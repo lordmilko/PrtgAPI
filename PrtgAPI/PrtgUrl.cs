@@ -1,0 +1,172 @@
+﻿using System;
+using System.Collections;
+using System.Text;
+using System.Web;
+using Prtg.Helpers;
+
+namespace Prtg
+{
+    class PrtgUrl
+    {
+        bool usernameFound;
+        bool passFound;
+        bool hasQueries;
+
+        private string url;
+
+        public string Url
+        {
+            get { return url; }
+            private set { url = value.ToLower(); }
+        }
+
+        public PrtgUrl(string server, string username, string passhash, XmlFunction function, Parameters.Parameters parameters) :
+            this(server, username, passhash, function.GetDescription(), parameters)
+        {
+        }
+
+        public PrtgUrl(string server, string username, string passhash, JsonFunction function, Parameters.Parameters parameters) :
+            this(server, username, passhash, function.GetDescription(), parameters)
+        {
+        }
+
+        public PrtgUrl(string server, string username, string passhash, CommandFunction function, Parameters.Parameters parameters) :
+            this(server, username, passhash, function.GetDescription(), parameters)
+        {
+        }
+
+        private PrtgUrl(string server, string username, string passhash, string function, Parameters.Parameters parameters)
+        {
+            StringBuilder url = new StringBuilder();
+
+            url.Append(server.StartsWith("https://") ? server : string.Format($"https://{server}"));
+            url.Append(string.Format($"/api/{function}"));
+
+            foreach (var p in parameters.GetParameters())
+            {
+                AddParameter(url, p.Key, p.Value);
+            }
+
+            if (!usernameFound)
+                AddParameter(url, Parameter.Username, username);
+
+            if (!passFound)
+            {
+                if (passhash == null)
+                    throw new ArgumentNullException(nameof(passhash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(passhash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");
+
+                AddParameter(url, Parameter.PassHash, passhash);
+            }
+
+            Url = url.ToString();
+        }
+
+        private void AddParameter(StringBuilder url, Parameter parameter, object value)
+        {
+            if (parameter == Parameter.Username)
+                usernameFound = true;
+            else if (parameter == Parameter.PassHash || parameter == Parameter.Password)
+                passFound = true;
+
+            string delim;
+
+            if (!hasQueries)
+            {
+                delim = "?";
+                hasQueries = true;
+            }
+            else
+            {
+                delim = "&";
+            }
+
+            url.Append(delim + GetUrlComponent(parameter, value));
+        }
+
+        private static string GetUrlComponent(Parameter parameter, object value)
+        {
+            var parameterType = parameter.GetParameterType();
+            var description = parameter.GetDescription();
+
+            string s = value as string;
+            if (s != null)
+            {
+                return FormatSingleParameterWithValEncode(description, s);
+            }
+
+            Enum e = value as Enum;
+            if (e != null)
+            {
+                return FormatSingleParameterWithValEncode(description, e.ToString());
+            }
+
+            var enumerable = value as IEnumerable;
+            if (enumerable != null)
+            {
+                if (parameterType == ParameterType.MultiValue)
+                {
+                    var str = GetMultiValueStr(enumerable);
+                    return FormatSingleParameterWithoutValEncode(description, str);
+                }
+
+                if (parameterType == ParameterType.MultiParameter)
+                {
+                    return FormatMultiParameter(enumerable, description);
+                }
+
+                throw new NotImplementedException();
+            }
+
+            return FormatSingleParameterWithValEncode(description, Convert.ToString(value));
+        }
+
+        private static string FormatSingleParameterWithValEncode(string name, string val)
+        {
+            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(val));
+        }
+
+        private static string FormatSingleParameterWithoutValEncode(string name, string val)
+        {
+            return string.Format($"{name}={val}");
+        }
+
+        private static string GetMultiValueStr(IEnumerable enumerable)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var obj in enumerable)
+            {
+                builder.Append(HttpUtility.UrlEncode(Convert.ToString(obj)) + ",");
+            }
+
+            builder.Length--;
+
+            return builder.ToString();
+        }
+
+        private static string FormatMultiParameter(IEnumerable enumerable, string description)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var val in enumerable)
+            {
+                string query;
+
+                if (description == Parameter.FilterXyz.GetDescription())
+                {
+                    query = ((ContentFilter)val).ToString();
+                }
+                else
+                {
+                    query = FormatSingleParameterWithValEncode(description, Convert.ToString(val));
+                }
+
+                builder.Append(query + "&");
+            }
+
+            builder.Length--;
+
+            return builder.ToString();
+        }
+    }
+}
