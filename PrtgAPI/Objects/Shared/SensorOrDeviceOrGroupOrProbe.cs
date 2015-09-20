@@ -78,7 +78,7 @@ namespace Prtg.Objects.Shared
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.NotifiesX))]
-        public NotificationTypes NotificationTypes => new NotificationTypes(_RawNotificationTypes);
+        public NotificationTypes NotificationTypes => _RawNotificationTypes == null ? null : new NotificationTypes(_RawNotificationTypes);
 
         /// <summary>
         /// Raw value used for <see cref="_RawNotificationTypes"/> attribute. This property should not be used.
