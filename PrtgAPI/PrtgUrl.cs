@@ -17,7 +17,8 @@ namespace Prtg
         public string Url
         {
             get { return url; }
-            private set { url = value.ToLower(); }
+            //private set { url = value.ToLower(); } //bug: this will mess up your password if it contains uppercase letters
+            private set { url = value; }
         }
 
         public PrtgUrl(string server, string username, string passhash, XmlFunction function, Parameters.Parameters parameters) :
