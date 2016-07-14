@@ -5,6 +5,8 @@
     /// </summary>
     public enum Access
     {
+        Inherited,
+        
         /// <summary>
         /// The object is not displayed. Logs, tickets and alarms pertaining to the object are not visible.
         /// </summary>
