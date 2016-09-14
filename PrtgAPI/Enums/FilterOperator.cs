@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies operators that can be used for filtering results in a PRTG Request.

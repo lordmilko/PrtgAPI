@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prtg.Attributes
+namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     sealed class PropertyParameter : Attribute

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Prtg.Helpers;
+using PrtgAPI.Helpers;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Deserializes XML returned from a PRTG Request.
@@ -24,7 +24,7 @@ namespace Prtg
         public List<T> Items { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.Data`1"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.Data`1"/> class.
         /// </summary>
         /// <param name="doc">XML returned from a PRTG Server Request.</param>
         /// <returns></returns>

@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to Devices, Groups and Probes
@@ -17,63 +17,63 @@ namespace Prtg.Objects.Shared
 
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.Up"/> state.
+        /// Number of sensors in <see cref="SensorStatus.Up"/> state.
         /// </summary>
         [XmlElement("upsens_raw")]
         [PropertyParameter(nameof(Property.UpSens))]
         public int? UpSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.Down"/> state.
+        /// Number of sensors in <see cref="SensorStatus.Down"/> state.
         /// </summary>
         [XmlElement("downsens_raw")]
         [PropertyParameter(nameof(Property.DownSens))]
         public int? DownSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.DownAcknowledged"/> state.
+        /// Number of sensors in <see cref="SensorStatus.DownAcknowledged"/> state.
         /// </summary>
         [XmlElement("downacksens_raw")]
         [PropertyParameter(nameof(Property.DownAckSens))]
         public int? DownAcknowledgedSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.DownPartial"/> state.
+        /// Number of sensors in <see cref="SensorStatus.DownPartial"/> state.
         /// </summary>
         [XmlElement("partialdownsens_raw")]
         [PropertyParameter(nameof(Property.PartialDownSens))]
         public int? PartialDownSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.Warning"/> state.
+        /// Number of sensors in <see cref="SensorStatus.Warning"/> state.
         /// </summary>
         [XmlElement("warnsens_raw")]
         [PropertyParameter(nameof(Property.WarnSens))]
         public int? WarningSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.PausedbyUser"/>, <see cref="Prtg.SensorStatus.PausedbyDependency"/>, <see cref="Prtg.SensorStatus.PausedbySchedule"/> or <see cref="Prtg.SensorStatus.PausedbyLicense"/> state.
+        /// Number of sensors in <see cref="SensorStatus.PausedbyUser"/>, <see cref="SensorStatus.PausedbyDependency"/>, <see cref="SensorStatus.PausedbySchedule"/> or <see cref="SensorStatus.PausedbyLicense"/> state.
         /// </summary>
         [XmlElement("pausedsens_raw")]
         [PropertyParameter(nameof(Property.PausedSens))]
         public int? PausedSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.Unusual"/> state.
+        /// Number of sensors in <see cref="SensorStatus.Unusual"/> state.
         /// </summary>
         [XmlElement("unusualsens_raw")]
         [PropertyParameter(nameof(Property.UnusualSens))]
         public int? UnusualSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="Prtg.SensorStatus.Unknown"/> state.
+        /// Number of sensors in <see cref="SensorStatus.Unknown"/> state.
         /// </summary>
         [XmlElement("undefinedsens_raw")]
         [PropertyParameter(nameof(Property.UndefinedSens))]
         public int? UndefinedSensors { get; set; }
 
         /// <summary>
-        /// Total number of sensors in any <see cref="T:Prtg.SensorStatus"/> state.
+        /// Total number of sensors in any <see cref="T:PrtgAPI.SensorStatus"/> state.
         /// </summary>
         [XmlElement("totalsens")]
         [PropertyParameter(nameof(Property.TotalSens))]

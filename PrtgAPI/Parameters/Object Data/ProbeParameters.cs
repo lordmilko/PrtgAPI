@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 
-namespace Prtg.Parameters
+namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="T:Prtg.PrtgUrl"/> for retrieving <see cref="T:Prtg.Probe"/> objects.
+    /// Represents parameters used to construct a <see cref="T:PrtgAPI.PrtgUrl"/> for retrieving <see cref="T:PrtgAPI.Probe"/> objects.
     /// </summary>
     public class ProbeParameters : TableParameters<Probe>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.Parameters.ProbeParameters"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.Parameters.ProbeParameters"/> class.
         /// </summary>
         public ProbeParameters() : base(Content.Objects)
         {
@@ -21,7 +21,7 @@ namespace Prtg.Parameters
         }
 
         /// <summary>
-        /// Filter objects to those with a <see cref="T:Prtg.Property"/> of a certain value. Specify multiple filters to limit results further.
+        /// Filter objects to those with a <see cref="T:PrtgAPI.Property"/> of a certain value. Specify multiple filters to limit results further.
         /// </summary>
         public override ContentFilter[] ContentFilter
         {

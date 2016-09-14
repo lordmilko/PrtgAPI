@@ -1,4 +1,4 @@
-﻿namespace Prtg.Parameters
+﻿namespace PrtgAPI.Parameters
 {
     class PauseParametersBase : Parameters
     {

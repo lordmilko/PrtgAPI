@@ -1,6 +1,6 @@
-﻿using Prtg.Helpers;
+﻿using PrtgAPI.Helpers;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Represents a filter used to limit search results returned by a PRTG Request.
@@ -23,7 +23,7 @@ namespace Prtg
         public string Value { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.ContentFilter"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.ContentFilter"/> class.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="value">Value to filter on.</param>
@@ -32,7 +32,7 @@ namespace Prtg
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.ContentFilter"/> class with a specified operator.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.ContentFilter"/> class with a specified operator.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="operator">Operator to use to filter <paramref name="property"/> with <paramref name="value"/></param>
@@ -55,12 +55,12 @@ namespace Prtg
         }
 
         /// <summary>
-        /// Returns the formatted string representation of this filter for use in a <see cref="T:Prtg.PrtgUrl"/>
+        /// Returns the formatted string representation of this filter for use in a <see cref="T:PrtgAPI.PrtgUrl"/>
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            var format = string.Format($"{Parameter.FilterXyz.GetDescription()}{Property}={GetOperatorFormat()}");
+            var format = string.Format($"{Parameter.FilterXyz.GetDescription()}{Property.ToString().ToLower()}={GetOperatorFormat()}");
 
             return format;
         }

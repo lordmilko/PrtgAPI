@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace Prtg.Attributes
+namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     sealed class ParameterType : Attribute
     {
-        public ParameterType(Prtg.ParameterType type)
+        public ParameterType(PrtgAPI.ParameterType type)
         {
             this.Type = type;
         }
 
-        public Prtg.ParameterType Type { get; private set; }
+        public PrtgAPI.ParameterType Type { get; private set; }
     }
 }

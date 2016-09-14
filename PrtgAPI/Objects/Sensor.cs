@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Prtg.Attributes;
-using Prtg.Objects.Shared;
+using PrtgAPI.Attributes;
+using PrtgAPI.Objects.Shared;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// An object that monitors and collects information according to a defined schedule.

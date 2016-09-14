@@ -1,4 +1,4 @@
-﻿namespace Prtg
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the Authentication Mode used to make requests against PRTG.

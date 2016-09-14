@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to Sensors, Devices, Groups, Probes, Messages, Tickets, TicketData and History.

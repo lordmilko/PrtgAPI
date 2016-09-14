@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml.Linq;
 
-namespace Prtg.Helpers
+namespace PrtgAPI.Helpers
 {
     static class XDocumentHelpers
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies fields to be included in a PRTG API Request.
@@ -28,19 +28,19 @@ namespace Prtg
         PassHash,
 
         /// <summary>
-        /// A <see cref="T:Prtg.Content"/> value representing a PRTG object type.
+        /// A <see cref="T:PrtgAPI.Content"/> value representing a PRTG object type.
         /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         Content,
 
         /// <summary>
-        /// One or more <see cref="T:Prtg.Property"/> values specifying properties that will be retrieved for a PRTG Object.
+        /// One or more <see cref="T:PrtgAPI.Property"/> values specifying properties that will be retrieved for a PRTG Object.
         /// </summary>
         [Attributes.ParameterType(ParameterType.MultiValue)]
         Columns,
 
         /// <summary>
-        /// A <see cref="T:Prtg.Output"/> value specifying the format the PRTG Response will be stored in.
+        /// A <see cref="T:PrtgAPI.Output"/> value specifying the format the PRTG Response will be stored in.
         /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         Output,
@@ -58,14 +58,14 @@ namespace Prtg
         Start,
 
         /// <summary>
-        /// A <see cref="T:Prtg.RecordAge"/> value limiting records returned to those within this time period.
+        /// A <see cref="T:PrtgAPI.RecordAge"/> value limiting records returned to those within this time period.
         /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("filter_drel")]
         FilterRecordAge,
 
         /// <summary>
-        /// One or more <see cref="T:Prtg.SensorStatus"/> values used to retrieve sensors in specified states.
+        /// One or more <see cref="T:PrtgAPI.SensorStatus"/> values used to retrieve sensors in specified states.
         /// </summary>
         [Attributes.ParameterType(ParameterType.MultiParameter)]
         [Description("filter_status")]
@@ -78,7 +78,7 @@ namespace Prtg
         FilterTags,
 
         /// <summary>
-        /// Used to filter objects returned based on the value of a specified <see cref="T:Prtg.Property"/>.
+        /// Used to filter objects returned based on the value of a specified <see cref="T:PrtgAPI.Property"/>.
         /// When submitting a PRTG Request, the name of the Property being filtered on should be added to the value of this parameter (e.g. filter_name).
         /// </summary>
         [Attributes.ParameterType(ParameterType.MultiParameter)]
@@ -86,12 +86,12 @@ namespace Prtg
         FilterXyz,
 
         /// <summary>
-        /// A <see cref="T:Prtg.Property"/> used to specify which property to sort PRTG Response by.
+        /// A <see cref="T:PrtgAPI.Property"/> used to specify which property to sort PRTG Response by.
         /// </summary>
         SortBy,
 
         /// <summary>
-        /// A <see cref="T:Prtg.CustomNumberFormat"/> specifying how values should be displayed.
+        /// A <see cref="T:PrtgAPI.CustomNumberFormat"/> specifying how values should be displayed.
         /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         Show,
@@ -105,7 +105,7 @@ namespace Prtg
         Id,
 
         /// <summary>
-        /// The <see cref="Prtg.Property"/> of <see cref="Id"/> to operate upon.
+        /// The <see cref="Property"/> of <see cref="Id"/> to operate upon.
         /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         Name,
@@ -149,12 +149,12 @@ namespace Prtg
         [Description("ackmsg")]
         AcknowledgeMessage,
 
-        /*
+        
 
         //Reordering
 
         NewPos,
-
+        /*
         //Report Related
 
         AddId,
@@ -173,5 +173,15 @@ namespace Prtg
         Location,
         LonLat
         */
+
+        //Channel
+
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        [Description("subid")]
+        SubId,
+
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        [Description("subtype")]
+        SubType,
     }
 }

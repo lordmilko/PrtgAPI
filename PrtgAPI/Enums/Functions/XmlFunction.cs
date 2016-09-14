@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies API Request Pages that return XML.
@@ -14,7 +14,7 @@ namespace Prtg
         TableData,
 
         /// <summary>
-        /// Retrieve the value of a <see cref="T:Prtg.Property"/> for a specified PRTG Object.
+        /// Retrieve the value of a <see cref="T:PrtgAPI.Property"/> for a specified PRTG Object.
         /// </summary>
         [Description("getobjectproperty.htm")]
         GetObjectProperty

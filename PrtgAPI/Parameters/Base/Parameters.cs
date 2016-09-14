@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Prtg.Parameters
+namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="T:Prtg.PrtgUrl"/>.
+    /// Represents parameters used to construct a <see cref="T:PrtgAPI.PrtgUrl"/>.
     /// </summary>
     public class Parameters
     {
@@ -19,7 +19,7 @@ namespace Prtg.Parameters
         }
 
         /// <summary>
-        /// Add or update a <see cref="T:Prtg.Parameter"/> for use in a <see cref="T:Prtg.PrtgUrl"/>.
+        /// Add or update a <see cref="T:PrtgAPI.Parameter"/> for use in a <see cref="T:PrtgAPI.PrtgUrl"/>.
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>

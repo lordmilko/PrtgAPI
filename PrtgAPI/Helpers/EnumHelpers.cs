@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 
-namespace Prtg.Helpers
+namespace PrtgAPI.Helpers
 {
     static class EnumHelpers
     {

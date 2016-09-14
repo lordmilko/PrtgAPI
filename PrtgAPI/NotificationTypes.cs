@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the number of notification triggers on a PRTG Object, as well as whether any triggers are inherited from parent objects
@@ -29,9 +29,9 @@ namespace Prtg
         public bool TriggerInheritance { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.NotificationTypes"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.NotificationTypes"/> class.
         /// </summary>
-        /// <param name="rawNotificationTypes">Raw <see cref="Prtg.Property.NotifiesX"/> value returned from a PRTG Request.</param>
+        /// <param name="rawNotificationTypes">Raw <see cref="Property.NotifiesX"/> value returned from a PRTG Request.</param>
         public NotificationTypes(string rawNotificationTypes)
         {
             if (rawNotificationTypes != null)

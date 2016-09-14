@@ -1,4 +1,4 @@
-﻿namespace Prtg
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies sensor display settings, found under the "Sensor Display" settings of object settings pages.

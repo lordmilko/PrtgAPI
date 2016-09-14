@@ -1,4 +1,4 @@
-﻿namespace Prtg
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies properties (referred to by PRTG as "columns") that can be retrieved for a PRTG Object.
@@ -162,7 +162,7 @@
         Dependency,
 
         /// <summary>
-        /// For sensor tree objects: <see cref="T:Prtg.SensorStatus"/> of the object; For messages: category of the log message.
+        /// For sensor tree objects: <see cref="T:PrtgAPI.SensorStatus"/> of the object; For messages: category of the log message.
         /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets
         /// </summary>
         Status,

@@ -1,4 +1,4 @@
-﻿namespace Prtg
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies settings that apply to EXE/Script sensors.

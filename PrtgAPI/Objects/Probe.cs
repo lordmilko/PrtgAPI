@@ -1,6 +1,6 @@
-﻿using Prtg.Objects.Shared;
+﻿using PrtgAPI.Objects.Shared;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// A device used to perform monitoring against a site or set of systems.

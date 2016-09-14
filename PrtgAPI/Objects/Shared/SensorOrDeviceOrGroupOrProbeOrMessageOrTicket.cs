@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to Sensors, Devices, Groups, Probes, Messages and Tickets.
@@ -11,14 +11,14 @@ namespace Prtg.Objects.Shared
         // ################################## Sensors, Devices, Groups, Probes, Messages, Tickets ##################################
 
         /// <summary>
-        /// <see cref="T:Prtg.SensorStatus"/> of this object. If this object is a Message, this value contains the category of log message.
+        /// <see cref="T:PrtgAPI.SensorStatus"/> of this object. If this object is a Message, this value contains the category of log message.
         /// </summary>
         [XmlElement("status_raw")]
         [PropertyParameter(nameof(Property.Status))]
         public SensorStatus? Status { get; set; }
 
         /// <summary>
-        /// <see cref="T:Prtg.Priority"/> of this object.
+        /// <see cref="T:PrtgAPI.Priority"/> of this object.
         /// </summary>
         [XmlElement("priority")]
         [PropertyParameter(nameof(Property.Priority))]

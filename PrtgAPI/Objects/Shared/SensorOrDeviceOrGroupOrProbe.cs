@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to Sensors, Devices, Groups and Probes.
@@ -126,7 +126,7 @@ namespace Prtg.Objects.Shared
         public string _RawIntervalInherited { get; set; }
 
         /// <summary>
-        /// An <see cref="T:Prtg.Access"/> value specifying the access rights of the API Request User on the specified object.
+        /// An <see cref="T:PrtgAPI.Access"/> value specifying the access rights of the API Request User on the specified object.
         /// </summary>
         [XmlElement("access")]
         [PropertyParameter(nameof(Property.Access))]

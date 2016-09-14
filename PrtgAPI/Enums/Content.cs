@@ -1,4 +1,4 @@
-﻿namespace Prtg
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the type of content to retrieve from a PRTG API Request.

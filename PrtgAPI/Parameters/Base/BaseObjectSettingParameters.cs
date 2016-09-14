@@ -1,7 +1,7 @@
 ﻿using System;
-using Prtg.Helpers;
+using PrtgAPI.Helpers;
 
-namespace Prtg.Parameters
+namespace PrtgAPI.Parameters
 {
     class BaseObjectSettingParameters<T> : Parameters
     {

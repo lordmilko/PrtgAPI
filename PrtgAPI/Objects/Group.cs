@@ -1,8 +1,8 @@
 ﻿using System.Xml.Serialization;
-using Prtg.Attributes;
-using Prtg.Objects.Shared;
+using PrtgAPI.Attributes;
+using PrtgAPI.Objects.Shared;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// A group used to organize one or more devices.

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to Groups and Probes

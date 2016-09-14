@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Prtg.Attributes;
+using PrtgAPI.Attributes;
 
-namespace Prtg.Objects.Shared
+namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
     /// Properties that apply to objects found in tables.
@@ -19,7 +19,7 @@ namespace Prtg.Objects.Shared
         public int? Id { get; set; }
 
         /// <summary>
-        /// The type of this object. Certain objects may simply report their <see cref="Prtg.BaseType"/>, while others may get more specific (e.g. a sensor of type "Ping").
+        /// The type of this object. Certain objects may simply report their <see cref="BaseType"/>, while others may get more specific (e.g. a sensor of type "Ping").
         /// </summary>
         [XmlElement("type")]
         [PropertyParameter(nameof(Property.Type))]

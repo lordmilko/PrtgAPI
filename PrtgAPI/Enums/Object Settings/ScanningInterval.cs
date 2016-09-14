@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies for settings under the "Scanning Interval" header of PRTG Objects.

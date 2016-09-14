@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the underlying type of a PRTG Object.

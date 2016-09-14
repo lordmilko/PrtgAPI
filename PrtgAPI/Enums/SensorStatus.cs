@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies states capable of being held by sensors.

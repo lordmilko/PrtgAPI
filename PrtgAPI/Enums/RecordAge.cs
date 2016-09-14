@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies time spans for filtering records by.

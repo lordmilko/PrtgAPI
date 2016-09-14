@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the order in which objects are displayed in PRTG table lists, with objects with higher priorities displayed first.
