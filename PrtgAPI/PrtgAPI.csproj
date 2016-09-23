@@ -42,10 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ParameterType.cs" />
-    <Compile Include="Attributes\PropertyParameter.cs" />
-    <Compile Include="Attributes\GetObjectName.cs" />
-    <Compile Include="Attributes\SetObjectName.cs" />
+    <Compile Include="Attributes\ParameterTypeAttribute.cs" />
+    <Compile Include="Attributes\PropertyParameterAttribute.cs" />
+    <Compile Include="Attributes\GetObjectNameAttribute.cs" />
+    <Compile Include="Attributes\SetObjectNameAttribute.cs" />
     <Compile Include="ContentFilter.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
