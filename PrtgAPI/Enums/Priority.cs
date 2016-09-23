@@ -7,6 +7,9 @@ namespace PrtgAPI
     /// </summary>
     public enum Priority
     {
+        [XmlEnum("0")]
+        None,
+
         /// <summary>
         /// Priority 1 (lowest priority).
         /// </summary>
