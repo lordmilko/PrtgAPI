@@ -149,10 +149,12 @@ namespace PrtgAPI
         [Description("ackmsg")]
         AcknowledgeMessage,
 
-        
+
 
         //Reordering
 
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        [Description("newpos")]
         NewPos,
         /*
         //Report Related
@@ -173,6 +175,16 @@ namespace PrtgAPI
         Location,
         LonLat
         */
+
+        //Cloning
+
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        [Description("host")]
+        Host,
+
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        [Description("targetid")]
+        TargetId,
 
         //Channel
 
