@@ -3,9 +3,9 @@
 namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    sealed class SetObjectName : Attribute
+    sealed class SetObjectNameAttribute : Attribute
     {
-        public SetObjectName(string name)
+        public SetObjectNameAttribute(string name)
         {
             this.Name = name;
         }

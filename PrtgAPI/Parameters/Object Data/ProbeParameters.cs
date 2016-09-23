@@ -28,7 +28,7 @@ namespace PrtgAPI.Parameters
             get { return base.ContentFilter; }
             set
             {
-                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value == "0"))
+                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value.ToString() == "0"))
                     value = value.Concat(DefaultContentFilter()).ToArray();
 
                 base.ContentFilter = value;

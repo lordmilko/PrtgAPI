@@ -7,6 +7,9 @@ namespace PrtgAPI
     /// </summary>
     public enum Priority
     {
+        /// <summary>
+        /// This object does not have a priority specified.
+        /// </summary>
         [XmlEnum("0")]
         None,
 

@@ -5,6 +5,9 @@
     /// </summary>
     public enum Access
     {
+        /// <summary>
+        /// This object's access is inherited from its parent.
+        /// </summary>
         Inherited,
         
         /// <summary>

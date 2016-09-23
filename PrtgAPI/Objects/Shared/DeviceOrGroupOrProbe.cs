@@ -52,7 +52,7 @@ namespace PrtgAPI.Objects.Shared
         public int? WarningSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.PausedbyUser"/>, <see cref="SensorStatus.PausedbyDependency"/>, <see cref="SensorStatus.PausedbySchedule"/> or <see cref="SensorStatus.PausedbyLicense"/> state.
+        /// Number of sensors in <see cref="SensorStatus.PausedByUser"/>, <see cref="SensorStatus.PausedByDependency"/>, <see cref="SensorStatus.PausedBySchedule"/> or <see cref="SensorStatus.PausedByLicense"/> state.
         /// </summary>
         [XmlElement("pausedsens_raw")]
         [PropertyParameter(nameof(Property.PausedSens))]

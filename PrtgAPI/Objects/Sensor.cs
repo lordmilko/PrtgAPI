@@ -11,7 +11,7 @@ namespace PrtgAPI
     public class Sensor : SensorOrDeviceOrGroupOrProbe
     {
         // ################################## Sensors, Devices, Groups ##################################
-        //Also in Group because group must derived from GroupOrProbe
+        //Also in Group because group must be derived from GroupOrProbe
         //Also in Device because device must be derived from DeviceOrGroupOrProbe
 
         /// <summary>

@@ -216,7 +216,7 @@
         WarnSens,
 
         /// <summary>
-        /// Number of sensors currently in a PAUSED state. This includes all PAUSED states (i.e. <see cref="SensorStatus.PausedbyUser"/>, <see cref="SensorStatus.PausedbyDependency"/>, <see cref="SensorStatus.PausedbySchedule"/> etc.).
+        /// Number of sensors currently in a PAUSED state. This includes all PAUSED states (i.e. <see cref="SensorStatus.PausedByUser"/>, <see cref="SensorStatus.PausedByDependency"/>, <see cref="SensorStatus.PausedBySchedule"/> etc.).
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
         PausedSens,
@@ -358,7 +358,7 @@
         /// Probe status for probes, auto discovery status for groups.
         /// Used in: Groups, Probes
         /// </summary>
-            Condition,
+        Condition,
 
         /// <summary>
         /// Object type (string).

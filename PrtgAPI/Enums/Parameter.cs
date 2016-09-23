@@ -153,6 +153,9 @@ namespace PrtgAPI
 
         //Reordering
 
+        /// <summary>
+        /// The new position of the object.
+        /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("newpos")]
         NewPos,
@@ -178,20 +181,32 @@ namespace PrtgAPI
 
         //Cloning
 
+        /// <summary>
+        /// The hostname of the new object.
+        /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("host")]
         Host,
 
+        /// <summary>
+        /// The object targeted by the API call.
+        /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("targetid")]
         TargetId,
 
         //Channel
 
+        /// <summary>
+        /// The ID of the Channel.
+        /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("subid")]
         SubId,
 
+        /// <summary>
+        /// The type of object to change properties for.
+        /// </summary>
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("subtype")]
         SubType,

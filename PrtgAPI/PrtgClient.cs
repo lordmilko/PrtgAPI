@@ -247,7 +247,7 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(Property property, string value)
+        public List<Device> GetDevices(Property property, object value)
         {
             return GetDevices(new ContentFilter(property, value));
         }
@@ -303,7 +303,7 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Group> GetGroups(Property property, string value)
+        public List<Group> GetGroups(Property property, object value)
         {
             return GetGroups(new ContentFilter(property, value));
         }
@@ -358,7 +358,7 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Probe> GetProbes(Property property, string value)
+        public List<Probe> GetProbes(Property property, object value)
         {
             return GetProbes(new ContentFilter(property, value));
         }
@@ -524,17 +524,6 @@ namespace PrtgAPI
             SetObjectProperty(new SetObjectSettingParameters<BasicObjectSetting>(objectId, name, value));
         }
 
-        /// <summary>
-        /// Modify basic object settings (name, tags, priority, etc.) for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        public void SetObjectProperty(int objectId, BasicObjectSetting name, int value)
-        {
-            SetObjectProperty(objectId, name, value.ToString());
-        }
-
         #endregion
 
         #region ScanningInterval
@@ -545,20 +534,9 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to modify.</param>
         /// <param name="name">The setting to whose value will be overwritten.</param>
         /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ScanningInterval name, string value)
+        private void SetObjectProperty(int objectId, ScanningInterval name, object value)
         {
             SetObjectProperty(new SetObjectSettingParameters<ScanningInterval>(objectId, name, value));
-        }
-
-        /// <summary>
-        /// Modify scanning interval settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ScanningInterval name, int value)
-        {
-            SetObjectProperty(objectId, name, value.ToString());
         }
 
         #endregion
@@ -571,20 +549,9 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to modify.</param>
         /// <param name="name">The setting to whose value will be overwritten.</param>
         /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, SensorDisplay name, string value)
+        private void SetObjectProperty(int objectId, SensorDisplay name, object value)
         {
             SetObjectProperty(new SetObjectSettingParameters<SensorDisplay>(objectId, name, value));
-        }
-
-        /// <summary>
-        /// Modify sensor display settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, SensorDisplay name, int value)
-        {
-            SetObjectProperty(objectId, name, value.ToString());
         }
 
         #endregion
@@ -597,27 +564,23 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to modify.</param>
         /// <param name="name">The setting to whose value will be overwritten.</param>
         /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ExeScriptSetting name, string value)
+        private void SetObjectProperty(int objectId, ExeScriptSetting name, object value)
         {
             SetObjectProperty(new SetObjectSettingParameters<ExeScriptSetting>(objectId, name, value));
-        }
-
-        /// <summary>
-        /// Modify EXE/Script settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ExeScriptSetting name, int value)
-        {
-            SetObjectProperty(objectId, name, value.ToString());
         }
 
         #endregion
 
         #region Channel
 
-        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, string value)
+        /// <summary>
+        /// Modify channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="property">The property of the channel to modify</param>
+        /// <param name="value">The value to set the channel's property to.</param>
+        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value)
         {
             SetObjectProperty(new SetChannelSettingParameters(sensorId, channelId, property, value));
         }
@@ -769,6 +732,10 @@ namespace PrtgAPI
 
         #endregion
 
+        /// <summary>
+        /// Request an object or any children of an object refresh themselves immediately.
+        /// </summary>
+        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
         public void CheckNow(int objectId)
         {
             var parameters = new Parameters.Parameters()
@@ -779,6 +746,10 @@ namespace PrtgAPI
             ExecuteRequest(CommandFunction.ScanNow, parameters);
         }
 
+        /// <summary>
+        /// Automatically create sensors under an object based on the object's (or it's children's) device type.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
         public void AutoDiscover(int objectId)
         {
             var parameters = new Parameters.Parameters()
@@ -789,6 +760,11 @@ namespace PrtgAPI
             ExecuteRequest(CommandFunction.DiscoverNow, parameters);
         }
 
+        /// <summary>
+        /// Modify the position of an object up or down within the PRTG User Interface.
+        /// </summary>
+        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="position">The direction to move in.</param>
         public void SetPosition(int objectId, Position position)
         {
             var parameters = new Parameters.Parameters()

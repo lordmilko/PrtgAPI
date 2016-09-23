@@ -3,9 +3,9 @@
 namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    sealed class ParameterType : Attribute
+    sealed class ParameterTypeAttribute : Attribute
     {
-        public ParameterType(PrtgAPI.ParameterType type)
+        public ParameterTypeAttribute(PrtgAPI.ParameterType type)
         {
             this.Type = type;
         }

@@ -3,9 +3,9 @@
 namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-    sealed class PropertyParameter : Attribute
+    sealed class PropertyParameterAttribute : Attribute
     {
-        public PropertyParameter(string name)
+        public PropertyParameterAttribute(string name)
         {
             this.Name = name;
         }

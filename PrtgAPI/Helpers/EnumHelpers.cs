@@ -62,11 +62,11 @@ namespace PrtgAPI.Helpers
                 element.GetType()
                     .GetMember(element.ToString())
                     .First()
-                    .GetCustomAttributes(typeof (Attributes.ParameterType), false);
+                    .GetCustomAttributes(typeof (Attributes.ParameterTypeAttribute), false);
 
             if (attributes.Length > 0)
             {
-                return ((Attributes.ParameterType) attributes.First()).Type;
+                return ((Attributes.ParameterTypeAttribute) attributes.First()).Type;
             }
 
             throw new Exceptions.Internal.MissingParameterTypeException(element);
