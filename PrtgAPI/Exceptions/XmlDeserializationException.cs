@@ -50,6 +50,7 @@ namespace PrtgAPI
         /// Initializes a new instance of the <see cref="T:SwitchvoxAPI.XmlDeserializationException"/> class with the outer type that was being deserialized, the XML that is believed to have caused the exception and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="type">The outer type that was being deserialized.</param>
+        /// <param name="xml">The XML believed to have caused the exception.</param>
         /// <param name="inner">The exception that is the cause of the current exception. If the <paramref name="inner"/> parameter is not null, the current exception is raised in a catch block that handles the inner exception.</param>
         public XmlDeserializationException(Type type, string xml, Exception inner) : base(GetMessage(type, xml, inner), inner)
         {

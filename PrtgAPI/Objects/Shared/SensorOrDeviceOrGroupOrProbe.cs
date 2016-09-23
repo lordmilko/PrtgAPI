@@ -56,7 +56,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("basetype")]
         [PropertyParameter(nameof(Property.BaseType))]
-        public BaseType BaseType { get; set; }
+        public BaseType? BaseType { get; set; }
 
         /// <summary>
         /// URL of this object.
@@ -130,7 +130,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("access")]
         [PropertyParameter(nameof(Property.Access))]
-        public Access Access { get; set; }
+        public Access? Access { get; set; }
 
         /// <summary>
         /// Name of the object the monitoring of this object is dependent on. If dependency is on the parent object, value of DependencyName will be "Parent".
