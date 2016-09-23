@@ -8,7 +8,7 @@ namespace PrtgAPI.Parameters
 {
     class SetChannelSettingParameters : SetObjectSettingParameters<ChannelProperty>
     {
-        public SetChannelSettingParameters(int sensorId, int channelId, ChannelProperty property, string value) : base(sensorId, property, value)
+        public SetChannelSettingParameters(int sensorId, int channelId, ChannelProperty property, object value) : base(sensorId, property, value)
         {
             ChannelId = channelId;
             SubType = SubType.Channel;
