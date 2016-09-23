@@ -7,7 +7,7 @@
     <ProjectGuid>{0F6F773A-7053-424E-89F8-43467A695433}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Prtg</RootNamespace>
+    <RootNamespace>PrtgAPI</RootNamespace>
     <AssemblyName>PrtgAPI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,6 +50,8 @@
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
     <Compile Include="Enums\BaseType.cs" />
+    <Compile Include="Enums\ChannelProperty.cs" />
+    <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\Property.cs" />
     <Compile Include="Enums\Functions\CommandFunction.cs" />
     <Compile Include="Enums\Content.cs" />
@@ -68,9 +70,11 @@
     <Compile Include="Enums\SensorStatus.cs" />
     <Compile Include="Enums\Functions\XmlFunction.cs" />
     <Compile Include="Enums\CustomNumberFormat.cs" />
+    <Compile Include="Enums\SubType.cs" />
     <Compile Include="Exceptions\Internal\MissingParameterTypeException.cs" />
     <Compile Include="Exceptions\PrtgRequestException.cs" />
     <Compile Include="Exceptions\UnknownTypeException.cs" />
+    <Compile Include="Exceptions\XmlDeserializationException.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\XDocumentHelpers.cs" />
     <Compile Include="NotificationTypes.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="Parameters\Base\BaseObjectSettingParameters.cs" />
     <Compile Include="Parameters\Base\BasePauseParameters.cs" />
     <Compile Include="Parameters\Object Data\ProbeParameters.cs" />
+    <Compile Include="Parameters\Object Manipulation\SetChannelSettingParameters.cs" />
     <Compile Include="Parameters\Object Manipulation\SetObjectSettingParameters.cs" />
     <Compile Include="Parameters\Base\Parameters.cs" />
     <Compile Include="Parameters\Base\TableParameters.cs" />
@@ -100,10 +105,9 @@
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbe.cs" />
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicket.cs" />
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory.cs" />
-    <Compile Include="PrtgRequest.cs" />
+    <Compile Include="PrtgClient.cs" />
     <Compile Include="PrtgUrl.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

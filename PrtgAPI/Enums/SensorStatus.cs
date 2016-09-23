@@ -37,17 +37,17 @@ namespace PrtgAPI
         /// <summary>
         /// Sensor has been paused indefinitely by a user.
         /// </summary>
-        [XmlEnum("7")] PausedbyUser = 7,
+        [XmlEnum("7")] PausedByUser = 7,
 
         /// <summary>
         /// Sensor has been paused due to a dependency on another sensor (e.g. the device is not pingable)
         /// </summary>
-        [XmlEnum("8")] PausedbyDependency = 8,
+        [XmlEnum("8")] PausedByDependency = 8,
 
         /// <summary>
         /// Sensor has been paused automatically by a schedule used to control monitoring windows.
         /// </summary>
-        [XmlEnum("9")] PausedbySchedule = 9,
+        [XmlEnum("9")] PausedBySchedule = 9,
 
         /// <summary>
         /// Sensor data is outside of normal ranges, potentially indicating an issue.
@@ -57,7 +57,7 @@ namespace PrtgAPI
         /// <summary>
         /// Sensor has been paused due to sensor limits imposed by a chance in license.
         /// </summary>
-        [XmlEnum("11")] PausedbyLicense = 11,
+        [XmlEnum("11")] PausedByLicense = 11,
 
         /// <summary>
         /// Sensor has been paused temporarily by a user until a specified time period.

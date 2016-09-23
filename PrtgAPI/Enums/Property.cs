@@ -379,7 +379,7 @@
         Icon,
 
         /// <summary>
-        /// ID of the parent object or ID of a ticket.
+        /// ID of the parent object or ID of a ticket (e.g. the device of sensor, the probe of a group, etc).
         /// Used in: All Tree Objects, Tickets
         /// </summary>
         ParentId,
