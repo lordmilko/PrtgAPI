@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Text;
 using System.Web;
-using Prtg.Helpers;
+using PrtgAPI.Helpers;
 
-namespace Prtg
+namespace PrtgAPI
 {
     class PrtgUrl
     {
@@ -40,7 +40,15 @@ namespace Prtg
         {
             StringBuilder url = new StringBuilder();
 
-            url.Append(server.StartsWith("https://") ? server : string.Format($"https://{server}"));
+            if (server.StartsWith("http://") || server.StartsWith("https://"))
+            {
+                url.Append(server);
+            }
+            else
+            {
+                url.Append($"https://{server}");
+            }
+
             url.Append(string.Format($"/api/{function}"));
 
             foreach (var p in parameters.GetParameters())
@@ -81,6 +89,8 @@ namespace Prtg
                 delim = "&";
             }
 
+            //get the content. if its not a password, capitalize it
+
             url.Append(delim + GetUrlComponent(parameter, value));
         }
 
@@ -89,17 +99,23 @@ namespace Prtg
             var parameterType = parameter.GetParameterType();
             var description = parameter.GetDescription();
 
+            //Format String Parameter
+
             string s = value as string;
             if (s != null)
             {
                 return FormatSingleParameterWithValEncode(description, s);
             }
 
+            //Format Enum Parameter
+
             Enum e = value as Enum;
             if (e != null)
             {
                 return FormatSingleParameterWithValEncode(description, e.ToString());
             }
+
+            //Format IEnumerable Parameter
 
             var enumerable = value as IEnumerable;
             if (enumerable != null)
@@ -128,7 +144,10 @@ namespace Prtg
 
         private static string FormatSingleParameterWithoutValEncode(string name, string val)
         {
-            return string.Format($"{name}={val}");
+            if (name == Parameter.Password.GetDescription())
+                return $"{name.ToLower()}={val}";
+
+            return $"{name}={val}".ToLower();
         }
 
         private static string GetMultiValueStr(IEnumerable enumerable)
@@ -142,7 +161,7 @@ namespace Prtg
 
             builder.Length--;
 
-            return builder.ToString();
+            return builder.ToString().ToLower();
         }
 
         private static string FormatMultiParameter(IEnumerable enumerable, string description)

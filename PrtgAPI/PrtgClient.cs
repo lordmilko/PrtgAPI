@@ -4,17 +4,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
-using Prtg.Parameters;
+using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 
-using Prtg.Helpers;
-
-namespace Prtg
+namespace PrtgAPI
 {
     /// <summary>
     /// Makes API requests against a PRTG Network Monitor server.
     /// </summary>
-    public class PrtgRequest
+    public class PrtgClient
     {
         /// <summary>
         /// Gets the PRTG server API requests will be made against.
@@ -29,10 +30,19 @@ namespace Prtg
         private readonly string passhash;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Prtg.PrtgRequest"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.PrtgClient"/> class.
         /// </summary>
-        public PrtgRequest(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
+        public PrtgClient(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
         {
+            if (server == null)
+                throw new ArgumentNullException(nameof(server));
+
+            if (username == null)
+                throw new ArgumentNullException(nameof(username));
+
+            if (pass == null)
+                throw new ArgumentNullException(nameof(pass));
+
             Server = server;
             Username = username;
 
@@ -61,11 +71,89 @@ namespace Prtg
             Debug.WriteLine(response.ToString());
 #endif
 
-            //check its not an error
+            //todo: change the Property enum to have a description attribute that lets you change the property name to something else
+            //then, change ObjId to just Id
 
-            var data = Data<T>.Deserialize(response);
+            //todo - check the xml doesnt say there was an error
+            //it looks like we already do this when its an xml request, however theres also a bug here in that we automatically try to deserialize
+            //some xml without checking whether its xml or not; this could result in an exception in the exception handler!
+            //we need to be able to handle errors on json requests or otherwise
+            //it looks like these properties are ultimately parsed by prtgurl, so we'd need to change prtgurl to try and get the description property
+            //if it detects a parameters object type is an enum
 
-            return data.Items;
+            //todo: upload our empty settings file then say dont track it
+            //git update-index --assume-unchanged <file> and --no-assume-unchanged
+
+            try
+            {
+                var data = Data<T>.Deserialize(response);
+
+                return data.Items;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Exception ex1 = null;
+
+                try
+                {
+                    ex1 = GetInvalidXml(response, ex, typeof(T));
+                }
+                catch
+                {
+                }
+
+                if (ex1 != null)
+                    throw ex1;
+                else
+                    throw;
+            }
+
+        }
+
+        private Exception GetInvalidXml(XDocument response, InvalidOperationException ex, Type type)
+        {
+            var stream = GetStream(response);
+
+            var xmlReader = (XmlReader)new XmlTextReader(stream)
+            {
+                WhitespaceHandling = WhitespaceHandling.Significant,
+                Normalization = true,
+                XmlResolver = null
+            };
+
+            var regex = new Regex("(.+\\()(.+)(, )(.+)(\\).+)");
+            var line = Convert.ToInt32(regex.Replace(ex.Message, "$2"));
+            var position = Convert.ToInt32(regex.Replace(ex.Message, "$4"));
+
+            while (xmlReader.Read())
+            {
+                IXmlLineInfo xmlLineInfo = (IXmlLineInfo)xmlReader;
+
+                if (xmlLineInfo.LineNumber == line - 1)
+                {
+                    var xml = xmlReader.ReadOuterXml();
+
+                    var prevSpace = xml.LastIndexOf(' ', position) + 1;
+                    var nextSpace = xml.IndexOf(' ', position);
+
+                    var length = nextSpace - prevSpace;
+
+                    var str = length > 0 ? xml.Substring(prevSpace, length) : xml;
+
+                    return new XmlDeserializationException(type, str, ex);
+                }
+            }
+
+            return null;
+        }
+
+        private Stream GetStream(XDocument response)
+        {
+            var stream = new MemoryStream();
+            response.Save(stream);
+            stream.Position = 0;
+
+            return stream;
         }
 
         #region Sensors
@@ -101,7 +189,7 @@ namespace Prtg
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Sensor> GetSensors(Property property, string value)
+        public List<Sensor> GetSensors(Property property, object value)
         {
             return GetSensors(new ContentFilter(property, value));
         }
@@ -113,7 +201,7 @@ namespace Prtg
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Sensor> GetSensors(Property property, FilterOperator @operator, string value)
+        public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value)
         {
             return GetSensors(new ContentFilter(property, @operator, value));
         }
@@ -346,6 +434,15 @@ namespace Prtg
             ExecuteRequest(CommandFunction.Pause, parameters);
         }
 
+        /// <summary>
+        /// Simulate an error state for a sensor.
+        /// </summary>
+        /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
+        public void SimulateError(int sensorId)
+        {
+            ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorId));
+        }
+
         #endregion
 
         #region ExecuteRequest
@@ -386,6 +483,9 @@ namespace Prtg
             }
             catch (WebException ex)
             {
+                if (ex.Response == null)
+                    throw;
+
                 var webResponse = (HttpWebResponse)ex.Response;
 
                 if (webResponse.StatusCode == HttpStatusCode.BadRequest)
@@ -515,6 +615,15 @@ namespace Prtg
 
         #endregion
 
+        #region Channel
+
+        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, string value)
+        {
+            SetObjectProperty(new SetChannelSettingParameters(sensorId, channelId, property, value));
+        }
+
+        #endregion
+
         private void SetObjectProperty<T>(SetObjectSettingParameters<T> parameters)
         {
             ExecuteRequest(CommandFunction.SetObjectProperty, parameters);
@@ -540,7 +649,7 @@ namespace Prtg
         /// <summary>
         /// Retrieves basic object settings (name, tags, priority, etc.) in their true data type for a PRTG Object.
         /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="Prtg.BasicObjectSetting"/> specified in <paramref name="name"/>.</typeparam>
+        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="BasicObjectSetting"/> specified in <paramref name="name"/>.</typeparam>
         /// <param name="objectId">ID of the object to retrieve settings for.</param>
         /// <param name="name">The setting to retrieve.</param>
         /// <returns>The value of the requested setting.</returns>
@@ -567,7 +676,7 @@ namespace Prtg
         /// <summary>
         /// Retrieves scanning interval related settings in their true data type for a PRTG Object.
         /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="Prtg.ScanningInterval"/> specified in <paramref name="name"/>.</typeparam>
+        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="ScanningInterval"/> specified in <paramref name="name"/>.</typeparam>
         /// <param name="objectId">ID of the object to retrieve settings for.</param>
         /// <param name="name">The setting to retrieve.</param>
         /// <returns>The value of the requested setting.</returns>
@@ -594,7 +703,7 @@ namespace Prtg
         /// <summary>
         /// Retrieves sensor display settings in their true data type for a PRTG Object.
         /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="Prtg.SensorDisplay"/> specified in <paramref name="name"/>.</typeparam>
+        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="SensorDisplay"/> specified in <paramref name="name"/>.</typeparam>
         /// <param name="objectId">ID of the object to retrieve settings for.</param>
         /// <param name="name">The setting to retrieve.</param>
         /// <returns>The value of the requested setting.</returns>
@@ -621,7 +730,7 @@ namespace Prtg
         /// <summary>
         /// Retrieves EXE/Script settings in their true data type for a PRTG Object.
         /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="Prtg.ExeScriptSetting"/> specified in <paramref name="name"/>.</typeparam>
+        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="ExeScriptSetting"/> specified in <paramref name="name"/>.</typeparam>
         /// <param name="objectId">ID of the object to retrieve settings for.</param>
         /// <param name="name">The setting to retrieve.</param>
         /// <returns>The value of the requested setting.</returns>
@@ -659,5 +768,67 @@ namespace Prtg
         #endregion
 
         #endregion
+
+        public void CheckNow(int objectId)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId
+            };
+
+            ExecuteRequest(CommandFunction.ScanNow, parameters);
+        }
+
+        public void AutoDiscover(int objectId)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId
+            };
+            
+            ExecuteRequest(CommandFunction.DiscoverNow, parameters);
+        }
+
+        public void SetPosition(int objectId, Position position)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.NewPos] = position
+            };
+
+            ExecuteRequest(CommandFunction.SetPosition, parameters);
+        }
+
+        //clone a sensor or group
+        public void Clone(int id, string cloneName, int targetLocation)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = id,
+                [Parameter.Name] = cloneName,
+                [Parameter.TargetId] = targetLocation
+            };
+
+            //todo: need to implement simulateerrorparameters or get rid of it?
+
+            ExecuteRequest(CommandFunction.DuplicateObject, parameters);
+
+            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+        }
+
+        //clone a device
+        public void Clone(int id, string cloneName, string host, int targetLocation)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = id,
+                [Parameter.Name] = cloneName,
+                [Parameter.Host] = host,
+                [Parameter.TargetId] = targetLocation
+            };
+
+            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+        }
     }
 }
