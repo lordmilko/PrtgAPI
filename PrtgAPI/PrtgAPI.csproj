@@ -100,7 +100,7 @@
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbe.cs" />
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicket.cs" />
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory.cs" />
-    <Compile Include="PrtgRequest.cs" />
+    <Compile Include="PrtgClient.cs" />
     <Compile Include="PrtgUrl.cs" />
   </ItemGroup>
   <ItemGroup />
