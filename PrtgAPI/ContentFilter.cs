@@ -20,14 +20,14 @@ namespace PrtgAPI
         /// <summary>
         /// Value to filter on.
         /// </summary>
-        public string Value { get; private set; }
+        public object Value { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:PrtgAPI.ContentFilter"/> class.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="value">Value to filter on.</param>
-        public ContentFilter(Property property, string value) : this(property, FilterOperator.Equals, value)
+        public ContentFilter(Property property, object value) : this(property, FilterOperator.Equals, value)
         {
         }
 
@@ -37,7 +37,7 @@ namespace PrtgAPI
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="operator">Operator to use to filter <paramref name="property"/> with <paramref name="value"/></param>
         /// <param name="value">Value to filter on.</param>
-        public ContentFilter(Property property, FilterOperator @operator, string value)
+        public ContentFilter(Property property, FilterOperator @operator, object value)
         {
             Property = property;
             Operator = @operator;
@@ -49,7 +49,7 @@ namespace PrtgAPI
             var description = Operator.GetDescription(false);
 
             if (description == null)
-                return Value;
+                return Value.ToString();
             else
                 return string.Format($"@{description}({Value})");
         }
