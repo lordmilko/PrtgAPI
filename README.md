@@ -4,18 +4,18 @@ PrtgAPI is a C# library that abstracts away the complexity of interfacing with t
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
 # Usage
-All actions in PrtgAPI revolve around a core class: `PrtgRequest`
+All actions in PrtgAPI revolve around a core class: `PrtgClient`
 
 ```c#
-var request = new PrtgRequest("prtg.mycoolsite.com", "username", "password");
+var client = new PrtgClient("prtg.mycoolsite.com", "username", "password");
 ```
 
-When a `PrtgRequest` is created, it will immediately attempt to retrieve your user's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
+When a `PrtgClient` is created, it will immediately attempt to retrieve your user's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
 
-For debugging purposes, you are able to use your passhash to `PrtgRequest` instead of using your password. Simply create a breakpoint after the `PrtgRequest` constructor call has executed, copy your passhash out of your `request` object's private `passhash` property then tell the constructor to use the passhash instead.
+For added security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `request` object's private `passhash` property then tell the constructor to use the passhash instead.
 
 ```c#
-var request = new PrtgRequest("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
+var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
 ```
 
 ## Lists
@@ -25,7 +25,7 @@ PrtgAPI provides a series of method overloads for retrieving all sorts of data i
 To retrieve a list of all sensors, call the `GetSensors()` method.
 
 ```c#
-var sensors = request.GetSensors();
+var sensors = client.GetSensors();
 ```
 
 For groups, call `GetGroups()`; Devices, call `GetDevices()`, etc.
@@ -34,27 +34,27 @@ Typically however, you'll want to apply one or more filters to limit the number 
 
 ```c#
 //List all sensors in a "down" state.
-var downSensors = request.GetSensors(SensorStatus.Down);
+var downSensors = client.GetSensors(SensorStatus.Down);
 ```
 ```c#
 //List all devices under probes whose name contains "chicago"
-var chicagoProbeDevices = request.GetDevices(Property.Probe, FilterOperator.Contains, "chicago");
+var chicagoProbeDevices = client.GetDevices(Property.Probe, FilterOperator.Contains, "chicago");
 ```
 ```c#
 //List all sensors under the Device with Object ID 2000.
-var childSensors = request.GetSensors(Property.ParentId, "2000");
+var childSensors = client.GetSensors(Property.ParentId, "2000");
 ```
 
 PrtgAPI methods that return values typically return a `List` of objects, allowing you to use LINQ to retrieve the values you're really after.
 
 ```c#
-var names = request.GetSensors(SensorStatus.Unknown).Select(s => s.Name).ToList();
+var names = client.GetSensors(SensorStatus.Unknown).Select(s => s.Name).ToList();
 ```
 
 Many method parameters are implemented as `params`, allowing you to specify multiple values just by adding additional commas.
 
 ```c#
-var variousSensors = request.GetSensors(SensorStatus.Down, SensorStatus.Up, SensorStatus.DownAcknowledged);
+var variousSensors = client.GetSensors(SensorStatus.Down, SensorStatus.Up, SensorStatus.DownAcknowledged);
 ```
 ```c#
 //Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
@@ -65,7 +65,7 @@ var filters = new[]
     new ContentFilter(Property.Probe, "Perth Office")
 };
 
-var perthDCPingSensors = request.GetSensors(filters);
+var perthDCPingSensors = client.GetSensors(filters);
 ```
 
 ## Object Settings
@@ -73,17 +73,34 @@ Values of object settings can be enumerated and manipulated via two groups of ov
 
 ```c#
 //Retrieve the name of object with ID 2001
-var name = request.GetObjectProperty(2001, BasicObjectSetting.Name);
+var name = client.GetObjectProperty(2001, BasicObjectSetting.Name);
 ```
 ```
 //Update the name of object with ID 2001
-var name = request.SetObjectProperty(2001, BasicObjectSetting.Name, "a brand new name!");
+var name = client.SetObjectProperty(2001, BasicObjectSetting.Name, "a brand new name!");
 ```
 By default, `GetObjectProperty` will return a `string` containing the value you requested. If you know for a fact the property is of another type (an enum defined by PrtgAPI, or an integer) you can request GetObjectProperty cast its return value to its "true" data type.
 
 ```c#
-var priorityNum = request.GetObjectProperty<int>(2001, BasicObjectSetting.Priority);
-var priorityEnum = request.GetObjectProperty<Priority>(2001, BasicObjectSetting.Priority);
+var priorityNum = client.GetObjectProperty<int>(2001, BasicObjectSetting.Priority);
+var priorityEnum = client.GetObjectProperty<Priority>(2001, BasicObjectSetting.Priority);
+```
+
+## Pausing / Resuming
+
+Objects can be paused and resumed using the `Pause` and `Resume` methods respectively. A message and a pause duration can be optionally specified. If no time is given, the object is paused indefinitely.
+
+```c#
+//Pause object with ID 2001 indefinitely
+client.Pause(2001);
+```
+```c#
+//Pause object with ID 2002 for 60 minutes
+client.Pause(2002, "Paused for the next 60 minutes!", 60);
+```
+```c#
+//Resume object with ID 2001
+client.Resume(2001);
 ```
 
 # Custom Requests
@@ -93,10 +110,10 @@ For those that which to execute custom requests (i.e. those not yet supported by
 //Return only the "name" and "object ID" properties, limiting the number of results returned to 100.
 var parameters = new SensorParameters()
 {
-    [Parameter.Columns] = new[] { Property.Name, Property.ObjId }
-    [Parameter.Count] = 100
+    Columns = new[] { Property.Name, Property.ObjId }
+    Count = 100
 };
 
-var sensors = request.GetSensors(parameters);
+var sensors = client.GetSensors(parameters);
 ```
 PrtgAPI implements a number of built-in parameter types that automatically specify the type of content their requests will retrieve. If you wish to implement your own custom parameters, you can do so by manipulating the base `Parameters` class.
