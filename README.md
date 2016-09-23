@@ -12,7 +12,7 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "password");
 
 When a `PrtgClient` is created, it will immediately attempt to retrieve your user's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
 
-For added security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `request` object's private `passhash` property then tell the constructor to use the passhash instead.
+For further security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `request` object's private `passhash` property then tell the constructor to use the passhash instead.
 
 ```c#
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
