@@ -14,7 +14,7 @@ namespace PrtgAPI.PowerShell
         public string Name { get; set; }
 
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, Position = 1)]
-        public SearchFilter Filter { get; set; }
+        public SearchFilter[] Filter { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell
 
             var filter = new SearchFilter(Property.Name, op, trimmed);
 
-            var records = GetRecords(new[] { filter });
+            var records = GetRecords(filter);
 
             if (!ignoreFront)
                 records = records.Where(record => record.Name.ToLower().StartsWith(trimmed.ToLower())).ToList();

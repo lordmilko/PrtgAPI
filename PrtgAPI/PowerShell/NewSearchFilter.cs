@@ -21,7 +21,7 @@ namespace PrtgAPI.PowerShell
 
         protected override void ProcessRecord()
         {
-            WriteObject(new SearchFilter(Property.Name, Operator, Value));
+            WriteObject(new SearchFilter(Property, Operator, Value));
         }
     }
 }
