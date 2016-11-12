@@ -159,7 +159,7 @@ Delete all sensors whose device name contains "banana"
 Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
 ```
 
-Get get ping sensors whose devices contain "dc"
+Get ping sensors whose devices contain "dc"
 
 ```powershell
 #Any method of creating an array will do
