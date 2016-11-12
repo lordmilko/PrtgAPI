@@ -174,7 +174,7 @@ namespace PrtgAPI
 
                 if (description == Parameter.FilterXyz.GetDescription())
                 {
-                    query = ((ContentFilter)val).ToString();
+                    query = ((SearchFilter)val).ToString();
                 }
                 else
                 {

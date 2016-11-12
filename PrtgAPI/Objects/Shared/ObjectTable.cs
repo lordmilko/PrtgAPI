@@ -16,6 +16,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("objid")]
         [PropertyParameter(nameof(Property.ObjId))]
+        [PSVisible(true)]
         public int? Id { get; set; }
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("type")]
         [PropertyParameter(nameof(Property.Type))]
+        [PSVisible(true)]
         public string Type { get; set; }
 
         /// <summary>
@@ -30,6 +32,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("name")]
         [PropertyParameter(nameof(Property.Name))]
+        [PSVisible(true)]
         public string Name { get; set; }
 
         /// <summary>
@@ -37,12 +40,14 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("tags")]
         [PropertyParameter(nameof(Property.Tags))]
+        [PSVisible(true)]
         public string Tags { get; set; }
 
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
         [PropertyParameter(nameof(Property.Active))]
+        [PSVisible(true)]
         public bool? Active => Convert.ToBoolean(_RawActive);
 
         private string activeraw;
@@ -51,6 +56,7 @@ namespace PrtgAPI.Objects.Shared
         /// Raw value used for <see cref="Active"/> attribute. This property should not be used.
         /// </summary>
         [XmlElement("active")]
+        [PSVisible(false)]
         public string _RawActive
         {
             get { return activeraw; }

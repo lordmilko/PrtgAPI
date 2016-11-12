@@ -12,26 +12,26 @@ namespace PrtgAPI.Parameters
         /// </summary>
         public ProbeParameters() : base(Content.Objects)
         {
-            base.ContentFilter = DefaultContentFilter();
+            base.SearchFilter = DefaultSearchFilter();
         }
 
-        private ContentFilter[] DefaultContentFilter()
+        private SearchFilter[] DefaultSearchFilter()
         {
-            return new[] {new ContentFilter(Property.ParentId, "0")};
+            return new[] {new SearchFilter(Property.ParentId, "0")};
         }
 
         /// <summary>
         /// Filter objects to those with a <see cref="T:PrtgAPI.Property"/> of a certain value. Specify multiple filters to limit results further.
         /// </summary>
-        public override ContentFilter[] ContentFilter
+        public override SearchFilter[] SearchFilter
         {
-            get { return base.ContentFilter; }
+            get { return base.SearchFilter; }
             set
             {
                 if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value.ToString() == "0"))
-                    value = value.Concat(DefaultContentFilter()).ToArray();
+                    value = value.Concat(DefaultSearchFilter()).ToArray();
 
-                base.ContentFilter = value;
+                base.SearchFilter = value;
             }
         }
     }

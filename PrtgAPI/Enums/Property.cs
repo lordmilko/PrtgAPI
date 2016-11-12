@@ -5,6 +5,8 @@
     /// </summary>
     public enum Property
     {
+        //todo: give these optional descriptions and make the prtgurl multi item getting code smart enough to detect that if its an enum try and get its get description property maybe
+
         /// <summary>
         /// ID of the current object.
         /// Used in: All Object Tables

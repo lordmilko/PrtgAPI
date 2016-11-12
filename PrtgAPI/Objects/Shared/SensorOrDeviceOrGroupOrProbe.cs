@@ -43,6 +43,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("schedule")]
         [PropertyParameter(nameof(Property.Schedule))]
+        [PSVisible(true)]
         public string Schedule
         {
             get { return schedule; }
@@ -56,6 +57,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("basetype")]
         [PropertyParameter(nameof(Property.BaseType))]
+        [PSVisible(true)]
         public BaseType? BaseType { get; set; }
 
         /// <summary>
@@ -63,6 +65,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("baselink")]
         [PropertyParameter(nameof(Property.BaseLink))]
+        [PSVisible(true)]
         public string Url { get; set; }
 
         /// <summary>
@@ -70,6 +73,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("parentid")]
         [PropertyParameter(nameof(Property.ParentId))]
+        [PSVisible(true)]
         public int? ParentId { get; set; }
 
         // ################################## Sensors, Devices, Groups, Probes ##################################
@@ -78,18 +82,21 @@ namespace PrtgAPI.Objects.Shared
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.NotifiesX))]
+        [PSVisible(true)]
         public NotificationTypes NotificationTypes => _RawNotificationTypes == null ? null : new NotificationTypes(_RawNotificationTypes);
 
         /// <summary>
         /// Raw value used for <see cref="_RawNotificationTypes"/> attribute. This property should not be used.
         /// </summary>
         [XmlElement("notifiesx")]
+        [PSVisible(false)]
         public string _RawNotificationTypes { get; set; }
 
         /// <summary>
         /// Scanning interval for this sensor.
         /// </summary>
         [PropertyParameter(nameof(Property.Interval))]
+        [PSVisible(true)]
         public TimeSpan? Interval
         {
             get
@@ -111,18 +118,21 @@ namespace PrtgAPI.Objects.Shared
         /// Raw value used for <see cref="Interval"/> attribute. This property should not be used.
         /// </summary>
         [XmlElement("interval_raw")]
+        [PSVisible(false)]
         public double? _RawInterval { get; set; }
 
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.IntervalX))]
+        [PSVisible(true)]
         public bool? IntervalInherited => _RawIntervalInherited?.Contains("Inherited");
 
         /// <summary>
         /// Raw value used for <see cref="IntervalInherited"/> attribute. This property should not be used.
         /// </summary>
         [XmlElement("intervalx")]
+        [PSVisible(false)]
         public string _RawIntervalInherited { get; set; }
 
         /// <summary>
@@ -130,6 +140,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("access")]
         [PropertyParameter(nameof(Property.Access))]
+        [PSVisible(true)]
         public Access? Access { get; set; }
 
         /// <summary>
@@ -137,6 +148,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("dependency")]
         [PropertyParameter(nameof(Property.Dependency))]
+        [PSVisible(true)]
         public string Dependency { get; set; }
 
         /// <summary>
@@ -144,6 +156,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("favorite_raw")]
         [PropertyParameter(nameof(Property.Favorite))]
+        [PSVisible(true)]
         public bool? Favorite { get; set; }
     }
 }

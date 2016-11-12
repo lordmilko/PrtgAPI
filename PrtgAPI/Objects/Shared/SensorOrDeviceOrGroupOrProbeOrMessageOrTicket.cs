@@ -15,6 +15,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("status_raw")]
         [PropertyParameter(nameof(Property.Status))]
+        [PSVisible(true)]
         public SensorStatus? Status { get; set; }
 
         /// <summary>
@@ -22,6 +23,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("priority")]
         [PropertyParameter(nameof(Property.Priority))]
+        [PSVisible(true)]
         public Priority? Priority { get; set; }
     }
 }

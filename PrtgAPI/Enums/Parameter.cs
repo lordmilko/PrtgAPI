@@ -210,5 +210,11 @@ namespace PrtgAPI
         [Attributes.ParameterType(ParameterType.SingleValue)]
         [Description("subtype")]
         SubType,
+
+        /// <summary>
+        /// Whether or not approval is granted to perform an action.
+        /// </summary>
+        [Attributes.ParameterType(ParameterType.SingleValue)]
+        Approve
     }
 }

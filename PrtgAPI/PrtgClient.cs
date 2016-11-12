@@ -181,7 +181,7 @@ namespace PrtgAPI
 
         #endregion 
 
-        #region ContentFilter
+        #region SearchFilter
 
         /// <summary>
         /// Retrieve sensors from a PRTG Server based on the value of a certain property.
@@ -191,7 +191,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Sensor> GetSensors(Property property, object value)
         {
-            return GetSensors(new ContentFilter(property, value));
+            return GetSensors(new SearchFilter(property, value));
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value)
         {
-            return GetSensors(new ContentFilter(property, @operator, value));
+            return GetSensors(new SearchFilter(property, @operator, value));
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Sensor> GetSensors(params ContentFilter[] filters)
+        public List<Sensor> GetSensors(params SearchFilter[] filters)
         {
-            return GetSensors(new SensorParameters { ContentFilter = filters });
+            return GetSensors(new SensorParameters { SearchFilter = filters });
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Device> GetDevices(Property property, object value)
         {
-            return GetDevices(new ContentFilter(property, value));
+            return GetDevices(new SearchFilter(property, value));
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Device> GetDevices(Property property, FilterOperator @operator, string value)
         {
-            return GetDevices(new ContentFilter(property, @operator, value));
+            return GetDevices(new SearchFilter(property, @operator, value));
         }
 
         /// <summary>
@@ -269,9 +269,9 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(params ContentFilter[] filters)
+        public List<Device> GetDevices(params SearchFilter[] filters)
         {
-            return GetDevices(new DeviceParameters { ContentFilter = filters });
+            return GetDevices(new DeviceParameters { SearchFilter = filters });
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Group> GetGroups(Property property, object value)
         {
-            return GetGroups(new ContentFilter(property, value));
+            return GetGroups(new SearchFilter(property, value));
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Group> GetGroups(Property property, FilterOperator @operator, string value)
         {
-            return GetGroups(new ContentFilter(property, @operator, value));
+            return GetGroups(new SearchFilter(property, @operator, value));
         }
 
         /// <summary>
@@ -325,9 +325,9 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Group> GetGroups(params ContentFilter[] filters)
+        public List<Group> GetGroups(params SearchFilter[] filters)
         {
-            return GetGroups(new GroupParameters { ContentFilter = filters });
+            return GetGroups(new GroupParameters { SearchFilter = filters });
         }
 
         /// <summary>
@@ -360,7 +360,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Probe> GetProbes(Property property, object value)
         {
-            return GetProbes(new ContentFilter(property, value));
+            return GetProbes(new SearchFilter(property, value));
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Probe> GetProbes(Property property, FilterOperator @operator, string value)
         {
-            return GetProbes(new ContentFilter(property, @operator, value));
+            return GetProbes(new SearchFilter(property, @operator, value));
         }
 
         /// <summary>
@@ -380,9 +380,9 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Probe> GetProbes(params ContentFilter[] filters)
+        public List<Probe> GetProbes(params SearchFilter[] filters)
         {
-            return GetObjects<Probe>(new ProbeParameters {ContentFilter = filters});
+            return GetObjects<Probe>(new ProbeParameters {SearchFilter = filters});
         }
 
         /// <summary>
@@ -805,6 +805,18 @@ namespace PrtgAPI
             };
 
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+        }
+
+        //delete an object
+        public void Delete(int id)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = id,
+                [Parameter.Approve] = 1
+            };
+
+            ExecuteRequest(CommandFunction.DeleteObject, parameters);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace PrtgAPI
             var deserializer = new XmlSerializer(typeof(Data<T>), new XmlRootAttribute(doc.Root.Name.ToString()));
             var obj = deserializer.Deserialize(doc.ToStream());
             var data = (Data<T>)obj;
-
+            
             return data;
         }
     }

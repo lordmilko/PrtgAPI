@@ -35,9 +35,9 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Filter objects to those with a <see cref="T:PrtgAPI.Property"/> of a certain value. Specify multiple filters to limit results further.
         /// </summary>
-        public virtual ContentFilter[] ContentFilter
+        public virtual SearchFilter[] SearchFilter
         {
-            get { return (ContentFilter[])this[Parameter.FilterXyz]; }
+            get { return (SearchFilter[])this[Parameter.FilterXyz]; }
             set { this[Parameter.FilterXyz] = value; }
         }
 

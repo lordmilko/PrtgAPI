@@ -5,7 +5,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents a filter used to limit search results returned by a PRTG Request.
     /// </summary>
-    public class ContentFilter
+    public class SearchFilter
     {
         /// <summary>
         /// Property to filter on.
@@ -23,21 +23,21 @@ namespace PrtgAPI
         public object Value { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.ContentFilter"/> class.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.SearchFilter"/> class.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="value">Value to filter on.</param>
-        public ContentFilter(Property property, object value) : this(property, FilterOperator.Equals, value)
+        public SearchFilter(Property property, object value) : this(property, FilterOperator.Equals, value)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.ContentFilter"/> class with a specified operator.
+        /// Initializes a new instance of the <see cref="T:PrtgAPI.SearchFilter"/> class with a specified operator.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="operator">Operator to use to filter <paramref name="property"/> with <paramref name="value"/></param>
         /// <param name="value">Value to filter on.</param>
-        public ContentFilter(Property property, FilterOperator @operator, object value)
+        public SearchFilter(Property property, FilterOperator @operator, object value)
         {
             Property = property;
             Operator = @operator;

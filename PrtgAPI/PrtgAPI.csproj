@@ -30,9 +30,37 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell (Debug)|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\PowerShell (Debug)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\PrtgAPI.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Debug%29|AnyCPU'">
+    <OutputPath>bin\PowerShell %28Debug%29\PrtgAPI\</OutputPath>
+    <DocumentationFile>bin\PowerShell %28Debug%29\PrtgAPI.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Release%29|AnyCPU'">
+    <OutputPath>bin\PowerShell %28Release%29\PrtgAPI\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <!--<Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+    </Reference>-->
+    <Reference Include="System.Management.Automation" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,7 +74,11 @@
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\GetObjectNameAttribute.cs" />
     <Compile Include="Attributes\SetObjectNameAttribute.cs" />
-    <Compile Include="ContentFilter.cs" />
+    <Compile Include="PowerShell\GetProbe.cs" />
+    <Compile Include="PowerShell\RemoveObject.cs" />
+    <Compile Include="PowerShell\GetDevice.cs" />
+    <Compile Include="PowerShell\PrtgObjectCmdlet.cs" />
+    <Compile Include="SearchFilter.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
     <Compile Include="Enums\BaseType.cs" />
@@ -71,10 +103,12 @@
     <Compile Include="Enums\Functions\XmlFunction.cs" />
     <Compile Include="Enums\CustomNumberFormat.cs" />
     <Compile Include="Enums\SubType.cs" />
+    <Compile Include="Exceptions\Internal\MissingAttributeException.cs" />
     <Compile Include="Exceptions\Internal\MissingParameterTypeException.cs" />
     <Compile Include="Exceptions\PrtgRequestException.cs" />
     <Compile Include="Exceptions\UnknownTypeException.cs" />
     <Compile Include="Exceptions\XmlDeserializationException.cs" />
+    <Compile Include="Helpers\AttributeHelpers.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\XDocumentHelpers.cs" />
     <Compile Include="NotificationTypes.cs" />
@@ -94,6 +128,13 @@
     <Compile Include="Parameters\Object Manipulation\PauseParameters.cs" />
     <Compile Include="Parameters\Object Manipulation\SimulateErrorParameters.cs" />
     <Compile Include="Parameters\Object Data\SensorParameters.cs" />
+    <Compile Include="PowerShell\ConnectPrtgServer.cs" />
+    <Compile Include="PowerShell\DisconnectPrtgServer.cs" />
+    <Compile Include="PowerShell\GetSensor.cs" />
+    <Compile Include="PowerShell\NewSearchFilter.cs" />
+    <Compile Include="PowerShell\PrtgCmdlet.cs" />
+    <Compile Include="PowerShell\PrtgSessionState.cs" />
+    <Compile Include="Attributes\PSVisibleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\Deserialization\Data.cs" />
     <Compile Include="Objects\Device.cs" />
@@ -108,7 +149,17 @@
     <Compile Include="PrtgClient.cs" />
     <Compile Include="PrtgUrl.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PowerShell\PrtgAPI.Format.ps1xml" />
+    <None Include="PowerShell\PrtgAPI.psd1" />
+    <None Include="PowerShell\PrtgAPI.psm1" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)\PowerShell\*.psd1" "$(TargetDir)"
+copy "$(ProjectDir)\PowerShell\*.ps1xml" "$(TargetDir)"
+copy "$(ProjectDir)\PowerShell\*.psm1" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

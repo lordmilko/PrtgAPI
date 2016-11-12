@@ -17,6 +17,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("comments")]
         [PropertyParameter(nameof(Property.Comments))]
+        [PSVisible(true)]
         public string Comments
         {
             get { return comments;}
