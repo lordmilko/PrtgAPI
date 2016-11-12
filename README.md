@@ -155,6 +155,6 @@ Get-Device *dc*
 
 Delete all sensors whose device name contains "banana"
 
-```haskell
+```powershell
 Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
 ```
