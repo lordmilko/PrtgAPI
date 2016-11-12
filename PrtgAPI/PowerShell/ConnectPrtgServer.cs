@@ -22,11 +22,16 @@ namespace PrtgAPI.PowerShell
         [Parameter(Mandatory = false)]
         public SwitchParameter Force { get; set; }
 
+        [Parameter(Mandatory = false)]
+        public SwitchParameter PassHash { get; set; }
+
         protected override void ProcessRecord()
         {
             if (PrtgSessionState.Client == null || Force.IsPresent)
             {
-                PrtgSessionState.Client = new PrtgClient(Server, Username, Password);
+                PrtgSessionState.Client = PassHash.IsPresent ?
+                    new PrtgClient(Server, Username, Password, AuthMode.PassHash) :
+                    new PrtgClient(Server, Username, Password);
             }
             else
             {

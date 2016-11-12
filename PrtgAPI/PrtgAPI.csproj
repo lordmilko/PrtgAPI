@@ -75,6 +75,7 @@
     <Compile Include="Attributes\GetObjectNameAttribute.cs" />
     <Compile Include="Attributes\SetObjectNameAttribute.cs" />
     <Compile Include="PowerShell\GetProbe.cs" />
+    <Compile Include="PowerShell\GetPrtgServer.cs" />
     <Compile Include="PowerShell\RemoveObject.cs" />
     <Compile Include="PowerShell\GetDevice.cs" />
     <Compile Include="PowerShell\PrtgObjectCmdlet.cs" />

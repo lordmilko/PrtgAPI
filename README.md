@@ -136,6 +136,7 @@ The following cmdlets are currently supported
 ```powershell
 Connect-PrtgServer
 Disconnect-PrtgServer
+Get-PrtgServer
 Get-Sensor
 Get-Device
 Remove-Object

@@ -87,5 +87,29 @@
                 </TableRowEntries>
             </TableControl>
         </View>
+
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.PrtgClient</TypeName>
+            </ViewSelectedBy>
+            <ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <PropertyName>Server</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>Username</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>PassHash</PropertyName>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>
+        </View>
     </ViewDefinitions>
 </Configuration>

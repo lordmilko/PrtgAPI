@@ -27,7 +27,7 @@ namespace PrtgAPI
         /// </summary>
         public string Username { get; }
 
-        private readonly string passhash;
+        public string PassHash { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:PrtgAPI.PrtgClient"/> class.
@@ -46,7 +46,7 @@ namespace PrtgAPI
             Server = server;
             Username = username;
 
-            passhash = authMode == AuthMode.Password ? GetPassHash(pass) : pass;
+            PassHash = authMode == AuthMode.Password ? GetPassHash(pass) : pass;
         }
 
         #region Requests
@@ -449,7 +449,7 @@ namespace PrtgAPI
 
         private string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, passhash, function, parameters);
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -458,7 +458,7 @@ namespace PrtgAPI
 
         private XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, passhash, function, parameters);
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -467,7 +467,7 @@ namespace PrtgAPI
 
         private void ExecuteRequest(CommandFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, passhash, function, parameters);
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
         }
