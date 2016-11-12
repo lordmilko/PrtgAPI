@@ -1,5 +1,5 @@
 # PrtgAPI
-PrtgAPI is a C# library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
+PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
@@ -60,9 +60,9 @@ var variousSensors = client.GetSensors(SensorStatus.Down, SensorStatus.Up, Senso
 //Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
 var filters = new[]
 {
-    new ContentFilter(Property.Type, "ping"),
-    new ContentFilter(Property.Device, FilterOperator.Contains, "dc"),
-    new ContentFilter(Property.Probe, "Perth Office")
+    new SearchFilter(Property.Type, "ping"),
+    new SearchFilter(Property.Device, FilterOperator.Contains, "dc"),
+    new SearchFilter(Property.Probe, "Perth Office")
 };
 
 var perthDCPingSensors = client.GetSensors(filters);
@@ -117,3 +117,44 @@ var parameters = new SensorParameters()
 var sensors = client.GetSensors(parameters);
 ```
 PrtgAPI implements a number of built-in parameter types that automatically specify the type of content their requests will retrieve. If you wish to implement your own custom parameters, you can do so by manipulating the base `Parameters` class.
+
+# PowerShell
+
+PrtgAPI features a number of cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
+
+```powershell
+Import-Module "C:\path\to\PrtgAPI"
+```
+
+Once loaded, you can connect to your PRTG Server
+
+```powershell
+Connect-PrtgServer prtg.mycoolsite.com username password
+```
+The following cmdlets are currently supported
+
+```powershell
+Connect-PrtgServer
+Disconnect-PrtgServer
+Get-Sensor
+Get-Device
+Remove-Object
+New-SearchFilter
+```
+
+Get all ping sensors
+
+```powershell
+Get-Sensor ping
+```
+Get all devices whose names contain dc
+
+```powershell
+Get-Device *dc*
+```
+
+Delete all sensors whose device name contains "banana"
+
+```haskell
+Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
+```
