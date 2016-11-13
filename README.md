@@ -173,11 +173,11 @@ Get-Sensor -Filter ($a,$b)
 You can also filter via the pipeline
 ```powershell
  # use the unary operator , to pipe all items at once!
-,($a,$b)|Get-Sensor
+,($a,$b) | Get-Sensor
 ```
 
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor)
 
 ```powershell
-Get-Probe|select -last 1|Get-Group|select -last 2|Get-Device|select -first 1|Get-Sensor
+Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor
 ```
