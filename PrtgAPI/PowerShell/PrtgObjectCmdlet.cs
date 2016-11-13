@@ -10,23 +10,23 @@ namespace PrtgAPI.PowerShell
 {
     public abstract class PrtgObjectCmdlet<T> : PrtgCmdlet where T : ObjectTable
     {
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 0, HelpMessage = "Limit results to sensors those with a certain name.")]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 0, HelpMessage = "Limit results to sensors those with a certain name.")]
         public string Name { get; set; }
 
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, Position = 1)]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 1)]
         public SearchFilter[] Filter { get; set; }
 
         protected override void ProcessRecord()
         {
             List<T> records = null;
 
-            if (!string.IsNullOrEmpty(Name))
-            {
-                records = GetRecordsFilteredOnName();
-            }
-            else if (Filter != null)
+            if (Filter != null)
             {
                 records = GetRecords(Filter);
+            }
+            else if (!string.IsNullOrEmpty(Name))
+            {
+                records = GetRecordsFilteredOnName();
             }
             else
                 records = GetRecords();
@@ -63,6 +63,11 @@ namespace PrtgAPI.PowerShell
                 records = records.Where(record => record.Name.ToLower().EndsWith(trimmed.ToLower())).ToList();
 
             return records;
+        }
+
+        protected void SetPipelineFilter(Property property, object value)
+        {
+            Filter = new[] { new SearchFilter(property, FilterOperator.Equals, value) };
         }
 
         protected abstract List<T> GetRecords();

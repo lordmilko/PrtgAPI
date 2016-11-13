@@ -74,6 +74,7 @@
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\GetObjectNameAttribute.cs" />
     <Compile Include="Attributes\SetObjectNameAttribute.cs" />
+    <Compile Include="PowerShell\GetGroup.cs" />
     <Compile Include="PowerShell\GetProbe.cs" />
     <Compile Include="PowerShell\GetPrtgServer.cs" />
     <Compile Include="PowerShell\RemoveObject.cs" />

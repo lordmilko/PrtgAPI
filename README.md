@@ -139,6 +139,8 @@ Disconnect-PrtgServer
 Get-PrtgServer
 Get-Sensor
 Get-Device
+Get-Group
+Get-Probe
 Remove-Object
 New-SearchFilter
 ```
@@ -167,4 +169,10 @@ Get ping sensors whose devices contain "dc"
 $a = New-SearchFilter name equals ping
 $b = New-SearchFilter device contains dc
 Get-Sensor -Filter ($a,$b)
+```
+
+Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor)
+
+```powershell
+Get-Probe|select -last 1|Get-Group|select -last 2|Get-Device|select -first 1|Get-Sensor
 ```

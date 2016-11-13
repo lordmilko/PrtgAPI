@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.PowerShell
 {
-    [Cmdlet(VerbsCommon.Get, "Device")]
-    public class GetDevice : PrtgObjectCmdlet<Device>
+    [Cmdlet(VerbsCommon.Get, "Group")]
+    public class GetGroup : PrtgObjectCmdlet<Group>
     {
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Group Group { get; set; }
@@ -26,14 +26,14 @@ namespace PrtgAPI.PowerShell
             base.ProcessRecord();
         }
 
-        protected override List<Device> GetRecords()
+        protected override List<Group> GetRecords()
         {
-            return client.GetDevices();
+            return client.GetGroups();
         }
 
-        protected override List<Device> GetRecords(params SearchFilter[] filter)
+        protected override List<Group> GetRecords(params SearchFilter[] filter)
         {
-            return client.GetDevices(filter);
+            return client.GetGroups(filter);
         }
     }
 }
