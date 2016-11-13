@@ -166,7 +166,7 @@ Multiple filters can be specified to further limit the results (and speed up the
 
 ```powershell
 # Any method of creating an array will do
-$a = New-SearchFilter name equals ping # equals is case sensitive!
+$a = New-SearchFilter name equals Ping # equals is case sensitive!
 $b = New-SearchFilter device contains dc
 Get-Sensor -Filter ($a,$b)
 ```
