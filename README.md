@@ -120,7 +120,7 @@ PrtgAPI implements a number of built-in parameter types that automatically speci
 
 # PowerShell
 
-PrtgAPI features a number of cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
+PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
 
 ```powershell
 Import-Module "C:\path\to\PrtgAPI"
