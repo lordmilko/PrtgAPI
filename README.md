@@ -131,6 +131,15 @@ Once loaded, you can connect to your PRTG Server
 ```powershell
 Connect-PrtgServer prtg.mycoolsite.com username password
 ```
+
+To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgServer`
+
+To authenticate using your PassHash:
+
+```powershell
+Connect-PrtgServer prtg.mycoolsite.com username passhash -PassHash
+```
+
 The following cmdlets are currently supported
 
 ```powershell
@@ -144,6 +153,8 @@ Get-Probe
 Remove-Object
 New-SearchFilter
 ```
+
+## Examples
 
 Get all ping sensors
 
@@ -166,6 +177,7 @@ Multiple filters can be specified to further limit the results (and speed up the
 
 ```powershell
 # Any method of creating an array will do
+
 $a = New-SearchFilter name equals Ping # equals is case sensitive!
 $b = New-SearchFilter device contains dc
 
