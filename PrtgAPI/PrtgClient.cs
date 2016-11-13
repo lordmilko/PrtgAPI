@@ -573,6 +573,11 @@ namespace PrtgAPI
 
         #region Channel
 
+        public List<Channel> GetChannels(int sensorId)
+        {
+            return GetObjects<Channel>(new ChannelParameters(sensorId));
+        }
+
         /// <summary>
         /// Modify channel properties for a PRTG Sensor.
         /// </summary>

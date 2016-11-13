@@ -9,15 +9,7 @@ namespace PrtgAPI.Objects.Shared
     /// </summary>
     public class ObjectTable : PrtgObject
     {
-        // ################################## All Object Tables ##################################
-
-        /// <summary>
-        /// ID number used to uniquely identify this object within PRTG.
-        /// </summary>
-        [XmlElement("objid")]
-        [PropertyParameter(nameof(Property.ObjId))]
-        [PSVisible(true)]
-        public int? Id { get; set; }
+        // ################################## All Object Tables ##################################       
 
         /// <summary>
         /// The type of this object. Certain objects may simply report their <see cref="BaseType"/>, while others may get more specific (e.g. a sensor of type "Ping").
@@ -26,14 +18,6 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Type))]
         [PSVisible(true)]
         public string Type { get; set; }
-
-        /// <summary>
-        /// Name of this object.
-        /// </summary>
-        [XmlElement("name")]
-        [PropertyParameter(nameof(Property.Name))]
-        [PSVisible(true)]
-        public string Name { get; set; }
 
         /// <summary>
         /// Tags contained on this object.

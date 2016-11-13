@@ -21,11 +21,13 @@
         /// Objects that monitor and collect data - the fundamental components of PRTG.
         /// </summary>
         Sensors,
+
+        Channels,
         /*Tickets,
         TicketData,
         Messages,
         Values,
-        Channels,
+        
         Reports,
         TopLists,*/
 

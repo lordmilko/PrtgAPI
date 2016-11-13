@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PrtgAPI.PowerShell
 {
     [Cmdlet(VerbsCommon.Get, "Probe")]
-    public class GetProbe : PrtgObjectCmdlet<Probe>
+    public class GetProbe : PrtgTableCmdlet<Probe>
     {
         protected override List<Probe> GetRecords()
         {

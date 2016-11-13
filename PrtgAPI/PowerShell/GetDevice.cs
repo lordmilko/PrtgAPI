@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PrtgAPI.PowerShell
 {
     [Cmdlet(VerbsCommon.Get, "Device")]
-    public class GetDevice : PrtgObjectCmdlet<Device>
+    public class GetDevice : PrtgTableCmdlet<Device>
     {
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Group Group { get; set; }

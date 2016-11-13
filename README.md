@@ -150,6 +150,7 @@ Get-Sensor
 Get-Device
 Get-Group
 Get-Probe
+Get-Channel
 Remove-Object
 New-SearchFilter
 ```
@@ -189,8 +190,18 @@ You can also filter via the pipeline
 ,($a,$b) | Get-Sensor
 ```
 
-Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor)
+Get the channels of a sensor
 
 ```powershell
-Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor
+Get-Sensor | Select -first 1 | Get-Channel
+```
+You can also get the channels of a sensor by specifying its Object ID
+```powershell
+Get-Channel 1234
+```
+
+Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor -> Channel)
+
+```powershell
+Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor | Get-Channel
 ```

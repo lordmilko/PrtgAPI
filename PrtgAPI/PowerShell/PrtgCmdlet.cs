@@ -25,12 +25,6 @@ namespace PrtgAPI.PowerShell
 
             visibleMembers.Sort();
 
-            /*MoveToFront(visibleMembers, "Status");
-            MoveToFront(visibleMembers, "Probe");
-            MoveToFront(visibleMembers, "Group");
-            MoveToFront(visibleMembers, "Device");
-            MoveToFront(visibleMembers, "Name");*/
-
             foreach (var item in sendToPipeline)
             {
                 var psObject = new PSObject(item);
@@ -40,13 +34,6 @@ namespace PrtgAPI.PowerShell
 
                 WriteObject(psObject);
             }
-        }
-
-        private void MoveToFront(List<string> list, string elm)
-        {
-            var item = list.Find(m => m == elm);
-            list.Remove(item);
-            list.Insert(0, item);
         }
     }
 }

@@ -8,7 +8,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.PowerShell
 {
     [Cmdlet(VerbsCommon.Get, "Sensor")]
-    public class GetSensor : PrtgObjectCmdlet<Sensor>
+    public class GetSensor : PrtgTableCmdlet<Sensor>
     {
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Device Device { get; set; }
@@ -36,7 +36,7 @@ namespace PrtgAPI.PowerShell
             return client.GetSensors();
         }
 
-        protected override List<Sensor> GetRecords(params SearchFilter[] filter)
+        protected override List<Sensor> GetRecords(SearchFilter[] filter)
         {
             return client.GetSensors(filter);
         }
