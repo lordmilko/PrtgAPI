@@ -173,7 +173,7 @@ Get-Sensor -Filter ($a,$b)
 ```
 You can also filter via the pipeline
 ```powershell
- # use the unary operator , to pipe all items at once!
+ # Use the unary operator , to pipe all items at once!
 ,($a,$b) | Get-Sensor
 ```
 
