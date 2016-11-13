@@ -162,13 +162,18 @@ Delete all sensors whose device name contains "banana"
 Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
 ```
 
-Get ping sensors whose devices contain "dc"
+Multiple filters can be specified to further limit the results (and speed up the query!)
 
 ```powershell
-#Any method of creating an array will do
-$a = New-SearchFilter name equals ping
+# Any method of creating an array will do
+$a = New-SearchFilter name equals ping # equals is case sensitive!
 $b = New-SearchFilter device contains dc
 Get-Sensor -Filter ($a,$b)
+```
+You can also filter via the pipeline
+```powershell
+ # use the unary operator , to pipe all items at once!
+,($a,$b)|Get-Sensor
 ```
 
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor)
