@@ -1,4 +1,6 @@
-﻿using PrtgAPI.Helpers;
+﻿using System;
+using System.Xml.Serialization;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI
 {
@@ -10,20 +12,20 @@ namespace PrtgAPI
         /// <summary>
         /// Property to filter on.
         /// </summary>
-        public Property Property { get; private set; }
+        public Property Property { get; set; }
 
         /// <summary>
         /// Operator to use to filter <see cref="Property"/> with <see cref="Value"/>.
         /// </summary>
-        public FilterOperator Operator { get; private set; }
+        public FilterOperator Operator { get; set; }
 
         /// <summary>
         /// Value to filter on.
         /// </summary>
-        public object Value { get; private set; }
+        public object Value { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.SearchFilter"/> class.
+        /// Initializes a new instance of the <see cref="SearchFilter"/> class.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="value">Value to filter on.</param>
@@ -32,7 +34,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.SearchFilter"/> class with a specified operator.
+        /// Initializes a new instance of the <see cref="SearchFilter"/> class with a specified operator.
         /// </summary>
         /// <param name="property">Property (property) to filter on.</param>
         /// <param name="operator">Operator to use to filter <paramref name="property"/> with <paramref name="value"/></param>
@@ -46,16 +48,26 @@ namespace PrtgAPI
 
         private string GetOperatorFormat()
         {
-            var description = Operator.GetDescription(false);
+            var operatorDescription = Operator.GetDescription(false);
 
-            if (description == null)
-                return Value.ToString();
+            var val = Value.ToString();
+
+            if (Value.GetType().IsEnum)
+            {
+                var attrib = ((Enum)Value).GetEnumAttribute<XmlEnumAttribute>();
+
+                if (attrib != null)
+                    val = attrib.Name;
+            }
+
+            if (operatorDescription == null)
+                return val;
             else
-                return string.Format($"@{description}({Value})");
+                return string.Format($"@{operatorDescription}({val})");
         }
 
         /// <summary>
-        /// Returns the formatted string representation of this filter for use in a <see cref="T:PrtgAPI.PrtgUrl"/>
+        /// Returns the formatted string representation of this filter for use in a <see cref="PrtgUrl"/>
         /// </summary>
         /// <returns></returns>
         public override string ToString()

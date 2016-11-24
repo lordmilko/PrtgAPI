@@ -1,22 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
+using PrtgAPI.PowerShell.Base;
 
-namespace PrtgAPI.PowerShell
+namespace PrtgAPI.PowerShell.Cmdlets
 {
+    /// <summary>
+    /// Permanently remove an object from PRTG.
+    /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Object", SupportsShouldProcess = true)]
     public class RemoveObject : PrtgCmdlet
     {
+        /// <summary>
+        /// The object to remove.
+        /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
+        /// <summary>
+        /// Forces an object to be removed without displaying a confirmation prompt.
+        /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter Force { get; set; }
 
+        /// <summary>
+        /// Provides a record-by-record processing functionality for the cmdlet.
+        /// </summary>
         protected override void ProcessRecord()
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))

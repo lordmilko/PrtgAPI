@@ -9,19 +9,22 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>20</Width>
+                        <Width>30</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                      <Width>15</Width>
+                        <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                      <Width>15</Width>
+                      <Width>22</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                      <Width>15</Width>
+                      <Width>25</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                      <Width>20</Width>
+                      <Width>23</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                      <Width>25</Width>
                     </TableColumnHeader>
                 </TableHeaders>
                 <TableRowEntries>
@@ -29,6 +32,9 @@
                         <TableColumnItems>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                               <PropertyName>Device</PropertyName>
@@ -55,20 +61,23 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>23</Width>
+                        <Width>30</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
                         <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>7</Width>
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>10</Width>
                         <Label>Sensors</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>20</Width>
+                        <Width>25</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>19</Width>
+                        <Width>25</Width>
                     </TableColumnHeader>
                 </TableHeaders>
                 <TableRowEntries>
@@ -76,6 +85,9 @@
                         <TableColumnItems>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Status</PropertyName>
@@ -102,7 +114,10 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>20</Width>
+                        <Width>25</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/>
                     <TableColumnHeader>
@@ -111,7 +126,9 @@
                     <TableColumnHeader>
                         <Label>Groups</Label>
                     </TableColumnHeader>
-                    <TableColumnHeader/>
+                    <TableColumnHeader>
+                        <Label>Up Sensors</Label>
+                    </TableColumnHeader>
                     <TableColumnHeader>
                         <Label>Down</Label>
                     </TableColumnHeader>
@@ -130,6 +147,9 @@
                         <TableColumnItems>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Status</PropertyName>
@@ -168,14 +188,21 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>20</Width>
+                        <Width>25</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/>
-                    <TableColumnHeader/>
+                    <TableColumnHeader>
+                        <Width>25</Width>
+                    </TableColumnHeader>
                     <TableColumnHeader>
                         <Label>Devices</Label>
                     </TableColumnHeader>
-                    <TableColumnHeader/>
+                    <TableColumnHeader>
+                        <Label>Up Sensors</Label>
+                    </TableColumnHeader>
                     <TableColumnHeader>
                         <Label>Down</Label>
                     </TableColumnHeader>
@@ -194,6 +221,9 @@
                         <TableColumnItems>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Status</PropertyName>
@@ -232,31 +262,57 @@
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
-                    
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>25</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
+                        <Width>6</Width>
                         <Alignment>Right</Alignment>
                     </TableColumnHeader>
-                    <TableColumnHeader/>
-                    <TableColumnHeader>
-                        <Alignment>Left</Alignment>
-                        <Width>40</Width>
+                    <TableColumnHeader> <!-- LastValue -->
+                        <Width>13</Width>
+                        <Alignment>Right</Alignment>
+                        <Label>LastValue</Label>
                     </TableColumnHeader>
-                    <TableColumnHeader/>
+                    <TableColumnHeader> <!-- LimitsEnabled -->
+                        <Width>13</Width>
+                        <Alignment>Right</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- UpperErrorLimit -->
+                        <Width>15</Width>
+                        <Alignment>Right</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- LowerErrorLimit -->
+                        <Width>15</Width>
+                        <Alignment>Right</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- ErrorLimitMessage -->
+                        <Width>30</Width>
+                    </TableColumnHeader>
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Id</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>LastValue</PropertyName>
+                                <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Comments</PropertyName>
+                                <PropertyName>LastValueDisplay</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>LimitsEnabled</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>UpperErrorLimit</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>LowerErrorLimit</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ErrorLimitMessage</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
@@ -281,6 +337,48 @@
                             </ListItem>
                             <ListItem>
                                 <PropertyName>PassHash</PropertyName>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>
+        </View>
+
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.SensorTotals</TypeName>
+            </ViewSelectedBy>
+            <ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <PropertyName>TotalSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>UpSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>WarningSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>DownSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>DownAcknowledgedSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>PartialDownSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>UnusualSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>PausedSensors</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>UndefinedSensors</PropertyName>
                             </ListItem>
                         </ListItems>
                     </ListEntry>
