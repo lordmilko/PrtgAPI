@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Web;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI
 {
@@ -22,17 +26,22 @@ namespace PrtgAPI
         }
 
         public PrtgUrl(string server, string username, string passhash, XmlFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, function.GetDescription(), parameters)
+            this(server, username, passhash, GetResourcePath(function), parameters)
         {
         }
 
         public PrtgUrl(string server, string username, string passhash, JsonFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, function.GetDescription(), parameters)
+            this(server, username, passhash, GetResourcePath(function), parameters)
         {
         }
 
         public PrtgUrl(string server, string username, string passhash, CommandFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, function.GetDescription(), parameters)
+            this(server, username, passhash, GetResourcePath(function), parameters)
+        {
+        }
+
+        public PrtgUrl(string server, string username, string passhash, HtmlFunction function, Parameters.Parameters parameters) :
+            this(server, username, passhash, GetResourcePath(function), parameters)
         {
         }
 
@@ -49,7 +58,7 @@ namespace PrtgAPI
                 url.Append($"https://{server}");
             }
 
-            url.Append(string.Format($"/api/{function}"));
+            url.Append(function);
 
             foreach (var p in parameters.GetParameters())
             {
@@ -68,6 +77,15 @@ namespace PrtgAPI
             }
 
             Url = url.ToString();
+
+#if DEBUG
+            Debug.WriteLine(Url);
+#endif
+        }
+
+        private static string GetResourcePath(Enum function)
+        {
+            return function.IsUndocumented() ? $"/{function.GetDescription()}" : $"/api/{function.GetDescription()}";
         }
 
         private void AddParameter(StringBuilder url, Parameter parameter, object value)
@@ -96,6 +114,37 @@ namespace PrtgAPI
 
         private static string GetUrlComponent(Parameter parameter, object value)
         {
+            if (parameter == Parameter.Custom)
+            {
+                var arr = value as IEnumerable<CustomParameter>;
+
+                if (arr != null)
+                {
+                    var builder = new StringBuilder();
+
+                    var list = arr.ToList();
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value));
+
+                        if (i < list.Count - 1)
+                            builder.Append("&");
+                    }
+
+                    return builder.ToString();
+                }
+
+                var singleParam = value as CustomParameter;
+
+                if (singleParam != null)
+                {
+                    return FormatSingleParameterWithoutValEncode(singleParam.Name, singleParam.Value);
+                }
+
+                throw new NotImplementedException(); //actually you just passed the wrong type, so its an argument exception?
+            }
+
             var parameterType = parameter.GetParameterType();
             var description = parameter.GetDescription();
 
@@ -112,7 +161,7 @@ namespace PrtgAPI
             Enum e = value as Enum;
             if (e != null)
             {
-                return FormatSingleParameterWithValEncode(description, e.ToString());
+                return FormatSingleParameterWithValEncode(description, e.ToString(), true);
             }
 
             //Format IEnumerable Parameter
@@ -137,17 +186,17 @@ namespace PrtgAPI
             return FormatSingleParameterWithValEncode(description, Convert.ToString(value));
         }
 
-        private static string FormatSingleParameterWithValEncode(string name, string val)
+        private static string FormatSingleParameterWithValEncode(string name, string val, bool isEnum = false)
         {
-            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(val));
+            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(val), isEnum);
         }
 
-        private static string FormatSingleParameterWithoutValEncode(string name, string val)
+        private static string FormatSingleParameterWithoutValEncode(string name, string val, bool isEnum = false)
         {
-            if (name == Parameter.Password.GetDescription())
-                return $"{name.ToLower()}={val}";
+            if(isEnum && name != Parameter.Password.GetDescription())
+                return $"{name}={val}".ToLower();
 
-            return $"{name}={val}".ToLower();
+            return $"{name.ToLower()}={val}";
         }
 
         private static string GetMultiValueStr(IEnumerable enumerable)

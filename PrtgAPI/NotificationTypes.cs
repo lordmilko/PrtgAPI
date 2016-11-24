@@ -29,7 +29,7 @@ namespace PrtgAPI
         public bool TriggerInheritance { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.NotificationTypes"/> class.
+        /// Initializes a new instance of the <see cref="NotificationTypes"/> class.
         /// </summary>
         /// <param name="rawNotificationTypes">Raw <see cref="Property.NotifiesX"/> value returned from a PRTG Request.</param>
         public NotificationTypes(string rawNotificationTypes)

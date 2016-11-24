@@ -9,8 +9,8 @@
 
         public int Duration
         {
-            get { return (int) this[Parameter.PauseDuration]; }
-            set { this[Parameter.PauseDuration] = value; }
+            get { return (int) this[Parameter.Duration]; }
+            set { this[Parameter.Duration] = value; }
         }
     }
 }

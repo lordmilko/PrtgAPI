@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -14,9 +15,21 @@ namespace PrtgAPI
         TableData,
 
         /// <summary>
-        /// Retrieve the value of a <see cref="T:PrtgAPI.Property"/> for a specified PRTG Object.
+        /// Retrieve the current system status.
+        /// </summary>
+        [Description("getstatus.xml")]
+        GetStatus,
+
+        /// <summary>
+        /// Retrieve the value of a <see cref="Property"/> for a specified PRTG Object.
         /// </summary>
         [Description("getobjectproperty.htm")]
-        GetObjectProperty
+        GetObjectProperty,
+
+        /// <summary>
+        /// Get sensor totals (up, down, paused, etc) for a PRTG Server.
+        /// </summary>
+        [Description("gettreenodestats.xml")]
+        GetTreeNodeStats
     }
 }

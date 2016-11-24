@@ -12,6 +12,27 @@ namespace PrtgAPI
         /// </summary>
         [Description("intervalgroup_")]
         Inherit, //is this intervalgroup or inheritintervalgroup
+        
+        //untested
+
+        [Description("interval_")] //wants an interval in seconds?
+        Interval,
+
+        [Description("errorintervalsdown_")]
+        IntervalsDown
+
+
+
+
+
+
+
+
+
+
+
+        //
+        
         //Scanning Interval
 
         //whether to be inherited?

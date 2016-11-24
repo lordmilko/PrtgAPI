@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Xml.Serialization;
+using PrtgAPI.Attributes;
+using PrtgAPI.Exceptions.Internal;
 
 namespace PrtgAPI.Helpers
 {
@@ -15,8 +18,7 @@ namespace PrtgAPI.Helpers
         {
             foreach (var field in typeof (T).GetFields())
             {
-                var attribute =
-                    Attribute.GetCustomAttribute(field, typeof (DescriptionAttribute)) as DescriptionAttribute;
+                var attribute = Attribute.GetCustomAttribute(field, typeof (DescriptionAttribute)) as DescriptionAttribute;
 
                 if (attribute != null)
                 {
@@ -56,20 +58,46 @@ namespace PrtgAPI.Helpers
             return element.ToString();
         }
 
+        public static bool IsUndocumented(this Enum element)
+        {
+            return element.GetEnumAttribute<UndocumentedAttribute>() != null;
+        }
+
+        public static T GetEnumAttribute<T>(this Enum element, bool mandatory = false) where T : Attribute
+        {
+            var attributes = element.GetType().GetMember(element.ToString()).First().GetCustomAttributes(typeof(T), false);
+
+            if (attributes.Any())
+                return (T)attributes.First();
+
+            if (!mandatory)
+                return null;
+            else
+                throw new MissingAttributeException(element.GetType(), element.ToString(), typeof (T));
+        } 
+
         public static ParameterType GetParameterType(this Parameter element)
         {
-            var attributes =
-                element.GetType()
-                    .GetMember(element.ToString())
-                    .First()
-                    .GetCustomAttributes(typeof (Attributes.ParameterTypeAttribute), false);
+            var attributes = element.GetType().GetMember(element.ToString()).First().GetCustomAttributes(typeof (ParameterTypeAttribute), false);
 
             if (attributes.Length > 0)
             {
-                return ((Attributes.ParameterTypeAttribute) attributes.First()).Type;
+                return ((ParameterTypeAttribute) attributes.First()).Type;
             }
 
             throw new Exceptions.Internal.MissingParameterTypeException(element);
+        }
+
+        public static T[] GetDependentProperties<T>(this Enum element)
+        {
+            var elms = element.GetType().GetMembers()
+                .Where(m => m.GetCustomAttributes(typeof(DependentPropertyAttribute), false)
+                .Cast<DependentPropertyAttribute>()
+                .Any(a => a.Name == element.ToString()))
+                .Select(e => e.Name.ToEnum<T>())
+                .ToArray();
+
+            return elms;
         }
     }
 }

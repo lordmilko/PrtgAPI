@@ -4,10 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Html;
+using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI
@@ -15,7 +19,7 @@ namespace PrtgAPI
     /// <summary>
     /// Makes API requests against a PRTG Network Monitor server.
     /// </summary>
-    public class PrtgClient
+    public partial class PrtgClient
     {
         /// <summary>
         /// Gets the PRTG server API requests will be made against.
@@ -27,10 +31,13 @@ namespace PrtgAPI
         /// </summary>
         public string Username { get; }
 
+        /// <summary>
+        /// The PassHash that will be used to authenticate with, in place of a password.
+        /// </summary>
         public string PassHash { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.PrtgClient"/> class.
+        /// Initializes a new instance of the <see cref="PrtgClient"/> class.
         /// </summary>
         public PrtgClient(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
         {
@@ -68,7 +75,7 @@ namespace PrtgAPI
             var response = ExecuteRequest(XmlFunction.TableData, parameters);
 
 #if DEBUG
-            Debug.WriteLine(response.ToString());
+            //Debug.WriteLine(response.ToString());
 #endif
 
             //todo: change the Property enum to have a description attribute that lets you change the property name to something else
@@ -84,76 +91,11 @@ namespace PrtgAPI
             //todo: upload our empty settings file then say dont track it
             //git update-index --assume-unchanged <file> and --no-assume-unchanged
 
-            try
-            {
-                var data = Data<T>.Deserialize(response);
+            //redundant: deserializelist already does this exception handling
 
-                return data.Items;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Exception ex1 = null;
+            var data = Data<T>.DeserializeList(response);
 
-                try
-                {
-                    ex1 = GetInvalidXml(response, ex, typeof(T));
-                }
-                catch
-                {
-                }
-
-                if (ex1 != null)
-                    throw ex1;
-                else
-                    throw;
-            }
-
-        }
-
-        private Exception GetInvalidXml(XDocument response, InvalidOperationException ex, Type type)
-        {
-            var stream = GetStream(response);
-
-            var xmlReader = (XmlReader)new XmlTextReader(stream)
-            {
-                WhitespaceHandling = WhitespaceHandling.Significant,
-                Normalization = true,
-                XmlResolver = null
-            };
-
-            var regex = new Regex("(.+\\()(.+)(, )(.+)(\\).+)");
-            var line = Convert.ToInt32(regex.Replace(ex.Message, "$2"));
-            var position = Convert.ToInt32(regex.Replace(ex.Message, "$4"));
-
-            while (xmlReader.Read())
-            {
-                IXmlLineInfo xmlLineInfo = (IXmlLineInfo)xmlReader;
-
-                if (xmlLineInfo.LineNumber == line - 1)
-                {
-                    var xml = xmlReader.ReadOuterXml();
-
-                    var prevSpace = xml.LastIndexOf(' ', position) + 1;
-                    var nextSpace = xml.IndexOf(' ', position);
-
-                    var length = nextSpace - prevSpace;
-
-                    var str = length > 0 ? xml.Substring(prevSpace, length) : xml;
-
-                    return new XmlDeserializationException(type, str, ex);
-                }
-            }
-
-            return null;
-        }
-
-        private Stream GetStream(XDocument response)
-        {
-            var stream = new MemoryStream();
-            response.Save(stream);
-            stream.Position = 0;
-
-            return stream;
+            return data.Items;
         }
 
         #region Sensors
@@ -177,6 +119,17 @@ namespace PrtgAPI
         public List<Sensor> GetSensors(params SensorStatus[] sensorStatuses)
         {
             return GetSensors(new SensorParameters { StatusFilter = sensorStatuses });
+        }
+
+        /// <summary>
+        /// Retrieve the number of sensors of each sensor type in the system.
+        /// </summary>
+        /// <returns></returns>
+        public SensorTotals GetSensorTotals()
+        {
+            var response = ExecuteRequest(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
+
+            return Data<SensorTotals>.DeserializeType(response);
         }
 
         #endregion 
@@ -216,6 +169,8 @@ namespace PrtgAPI
             return GetSensors(new SensorParameters { SearchFilter = filters });
         }
 
+        #endregion
+
         /// <summary>
         /// Retrieve sensors from a PRTG Server using a custom set of parameters.
         /// </summary>
@@ -225,8 +180,6 @@ namespace PrtgAPI
         {
             return GetObjects<Sensor>(parameters);
         }
-
-        #endregion
 
         #endregion
 
@@ -396,7 +349,118 @@ namespace PrtgAPI
 
         #endregion
 
+        #region Channel
+
+        /// <summary>
+        /// Retrieve all channels of a sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <returns></returns>
+        public List<Channel> GetChannels(int sensorId)
+        {
+            var response = ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
+
+            var items = response.Descendants("item").ToList();
+            var ids = response.Descendants("objid").Select(v => v.Value);
+
+            foreach (var item in items)
+            {
+                var id = Convert.ToInt32(item.Element("objid").Value);
+
+                var properties = GetChannelProperties(sensorId, id);
+
+                item.Add(properties.Nodes());
+                item.Add(new XElement("injected_sensorId", sensorId));
+            }
+
+            return Data<Channel>.DeserializeList(response).Items;
+
+            //response.FirstNode.AddAfterSelf(GetChannelProperties(sensorId))
+
+            //var obj = GetObjects<Channel>(new ChannelParameters(sensorId));
+
+            /*foreach (var o in obj)
+            {
+                o.SensorId = sensorId;
+            }
+
+            return obj;*/
+            return null;
+        }
+
+        internal XElement GetChannelProperties(int sensorId, int channelId)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Hjax] = true,
+                [Parameter.Id] = sensorId,
+                [Parameter.Channel] = channelId
+            };
+
+            var response = ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
+
+            return ChannelSettings.GetXml(response, channelId);
+        }
+
+        internal void GetSensorSettings(int sensorId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = sensorId,
+                [Parameter.ObjectType] = BaseType.Sensor
+            };
+
+            //we'll need to add support for dropdown lists too
+
+            var response = ExecuteRequest(HtmlFunction.ObjectData, parameters);
+
+            var blah = SensorSettings.GetXml(response, sensorId);
+
+            var doc = new XDocument(blah);
+
+            var aaaa = Data<SensorSettings>.DeserializeType(doc);
+        }
+
+        public void blah()
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Custom] = new CustomParameter("limitmaxerror_0", ""),
+                //prtgurl needs to throw an exception if you dont use a customparameter with parameter.custom and detect if it contains a list
+                [Parameter.Id] = 2196
+            };
+
+            var response = ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        }
+
+        
+
+        #endregion
+
         #region Pause / Resume
+
+        /// <summary>
+        /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
+        /// </summary>
+        /// <param name="objectId">ID of the sensor to acknowledge.</param>
+        /// <param name="message">Message to display on the acknowledged sensor.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
+        public void AcknowledgeSensor(int objectId, string message = null, int? duration = null)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                //[Parameter.AcknowledgeMessage] = message,
+            };
+
+            if (message != null)
+                parameters[Parameter.AcknowledgeMessage] = message;
+
+            if (duration != null)
+                parameters[Parameter.Duration] = duration;
+
+            ExecuteRequest(CommandFunction.AcknowledgeAlarm, parameters);
+        }
 
         /// <summary>
         /// Pause a PRTG Object (sensor, device, etc).
@@ -472,6 +536,15 @@ namespace PrtgAPI
             var response = ExecuteRequest(url);
         }
 
+        private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+
+            return response;
+        }
+
         private string ExecuteRequest(PrtgUrl url)
         {
             string response;
@@ -490,14 +563,14 @@ namespace PrtgAPI
 
                 if (webResponse.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    using (var reader = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.UTF8))
+                    using (var reader = new StreamReader(webResponse.GetResponseStream(), Encoding.UTF8))
                     {
                         response = reader.ReadToEnd();
                         
                         var xDoc = XDocument.Parse(response);
                         var errorMessage = xDoc.Descendants("error").First().Value;
 
-                        throw new PrtgRequestException("PRTG was unable to complete the request. The server responded with the following error: " + errorMessage, ex);
+                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
                     }
                 }
 
@@ -573,11 +646,6 @@ namespace PrtgAPI
 
         #region Channel
 
-        public List<Channel> GetChannels(int sensorId)
-        {
-            return GetObjects<Channel>(new ChannelParameters(sensorId));
-        }
-
         /// <summary>
         /// Modify channel properties for a PRTG Sensor.
         /// </summary>
@@ -587,7 +655,54 @@ namespace PrtgAPI
         /// <param name="value">The value to set the channel's property to.</param>
         public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value)
         {
-            SetObjectProperty(new SetChannelSettingParameters(sensorId, channelId, property, value));
+            var customParams = GetChannelSetObjectPropertyCustomParams(channelId, property, value);
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Custom] = customParams,
+                [Parameter.Id] = sensorId
+            };
+
+            ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        }
+
+        private List<CustomParameter> GetChannelSetObjectPropertyCustomParams(int channelId, ChannelProperty property, object value)
+        {
+            bool valAsBool;
+            var valIsBool = bool.TryParse(value.ToString(), out valAsBool);
+
+            List<CustomParameter> customParams = new List<CustomParameter>();
+
+            if (valIsBool)
+            {
+                if (valAsBool)
+                {
+                    value = 1;
+                }
+
+                else //if we're disabling a property, check if there are values dependent on us. if so, disable them too!
+                {
+                    value = 0;
+
+                    var associatedProperties = property.GetDependentProperties<ChannelProperty>();
+
+                    customParams.AddRange(
+                        associatedProperties.Select(prop => Channel.CreateCustomParameter(prop, channelId, string.Empty)));
+                }
+            }
+            else //if we're enabling a property, check if there are values we depend on. if so, enable them!
+            {
+                var props = property.GetEnumAttribute<DependentPropertyAttribute>();
+
+                if (props != null)
+                {
+                    customParams.Add(Channel.CreateCustomParameter(props.Name.ToEnum<ChannelProperty>(), channelId, "1"));
+                }
+            }
+
+            customParams.Add(Channel.CreateCustomParameter(property, channelId, value));
+
+            return customParams;
         }
 
         #endregion
@@ -737,6 +852,10 @@ namespace PrtgAPI
 
         #endregion
 
+        #region Miscellaneous
+
+        //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
+
         /// <summary>
         /// Request an object or any children of an object refresh themselves immediately.
         /// </summary>
@@ -784,6 +903,9 @@ namespace PrtgAPI
         //clone a sensor or group
         public void Clone(int id, string cloneName, int targetLocation)
         {
+            if (cloneName == null)
+                throw new ArgumentNullException(nameof(cloneName));
+
             var parameters = new Parameters.Parameters()
             {
                 [Parameter.Id] = id,
@@ -801,6 +923,12 @@ namespace PrtgAPI
         //clone a device
         public void Clone(int id, string cloneName, string host, int targetLocation)
         {
+            if (cloneName == null)
+                throw new ArgumentNullException(nameof(cloneName));
+
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+
             var parameters = new Parameters.Parameters()
             {
                 [Parameter.Id] = id,
@@ -812,10 +940,13 @@ namespace PrtgAPI
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
         }
 
-        //delete an object
+        /// <summary>
+        /// Permanently delete an object from PRTG. This cannot be undone.
+        /// </summary>
+        /// <param name="id">ID of the object to delete.</param>
         public void Delete(int id)
         {
-            var parameters = new Parameters.Parameters()
+            var parameters = new Parameters.Parameters
             {
                 [Parameter.Id] = id,
                 [Parameter.Approve] = 1
@@ -823,5 +954,38 @@ namespace PrtgAPI
 
             ExecuteRequest(CommandFunction.DeleteObject, parameters);
         }
+
+        /// <summary>
+        /// Rename an object.
+        /// </summary>
+        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="name">New name to give the object.</param>
+        public void Rename(int objectId, string name)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.Value] = name
+            };
+
+            ExecuteRequest(CommandFunction.Rename, parameters);
+        }
+
+        public ServerStatus GetStatus()
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = 0
+            };
+
+            var response = ExecuteRequest(XmlFunction.GetStatus, parameters);
+
+            return Data<ServerStatus>.DeserializeType(response);
+        }
+
+        #endregion
     }
 }
