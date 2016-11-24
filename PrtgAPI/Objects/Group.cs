@@ -18,7 +18,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("probe")]
         [PropertyParameter(nameof(Property.Probe))]
-        [PSVisible(true)]
         public string Probe { get; set; }
     }
 }

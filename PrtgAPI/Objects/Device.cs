@@ -17,7 +17,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("group")]
         [PropertyParameter(nameof(Property.Group))]
-        [PSVisible(true)]
         public string Group { get; set; }
 
         /// <summary>
@@ -25,7 +24,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("probe")]
         [PropertyParameter(nameof(Property.Probe))]
-        [PSVisible(true)]
         public string Probe { get; set; }
 
         //todo: put these where they need to be

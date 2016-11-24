@@ -15,7 +15,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("message_raw")]
         [PropertyParameter(nameof(Property.Message))]
-        [PSVisible(true)]
         public string Message { get; set; }
     }
 }

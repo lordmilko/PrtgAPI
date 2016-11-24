@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Management.Automation;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Objects.Shared;
+using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {
@@ -19,7 +21,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("probe")]
         [PropertyParameter(nameof(Property.Probe))]
-        [PSVisible(true)]
         public string Probe { get; set; }
 
         // ################################## Sensors, Devices ##################################
@@ -30,7 +31,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("group")]
         [PropertyParameter(nameof(Property.Group))]
-        [PSVisible(true)]
         public string Group { get; set; }
 
         // ################################## Sensors, Channel ##################################
@@ -43,7 +43,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("lastvalue")]
         [PropertyParameter(nameof(Property.LastValue))]
-        [PSVisible(true)]
         public string LastValue
         {
             get { return lastvalue; }
@@ -57,7 +56,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("device")]
         [PropertyParameter(nameof(Property.Device))]
-        [PSVisible(true)]
         public string Device { get; set; }
 
         /// <summary>
@@ -65,35 +63,32 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("downtime")]
         [PropertyParameter(nameof(Property.Downtime))]
-        [PSVisible(true)]
         public string Downtime { get; set; }
 
         /// <summary>
         /// Total amount of time sensor has ever been in a down state.
         /// </summary>
         [PropertyParameter(nameof(Property.DowntimeTime))]
-        [PSVisible(true)]
-        public TimeSpan? TotalDowntime => ConvertPrtgTimeSpan(_RawTotalDowntime);
+        public TimeSpan? TotalDowntime => DH.ConvertPrtgTimeSpan(_RawTotalDowntime);
 
         /// <summary>
         /// Raw value used for <see cref="TotalDowntime"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("downtimetime_raw")]
-        [PSVisible(false)]
         public double? _RawTotalDowntime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an up state. If sensor is currently up, this value is null.
         /// </summary>
         [PropertyParameter(nameof(Property.DowntimeSince))]
-        [PSVisible(true)]
-        public TimeSpan? DownDuration => ConvertPrtgTimeSpan(_RawDownDuration);
+        public TimeSpan? DownDuration => DH.ConvertPrtgTimeSpan(_RawDownDuration);
 
         /// <summary>
         /// Raw value used for <see cref="DownDuration"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("downtimesince_raw")]
-        [PSVisible(false)]
         public double? _RawDownDuration { get; set; }
 
         /// <summary>
@@ -101,113 +96,105 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("uptime")]
         [PropertyParameter(nameof(Property.Uptime))]
-        [PSVisible(true)]
         public string Uptime { get; set; }
 
         /// <summary>
         /// Total amount of time sensor has ever been in an up state.
         /// </summary>
         [PropertyParameter(nameof(Property.UptimeTime))]
-        [PSVisible(true)]
-        public TimeSpan? TotalUptime => ConvertPrtgTimeSpan(_RawTotalUptime);
+        public TimeSpan? TotalUptime => DH.ConvertPrtgTimeSpan(_RawTotalUptime);
 
         /// <summary>
         /// Raw value used for <see cref="TotalUptime"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("uptimetime_raw")]
-        [PSVisible(false)]
         public double? _RawTotalUptime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an down state. If sensor is currently down, this value is null.
         /// </summary>
         [PropertyParameter(nameof(Property.UptimeSince))]
-        [PSVisible(true)]
-        public TimeSpan? UpDuration => ConvertPrtgTimeSpan(_RawUpDuration);
+        public TimeSpan? UpDuration => DH.ConvertPrtgTimeSpan(_RawUpDuration);
 
         /// <summary>
         /// Raw value used for <see cref="UpDuration"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("uptimesince_raw")]
-        [PSVisible(false)]
         public double? _RawUpDuration { get; set; }
 
         /// <summary>
         /// Total amount of time this sensor has been in an up or down state.
         /// </summary>
         [PropertyParameter(nameof(Property.KnownTime))]
-        [PSVisible(true)]
-        public TimeSpan? TotalMonitorTime => ConvertPrtgTimeSpan(_RawTotalMonitorTime);
+        public TimeSpan? TotalMonitorTime => DH.ConvertPrtgTimeSpan(_RawTotalMonitorTime);
 
         /// <summary>
         /// Raw value used for <see cref="TotalMonitorTime"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("knowntime_raw")]
-        [PSVisible(false)]
         public double? _RawTotalMonitorTime { get; set; }
 
         /// <summary>
         /// When data collection on this sensor began.
         /// </summary>
         [PropertyParameter(nameof(Property.CumSince))]
-        [PSVisible(true)]
-        public DateTime? DataCollectedSince => ConvertPrtgDateTime(_RawDataCollectedSince);
+        public DateTime? DataCollectedSince => DH.ConvertPrtgDateTime(_RawDataCollectedSince);
 
         /// <summary>
         /// Raw value used for <see cref="DataCollectedSince"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("cumsince_raw")]
-        [PSVisible(false)]
         public double? _RawDataCollectedSince { get; set; }
 
         /// <summary>
         /// When this sensor last checked for a value.
         /// </summary>
         [PropertyParameter(nameof(Property.LastCheck))]
-        [PSVisible(true)]
-        public DateTime? LastCheck => ConvertPrtgDateTime(_RawLastCheck);
+        public DateTime? LastCheck => DH.ConvertPrtgDateTime(_RawLastCheck);
 
         /// <summary>
         /// Raw value used for <see cref="LastCheck"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("lastcheck_raw")]
-        [PSVisible(false)]
         public double? _RawLastCheck { get; set; }
 
         /// <summary>
         /// When this object was last in an up state.
         /// </summary>
         [PropertyParameter(nameof(Property.LastUp))]
-        [PSVisible(true)]
-        public DateTime? LastUp => ConvertPrtgDateTime(_RawLastUp);
+        public DateTime? LastUp => DH.ConvertPrtgDateTime(_RawLastUp);
 
         /// <summary>
         /// Raw value used for <see cref="LastUp"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("lastup_raw")]
-        [PSVisible(false)]
         public double? _RawLastUp { get; set; }
 
         /// <summary>
         /// When this value was last in a down state.
         /// </summary>
         [PropertyParameter(nameof(Property.LastDown))]
-        [PSVisible(true)]
-        public DateTime? LastDown => ConvertPrtgDateTime(_RawLastDown);
+        public DateTime? LastDown => DH.ConvertPrtgDateTime(_RawLastDown);
 
         /// <summary>
         /// Raw value used for <see cref="LastDown"/> attribute. This property should not be used.
         /// </summary>
+        [Hidden]
         [XmlElement("lastdown_raw")]
-        [PSVisible(false)]
         public double? _RawLastDown { get; set; }
 
         /// <summary>
         /// CSV of sensor values for the past 24 hours. Numbers are stored as 5 minute averages. Value contains two sets of CSVs: measured values and errors. Sets are separated by a pipe . If MiniGraphs are disabled, this value is null.
         /// </summary>
+        [Hidden]
         [XmlElement("minigraph")]
         [PropertyParameter(nameof(Property.MiniGraph))]
-        [PSVisible(false)]
         public string MiniGraph { get; set; }       
     }
 }

@@ -13,16 +13,13 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("condition")]
         [PropertyParameter(nameof(Property.Condition))]
-        [PSVisible(true)]
         public string Condition { get; set; }
-
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Up"/> state.
         /// </summary>
         [XmlElement("upsens_raw")]
         [PropertyParameter(nameof(Property.UpSens))]
-        [PSVisible(true)]
         public int? UpSensors { get; set; }
 
         /// <summary>
@@ -30,7 +27,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("downsens_raw")]
         [PropertyParameter(nameof(Property.DownSens))]
-        [PSVisible(true)]
         public int? DownSensors { get; set; }
 
         /// <summary>
@@ -38,7 +34,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("downacksens_raw")]
         [PropertyParameter(nameof(Property.DownAckSens))]
-        [PSVisible(true)]
         public int? DownAcknowledgedSensors { get; set; }
 
         /// <summary>
@@ -46,7 +41,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("partialdownsens_raw")]
         [PropertyParameter(nameof(Property.PartialDownSens))]
-        [PSVisible(true)]
         public int? PartialDownSensors { get; set; }
 
         /// <summary>
@@ -54,7 +48,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("warnsens_raw")]
         [PropertyParameter(nameof(Property.WarnSens))]
-        [PSVisible(true)]
         public int? WarningSensors { get; set; }
 
         /// <summary>
@@ -62,7 +55,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("pausedsens_raw")]
         [PropertyParameter(nameof(Property.PausedSens))]
-        [PSVisible(true)]
         public int? PausedSensors { get; set; }
 
         /// <summary>
@@ -70,7 +62,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("unusualsens_raw")]
         [PropertyParameter(nameof(Property.UnusualSens))]
-        [PSVisible(true)]
         public int? UnusualSensors { get; set; }
 
         /// <summary>
@@ -78,15 +69,13 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("undefinedsens_raw")]
         [PropertyParameter(nameof(Property.UndefinedSens))]
-        [PSVisible(true)]
         public int? UndefinedSensors { get; set; }
 
         /// <summary>
-        /// Total number of sensors in any <see cref="T:PrtgAPI.SensorStatus"/> state.
+        /// Total number of sensors in any <see cref="SensorStatus"/> state.
         /// </summary>
         [XmlElement("totalsens")]
         [PropertyParameter(nameof(Property.TotalSens))]
-        [PSVisible(true)]
         public int? TotalSensors { get; set; }
 
         /// <summary>
@@ -94,7 +83,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("location_raw")]
         [PropertyParameter(nameof(Property.Location))]
-        [PSVisible(true)]
         public string Location { get; set; }
     }
 }

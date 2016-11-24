@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
 namespace PrtgAPI.Objects.Shared
@@ -17,7 +18,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("objid")]
         [PropertyParameter(nameof(Property.ObjId))]
-        [PSVisible(true)]
         public int? Id { get; set; }
 
         /// <summary>
@@ -25,7 +25,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("name")]
         [PropertyParameter(nameof(Property.Name))]
-        [PSVisible(true)]
         public string Name { get; set; }
 
         // ################################## All Objects ##################################
@@ -37,7 +36,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("comments")]
         [PropertyParameter(nameof(Property.Comments))]
-        [PSVisible(true)]
         public string Comments
         {
             get { return comments;}
