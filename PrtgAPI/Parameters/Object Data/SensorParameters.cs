@@ -3,12 +3,12 @@
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="T:PrtgAPI.PrtgUrl"/> for retrieving <see cref="T:PrtgAPI.Sensor"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Sensor"/> objects.
     /// </summary>
     public class SensorParameters : TableParameters<Sensor>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:PrtgAPI.Parameters.SensorParameters"/> class.
+        /// Initializes a new instance of the <see cref="SensorParameters"/> class.
         /// </summary>
         public SensorParameters() : base(Content.Sensors)
         {

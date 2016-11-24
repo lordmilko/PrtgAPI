@@ -3,7 +3,7 @@
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="T:PrtgAPI.PrtgUrl"/>.
+    /// Represents parameters used to construct a <see cref="PrtgUrl"/>.
     /// </summary>
     public class Parameters
     {
@@ -19,7 +19,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Add or update a <see cref="T:PrtgAPI.Parameter"/> for use in a <see cref="T:PrtgAPI.PrtgUrl"/>.
+        /// Add or update a <see cref="Parameter"/> for use in a <see cref="PrtgUrl"/>.
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>

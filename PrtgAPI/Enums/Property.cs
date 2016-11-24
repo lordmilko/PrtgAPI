@@ -164,7 +164,7 @@
         Dependency,
 
         /// <summary>
-        /// For sensor tree objects: <see cref="T:PrtgAPI.SensorStatus"/> of the object; For messages: category of the log message.
+        /// For sensor tree objects: <see cref="SensorStatus"/> of the object; For messages: category of the log message.
         /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets
         /// </summary>
         Status,

@@ -22,7 +22,11 @@
         /// </summary>
         Sensors,
 
+        /// <summary>
+        /// Values within sensors that hold the results of monitoring operations.
+        /// </summary>
         Channels,
+
         /*Tickets,
         TicketData,
         Messages,
