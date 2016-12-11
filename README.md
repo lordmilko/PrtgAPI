@@ -209,10 +209,11 @@ Get-Channel -SensorId 1234
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor -> Channel)
 
 ```powershell
-Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor | Get-Channel *mem | Set-ChannelProperty UpperErrorLimit 100
+$sensors = Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor
+$sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 ```
 
-When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the actual units of a channel by referring to the `LastValueNumeric` property.
+When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the numeric value of a channel by referring to the `LastValueNumeric` property.
 
 ```powershell
 C:\> Get-Sensor *mem* | Get-Channel *mem* | fl Name,Last*
