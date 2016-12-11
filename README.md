@@ -161,6 +161,8 @@ Rename-Object
 Set-ChannelProperty # Currently supports limit related properties
 ```
 
+For details on supported parameters run `Get-Help <cmdlet>` within PowerShell
+
 ## Examples
 
 Get all ping sensors
@@ -180,6 +182,12 @@ Delete all sensors whose device name contains "banana"
 Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
 ```
 
+Get all WMI sensors
+
+```powershell
+Get-Sensor -Tags wmi*
+```
+
 Multiple filters can be specified to further limit the results (and speed up the query!)
 
 ```powershell
@@ -195,15 +203,27 @@ You can also filter via the pipeline
  # Use the unary operator , to pipe all items at once!
 ,($a,$b) | Get-Sensor
 ```
-
 Get the channels of a sensor
 
 ```powershell
-Get-Sensor | Select -first 1 | Get-Channel
+Get-Sensor | Select -First 1 | Get-Channel
 ```
-You can also get the channels of a sensor by specifying its Object ID
+You can also get the channels of a sensor by specifying its Sensor ID
 ```powershell
 Get-Channel -SensorId 1234
+```
+
+Acknowledge all down sensors
+
+```powershell
+# Sensors can be paused -Forever, -Until a given date, or for a specified -Duration (in minutes) with an optional -Message
+Get-Sensor -Status Down | Acknowledge-Sensor -Until (Get-Date).AddDays(1) -Message "Hi Mom!"
+```
+
+Pause all acknowledged sensors forever.
+
+```powershell
+Get-Sensor -Status DownAck | Pause-Object -Forever # "DownAck" automatically resolves to "DownAcknowledged"
 ```
 
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor -> Channel)
