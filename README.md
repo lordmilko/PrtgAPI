@@ -142,16 +142,23 @@ Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) -PassHash
 The following cmdlets are currently supported
 
 ```powershell
+Acknowledge-Sensor
 Connect-PrtgServer
 Disconnect-PrtgServer
-Get-PrtgServer
-Get-Sensor
+Get-Channel
 Get-Device
 Get-Group
 Get-Probe
-Get-Channel
-Remove-Object
+Get-PrtgServer
+Get-Sensor
+Get-SensorTotals
+New-Credential # Allows creating PSCredentials programmatically
 New-SearchFilter
+Pause-Object
+Refresh-Object
+Remove-Object
+Rename-Object
+Set-ChannelProperty # Currently supports limit related properties
 ```
 
 ## Examples
@@ -202,5 +209,19 @@ Get-Channel -SensorId 1234
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor -> Channel)
 
 ```powershell
-Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor | Get-Channel
+Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor | Get-Channel *mem | Set-ChannelProperty UpperErrorLimit 100
+```
+
+When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the actual units of a channel by piping to `Format-List`
+
+```powershell
+C:\> Get-Sensor *mem* | Get-Channel *mem* | FL Last*
+
+Name             : Percent Available Memory
+LastValueDisplay : 27 %
+LastValue        : 27
+
+Name             : Available Memory
+LastValueDisplay : 1,116 MByte
+LastValue        : 1169711104
 ```
