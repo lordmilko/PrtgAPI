@@ -29,7 +29,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("lastvalue")]
         [PropertyParameter(nameof(Property.LastValue))]
-        public string LastValueDisplay
+        public string LastValue
         {
             get { return lastvalue; }
             set { lastvalue = value == string.Empty ? null : value.Trim(); }
@@ -38,7 +38,7 @@ namespace PrtgAPI
         /// <summary>
         /// The numeric last value of this object.
         /// </summary>
-        public double LastValue => Convert.ToDouble((Convert.ToDecimal(_RawLastValue)/10).ToString("F"));
+        public double LastValueNumeric => Convert.ToDouble((Convert.ToDecimal(_RawLastValue)/10).ToString("F"));
 
         /// <summary>
         /// Raw value used for <see cref="LastValue"/> attribute. This property should not be used.

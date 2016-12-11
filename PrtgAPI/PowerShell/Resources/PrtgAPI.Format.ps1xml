@@ -300,7 +300,7 @@
                                 <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>LastValueDisplay</PropertyName>
+                                <PropertyName>LastValue</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>LimitsEnabled</PropertyName>
