@@ -402,7 +402,7 @@ namespace PrtgAPI
             return ChannelSettings.GetXml(response, channelId);
         }
 
-        internal void GetSensorSettings(int sensorId)
+        internal SensorSettings GetSensorSettings(int sensorId)
         {
             var parameters = new Parameters.Parameters
             {
@@ -419,6 +419,13 @@ namespace PrtgAPI
             var doc = new XDocument(blah);
 
             var aaaa = Data<SensorSettings>.DeserializeType(doc);
+
+            //maybe instead of having an enum for my schedule and scanninginterval we have a class with a special getter that removes the <num>|component when you try and retrieve the property
+            //the thing is, the enum IS actually dynamic - we need a list of valid options
+
+            //todo: whenever we use _raw attributes dont we need to add xmlignore on the one that accesses it/
+
+            return aaaa;
         }
 
         public void blah()

@@ -16,7 +16,7 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Fold))]
         public bool Collapsed => Convert.ToBoolean(_RawCollapsed);
 
-        private string rawcollapsed;
+        private string rawCollapsed;
 
         /// <summary>
         /// Raw value used for <see cref="Collapsed"/> attribute. This property should not be used.
@@ -25,8 +25,8 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("fold")]
         public string _RawCollapsed
         {
-            get { return rawcollapsed; }
-            set { rawcollapsed = Convert.ToBoolean(value).ToString(); }
+            get { return rawCollapsed; }
+            set { rawCollapsed = Convert.ToBoolean(value).ToString(); }
         }
 
         /// <summary>

@@ -60,7 +60,7 @@ namespace PrtgAPI
         public Visibility GraphVisibility { get; set; } //Show, Hide
 
         /// <summary>
-        /// Whether this channel should be shown in tables.
+        /// Whether this channel should be shown in tables and API responses. If this value is set to <see cref="Visibility.NotVisible"/> you will be unable to restore visibility without manual intervention or an existing reference to this object.
         /// </summary>
         [XmlElement("injected_show")]
         public Visibility TableVisibility { get; set; }

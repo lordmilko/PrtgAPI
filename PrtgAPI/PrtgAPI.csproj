@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Debug%29|AnyCPU'">
     <OutputPath>bin\PowerShell %28Debug%29\PrtgAPI\</OutputPath>
-    <DocumentationFile>bin\PowerShell %28Debug%29\PrtgAPI.XML</DocumentationFile>
+    <DocumentationFile>bin\PowerShell %28Debug%29\PrtgAPI\PrtgAPI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Release%29|AnyCPU'">
     <OutputPath>bin\PowerShell %28Release%29\PrtgAPI\</OutputPath>
@@ -70,25 +70,71 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyFileVersion.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyFileVersion.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Attributes\DependentPropertyAttribute.cs" />
+    <Compile Include="Attributes\XmlEnumAlternateName.cs" />
     <Compile Include="Attributes\ParameterTypeAttribute.cs" />
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\GetObjectNameAttribute.cs" />
+    <Compile Include="Attributes\PropertyTypeAttribute.cs" />
     <Compile Include="Attributes\SetObjectNameAttribute.cs" />
+    <Compile Include="Attributes\UndocumentedAttribute.cs" />
+    <Compile Include="Enums\Deserialization\AutoMode.cs" />
+    <Compile Include="Enums\Deserialization\DebugMode.cs" />
+    <Compile Include="Enums\Deserialization\DependencyType.cs" />
+    <Compile Include="Enums\Deserialization\ErrorIntervalDown.cs" />
+    <Compile Include="Enums\Deserialization\ScanningInterval.cs" />
+    <Compile Include="Enums\Deserialization\WmiMode.cs" />
+    <Compile Include="Enums\Functions\HtmlFunction.cs" />
+    <Compile Include="Enums\Deserialization\HistoricValueMode.cs" />
+    <Compile Include="Enums\Deserialization\Visibility.cs" />
+    <Compile Include="Enums\PropertyType.cs" />
+    <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
+    <Compile Include="Helpers\Async\ParallelObjectGenerator.cs" />
+    <Compile Include="Helpers\TaskHelpers.cs" />
+    <Compile Include="Html\DropDownList.cs" />
+    <Compile Include="Html\Input.cs" />
+    <Compile Include="Html\InputType.cs" />
+    <Compile Include="Html\Option.cs" />
     <Compile Include="Objects\Channel.cs" />
+    <Compile Include="Enums\PercentDisplay.cs" />
+    <Compile Include="Enums\Deserialization\DecimalMode.cs" />
+    <Compile Include="Objects\Deserialization\DeserializationHelpers.cs" />
+    <Compile Include="Objects\Schedule.cs" />
+    <Compile Include="Objects\SensorTotals.cs" />
+    <Compile Include="Objects\ServerStatus.cs" />
+    <Compile Include="Objects\Undocumented\ChannelSettings.cs" />
+    <Compile Include="Objects\Undocumented\ObjectSettings.cs" />
+    <Compile Include="Objects\Undocumented\SensorSettings.cs" />
     <Compile Include="Parameters\Base\ContentParameters.cs" />
+    <Compile Include="Parameters\CustomParameter.cs" />
     <Compile Include="Parameters\Object Data\ChannelParameters.cs" />
-    <Compile Include="PowerShell\GetChannel.cs" />
-    <Compile Include="PowerShell\GetGroup.cs" />
-    <Compile Include="PowerShell\GetProbe.cs" />
-    <Compile Include="PowerShell\GetPrtgServer.cs" />
-    <Compile Include="PowerShell\PrtgObjectCmdlet.cs" />
-    <Compile Include="PowerShell\RemoveObject.cs" />
-    <Compile Include="PowerShell\GetDevice.cs" />
-    <Compile Include="PowerShell\PrtgTableCmdlet.cs" />
+    <Compile Include="PowerShell\Cmdlets\AcknowledgeSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetChannel.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetProbe.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetObjectProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
+    <Compile Include="PowerShell\Base\PrtgObjectCmdlet.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetSensorTotals.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\RefreshObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\PauseObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\RenameObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ResumeObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\SetChannelProperty.cs" />
+    <Compile Include="PowerShell\ProgressSettings.cs" />
+    <Compile Include="PowerShell\Cmdlets\RemoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetDevice.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
+    <Compile Include="PrtgClient.Async.cs" />
     <Compile Include="SearchFilter.cs" />
-    <Compile Include="Enums\Access.cs" />
+    <Compile Include="Enums\Deserialization\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
-    <Compile Include="Enums\BaseType.cs" />
+    <Compile Include="Enums\Deserialization\BaseType.cs" />
     <Compile Include="Enums\ChannelProperty.cs" />
     <Compile Include="Enums\Position.cs" />
     <Compile Include="Enums\Property.cs" />
@@ -104,9 +150,9 @@
     <Compile Include="Enums\Parameter.cs" />
     <Compile Include="Enums\ParameterType.cs" />
     <Compile Include="Enums\PauseAction.cs" />
-    <Compile Include="Enums\Priority.cs" />
+    <Compile Include="Enums\Deserialization\Priority.cs" />
     <Compile Include="Enums\RecordAge.cs" />
-    <Compile Include="Enums\SensorStatus.cs" />
+    <Compile Include="Enums\Deserialization\SensorStatus.cs" />
     <Compile Include="Enums\Functions\XmlFunction.cs" />
     <Compile Include="Enums\CustomNumberFormat.cs" />
     <Compile Include="Enums\SubType.cs" />
@@ -135,13 +181,12 @@
     <Compile Include="Parameters\Object Manipulation\PauseParameters.cs" />
     <Compile Include="Parameters\Object Manipulation\SimulateErrorParameters.cs" />
     <Compile Include="Parameters\Object Data\SensorParameters.cs" />
-    <Compile Include="PowerShell\ConnectPrtgServer.cs" />
-    <Compile Include="PowerShell\DisconnectPrtgServer.cs" />
-    <Compile Include="PowerShell\GetSensor.cs" />
-    <Compile Include="PowerShell\NewSearchFilter.cs" />
-    <Compile Include="PowerShell\PrtgCmdlet.cs" />
+    <Compile Include="PowerShell\Cmdlets\ConnectPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\DisconnectPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\NewSearchFilter.cs" />
+    <Compile Include="PowerShell\Base\PrtgCmdlet.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
-    <Compile Include="Attributes\PSVisibleAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\Deserialization\Data.cs" />
     <Compile Include="Objects\Device.cs" />
@@ -157,15 +202,36 @@
     <Compile Include="PrtgUrl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PowerShell\PrtgAPI.Format.ps1xml" />
-    <None Include="PowerShell\PrtgAPI.psd1" />
-    <None Include="PowerShell\PrtgAPI.psm1" />
+    <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml" />
+    <None Include="PowerShell\Resources\PrtgAPI.ps1" />
+    <None Include="PowerShell\Resources\PrtgAPI.psd1" />
+    <None Include="PowerShell\Resources\PrtgAPI.psm1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssemblyFileVersion.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyFileVersion.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)\PowerShell\*.psd1" "$(TargetDir)"
-copy "$(ProjectDir)\PowerShell\*.ps1xml" "$(TargetDir)"
-copy "$(ProjectDir)\PowerShell\*.psm1" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)\PowerShell\Resources\*.*" "$(TargetDir)"
+</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if "$(ConfigurationName)" == Release goto :release
+if "$(ConfigurationName)" == "PowerShell (Release)" goto :release
+goto :exit
+
+:release
+set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+%25textTemplatingPath%25 "$(ProjectDir)AssemblyFileVersion.tt"
+
+:exit</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

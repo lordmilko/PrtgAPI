@@ -36,7 +36,7 @@ namespace PrtgAPI
         // ################################## Sensors, Channel ##################################
         // There is a copy in both Sensor and Channel
 
-        private string lastvalue;
+        private string lastValue;
 
         /// <summary>
         /// Last value of this sensor's primary channel. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpause (otherwise it may just display "No Data").
@@ -45,8 +45,8 @@ namespace PrtgAPI
         [PropertyParameter(nameof(Property.LastValue))]
         public string LastValue
         {
-            get { return lastvalue; }
-            set { lastvalue = value == string.Empty ? null : value; }
+            get { return lastValue; }
+            set { lastValue = value == string.Empty ? null : value; }
         }
 
         // ################################## Sensor Only ##################################
@@ -192,7 +192,6 @@ namespace PrtgAPI
         /// <summary>
         /// CSV of sensor values for the past 24 hours. Numbers are stored as 5 minute averages. Value contains two sets of CSVs: measured values and errors. Sets are separated by a pipe . If MiniGraphs are disabled, this value is null.
         /// </summary>
-        [Hidden]
         [XmlElement("minigraph")]
         [PropertyParameter(nameof(Property.MiniGraph))]
         public string MiniGraph { get; set; }       

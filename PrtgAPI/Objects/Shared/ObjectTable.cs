@@ -19,12 +19,30 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Type))]
         public string Type { get; set; }
 
+        private string[] tags;
+
         /// <summary>
         /// Tags contained on this object.
         /// </summary>
-        [XmlElement("tags")]
         [PropertyParameter(nameof(Property.Tags))]
-        public string Tags { get; set; }
+        public string[] Tags
+        {
+            get
+            {
+                if (tags != null)
+                    return tags;
+
+                tags = _RawTags.Split(' ');
+                return tags;
+            }
+        }
+
+        /// <summary>
+        /// Raw value used for <see cref="Tags"/> attribute. This property should not be used.
+        /// </summary>
+        [Hidden]
+        [XmlElement("tags")]
+        public string _RawTags { get; set; }
 
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
@@ -32,7 +50,7 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Active))]
         public bool? Active => Convert.ToBoolean(_RawActive);
 
-        private string activeraw;
+        private string rawActive;
 
         /// <summary>
         /// Raw value used for <see cref="Active"/> attribute. This property should not be used.
@@ -41,8 +59,8 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("active")]
         public string _RawActive
         {
-            get { return activeraw; }
-            set { activeraw = Convert.ToBoolean(value).ToString(); }
+            get { return rawActive; }
+            set { rawActive = Convert.ToBoolean(value).ToString(); }
         }
     }
 }

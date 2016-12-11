@@ -10,9 +10,8 @@ namespace PrtgAPI.Html
     {
         public string Name { get; set; }
         public string Value { get; set; }
-        public bool Radio { get; set; }
+        public InputType Type { get; set; }
         public bool Checked { get; set; }
-
         public bool Hidden { get; set; }
     }
 }

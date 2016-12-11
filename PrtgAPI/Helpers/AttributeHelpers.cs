@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrtgAPI.Helpers
 {
     static class AttributeHelpers
     {
-        public static string[] GetPSVisibleMembers(this Type type)
+        /*public static string[] GetPSVisibleMembers(this Type type)
         {
             var properties = type.GetProperties();
 
@@ -20,18 +18,18 @@ namespace PrtgAPI.Helpers
 
                 if (attributes.Length > 0)
                 {
-                    if (((Attributes.PSVisibleAttribute) attributes.First()).Visible)
+                    if (!((Attributes.PSVisibleAttribute) attributes.First()).Visible)
                     {
                         list.Add(property.Name);
                     }
                 }
                 else
                 {
-                    throw new Exceptions.Internal.MissingAttributeException(type, property.Name);
+                    throw new Exceptions.Internal.MissingAttributeException(type, property.Name, typeof(Attributes.PSVisibleAttribute));
                 }
             }
 
             return list.ToArray();
-        }
+        }*/
     }
 }

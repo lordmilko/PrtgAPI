@@ -42,7 +42,7 @@ var chicagoProbeDevices = client.GetDevices(Property.Probe, FilterOperator.Conta
 ```
 ```c#
 //List all sensors under the Device with Object ID 2000.
-var childSensors = client.GetSensors(Property.ParentId, "2000");
+var childSensors = client.GetSensors(Property.ParentId, 2000);
 ```
 
 PrtgAPI methods that return values typically return a `List` of objects, allowing you to use LINQ to retrieve the values you're really after.
@@ -120,16 +120,15 @@ PrtgAPI implements a number of built-in parameter types that automatically speci
 
 # PowerShell
 
-PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
-
+PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, ensure you have PowerShell 5 installed (Windows Management Framework 5.0), select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
 ```powershell
-Import-Module "C:\path\to\PrtgAPI"
+Import-Module "C:\path\to\PrtgAPI" -DisableNameChecking
 ```
 
 Once loaded, you can connect to your PRTG Server
 
 ```powershell
-Connect-PrtgServer prtg.mycoolsite.com username password
+Connect-PrtgServer prtg.mycoolsite.com (Get-Credential)
 ```
 
 To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgServer`
@@ -137,7 +136,7 @@ To use your PassHash instead of your password, specify the `-PassHash` switch. I
 To authenticate using your PassHash:
 
 ```powershell
-Connect-PrtgServer prtg.mycoolsite.com username passhash -PassHash
+Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) -PassHash
 ```
 
 The following cmdlets are currently supported

@@ -23,6 +23,9 @@ namespace PrtgAPI.PowerShell.Base
         [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 1)]
         public SearchFilter[] Filter { get; set; }
 
+        [Parameter(Mandatory = false)]
+        public string[] Tags { get; set; }
+
         protected Content content;
         private int? progressThreshold;
 
@@ -51,19 +54,12 @@ namespace PrtgAPI.PowerShell.Base
 
             ProgressSettings progressSettings = null;
 
-            if (Id != null)
-            {
-                AddPipelineFilter(Property.ObjId, Id);
-            }
-            if (!string.IsNullOrEmpty(Name))
-            {
-                AddWildcardFilter(Name);
-            }
+            ProcessIdFilter();
+            ProcessNameFilter();
+            ProcessTagsFilter();
 
             if (Filter == null)
             {
-                //progress
-
                 ProgressRecord progress = null;
                 int? count = null;
 
@@ -76,38 +72,99 @@ namespace PrtgAPI.PowerShell.Base
 
                 records = GetRecords();
 
-                if (progress != null)
-                {
-                    progress.RecordType = ProgressRecordType.Completed;
-                    WriteProgress(progress);
-
-                    if (count > progressThreshold)
-                    {
-                        progressSettings = new ProgressSettings()
-                        {
-                            ActivityName = $"PRTG {content.ToString().Substring(0, content.ToString().Length - 1)} Search",
-                            InitialDescription = $"Retrieving all {content.ToString().ToLower()}",
-                            TotalRecords = count.Value
-                        };
-                    }
-                }
+                progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count); //TODO - FIX UP PROPERLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             }
             else
             {
                 records = GetRecords(Filter);
             }
 
-            if (Name != null)
+            /*if (Name != null)
             {
                 var filter = new WildcardPattern(Name.ToLower());
                 records = records.Where(r => filter.IsMatch(r.Name.ToLower()));
+            }*/
+
+            records = FilterResponseRecords(records, Name, r => r.Name);
+
+            if (Tags != null)
+            {
+                foreach (var tag in Tags)
+                {
+                    //if any of our tags are ismatch, include that record
+                    var filter = new WildcardPattern(tag.ToLower());
+                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1.ToLower())));
+                }
             }
 
             WriteList(records, progressSettings);
 
+            
+
             //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
 
             Filter = null;
+        }
+
+        private void ProcessIdFilter()
+        {
+            if (Id != null)
+            {
+                AddPipelineFilter(Property.ObjId, Id);
+            }
+        }
+
+        private void ProcessNameFilter()
+        {
+            if (!string.IsNullOrEmpty(Name))
+            {
+                AddWildcardFilter(Property.Name, Name);
+            }
+        }
+
+        private void ProcessTagsFilter()
+        {
+            if (Tags != null)
+            {
+                foreach (var value in Tags)
+                {
+                    AddWildcardFilter(Property.Tags, value);
+                }
+            }
+        }
+
+        private ProgressSettings CompleteTotalsProgressAndCreateProgressSettings(ProgressRecord progress, int? count) //TODO - RENAME
+        {
+            ProgressSettings progressSettings = null;
+
+            if (progress != null)
+            {
+                progress.RecordType = ProgressRecordType.Completed;
+                WriteProgress(progress);
+
+                if (count > progressThreshold)
+                {
+                    progressSettings = new ProgressSettings()
+                    {
+                        ActivityName = $"PRTG {content.ToString().Substring(0, content.ToString().Length - 1)} Search",
+                        InitialDescription = $"Retrieving all {content.ToString().ToLower()}",
+                        TotalRecords = count.Value
+                    };
+                }
+            }
+
+            return progressSettings;
+        }
+
+        private IEnumerable<T> FilterResponseRecords(IEnumerable<T> records, string pattern, Func<T, string> getProperty)
+        {
+            if (pattern != null)
+            {
+                var filter = new WildcardPattern(pattern.ToLower());
+                records = records.Where(r => filter.IsMatch(getProperty(r).ToLower()));
+            }
+
+            return records;
         }
 
         /// <summary>
@@ -122,25 +179,13 @@ namespace PrtgAPI.PowerShell.Base
             AddToFilter(filter);
         }
 
-        protected void AddWildcardFilter(string value)
+        protected void AddWildcardFilter(Property property, string value)
         {
-            var trimmed = Name.Trim('*');
+            var trimmed = value.Trim('*');
 
-            bool ignoreFront = false;
-            bool ignoreEnd = false;
-
-            if (Name.StartsWith("*"))
-                ignoreFront = true;
-
-            if (Name.EndsWith("*"))
-                ignoreEnd = true;
-
-            var op = FilterOperator.Equals; //todo - my documentation in my readme.md file says equals is case sensitive, but it actually doesnt appear to be. whats up with that?
-
-            if (ignoreFront || ignoreEnd)
-                op = FilterOperator.Contains;
-
-            var filter = new SearchFilter(Property.Name, op, trimmed);
+            //If another filter has been specified, an equals filter will become case sensitive. To work around this, we always do "contains", and then filter for
+            //what we really wanted once the response is returned
+            var filter = new SearchFilter(property, FilterOperator.Contains, trimmed);
 
             AddToFilter(filter);
         }

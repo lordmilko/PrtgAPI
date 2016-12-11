@@ -13,17 +13,29 @@ namespace PrtgAPI.Objects.Undocumented
     {
         protected static XElement GetXmlInternal(string response, int channelId, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
         {
-            //original channel code:
-            //                Name = Regex.Replace(input, ".Replace($"_{channelId}", ""),
-
-
-            
-
             var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, nameTransformer);
             var ddlXml = GetDropDownListXml(response, nameRegex);
-            
-            var elm = new XElement("properties", inputXml, ddlXml);
+            var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
+
+            var elm = new XElement("properties", inputXml, ddlXml, dependencyXml);
             return elm;
+        }
+
+        private static XElement GetDependency(string response)
+        {
+            var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
+
+            var match = Regex.Match(response, basicMatch);
+
+            if (match.Success)
+            {
+                var idStr = Regex.Replace(match.Value, "(.+data-selid=\")(.+?)(\".+)", "$2");
+                var id = idStr == "null" ? null : (int?)Convert.ToInt32(idStr);
+
+                return new XElement("injected_dependencyvalue", id);
+            }
+
+            return null;
         }
 
         private static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
@@ -33,9 +45,23 @@ namespace PrtgAPI.Objects.Undocumented
 
             var properties = GetProperties(inputs, nameRegex, nameTransformer);
 
-            var props = FilterInputTags(properties).Select(v => new XElement($"injected_{v.Value.Name}", v.Value.Value));
+            var props = FilterInputTags(properties); //.Select(v => new XElement($"injected_{v.Value.Name}", v.Value.Value));
 
-            return props.ToList();
+            var list = new List<XElement>();
+
+            foreach (var prop in props)
+            {
+                if (prop.Value.Type == InputType.Checkbox)
+                {
+                    list.Add(new XElement($"injected_{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
+                }
+                else
+                {
+                    list.Add(new XElement($"injected_{prop.Value.Name}", prop.Value.Value));
+                }
+            }
+
+            return list;
         }
 
         private static List<XElement> GetDropDownListXml(string response, string nameRegex)
@@ -63,12 +89,21 @@ namespace PrtgAPI.Objects.Undocumented
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")), //.Replace($"_{channelId}", ""),
                 Value = Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2"),
-                Radio = Regex.Match(input, "radio").Success,
+                Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success
-            }).Where(p => !p.Hidden).ToList();
+            }).ToList();
 
-            return properties;
+            return properties; //todo: allow hidden items, and in the filter if theres a conflict overwrite the hidden one
+        }
+
+        private static InputType GetInputType(string input)
+        {
+            if (Regex.Match(input, "radio").Success)
+                return InputType.Radio;
+            if (Regex.Match(input, "checkbox").Success)
+                return InputType.Checkbox;
+            return InputType.Other;
         }
 
         private static List<DropDownList> GetLists(List<string> lists, string nameRegex)
@@ -95,6 +130,8 @@ namespace PrtgAPI.Objects.Undocumented
                         Selected = Regex.Match(match, "selected").Success
                     });
                 }
+
+                blah.Add(ddl);
             }
 
             return blah;
@@ -117,7 +154,7 @@ namespace PrtgAPI.Objects.Undocumented
             //return properties;
         }
 
-        internal static Dictionary<string, Input> FilterInputTags(List<Input> properties)
+        static Dictionary<string, Input> FilterInputTags(List<Input> properties)
         {
             var dictionary = new Dictionary<string, Input>();
 
@@ -127,7 +164,53 @@ namespace PrtgAPI.Objects.Undocumented
                     dictionary.Add(prop.Name, prop);
                 else
                 {
-                    if (prop.Radio && dictionary[prop.Name].Radio) //if theyre both radio buttons
+                    ReplaceExistingItem(dictionary, prop);
+                }
+            }
+
+            return dictionary;
+        }
+
+        private static void ReplaceExistingItem(Dictionary<string, Input> dictionary, Input prop)
+        {
+            if (prop.Type == dictionary[prop.Name].Type)
+                //If our new item has the same as our existing item of the same name
+            {
+                if (prop.Checked && !dictionary[prop.Name].Checked)
+                    //If the new one is checked, replace the existing one
+                    dictionary[prop.Name] = prop;
+
+                //if (prop.Hidden && !dictionary[prop.Name].Hidden)
+                //    dictionary[prop.Name] = prop;
+
+                //but there are also HIDDEN ones, we need to allow for that and i think we wanna say if we're hidden replace it? didnt i write this down
+
+                //Otherwise, we're either both checked, or neither are checked, in which case we don't care
+            }
+            else
+            {
+                if (!prop.Hidden && dictionary[prop.Name].Hidden)
+                    dictionary[prop.Name] = prop;
+                else if (prop.Hidden && dictionary[prop.Name].Hidden)
+                    ; //Don't care
+                else
+                    throw new NotImplementedException($"Two properties were found with the same name but had different types: '{prop.Type}', '{dictionary[prop.Name]}'");
+            }
+                
+        }
+
+        
+        /*internal static Dictionary<string, Input> FilterInputTags1(List<Input> properties)
+        {
+            var dictionary = new Dictionary<string, Input>();
+
+            foreach (var prop in properties)
+            {
+                if (!dictionary.ContainsKey(prop.Name)) //if the item is new, add it
+                    dictionary.Add(prop.Name, prop);
+                else                                    //if the item already exists
+                {
+                    if (prop.Radio && dictionary[prop.Name].Radio) //and the new and existimg items are both radio buttons
                     {
                         if (prop.Checked && !dictionary[prop.Name].Checked) //and we're checked and our existing one isnt, replace it
                             dictionary[prop.Name] = prop;
@@ -146,13 +229,14 @@ namespace PrtgAPI.Objects.Undocumented
                     }
                     else
                     {
-                        throw new NotImplementedException("We had two channel properties that arent radio buttons, or two properties with the same name with only one of them a radio");
+                        throw new NotImplementedException(
+                            "We had two channel properties that arent radio buttons, or two properties with the same name with only one of them a radio");
                         //crash! either we have a duplicate of two things that arent radios, or a thing that is a radio and something that isnt a radio
                     }
                 }
             }
 
             return dictionary;
-        }
+        }*/
     }
 }

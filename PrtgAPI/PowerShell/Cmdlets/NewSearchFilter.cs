@@ -9,8 +9,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
     [Cmdlet(VerbsCommon.New, "SearchFilter")]
     public class NewSearchFilter : PrtgCmdlet
     {
-        //todo - find out why doing new-searchfilter status equals down|get-sensor doesnt work. test making the api call to prtgclient directly if it doesnt work?
-
         /// <summary>
         /// Object property to filter on.
         /// </summary>

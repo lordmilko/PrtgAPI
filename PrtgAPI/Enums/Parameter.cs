@@ -76,7 +76,7 @@ namespace PrtgAPI
         /// <summary>
         /// One or more string values limiting objects returned to only those with these tag attributes.
         /// </summary>
-        [Description("filter_tags")]
+        [Description("filter_tags")] //todo: this needs a parametertype!
         FilterTags,
 
         /// <summary>

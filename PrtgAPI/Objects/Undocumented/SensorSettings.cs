@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using PrtgAPI.Enums.Deserialization;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Undocumented
 {
@@ -18,74 +21,106 @@ namespace PrtgAPI.Objects.Undocumented
             return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
         }
 
+        const string TimeFormat = "yyyy,MM,dd,HH,mm,ss";
+
         [XmlElement("injected_name")]
-        public string Name { get; set; }
+        public string z_Name { get; set; }
 
         [XmlElement("injected_parenttags")]
-        public string ParentTags { get; set; }
+        public string z_ParentTags { get; set; }
 
         [XmlElement("injected_tags")]
-        public string Tags { get; set; }
+        public string z_Tags { get; set; }
 
         [XmlElement("injected_writeresult")]
-        public string WriteResult { get; set; }
+        public DebugMode z_DebugMode { get; set; }
 
         [XmlElement("injected_wmialternative")]
-        public string WmiAlternative { get; set; }
+        public WmiMode z_WmiMode { get; set; }
 
-        [XmlElement("injected_stack")]
-        public string Stack { get; set; }
+[XmlElement("injected_stack")]
+public string Stack { get; set; }
 
-        [XmlElement("injected_stackunit")]
-        public string StackUnit { get; set; }
+[XmlElement("injected_stackunit")]
+public string StackUnit { get; set; }
 
         [XmlElement("injected_intervalgroup")]
-        public string IntervalGroup { get; set; }
+        public bool z_InheritScanningInterval { get; set; }
 
         [XmlElement("injected_scheduledependency")]
-        public string ScheduleDependency { get; set; }
+        public bool z_InheritScheduleDependency { get; set; }
 
         [XmlElement("injected_maintenable")]
-        public string MaintEnable {get; set; }
+        public bool z_MaintenanceEnabled {get; set; }
 
+        public DateTime z_MaintenanceStart => DateTime.ParseExact(_RawMaintenanceStart, TimeFormat, null);
+
+        [Hidden]
         [XmlElement("injected_maintstart")]
-        public string MaintStart {get; set; }
+        public string _RawMaintenanceStart {get; set; }
+
+        public DateTime z_MaintenanceEnd => DateTime.ParseExact(_RawMaintenanceEnd, TimeFormat, null);
 
         [XmlElement("injected_maintend")]
-        public string MaintEnd {get; set; }
+        public string _RawMaintenanceEnd { get; set; }
 
         [XmlElement("injected_dependencytype")]
-        public string DependencyType {get; set; }
+        public DependencyType z_DependencyType {get; set; } //if you select selectobject there is a second textbox we dont have that specifies that dependency object
+
+        private string dependencyValue;
+
+        [XmlElement("injected_dependencyvalue")]
+        public string z_DependencyValue
+        {
+            get { return dependencyValue; }
+            set { dependencyValue = value == string.Empty ? null : value; }
+        }
 
         [XmlElement("injected_depdelay")]
-        public string DepDelay { get; set; }
+        public int z_DependencyDelay { get; set; }
 
         [XmlElement("injected_accessgroup")]
-        public string AccessGroup { get; set; }
+        public bool z_InheritAccessGroup { get; set; }
 
         [XmlElement("injected_unitconfiggroup")]
-        public string UnitConfigGroup { get; set; }
+        public bool z_InheritChannelUnit { get; set; }
 
         [XmlElement("injected_priority")]
-        public string Priority { get; set; }
+        public Priority z_Priority { get; set; }
 
-        [XmlElement("injected_primarychannel")]
-        public string PrimaryChannel { get; set; }
+[XmlElement("injected_primarychannel")]
+public string PrimaryChannel { get; set; }
 
         [XmlElement("injected_interval")]
-        public string Interval { get; set; }
+        public ScanningInterval z_ScanningInterval { get; set; }
 
         [XmlElement("injected_errorintervalsdown")]
-        public string ErrorIntervalsDown { get; set; }
+        public ErrorIntervalDown z_ErrorIntervalDown { get; set; }
 
         [XmlElement("injected_schedule")]
-        public string Schedule { get; set; }
+        public string _RawSchedule { get; set; }
+
+        public Schedule z_Schedule => new Schedule(_RawSchedule);
+
+
+        private string rawAccessRights;
+        private Access accessRights;
 
         [XmlElement("injected_accessrights_201")]
-        public string AccessRights { get; set; }
+        public string _RawAccessRights
+        {
+            set
+            {
+                rawAccessRights = value;
+                accessRights = value.XmlEnumAlternateNameToEnum<Access>();
+            }
+            get { return rawAccessRights; }
+        }
 
-        [XmlElement("injected_unitconfig__oukBytesMemory_volume")]
-        public string UnitConfig__OUKBytesMemory_Volume { get; set; }
+        public Access z_AccessRights => accessRights;
+
+[XmlElement("injected_unitconfig__oukBytesMemory_volume")]
+public string UnitConfig__OUKBytesMemory_Volume { get; set; }
 
 
 
