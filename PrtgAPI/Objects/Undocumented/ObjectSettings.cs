@@ -11,17 +11,9 @@ namespace PrtgAPI.Objects.Undocumented
 {
     public class ObjectSettings
     {
-        protected static XElement GetXmlInternal(string response, int channelId, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
-        {
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, nameTransformer);
-            var ddlXml = GetDropDownListXml(response, nameRegex);
-            var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
+        
 
-            var elm = new XElement("properties", inputXml, ddlXml, dependencyXml);
-            return elm;
-        }
-
-        private static XElement GetDependency(string response)
+        protected static XElement GetDependency(string response)
         {
             var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
@@ -38,7 +30,7 @@ namespace PrtgAPI.Objects.Undocumented
             return null;
         }
 
-        private static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
+        protected static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
         {
             var matches = Regex.Matches(response, basicMatchRegex);
             var inputs = (matches.Cast<Match>().Select(match => match.Value)).ToList();
@@ -64,7 +56,7 @@ namespace PrtgAPI.Objects.Undocumented
             return list;
         }
 
-        private static List<XElement> GetDropDownListXml(string response, string nameRegex)
+        protected static List<XElement> GetDropDownListXml(string response, string nameRegex)
         {
             var ddl = Regex.Matches(response, "<select.+?>.+?<\\/select>", RegexOptions.Singleline);
             var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();

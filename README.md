@@ -196,7 +196,7 @@ Get-Sensor | Select -first 1 | Get-Channel
 ```
 You can also get the channels of a sensor by specifying its Object ID
 ```powershell
-Get-Channel 1234
+Get-Channel -SensorId 1234
 ```
 
 Cmdlets can be chained together, in order from outer object to inner object (i.e. Probe -> Group -> Group -> Device -> Sensor -> Channel)

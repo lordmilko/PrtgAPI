@@ -17,5 +17,15 @@ namespace PrtgAPI.Objects.Undocumented
 
             return GetXmlInternal(response, channelId, basicMatchRegex, nameRegex, n => n.Replace($"_{channelId}", ""));
         }
+
+        protected static XElement GetXmlInternal(string response, int channelId, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
+        {
+            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, nameTransformer);
+            //var ddlXml = GetDropDownListXml(response, nameRegex);
+            //var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
+
+            var elm = new XElement("properties", inputXml);
+            return elm;
+        }
     }
 }
