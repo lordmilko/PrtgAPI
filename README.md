@@ -103,7 +103,7 @@ client.Pause(2002, "Paused for the next 60 minutes!", 60);
 client.Resume(2001);
 ```
 
-# Custom Requests
+## Custom Requests
 For those that which to execute custom requests (i.e. those not yet supported by PrtgAPI, or those not known to be supported by PRTG) it is possible to craft custom requests that do whatever you like.
 
 ```c#
@@ -133,10 +133,14 @@ Connect-PrtgServer prtg.mycoolsite.com (Get-Credential)
 
 To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgServer`
 
-To authenticate using your PassHash:
-
 ```powershell
 Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) -PassHash
+```
+
+If you are scripting against PrtgAPI, you can use the included `New-Credential` cmdlet to bypass the authentication prompt.
+
+```powershell
+Connect-PrtgServer prtg.mycoolsite.com (New-Credential prtgadmin supersecretpassword)
 ```
 
 The following cmdlets are currently supported
@@ -152,7 +156,7 @@ Get-Probe
 Get-PrtgServer
 Get-Sensor
 Get-SensorTotals
-New-Credential # Allows creating PSCredentials programmatically
+New-Credential
 New-SearchFilter
 Pause-Object
 Refresh-Object
