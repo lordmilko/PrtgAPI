@@ -216,7 +216,8 @@ Get-Channel -SensorId 1234
 Acknowledge all down sensors
 
 ```powershell
-# Sensors can be paused -Forever, -Until a given date, or for a specified -Duration (in minutes) with an optional -Message
+# Sensors can be paused -Forever, -Until a given date, or for a specified -Duration (in minutes) with
+# an optional -Message
 Get-Sensor -Status Down | Acknowledge-Sensor -Until (Get-Date).AddDays(1) -Message "Hi Mom!"
 ```
 
