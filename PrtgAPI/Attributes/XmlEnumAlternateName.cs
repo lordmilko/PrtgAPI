@@ -8,10 +8,9 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Attributes
 {
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     internal class XmlEnumAlternateName : XmlEnumAttribute
     {
-        public string Name { get; set; }
-
         internal XmlEnumAlternateName(string name) : base(name)
         {
             Name = name;

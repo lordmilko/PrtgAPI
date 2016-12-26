@@ -19,48 +19,32 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Type))]
         public string Type { get; set; }
 
-        private string[] tags;
-
         /// <summary>
         /// Tags contained on this object.
         /// </summary>
-        [PropertyParameter(nameof(Property.Tags))]
-        public string[] Tags
-        {
-            get
-            {
-                if (tags != null)
-                    return tags;
-
-                tags = _RawTags.Split(' ');
-                return tags;
-            }
-        }
-
-        /// <summary>
-        /// Raw value used for <see cref="Tags"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("tags")]
-        public string _RawTags { get; set; }
+        [SplittableString(' ')]
+        [PropertyParameter(nameof(Property.Tags))] //todo: give this some attribute we can use to decide to split it later
+        public string[] Tags { get; set; }
 
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
+        [XmlElement("active")]
         [PropertyParameter(nameof(Property.Active))]
-        public bool? Active => Convert.ToBoolean(_RawActive);
+        public bool Active { get; set; }
 
-        private string rawActive;
+        private string comments;
 
         /// <summary>
-        /// Raw value used for <see cref="Active"/> attribute. This property should not be used.
+        /// Comments present on this object.
         /// </summary>
-        [Hidden]
-        [XmlElement("active")]
-        public string _RawActive
+        [XmlElement("comments")]
+        [PropertyParameter(nameof(Property.Comments))]
+        public string Comments
         {
-            get { return rawActive; }
-            set { rawActive = Convert.ToBoolean(value).ToString(); }
+            get { return comments; }
+            set { comments = value?.Trim(); }
         }
     }
 }

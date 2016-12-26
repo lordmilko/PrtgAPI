@@ -107,10 +107,10 @@ client.Resume(2001);
 For those that which to execute custom requests (i.e. those not yet supported by PrtgAPI, or those not known to be supported by PRTG) it is possible to craft custom requests that do whatever you like.
 
 ```c#
-//Return only the "name" and "object ID" properties, limiting the number of results returned to 100.
+//Specify the super secret "foobar" parameter, limiting the number of results returned to 100.
 var parameters = new SensorParameters()
 {
-    Columns = new[] { Property.Name, Property.ObjId }
+    [Parameter.Custom] = new CustomParameter("foobar", "1"),
     Count = 100
 };
 
@@ -236,6 +236,12 @@ Cmdlets can be chained together, in order from outer object to inner object (i.e
 ```powershell
 $sensors = Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device | Select -First 1 | Get-Sensor
 $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
+```
+
+Inner objects know how to receive a variety of objects via the pipeline. As such it is not necessary to include very intermediate object type
+
+```powershell
+Get-Probe | Get-Sensor
 ```
 
 When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the numeric value of a channel by referring to the `LastValueNumeric` property.

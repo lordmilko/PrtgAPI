@@ -30,7 +30,7 @@ namespace PrtgAPI
         PassHash,
 
         /// <summary>
-        /// A <see cref="Content"/> value representing a PRTG object type.
+        /// A <see cref="PrtgAPI.Content"/> value representing a PRTG object type.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
         Content,
@@ -200,7 +200,7 @@ namespace PrtgAPI
         //Channel
 
         /// <summary>
-        /// The ID of the Channel.
+        /// The ID of the object.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
         [Description("subid")]

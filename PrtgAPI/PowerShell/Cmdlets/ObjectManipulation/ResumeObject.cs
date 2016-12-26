@@ -26,7 +26,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.Resume(Object.Id.Value);
+            client.Resume(Object.Id);
         }
     }
 }

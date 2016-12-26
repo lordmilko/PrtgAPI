@@ -8,6 +8,23 @@ namespace PrtgAPI
     /// </summary>
     public enum ChannelProperty
     {
+        [Description("spikemode")]
+        SpikeFilterEnabled,
+
+        [Description("spikemax")]
+        [DependentProperty(nameof(SpikeFilterEnabled))]
+        SpikeFilterMax,
+
+        [Description("spikemin")]
+        [DependentProperty(nameof(SpikeFilterEnabled))]
+        SpikeFilterMin,
+
+        /// <summary>
+        /// Whether limits are enabled for this object. If limits are disabled, limit thresholds will be ignored.
+        /// </summary>
+        [Description("limitmode")]
+        LimitsEnabled,
+
         /// <summary>
         /// The maximum value allowed before the sensor goes into an error state.
         /// </summary>
@@ -48,13 +65,7 @@ namespace PrtgAPI
         /// </summary>
         [Description("limitwarningmsg")]
         [DependentProperty(nameof(LimitsEnabled))]
-        WarningLimitMessage,
-        
-        /// <summary>
-        /// Whether limits are enabled for this object. If limits are disabled, limit thresholds will be ignored.
-        /// </summary>
-        [Description("limitmode")]
-        LimitsEnabled
+        WarningLimitMessage
 
         //todo: allow setting all other properties
     }

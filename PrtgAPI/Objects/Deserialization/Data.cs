@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
 
-namespace PrtgAPI
+namespace PrtgAPI.Objects.Deserialization
 {
     /// <summary>
     /// Deserializes XML returned from a PRTG Request.
@@ -15,6 +17,9 @@ namespace PrtgAPI
     /// <typeparam name="T">The type of objects to create from the request.</typeparam>
     public class Data<T>
     {
+        /// <summary>
+        /// Total number of objects returned by the request.
+        /// </summary>
         [XmlAttribute("totalcount")]
         public string TotalCount { get; set; }
 
@@ -45,12 +50,16 @@ namespace PrtgAPI
             return DeserializeInternal<T, T>(doc);
         }
 
+#pragma warning disable 693
         private static T DeserializeInternal<T, TInner>(XDocument doc)
+#pragma warning restore 693
         {
             try
             {
-                var deserializer = new XmlSerializer(typeof (T), new XmlRootAttribute(doc.Root.Name.ToString()));
-                var obj = deserializer.Deserialize(doc.ToStream());
+                var deserializer = new XmlSerializer(typeof(T));
+                var obj = deserializer.Deserialize(doc);
+                //var deserializer = new XmlSerializer(typeof (T), new XmlRootAttribute(doc.Root.Name.ToString()));
+                //var obj = deserializer.Deserialize(doc.ToStream());
                 var data = (T) obj;
 
                 return data;

@@ -30,7 +30,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 if(Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
-                    client.Delete(Object.Id.Value);
+                    client.Delete(Object.Id);
             }
         }
     }

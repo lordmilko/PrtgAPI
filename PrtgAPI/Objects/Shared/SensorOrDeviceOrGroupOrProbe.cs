@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management.Automation;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
@@ -34,7 +35,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("basetype")]
         [PropertyParameter(nameof(Property.BaseType))]
-        public BaseType? BaseType { get; set; }
+        public BaseType BaseType { get; set; }
 
         /// <summary>
         /// URL of this object.
@@ -48,7 +49,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("parentid")]
         [PropertyParameter(nameof(Property.ParentId))]
-        public int? ParentId { get; set; }
+        public int ParentId { get; set; }
 
         // ################################## Sensors, Devices, Groups, Probes ##################################
 
@@ -56,20 +57,16 @@ namespace PrtgAPI.Objects.Shared
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.NotifiesX))]
-        public NotificationTypes NotificationTypes => _RawNotificationTypes == null ? null : new NotificationTypes(_RawNotificationTypes);
+        public NotificationTypes NotificationTypes => notificationTypes == null ? null : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
-        /// <summary>
-        /// Raw value used for <see cref="_RawNotificationTypes"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("notifiesx")]
-        public string _RawNotificationTypes { get; set; }
+        protected string notificationTypes { get; set; }
 
         /// <summary>
         /// Scanning interval for this sensor.
         /// </summary>
         [PropertyParameter(nameof(Property.Interval))]
-        public TimeSpan? Interval
+        public TimeSpan Interval //todo: add custom handling for this
         {
             get
             {
@@ -77,41 +74,41 @@ namespace PrtgAPI.Objects.Shared
                 //As a workaround, when we can extract the value from their intervalx attributes instead.
                 //If this statement is true, we've confirmed we need to make a last ditch effort to return a value.
                 //Usually however, this expression will return false.
-                if (_RawInterval == null && IntervalInherited == false) //If IntervalInherited is false, _RawIntervalInherited should just contain a number.
+                if (interval == null)
                 {
-                    return DH.ConvertPrtgTimeSpan(Convert.ToDouble(_RawIntervalInherited));
+                    if (IntervalInherited == false)
+                        //If IntervalInherited is false, _RawIntervalInherited should just contain a number.
+                        return DH.ConvertPrtgTimeSpan(Convert.ToDouble(intervalInherited));
+                    else //
+                    {
+                        var num = Regex.Replace(intervalInherited, "(.+\\()(.+)(\\))", "$2");
+
+                        return DH.ConvertPrtgTimeSpan(Convert.ToDouble(num));
+                    }
                 }
 
-                return DH.ConvertPrtgTimeSpan(_RawInterval);
+                return DH.ConvertPrtgTimeSpan(interval.Value);
             }
         }
 
-        /// <summary>
-        /// Raw value used for <see cref="Interval"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("interval_raw")]
-        public double? _RawInterval { get; set; }
+        protected double? interval { get; set; }
 
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.IntervalX))]
-        public bool? IntervalInherited => _RawIntervalInherited?.Contains("Inherited");
+        public bool IntervalInherited => intervalInherited?.Contains("Inherited") ?? false; //todo: add custom handling for this
 
-        /// <summary>
-        /// Raw value used for <see cref="IntervalInherited"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("intervalx")]
-        public string _RawIntervalInherited { get; set; }
+        protected string intervalInherited { get; set; }
 
         /// <summary>
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.
         /// </summary>
         [XmlElement("access")]
         [PropertyParameter(nameof(Property.Access))]
-        public Access? Access { get; set; }
+        public Access Access { get; set; }
 
         /// <summary>
         /// Name of the object the monitoring of this object is dependent on. If dependency is on the parent object, value of DependencyName will be "Parent".
@@ -125,6 +122,6 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("favorite_raw")]
         [PropertyParameter(nameof(Property.Favorite))]
-        public bool? Favorite { get; set; }
+        public bool Favorite { get; set; }
     }
 }

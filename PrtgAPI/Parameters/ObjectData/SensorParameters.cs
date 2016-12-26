@@ -20,10 +20,7 @@ namespace PrtgAPI.Parameters
         public SensorStatus[] StatusFilter
         {
             get { return (SensorStatus[]) this[Parameter.FilterStatus]; }
-            set
-            {
-                this[Parameter.FilterStatus] = value.Select(x => (int)x).ToArray();
-            }
+            set { this[Parameter.FilterStatus] = value; }
         }
 
         //todo: implement filter_tags

@@ -13,34 +13,22 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// Whether the object is currently expanded or collapsed in the PRTG Interface.
         /// </summary>
-        [PropertyParameter(nameof(Property.Fold))]
-        public bool Collapsed => Convert.ToBoolean(_RawCollapsed);
-
-        private string rawCollapsed;
-
-        /// <summary>
-        /// Raw value used for <see cref="Collapsed"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("fold")]
-        public string _RawCollapsed
-        {
-            get { return rawCollapsed; }
-            set { rawCollapsed = Convert.ToBoolean(value).ToString(); }
-        }
+        [PropertyParameter(nameof(Property.Fold))]
+        public bool Collapsed { get; set; }
 
         /// <summary>
         /// Number of groups contained under this object.
         /// </summary>
         [XmlElement("groupnum")]
         [PropertyParameter(nameof(Property.GroupNum))]
-        public int? TotalGroups { get; set; }
+        public int TotalGroups { get; set; }
 
         /// <summary>
         /// Number of devices contained under this object.
         /// </summary>
         [XmlElement("devicenum")]
         [PropertyParameter(nameof(Property.DeviceNum))]
-        public int? TotalDevices { get; set; }
+        public int TotalDevices { get; set; }
     }
 }

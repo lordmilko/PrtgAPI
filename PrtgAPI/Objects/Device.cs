@@ -26,6 +26,10 @@ namespace PrtgAPI
         [PropertyParameter(nameof(Property.Probe))]
         public string Probe { get; set; }
 
+        [XmlElement("host")]
+        [PropertyParameter(nameof(Property.Host))]
+        public string Host { get; set; }
+
         //todo: put these where they need to be
 
         //deviceicon, host, icon, location

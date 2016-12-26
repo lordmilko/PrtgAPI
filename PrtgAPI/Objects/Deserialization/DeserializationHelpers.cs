@@ -37,11 +37,12 @@ namespace PrtgAPI.Objects.Deserialization
         /// </summary>
         /// <param name="datetime">An OLE Automation style DateTime.</param>
         /// <returns>If <paramref name="datetime"/> contains a value, the PRTG DateTime formatted for the local timezone. Otherwise, null.</returns>
-        internal static DateTime? ConvertPrtgDateTime(double? datetime)
+        internal static DateTime? ConvertPrtgDateTime(double datetime)
         {
-            if (datetime != null && datetime.Value != 0)
+            if (datetime != 0)
                 return DateTime.FromOADate((double)datetime).ToLocalTime();
             return null;
+            //return null;
         }
 
         /// <summary>
@@ -49,11 +50,9 @@ namespace PrtgAPI.Objects.Deserialization
         /// </summary>
         /// <param name="timespan">PRTG TimeSpan representing the number of seconds since an event occurred. If this value is null, this method will return null.</param>
         /// <returns></returns>
-        internal static TimeSpan? ConvertPrtgTimeSpan(double? timespan)
+        internal static TimeSpan ConvertPrtgTimeSpan(double timespan)
         {
-            if (timespan != null)
-                return TimeSpan.FromSeconds((double)timespan);
-            return null;
+            return TimeSpan.FromSeconds(timespan);
         }
     }
 }

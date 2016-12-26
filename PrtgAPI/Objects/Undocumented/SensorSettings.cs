@@ -63,11 +63,10 @@ public string StackUnit { get; set; }
         [XmlElement("injected_maintenable")]
         public bool z_MaintenanceEnabled {get; set; }
 
-        public DateTime z_MaintenanceStart => DateTime.ParseExact(_RawMaintenanceStart, TimeFormat, null);
+        public DateTime z_MaintenanceStart => DateTime.ParseExact(maintenanceStart, TimeFormat, null);
 
-        [Hidden]
         [XmlElement("injected_maintstart")]
-        public string _RawMaintenanceStart {get; set; }
+        protected string maintenanceStart {get; set; }
 
         public DateTime z_MaintenanceEnd => DateTime.ParseExact(_RawMaintenanceEnd, TimeFormat, null);
 
@@ -102,7 +101,7 @@ public string StackUnit { get; set; }
 public string PrimaryChannel { get; set; }
 
         [XmlElement("injected_interval")]
-        public ScanningInterval z_ScanningInterval { get; set; }
+        public ScanningInterval z_ScanningInterval { get; set; }  //todo: what if its a custom interval
 
         [XmlElement("injected_errorintervalsdown")]
         public ErrorIntervalDown z_ErrorIntervalDown { get; set; }

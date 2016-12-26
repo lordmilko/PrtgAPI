@@ -16,42 +16,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\PrtgAPI\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\PrtgAPI.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\PrtgAPI\PrtgAPI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\PrtgAPI\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell (Debug)|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\PowerShell (Debug)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>bin\Debug\PrtgAPI.XML</DocumentationFile>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Debug%29|AnyCPU'">
-    <OutputPath>bin\PowerShell %28Debug%29\PrtgAPI\</OutputPath>
-    <DocumentationFile>bin\PowerShell %28Debug%29\PrtgAPI\PrtgAPI.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PowerShell %28Release%29|AnyCPU'">
-    <OutputPath>bin\PowerShell %28Release%29\PrtgAPI\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\PrtgAPI\PrtgAPI.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,6 +39,7 @@
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
     </Reference>-->
     <Reference Include="System.Management.Automation" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -70,7 +49,43 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyFileVersion.cs">
+    <Compile Include="Attributes\SplittableStringAttribute.cs" />
+    <Compile Include="Enums\Deserialization\TriggerChannel.cs" />
+    <Compile Include="Enums\Deserialization\TriggerCondition.cs" />
+    <Compile Include="Enums\Deserialization\TriggerPeriod.cs" />
+    <Compile Include="Enums\Deserialization\TriggerTime.cs" />
+    <Compile Include="Enums\Deserialization\TriggerType.cs" />
+    <Compile Include="Enums\Deserialization\TriggerUnitSize.cs" />
+    <Compile Include="Enums\ModifyAction.cs" />
+    <Compile Include="Enums\Serialization\TriggerProperty.cs" />
+    <Compile Include="Enums\Serialization\TriggerSensorState.cs" />
+    <Compile Include="Enums\Serialization\TriggerVolumeUnitSize.cs" />
+    <Compile Include="IWebClient.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Objects\Deserialization\JsonDeserializer.cs" />
+    <Compile Include="Objects\Deserialization\NotificationTriggerData.cs" />
+    <Compile Include="Objects\Deserialization\XmlMapping.cs" />
+    <Compile Include="Objects\Deserialization\XmlAttributeType.cs" />
+    <Compile Include="Objects\Deserialization\XmlSerializer.cs" />
+    <Compile Include="Objects\NotificationAction.cs" />
+    <Compile Include="Objects\NotificationActionDescriptor.cs" />
+    <Compile Include="Objects\NotificationTrigger.cs" />
+    <Compile Include="Objects\Deserialization\SensorHistoryData.cs" />
+    <Compile Include="Objects\SensorHistory.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\ChangeTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\SpeedTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\StateTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\ThresholdTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\TriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetNotificationAction.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\NewTriggerParameter.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\RemoveNotificationTrigger.cs" />
+    <Compile Include="_Todo.cs" />
+    <Compile Include="Properties\AssemblyFileVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyFileVersion.tt</DependentUpon>
@@ -101,7 +116,7 @@
     <Compile Include="Html\InputType.cs" />
     <Compile Include="Html\Option.cs" />
     <Compile Include="Objects\Channel.cs" />
-    <Compile Include="Enums\PercentDisplay.cs" />
+    <Compile Include="Enums\Deserialization\PercentDisplay.cs" />
     <Compile Include="Enums\Deserialization\DecimalMode.cs" />
     <Compile Include="Objects\Deserialization\DeserializationHelpers.cs" />
     <Compile Include="Objects\Schedule.cs" />
@@ -112,50 +127,50 @@
     <Compile Include="Objects\Undocumented\SensorSettings.cs" />
     <Compile Include="Parameters\Base\ContentParameters.cs" />
     <Compile Include="Parameters\CustomParameter.cs" />
-    <Compile Include="Parameters\Object Data\ChannelParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\AcknowledgeSensor.cs" />
-    <Compile Include="PowerShell\Cmdlets\GetChannel.cs" />
-    <Compile Include="PowerShell\Cmdlets\GetGroup.cs" />
-    <Compile Include="PowerShell\Cmdlets\GetProbe.cs" />
+    <Compile Include="Parameters\ObjectData\ChannelParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AcknowledgeSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetChannel.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetProbe.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetObjectProperty.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
     <Compile Include="PowerShell\Base\PrtgObjectCmdlet.cs" />
-    <Compile Include="PowerShell\Cmdlets\GetSensorTotals.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTotals.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\RefreshObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\PauseObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\RenameObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\ResumeObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\SetChannelProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\PauseObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RenameObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ResumeObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetChannelProperty.cs" />
     <Compile Include="PowerShell\ProgressSettings.cs" />
-    <Compile Include="PowerShell\Cmdlets\RemoveObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\GetDevice.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
     <Compile Include="PrtgClient.Async.cs" />
     <Compile Include="SearchFilter.cs" />
     <Compile Include="Enums\Deserialization\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
     <Compile Include="Enums\Deserialization\BaseType.cs" />
-    <Compile Include="Enums\ChannelProperty.cs" />
-    <Compile Include="Enums\Position.cs" />
-    <Compile Include="Enums\Property.cs" />
+    <Compile Include="Enums\Serialization\ChannelProperty.cs" />
+    <Compile Include="Enums\Serialization\Position.cs" />
+    <Compile Include="Enums\Serialization\Property.cs" />
     <Compile Include="Enums\Functions\CommandFunction.cs" />
-    <Compile Include="Enums\Content.cs" />
+    <Compile Include="Enums\Serialization\Content.cs" />
     <Compile Include="Enums\Functions\JsonFunction.cs" />
-    <Compile Include="Enums\Object Settings\BasicObjectSetting.cs" />
-    <Compile Include="Enums\Object Settings\ScanningInterval.cs" />
-    <Compile Include="Enums\Object Settings\SensorDisplay.cs" />
-    <Compile Include="Enums\Object Settings\ExeScriptSetting.cs" />
-    <Compile Include="Enums\FilterOperator.cs" />
-    <Compile Include="Enums\Output.cs" />
-    <Compile Include="Enums\Parameter.cs" />
+    <Compile Include="Enums\ObjectSettings\BasicObjectSetting.cs" />
+    <Compile Include="Enums\ObjectSettings\ScanningInterval.cs" />
+    <Compile Include="Enums\ObjectSettings\SensorDisplay.cs" />
+    <Compile Include="Enums\ObjectSettings\ExeScriptSetting.cs" />
+    <Compile Include="Enums\Serialization\FilterOperator.cs" />
+    <Compile Include="Enums\Serialization\Output.cs" />
+    <Compile Include="Enums\Serialization\Parameter.cs" />
     <Compile Include="Enums\ParameterType.cs" />
-    <Compile Include="Enums\PauseAction.cs" />
+    <Compile Include="Enums\Serialization\PauseAction.cs" />
     <Compile Include="Enums\Deserialization\Priority.cs" />
-    <Compile Include="Enums\RecordAge.cs" />
+    <Compile Include="Enums\Serialization\RecordAge.cs" />
     <Compile Include="Enums\Deserialization\SensorStatus.cs" />
     <Compile Include="Enums\Functions\XmlFunction.cs" />
-    <Compile Include="Enums\CustomNumberFormat.cs" />
-    <Compile Include="Enums\SubType.cs" />
+    <Compile Include="Enums\Serialization\CustomNumberFormat.cs" />
+    <Compile Include="Enums\Serialization\SubType.cs" />
     <Compile Include="Exceptions\Internal\MissingAttributeException.cs" />
     <Compile Include="Exceptions\Internal\MissingParameterTypeException.cs" />
     <Compile Include="Exceptions\PrtgRequestException.cs" />
@@ -164,23 +179,23 @@
     <Compile Include="Helpers\AttributeHelpers.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\XDocumentHelpers.cs" />
-    <Compile Include="NotificationTypes.cs" />
+    <Compile Include="Objects\NotificationTypes.cs" />
     <Compile Include="Objects\Probe.cs" />
     <Compile Include="Objects\Shared\DeviceOrGroupOrProbe.cs" />
-    <Compile Include="Parameters\Object Data\GetObjectSettingParameters.cs" />
+    <Compile Include="Parameters\ObjectData\GetObjectSettingParameters.cs" />
     <Compile Include="Parameters\Base\BaseObjectSettingParameters.cs" />
     <Compile Include="Parameters\Base\BasePauseParameters.cs" />
-    <Compile Include="Parameters\Object Data\ProbeParameters.cs" />
-    <Compile Include="Parameters\Object Manipulation\SetChannelSettingParameters.cs" />
-    <Compile Include="Parameters\Object Manipulation\SetObjectSettingParameters.cs" />
+    <Compile Include="Parameters\ObjectData\ProbeParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SetChannelSettingParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SetObjectSettingParameters.cs" />
     <Compile Include="Parameters\Base\Parameters.cs" />
     <Compile Include="Parameters\Base\TableParameters.cs" />
-    <Compile Include="Parameters\Object Data\DeviceParameters.cs" />
-    <Compile Include="Parameters\Object Data\GroupParameters.cs" />
-    <Compile Include="Parameters\Object Manipulation\PauseForDurationParameters.cs" />
-    <Compile Include="Parameters\Object Manipulation\PauseParameters.cs" />
-    <Compile Include="Parameters\Object Manipulation\SimulateErrorParameters.cs" />
-    <Compile Include="Parameters\Object Data\SensorParameters.cs" />
+    <Compile Include="Parameters\ObjectData\DeviceParameters.cs" />
+    <Compile Include="Parameters\ObjectData\GroupParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\PauseForDurationParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\PauseParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SimulateErrorParameters.cs" />
+    <Compile Include="Parameters\ObjectData\SensorParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ConnectPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\DisconnectPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensor.cs" />
@@ -200,15 +215,18 @@
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory.cs" />
     <Compile Include="PrtgClient.cs" />
     <Compile Include="PrtgUrl.cs" />
+    <Compile Include="WebClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml" />
+    <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PowerShell\Resources\PrtgAPI.ps1" />
     <None Include="PowerShell\Resources\PrtgAPI.psd1" />
     <None Include="PowerShell\Resources\PrtgAPI.psm1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AssemblyFileVersion.tt">
+    <Content Include="Properties\AssemblyFileVersion.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyFileVersion.cs</LastGenOutput>
     </Content>
@@ -222,14 +240,13 @@
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if "$(ConfigurationName)" == Release goto :release
-if "$(ConfigurationName)" == "PowerShell (Release)" goto :release
+    <PreBuildEvent>if "$(ConfigurationName)" == "Release" goto :release
 goto :exit
 
 :release
 set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
 if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
-%25textTemplatingPath%25 "$(ProjectDir)AssemblyFileVersion.tt"
+%25textTemplatingPath%25 "$(ProjectDir)Properties\AssemblyFileVersion.tt"
 
 :exit</PreBuildEvent>
   </PropertyGroup>

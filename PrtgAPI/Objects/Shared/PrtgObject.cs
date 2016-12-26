@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
@@ -18,7 +24,7 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("objid")]
         [PropertyParameter(nameof(Property.ObjId))]
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Name of this object.
@@ -29,17 +35,6 @@ namespace PrtgAPI.Objects.Shared
 
         // ################################## All Objects ##################################
 
-        private string comments;
-
-        /// <summary>
-        /// Comments present on this object.
-        /// </summary>
-        [XmlElement("comments")]
-        [PropertyParameter(nameof(Property.Comments))]
-        public string Comments
-        {
-            get { return comments;}
-            set { comments = string.IsNullOrWhiteSpace(value) ? null : value.Trim(); }
-        }
+        
     }
 }

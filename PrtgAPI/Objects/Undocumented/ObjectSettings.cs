@@ -184,7 +184,9 @@ namespace PrtgAPI.Objects.Undocumented
                 if (!prop.Hidden && dictionary[prop.Name].Hidden)
                     dictionary[prop.Name] = prop;
                 else if (prop.Hidden && dictionary[prop.Name].Hidden)
-                    ; //Don't care
+                {
+                    //Don't care
+                }
                 else
                     throw new NotImplementedException($"Two properties were found with the same name but had different types: '{prop.Type}', '{dictionary[prop.Name]}'");
             }

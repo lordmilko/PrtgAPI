@@ -69,6 +69,11 @@ namespace PrtgAPI
             {
                 str += " " + ex.InnerException.Message;
             }
+            else
+            {
+                if(ex != null)
+                    str += " " + ex.Message;
+            }
 
             return str;
         }

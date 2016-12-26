@@ -50,7 +50,6 @@ namespace PrtgAPI.PowerShell.Base
             Debug.WriteLine($"############################ ProcessRecord for {GetType()} Filter is {str} ############################ ");
 
             IEnumerable<T> records = null;
-            Task<IEnumerable<T>> recordsAsync = null;
 
             ProgressSettings progressSettings = null;
 
@@ -72,7 +71,7 @@ namespace PrtgAPI.PowerShell.Base
 
                 records = GetRecords();
 
-                progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count); //TODO - FIX UP PROPERLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count);
             }
             else
             {
@@ -97,10 +96,16 @@ namespace PrtgAPI.PowerShell.Base
                 }
             }
 
-            WriteList(records, progressSettings);
-
+            try
+            {
+                WriteList(records, progressSettings);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+            }
             
-
             //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
 
             Filter = null;

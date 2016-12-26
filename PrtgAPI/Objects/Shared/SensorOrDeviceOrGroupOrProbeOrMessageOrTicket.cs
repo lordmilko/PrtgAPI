@@ -15,13 +15,14 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("status_raw")]
         [PropertyParameter(nameof(Property.Status))]
-        public SensorStatus? Status { get; set; }
+        public SensorStatus Status { get; set; }
 
         /// <summary>
         /// <see cref="Priority"/> of this object.
         /// </summary>
         [XmlElement("priority")]
+        [XmlElement("priority_raw")]
         [PropertyParameter(nameof(Property.Priority))]
-        public Priority? Priority { get; set; }
+        public Priority Priority { get; set; }
     }
 }

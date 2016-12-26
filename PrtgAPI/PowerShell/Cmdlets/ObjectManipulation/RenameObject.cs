@@ -32,7 +32,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.Rename(Object.Id.Value, Name);
+            client.Rename(Object.Id, Name);
         }
     }
 }

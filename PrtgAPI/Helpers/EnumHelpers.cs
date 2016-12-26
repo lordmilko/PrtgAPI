@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
@@ -13,6 +14,36 @@ namespace PrtgAPI.Helpers
         {
             return (T)Enum.Parse(typeof(T), value, true);
         }
+
+        public static IEnumerable<Enum> GetUnderlyingFlags(this Enum element)
+        {
+            var enums = Enum.GetValues(element.GetType()).Cast<Enum>().ToList();
+
+            return GetUnderlyingFlagsInternal(element, enums).Distinct();
+        }
+
+        private static IEnumerable<Enum> GetUnderlyingFlagsInternal(Enum e, List<Enum> enums)
+        {
+            foreach (var enumListMember in enums)
+            {
+                if (e.HasFlag(enumListMember) && !e.Equals(enumListMember))
+                {
+                    var result = GetUnderlyingFlagsInternal(enumListMember, enums).ToList();
+
+                    if (result.Count == 0)
+                        yield return enumListMember;
+                    else
+                    {
+                        foreach (var val in result)
+                        {
+                            yield return val;
+                        }
+                    }
+                }
+            }
+        }
+
+        
 
         public static TEnum DescriptionToEnum<TEnum>(this string value, bool toStringFallback = true)
         {
@@ -52,6 +83,23 @@ namespace PrtgAPI.Helpers
             }
 
             throw new XmlDeserializationException($"Could not find a member in type {typeof(TEnum)} with an XmlEnumAlternateNameAttribute for value '{value}'");
+        }
+
+        internal static object XmlToEnum(string value, Type type)
+        {
+            foreach (var field in type.GetFields())
+            {
+                //var attribute = Attribute.GetCustomAttribute(field, typeof(XmlEnumAttribute), false) as XmlEnumAttribute;
+                var attribute = Attribute.GetCustomAttributes(field, typeof(XmlEnumAttribute)).Where(a => a.GetType() == typeof(XmlEnumAttribute)).Cast<XmlEnumAttribute>().FirstOrDefault();
+
+                if (attribute != null)
+                {
+                    if (attribute.Name == value)
+                        return field.GetValue(null);
+                }
+            }
+
+            return Enum.Parse(type, value, true);
         }
 
         public static string GetDescription(this Enum element, bool toStringFallback = true)

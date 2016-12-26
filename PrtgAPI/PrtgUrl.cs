@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using System.Reflection;
 
 namespace PrtgAPI
 {
@@ -49,14 +50,7 @@ namespace PrtgAPI
         {
             StringBuilder url = new StringBuilder();
 
-            if (server.StartsWith("http://") || server.StartsWith("https://"))
-            {
-                url.Append(server);
-            }
-            else
-            {
-                url.Append($"https://{server}");
-            }
+            url.Append(AddUrlPrefix(server));
 
             url.Append(function);
 
@@ -81,6 +75,18 @@ namespace PrtgAPI
 #if DEBUG
             Debug.WriteLine(Url);
 #endif
+        }
+
+        private string AddUrlPrefix(string server)
+        {
+            if (server.StartsWith("http://") || server.StartsWith("https://"))
+            {
+                return server;
+            }
+            else
+            {
+                return $"https://{server}";
+            }
         }
 
         private static string GetResourcePath(Enum function)
@@ -114,6 +120,8 @@ namespace PrtgAPI
 
         private static string GetUrlComponent(Parameter parameter, object value)
         {
+            var parameterType = parameter.GetParameterType();
+
             if (parameter == Parameter.Custom)
             {
                 var arr = value as IEnumerable<CustomParameter>;
@@ -126,7 +134,7 @@ namespace PrtgAPI
 
                     for (int i = 0; i < list.Count; i++)
                     {
-                        builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value));
+                        builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value.ToString()));
 
                         if (i < list.Count - 1)
                             builder.Append("&");
@@ -139,13 +147,17 @@ namespace PrtgAPI
 
                 if (singleParam != null)
                 {
-                    return FormatSingleParameterWithoutValEncode(singleParam.Name, singleParam.Value);
+                    return FormatSingleParameterWithoutValEncode(singleParam.Name, singleParam.Value.ToString());
                 }
 
                 throw new NotImplementedException(); //actually you just passed the wrong type, so its an argument exception?
             }
 
-            var parameterType = parameter.GetParameterType();
+            if ((parameterType == ParameterType.MultiParameter || parameterType == ParameterType.MultiValue) && !(value is IEnumerable))
+            {
+                value = new[] { value };
+            }
+
             var description = parameter.GetDescription();
 
             //Format String Parameter
@@ -223,7 +235,26 @@ namespace PrtgAPI
 
                 if (description == Parameter.FilterXyz.GetDescription())
                 {
-                    query = ((SearchFilter)val).ToString();
+                    var filter = (SearchFilter)val;
+
+                    string result = null;
+
+                    if (filter.Value.GetType().IsEnum)
+                    {
+                        var e = (Enum) filter.Value;
+
+                        result = FormatFlagEnum(e, v => filter.ToString(v));
+                    }
+
+                    query = result ?? ((SearchFilter)val).ToString();
+                }
+                else if(val.GetType().IsEnum)
+                {
+                    var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
+
+                    query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val);
+
+                    //if it has a flag attribute, get its underlying flags, foreach of them formatsingleparameterwithvalencode
                 }
                 else
                 {
@@ -236,6 +267,32 @@ namespace PrtgAPI
             builder.Length--;
 
             return builder.ToString();
+        }
+
+        private static string FormatFlagEnum(Enum e, Func<Enum, string> formatter)
+        {
+            string query = null;
+
+            if (e.GetType().GetCustomAttributes<FlagsAttribute>().Any())
+            {
+                var flags = e.GetUnderlyingFlags().ToList();
+
+                if (flags.Count > 0)
+                {
+                    var enumBuilder = new StringBuilder();
+
+                    foreach (var @enum in flags)
+                    {
+                        enumBuilder.Append(formatter(@enum) + "&");
+                    }
+
+                    enumBuilder.Length--;
+
+                    query = enumBuilder.ToString();
+                }
+            }
+
+            return query;
         }
     }
 }

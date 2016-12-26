@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
+using System.Reflection;
 
 namespace PrtgAPI
 {
@@ -46,15 +48,15 @@ namespace PrtgAPI
             Value = value;
         }
 
-        private string GetOperatorFormat()
+        private static string GetOperatorFormat(object value, FilterOperator @operator)
         {
-            var operatorDescription = Operator.GetDescription(false);
+            var operatorDescription = @operator.GetDescription(false);
 
-            var val = Value.ToString();
+            var val = value.ToString();
 
-            if (Value.GetType().IsEnum)
+            if (value.GetType().IsEnum)
             {
-                var attrib = ((Enum)Value).GetEnumAttribute<XmlEnumAttribute>();
+                var attrib = ((Enum)value).GetEnumAttribute<XmlEnumAttribute>();
 
                 if (attrib != null)
                     val = attrib.Name;
@@ -63,7 +65,7 @@ namespace PrtgAPI
             if (operatorDescription == null)
                 return val;
             else
-                return string.Format($"@{operatorDescription}({val})");
+                return $"@{operatorDescription}({val})";
         }
 
         /// <summary>
@@ -72,9 +74,21 @@ namespace PrtgAPI
         /// <returns></returns>
         public override string ToString()
         {
-            var format = string.Format($"{Parameter.FilterXyz.GetDescription()}{Property.ToString().ToLower()}={GetOperatorFormat()}");
+            return ToString(Value);
+        }
+
+        public string ToString(object value)
+        {
+            return ToString($"{Parameter.FilterXyz.GetDescription()}{Property.ToString().ToLower()}", Operator, value);
+        }
+
+        internal static string ToString(string parameter, FilterOperator @operator, object value)
+        {
+            var format = $"{parameter}={GetOperatorFormat(value, @operator)}";
 
             return format;
         }
+
+
     }
 }

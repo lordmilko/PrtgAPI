@@ -6,7 +6,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Initializes a new instance of a <see cref="PrtgClient"/>. This cmdlet must be called at least once before attempting to use any other cmdlets.
     /// </summary>
-    [Cmdlet("Connect", "PrtgServer")]
+    [Cmdlet(VerbsCommunications.Connect, "PrtgServer")]
     public class ConnectPrtgServer : PSCmdlet
     {
         /// <summary>

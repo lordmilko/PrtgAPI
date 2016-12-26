@@ -5,7 +5,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Invalidates a <see cref="PrtgClient"/> previously created with <see cref="ConnectPrtgServer"/>.
     /// </summary>
-    [Cmdlet("Disconnect", "PrtgServer")]
+    [Cmdlet(VerbsCommunications.Disconnect, "PrtgServer")]
     public class DisconnectPrtgServer : PSCmdlet
     {
         /// <summary>

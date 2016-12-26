@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -11,6 +14,8 @@ using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Html;
+using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
 
@@ -36,10 +41,17 @@ namespace PrtgAPI
         /// </summary>
         public string PassHash { get; }
 
+        private IWebClient client;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgClient"/> class.
         /// </summary>
         public PrtgClient(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
+            : this(server, username, pass, authMode, new WebClient())
+        {
+        }
+
+        internal PrtgClient(string server, string username, string pass, AuthMode authMode, IWebClient client)
         {
             if (server == null)
                 throw new ArgumentNullException(nameof(server));
@@ -49,6 +61,8 @@ namespace PrtgAPI
 
             if (pass == null)
                 throw new ArgumentNullException(nameof(pass));
+
+            this.client = client;
 
             Server = server;
             Username = username;
@@ -349,7 +363,7 @@ namespace PrtgAPI
 
         #endregion
 
-        #region Channel
+        #region Channels
 
         /// <summary>
         /// Retrieve all channels of a sensor.
@@ -385,7 +399,6 @@ namespace PrtgAPI
             }
 
             return obj;*/
-            return null;
         }
 
         internal XElement GetChannelProperties(int sensorId, int channelId)
@@ -440,7 +453,263 @@ namespace PrtgAPI
             var response = ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
-        
+
+
+        #endregion
+
+        #region Notification Actions       
+
+        //todo: move this
+        public List<SensorHistory> GetSensorHistory(int sensorId)
+        {
+            Logger.DebugEnabled = false;
+
+            //todo: add xml formatting
+            //var awwww = typeof (SensorOrDeviceOrGroupOrProbe).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+            //var q = GetSensors(SensorStatus.Paused);
+
+            //var filter = new SearchFilter(Property.Comments, SensorStatus.Paused);
+            //filter.ToString();
+
+            //myenum val = myenum.Val5;
+
+            //var al= Enum.GetValues(typeof (myenum)).Cast<myenum>().Where(m => m != val && val.HasFlag(m)).ToList();
+
+            //var enums = Enum.GetValues(typeof (myenum)).Cast<myenum>().ToList();
+
+
+            //var result = myenum.Val5.GetUnderlyingFlags();
+
+            //var result = outer(myenum.Val5, enums).ToList();
+
+            //foreach (var a in al1)
+            
+
+            //loop over each element. if a value contains more than 1 element in it, its not real, so ignore it
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Columns] = new[] {Property.Datetime, Property.Value_, Property.Coverage},
+                [Parameter.Id] = 2196,
+                [Parameter.Content] = Content.Values
+            };
+
+            var items = GetObjects<SensorHistoryData>(parameters);
+
+            foreach (var history in items)
+            {
+                foreach (var value in history.Values)
+                {
+                    value.DateTime = history.DateTime;
+                    value.SensorId = sensorId;
+                }
+            }
+            //todo: need to implement coverage column
+            //todo: right now the count is just the default - 500. need to allow specifying bigger counts
+            return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
+        }
+
+        public List<NotificationTrigger> GetNotificationTriggers(int objectId)
+        {
+            //var allRaw = GetNotificationTriggers(objectId, Content.Triggers);
+            //var all = GetNotificationTriggers(allRaw, objectId);
+            //return all;
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.Content] = Content.Triggers,
+                [Parameter.Columns] = new [] { Property.Content, Property.ObjId }
+            };
+
+            var xmlResponse = ExecuteRequest(XmlFunction.TableData, parameters);
+            var xmlResponseContent = xmlResponse.Descendants("item").Select(x => new
+            {
+                Content = x.Element("content").Value,
+                Id = Convert.ToInt32(x.Element("objid").Value)
+            }).ToList();
+            //var xmlResponseContent = xmlResponse.Descendants("content").Select(x => x.Value).ToList(); //we have an objid now so we need to handle that!
+            var triggers = JsonDeserializer<NotificationTrigger>.DeserializeList(xmlResponseContent, e => e.Content,
+                (e, o) =>
+                {
+                    o.SubId = e.Id;
+                    o.ObjectId = objectId;
+                });
+
+            return triggers;
+
+            //var jsonResponse = ExecuteRequest(JsonFunction.Triggers, parameters);
+            //var jsonData = JsonDeserializer<NotificationTriggerData>.DeserializeType(jsonResponse);
+            
+            //objectlinkxml contains the parentid, whereas triggers.json contains the subid
+
+            //foreach (var trigger in triggers)
+            //{
+            //    trigger.ObjectId = objectId;
+
+                //we need to loop between the jsonresponse to add the subid to the xml response, however how am i supposed to
+                //identify which subid belongs to which trigger when the subid is what unique identifies a trigger!
+            //}
+
+            throw new NotImplementedException();
+
+            //return data.Triggers.ToList();
+
+
+
+
+
+
+
+            //if thisid != parentid, its inherited
+
+
+
+            //var inheritedRaw = GetNotificationTriggers(objectId, Content.Trigger).ToList();
+
+
+            //var nonInheritedRaw = allRaw.Except(inheritedRaw);
+
+
+
+
+
+
+            //var nonInherited = GetNotificationTriggers(nonInheritedRaw, objectId);
+
+
+
+            //inherited triggers - https://prtg.example.com/api/table.xml?id=49229&content=triggers&columns=content
+            //then, we have to do a diff
+
+
+
+
+
+
+            //http://prtg.example.com/api/table.json?content=triggers&id=1&columns=content
+
+
+
+            //using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(response)))
+            {
+            //    var data = (NotificationTriggerData) deserializer.ReadObject(stream);
+
+            //    return data.Triggers.ToList();
+            }
+
+
+
+
+
+
+            //http://stackoverflow.com/questions/814001/how-to-convert-json-to-xml-or-xml-to-json
+
+
+
+            //todo: need to handle no content
+
+            //editsettings?inherittriggers_=0&id=1
+
+
+            //configure sensor 2196 to have a go green event and compare the json
+
+            //how do we enable/disable inheritance of notifications
+            //POST /editsettings?nodest_new=0&latency_new=60&onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&esclatency_new=300&escnotificationid_new=-1%7CNone%7C&repeatival_new=0&offnotificationid_new=-1%7CNone%7C&subid=new&objecttype=nodetrigger&class=state&ajaxrequest=1&id=2196 HTTP/1.1
+            //how do we get the setting of whether inheritance is enabled/disabled
+            //http://prtg.example.com/controls/triggersandnotifications.htm?id=2196
+            //how do we get the values of the inherited notifications
+
+            //i bet theres a way we can get ALL the info in a single request
+
+            //there is a log.htm page that takes ?filter_status filters.
+
+            //apparently its valid to set * as a valid for parameter count
+
+            //http://prtg.example.com/api/triggers.json?id=2196&subid=1
+
+            //all triggers:
+
+            //http://prtg.example.com/api/triggers.json?id=1
+
+            //have our get-notification cmdlet called gettriggers. maybe rename this function too?
+
+            //todo: add sensorid to the table display for get-channelproperty
+        }
+
+        public List<NotificationAction> GetNotificationActions()
+        {
+            return GetObjects<NotificationAction>(new NotificationActionParameters());
+        }
+
+        public void SetNotificationTrigger(TriggerParameters parameters)
+        {
+            ExecuteRequest(HtmlFunction.EditSettings, parameters);
+            //var p = new StateTriggerParameters(2196, null, ModifyAction.Add, TriggerSensorState.Down); //will the fact we tolower our value prevent the notificationaction from working?
+                                                                                                       //p.Latency = 30;
+
+            //how do you delete a trigger?
+                //GET /deletesub.htm?id=2196&subid=7&_=1481973979539 HTTP/1.1
+            //we can have a new-triggerparameter that takes a -type and gives back the appropriate object
+
+            //var url = new PrtgUrl(Server, Username, PassHash, HtmlFunction.EditSettings, p);
+
+            int i = 0;
+            /*
+            
+            nodest_new=0&
+            latency_new=60&
+            onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&
+            esclatency_new=300&
+            escnotificationid_new=-1%7CNone%7C&
+            offnotificationid_new=-1%7CNone%7C&
+            repeatival_new=0&
+            <optional offnotificationid>
+
+
+
+            subid=new&
+            objecttype=nodetrigger&
+            class=state&
+            ajaxrequest=1&
+            id=2196
+            */
+
+            //POST /editsettings? HTTP/1.1
+
+            //some have _new, some dont. what are the fields called when you EDIT a trigger?
+
+            //POST /editsettings?nodest_4=0&latency_4=70&onnotificationid_4=300%7CEmail+and+push+notification+to+admin%7C&esclatency_4=300&escnotificationid_4=301%7CEmail+to+all+members+of+group+PRTG+Users+Group%7C&repeatival_4=3&offnotificationid_4=302%7CTicket+Notification%7C&id=1&subid=4 HTTP/1.1
+
+            /*
+            //POST /editsettings?
+            
+            nodest_4=0&
+            latency_4=70&
+            onnotificationid_4=300%7CEmail+and+push+notification+to+admin%7C&
+            esclatency_4=300
+            &escnotificationid_4=301%7CEmail+to+all+members+of+group+PRTG+Users+Group%7C
+            &repeatival_4=3&
+            offnotificationid_4=302%7CTicket+Notification%7C&
+            id=1&subid=4 HTTP/1.1
+            */
+
+
+
+            //instead of appending "new", append the subid of the trigger
+
+        }
+
+        public void RemoveNotificationTrigger(int objectId, int triggerId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.SubId] = triggerId
+            };
+
+            ExecuteRequest(HtmlFunction.RemoveSubObject, parameters);
+        }
 
         #endregion
 
@@ -558,7 +827,7 @@ namespace PrtgAPI
 
             try
             {
-                var client = new WebClient();
+                //var client = new WebClient();
                 response = client.DownloadString(url.Url);
             }
             catch (WebException ex)
@@ -693,8 +962,7 @@ namespace PrtgAPI
 
                     var associatedProperties = property.GetDependentProperties<ChannelProperty>();
 
-                    customParams.AddRange(
-                        associatedProperties.Select(prop => Channel.CreateCustomParameter(prop, channelId, string.Empty)));
+                    customParams.AddRange(associatedProperties.Select(prop => Channel.CreateCustomParameter(prop, channelId, string.Empty)));
                 }
             }
             else //if we're enabling a property, check if there are values we depend on. if so, enable them!
@@ -925,6 +1193,8 @@ namespace PrtgAPI
             ExecuteRequest(CommandFunction.DuplicateObject, parameters);
 
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+
+            //get-sensor|copy-object -target $devices
         }
 
         //clone a device

@@ -265,6 +265,10 @@
                     <TableColumnHeader> <!-- Name -->
                         <Width>25</Width>
                     </TableColumnHeader>
+                    <TableColumnHeader> <!-- SensorId -->
+                        <Width>8</Width>
+                        <Alignment>Left</Alignment>
+                    </TableColumnHeader>
                     <TableColumnHeader> <!-- Id -->
                         <Width>6</Width>
                         <Alignment>Right</Alignment>
@@ -297,6 +301,9 @@
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
+                                <PropertyName>SensorId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
                                 <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
@@ -313,6 +320,82 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>ErrorLimitMessage</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.NotificationTrigger</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Type -->
+                        <Width>9</Width>
+                        <Alignment>Left</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- ObjectId -->
+                        <Width>8</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- SubId -->
+                        <Width>5</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Inherited -->
+                        <Width>9</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- ParentId -->
+                        <Width>8</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Latency -->
+                        <Width>7</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Condition -->
+                        <Width>9</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Threshold -->
+                        <Width>9</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Units -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- OnNotificationAction -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Type</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ObjectId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>SubId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Inherited</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ParentId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Latency</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Condition</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Threshold</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Units</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>OnNotificationAction</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>

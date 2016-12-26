@@ -19,8 +19,6 @@ namespace PrtgAPI
         {
             var regex = new Regex("(.+?)\\|(.+?)\\|");
 
-            var res = regex.Match(raw).Success;
-
             var number = regex.Replace(raw, "$1");
             var name = regex.Replace(raw, "$2");
 

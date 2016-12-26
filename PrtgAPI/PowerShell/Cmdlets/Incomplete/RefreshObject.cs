@@ -17,7 +17,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         protected override void ProcessRecord()
         {
-            client.CheckNow(Object.Id.Value);
+            client.CheckNow(Object.Id);
         }
     }
 }

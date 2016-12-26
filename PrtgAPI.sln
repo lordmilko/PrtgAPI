@@ -15,18 +15,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.PowerShell (Debug)|Any CPU.ActiveCfg = PowerShell (Debug)|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.PowerShell (Debug)|Any CPU.Build.0 = PowerShell (Debug)|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.PowerShell (Release)|Any CPU.ActiveCfg = PowerShell (Release)|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.PowerShell (Release)|Any CPU.Build.0 = PowerShell (Release)|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2179C33F-C774-45AF-A664-338B8C3B799B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2179C33F-C774-45AF-A664-338B8C3B799B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.PowerShell (Debug)|Any CPU.ActiveCfg = PowerShell (Debug)|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.PowerShell (Debug)|Any CPU.Build.0 = PowerShell (Debug)|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.PowerShell (Release)|Any CPU.ActiveCfg = PowerShell (Debug)|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.PowerShell (Release)|Any CPU.Build.0 = PowerShell (Debug)|Any CPU
 		{2179C33F-C774-45AF-A664-338B8C3B799B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2179C33F-C774-45AF-A664-338B8C3B799B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

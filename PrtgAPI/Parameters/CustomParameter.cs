@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Parameters
 {
-    class CustomParameter
+    public class CustomParameter
     {
         public string Name { get; set; }
 
-        public string Value { get; set; }
+        public object Value { get; set; }
 
-        public CustomParameter(string name, string value)
+        public CustomParameter(string name, object value)
         {
             Name = name;
             Value = value;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name}={Value}";
         }
     }
 }

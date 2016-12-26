@@ -27,10 +27,24 @@
         /// </summary>
         Channels,
 
+        Notifications,
+
+        /// <summary>
+        /// All notification triggers defined on an object, including inherited triggers.
+        /// </summary>
+        Triggers,
+
+        /// <summary>
+        /// Notification triggers inherited by an object.
+        /// </summary>
+        Trigger,
+
+        Values,
+
         /*Tickets,
         TicketData,
         Messages,
-        Values,
+        
         
         Reports,
         TopLists,*/

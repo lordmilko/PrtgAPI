@@ -21,5 +21,9 @@ namespace PrtgAPI
         [Undocumented]
         [Description("editsettings")]
         EditSettings,
+
+        [Undocumented]
+        [Description("deletesub.htm")]
+        RemoveSubObject
     }
 }

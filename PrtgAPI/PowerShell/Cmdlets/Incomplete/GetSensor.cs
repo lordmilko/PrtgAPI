@@ -56,41 +56,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         //try and find out how to "disable limits" for a channel type
 
 
-        /*
-
-        Todo
-        ----------------
-
-        -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
-
-        Async
-        -can we run a task for x seconds before we demand it switches the context back to us so we can do something then resume it. we could use this to get the sensor totals
-         and if its taking too long THEN display a progress bar
-        -is there some way we can specify a cancellation token or something for a web request download?
-
-        Device
-        -Add a property for propertyparameter "Host". Confirm it works
-
-        SearchFilter
-        -if the value passed to searchfilter is an enum, and that enum has an xmlenum property, search using the value in the xmlenum instead of the string representation of the enum
-        -my documentation in my readme.md file says equals is case sensitive, but it actually doesnt appear to be. whats up with that?
-
-        GetSensor
-        -Status parameter needs to support passing "paused", which resolves to all types of being paused
-        -bug: if we specify name and tags together we get no results. it looks like the actual issue is we need to do @sub on tag requests. i think we should extend support to doing wildcards for tags, if not any value that could be specified?
-        -tags always need to filter using "contains. we're fine for the powershell version, but i think we need some sort of filteroperator override for the c# api. perhaps
-         a filteroperatoroverrideattribute. we can override it during the prtgurl construction, but then we need to filter the results once the request has completed
-        -if you specify a status filter of "acknowledged" does it autocomplete to downacknowledged?
-        -should the LastValue property be a number? if so, when sensors are paused they are "-" so clearly it should be a nullable double or something?
-        -there is a "listend" property when you make a request. 1 means you've gotten all the sensors now. i dont think this will help considering previously we asked for the remaining ones and we got more than we expected
-
-        Get[Sensor|Device|Group|Probe]
-        -how do we do wildcard matching in the middle of a name? (e.g. "a*m"). potential solution: do two filter_xyz's and then do a final powershell wildcardmatch class on the result
-
-        GetChannel
-        -test on drods pc. see if the output is all messed up and middle aligned. is it a windows 10 thing? we can also test on my win 10 vm
-
-        */
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetSensor"/> class.

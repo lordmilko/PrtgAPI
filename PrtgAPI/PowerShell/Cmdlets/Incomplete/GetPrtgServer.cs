@@ -18,7 +18,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             //WriteObject(client.GetStatus());
 
             //find out how prtgshell or whatever showed the server status, that looked pretty good
-
+            
             WriteObject(PrtgSessionState.Client);
         }
 

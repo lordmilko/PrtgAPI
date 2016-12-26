@@ -68,28 +68,16 @@ namespace PrtgAPI
         /// <summary>
         /// Total amount of time sensor has ever been in a down state.
         /// </summary>
-        [PropertyParameter(nameof(Property.DowntimeTime))]
-        public TimeSpan? TotalDowntime => DH.ConvertPrtgTimeSpan(_RawTotalDowntime);
-
-        /// <summary>
-        /// Raw value used for <see cref="TotalDowntime"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("downtimetime_raw")]
-        public double? _RawTotalDowntime { get; set; }
+        [PropertyParameter(nameof(Property.DowntimeTime))]
+        public TimeSpan? TotalDowntime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an up state. If sensor is currently up, this value is null.
         /// </summary>
-        [PropertyParameter(nameof(Property.DowntimeSince))]
-        public TimeSpan? DownDuration => DH.ConvertPrtgTimeSpan(_RawDownDuration);
-
-        /// <summary>
-        /// Raw value used for <see cref="DownDuration"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("downtimesince_raw")]
-        public double? _RawDownDuration { get; set; }
+        [PropertyParameter(nameof(Property.DowntimeSince))]
+        public TimeSpan? DownDuration { get; set; }
 
         /// <summary>
         /// Percentage indicating overall uptime of this object over its entire lifetime. See also: <see cref="Downtime"/>.
@@ -101,93 +89,51 @@ namespace PrtgAPI
         /// <summary>
         /// Total amount of time sensor has ever been in an up state.
         /// </summary>
-        [PropertyParameter(nameof(Property.UptimeTime))]
-        public TimeSpan? TotalUptime => DH.ConvertPrtgTimeSpan(_RawTotalUptime);
-
-        /// <summary>
-        /// Raw value used for <see cref="TotalUptime"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("uptimetime_raw")]
-        public double? _RawTotalUptime { get; set; }
+        [PropertyParameter(nameof(Property.UptimeTime))]
+        public TimeSpan? TotalUptime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an down state. If sensor is currently down, this value is null.
         /// </summary>
-        [PropertyParameter(nameof(Property.UptimeSince))]
-        public TimeSpan? UpDuration => DH.ConvertPrtgTimeSpan(_RawUpDuration);
-
-        /// <summary>
-        /// Raw value used for <see cref="UpDuration"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("uptimesince_raw")]
-        public double? _RawUpDuration { get; set; }
+        [PropertyParameter(nameof(Property.UptimeSince))]
+        public TimeSpan? UpDuration { get; set; }
 
         /// <summary>
         /// Total amount of time this sensor has been in an up or down state.
         /// </summary>
-        [PropertyParameter(nameof(Property.KnownTime))]
-        public TimeSpan? TotalMonitorTime => DH.ConvertPrtgTimeSpan(_RawTotalMonitorTime);
-
-        /// <summary>
-        /// Raw value used for <see cref="TotalMonitorTime"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("knowntime_raw")]
-        public double? _RawTotalMonitorTime { get; set; }
+        [PropertyParameter(nameof(Property.KnownTime))]
+        public TimeSpan TotalMonitorTime { get; set; }
 
         /// <summary>
         /// When data collection on this sensor began.
         /// </summary>
         [PropertyParameter(nameof(Property.CumSince))]
-        public DateTime? DataCollectedSince => DH.ConvertPrtgDateTime(_RawDataCollectedSince);
-
-        /// <summary>
-        /// Raw value used for <see cref="DataCollectedSince"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("cumsince_raw")]
-        public double? _RawDataCollectedSince { get; set; }
+        public DateTime? DataCollectedSince { get; set; }
 
         /// <summary>
         /// When this sensor last checked for a value.
         /// </summary>
-        [PropertyParameter(nameof(Property.LastCheck))]
-        public DateTime? LastCheck => DH.ConvertPrtgDateTime(_RawLastCheck);
-
-        /// <summary>
-        /// Raw value used for <see cref="LastCheck"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("lastcheck_raw")]
-        public double? _RawLastCheck { get; set; }
+        [PropertyParameter(nameof(Property.LastCheck))]
+        public DateTime? LastCheck { get; set; }
 
         /// <summary>
         /// When this object was last in an up state.
         /// </summary>
-        [PropertyParameter(nameof(Property.LastUp))]
-        public DateTime? LastUp => DH.ConvertPrtgDateTime(_RawLastUp);
-
-        /// <summary>
-        /// Raw value used for <see cref="LastUp"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("lastup_raw")]
-        public double? _RawLastUp { get; set; }
-
+        [PropertyParameter(nameof(Property.LastUp))]
+        public DateTime? LastUp { get; set; }
+        
         /// <summary>
         /// When this value was last in a down state.
         /// </summary>
-        [PropertyParameter(nameof(Property.LastDown))]
-        public DateTime? LastDown => DH.ConvertPrtgDateTime(_RawLastDown);
-
-        /// <summary>
-        /// Raw value used for <see cref="LastDown"/> attribute. This property should not be used.
-        /// </summary>
-        [Hidden]
         [XmlElement("lastdown_raw")]
-        public double? _RawLastDown { get; set; }
+        [PropertyParameter(nameof(Property.LastDown))]
+        public DateTime? LastDown { get; set; }
 
         /// <summary>
         /// CSV of sensor values for the past 24 hours. Numbers are stored as 5 minute averages. Value contains two sets of CSVs: measured values and errors. Sets are separated by a pipe . If MiniGraphs are disabled, this value is null.

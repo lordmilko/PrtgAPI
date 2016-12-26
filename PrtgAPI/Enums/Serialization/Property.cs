@@ -429,9 +429,9 @@
         Actions,
 
         /// <summary>
-        /// The text of the ticket that was added with the last edit.
-        /// Used in: TicketData
+        /// The text of the ticket that was added with the last edit, or the properties of a notification trigger.
+        /// Used in: TicketData, Triggers
         /// </summary>
-        Content
+        Content,
     }
 }
