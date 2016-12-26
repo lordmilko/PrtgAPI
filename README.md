@@ -210,12 +210,23 @@ For details on supported parameters run `Get-Help <cmdlet>` within PowerShell
 Get all ping sensors
 
 ```powershell
-Get-Sensor ping
+C:\> Get-Sensor ping # pipe to Format-List to view all properties!
+
+Name                Id      Device      Group           Probe           Status
+----                --      ------      -----           -----           ------
+PING                2010    dc1         Servers         Local Probe     Up
+Ping                2011    dc2         Servers         Local Probe     Down
 ```
 Get all devices whose names contain dc
 
 ```powershell
-Get-Device *dc*
+C:\> Get-Device *dc*
+
+Name                Id      Status      Group           Probe
+----                --      ------      -----           -----
+dc1                 2001    Up          Servers         Local Probe
+dc2                 2002    Down        Servers         Local Probe
+
 ```
 
 If you request all sensors with no filter and have more than 500 sensors in your system, `Get-Sensor` will show a progress bar and execute as if it were an `IEnumerable<Task<>>`, generating multiple sensor requests to your server in parallel and printing results as they come in.
@@ -254,8 +265,15 @@ You can also filter via the pipeline
 Get the channels of a sensor
 
 ```powershell
-Get-Sensor | Select -First 1 | Get-Channel
+C:\> Get-Sensor | Select -First 1 | Get-Channel
+
+Name                SensorId    Id    LastValue LimitsEnabled UpperErrorLimit LowerErrorLimit ErrorLimitMessage
+----                --------    --    --------- ------------- --------------- --------------- -----------------
+Downtime            3001        -4
+Total               3001         0       0.32 %          True              95                 PANIC!! PANIC!!!
+Processor 1         3001         1         <1 %         False
 ```
+
 You can also get the channels of a sensor by specifying its Sensor ID
 ```powershell
 Get-Channel -SensorId 1234
