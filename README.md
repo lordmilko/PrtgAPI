@@ -1,7 +1,12 @@
 # PrtgAPI
+
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
+
+**Current Version: 0.5.0.26**
+
+[What's new](https://github.com/lordmilko/PrtgAPI/commit/71df2d0f95c3f777def3e56fad077fdd03910ddb)
 
 # Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
@@ -68,6 +73,39 @@ var filters = new[]
 var perthDCPingSensors = client.GetSensors(filters);
 ```
 
+## Notification Triggers
+
+The Notification Triggers of an object can be accessed via the `GetNotificationTriggers` method
+
+```c#
+//Get Notification Triggers for the object with ID 1234
+var triggers = client.GetNotificationTriggers(1234);
+```
+
+Notification triggers can also be added and modified via the `SetNotificationTrigger` method.
+
+To update triggers with `SetNotificationTrigger` you must construct a `TriggerParameters` object of the trigger type you wish to construct.
+
+```c#
+
+//Create a new State Trigger on the object with ID 1234
+
+var actions = client.GetNotificationActions();
+
+client.SetNotificationTrigger(new StateTriggerParameters(1234, null, NodifyAction.Add, TriggerSensorState.Down)
+{
+    OnNotificationAction = actions.First() //TriggerParameters have a variety of fields that can be specified
+});
+```
+
+Notification Triggers can also be removed from objects.
+
+```c#
+client.RemoveNotificationTrigger(1234, triggers.First().SubId);
+```
+
+Please note: RemoveNotificationTrigger does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. (The PowerShell variant, Remove-NotificationTrigger, _does_ perform this check)
+
 ## Object Settings
 Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
 
@@ -75,7 +113,7 @@ Values of object settings can be enumerated and manipulated via two groups of ov
 //Retrieve the name of object with ID 2001
 var name = client.GetObjectProperty(2001, BasicObjectSetting.Name);
 ```
-```
+```c#
 //Update the name of object with ID 2001
 var name = client.SetObjectProperty(2001, BasicObjectSetting.Name, "a brand new name!");
 ```
@@ -120,7 +158,7 @@ PrtgAPI implements a number of built-in parameter types that automatically speci
 
 # PowerShell
 
-PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. To compile for PowerShell, ensure you have PowerShell 5 installed (Windows Management Framework 5.0), select the _PowerShell (Release)_ configuration in Visual Studio. This will create a _PrtgAPI_ folder under _bin\PowerShell (Release)_ you can then copy wherever you like and import into PowerShell, as follows:
+PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. When compiling, a _PrtgAPI_ folder will be created under the Debug/Release folder. You can then copy wherever you like and import into PowerShell, as follows:
 ```powershell
 Import-Module "C:\path\to\PrtgAPI" -DisableNameChecking
 ```
@@ -152,6 +190,8 @@ Disconnect-PrtgServer
 Get-Channel
 Get-Device
 Get-Group
+Get-NotificationAction
+Get-NotificationTrigger
 Get-Probe
 Get-PrtgServer
 Get-Sensor
@@ -160,6 +200,7 @@ New-Credential
 New-SearchFilter
 Pause-Object
 Refresh-Object
+Remove-NotificationTrigger
 Remove-Object
 Rename-Object
 Set-ChannelProperty # Currently supports limit related properties
