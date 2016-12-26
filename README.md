@@ -1,5 +1,4 @@
 # PrtgAPI
-
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
@@ -27,13 +26,13 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", Aut
 
 PrtgAPI provides a series of method overloads for retrieving all sorts of data in a variety of different ways.
 
-To retrieve a list of all sensors, call the `GetSensors()` method.
+To retrieve a list of all sensors, call the `GetSensors` method.
 
 ```c#
 var sensors = client.GetSensors();
 ```
 
-For groups, call `GetGroups()`; Devices, call `GetDevices()`, etc.
+For groups, call `GetGroups`; Devices, call `GetDevices`, etc.
 
 Typically however, you'll want to apply one or more filters to limit the number of objects returned (and increase the speed of the HTTP GET request).
 
@@ -219,6 +218,12 @@ Get all devices whose names contain dc
 
 ```powershell
 Get-Device *dc*
+```
+
+If you request all sensors with no filter and have more than 500 sensors in your system, `Get-Sensor` will show a progress bar and execute as if it were an IEnumerable<Task<>>, generating multiple sensor requests to your server in parallel and printing results as they come in.
+
+```powershell
+Get-Sensor # For great justice!
 ```
 
 Delete all sensors whose device name contains "banana"
