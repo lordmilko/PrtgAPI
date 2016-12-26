@@ -218,7 +218,7 @@ Get all devices whose names contain dc
 Get-Device *dc*
 ```
 
-If you request all sensors with no filter and have more than 500 sensors in your system, `Get-Sensor` will show a progress bar and execute as if it were an IEnumerable<Task<>>, generating multiple sensor requests to your server in parallel and printing results as they come in.
+If you request all sensors with no filter and have more than 500 sensors in your system, `Get-Sensor` will show a progress bar and execute as if it were an `IEnumerable<Task<>>`, generating multiple sensor requests to your server in parallel and printing results as they come in.
 
 ```powershell
 Get-Sensor # For great justice!
