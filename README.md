@@ -323,7 +323,7 @@ LastValueNumeric : 1169711104
 
 ## Access Underlying Methods
 
-The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgServer` cmdlet. Accessing the `PrtgClient` object directly allows accessing methods from PowerShell that do not yet have cmdlet counterparts
+The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgServer` cmdlet. Accessing the `PrtgClient` object directly allows invoking methods from PowerShell that do not yet have cmdlet counterparts
 
 ```powershell
 $parameters = CreateMyAwesomeNotificationTrigger
