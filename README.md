@@ -200,7 +200,7 @@ Refresh-Object
 Remove-NotificationTrigger
 Remove-Object
 Rename-Object
-Set-ChannelProperty # Currently supports limit related properties
+Set-ChannelProperty # Currently supports limit and spike related properties
 ```
 
 For details on supported parameters run `Get-Help <cmdlet>` within PowerShell
