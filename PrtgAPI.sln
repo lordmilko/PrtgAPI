@@ -8,8 +8,6 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		PowerShell (Debug)|Any CPU = PowerShell (Debug)|Any CPU
-		PowerShell (Release)|Any CPU = PowerShell (Release)|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
