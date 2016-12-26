@@ -3,9 +3,7 @@ PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfa
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
-**Current Version: 0.5.0.26**
-
-[What's new](https://github.com/lordmilko/PrtgAPI/commit/71df2d0f95c3f777def3e56fad077fdd03910ddb)
+**Current Version: 0.5.0.26**. [What's new](https://github.com/lordmilko/PrtgAPI/commit/71df2d0f95c3f777def3e56fad077fdd03910ddb)
 
 # Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
