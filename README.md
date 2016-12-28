@@ -218,7 +218,7 @@ PING                2010    dc1         Servers         Local Probe     Up
 Ping                2011    dc2         Servers         Local Probe     Down
 Ping                2012    exch1       Servers         Remote Probe    DownAcknowledged
 ```
-Get all devices whose names contain dc
+Get all devices whose names contain "dc"
 
 ```powershell
 C:\> Get-Device *dc*

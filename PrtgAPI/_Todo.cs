@@ -48,5 +48,9 @@ namespace PrtgAPI
     GetChannel
     -test on drods pc. see if the output is all messed up and middle aligned. is it a windows 10 thing? we can also test on my win 10 vm
     -the downtime channel never displays a value. it should be 0% when up, 100% when down
+
+    Clone
+    -Parse the response and get the new object id
+    -whats the response when theres an error?
     */
 }

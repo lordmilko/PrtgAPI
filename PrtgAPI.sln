@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj", "{2179C33F-C774-45AF-A664-338B8C3B799B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
