@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Parameters
 {
-    class VolumeTriggerParameters : TriggerParameters
+    public class VolumeTriggerParameters : TriggerParameters
     {
         public TriggerChannel? Channel
         {

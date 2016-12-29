@@ -6,14 +6,23 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Parameters
 {
-    class SpeedTriggerParameters : TriggerParameters
+    /// <summary>
+    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/> objects.
+    /// </summary>
+    public class SpeedTriggerParameters : TriggerParameters
     {
+        /// <summary>
+        /// The <see cref="NotificationAction"/> to execute when the trigger's active state clears.
+        /// </summary>
         public NotificationAction OffNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OffNotificationAction); }
             set { SetNotificationAction(TriggerProperty.OffNotificationAction, value); }
         }
 
+        /// <summary>
+        /// The channel of the sensor this trigger should apply to.
+        /// </summary>
         public TriggerChannel? Channel
         {
             get { return (TriggerChannel?) GetCustomParameterValue(TriggerProperty.Channel); }
@@ -24,6 +33,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
+        /// </summary>
         public int? Latency
         {
             get { return (int?) GetCustomParameterValue(TriggerProperty.Latency); }
@@ -34,6 +46,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The condition that controls when the <see cref="Threshold"/> is activated.
+        /// </summary>
         public TriggerCondition? Condition
         {
             get { return (TriggerCondition?) GetCustomParameterValue(TriggerProperty.Condition); }
@@ -44,6 +59,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
+        /// </summary>
         public int? Threshold
         {
             get { return (int?) GetCustomParameterValue(TriggerProperty.Threshold); }

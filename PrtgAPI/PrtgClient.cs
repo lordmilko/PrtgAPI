@@ -375,7 +375,6 @@ namespace PrtgAPI
             var response = ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
             var items = response.Descendants("item").ToList();
-            var ids = response.Descendants("objid").Select(v => v.Value);
 
             foreach (var item in items)
             {
@@ -388,17 +387,6 @@ namespace PrtgAPI
             }
 
             return Data<Channel>.DeserializeList(response).Items;
-
-            //response.FirstNode.AddAfterSelf(GetChannelProperties(sensorId))
-
-            //var obj = GetObjects<Channel>(new ChannelParameters(sensorId));
-
-            /*foreach (var o in obj)
-            {
-                o.SensorId = sensorId;
-            }
-
-            return obj;*/
         }
 
         internal XElement GetChannelProperties(int sensorId, int channelId)
@@ -967,11 +955,11 @@ namespace PrtgAPI
             }
             else //if we're enabling a property, check if there are values we depend on. if so, enable them!
             {
-                var props = property.GetEnumAttribute<DependentPropertyAttribute>();
+                var dependentProperty = property.GetEnumAttribute<DependentPropertyAttribute>();
 
-                if (props != null)
+                if (dependentProperty != null)
                 {
-                    customParams.Add(Channel.CreateCustomParameter(props.Name.ToEnum<ChannelProperty>(), channelId, "1"));
+                    customParams.Add(Channel.CreateCustomParameter(dependentProperty.Name.ToEnum<ChannelProperty>(), channelId, "1"));
                 }
             }
 

@@ -26,6 +26,9 @@ namespace PrtgAPI
         [PropertyParameter(nameof(Property.Probe))]
         public string Probe { get; set; }
 
+        /// <summary>
+        /// The Hostname or IP Address of this device.
+        /// </summary>
         [XmlElement("host")]
         [PropertyParameter(nameof(Property.Host))]
         public string Host { get; set; }

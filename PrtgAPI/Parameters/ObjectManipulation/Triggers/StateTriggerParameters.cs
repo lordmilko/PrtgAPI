@@ -7,20 +7,32 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
+    /// <summary>
+    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/> objects.
+    /// </summary>
     public class StateTriggerParameters : TriggerParameters
     {
+        /// <summary>
+        /// The <see cref="NotificationAction"/> to execute when the trigger's active state clears.
+        /// </summary>
         public NotificationAction OffNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OffNotificationAction); }
             set { SetNotificationAction(TriggerProperty.OffNotificationAction, value); }
         }
 
+        /// <summary>
+        /// The <see cref="NotificationAction"/> to fire if this trigger remains in an active state for an extended period of time.
+        /// </summary>
         public NotificationAction EscalationNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.EscalationNotificationAction); }
             set { SetNotificationAction(TriggerProperty.EscalationNotificationAction, value); }
         }
 
+        /// <summary>
+        /// The delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
+        /// </summary>
         public int? Latency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Latency); }
@@ -31,6 +43,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The delay (in seconds) this trigger should wait before executing its <see cref="EscalationNotificationAction"/>.
+        /// </summary>
         public int? EscalationLatency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.EscalationLatency); }
@@ -40,7 +55,11 @@ namespace PrtgAPI.Parameters
                     UpdateCustomParameter(TriggerProperty.EscalationLatency, value);
             }
         }
-        //our adder function should validate each property has a value, and tell the caller they messed up
+        //todo our adder function should validate each property has a value, and tell the caller they messed up
+
+        /// <summary>
+        /// The interval (in minutes) with which the <see cref="EscalationNotificationAction"/> should be re-executed.
+        /// </summary>
         public int? RepeatInterval
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.RepeatInterval); }
@@ -51,12 +70,16 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The object state that will cause this trigger to activate.
+        /// </summary>
         public TriggerSensorState? State
         {
             get
             {
                 var value = GetCustomParameterValue(TriggerProperty.StateTrigger);
 
+                //If the value is null, cast to nullable. Otherwise, cast to a concrete value (then implicitly to nullable)
                 return value == null ? (TriggerSensorState?) null : (TriggerSensorState) value;
             }
             set
@@ -66,6 +89,13 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class.
+        /// </summary>
+        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="triggerId">If this trigger is being edited, the trigger's sub ID. If this trigger is being added, this value is null.</param>
+        /// <param name="action">Whether to add a new trigger or modify an existing one.</param>
+        /// <param name="state">The object state that will cause this trigger to activate.</param>
         public StateTriggerParameters(int objectId, int? triggerId, ModifyAction action, TriggerSensorState? state) : base(TriggerType.State, objectId, triggerId, action)
         {
             if (action == ModifyAction.Add)

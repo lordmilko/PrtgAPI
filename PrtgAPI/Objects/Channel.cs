@@ -40,6 +40,9 @@ namespace PrtgAPI
         /// </summary>
         public double LastValueNumeric => Convert.ToDouble((Convert.ToDecimal(lastValueNumeric) /10).ToString("F"));
 
+        /// <summary>
+        /// The raw numeric last value of this object. This field is for internal use only.
+        /// </summary>
         [XmlElement("lastvalue_raw")]
         protected string lastValueNumeric { get; set; }
 

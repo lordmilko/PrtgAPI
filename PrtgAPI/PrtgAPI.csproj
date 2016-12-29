@@ -228,7 +228,6 @@
   <ItemGroup>
     <Content Include="Properties\AssemblyFileVersion.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyFileVersion.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

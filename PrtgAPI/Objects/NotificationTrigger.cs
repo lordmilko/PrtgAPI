@@ -150,8 +150,6 @@ namespace PrtgAPI
             set { threshold = Convert.ToInt32(value); }
         }
 
-        private string condition;
-
         [DataMember(Name = "condition")] //speed, threshold?
         private string conditionStr;
 

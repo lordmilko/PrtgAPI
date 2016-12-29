@@ -1,9 +1,18 @@
 # PrtgAPI
+
+[![Build status](https://ci.appveyor.com/api/projects/status/m2q2r875yvewn7x9?svg=true)](https://ci.appveyor.com/project/lordmilko/prtgapi)
+
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
-**Current Version: 0.5.0.26**. [What's new](https://github.com/lordmilko/PrtgAPI/commit/71df2d0f95c3f777def3e56fad077fdd03910ddb)
+## Installation
+
+1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI/bin/Release/PrtgAPI.zip)
+2. Right click **PrtgAPI.zip** -> **Properties**
+3. On the *General* tab, under *Security* select **Unblock**
+4. Unzip the file
+5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below)
 
 # Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
@@ -94,6 +103,13 @@ client.SetNotificationTrigger(new StateTriggerParameters(1234, null, NodifyActio
     OnNotificationAction = actions.First() //TriggerParameters have a variety of fields that can be specified
 });
 ```
+
+The following trigger parameter types are available:
+* StateTriggerParameters
+* ChangeTriggerParameters
+* SpeedTriggerParameters
+* VolumeTriggerParameters
+* ThresholdTriggerParameters
 
 Notification Triggers can also be removed from objects.
 
