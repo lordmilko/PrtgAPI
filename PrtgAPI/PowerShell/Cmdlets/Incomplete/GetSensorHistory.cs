@@ -17,10 +17,11 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
     }
 
     [Cmdlet(VerbsCommon.Get, "SensorHistory")]
-    public class GetSensorHistory : PSCmdlet
+    class GetSensorHistory : PSCmdlet
     {
         protected override void ProcessRecord()
         {
+            throw new NotImplementedException();
             var list = new List<Record>();
 
             list.Add(new Record

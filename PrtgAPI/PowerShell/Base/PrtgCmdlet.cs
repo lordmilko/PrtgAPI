@@ -32,7 +32,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <typeparam name="T">The type of the list that will be output.</typeparam>
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
         /// <param name="settings">How progress should be displayed while the list is being enumerated.</param>
-        protected void WriteList<T>(IEnumerable<T> sendToPipeline, ProgressSettings settings)
+        internal void WriteList<T>(IEnumerable<T> sendToPipeline, ProgressSettings settings)
         {
             //var visibleMembers = typeof(T).GetPSVisibleMembers().ToList();
 

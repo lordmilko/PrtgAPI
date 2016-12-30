@@ -16,6 +16,8 @@ namespace PrtgAPI
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
         -maybe not, its good to be able to specify an id. maybe we should add MORE places you can specify ids!
 
+    -search for any _raw values and fix them
+
     Async
     -can we run a task for x seconds before we demand it switches the context back to us so we can do something then resume it. we could use this to get the sensor totals
         and if its taking too long THEN display a progress bar
@@ -26,6 +28,12 @@ namespace PrtgAPI
 
     NotificationTriggers
     -test we can successfully create triggers of all types with all parameters specified
+
+    GetSensorHistory
+    -should return a list of channelhistory instead?
+    -rename sensorhistorydata to sensorhistory?
+    -how to make it return more than 500 results
+    -the sensorhistory class needs to be made public again
 
     NotificationAction
     -add additional columns
@@ -40,6 +48,8 @@ namespace PrtgAPI
 
     SensorSettings
     -not complete
+    -internal for now
+    -the schedule class is also internal
 
     Get[Sensor|Device|Group|Probe]
     -how do we do wildcard matching in the middle of a name? (e.g. "a*m"). potential solution: do two filter_xyz's and then do a final powershell wildcardmatch class on the result
@@ -49,8 +59,18 @@ namespace PrtgAPI
     -test on drods pc. see if the output is all messed up and middle aligned. is it a windows 10 thing? we can also test on my win 10 vm
     -the downtime channel never displays a value. it should be 0% when up, 100% when down
 
+    GetStatus
+    -internal for now
+    -need to rename fields to be nice names
+
     Clone
     -Parse the response and get the new object id
     -whats the response when theres an error?
+
+    SensorTotals
+    -Remove _raw values
+
+    ServerStatus
+    -Remove _raw values
     */
 }

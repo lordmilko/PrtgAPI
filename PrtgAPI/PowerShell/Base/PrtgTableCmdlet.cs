@@ -14,21 +14,42 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="T">The type of objects that will be retrieved.</typeparam>
     public abstract class PrtgTableCmdlet<T> : PrtgObjectCmdlet<T> where T : ObjectTable
     {
-        [Parameter(Mandatory = false, Position = 0, HelpMessage = "Limit results to sensors those with a certain name.")]
+        /// <summary>
+        /// Filter the response to objects with a certain name. Can include wildcards.
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, HelpMessage = "Filter the response to objects with a certain name. Can include wildcards.")]
         public string Name { get; set; }
 
-        [Parameter(Mandatory = false)]
+        /// <summary>
+        /// Retrieve an object with a specified ID.
+        /// </summary>
+        [Parameter(Mandatory = false, HelpMessage = "Retrieve an obejct with a specified ID.")]
         public int? Id { get; set; }
 
-        [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 1)]
+        /// <summary>
+        /// Filter the response to objects that match one or more criteria.
+        /// </summary>
+        [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 1, HelpMessage = "Filter the response to objects that match one or more criteria.")]
         public SearchFilter[] Filter { get; set; }
 
-        [Parameter(Mandatory = false)]
+        /// <summary>
+        /// Filter the response to objects with certain tags. Can include wildcards.
+        /// </summary>
+        [Parameter(Mandatory = false, HelpMessage = "Filter the response to objects with certain tags. Can include wildcards.")]
         public string[] Tags { get; set; }
 
+        /// <summary>
+        /// The type of content this cmdlet will retrieve.
+        /// </summary>
         protected Content content;
+
         private int? progressThreshold;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrtgTableCmdlet{T}"/> class. 
+        /// </summary>
+        /// <param name="content">The type of content this cmdlet will retrieve.</param>
+        /// <param name="progressThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
         protected PrtgTableCmdlet(Content content, int? progressThreshold)
         {
             this.content = content;
@@ -184,6 +205,11 @@ namespace PrtgAPI.PowerShell.Base
             AddToFilter(filter);
         }
 
+        /// <summary>
+        /// Add a filter for a value that may contain wildcard characters.
+        /// </summary>
+        /// <param name="property">The property to filter on.</param>
+        /// <param name="value">The value to filter for.</param>
         protected void AddWildcardFilter(Property property, string value)
         {
             var trimmed = value.Trim('*');
@@ -276,9 +302,12 @@ namespace PrtgAPI.PowerShell.Base
         {
             Filter = Filter?.Concat(filters).ToArray() ?? filters;
         }
-
         
-
+        /// <summary>
+        /// Retrieves a list of objects from a PRTG Server based on a specified filter.
+        /// </summary>
+        /// <param name="filter">A list of filter to use to limit search results.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
         protected abstract IEnumerable<T> GetRecords(SearchFilter[] filter);
     }
 }

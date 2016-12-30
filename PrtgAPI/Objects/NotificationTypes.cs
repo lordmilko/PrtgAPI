@@ -78,7 +78,7 @@ namespace PrtgAPI
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return $"Inheritance: {TriggerInheritance}, State: {StateTriggers}, Threshold: {ThresholdTriggers}, Change: {ChangeTriggers}, Speed: {SpeedTriggers}, Volume: {VolumeTriggers}";

@@ -131,12 +131,21 @@ namespace PrtgAPI
         [XmlElement("injected_spikemin")]
         public int? SpikeFilterMin { get; set; }
 
+        /// <summary>
+        /// Indicates how to scale this channel in graphs.
+        /// </summary>
         [XmlElement("injected_axismode")]
         public AutoMode VerticalAxisScaling { get; set; } //Automatic or Manual
 
+        /// <summary>
+        /// Maximum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.
+        /// </summary>
         [XmlElement("injected_axismax")]
         public int? VerticalAxisMax { get; set; }
 
+        /// <summary>
+        /// Minimum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.
+        /// </summary>
         [XmlElement("injected_axismin")]
         public int? VerticalAxisMin { get; set; }
 
@@ -172,9 +181,15 @@ namespace PrtgAPI
         [XmlElement("injected_limitminwarning")]
         public double? LowerWarningLimit { get; set; }
 
+        /// <summary>
+        /// The message to display when the <see cref="LastValue"/> of this channel goes above or below the <see cref="UpperErrorLimit"/> or <see cref="LowerErrorLimit"/> respectively.
+        /// </summary>
         [XmlElement("injected_limiterrormsg")]
         public string ErrorLimitMessage { get; set; }
 
+        /// <summary>
+        /// The message to display when the <see cref="LastValue"/> of this channel goes above or below the <see cref="UpperWarningLimit"/> or <see cref="LowerWarningLimit"/> respectively.
+        /// </summary>
         [XmlElement("injected_limitwarningmsg")]
         public string WarningLimitMessage { get; set; }
 

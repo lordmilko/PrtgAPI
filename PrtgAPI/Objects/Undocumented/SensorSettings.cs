@@ -11,19 +11,15 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    public class SensorSettings : ObjectSettings
+    internal class SensorSettings : ObjectSettings
     {
         internal static XElement GetXml(string response, int sensorId)
         {
             var basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
             var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall
 
-            return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
-        }
-
-        protected static XElement GetXmlInternal(string response, int channelId, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
-        {
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, nameTransformer);
+            //return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
+            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, null);
             var ddlXml = GetDropDownListXml(response, nameRegex);
             var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
 
@@ -33,18 +29,33 @@ namespace PrtgAPI.Objects.Undocumented
 
         const string TimeFormat = "yyyy,MM,dd,HH,mm,ss";
 
+        /// <summary>
+        /// The name of this sensor.
+        /// </summary>
         [XmlElement("injected_name")]
         public string z_Name { get; set; }
 
+        /// <summary>
+        /// Tags that are inherited from this objects parent
+        /// </summary>
         [XmlElement("injected_parenttags")]
         public string z_ParentTags { get; set; }
 
+        /// <summary>
+        /// Tags that are defined on this object.
+        /// </summary>
         [XmlElement("injected_tags")]
         public string z_Tags { get; set; }
 
+        /// <summary>
+        /// How raw sensor results should be stored.
+        /// </summary>
         [XmlElement("injected_writeresult")]
         public DebugMode z_DebugMode { get; set; }
 
+        /// <summary>
+        /// The method used for performing WMI queries.
+        /// </summary>
         [XmlElement("injected_wmialternative")]
         public WmiMode z_WmiMode { get; set; }
 
@@ -54,9 +65,15 @@ public string Stack { get; set; }
 [XmlElement("injected_stackunit")]
 public string StackUnit { get; set; }
 
+        /// <summary>
+        /// Whether to inherit Scanning Interval settings from the parent object.
+        /// </summary>
         [XmlElement("injected_intervalgroup")]
         public bool z_InheritScanningInterval { get; set; }
 
+        /// <summary>
+        /// Whether to inherit Schedules, Dependencies and Maintenance Window settings from the parent object.
+        /// </summary>
         [XmlElement("injected_scheduledependency")]
         public bool z_InheritScheduleDependency { get; set; }
 
@@ -85,15 +102,27 @@ public string StackUnit { get; set; }
             set { dependencyValue = value == string.Empty ? null : value; }
         }
 
+        /// <summary>
+        /// Duration (in seconds) to delay resuming this sensor after its master object returns to <see cref="SensorStatus.Up"/>.
+        /// </summary>
         [XmlElement("injected_depdelay")]
         public int z_DependencyDelay { get; set; }
 
+        /// <summary>
+        /// Whether to inherit Access Rights settings from this sensor's parent object.
+        /// </summary>
         [XmlElement("injected_accessgroup")]
         public bool z_InheritAccessGroup { get; set; }
 
+        /// <summary>
+        /// Whether to inherit the Channel Unit Configuration settings from this sensor's parent object.
+        /// </summary>
         [XmlElement("injected_unitconfiggroup")]
         public bool z_InheritChannelUnit { get; set; }
 
+        /// <summary>
+        /// The priority of this sensor.
+        /// </summary>
         [XmlElement("injected_priority")]
         public Priority z_Priority { get; set; }
 
@@ -107,10 +136,9 @@ public string PrimaryChannel { get; set; }
         public ErrorIntervalDown z_ErrorIntervalDown { get; set; }
 
         [XmlElement("injected_schedule")]
-        public string _RawSchedule { get; set; }
+        public string _RawSchedule { get; set; } //todo: remove all _raw fields in this file
 
         public Schedule z_Schedule => new Schedule(_RawSchedule);
-
 
         private string rawAccessRights;
         private Access accessRights;

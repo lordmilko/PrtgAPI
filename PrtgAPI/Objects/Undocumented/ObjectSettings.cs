@@ -11,9 +11,7 @@ namespace PrtgAPI.Objects.Undocumented
 {
     public class ObjectSettings
     {
-        
-
-        protected static XElement GetDependency(string response)
+        internal static XElement GetDependency(string response)
         {
             var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
@@ -30,7 +28,7 @@ namespace PrtgAPI.Objects.Undocumented
             return null;
         }
 
-        protected static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
+        internal static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
         {
             var matches = Regex.Matches(response, basicMatchRegex);
             var inputs = (matches.Cast<Match>().Select(match => match.Value)).ToList();
@@ -56,7 +54,7 @@ namespace PrtgAPI.Objects.Undocumented
             return list;
         }
 
-        protected static List<XElement> GetDropDownListXml(string response, string nameRegex)
+        internal static List<XElement> GetDropDownListXml(string response, string nameRegex)
         {
             var ddl = Regex.Matches(response, "<select.+?>.+?<\\/select>", RegexOptions.Singleline);
             var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();
@@ -100,7 +98,7 @@ namespace PrtgAPI.Objects.Undocumented
 
         private static List<DropDownList> GetLists(List<string> lists, string nameRegex)
         {
-            List<DropDownList> blah = new List<DropDownList>();
+            List<DropDownList> ddls = new List<DropDownList>();
 
             foreach (var list in lists)
             {
@@ -123,10 +121,10 @@ namespace PrtgAPI.Objects.Undocumented
                     });
                 }
 
-                blah.Add(ddl);
+                ddls.Add(ddl);
             }
 
-            return blah;
+            return ddls;
 
            /*var properties = lists.Select(list => new DropDownList
             {

@@ -91,6 +91,9 @@ namespace PrtgAPI.Objects.Shared
             }
         }
 
+        /// <summary>
+        /// Raw interval value of this object. THis field is for internal use only.
+        /// </summary>
         [XmlElement("interval_raw")]
         protected double? interval { get; set; }
 
@@ -100,6 +103,9 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.IntervalX))]
         public bool IntervalInherited => intervalInherited?.Contains("Inherited") ?? false; //todo: add custom handling for this
 
+        /// <summary>
+        /// Raw inherited interval value of this object. This field is for internal use only.
+        /// </summary>
         [XmlElement("intervalx")]
         protected string intervalInherited { get; set; }
 

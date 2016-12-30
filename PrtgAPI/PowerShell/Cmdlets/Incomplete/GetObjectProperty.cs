@@ -10,7 +10,7 @@ using System.Text;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     [Cmdlet(VerbsCommon.Get, "ObjectProperty")]
-    public class GetObjectProperty : PrtgCmdlet
+    internal class GetObjectProperty : PrtgCmdlet
     {
         public int? ObjectId { get; set; }
 

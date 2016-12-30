@@ -33,17 +33,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Group Group { get; set; }
 
-        private SensorStatus[] sensorstatus;
-
         /// <summary>
         /// Only retrieve sensors that match a specific status.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public SensorStatus[] Status //we probably need to make a custom type that can take a sensorstatus or custom words we say like acknowledged, paused, etc
-        {
-            get { return sensorstatus; }
-            set { sensorstatus = value; }
-        }
+        public SensorStatus[] Status { get; set; }
 
         //todo - implement proper help system for use with get help or whatever? everything that can have it needs to provide help
         //todo: make the tags on an object an array instead of a string with the items separated by a space
@@ -116,7 +110,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             //var c = DateTime.ParseExact(b.MaintStart, "yyyy,MM,dd,HH,mm,ss", null);
 
-            ValidateFilters();
+            //ValidateFilters();
 
             if (Device != null)
                 AddPipelineFilter(Property.ParentId, Device.Id);

@@ -112,12 +112,28 @@ namespace PrtgAPI
             return data.Items;
         }
 
+        /// <summary>
+        /// Calcualte the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of a given type.</returns>
+        public int GetTotalObjects(Content content)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Count] = 0,
+                [Parameter.Content] = content
+            };
+
+            return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
+        }
+
         #region Sensors
 
         /// <summary>
         /// Retrieve all sensors from a PRTG Server.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of all sensors on a PRTG Server.</returns>
         public List<Sensor> GetSensors()
         {
             return GetObjects<Sensor>(new SensorParameters());
@@ -189,7 +205,7 @@ namespace PrtgAPI
         /// Retrieve sensors from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
-        /// <returns></returns>
+        /// <returns>A list of sensors that match the specified parameters.</returns>
         public List<Sensor> GetSensors(SensorParameters parameters)
         {
             return GetObjects<Sensor>(parameters);
@@ -393,7 +409,6 @@ namespace PrtgAPI
         {
             var parameters = new Parameters.Parameters()
             {
-                [Parameter.Hjax] = true,
                 [Parameter.Id] = sensorId,
                 [Parameter.Channel] = channelId
             };
@@ -448,7 +463,7 @@ namespace PrtgAPI
         #region Notification Actions       
 
         //todo: move this
-        public List<SensorHistory> GetSensorHistory(int sensorId)
+        private List<SensorHistory> GetSensorHistory(int sensorId)
         {
             Logger.DebugEnabled = false;
 
@@ -497,6 +512,11 @@ namespace PrtgAPI
             return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
         }
 
+        /// <summary>
+        /// Retrieve all notification triggers of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The object to retrieve triggers for.</param>
+        /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public List<NotificationTrigger> GetNotificationTriggers(int objectId)
         {
             //var allRaw = GetNotificationTriggers(objectId, Content.Triggers);
@@ -625,11 +645,19 @@ namespace PrtgAPI
             //todo: add sensorid to the table display for get-channelproperty
         }
 
+        /// <summary>
+        /// Retrieve all notification actions on a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
         public List<NotificationAction> GetNotificationActions()
         {
             return GetObjects<NotificationAction>(new NotificationActionParameters());
         }
 
+        /// <summary>
+        /// Add or edit a notification trigger on a PRTG Server.
+        /// </summary>
+        /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
         public void SetNotificationTrigger(TriggerParameters parameters)
         {
             ExecuteRequest(HtmlFunction.EditSettings, parameters);
@@ -642,7 +670,6 @@ namespace PrtgAPI
 
             //var url = new PrtgUrl(Server, Username, PassHash, HtmlFunction.EditSettings, p);
 
-            int i = 0;
             /*
             
             nodest_new=0&
@@ -1163,17 +1190,22 @@ namespace PrtgAPI
             ExecuteRequest(CommandFunction.SetPosition, parameters);
         }
 
-        //clone a sensor or group
-        public void Clone(int id, string cloneName, int targetLocation)
+        /// <summary>
+        /// Clone a sensor or group to another device or group respectively.
+        /// </summary>
+        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned object.</param>
+        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        public void Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
 
             var parameters = new Parameters.Parameters()
             {
-                [Parameter.Id] = id,
+                [Parameter.Id] = sourceObjectId,
                 [Parameter.Name] = cloneName,
-                [Parameter.TargetId] = targetLocation
+                [Parameter.TargetId] = targetLocationObjectId
             };
 
             //todo: need to implement simulateerrorparameters or get rid of it?
@@ -1185,8 +1217,14 @@ namespace PrtgAPI
             //get-sensor|copy-object -target $devices
         }
 
-        //clone a device
-        public void Clone(int id, string cloneName, string host, int targetLocation)
+        /// <summary>
+        /// Clone a device to another group.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned device.</param>
+        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
+        /// <param name="targetGroupId">The group the device should be cloned to.</param>
+        public void Clone(int deviceId, string cloneName, string host, int targetGroupId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
@@ -1196,10 +1234,10 @@ namespace PrtgAPI
 
             var parameters = new Parameters.Parameters()
             {
-                [Parameter.Id] = id,
+                [Parameter.Id] = deviceId,
                 [Parameter.Name] = cloneName,
                 [Parameter.Host] = host,
-                [Parameter.TargetId] = targetLocation
+                [Parameter.TargetId] = targetGroupId
             };
 
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
@@ -1239,7 +1277,7 @@ namespace PrtgAPI
             ExecuteRequest(CommandFunction.Rename, parameters);
         }
 
-        public ServerStatus GetStatus()
+        internal ServerStatus GetStatus()
         {
             var parameters = new Parameters.Parameters
             {

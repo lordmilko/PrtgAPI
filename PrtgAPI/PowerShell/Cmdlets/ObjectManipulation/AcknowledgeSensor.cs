@@ -48,6 +48,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ParameterSetName = "Forever")]
         public SwitchParameter Forever { get; set; }
 
+        /// <summary>
+        /// Provides a record-by-record processing functionality for the cmdlet.
+        /// </summary>
         protected override void ProcessRecord()
         {
             int? duration = null;

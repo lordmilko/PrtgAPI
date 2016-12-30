@@ -72,6 +72,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The time component of the data rate that causes this trigger to activate.
+        /// </summary>
         public TriggerUnitTime? UnitTime
         {
             get { return (TriggerUnitTime?) GetCustomParameterValue(TriggerProperty.UnitTime); }
@@ -82,6 +85,9 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// The unit component of the data rate that causes this trigger to activate.
+        /// </summary>
         public TriggerUnitSize? UnitSize
         {
             get { return (TriggerUnitSize?) GetCustomParameterValue(TriggerProperty.UnitSize); }
@@ -92,6 +98,12 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class.
+        /// </summary>
+        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="triggerId">If this trigger is being edited, the trigger's sub ID. If this trigger is being added, this value is null.</param>
+        /// <param name="action">Whether to add a new trigger or modify an existing one.</param>
         public SpeedTriggerParameters(int objectId, int? triggerId, ModifyAction action) : base(TriggerType.Volume, objectId, triggerId, action)
         {
             if(action == ModifyAction.Add)

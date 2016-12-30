@@ -77,7 +77,7 @@ namespace PrtgAPI.Parameters
         {
             get
             {
-                var value = GetCustomParameterValue(TriggerProperty.StateTrigger);
+                var value = GetCustomParameterValue(TriggerProperty.State);
 
                 //If the value is null, cast to nullable. Otherwise, cast to a concrete value (then implicitly to nullable)
                 return value == null ? (TriggerSensorState?) null : (TriggerSensorState) value;
@@ -85,7 +85,7 @@ namespace PrtgAPI.Parameters
             set
             {
                 if (value != null)
-                    UpdateCustomParameter(TriggerProperty.StateTrigger, (int?) value);
+                    UpdateCustomParameter(TriggerProperty.State, (int?) value);
             }
         }
 

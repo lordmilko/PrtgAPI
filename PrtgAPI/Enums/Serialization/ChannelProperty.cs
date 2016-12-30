@@ -8,13 +8,22 @@ namespace PrtgAPI
     /// </summary>
     public enum ChannelProperty
     {
+        /// <summary>
+        /// Whether spike filtering is enabled for this object. If filtering is enabled, channel results outside expected ranges will be rounded to their <see cref="SpikeFilterMin"/>  or <see cref="SpikeFilterMax"/> values.
+        /// </summary>
         [Description("spikemode")]
         SpikeFilterEnabled,
 
+        /// <summary>
+        /// The maximum valid value of this channel. Results above this threshold will be rounded to this value.
+        /// </summary>
         [Description("spikemax")]
         [DependentProperty(nameof(SpikeFilterEnabled))]
         SpikeFilterMax,
 
+        /// <summary>
+        /// The minimum valid value of this channel. Results below this threshold will be rounded to this value.
+        /// </summary>
         [Description("spikemin")]
         [DependentProperty(nameof(SpikeFilterEnabled))]
         SpikeFilterMin,

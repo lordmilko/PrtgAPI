@@ -8,7 +8,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {
-    public class ServerStatus
+    internal class ServerStatus
     {
         [XmlElement("NewMessages")]
         public int? NewMessages { get; set; }
@@ -48,7 +48,7 @@ namespace PrtgAPI
         public bool UpdateAvailable => DH.YesNoToBool(_RawUpdateAvailable);
 
         [XmlElement("PRTGUpdateAvailable")]
-        public string _RawUpdateAvailable { get; set; }
+        public string _RawUpdateAvailable { get; set; } //todo: remove all _raw fields from this file
 
         [XmlElement("IsAdminUser")]
         public bool IsAdminUser { get; set; }

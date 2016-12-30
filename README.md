@@ -14,7 +14,7 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 4. Unzip the file
 5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below)
 
-# Usage (C#)
+## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
 
 ```c#
@@ -29,7 +29,7 @@ For further security, you are able to use your passhash to `PrtgClient` instead 
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
 ```
 
-## Lists
+### Lists
 
 PrtgAPI provides a series of method overloads for retrieving all sorts of data in a variety of different ways.
 
@@ -79,7 +79,7 @@ var filters = new[]
 var perthDCPingSensors = client.GetSensors(filters);
 ```
 
-## Notification Triggers
+### Notification Triggers
 
 The Notification Triggers of an object can be accessed via the `GetNotificationTriggers` method
 
@@ -119,7 +119,7 @@ client.RemoveNotificationTrigger(1234, triggers.First().SubId);
 
 Please note: RemoveNotificationTrigger does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. (The PowerShell variant, Remove-NotificationTrigger, _does_ perform this check)
 
-## Object Settings
+### Object Settings
 Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
 
 ```c#
@@ -137,7 +137,7 @@ var priorityNum = client.GetObjectProperty<int>(2001, BasicObjectSetting.Priorit
 var priorityEnum = client.GetObjectProperty<Priority>(2001, BasicObjectSetting.Priority);
 ```
 
-## Pausing / Resuming
+### Pausing / Resuming
 
 Objects can be paused and resumed using the `Pause` and `Resume` methods respectively. A message and a pause duration can be optionally specified. If no time is given, the object is paused indefinitely.
 
@@ -154,7 +154,7 @@ client.Pause(2002, "Paused for the next 60 minutes!", 60);
 client.Resume(2001);
 ```
 
-## Custom Requests
+### Custom Requests
 For those that which to execute custom requests (i.e. those not yet supported by PrtgAPI, or those not known to be supported by PRTG) it is possible to craft custom requests that do whatever you like.
 
 ```c#
@@ -169,7 +169,7 @@ var sensors = client.GetSensors(parameters);
 ```
 PrtgAPI implements a number of built-in parameter types that automatically specify the type of content their requests will retrieve. If you wish to implement your own custom parameters, you can do so by manipulating the base `Parameters` class.
 
-# PowerShell
+## PowerShell
 
 PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. When compiling, a _PrtgAPI_ folder will be created under the Debug/Release folder. You can then copy wherever you like and import into PowerShell, as follows:
 ```powershell
@@ -221,7 +221,7 @@ Set-ChannelProperty # Currently supports limit and spike related properties
 
 For details on supported parameters run `Get-Help <cmdlet>` within PowerShell
 
-## Examples
+### Examples
 
 Get all ping sensors
 
@@ -337,7 +337,7 @@ LastValue        : 1,116 MByte
 LastValueNumeric : 1169711104
 ```
 
-## Access Underlying Methods
+### Access Underlying Methods
 
 The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgServer` cmdlet. Accessing the `PrtgClient` object directly allows invoking methods from PowerShell that do not yet have cmdlet counterparts
 

@@ -227,15 +227,16 @@ namespace PrtgAPI
 
         //Undocumented
 
-        [Undocumented]
-        [ParameterType(ParameterType.SingleValue)]
-        [Description("_hjax")]
-        Hjax,
-
+        /// <summary>
+        /// ID of the channel to retrieve properties for.
+        /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
         Channel,
 
+        /// <summary>
+        /// The type of object to retrieve details for.
+        /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
         ObjectType

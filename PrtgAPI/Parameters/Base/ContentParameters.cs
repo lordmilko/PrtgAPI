@@ -32,7 +32,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Maximum number of records to return.
+        /// Maximum number of records to return. To retrieve all records in a single request, set this value to a very high number.<para/>
+        /// If this value is less than the total number of records available, additional records can be obtained by requesting the next <see cref="Page"/>.
         /// </summary>
         public int Count
         {
@@ -49,6 +50,9 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Start] = value; }
         }
 
+        /// <summary>
+        /// The page of the response to return. Requests can be split over multiple pages to increase the speed of each individual request.
+        /// </summary>
         public int Page
         {
             get

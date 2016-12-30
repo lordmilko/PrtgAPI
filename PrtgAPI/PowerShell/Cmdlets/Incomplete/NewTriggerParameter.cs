@@ -9,8 +9,11 @@ using PrtgAPI.Parameters;
 namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 {
     [Cmdlet(VerbsCommon.New, "TriggerParameter")]
-    public class NewTriggerParameter : PSCmdlet
+    internal class NewTriggerParameter : PSCmdlet
     {
+        /// <summary>
+        /// Provides a record-by-record processing functionality for the cmdlet.
+        /// </summary>
         protected override void ProcessRecord()
         {
             //WriteObject(new StateTriggerParameters())

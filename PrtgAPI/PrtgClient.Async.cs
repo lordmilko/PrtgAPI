@@ -15,6 +15,10 @@ namespace PrtgAPI
 {
     public partial class PrtgClient
     {
+        /// <summary>
+        /// Retrieve all sensors from a PRTG Server asynchronously. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects to perform against a PRTG Server.</returns>
         public IEnumerable<Sensor> GetSensorsAsync()
         {
             //need to test asking for one page at a time manually and see if we always get 100 if we ask for 100 even if we're on the last page
@@ -41,6 +45,11 @@ namespace PrtgAPI
             return result;
         }
 
+        /// <summary>
+        /// Asynchronously calcualte the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of a given type.</returns>
         public async Task<int> GetTotalObjectsAsync(Content content)
         {
             var parameters = new Parameters.Parameters()
@@ -52,17 +61,11 @@ namespace PrtgAPI
             return Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(parameters)).TotalCount);
         }
 
-        public int GetTotalObjects(Content content)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Count] = 0,
-                [Parameter.Content] = content
-            };
-
-            return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
-        }
-
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server using a custom set of parameters
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns>A custom set of parameters used to retrieve PRTG Sensors.</returns>
         public async Task<List<Sensor>> GetSensorsAsync(SensorParameters parameters)
         {
             return await GetObjectsAsync<Sensor>(parameters);

@@ -35,17 +35,12 @@ namespace PrtgAPI.Objects.Deserialization
         [XmlElement("item")]
         public List<T> Items { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Data{T}"/> class.
-        /// </summary>
-        /// <param name="doc">XML returned from a PRTG Server Request.</param>
-        /// <returns></returns>
-        public static Data<T> DeserializeList(XDocument doc)
+        internal static Data<T> DeserializeList(XDocument doc)
         {
             return DeserializeInternal<Data<T>, T>(doc);
         }
 
-        public static T DeserializeType(XDocument doc)
+        internal static T DeserializeType(XDocument doc)
         {
             return DeserializeInternal<T, T>(doc);
         }

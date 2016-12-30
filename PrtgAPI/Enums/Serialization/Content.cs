@@ -27,6 +27,9 @@
         /// </summary>
         Channels,
 
+        /// <summary>
+        /// Notification actions for use with notification triggers.
+        /// </summary>
         Notifications,
 
         /// <summary>
@@ -39,6 +42,9 @@
         /// </summary>
         Trigger,
 
+        /// <summary>
+        /// Historical data of a PRTG Sensor.
+        /// </summary>
         Values,
 
         /*Tickets,

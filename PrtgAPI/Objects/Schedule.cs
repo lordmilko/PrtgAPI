@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI
 {
-    public class Schedule
+    /// <summary>
+    /// Represents a schedule used to indicate when monitoring should be active on an object.
+    /// </summary>
+    internal class Schedule
     {
         public string Name { get; set; }
 
