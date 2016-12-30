@@ -1,6 +1,6 @@
 # PrtgAPI
 
-[![Build status](https://ci.appveyor.com/api/projects/status/m2q2r875yvewn7x9?svg=true)](https://ci.appveyor.com/project/lordmilko/prtgapi)
+[![Build status](https://img.shields.io/appveyor/ci/lordmilko/prtgapi.svg)](https://ci.appveyor.com/project/lordmilko/prtgapi)
 
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
 
