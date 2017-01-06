@@ -1,6 +1,6 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
 {
-    public class DeviceItem
+    public class DeviceItem : BaseItem
     {
         public string Group { get; set; }
         public string Probe { get; set; }
@@ -49,7 +49,6 @@
         public string TypeRaw { get; set; }
         public string Active { get; set; }
         public string ActiveRaw { get; set; }
-        public string ObjId { get; set; }
         public string Name { get; set; }
         public string Comments { get; set; }
         public string Host { get; set; }

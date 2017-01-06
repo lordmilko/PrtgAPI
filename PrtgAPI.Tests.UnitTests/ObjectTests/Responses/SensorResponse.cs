@@ -1,6 +1,9 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     public class SensorResponse : BaseResponse<SensorItem>
     {

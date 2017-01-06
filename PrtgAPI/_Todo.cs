@@ -18,6 +18,8 @@ namespace PrtgAPI
 
     -search for any _raw values and fix them
 
+    -test prtgapi.cmd on a computer with a default execution policy
+
     Async
     -can we run a task for x seconds before we demand it switches the context back to us so we can do something then resume it. we could use this to get the sensor totals
         and if its taking too long THEN display a progress bar
@@ -50,6 +52,9 @@ namespace PrtgAPI
     -not complete
     -internal for now
     -the schedule class is also internal
+
+    ScanningInterval
+    -this type has been made internal but if we're not going to even have individual getobjectproperty/setobjectproperty methods we can delete it
 
     Get[Sensor|Device|Group|Probe]
     -how do we do wildcard matching in the middle of a name? (e.g. "a*m"). potential solution: do two filter_xyz's and then do a final powershell wildcardmatch class on the result

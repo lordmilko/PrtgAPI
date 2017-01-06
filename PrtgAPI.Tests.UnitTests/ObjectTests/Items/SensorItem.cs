@@ -1,6 +1,6 @@
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
 {
-    public class SensorItem
+    public class SensorItem : BaseItem
     {
         public string Probe { get; set; }
         public string Group { get; set; }
@@ -56,7 +56,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
         public string Tags { get; set; }
         public string Active { get; set; }
         public string ActiveRaw { get; set; }
-        public string ObjId { get; set; }
         public string Name { get; set; }
         public string Comments { get; set; }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI
 {
-    public enum PropertyType
+    internal enum PropertyType
     {
         [Attributes.PropertyType(typeof(BasicObjectSetting))]
         BasicObjectSetting,

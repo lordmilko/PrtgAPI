@@ -1,0 +1,1 @@
+start powershell -noexit -command "import-module '%~dp0..\PrtgAPI' -DisableNameChecking; cd $env:userprofile"

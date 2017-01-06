@@ -12,7 +12,7 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
-5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below)
+5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below). Alternatively, you can run the included *PrtgAPI.cmd* file to open a prompt and import the PrtgAPI module for you.
 
 ## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`

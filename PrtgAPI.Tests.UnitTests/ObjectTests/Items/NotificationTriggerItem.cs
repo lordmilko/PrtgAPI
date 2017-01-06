@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Text;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
 {
-    public class NotificationTriggerItem
+    public class NotificationTriggerItem : BaseItem
     {
         public string Content { get; set; }
-
-        public string ObjId { get; set; }
 
         private NotificationTriggerItem()
         {

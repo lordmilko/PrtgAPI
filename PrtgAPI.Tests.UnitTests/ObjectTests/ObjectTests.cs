@@ -2,7 +2,6 @@
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {

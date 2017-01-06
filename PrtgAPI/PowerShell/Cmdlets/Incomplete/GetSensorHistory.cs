@@ -21,8 +21,7 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
     {
         protected override void ProcessRecord()
         {
-            throw new NotImplementedException();
-            var list = new List<Record>();
+            /*var list = new List<Record>();
 
             list.Add(new Record
             {
@@ -33,6 +32,8 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
             });
 
             WriteObject(list, true);
+            */
+            throw new NotImplementedException();
         }
     }
 }

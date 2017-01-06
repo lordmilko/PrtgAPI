@@ -59,6 +59,9 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.NotifiesX))]
         public NotificationTypes NotificationTypes => notificationTypes == null ? null : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
+        /// <summary>
+        /// Raw notification types value of this object. This field is for internal use only.
+        /// </summary>
         [XmlElement("notifiesx")]
         protected string notificationTypes { get; set; }
 

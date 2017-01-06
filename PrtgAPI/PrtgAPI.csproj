@@ -218,6 +218,7 @@
     <Compile Include="WebClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="PowerShell\Resources\PrtgAPI.cmd" />
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>

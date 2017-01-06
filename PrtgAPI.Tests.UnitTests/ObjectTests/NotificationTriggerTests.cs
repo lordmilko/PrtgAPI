@@ -6,7 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {

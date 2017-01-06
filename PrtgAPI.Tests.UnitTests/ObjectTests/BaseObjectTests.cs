@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     public abstract class BaseObjectTests<TObject, TItem, TResponse> where TResponse : IWebResponse
     {
-        private PrtgClient Initialize_Client(IWebResponse response)
+        protected PrtgClient Initialize_Client(IWebResponse response)
         {
             var webClient = new MockWebClient(response);
 
@@ -52,6 +52,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
             var obj = GetObjects(client);
 
             return obj;
+        }
+
+        public void SetPrtgSessionState()
+        {
+            PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(GetItem());
         }
 
         protected abstract TItem GetItem();

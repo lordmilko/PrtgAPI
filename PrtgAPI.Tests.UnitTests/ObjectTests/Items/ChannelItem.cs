@@ -1,6 +1,6 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
 {
-    public class ChannelItem
+    public class ChannelItem : BaseItem
     {
         public string LastValue { get; set; }
         public string LastValueRaw { get; set; }
@@ -26,7 +26,6 @@
         public string LowerWarningLimit { get; set; }
         public string ErrorLimitMessage { get; set; }
         public string WarningLimitMessage { get; set; }
-        public string ObjId { get; set; }
         public string ObjIdRaw { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }

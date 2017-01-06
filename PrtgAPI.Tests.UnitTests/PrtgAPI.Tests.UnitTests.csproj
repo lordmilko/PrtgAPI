@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Web" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -56,20 +57,22 @@
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="ObjectTests\ChannelTests.cs" />
     <Compile Include="ObjectTests\DeviceTests.cs" />
+    <Compile Include="ObjectTests\Items\BaseItem.cs" />
     <Compile Include="ObjectTests\NotificationActionTests.cs" />
     <Compile Include="ObjectTests\ObjectTests.cs" />
+    <Compile Include="ObjectTests\Responses\SetChannelPropertyResponse.cs" />
     <Compile Include="ObjectTests\SensorTests.cs" />
-    <Compile Include="ObjectTests\Support\BaseObjectTests.cs" />
-    <Compile Include="ObjectTests\Support\BaseResponse.cs" />
-    <Compile Include="ObjectTests\Support\ChannelItem.cs" />
-    <Compile Include="ObjectTests\Support\ChannelResponse.cs" />
-    <Compile Include="ObjectTests\Support\DeviceItem.cs" />
-    <Compile Include="ObjectTests\Support\DeviceResponse.cs" />
+    <Compile Include="ObjectTests\BaseObjectTests.cs" />
+    <Compile Include="ObjectTests\Responses\BaseResponse.cs" />
+    <Compile Include="ObjectTests\Items\ChannelItem.cs" />
+    <Compile Include="ObjectTests\Responses\ChannelResponse.cs" />
+    <Compile Include="ObjectTests\Items\DeviceItem.cs" />
+    <Compile Include="ObjectTests\Responses\DeviceResponse.cs" />
     <Compile Include="ObjectTests\NotificationTriggerTests.cs" />
-    <Compile Include="ObjectTests\Support\NotificationActionItem.cs" />
-    <Compile Include="ObjectTests\Support\NotificationActionResponse.cs" />
-    <Compile Include="ObjectTests\Support\NotificationTriggerItem.cs" />
-    <Compile Include="ObjectTests\Support\NotificationTriggerResponse.cs" />
+    <Compile Include="ObjectTests\Items\NotificationActionItem.cs" />
+    <Compile Include="ObjectTests\Responses\NotificationActionResponse.cs" />
+    <Compile Include="ObjectTests\Items\NotificationTriggerItem.cs" />
+    <Compile Include="ObjectTests\Responses\NotificationTriggerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfrastructureTests\Support\IWebResponse.cs" />
     <Compile Include="InfrastructureTests\Support\MockWebClient.cs" />
@@ -77,8 +80,8 @@
     <Compile Include="InfrastructureTests\PrtgUrlTests.cs" />
     <Compile Include="InfrastructureTests\SearchFilterTests.cs" />
     <Compile Include="InfrastructureTests\Support\PassHashResponse.cs" />
-    <Compile Include="ObjectTests\Support\SensorItem.cs" />
-    <Compile Include="ObjectTests\Support\SensorResponse.cs" />
+    <Compile Include="ObjectTests\Items\SensorItem.cs" />
+    <Compile Include="ObjectTests\Responses\SensorResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI\PrtgAPI.csproj">

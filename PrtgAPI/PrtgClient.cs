@@ -63,7 +63,7 @@ namespace PrtgAPI
                 throw new ArgumentNullException(nameof(pass));
 
             this.client = client;
-
+            
             Server = server;
             Username = username;
 
@@ -443,20 +443,6 @@ namespace PrtgAPI
 
             return aaaa;
         }
-
-        public void blah()
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Custom] = new CustomParameter("limitmaxerror_0", ""),
-                //prtgurl needs to throw an exception if you dont use a customparameter with parameter.custom and detect if it contains a list
-                [Parameter.Id] = 2196
-            };
-
-            var response = ExecuteRequest(HtmlFunction.EditSettings, parameters);
-        }
-
-
 
         #endregion
 

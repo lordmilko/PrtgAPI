@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {

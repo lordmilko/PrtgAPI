@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {

@@ -105,12 +105,12 @@ namespace PrtgAPI
 
             try
             {
-                using (var client = new System.Net.WebClient()) //TODO - make our iwebclient implement idisposable?
+                //using (var client = new System.Net.WebClient()) //TODO - make our iwebclient implement idisposable?
                     //of course, now that our client STORES its webclient now, that means WE have to
                     //implement idisposable?
-                {
+                //{
                     response = await client.DownloadStringTaskAsync(url.Url);
-                }
+                //}
             }
             catch (WebException ex)
             {

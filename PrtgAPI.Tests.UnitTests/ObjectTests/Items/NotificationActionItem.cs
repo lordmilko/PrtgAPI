@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Support
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
 {
-    public class NotificationActionItem
+    public class NotificationActionItem : BaseItem
     {
-        public string ObjId { get; set; }
         public string Name { get; set; }
 
         internal NotificationActionItem(

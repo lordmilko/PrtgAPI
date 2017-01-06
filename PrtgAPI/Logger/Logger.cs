@@ -8,6 +8,7 @@ namespace PrtgAPI
 {
     internal class Logger
     {
+#pragma warning disable 649
         private static bool debugEnabled;
 
         internal static bool DebugEnabled
@@ -22,6 +23,8 @@ namespace PrtgAPI
 #endif
             }
         }
+
+#pragma warning restore 649
 
         internal static void Debug(string message, bool newLine = true)
         {

@@ -16,9 +16,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             return response.GetResponseText(address);
         }
 
-        public Task<string> DownloadStringTaskAsync(string address)
+        public async Task<string> DownloadStringTaskAsync(string address)
         {
-            return Task.FromResult(response.GetResponseText(address));
+            return await response.GetResponseTextAsync(address);
         }
     }
 }
