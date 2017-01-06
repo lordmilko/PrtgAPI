@@ -34,7 +34,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var client = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
             var results = client.GetSensorsAsync().Select(i => i.Id).ToList();
-            Assert.IsTrue(results.Count == count);
+            Assert.IsTrue(results.Count == count, $"Expected {count} results but got {results.Count} instead.");
 
             for (int pageNum = pages; pageNum > 0; pageNum--)
             {
