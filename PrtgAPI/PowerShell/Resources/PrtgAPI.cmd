@@ -1,1 +1,1 @@
-start powershell -noexit -command "import-module '%~dp0..\PrtgAPI' -DisableNameChecking; cd $env:userprofile"
+start powershell -executionpolicy bypass -noexit -command "import-module '%~dp0..\PrtgAPI'; cd $env:userprofile"

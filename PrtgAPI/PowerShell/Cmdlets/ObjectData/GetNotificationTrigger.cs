@@ -16,10 +16,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetNotificationTrigger : PrtgObjectCmdlet<NotificationTrigger>
     {
         /// <summary>
-        /// The object ID to retrieve notification triggers for.
+        /// The object to retrieve notification triggers for.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object ID to retrieve notification triggers for.")]
-        public PrtgObject ObjectId { get; set; }
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to retrieve notification triggers for.")]
+        public PrtgObject Object { get; set; }
+
+        /// <summary>
+        /// Filter the response to objects with a certain OnNotificationAction. Can include wildcards.
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0)]
+        public string OnNotificationAction { get; set; }
+
+        /// <summary>
+        /// Filter the response to objects of a certain type.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public TriggerType? Type { get; set; }
 
         /// <summary>
         /// Indicates whether to include inherited triggers in the response.
@@ -33,10 +45,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>A list of all notification triggers.</returns>
         protected override IEnumerable<NotificationTrigger> GetRecords()
         {
-            var triggers = client.GetNotificationTriggers(ObjectId.Id);
+            IEnumerable<NotificationTrigger> triggers = client.GetNotificationTriggers(Object.Id);
 
             if (Inherited == false)
-                return triggers.Where(a => a.Inherited == false);
+                triggers = triggers.Where(a => a.Inherited == false);
+
+            triggers = FilterResponseRecords(triggers, OnNotificationAction, t => t.OnNotificationAction.Name);
+
+            if (Type != null)
+                triggers = triggers.Where(t => t.Type == Type.Value);
 
             return triggers;
         }

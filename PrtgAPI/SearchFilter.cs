@@ -88,7 +88,5 @@ namespace PrtgAPI
 
             return format;
         }
-
-
     }
 }

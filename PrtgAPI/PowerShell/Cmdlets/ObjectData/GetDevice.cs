@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
 using System.Threading.Tasks;
+using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -9,7 +10,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// Retrieve devices from a PRTG Server.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Device")]
-    public class GetDevice : PrtgTableCmdlet<Device>
+    public class GetDevice : PrtgTableCmdlet<Device, DeviceParameters>
     {
         /// <summary>
         /// The group to retrieve devices for.
@@ -44,22 +45,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Retrieves all devices from a PRTG Server.
+        /// Creates a new parameter object to be used for retrieving devices from a PRTG Server.
         /// </summary>
-        /// <returns>A list of all devices.</returns>
-        protected override IEnumerable<Device> GetRecords()
-        {
-            return client.GetDevices();
-        }
-
-        /// <summary>
-        /// Retrieves a list of devices from a PRTG Server based on a specified filter.
-        /// </summary>
-        /// <param name="filter">A list of filters to use to limit search results.</param>
-        /// <returns>A list of devices that match the specified search criteria.</returns>
-        protected override IEnumerable<Device> GetRecords(SearchFilter[] filter)
-        {
-            return client.GetDevices(filter);
-        }
+        /// <returns></returns>
+        protected override DeviceParameters CreateParameters() => new DeviceParameters();
     }
 }

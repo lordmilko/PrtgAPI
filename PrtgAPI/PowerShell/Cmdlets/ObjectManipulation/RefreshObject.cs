@@ -12,13 +12,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Request an object and any if its children refresh themselves immediately.
     /// </summary>
-    [Cmdlet("Refresh", "Object")]
+    [Cmdlet(VerbsData.Update, "Object")]
     public class RefreshObject : PrtgCmdlet
     {
         /// <summary>
         /// The object to refresh.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to refresh.")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>

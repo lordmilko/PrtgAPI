@@ -16,7 +16,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         protected override List<Device> GetObjects(PrtgClient client) => client.GetDevices();
 
-        protected override DeviceItem GetItem() => new DeviceItem();
+        public override DeviceItem GetItem() => new DeviceItem();
 
         protected override DeviceResponse GetResponse(DeviceItem[] items) => new DeviceResponse(items);
     }

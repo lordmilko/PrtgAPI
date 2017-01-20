@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
@@ -15,6 +16,8 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// The <see cref="NotificationAction"/> to execute when the trigger's active state clears.
         /// </summary>
+        [RequireValue(false)]
+        [PropertyParameter(nameof(TriggerProperty.OffNotificationAction))]
         public NotificationAction OffNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OffNotificationAction); }
@@ -24,6 +27,8 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// The <see cref="NotificationAction"/> to fire if this trigger remains in an active state for an extended period of time.
         /// </summary>
+        [RequireValue(false)]
+        [PropertyParameter(nameof(TriggerProperty.EscalationNotificationAction))]
         public NotificationAction EscalationNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.EscalationNotificationAction); }
@@ -33,88 +38,78 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// The delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
         /// </summary>
+        [PropertyParameter(nameof(TriggerProperty.Latency))]
         public int? Latency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Latency); }
-            set
-            {
-                if (value != null)
-                    UpdateCustomParameter(TriggerProperty.Latency, value);
-            }
+            set { UpdateCustomParameter(TriggerProperty.Latency, value); }
         }
 
         /// <summary>
         /// The delay (in seconds) this trigger should wait before executing its <see cref="EscalationNotificationAction"/>.
         /// </summary>
+        [PropertyParameter(nameof(TriggerProperty.EscalationLatency))]
         public int? EscalationLatency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.EscalationLatency); }
-            set
-            {
-                if (value != null)
-                    UpdateCustomParameter(TriggerProperty.EscalationLatency, value);
-            }
+            set { UpdateCustomParameter(TriggerProperty.EscalationLatency, value); }
         }
         //todo our adder function should validate each property has a value, and tell the caller they messed up
 
         /// <summary>
         /// The interval (in minutes) with which the <see cref="EscalationNotificationAction"/> should be re-executed.
         /// </summary>
+        [PropertyParameter(nameof(TriggerProperty.RepeatInterval))]
         public int? RepeatInterval
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.RepeatInterval); }
-            set
-            {
-                if (value != null)
-                    UpdateCustomParameter(TriggerProperty.RepeatInterval, value);
-            }
+            set { UpdateCustomParameter(TriggerProperty.RepeatInterval, value); }
         }
 
         /// <summary>
         /// The object state that will cause this trigger to activate.
         /// </summary>
+        [RequireValue(true)]
+        [PropertyParameter(nameof(TriggerProperty.State))]
         public TriggerSensorState? State
         {
-            get
-            {
-                var value = GetCustomParameterValue(TriggerProperty.State);
-
-                //If the value is null, cast to nullable. Otherwise, cast to a concrete value (then implicitly to nullable)
-                return value == null ? (TriggerSensorState?) null : (TriggerSensorState) value;
-            }
-            set
-            {
-                if (value != null)
-                    UpdateCustomParameter(TriggerProperty.State, (int?) value);
-            }
+            get { return (TriggerSensorState?) GetCustomParameterEnumInt<TriggerSensorState>(TriggerProperty.State); }
+            set { UpdateCustomParameter(TriggerProperty.State, (int?) value, true); }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class.
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
-        /// <param name="triggerId">If this trigger is being edited, the trigger's sub ID. If this trigger is being added, this value is null.</param>
-        /// <param name="action">Whether to add a new trigger or modify an existing one.</param>
-        /// <param name="state">The object state that will cause this trigger to activate.</param>
-        public StateTriggerParameters(int objectId, int? triggerId, ModifyAction action, TriggerSensorState? state) : base(TriggerType.State, objectId, triggerId, action)
+        public StateTriggerParameters(int objectId) : base(TriggerType.State, objectId, null, ModifyAction.Add)
         {
-            if (action == ModifyAction.Add)
-            {
-                if (state == null)
-                    throw new ArgumentException("TriggerSensorState is mandatory when ModifyAction is Add", nameof(state));
+            EscalationNotificationAction = null;
+            OffNotificationAction = null;
+            State = TriggerSensorState.Down;
+        }
 
-                EscalationNotificationAction = null;
-                OffNotificationAction = null;
-                State = state.Value;
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing an existing notification trigger.
+        /// </summary>
+        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
+        public StateTriggerParameters(int objectId, int triggerId) : base(TriggerType.State, objectId, triggerId, ModifyAction.Edit)
+        {
+        }
 
-            //we need to check for null values when modifyaction is add for EVERYTHING
-
-            //if (state != null)
-            //    AddTriggerParameter(TriggerProperty.StateTrigger, ((int?)state).ToString());
-            //AddTriggerParameter(TriggerProperty.Latency, latency.ToString());
-            //AddTriggerParameter(TriggerProperty.OnNotificationAction, FormatNotificationAction(onNotificationAction));
-            //what does the "no notification" action look like
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
+        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.State, objectId, sourceTrigger)
+        {
+            OffNotificationAction = sourceTrigger.OffNotificationAction;
+            EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;
+            Latency = sourceTrigger.Latency;
+            EscalationLatency = sourceTrigger.EscalationLatency;
+            RepeatInterval = sourceTrigger.RepeatInterval;
+            State = sourceTrigger.StateTrigger;
         }
     }
 }

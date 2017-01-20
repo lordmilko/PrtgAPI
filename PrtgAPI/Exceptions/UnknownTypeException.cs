@@ -25,11 +25,11 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgRequestException"/> class with a specified type and a reference to the inner exception that is the cause of this exception.
+        /// Initializes a new instance of the <see cref="UnknownTypeException"/> class with a specified type and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="type">The type whose conversion implementation could not be found.</param>
         /// <param name="inner">The exception that is the cause of the current exception. If the <paramref name="inner"/> parameter is not null, the current exception is raised in a catch block that handles the inner exception.</param>
-        public UnknownTypeException(string type, Exception inner) : base($"Implementation missing for converting to type '{type}'", inner)
+        public UnknownTypeException(Type type, Exception inner) : base($"Implementation missing for converting to type '{type}'", inner)
         {
         }
 

@@ -5,14 +5,16 @@ using System.Linq;
 using System.Management.Automation;
 using System.Threading.Tasks;
 using PrtgAPI.Objects.Shared;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
 {
     /// <summary>
     /// Base class for all cmdlets that return advanced objects found in tables (sensors, devices, probes, etc)
     /// </summary>
-    /// <typeparam name="T">The type of objects that will be retrieved.</typeparam>
-    public abstract class PrtgTableCmdlet<T> : PrtgObjectCmdlet<T> where T : ObjectTable
+    /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
+    /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
+    public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgObjectCmdlet<TObject> where TParam : TableParameters<TObject> where TObject : ObjectTable
     {
         /// <summary>
         /// Filter the response to objects with a certain name. Can include wildcards.
@@ -39,14 +41,22 @@ namespace PrtgAPI.PowerShell.Base
         public string[] Tags { get; set; }
 
         /// <summary>
+        /// Maximum number of results to return.
+        /// </summary>
+        [Parameter(Mandatory = false, HelpMessage = "Maxmimum number of results to return.")]
+        public int? Count { get; set; }
+
+        /// <summary>
         /// The type of content this cmdlet will retrieve.
         /// </summary>
         protected Content content;
 
         private int? progressThreshold;
 
+        private bool streamResults;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgTableCmdlet{T}"/> class. 
+        /// Initializes a new instance of the <see cref="PrtgTableCmdlet{TObject, TParam}"/> class. 
         /// </summary>
         /// <param name="content">The type of content this cmdlet will retrieve.</param>
         /// <param name="progressThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
@@ -54,6 +64,9 @@ namespace PrtgAPI.PowerShell.Base
         {
             this.content = content;
             this.progressThreshold = progressThreshold;
+
+            if(progressThreshold != null)
+                streamResults = true;
         }
 
         /// <summary>
@@ -61,16 +74,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecord()
         {
-            string str = "";
+            var parameters = CreateParameters();
 
-            if (Filter == null)
-                str = "Empty!";
-            else
-                str = Filter.Count().ToString();
-
-            Debug.WriteLine($"############################ ProcessRecord for {GetType()} Filter is {str} ############################ ");
-
-            IEnumerable<T> records = null;
+            IEnumerable<TObject> records;
 
             ProgressSettings progressSettings = null;
 
@@ -78,55 +84,28 @@ namespace PrtgAPI.PowerShell.Base
             ProcessNameFilter();
             ProcessTagsFilter();
 
-            if (Filter == null)
+            if (Count != null)
             {
-                ProgressRecord progress = null;
-                int? count = null;
+                parameters.Count = Count.Value;
+                streamResults = false;
+            }
 
-                if (progressThreshold != null)
-                {
-                    progress = new ProgressRecord(1, $"PRTG {content} Search", "Detecting total number of items");
-                    WriteProgress(progress);
-                    count = client.GetTotalObjects(content);
-                }
-
-                records = GetRecords();
-
-                progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count);
+            if (streamResults)
+            {
+                records = GetResultsWithProgress(out progressSettings);
             }
             else
             {
-                records = GetRecords(Filter);
+                if(Filter != null)
+                    parameters.SearchFilter = Filter;
+                records = GetObjects(parameters);
             }
-
-            /*if (Name != null)
-            {
-                var filter = new WildcardPattern(Name.ToLower());
-                records = records.Where(r => filter.IsMatch(r.Name.ToLower()));
-            }*/
 
             records = FilterResponseRecords(records, Name, r => r.Name);
+            records = FilterResponseRecordsByTag(records);
 
-            if (Tags != null)
-            {
-                foreach (var tag in Tags)
-                {
-                    //if any of our tags are ismatch, include that record
-                    var filter = new WildcardPattern(tag.ToLower());
-                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1.ToLower())));
-                }
-            }
+            WriteList(records, progressSettings);
 
-            try
-            {
-                WriteList(records, progressSettings);
-            }
-            catch (AggregateException ex)
-            {
-                if (ex.InnerException != null)
-                    throw ex.InnerException;
-            }
-            
             //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
 
             Filter = null;
@@ -159,6 +138,40 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
+        private IEnumerable<TObject> GetResultsWithProgress(out ProgressSettings progressSettings)
+        {
+            ProgressRecord progress = null;
+            int? count = null;
+
+            if (progressThreshold != null)
+            {
+                progress = new ProgressRecord(1, $"PRTG {content} Search", "Detecting total number of items");
+                WriteProgress(progress);
+                count = client.GetTotalObjects(content);
+            }
+
+            var records = GetRecords();
+
+            progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count);
+
+            return records;
+        }
+
+        private IEnumerable<TObject> FilterResponseRecordsByTag(IEnumerable<TObject> records)
+        {
+            if (Tags != null)
+            {
+                foreach (var tag in Tags)
+                {
+                    //if any of our tags are ismatch, include that record
+                    var filter = new WildcardPattern(tag.ToLower());
+                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1.ToLower())));
+                }
+            }
+
+            return records;
+        }
+
         private ProgressSettings CompleteTotalsProgressAndCreateProgressSettings(ProgressRecord progress, int? count) //TODO - RENAME
         {
             ProgressSettings progressSettings = null;
@@ -182,17 +195,6 @@ namespace PrtgAPI.PowerShell.Base
             return progressSettings;
         }
 
-        private IEnumerable<T> FilterResponseRecords(IEnumerable<T> records, string pattern, Func<T, string> getProperty)
-        {
-            if (pattern != null)
-            {
-                var filter = new WildcardPattern(pattern.ToLower());
-                records = records.Where(r => filter.IsMatch(getProperty(r).ToLower()));
-            }
-
-            return records;
-        }
-
         /// <summary>
         /// Adds a filter for a concrete value that came in from the pipeline (such as an Id)
         /// </summary>
@@ -200,6 +202,8 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="value">The value to filter for.</param>
         protected void AddPipelineFilter(Property property, object value)
         {
+            streamResults = false;
+
             var filter = new SearchFilter(property, FilterOperator.Equals, value);
 
             AddToFilter(filter);
@@ -221,93 +225,34 @@ namespace PrtgAPI.PowerShell.Base
             AddToFilter(filter);
         }
 
-        
-
-        /*private void old()
-        {
-            if (Filter != null)
-            {
-                records = GetRecords(Filter);
-            }
-            if (Id != null)
-            {
-                SetPipelineFilter(Property.ObjId, Id);
-                records = GetRecords(Filter);
-            }
-            if (!string.IsNullOrEmpty(Name))
-            {
-                records = GetRecordsFilteredOnName();//instead of doing the * filtering here we should set a flag or maybe check if name was null and do it AFTER all the if statements
-            }
-            if (Filter == null && Id == null && string.IsNullOrEmpty(Name))
-            {
-                if (progressThreshold != null)
-                    recordsAsync = GetRecordsAsync();
-                else
-                    records = GetRecords();
-
-                showProgress = true;
-            }
-
-            ProgressSettings settings = null;
-
-            //todo - allow doing something like get-device|get-sensor ping
-
-            if (progressThreshold < maxRecords && showProgress)
-            {
-                settings = new ProgressSettings
-                {
-                    ActivityName = "PRTG Sensor Search",
-                    InitialDescription = "Retrieving all sensors",
-                    TotalRecords = maxRecords
-                };
-            }
-
-            if (recordsAsync == null)
-                WriteList(records, settings);
-            else
-                WriteList(recordsAsync.Result, settings);
-        }*/
-
-        /*private IEnumerable<T> GetRecordsFilteredOnName()
-        {
-            var trimmed = Name.Trim('*');
-
-            bool ignoreFront = false;
-            bool ignoreEnd = false;
-
-            if (Name.StartsWith("*"))
-                ignoreFront = true;
-
-            if (Name.EndsWith("*"))
-                ignoreEnd = true;
-
-            
-            //find out why my test wasnt working i talked about in readme.md
-
-            
-
-
-            var records = GetRecords(new[] { filter });
-
-            if (!ignoreFront)
-                records = records.Where(record => record.Name.ToLower().StartsWith(trimmed.ToLower())).ToList();
-
-            if (!ignoreEnd)
-                records = records.Where(record => record.Name.ToLower().EndsWith(trimmed.ToLower())).ToList();
-
-            return records;
-        }*/
-
         private void AddToFilter(params SearchFilter[] filters)
         {
             Filter = Filter?.Concat(filters).ToArray() ?? filters;
         }
-        
+
         /// <summary>
-        /// Retrieves a list of objects from a PRTG Server based on a specified filter.
+        /// Creates a new parameter object capable of being passed to <see cref="GetObjects(TParam)"/> 
         /// </summary>
-        /// <param name="filter">A list of filter to use to limit search results.</param>
-        /// <returns>A list of objects that match the specified search criteria.</returns>
-        protected abstract IEnumerable<T> GetRecords(SearchFilter[] filter);
+        /// <returns></returns>
+        protected abstract TParam CreateParameters();
+
+        /// <summary>
+        /// Retrieves all records of a specified type from a PRTG Server using the types default parameters.
+        /// </summary>
+        /// <returns></returns>
+        protected override IEnumerable<TObject> GetRecords()
+        {
+            return GetObjects(CreateParameters());
+        }
+
+        private IEnumerable<TObject> GetObjects(TParam parameters)
+        {
+            if (streamResults)
+                return client.StreamObjects(parameters);
+            else
+                return client.GetObjects<TObject>(parameters);
+        }
+
+        //protected abstract IEnumerable<TObject> GetRecords(TParam parameters);
     }
 }

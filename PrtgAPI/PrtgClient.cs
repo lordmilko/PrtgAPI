@@ -5,12 +5,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Html;
@@ -18,6 +20,9 @@ using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
+using System.Reflection;
+using System.Threading.Tasks;
+using PrtgAPI.Exceptions.Internal;
 
 namespace PrtgAPI
 {
@@ -47,7 +52,7 @@ namespace PrtgAPI
         /// Initializes a new instance of the <see cref="PrtgClient"/> class.
         /// </summary>
         public PrtgClient(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
-            : this(server, username, pass, authMode, new WebClient())
+            : this(server, username, pass, authMode, new PrtgWebClient())
         {
         }
 
@@ -70,7 +75,178 @@ namespace PrtgAPI
             PassHash = authMode == AuthMode.Password ? GetPassHash(pass) : pass;
         }
 
-        #region Requests
+#region Requests
+    #region ExecuteRequest
+
+        private string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+
+            return response;
+        }
+
+        private XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+
+            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
+        }
+
+        private async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+
+            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
+        }
+
+        private void ExecuteRequest(CommandFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+        }
+
+        private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+
+            return response;
+        }
+
+        private string ExecuteRequest(PrtgUrl url)
+        {
+            string responseText;
+
+            try
+            {
+                //var client1 = new HttpClient();
+                var response = client.GetSync(url.Url).Result;
+                //var response = client.GetAsync(url.Url).Result;
+
+                responseText = response.Content.ReadAsStringAsync().Result;
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var xDoc = XDocument.Parse(responseText);
+                    var errorMessage = xDoc.Descendants("error").First().Value;
+
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
+                }
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    if (ex.InnerException.InnerException != null)
+                        throw ex.InnerException.InnerException;
+                }
+                    throw ex.InnerException;
+
+                throw;
+            }
+
+
+            /*try
+            {
+                //var client = new WebClient();
+                //var client1 = new HttpClient();
+                //var r = client1.GetAsync(url.Url).Result;
+                //var c = r.Content.ReadAsStringAsync().Result;
+                response = client.DownloadString(url.Url);
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response == null)
+                    throw;
+
+                var webResponse = (HttpWebResponse)ex.Response;
+
+                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    using (var reader = new StreamReader(webResponse.GetResponseStream(), Encoding.UTF8))
+                    {
+                        response = reader.ReadToEnd();
+
+                        var xDoc = XDocument.Parse(response);
+                        var errorMessage = xDoc.Descendants("error").First().Value;
+
+                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
+                    }
+                }
+
+                throw;
+            }*/
+
+            return responseText;
+        }
+
+        private async Task<string> ExecuteRequestAsync(PrtgUrl url)
+        {
+            string responseText;
+            //HttpResponseMessage response;
+
+            try
+            {
+                //using (var client = new System.Net.WebClient()) //TODO - make our iwebclient implement idisposable?
+                //of course, now that our client STORES its webclient now, that means WE have to
+                //implement idisposable?
+                //{
+                //response = await client.DownloadStringTaskAsync(url.Url);
+                //var client1 = new HttpClient();
+                var response = await client.GetAsync(url.Url).ConfigureAwait(false);
+
+                responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var xDoc = XDocument.Parse(responseText);
+                    var errorMessage = xDoc.Descendants("error").First().Value;
+
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
+                }
+                //}
+            }
+            catch (HttpRequestException ex) //todo: test making invalid requests
+            {
+                var inner = ex.InnerException as WebException;
+
+                if (inner != null)
+                    throw ex.InnerException;
+
+                /*if (ex.Response == null)
+                    throw;
+
+                var webResponse = (HttpWebResponse) ex.Response;
+
+                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    using (var reader = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.UTF8))
+                    {
+                        responseText = reader.ReadToEnd();
+
+                        var xDoc = XDocument.Parse(responseText);
+                        var errorMessage = xDoc.Descendants("error").First().Value;
+
+                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
+                    }
+                }*/
+
+                throw;
+            }
+
+            return responseText;
+        }
+
+        #endregion
+        #region Object Data
 
         private string GetPassHash(string password)
         {
@@ -84,72 +260,190 @@ namespace PrtgAPI
             return response;
         }
 
-        private List<T> GetObjects<T>(Parameters.Parameters parameters)
+        internal List<T> GetObjects<T>(Parameters.Parameters parameters)
         {
             var response = ExecuteRequest(XmlFunction.TableData, parameters);
-
-#if DEBUG
-            //Debug.WriteLine(response.ToString());
-#endif
-
-            //todo: change the Property enum to have a description attribute that lets you change the property name to something else
-            //then, change ObjId to just Id
-
-            //todo - check the xml doesnt say there was an error
-            //it looks like we already do this when its an xml request, however theres also a bug here in that we automatically try to deserialize
-            //some xml without checking whether its xml or not; this could result in an exception in the exception handler!
-            //we need to be able to handle errors on json requests or otherwise
-            //it looks like these properties are ultimately parsed by prtgurl, so we'd need to change prtgurl to try and get the description property
-            //if it detects a parameters object type is an enum
-
-            //todo: upload our empty settings file then say dont track it
-            //git update-index --assume-unchanged <file> and --no-assume-unchanged
-
-            //redundant: deserializelist already does this exception handling
 
             var data = Data<T>.DeserializeList(response);
 
             return data.Items;
         }
 
-        /// <summary>
-        /// Calcualte the total number of objects of a given type present on a PRTG Server.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <returns>The total number of objects of a given type.</returns>
-        public int GetTotalObjects(Content content)
+        internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
         {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Count] = 0,
-                [Parameter.Content] = content
-            };
+            var totalObjects = GetTotalObjects(parameters.Content);
 
-            return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
+            var tasks = new List<Task<List<T>>>();
+
+            parameters.Count = 500;
+
+            for (int i = 0; i < totalObjects;)
+            {
+                tasks.Add(GetObjectsAsync<T>(parameters));
+
+                i = i + parameters.Count;
+                parameters.Page++;
+
+                if (totalObjects - i < parameters.Count)
+                    parameters.Count = totalObjects - i;
+            }
+
+            var result = new ParallelObjectGenerator<List<T>>(tasks.WhenAnyForAll()).SelectMany(m => m);
+
+            return result;
         }
 
         #region Sensors
+            #region Default
 
         /// <summary>
         /// Retrieve all sensors from a PRTG Server.
         /// </summary>
         /// <returns>A list of all sensors on a PRTG Server.</returns>
-        public List<Sensor> GetSensors()
-        {
-            return GetObjects<Sensor>(new SensorParameters());
-        }
+        public List<Sensor> GetSensors() => GetSensors(new SensorParameters());
 
-        #region SensorStatus
-        
+        /// <summary>
+        /// Asynchronously retrieve all sensors from a PRTG Server.
+        /// </summary>
+        /// <returns>A task that returns a list of all sensors on a PRTG Server.</returns>
+        public async Task<List<Sensor>> GetSensorsAsync() => await GetSensorsAsync(new SensorParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream all sensors from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.<para/>
+        /// </summary>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects to capable of streaming a response from a PRTG Server.</returns>
+        public IEnumerable<Sensor> StreamSensors() => StreamSensors(new SensorParameters());
+
+            #endregion
+            #region Sensor Status
+   
         /// <summary>
         /// Retrieve sensors from a PRTG Server of one or more statuses.
         /// </summary>
         /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
         /// <returns></returns>
-        public List<Sensor> GetSensors(params SensorStatus[] sensorStatuses)
-        {
-            return GetSensors(new SensorParameters { StatusFilter = sensorStatuses });
-        }
+        public List<Sensor> GetSensors(params SensorStatus[] sensorStatuses) => GetSensors(new SensorParameters { StatusFilter = sensorStatuses });
+
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server of one or more statuses.
+        /// </summary>
+        /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
+        /// <returns></returns>
+        public async Task<List<Sensor>> GetSensorsAsync(params SensorStatus[] sensorStatuses) => await GetSensorsAsync(new SensorParameters { StatusFilter = sensorStatuses }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream sensors from a PRTG Server of one or more statuses. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
+        /// <returns></returns>
+        public IEnumerable<Sensor> StreamSensors(params SensorStatus[] sensorStatuses) => StreamSensors(new SensorParameters { StatusFilter = sensorStatuses });
+
+            #endregion
+            #region Filter (Property, Value)
+
+        /// <summary>
+        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public List<Sensor> GetSensors(Property property, object value) => GetSensors(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Sensor>> GetSensorsAsync(Property property, object value) => await GetSensorsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Sensor> StreamSensors(Property property, object value) => StreamSensors(new SearchFilter(property, value));
+
+            #endregion
+            #region Filter (Property, Operator, Value)
+
+        /// <summary>
+        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value) => GetSensors(new SearchFilter(property, @operator, value));
+
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Sensor>> GetSensorsAsync(Property property, FilterOperator @operator, object value) => await GetSensorsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Sensor> StreamSensors(Property property, FilterOperator @operator, object value) => StreamSensors(new SearchFilter(property, @operator, value));
+
+            #endregion
+            #region Filter (Array)
+
+        /// <summary>
+        /// Retrieve sensors from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public List<Sensor> GetSensors(params SearchFilter[] filters) => GetSensors(new SensorParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public async Task<List<Sensor>> GetSensorsAsync(params SearchFilter[] filters) => await GetSensorsAsync(new SensorParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream sensors from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public IEnumerable<Sensor> StreamSensors(params SearchFilter[] filters) => StreamSensors(new SensorParameters { SearchFilter = filters });
+
+            #endregion
+            #region Parameters
+
+        /// <summary>
+        /// Retrieve sensors from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
+        /// <returns>A list of sensors that match the specified parameters.</returns>
+        public List<Sensor> GetSensors(SensorParameters parameters) => GetObjects<Sensor>(parameters);
+
+        /// <summary>
+        /// Asynchronously retrieve sensors from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
+        /// <returns>A list of sensors that match the specified parameters.</returns>
+        public async Task<List<Sensor>> GetSensorsAsync(SensorParameters parameters) => await GetObjectsAsync<Sensor>(parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream sensors from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
+        /// <returns>A list of sensors that match the specified parameters.</returns>
+        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters) => StreamObjects<Sensor>(parameters);
+
+            #endregion
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
@@ -162,67 +456,30 @@ namespace PrtgAPI
             return Data<SensorTotals>.DeserializeType(response);
         }
 
-        #endregion 
-
-        #region SearchFilter
-
-        /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
-        /// </summary>
-        /// <param name="property">Property to search against.</param>
-        /// <param name="value">Value to search for.</param>
-        /// <returns></returns>
-        public List<Sensor> GetSensors(Property property, object value)
-        {
-            return GetSensors(new SearchFilter(property, value));
-        }
-
-        /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
-        /// </summary>
-        /// <param name="property">Property to search against.</param>
-        /// <param name="operator">Operator to compare value and property value with.</param>
-        /// <param name="value">Value to search for.</param>
-        /// <returns></returns>
-        public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value)
-        {
-            return GetSensors(new SearchFilter(property, @operator, value));
-        }
-
-        /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the values of multiple properties.
-        /// </summary>
-        /// <param name="filters">One or more filters used to limit search results.</param>
-        /// <returns></returns>
-        public List<Sensor> GetSensors(params SearchFilter[] filters)
-        {
-            return GetSensors(new SensorParameters { SearchFilter = filters });
-        }
-
         #endregion
-
-        /// <summary>
-        /// Retrieve sensors from a PRTG Server using a custom set of parameters.
-        /// </summary>
-        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
-        /// <returns>A list of sensors that match the specified parameters.</returns>
-        public List<Sensor> GetSensors(SensorParameters parameters)
-        {
-            return GetObjects<Sensor>(parameters);
-        }
-
-        #endregion
-
         #region Devices
+            #region Default
 
         /// <summary>
         /// Retrieve all devices from a PRTG Server.
         /// </summary>
         /// <returns></returns>
-        public List<Device> GetDevices()
-        {
-            return GetObjects<Device>(new DeviceParameters());
-        }
+        public List<Device> GetDevices() => GetDevices(new DeviceParameters());
+
+        /// <summary>
+        /// Asynchronously retrieve all devices from a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Device>> GetDevicesAsync() => await GetDevicesAsync(new DeviceParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream all devices from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Device> StreamDevices() => StreamDevices(new DeviceParameters());
+
+            #endregion
+            #region Filter (Property, Value)
 
         /// <summary>
         /// Retrieve devices from a PRTG Server based on the value of a certain property.
@@ -230,10 +487,26 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(Property property, object value)
-        {
-            return GetDevices(new SearchFilter(property, value));
-        }
+        public List<Device> GetDevices(Property property, object value) => GetDevices(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieve devices from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Device>> GetDevicesAsync(Property property, object value) => await GetDevicesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Device> StreamDevices(Property property, object value) => StreamDevices(new SearchFilter(property, value));
+
+            #endregion
+            #region Filter (Property, Operator, Value)
 
         /// <summary>
         /// Retrieve devices from a PRTG Server based on the value of a certain property.
@@ -242,43 +515,99 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(Property property, FilterOperator @operator, string value)
-        {
-            return GetDevices(new SearchFilter(property, @operator, value));
-        }
+        public List<Device> GetDevices(Property property, FilterOperator @operator, string value) => GetDevices(new SearchFilter(property, @operator, value));
+
+        /// <summary>
+        /// Asynchronously retrieve devices from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Device>> GetDevicesAsync(Property property, FilterOperator @operator, string value) => await GetDevicesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Device> StreamDevices(Property property, FilterOperator @operator, string value) => StreamDevices(new SearchFilter(property, @operator, value));
+
+            #endregion
+            #region Filter (Array)
 
         /// <summary>
         /// Retrieve devices from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(params SearchFilter[] filters)
-        {
-            return GetDevices(new DeviceParameters { SearchFilter = filters });
-        }
+        public List<Device> GetDevices(params SearchFilter[] filters) => GetDevices(new DeviceParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve devices from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public async Task<List<Device>> GetDevicesAsync(params SearchFilter[] filters) => await GetDevicesAsync(new DeviceParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream devices from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public IEnumerable<Device> StreamDevices(params SearchFilter[] filters) => StreamDevices(new DeviceParameters { SearchFilter = filters });
+
+            #endregion
+            #region Parameters
 
         /// <summary>
         /// Retrieve devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <returns></returns>
-        public List<Device> GetDevices(DeviceParameters parameters)
-        {
-            return GetObjects<Device>(parameters);
-        }
+        public List<Device> GetDevices(DeviceParameters parameters) => GetObjects<Device>(parameters);
+
+        /// <summary>
+        /// Asynchronously retrieve devices from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
+        /// <returns></returns>
+        public async Task<List<Device>> GetDevicesAsync(DeviceParameters parameters) => await GetObjectsAsync<Device>(parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream devices from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
+        /// <returns></returns>
+        public IEnumerable<Device> StreamDevices(DeviceParameters parameters) => StreamObjects<Device>(parameters);
 
         #endregion
-
+        #endregion
         #region Groups
+            #region Default
 
         /// <summary>
         /// Retrieve all groups from a PRTG Server.
         /// </summary>
         /// <returns></returns>
-        public List<Group> GetGroups()
-        {
-            return GetGroups(new GroupParameters());
-        }
+        public List<Group> GetGroups() => GetGroups(new GroupParameters());
+
+        /// <summary>
+        /// Asynchronously retrieve all groups from a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Group>> GetGroupsAsync() => await GetGroupsAsync(new GroupParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream all groups from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Group> StreamGroups() => StreamGroups(new GroupParameters());
+
+            #endregion
+            #region Filter (Property, Value)
 
         /// <summary>
         /// Retrieve groups from a PRTG Server based on the value of a certain property.
@@ -286,10 +615,26 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Group> GetGroups(Property property, object value)
-        {
-            return GetGroups(new SearchFilter(property, value));
-        }
+        public List<Group> GetGroups(Property property, object value) => GetGroups(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieve groups from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Group>> GetGroupsAsync(Property property, object value) => await GetGroupsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Group> StreamGroups(Property property, object value) => StreamGroups(new SearchFilter(property, value));
+
+            #endregion
+            #region Filter (Property, Operator, Group)
 
         /// <summary>
         /// Retrieve groups from a PRTG Server based on the value of a certain property.
@@ -298,42 +643,94 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Group> GetGroups(Property property, FilterOperator @operator, string value)
-        {
-            return GetGroups(new SearchFilter(property, @operator, value));
-        }
+        public List<Group> GetGroups(Property property, FilterOperator @operator, string value) => GetGroups(new SearchFilter(property, @operator, value));
+
+        /// <summary>
+        /// Asynchronously retrieve groups from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Group>> GetGroupsAsync(Property property, FilterOperator @operator, string value) => await GetGroupsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Group> StreamGroups(Property property, FilterOperator @operator, string value) => StreamGroups(new SearchFilter(property, @operator, value));
+
+            #endregion
+            #region Filter (Array)
 
         /// <summary>
         /// Retrieve groups from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Group> GetGroups(params SearchFilter[] filters)
-        {
-            return GetGroups(new GroupParameters { SearchFilter = filters });
-        }
+        public List<Group> GetGroups(params SearchFilter[] filters) => GetGroups(new GroupParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve groups from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public async Task<List<Group>> GetGroupsAsync(params SearchFilter[] filters) => await GetGroupsAsync(new GroupParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream groups from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public IEnumerable<Group> StreamGroups(params SearchFilter[] filters) => StreamGroups(new GroupParameters { SearchFilter = filters });
+
+            #endregion
+            #region Parameters
 
         /// <summary>
         /// Retrieve groups from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Groups.</param>
-        public List<Group> GetGroups(GroupParameters parameters)
-        {
-            return GetObjects<Group>(parameters);
-        }
+        public List<Group> GetGroups(GroupParameters parameters) => GetObjects<Group>(parameters);
 
+        /// <summary>
+        /// Asynchronously retrieve groups from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        public async Task<List<Group>> GetGroupsAsync(GroupParameters parameters) => await GetObjectsAsync<Group>(parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream groups from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        public IEnumerable<Group> StreamGroups(GroupParameters parameters) => StreamObjects<Group>(parameters);
+
+            #endregion
         #endregion
-
         #region Probes
+            #region Default
 
         /// <summary>
         /// Retrieve all probes from a PRTG Server.
         /// </summary>
         /// <returns></returns>
-        public List<Probe> GetProbes()
-        {
-            return GetObjects<Probe>(new ProbeParameters());
-        }
+        public List<Probe> GetProbes() => GetProbes(new ProbeParameters());
+
+        /// <summary>
+        /// Asynchronously retrieve all probes from a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Probe>> GetProbesAsync() => await GetProbesAsync(new ProbeParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream all probes from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Probe> StreamProbes() => StreamProbes(new ProbeParameters());
+
+            #endregion
+            #region Filter (Property, Value)
 
         /// <summary>
         /// Retrieve probes from a PRTG Server based on the value of a certain property.
@@ -341,10 +738,26 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Probe> GetProbes(Property property, object value)
-        {
-            return GetProbes(new SearchFilter(property, value));
-        }
+        public List<Probe> GetProbes(Property property, object value) => GetProbes(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieve probes from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Probe>> GetProbesAsync(Property property, object value) => await GetProbesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Probe> StreamProbes(Property property, object value) => StreamProbes(new SearchFilter(property, value));
+
+            #endregion
+            #region Filter (Property, Operator, Value)
 
         /// <summary>
         /// Retrieve probes from a PRTG Server based on the value of a certain property.
@@ -353,33 +766,74 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns></returns>
-        public List<Probe> GetProbes(Property property, FilterOperator @operator, string value)
-        {
-            return GetProbes(new SearchFilter(property, @operator, value));
-        }
+        public List<Probe> GetProbes(Property property, FilterOperator @operator, string value) => GetProbes(new SearchFilter(property, @operator, value));
+
+        /// <summary>
+        /// Asynchronously retrieve probes from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public async Task<List<Probe>> GetProbesAsync(Property property, FilterOperator @operator, string value) => await GetProbesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns></returns>
+        public IEnumerable<Probe> StreamProbes(Property property, FilterOperator @operator, string value) => StreamProbes(new SearchFilter(property, @operator, value));
+
+            #endregion
+            #region Filter (Array)
 
         /// <summary>
         /// Retrieve probes from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns></returns>
-        public List<Probe> GetProbes(params SearchFilter[] filters)
-        {
-            return GetObjects<Probe>(new ProbeParameters {SearchFilter = filters});
-        }
+        public List<Probe> GetProbes(params SearchFilter[] filters) => GetProbes(new ProbeParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve probes from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public async Task<List<Probe>> GetProbesAsync(params SearchFilter[] filters) => await GetProbesAsync(new ProbeParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream probes from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns></returns>
+        public IEnumerable<Probe> StreamProbes(params SearchFilter[] filters) => StreamProbes(new ProbeParameters { SearchFilter = filters });
+
+            #endregion
+            #region Parameters
 
         /// <summary>
         /// Retrieve probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
-        public List<Probe> GetProbes(ProbeParameters parameters)
-        {
-            return GetObjects<Probe>(parameters);
-        }
+        public List<Probe> GetProbes(ProbeParameters parameters) => GetObjects<Probe>(parameters);
 
+        /// <summary>
+        /// Asynchronously retrieve probes from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
+        public async Task<List<Probe>> GetProbesAsync(ProbeParameters parameters) => await GetObjectsAsync<Probe>(parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Stream probes from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
+        public IEnumerable<Probe> StreamProbes(ProbeParameters parameters) => StreamObjects<Probe>(parameters);
+
+            #endregion
         #endregion
-
-        #region Channels
+        #region Channel
 
         /// <summary>
         /// Retrieve all channels of a sensor.
@@ -390,7 +844,7 @@ namespace PrtgAPI
         {
             var response = ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
-            var items = response.Descendants("item").ToList();
+            var items = response.Descendants("item").Where(item => item.Element("objid").Value != "-4").ToList();
 
             foreach (var item in items)
             {
@@ -418,85 +872,14 @@ namespace PrtgAPI
             return ChannelSettings.GetXml(response, channelId);
         }
 
-        internal SensorSettings GetSensorSettings(int sensorId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = sensorId,
-                [Parameter.ObjectType] = BaseType.Sensor
-            };
-
-            //we'll need to add support for dropdown lists too
-
-            var response = ExecuteRequest(HtmlFunction.ObjectData, parameters);
-
-            var blah = SensorSettings.GetXml(response, sensorId);
-
-            var doc = new XDocument(blah);
-
-            var aaaa = Data<SensorSettings>.DeserializeType(doc);
-
-            //maybe instead of having an enum for my schedule and scanninginterval we have a class with a special getter that removes the <num>|component when you try and retrieve the property
-            //the thing is, the enum IS actually dynamic - we need a list of valid options
-
-            //todo: whenever we use _raw attributes dont we need to add xmlignore on the one that accesses it/
-
-            return aaaa;
-        }
-
         #endregion
+        #region Notifications
 
-        #region Notification Actions       
-
-        //todo: move this
-        private List<SensorHistory> GetSensorHistory(int sensorId)
-        {
-            Logger.DebugEnabled = false;
-
-            //todo: add xml formatting
-            //var awwww = typeof (SensorOrDeviceOrGroupOrProbe).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-            //var q = GetSensors(SensorStatus.Paused);
-
-            //var filter = new SearchFilter(Property.Comments, SensorStatus.Paused);
-            //filter.ToString();
-
-            //myenum val = myenum.Val5;
-
-            //var al= Enum.GetValues(typeof (myenum)).Cast<myenum>().Where(m => m != val && val.HasFlag(m)).ToList();
-
-            //var enums = Enum.GetValues(typeof (myenum)).Cast<myenum>().ToList();
-
-
-            //var result = myenum.Val5.GetUnderlyingFlags();
-
-            //var result = outer(myenum.Val5, enums).ToList();
-
-            //foreach (var a in al1)
-            
-
-            //loop over each element. if a value contains more than 1 element in it, its not real, so ignore it
-
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Columns] = new[] {Property.Datetime, Property.Value_, Property.Coverage},
-                [Parameter.Id] = 2196,
-                [Parameter.Content] = Content.Values
-            };
-
-            var items = GetObjects<SensorHistoryData>(parameters);
-
-            foreach (var history in items)
-            {
-                foreach (var value in history.Values)
-                {
-                    value.DateTime = history.DateTime;
-                    value.SensorId = sensorId;
-                }
-            }
-            //todo: need to implement coverage column
-            //todo: right now the count is just the default - 500. need to allow specifying bigger counts
-            return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
-        }
+        /// <summary>
+        /// Retrieve all notification actions on a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
+        public List<NotificationAction> GetNotificationActions() => GetObjects<NotificationAction>(new NotificationActionParameters());
 
         /// <summary>
         /// Retrieve all notification triggers of a PRTG Object.
@@ -505,15 +888,11 @@ namespace PrtgAPI
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public List<NotificationTrigger> GetNotificationTriggers(int objectId)
         {
-            //var allRaw = GetNotificationTriggers(objectId, Content.Triggers);
-            //var all = GetNotificationTriggers(allRaw, objectId);
-            //return all;
-
             var parameters = new Parameters.Parameters
             {
                 [Parameter.Id] = objectId,
                 [Parameter.Content] = Content.Triggers,
-                [Parameter.Columns] = new [] { Property.Content, Property.ObjId }
+                [Parameter.Columns] = new[] { Property.Content, Property.ObjId }
             };
 
             var xmlResponse = ExecuteRequest(XmlFunction.TableData, parameters);
@@ -522,199 +901,76 @@ namespace PrtgAPI
                 Content = x.Element("content").Value,
                 Id = Convert.ToInt32(x.Element("objid").Value)
             }).ToList();
-            //var xmlResponseContent = xmlResponse.Descendants("content").Select(x => x.Value).ToList(); //we have an objid now so we need to handle that!
+
             var triggers = JsonDeserializer<NotificationTrigger>.DeserializeList(xmlResponseContent, e => e.Content,
                 (e, o) =>
                 {
                     o.SubId = e.Id;
                     o.ObjectId = objectId;
-                });
+                }
+            );
 
             return triggers;
 
-            //var jsonResponse = ExecuteRequest(JsonFunction.Triggers, parameters);
-            //var jsonData = JsonDeserializer<NotificationTriggerData>.DeserializeType(jsonResponse);
-            
-            //objectlinkxml contains the parentid, whereas triggers.json contains the subid
-
-            //foreach (var trigger in triggers)
-            //{
-            //    trigger.ObjectId = objectId;
-
-                //we need to loop between the jsonresponse to add the subid to the xml response, however how am i supposed to
-                //identify which subid belongs to which trigger when the subid is what unique identifies a trigger!
-            //}
-
-            throw new NotImplementedException();
-
-            //return data.Triggers.ToList();
-
-
-
-
-
-
-
-            //if thisid != parentid, its inherited
-
-
-
-            //var inheritedRaw = GetNotificationTriggers(objectId, Content.Trigger).ToList();
-
-
-            //var nonInheritedRaw = allRaw.Except(inheritedRaw);
-
-
-
-
-
-
-            //var nonInherited = GetNotificationTriggers(nonInheritedRaw, objectId);
-
-
-
-            //inherited triggers - https://prtg.example.com/api/table.xml?id=49229&content=triggers&columns=content
-            //then, we have to do a diff
-
-
-
-
-
-
-            //http://prtg.example.com/api/table.json?content=triggers&id=1&columns=content
-
-
-
-            //using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(response)))
+            /*
+            http://prtg.example.com/api/table.json?content=triggers&id=1&columns=content
+            using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(response)))
             {
-            //    var data = (NotificationTriggerData) deserializer.ReadObject(stream);
+                var data = (NotificationTriggerData) deserializer.ReadObject(stream);
 
-            //    return data.Triggers.ToList();
+                return data.Triggers.ToList();
             }
-
-
-
-
-
-
-            //http://stackoverflow.com/questions/814001/how-to-convert-json-to-xml-or-xml-to-json
-
-
-
-            //todo: need to handle no content
-
-            //editsettings?inherittriggers_=0&id=1
-
-
-            //configure sensor 2196 to have a go green event and compare the json
-
-            //how do we enable/disable inheritance of notifications
-            //POST /editsettings?nodest_new=0&latency_new=60&onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&esclatency_new=300&escnotificationid_new=-1%7CNone%7C&repeatival_new=0&offnotificationid_new=-1%7CNone%7C&subid=new&objecttype=nodetrigger&class=state&ajaxrequest=1&id=2196 HTTP/1.1
-            //how do we get the setting of whether inheritance is enabled/disabled
-            //http://prtg.example.com/controls/triggersandnotifications.htm?id=2196
-            //how do we get the values of the inherited notifications
-
-            //i bet theres a way we can get ALL the info in a single request
-
-            //there is a log.htm page that takes ?filter_status filters.
-
-            //apparently its valid to set * as a valid for parameter count
-
-            //http://prtg.example.com/api/triggers.json?id=2196&subid=1
-
-            //all triggers:
-
-            //http://prtg.example.com/api/triggers.json?id=1
-
-            //have our get-notification cmdlet called gettriggers. maybe rename this function too?
-
-            //todo: add sensorid to the table display for get-channelproperty
+            http://stackoverflow.com/questions/814001/how-to-convert-json-to-xml-or-xml-to-json
+            todo: need to handle no content
+            editsettings?inherittriggers_=0&id=1
+            configure sensor 2196 to have a go green event and compare the json
+            how do we enable/disable inheritance of notifications
+            POST /editsettings?nodest_new=0&latency_new=60&onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&esclatency_new=300&escnotificationid_new=-1%7CNone%7C&repeatival_new=0&offnotificationid_new=-1%7CNone%7C&subid=new&objecttype=nodetrigger&class=state&ajaxrequest=1&id=2196 HTTP/1.1
+            how do we get the setting of whether inheritance is enabled/disabled
+            http://prtg.example.com/controls/triggersandnotifications.htm?id=2196
+            how do we get the values of the inherited notifications
+            i bet theres a way we can get ALL the info in a single request
+            there is a log.htm page that takes ?filter_status filters.
+            apparently its valid to set * as a valid for parameter count
+            http://prtg.example.com/api/triggers.json?id=2196&subid=1
+            all triggers: //http://prtg.example.com/api/triggers.json?id=1
+            have our get-notification cmdlet called gettriggers. maybe rename this function too?
+            todo: add sensorid to the table display for get-channelproperty
+            */
         }
 
         /// <summary>
-        /// Retrieve all notification actions on a PRTG Server.
+        /// Retrieve all notification trigger types supported by a PRTG Object.
         /// </summary>
+        /// <param name="objectId">The object to retrieve supported trigger types for.</param>
         /// <returns></returns>
-        public List<NotificationAction> GetNotificationActions()
+        public List<TriggerType> GetNotificationTriggerTypes(int objectId)
         {
-            return GetObjects<NotificationAction>(new NotificationActionParameters());
+            var response = GetNotificationTriggerData(objectId);
+
+            var data = JsonDeserializer<NotificationTriggerData>.DeserializeType(response);
+
+            return data.SupportedTypes.ToList();
         }
 
-        /// <summary>
-        /// Add or edit a notification trigger on a PRTG Server.
-        /// </summary>
-        /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
-        public void SetNotificationTrigger(TriggerParameters parameters)
-        {
-            ExecuteRequest(HtmlFunction.EditSettings, parameters);
-            //var p = new StateTriggerParameters(2196, null, ModifyAction.Add, TriggerSensorState.Down); //will the fact we tolower our value prevent the notificationaction from working?
-                                                                                                       //p.Latency = 30;
-
-            //how do you delete a trigger?
-                //GET /deletesub.htm?id=2196&subid=7&_=1481973979539 HTTP/1.1
-            //we can have a new-triggerparameter that takes a -type and gives back the appropriate object
-
-            //var url = new PrtgUrl(Server, Username, PassHash, HtmlFunction.EditSettings, p);
-
-            /*
-            
-            nodest_new=0&
-            latency_new=60&
-            onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&
-            esclatency_new=300&
-            escnotificationid_new=-1%7CNone%7C&
-            offnotificationid_new=-1%7CNone%7C&
-            repeatival_new=0&
-            <optional offnotificationid>
-
-
-
-            subid=new&
-            objecttype=nodetrigger&
-            class=state&
-            ajaxrequest=1&
-            id=2196
-            */
-
-            //POST /editsettings? HTTP/1.1
-
-            //some have _new, some dont. what are the fields called when you EDIT a trigger?
-
-            //POST /editsettings?nodest_4=0&latency_4=70&onnotificationid_4=300%7CEmail+and+push+notification+to+admin%7C&esclatency_4=300&escnotificationid_4=301%7CEmail+to+all+members+of+group+PRTG+Users+Group%7C&repeatival_4=3&offnotificationid_4=302%7CTicket+Notification%7C&id=1&subid=4 HTTP/1.1
-
-            /*
-            //POST /editsettings?
-            
-            nodest_4=0&
-            latency_4=70&
-            onnotificationid_4=300%7CEmail+and+push+notification+to+admin%7C&
-            esclatency_4=300
-            &escnotificationid_4=301%7CEmail+to+all+members+of+group+PRTG+Users+Group%7C
-            &repeatival_4=3&
-            offnotificationid_4=302%7CTicket+Notification%7C&
-            id=1&subid=4 HTTP/1.1
-            */
-
-
-
-            //instead of appending "new", append the subid of the trigger
-
-        }
-
-        public void RemoveNotificationTrigger(int objectId, int triggerId)
+        private string GetNotificationTriggerData(int objectId)
         {
             var parameters = new Parameters.Parameters
             {
-                [Parameter.Id] = objectId,
-                [Parameter.SubId] = triggerId
+                [Parameter.Id] = objectId
             };
 
-            ExecuteRequest(HtmlFunction.RemoveSubObject, parameters);
+            var response = ExecuteRequest(JsonFunction.Triggers, parameters);
+            response = response.Replace("\"data\": \"(no triggers defined)\",", "");
+
+            return response;
         }
 
         #endregion
 
-        #region Pause / Resume
+    #endregion
+    #region Object Manipulation
+        #region Sensor State
 
         /// <summary>
         /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
@@ -727,7 +983,6 @@ namespace PrtgAPI
             var parameters = new Parameters.Parameters
             {
                 [Parameter.Id] = objectId,
-                //[Parameter.AcknowledgeMessage] = message,
             };
 
             if (message != null)
@@ -750,13 +1005,9 @@ namespace PrtgAPI
             PauseParametersBase parameters;
 
             if (durationMinutes == null)
-            {
                 parameters = new PauseParameters(objectId);
-            }
             else
-            {
                 parameters = new PauseForDurationParameters(objectId, (int)durationMinutes);
-            }
 
             if (pauseMessage != null)
                 parameters.PauseMessage = pauseMessage;
@@ -785,79 +1036,300 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Notifications
 
-        #region ExecuteRequest
+        /// <summary>
+        /// Add a notification trigger to a PRTG Server.
+        /// </summary>
+        /// <param name="parameters"></param>
+        public void AddNotificationTrigger(TriggerParameters parameters) => SetNotificationTrigger(parameters);
 
-        private string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
+        /// <summary>
+        /// Add or edit a notification trigger on a PRTG Server.
+        /// </summary>
+        /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
+        public void SetNotificationTrigger(TriggerParameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return response;
-        }
-
-        private XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
-        }
-
-        private void ExecuteRequest(CommandFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-        }
-
-        private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return response;
-        }
-
-        private string ExecuteRequest(PrtgUrl url)
-        {
-            string response;
-
-            try
+            if (parameters.Action == ModifyAction.Add)
             {
-                //var client = new WebClient();
-                response = client.DownloadString(url.Url);
+                var response = GetNotificationTriggerData(parameters.ObjectId);
+
+                var data = JsonDeserializer<NotificationTriggerData>.DeserializeType(response);
+
+                if (!data.SupportedTypes.Contains(parameters.Type))
+                    throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
-            catch (WebException ex)
+            else if (parameters.Action == ModifyAction.Edit)
             {
-                if (ex.Response == null)
-                    throw;
+                var properties = parameters.GetType().GetProperties().Where(p => p.GetCustomAttribute<RequireValueAttribute>()?.ValueRequired == true).Where(p => p.GetValue(parameters) == null).ToList();
 
-                var webResponse = (HttpWebResponse)ex.Response;
-
-                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    using (var reader = new StreamReader(webResponse.GetResponseStream(), Encoding.UTF8))
-                    {
-                        response = reader.ReadToEnd();
-                        
-                        var xDoc = XDocument.Parse(response);
-                        var errorMessage = xDoc.Descendants("error").First().Value;
-
-                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
-                    }
-                }
-
-                throw;
+                //if(properties.Count > 0)
+                //    throw new Exception
             }
+            else
+                throw new NotImplementedException($"Handler missing for modify action '{parameters.Action}'");
 
-            return response;
+            ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        }
+
+        //todo make a note this doesnt check for inheritance. find out what happens if you try and remove an inherited trigger using this? whats the http response?
+        public void RemoveNotificationTrigger(int objectId, int triggerId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.SubId] = triggerId
+            };
+
+            ExecuteRequest(HtmlFunction.RemoveSubObject, parameters);
+        }
+
+        /// <summary>
+        /// Remove a notification trigger from an object.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to remove.</param>
+        public void RemoveNotificationTrigger(NotificationTrigger trigger)
+        {
+            if (trigger == null)
+                throw new ArgumentNullException(nameof(trigger));
+
+            if (trigger.Inherited)
+                throw new InvalidOperationException($"Cannot remove trigger {trigger.SubId} from Object {trigger.ObjectId} as it is inherited from Object {trigger.ParentId}");
+
+            RemoveNotificationTrigger(trigger.ObjectId, trigger.SubId);
         }
 
         #endregion
+        #region Miscellaneous
+
+        /// <summary>
+        /// Request an object or any children of an object refresh themselves immediately.
+        /// </summary>
+        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
+        public void CheckNow(int objectId)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId
+            };
+
+            ExecuteRequest(CommandFunction.ScanNow, parameters);
+        }
+
+        /// <summary>
+        /// Automatically create sensors under an object based on the object's (or it's children's) device type.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        public void AutoDiscover(int objectId)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId
+            };
+
+            ExecuteRequest(CommandFunction.DiscoverNow, parameters);
+        }
+
+        /// <summary>
+        /// Modify the position of an object up or down within the PRTG User Interface.
+        /// </summary>
+        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="position">The direction to move in.</param>
+        public void SetPosition(int objectId, Position position)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.NewPos] = position
+            };
+
+            ExecuteRequest(CommandFunction.SetPosition, parameters);
+        }
+
+        /// <summary>
+        /// Clone a sensor or group to another device or group respectively.
+        /// </summary>
+        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned object.</param>
+        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        public void Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
+        {
+            if (cloneName == null)
+                throw new ArgumentNullException(nameof(cloneName));
+
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = sourceObjectId,
+                [Parameter.Name] = cloneName,
+                [Parameter.TargetId] = targetLocationObjectId
+            };
+
+            //todo: need to implement simulateerrorparameters or get rid of it?
+
+            ExecuteRequest(CommandFunction.DuplicateObject, parameters);
+
+            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+
+            //get-sensor|copy-object -target $devices
+        }
+
+        /// <summary>
+        /// Clone a device to another group.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned device.</param>
+        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
+        /// <param name="targetGroupId">The group the device should be cloned to.</param>
+        public void Clone(int deviceId, string cloneName, string host, int targetGroupId)
+        {
+            if (cloneName == null)
+                throw new ArgumentNullException(nameof(cloneName));
+
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Id] = deviceId,
+                [Parameter.Name] = cloneName,
+                [Parameter.Host] = host,
+                [Parameter.TargetId] = targetGroupId
+            };
+
+            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
+        }
+
+        /// <summary>
+        /// Permanently delete an object from PRTG. This cannot be undone.
+        /// </summary>
+        /// <param name="objectId">ID of the object to delete.</param>
+        public void Delete(int objectId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.Approve] = 1
+            };
+
+            ExecuteRequest(CommandFunction.DeleteObject, parameters);
+        }
+
+        /// <summary>
+        /// Rename an object.
+        /// </summary>
+        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="name">New name to give the object.</param>
+        public void Rename(int objectId, string name)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.Value] = name
+            };
+
+            ExecuteRequest(CommandFunction.Rename, parameters);
+        }
+
+        #endregion
+    #endregion
+#endregion
+
+        #region Unsorted
+
+        /// <summary>
+        /// Calcualte the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of a given type.</returns>
+        public int GetTotalObjects(Content content)
+        {
+            var parameters = new Parameters.Parameters()
+            {
+                [Parameter.Count] = 0,
+                [Parameter.Content] = content
+            };
+
+            return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
+        }
+
+        internal SensorSettings GetObjectProperties(int objectId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.ObjectType] = BaseType.Sensor
+            };
+
+            //we'll need to add support for dropdown lists too
+
+            var response = ExecuteRequest(HtmlFunction.ObjectData, parameters);
+
+            var blah = SensorSettings.GetXml(response, objectId);
+
+            var doc = new XDocument(blah);
+
+            var aaaa = Data<SensorSettings>.DeserializeType(doc);
+
+            //maybe instead of having an enum for my schedule and scanninginterval we have a class with a special getter that removes the <num>|component when you try and retrieve the property
+            //the thing is, the enum IS actually dynamic - we need a list of valid options
+
+            //todo: whenever we use _raw attributes dont we need to add xmlignore on the one that accesses it/
+
+            return aaaa;
+        }
+
+        //todo: move this
+        private List<SensorHistory> GetSensorHistory(int sensorId)
+        {
+            Logger.DebugEnabled = false;
+
+            //todo: add xml formatting
+            //var awwww = typeof (SensorOrDeviceOrGroupOrProbe).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+            //var q = GetSensors(SensorStatus.Paused);
+
+            //var filter = new SearchFilter(Property.Comments, SensorStatus.Paused);
+            //filter.ToString();
+
+            //myenum val = myenum.Val5;
+
+            //var al= Enum.GetValues(typeof (myenum)).Cast<myenum>().Where(m => m != val && val.HasFlag(m)).ToList();
+
+            //var enums = Enum.GetValues(typeof (myenum)).Cast<myenum>().ToList();
+
+
+            //var result = myenum.Val5.GetUnderlyingFlags();
+
+            //var result = outer(myenum.Val5, enums).ToList();
+
+            //foreach (var a in al1)
+
+
+            //loop over each element. if a value contains more than 1 element in it, its not real, so ignore it
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Columns] = new[] { Property.Datetime, Property.Value_, Property.Coverage },
+                [Parameter.Id] = 2196,
+                [Parameter.Content] = Content.Values
+            };
+
+            var items = GetObjects<SensorHistoryData>(parameters);
+
+            foreach (var history in items)
+            {
+                foreach (var value in history.Values)
+                {
+                    value.DateTime = history.DateTime;
+                    value.SensorId = sensorId;
+                }
+            }
+            //todo: need to implement coverage column
+            //todo: right now the count is just the default - 500. need to allow specifying bigger counts
+            return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
+        }
 
         #region SetObjectProperty
 
@@ -932,6 +1404,11 @@ namespace PrtgAPI
         /// <param name="value">The value to set the channel's property to.</param>
         public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value)
         {
+            var attrib = property.GetEnumAttribute<RequireValueAttribute>();
+
+            if (value == null && (attrib == null || (attrib != null && attrib.ValueRequired)))
+                throw new ArgumentNullException($"Property '{property}' does not support null values.");
+
             var customParams = GetChannelSetObjectPropertyCustomParams(channelId, property, value);
 
             var parameters = new Parameters.Parameters
@@ -943,10 +1420,76 @@ namespace PrtgAPI
             ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
+        //move this
+        public void SetObjectProperty(int objectId, ObjectProperty property, object value)
+        {
+            var prop = typeof (SensorSettings).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
+
+            if (prop == null)
+                throw new MissingAttributeException(typeof (SensorSettings), property.ToString(), typeof (PropertyParameterAttribute));
+
+            var propertyType = prop.PropertyType;
+            var valueType = value.GetType();
+
+            object val = null;
+
+            if (propertyType == typeof(bool))
+            {
+                if(valueType == typeof(bool))
+                    val = ((bool)value) ? "1" : "0";
+            }
+            else if (propertyType.IsEnum)
+            {
+                if (propertyType == valueType)
+                    val = ((Enum) value).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                else
+                {
+                    if(Enum.GetNames(propertyType).Any(x => x.ToLower() == value.ToString().ToLower()))
+                        val = ((Enum)Enum.Parse(propertyType, value.ToString(), true)).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                }
+            }
+            else
+                throw new InvalidTypeException(propertyType, valueType);
+
+            if (val == null)
+                throw new ArgumentException($"Value '{value}' could not be assigned to property '{prop.Name}'. Expected type: '{propertyType}'. Actual type: '{valueType}'.");
+
+            //i dont care what the current type is, i just want to know if the type can be parsed to the type of the property type
+
+            //maybe we'll create an instance of the property type and check we're assignable to it?
+
+
+            //then we ultimately do need to serialize that property
+
+
+
+            //i think the properties in sensorsetting need an enum that links them to an object property
+            //and then we use reflection to get the param with a given property and then confirm
+            //that the value we were given is convertable to the given type
+
+            //we should then implement this type safety for setchannelproperty as well
+
+
+
+            //we need to add handling for inherit error interval
+
+
+            //GetEnumAttributepqp
+
+
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Custom] = ObjectSettings.CreateCustomParameter(property, val),
+                [Parameter.Id] = objectId
+            };
+
+            ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        }
+
         private List<CustomParameter> GetChannelSetObjectPropertyCustomParams(int channelId, ChannelProperty property, object value)
         {
             bool valAsBool;
-            var valIsBool = bool.TryParse(value.ToString(), out valAsBool);
+            var valIsBool = bool.TryParse(value?.ToString(), out valAsBool);
 
             List<CustomParameter> customParams = new List<CustomParameter>();
 
@@ -963,7 +1506,7 @@ namespace PrtgAPI
 
                     var associatedProperties = property.GetDependentProperties<ChannelProperty>();
 
-                    customParams.AddRange(associatedProperties.Select(prop => Channel.CreateCustomParameter(prop, channelId, string.Empty)));
+                    customParams.AddRange(associatedProperties.Select(prop => ObjectSettings.CreateCustomParameter(channelId, prop, string.Empty)));
                 }
             }
             else //if we're enabling a property, check if there are values we depend on. if so, enable them!
@@ -972,11 +1515,11 @@ namespace PrtgAPI
 
                 if (dependentProperty != null)
                 {
-                    customParams.Add(Channel.CreateCustomParameter(dependentProperty.Name.ToEnum<ChannelProperty>(), channelId, "1"));
+                    customParams.Add(ObjectSettings.CreateCustomParameter(channelId, dependentProperty.Name.ToEnum<ChannelProperty>(), "1"));
                 }
             }
 
-            customParams.Add(Channel.CreateCustomParameter(property, channelId, value));
+            customParams.Add(ObjectSettings.CreateCustomParameter(channelId, property, value));
 
             return customParams;
         }
@@ -1126,142 +1669,10 @@ namespace PrtgAPI
 
         #endregion
 
-        #endregion
 
-        #region Miscellaneous
+
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
-
-        /// <summary>
-        /// Request an object or any children of an object refresh themselves immediately.
-        /// </summary>
-        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
-        public void CheckNow(int objectId)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = objectId
-            };
-
-            ExecuteRequest(CommandFunction.ScanNow, parameters);
-        }
-
-        /// <summary>
-        /// Automatically create sensors under an object based on the object's (or it's children's) device type.
-        /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        public void AutoDiscover(int objectId)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = objectId
-            };
-            
-            ExecuteRequest(CommandFunction.DiscoverNow, parameters);
-        }
-
-        /// <summary>
-        /// Modify the position of an object up or down within the PRTG User Interface.
-        /// </summary>
-        /// <param name="objectId">The object to reposition.</param>
-        /// <param name="position">The direction to move in.</param>
-        public void SetPosition(int objectId, Position position)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.NewPos] = position
-            };
-
-            ExecuteRequest(CommandFunction.SetPosition, parameters);
-        }
-
-        /// <summary>
-        /// Clone a sensor or group to another device or group respectively.
-        /// </summary>
-        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
-        /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
-        public void Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
-        {
-            if (cloneName == null)
-                throw new ArgumentNullException(nameof(cloneName));
-
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = sourceObjectId,
-                [Parameter.Name] = cloneName,
-                [Parameter.TargetId] = targetLocationObjectId
-            };
-
-            //todo: need to implement simulateerrorparameters or get rid of it?
-
-            ExecuteRequest(CommandFunction.DuplicateObject, parameters);
-
-            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
-
-            //get-sensor|copy-object -target $devices
-        }
-
-        /// <summary>
-        /// Clone a device to another group.
-        /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
-        /// <param name="cloneName">The name that should be given to the cloned device.</param>
-        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetGroupId">The group the device should be cloned to.</param>
-        public void Clone(int deviceId, string cloneName, string host, int targetGroupId)
-        {
-            if (cloneName == null)
-                throw new ArgumentNullException(nameof(cloneName));
-
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
-
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = deviceId,
-                [Parameter.Name] = cloneName,
-                [Parameter.Host] = host,
-                [Parameter.TargetId] = targetGroupId
-            };
-
-            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
-        }
-
-        /// <summary>
-        /// Permanently delete an object from PRTG. This cannot be undone.
-        /// </summary>
-        /// <param name="id">ID of the object to delete.</param>
-        public void Delete(int id)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = id,
-                [Parameter.Approve] = 1
-            };
-
-            ExecuteRequest(CommandFunction.DeleteObject, parameters);
-        }
-
-        /// <summary>
-        /// Rename an object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to rename.</param>
-        /// <param name="name">New name to give the object.</param>
-        public void Rename(int objectId, string name)
-        {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.Value] = name
-            };
-
-            ExecuteRequest(CommandFunction.Rename, parameters);
-        }
 
         internal ServerStatus GetStatus()
         {
@@ -1274,6 +1685,7 @@ namespace PrtgAPI
 
             return Data<ServerStatus>.DeserializeType(response);
         }
+
 
         #endregion
     }

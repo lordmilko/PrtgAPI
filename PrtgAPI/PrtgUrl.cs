@@ -48,29 +48,29 @@ namespace PrtgAPI
 
         private PrtgUrl(string server, string username, string passhash, string function, Parameters.Parameters parameters)
         {
-            StringBuilder url = new StringBuilder();
+            StringBuilder urlBuilder = new StringBuilder();
 
-            url.Append(AddUrlPrefix(server));
+            urlBuilder.Append(AddUrlPrefix(server));
 
-            url.Append(function);
+            urlBuilder.Append(function);
 
             foreach (var p in parameters.GetParameters())
             {
-                AddParameter(url, p.Key, p.Value);
+                AddParameter(urlBuilder, p.Key, p.Value);
             }
 
             if (!usernameFound)
-                AddParameter(url, Parameter.Username, username);
+                AddParameter(urlBuilder, Parameter.Username, username);
 
             if (!passFound)
             {
                 if (passhash == null)
                     throw new ArgumentNullException(nameof(passhash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(passhash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");
 
-                AddParameter(url, Parameter.PassHash, passhash);
+                AddParameter(urlBuilder, Parameter.PassHash, passhash);
             }
 
-            Url = url.ToString();
+            Url = urlBuilder.ToString();
 
 #if DEBUG
             Debug.WriteLine(Url);
@@ -80,13 +80,9 @@ namespace PrtgAPI
         private string AddUrlPrefix(string server)
         {
             if (server.StartsWith("http://") || server.StartsWith("https://"))
-            {
                 return server;
-            }
-            else
-            {
-                return $"https://{server}";
-            }
+
+            return $"https://{server}";
         }
 
         private static string GetResourcePath(Enum function)
@@ -94,7 +90,7 @@ namespace PrtgAPI
             return function.IsUndocumented() ? $"/{function.GetDescription()}" : $"/api/{function.GetDescription()}";
         }
 
-        private void AddParameter(StringBuilder url, Parameter parameter, object value)
+        private void AddParameter(StringBuilder urlBuilder, Parameter parameter, object value)
         {
             if (parameter == Parameter.Username)
                 usernameFound = true;
@@ -115,103 +111,104 @@ namespace PrtgAPI
 
             //get the content. if its not a password, capitalize it
 
-            url.Append(delim + GetUrlComponent(parameter, value));
+            urlBuilder.Append(delim + GetUrlComponent(parameter, value));
         }
 
-        private static string GetUrlComponent(Parameter parameter, object value)
+        private string GetUrlComponent(Parameter parameter, object value)
         {
             var parameterType = parameter.GetParameterType();
 
             if (parameter == Parameter.Custom)
-            {
-                var arr = value as IEnumerable<CustomParameter>;
-
-                if (arr != null)
-                {
-                    var builder = new StringBuilder();
-
-                    var list = arr.ToList();
-
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value.ToString()));
-
-                        if (i < list.Count - 1)
-                            builder.Append("&");
-                    }
-
-                    return builder.ToString();
-                }
-
-                var singleParam = value as CustomParameter;
-
-                if (singleParam != null)
-                {
-                    return FormatSingleParameterWithoutValEncode(singleParam.Name, singleParam.Value.ToString());
-                }
-
-                throw new NotImplementedException(); //actually you just passed the wrong type, so its an argument exception?
-            }
+                return ProcessCustomParameter(value);
 
             if ((parameterType == ParameterType.MultiParameter || parameterType == ParameterType.MultiValue) && !(value is IEnumerable))
-            {
                 value = new[] { value };
-            }
 
             var description = parameter.GetDescription();
 
-            //Format String Parameter
+            if (value is string)
+                return FormatSingleParameterWithValEncode(description, (string)value);
 
-            string s = value as string;
-            if (s != null)
-            {
-                return FormatSingleParameterWithValEncode(description, s);
-            }
+            if (value is Enum)
+                return FormatSingleParameterWithValEncode(description, ((Enum)value).ToString(), true);
 
-            //Format Enum Parameter
+            if (value is IEnumerable)
+                return ProcessIEnumerableParameter(parameterType, (IEnumerable)value, description);
 
-            Enum e = value as Enum;
-            if (e != null)
-            {
-                return FormatSingleParameterWithValEncode(description, e.ToString(), true);
-            }
-
-            //Format IEnumerable Parameter
-
-            var enumerable = value as IEnumerable;
-            if (enumerable != null)
-            {
-                if (parameterType == ParameterType.MultiValue)
-                {
-                    var str = GetMultiValueStr(enumerable);
-                    return FormatSingleParameterWithoutValEncode(description, str);
-                }
-
-                if (parameterType == ParameterType.MultiParameter)
-                {
-                    return FormatMultiParameter(enumerable, description);
-                }
-
-                throw new NotImplementedException();
-            }
-
-            return FormatSingleParameterWithValEncode(description, Convert.ToString(value));
+            return FormatSingleParameterWithValEncode(description, value);
         }
 
-        private static string FormatSingleParameterWithValEncode(string name, string val, bool isEnum = false)
+        private string ProcessCustomParameter(object value)
         {
-            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(val), isEnum);
+            var arr = value as IEnumerable<CustomParameter>;
+
+            if (arr != null)
+            {
+                var builder = new StringBuilder();
+
+                var list = arr.ToList();
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value));
+
+                    if (i < list.Count - 1)
+                        builder.Append("&");
+                }
+
+                return builder.ToString();
+            }
+
+            var singleParam = value as CustomParameter;
+
+            if (singleParam != null)
+                return FormatSingleParameterWithValEncode(singleParam.Name, singleParam.Value);
+
+            throw new NotImplementedException(); //actually you just passed the wrong type, so its an argument exception?
         }
 
-        private static string FormatSingleParameterWithoutValEncode(string name, string val, bool isEnum = false)
+        private string ProcessIEnumerableParameter(ParameterType parameterType, IEnumerable value, string description)
         {
+            if (parameterType == ParameterType.MultiValue)
+            {
+                var str = GetMultiValueStr(value);
+                return FormatSingleParameterWithoutValEncode(description, str);
+            }
+
+            if (parameterType == ParameterType.MultiParameter)
+                return FormatMultiParameter(value, description);
+
+            throw new NotImplementedException();
+        }
+
+        private string FormatSingleParameterWithValEncode(string name, object val, bool isEnum = false)
+        {
+            var str = val is IFormattable ? ((IFormattable) val).GetSerializedFormat() : Convert.ToString(val);
+
+            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(str), isEnum);
+        }
+
+        private string FormatSingleParameterWithoutValEncode(string name, object val, bool isEnum = false)
+        {
+            var str = string.Empty;
+
+            if (val is string)
+                str = val.ToString();
+            else
+            {
+                if (val is IFormattable)
+                    str = ((IFormattable) val).GetSerializedFormat();
+                else
+                    str = Convert.ToString(val);
+            }
+
             if(isEnum && name != Parameter.Password.GetDescription())
-                return $"{name}={val}".ToLower();
+                return $"{name}={str}".ToLower();
 
-            return $"{name.ToLower()}={val}";
+            return $"{name.ToLower()}={str}";
         }
 
-        private static string GetMultiValueStr(IEnumerable enumerable)
+        private string GetMultiValueStr(IEnumerable enumerable)
         {
             var builder = new StringBuilder();
 
@@ -225,7 +222,7 @@ namespace PrtgAPI
             return builder.ToString().ToLower();
         }
 
-        private static string FormatMultiParameter(IEnumerable enumerable, string description)
+        private string FormatMultiParameter(IEnumerable enumerable, string description)
         {
             var builder = new StringBuilder();
 
@@ -258,7 +255,7 @@ namespace PrtgAPI
                 }
                 else
                 {
-                    query = FormatSingleParameterWithValEncode(description, Convert.ToString(val));
+                    query = FormatSingleParameterWithValEncode(description, val);
                 }
 
                 builder.Append(query + "&");
@@ -269,7 +266,7 @@ namespace PrtgAPI
             return builder.ToString();
         }
 
-        private static string FormatFlagEnum(Enum e, Func<Enum, string> formatter)
+        private string FormatFlagEnum(Enum e, Func<Enum, string> formatter)
         {
             string query = null;
 

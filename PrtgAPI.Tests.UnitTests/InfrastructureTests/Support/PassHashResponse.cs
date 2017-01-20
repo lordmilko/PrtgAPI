@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             return "12345678";
         }
 
-        public Task<string> GetResponseTextAsync(string address)
+        public Task<string> GetResponseTextStream(string address)
         {
             throw new NotSupportedException();
         }

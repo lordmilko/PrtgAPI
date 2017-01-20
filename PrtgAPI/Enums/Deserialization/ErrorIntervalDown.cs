@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace PrtgAPI.Enums.Deserialization
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the number of scanning intervals to wait before setting the sensor <see cref="SensorStatus.Down"/> when an error is reported. When an error clears, the sensor will go <see cref="SensorStatus.Up"/> immediately.

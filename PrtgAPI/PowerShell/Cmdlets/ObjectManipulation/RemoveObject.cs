@@ -27,6 +27,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (Object.Name == null && Object.Id == default(int))
+                throw new ParameterBindingException($"Cannot bind an incomplete object to parameter '{Object}'");
+
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 if(Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))

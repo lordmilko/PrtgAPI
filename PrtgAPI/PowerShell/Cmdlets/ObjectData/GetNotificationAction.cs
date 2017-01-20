@@ -15,12 +15,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetNotificationAction : PrtgObjectCmdlet<NotificationAction>
     {
         /// <summary>
+        /// Filter the response to objects with a certain name. Can include wildcards.
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0)]
+        public string Name { get; set; }
+
+        /// <summary>
         /// Retrieves all notification actions from a PRTG Server.
         /// </summary>
         /// <returns>A list of all notification actions.</returns>
         protected override IEnumerable<NotificationAction> GetRecords()
         {
-            return client.GetNotificationActions();
+            var actions = client.GetNotificationActions();
+
+            if (Name != null)
+            {
+                var match = new WildcardPattern(Name.ToLower());
+
+                return actions.Where(action => match.IsMatch(action.Name.ToLower()));
+            }
+            else
+                return actions;
         }
     }
 }

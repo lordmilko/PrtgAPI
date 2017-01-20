@@ -6,7 +6,7 @@ using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     class Record
     {

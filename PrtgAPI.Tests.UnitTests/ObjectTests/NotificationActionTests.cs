@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         protected override List<NotificationAction> GetObjects(PrtgClient client) => client.GetNotificationActions();
 
-        protected override NotificationActionItem GetItem() => new NotificationActionItem();
+        public override NotificationActionItem GetItem() => new NotificationActionItem();
 
         protected override NotificationActionResponse GetResponse(NotificationActionItem[] items) => new NotificationActionResponse(items);
     }

@@ -16,100 +16,100 @@ namespace PrtgAPI
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Up"/> state.
         /// </summary>
-        public int UpSensors => DH.StrToInt(_RawUpSensors);
+        public int UpSensors => DH.StrToInt(upSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="UpSensors"/> attribute. This property should not be used.
+        /// Raw number of up sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("upsens")]
-        public string _RawUpSensors { get; set; }
+        protected string upSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Down"/> state.
         /// </summary>
-        public int DownSensors => DH.StrToInt(_RawDownSensors);
+        public int DownSensors => DH.StrToInt(downSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="DownSensors"/> attribute. This property should not be used.
+        /// Raw number of down sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("downsens")]
-        public string _RawDownSensors { get; set; }
+        protected string downSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Warning"/> state.
         /// </summary>
-        public int WarningSensors => DH.StrToInt(_RawWarningSensors);
+        public int WarningSensors => DH.StrToInt(warningSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="WarningSensors"/> attribute. This property should not be used.
+        /// Raw number of warning sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("warnsens")]
-        public string _RawWarningSensors { get; set; }
+        protected string warningSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.DownAcknowledged"/> state.
         /// </summary>
-        public int DownAcknowledgedSensors => DH.StrToInt(_RawDownAcknowledgedSensors);
+        public int DownAcknowledgedSensors => DH.StrToInt(downAcknowledgedSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="DownAcknowledgedSensors"/> attribute. This property should not be used.
+        /// Raw number of down acknowledged sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("downacksens")]
-        public string _RawDownAcknowledgedSensors { get; set; }
+        protected string downAcknowledgedSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.DownPartial"/> state.
         /// </summary>
-        public int PartialDownSensors => DH.StrToInt(_RawPartialDownSensors);
+        public int PartialDownSensors => DH.StrToInt(partialDownSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="PartialDownSensors"/> attribute. This property should not be used.
+        /// Raw number of partial down sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("partialdownsens")]
-        public string _RawPartialDownSensors { get; set; }
+        protected string partialDownSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Unusual"/> state.
         /// </summary>
-        public int UnusualSensors => DH.StrToInt(_RawUnusualSensors);
+        public int UnusualSensors => DH.StrToInt(unusualSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="UnusualSensors"/> attribute. This property should not be used.
+        /// Raw number of unusual sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("unusualsens")]
-        public string _RawUnusualSensors { get; set; }
+        protected string unusualSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.PausedByUser"/>, <see cref="SensorStatus.PausedByDependency"/>, <see cref="SensorStatus.PausedBySchedule"/> or <see cref="SensorStatus.PausedByLicense"/> state.
         /// </summary>
-        public int PausedSensors => DH.StrToInt(_RawPausedSensors);
+        public int PausedSensors => DH.StrToInt(pausedSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="PausedSensors"/> attribute. This property should not be used.
+        /// Raw number of paused sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("pausedsens")]
-        public string _RawPausedSensors { get; set; }
+        protected string pausedSensors { get; set; }
 
         /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Unknown"/> state.
         /// </summary>
-        public int UndefinedSensors => DH.StrToInt(_RawUndefinedSensors);
+        public int UndefinedSensors => DH.StrToInt(undefinedSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="UndefinedSensors"/> attribute. This property should not be used.
+        /// Raw number of undefined sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("undefinedsens")]
-        public string _RawUndefinedSensors { get; set; }
+        protected string undefinedSensors { get; set; }
 
         /// <summary>
         /// Total number of sensors in any <see cref="SensorStatus"/> state.
         /// </summary>
-        public int TotalSensors => DH.StrToInt(_RawTotalSensors);
+        public int TotalSensors => DH.StrToInt(totalSensors);
 
         /// <summary>
-        /// Raw value used for <see cref="TotalSensors"/> attribute. This property should not be used.
+        /// Raw number of total sensors. This field is for internal use only.
         /// </summary>
         [XmlElement("totalsens")]
-        public string _RawTotalSensors { get; set; }
+        protected string totalSensors { get; set; }
     }
 }

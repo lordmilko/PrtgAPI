@@ -54,16 +54,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             return obj;
         }
 
-        public void SetPrtgSessionState()
+        public void SetPrtgSessionState(params TItem[] items)
         {
-            PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(GetItem());
+            if (!items.Any())
+            {
+                PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(GetItems());
+            }
+            else
+                PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(items);
         }
 
-        protected abstract TItem GetItem();
+        public void SetPrtgSessionState(PrtgClient client)
+        {
+            PowerShell.PrtgSessionState.Client = client;
+        }
+
+        public abstract TItem GetItem();
 
         protected virtual TItem[] GetItems()
         {
-            throw new NotSupportedException();
+            return new[] {GetItem()};
         }
 
         protected abstract TResponse GetResponse(TItem[] items);

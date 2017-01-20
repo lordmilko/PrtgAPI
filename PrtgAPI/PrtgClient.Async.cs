@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
@@ -15,36 +18,6 @@ namespace PrtgAPI
 {
     public partial class PrtgClient
     {
-        /// <summary>
-        /// Retrieve all sensors from a PRTG Server asynchronously. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
-        /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects to perform against a PRTG Server.</returns>
-        public IEnumerable<Sensor> GetSensorsAsync()
-        {
-            //need to test asking for one page at a time manually and see if we always get 100 if we ask for 100 even if we're on the last page
-
-            var totalSensors = GetTotalObjects(Content.Sensors);
-
-            var tasks = new List<Task<List<Sensor>>>();
-
-            var parameters = new SensorParameters {Count = 500};
-
-            for (int i = 0; i < totalSensors;)
-            {
-                tasks.Add(GetSensorsAsync(parameters));
-
-                i = i + parameters.Count;
-                parameters.Page++;
-
-                if (totalSensors - i < parameters.Count)
-                    parameters.Count = totalSensors - i;
-            }
-
-            var result = new ParallelObjectGenerator<List<Sensor>>(tasks.WhenAnyForAll()).SelectMany(m => m);
-
-            return result;
-        }
-
         /// <summary>
         /// Asynchronously calcualte the total number of objects of a given type present on a PRTG Server.
         /// </summary>
@@ -58,27 +31,17 @@ namespace PrtgAPI
                 [Parameter.Content] = content
             };
 
-            return Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(parameters)).TotalCount);
-        }
-
-        /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server using a custom set of parameters
-        /// </summary>
-        /// <param name="parameters"></param>
-        /// <returns>A custom set of parameters used to retrieve PRTG Sensors.</returns>
-        public async Task<List<Sensor>> GetSensorsAsync(SensorParameters parameters)
-        {
-            return await GetObjectsAsync<Sensor>(parameters);
+            return Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(parameters).ConfigureAwait(false)).TotalCount);
         }
 
         private async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters)
         {
-            return (await GetObjectsRawAsync<T>(parameters)).Items;
+            return (await GetObjectsRawAsync<T>(parameters).ConfigureAwait(false)).Items;
         }
 
         private async Task<Data<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
         {
-            var response = await ExecuteRequestAsync(XmlFunction.TableData, parameters);
+            var response = await ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
             return Data<T>.DeserializeList(response);
         }
@@ -90,52 +53,6 @@ namespace PrtgAPI
             return Data<T>.DeserializeList(response);
         }
 
-        private async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
-
-            var response = await ExecuteRequestAsync(url);
-
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
-        }
-
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url)
-        {
-            string response;
-
-            try
-            {
-                //using (var client = new System.Net.WebClient()) //TODO - make our iwebclient implement idisposable?
-                    //of course, now that our client STORES its webclient now, that means WE have to
-                    //implement idisposable?
-                //{
-                    response = await client.DownloadStringTaskAsync(url.Url);
-                //}
-            }
-            catch (WebException ex)
-            {
-                if (ex.Response == null)
-                    throw;
-
-                var webResponse = (HttpWebResponse) ex.Response;
-
-                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    using (var reader = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.UTF8))
-                    {
-                        response = reader.ReadToEnd();
-
-                        var xDoc = XDocument.Parse(response);
-                        var errorMessage = xDoc.Descendants("error").First().Value;
-
-                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
-                    }
-                }
-
-                throw;
-            }
-
-            return response;
-        }
+        
     }
 }

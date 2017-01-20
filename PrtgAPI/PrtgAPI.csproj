@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\RequireValueAttribute.cs" />
     <Compile Include="Attributes\SplittableStringAttribute.cs" />
     <Compile Include="Enums\Deserialization\TriggerChannel.cs" />
     <Compile Include="Enums\Deserialization\TriggerCondition.cs" />
@@ -57,9 +58,13 @@
     <Compile Include="Enums\Deserialization\TriggerType.cs" />
     <Compile Include="Enums\Deserialization\TriggerUnitSize.cs" />
     <Compile Include="Enums\ModifyAction.cs" />
+    <Compile Include="Enums\Serialization\ObjectProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerSensorState.cs" />
     <Compile Include="Enums\Serialization\TriggerVolumeUnitSize.cs" />
+    <Compile Include="Exceptions\InvalidTriggerTypeException.cs" />
+    <Compile Include="Exceptions\InvalidTypeException.cs" />
+    <Compile Include="IFormattable.cs" />
     <Compile Include="IWebClient.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Objects\Deserialization\JsonDeserializer.cs" />
@@ -68,7 +73,6 @@
     <Compile Include="Objects\Deserialization\XmlAttributeType.cs" />
     <Compile Include="Objects\Deserialization\XmlSerializer.cs" />
     <Compile Include="Objects\NotificationAction.cs" />
-    <Compile Include="Objects\NotificationActionDescriptor.cs" />
     <Compile Include="Objects\NotificationTrigger.cs" />
     <Compile Include="Objects\Deserialization\SensorHistoryData.cs" />
     <Compile Include="Objects\SensorHistory.cs" />
@@ -79,11 +83,19 @@
     <Compile Include="Parameters\ObjectManipulation\Triggers\TriggerParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetNotificationAction.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\CloneSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSchedule.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\New-SensorFactory.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\EditNotificationTriggerProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationAction.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTriggerTypes.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\NewTriggerParameter.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\NewNotificationTriggerParameter.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\RemoveNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
     <Compile Include="_Todo.cs" />
     <Compile Include="Properties\AssemblyFileVersion.cs">
       <AutoGen>True</AutoGen>
@@ -107,7 +119,6 @@
     <Compile Include="Enums\Functions\HtmlFunction.cs" />
     <Compile Include="Enums\Deserialization\HistoricValueMode.cs" />
     <Compile Include="Enums\Deserialization\Visibility.cs" />
-    <Compile Include="Enums\PropertyType.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\Async\ParallelObjectGenerator.cs" />
     <Compile Include="Helpers\TaskHelpers.cs" />
@@ -133,14 +144,14 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetGroup.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetProbe.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetObjectProperty.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgClient.cs" />
     <Compile Include="PowerShell\Base\PrtgObjectCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTotals.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\RefreshObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RefreshObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\PauseObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RenameObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ResumeObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetChannelProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\SetChannelProperty.cs" />
     <Compile Include="PowerShell\ProgressSettings.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
@@ -176,7 +187,6 @@
     <Compile Include="Exceptions\PrtgRequestException.cs" />
     <Compile Include="Exceptions\UnknownTypeException.cs" />
     <Compile Include="Exceptions\XmlDeserializationException.cs" />
-    <Compile Include="Helpers\AttributeHelpers.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\XDocumentHelpers.cs" />
     <Compile Include="Objects\NotificationTypes.cs" />
@@ -198,7 +208,7 @@
     <Compile Include="Parameters\ObjectData\SensorParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ConnectPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\DisconnectPrtgServer.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensor.cs" />
     <Compile Include="PowerShell\Cmdlets\NewSearchFilter.cs" />
     <Compile Include="PowerShell\Base\PrtgCmdlet.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
@@ -215,20 +225,20 @@
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory.cs" />
     <Compile Include="PrtgClient.cs" />
     <Compile Include="PrtgUrl.cs" />
-    <Compile Include="WebClient.cs" />
+    <Compile Include="PrtgWebClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PowerShell\Resources\PrtgAPI.cmd" />
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PowerShell\Resources\PrtgAPI.ps1" />
     <None Include="PowerShell\Resources\PrtgAPI.psd1" />
     <None Include="PowerShell\Resources\PrtgAPI.psm1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\AssemblyFileVersion.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyFileVersion1.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

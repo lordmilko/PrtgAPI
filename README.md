@@ -12,7 +12,11 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
-5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below). Alternatively, you can run the included *PrtgAPI.cmd* file to open a prompt and import the PrtgAPI module for you.
+5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below). Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
+
+## Compilation
+
+PrtgAPI requires Visual Studio 2015. If you wish to run any unit tests, ensure *Test -> Test Settings -> Keep Test Execution Engine Running* is unticked to prevent the PowerShell tests from locking the assemblies (preventing recompilation or moving the files somewhere else)
 
 ## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
@@ -92,18 +96,6 @@ Notification triggers can also be added and modified via the `SetNotificationTri
 
 To update triggers with `SetNotificationTrigger` you must construct a `TriggerParameters` object of the trigger type you wish to construct.
 
-```c#
-
-//Create a new State Trigger on the object with ID 1234
-
-var actions = client.GetNotificationActions();
-
-client.SetNotificationTrigger(new StateTriggerParameters(1234, null, NodifyAction.Add, TriggerSensorState.Down)
-{
-    OnNotificationAction = actions.First() //TriggerParameters have a variety of fields that can be specified
-});
-```
-
 The following trigger parameter types are available:
 * StateTriggerParameters
 * ChangeTriggerParameters
@@ -111,13 +103,52 @@ The following trigger parameter types are available:
 * VolumeTriggerParameters
 * ThresholdTriggerParameters
 
-Notification Triggers can also be removed from objects.
+Trigger parameter objects can be created in different ways for three different use cases:
+* Creating a trigger from an existing trigger
+* Editing an existing existing trigger
+* Creating a new trigger from scratch.
+
+```c#
+
+//Create a new State Trigger on the object with ID 1234
+
+var actions = client.GetNotificationActions();
+
+var parameters = new StateTriggerParameters(1234) //By default sensor state "Down" will be used as the trigger
+{
+    OnNotificationAction = actions.First() //TriggerParameters have a variety of fields that can be specified
+};
+
+client.AddNotificationTrigger(parameters);
+```
+
+Some properties *must* have values in order to prevent issues with PRTG. Attempting to nullify these properties in parameters for creating a new trigger will generate an exception.
+
+When editing triggers, by default all properties are null. Only properties that are set on the object will be modified when the request is executed. If you decide you no longer wish to modify a property, setting it to `null` will remove it from the object.
+
+```powershell
+
+var parameters = new ThresholdTriggerParameters(1234, 1) //Modify the trigger with Sub ID 1 on the object with ID 1234
+{
+	Condition = TriggerCondition.Above //Change only the trigger's condition property
+}
+
+client.SetNotificationTrigger(parameters);
+
+```
+
+Setting a *notification action* to `null` when adding or editing trigger parameters will cause the action to be set to the *empty notification action*. As a result of this, if you are editing a notification trigger and have set a notification action property, this value cannot be unset without creating a new object.
+
+Notification Triggers can also be removed from objects. Trigers can be removed either by specfying the the object ID/sub ID of the trigger, or a `NotificationTrigger` object retrieved from a previous call to `GetNotificationTriggers`
 
 ```c#
 client.RemoveNotificationTrigger(1234, triggers.First().SubId);
+
+var trigger = client.GetNotificationTriggers(1234).First();
+client.RemoveNotificationTrigger(trigger);
 ```
 
-Please note: RemoveNotificationTrigger does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. (The PowerShell variant, Remove-NotificationTrigger, _does_ perform this check)
+Please note: the former overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The second overload _does_ perform this check.
 
 ### Object Settings
 Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
@@ -173,16 +204,16 @@ PrtgAPI implements a number of built-in parameter types that automatically speci
 
 PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functionality of the C# interface. When compiling, a _PrtgAPI_ folder will be created under the Debug/Release folder. You can then copy wherever you like and import into PowerShell, as follows:
 ```powershell
-Import-Module "C:\path\to\PrtgAPI" -DisableNameChecking
+Import-Module "C:\path\to\PrtgAPI"
 ```
 
 Once loaded, you can connect to your PRTG Server
 
 ```powershell
-Connect-PrtgServer prtg.mycoolsite.com (Get-Credential)
+Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) # ProTip: You can omit (Get-Credential)
 ```
 
-To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgServer`
+To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgClient`
 
 ```powershell
 Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) -PassHash
@@ -197,19 +228,22 @@ Connect-PrtgServer prtg.mycoolsite.com (New-Credential prtgadmin supersecretpass
 The following cmdlets are currently supported
 
 ```powershell
+Add-NotificationTrigger
 Acknowledge-Sensor
 Connect-PrtgServer
 Disconnect-PrtgServer
+Edit-NotificationTrigger
 Get-Channel
 Get-Device
 Get-Group
 Get-NotificationAction
 Get-NotificationTrigger
 Get-Probe
-Get-PrtgServer
+Get-PrtgClient
 Get-Sensor
 Get-SensorTotals
 New-Credential
+New-NotificationTriggerParameter
 New-SearchFilter
 Pause-Object
 Refresh-Object
@@ -217,6 +251,7 @@ Remove-NotificationTrigger
 Remove-Object
 Rename-Object
 Set-ChannelProperty # Currently supports limit and spike related properties
+Set-NotificationTrigger
 ```
 
 For details on supported parameters run `Get-Help <cmdlet>` within PowerShell
@@ -337,11 +372,71 @@ LastValue        : 1,116 MByte
 LastValueNumeric : 1169711104
 ```
 
-### Access Underlying Methods
-
-The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgServer` cmdlet. Accessing the `PrtgClient` object directly allows invoking methods from PowerShell that do not yet have cmdlet counterparts
+Notification Triggers can be retrieved via the `Get-NotificationTrigger` cmdlet.
 
 ```powershell
-$parameters = CreateMyAwesomeNotificationTrigger
-(Get-PrtgServer).SetNotificationTrigger($parameters)
+
+C:\> Get-Probe | Get-NotificationTrigger
+
+Type        ObjectId SubId Inherited ParentId Latency Condition Threshold Units      OnNotificationAction
+----        -------- ----- --------- -------- ------- --------- --------- -----      --------------------
+Change      1        8     False     1                Change                         Ticket Notification
+State       1        1     True      0        600     Equals    Down                 Email and push notification to admin
+Threshold   1        7     False     1        60      NotEquals 5                    Email PRTG Alerts Mailbox
+Speed       1        5     False     1        60      Above     3         TByte/Day  SMS Escalation Team 1
+Volume      1        6     False     1                Equals    6         KByte/Hour SMS Escalation Team 1
+```
+
+Triggers can be filtered to those of a specified type by specifying the `-Type` parameter. To filter out inherited triggers, specify `-Inherited $false`.
+
+Notification Triggers and Actions can be added or edited via the `Edit-NotificationTriggerProperty`, `Add-NotificationTrigger` and `Set-NotificationTrigger` cmdlets.
+
+`Edit-NotificationTriggerProperty` provides the simplest means of modifying a trigger, allowing you to pipe a variety of values across the pipeline for modifying a single property
+
+```powershell
+$action = Get-NotificationAction *admin* | Select -First 1
+Get-Probe | Get-NotificationTrigger -Type Volume | Edit-NotificationTriggerProperty OnNotificationAction $action
+```
+
+For advanced scenarios requiring one or more properties be manipulated, the `Add-NotificationTrigger` and `Set-NotificationTrigger` cmdlets should be used. In order to add or edit a notification trigger, a `TriggerParameters` object must first be constructed, using the `New-NotificationTriggerParameter` cmdlet. `New-NotificationTriggerParameter` has a number of parameter sets depending on the operation you are trying to perform.
+
+The easiest way to create a new `TriggerParameters` object is to pipe in an existing notification trigger. This will pre-populate all properties of the object with the properties of the existing notification trigger. This provides an excellent means of deploying or even moving triggers across a variety of PRTG Objects.
+
+```powershell
+# Migrate notification triggers defined on a probe to individual sensors
+
+# Retrieve all objects that will be required for this operation
+$probe = Get-Probe | Select -First 1
+$triggers = $probe | Get-NotificationTrigger -Inherited $false
+$sensors = $probe | Get-Sensor *cpu*
+
+# Add the notification triggers to each sensor
+foreach($trigger in $triggers)
+{
+    $sensors | New-NotificationTriggerParameter $trigger | Add-NotificationTrigger
+}
+
+# Remove the triggers from their original source
+$triggers | Remove-NotificationTrigger
+
+```
+
+To edit a notification trigger, create a new execute `New-NotificationTriggerParameter` specifying the trigger's object ID, sub ID, and the type of the notification trigger
+
+```powershell
+$trigger = Get-Device | Get-NotificationTrigger *admin* -Inherited $false -Type State | Select -First 1
+
+$parameters = New-NotificationTriggerParameter $trigger.Id $trigger.SubId $trigger.Type
+$parameters.Latency = 120
+
+$parameters | Set-NotificationTrigger
+```
+
+### Access Underlying Methods
+
+The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgClient` cmdlet. Accessing the `PrtgClient` object directly allows invoking methods from PowerShell that do not yet have cmdlet counterparts
+
+```powershell
+$parameters = CreateMyAwesomeObjectParameters
+(Get-PrtgClient).UpdateAwesomeObject($parameters)
 ```

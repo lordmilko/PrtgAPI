@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
-using System.Threading.Tasks;
+using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -9,7 +9,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// Retrieve groups from a PRTG Server.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Group")]
-    public class GetGroup : PrtgTableCmdlet<Group>
+    public class GetGroup : PrtgTableCmdlet<Group, GroupParameters>
     {
         /// <summary>
         /// The parent group to retrieve groups for.
@@ -44,22 +44,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Retrieves all groups from a PRTG Server.
+        /// Creates a new parameter object to be used for retrieving groups from a PRTG Server.
         /// </summary>
-        /// <returns>A list of all groups.</returns>
-        protected override IEnumerable<Group> GetRecords()
-        {
-            return client.GetGroups();
-        }
-
-        /// <summary>
-        /// Retrieves a list of groups from a PRTG Server based on a specified filter.
-        /// </summary>
-        /// <param name="filter">A list of filters to use to limit search results.</param>
-        /// <returns>A list of groups that match the specified search criteria.</returns>
-        protected override IEnumerable<Group> GetRecords(params SearchFilter[] filter)
-        {
-            return client.GetGroups(filter);
-        }
+        /// <returns></returns>
+        protected override GroupParameters CreateParameters() => new GroupParameters();
     }
 }

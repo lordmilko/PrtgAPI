@@ -49,7 +49,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         protected override List<Channel> GetObjects(PrtgClient client) => client.GetChannels(1234);
 
-        protected override ChannelItem GetItem() => new ChannelItem();
+        public override ChannelItem GetItem() => new ChannelItem();
 
         protected override ChannelResponse GetResponse(ChannelItem[] items) => new ChannelResponse(items);
     }

@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>.
     /// </summary>
-    [Cmdlet("Acknowledge", "Sensor")]
+    [Cmdlet(VerbsLifecycle.Confirm, "Sensor")]
     public class AcknowledgeSensor : PrtgCmdlet
     {
         /// <summary>

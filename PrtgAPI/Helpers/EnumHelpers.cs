@@ -43,8 +43,6 @@ namespace PrtgAPI.Helpers
             }
         }
 
-        
-
         public static TEnum DescriptionToEnum<TEnum>(this string value, bool toStringFallback = true)
         {
             foreach (var field in typeof (TEnum).GetFields())
@@ -85,11 +83,15 @@ namespace PrtgAPI.Helpers
             throw new XmlDeserializationException($"Could not find a member in type {typeof(TEnum)} with an XmlEnumAlternateNameAttribute for value '{value}'");
         }
 
+        internal static T XmlToEnum<T>(string value)
+        {
+            return (T) XmlToEnum(value, typeof (T));
+        }
+
         internal static object XmlToEnum(string value, Type type)
         {
             foreach (var field in type.GetFields())
             {
-                //var attribute = Attribute.GetCustomAttribute(field, typeof(XmlEnumAttribute), false) as XmlEnumAttribute;
                 var attribute = Attribute.GetCustomAttributes(field, typeof(XmlEnumAttribute)).Where(a => a.GetType() == typeof(XmlEnumAttribute)).Cast<XmlEnumAttribute>().FirstOrDefault();
 
                 if (attribute != null)
@@ -100,6 +102,17 @@ namespace PrtgAPI.Helpers
             }
 
             return Enum.Parse(type, value, true);
+        }
+
+        internal static object EnumToXml(this Enum element)
+        {
+            var attribute = element.GetEnumAttribute<XmlEnumAttribute>();
+
+            if (attribute == null)
+                return element.ToString();
+
+            else
+                return attribute.Name;
         }
 
         public static string GetDescription(this Enum element, bool toStringFallback = true)

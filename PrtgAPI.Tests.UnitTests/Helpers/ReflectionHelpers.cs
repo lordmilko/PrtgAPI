@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
     {
         public static IEnumerable<PropertyInfo> GetProperties2(this Type type)
         {
-            return type.GetProperties().Where(p => !p.GetIndexParameters().Any());
+            return type.GetProperties().Where(p => !p.GetIndexParameters().Any() && p.CanWrite);
         }
 
         public static void NullifyProperties(object obj)
@@ -40,6 +40,18 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
 
         public static object GetDefault(Type type)
         {
+            if (type.IsValueType)
+                return Activator.CreateInstance(type);
+            return null;
+        }
+
+        public static object GetDefaultUnderlying(Type type)
+        {
+            var underlying = Nullable.GetUnderlyingType(type);
+
+            if (underlying != null)
+                type = underlying;
+
             if (type.IsValueType)
                 return Activator.CreateInstance(type);
             return null;

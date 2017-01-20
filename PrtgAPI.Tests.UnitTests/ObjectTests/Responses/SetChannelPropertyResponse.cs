@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
@@ -26,9 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
         public string GetResponseText(string address)
         {
-            var addr = address.Substring(address.IndexOf('?')).Split('#')[0];
-
-            var queries = HttpUtility.ParseQueryString(addr);
+            var queries = ResponseHelpers.CrackUrl(address);
             queries.Remove("id");
             queries.Remove("username");
             queries.Remove("passhash");
@@ -63,7 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return "OK";
         }
 
-        public Task<string> GetResponseTextAsync(string address)
+        public Task<string> GetResponseTextStream(string address)
         {
             throw new NotImplementedException();
         }

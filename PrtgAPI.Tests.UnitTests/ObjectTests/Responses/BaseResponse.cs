@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
         //public abstract Task<string> GetResponseTextAsync(string address);
 
         //public async Task<string> GetResponseTextAsync(string address, Action<T, string> action)
-        public virtual async Task<string> GetResponseTextAsync(string address)
+        public virtual async Task<string> GetResponseTextStream(string address)
         {
             var page = GetPageNumber(address);
             var delay = (items.Count / 500) + 1 - page;
@@ -50,7 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             var list = items.Skip((page - 1)*500).Take(500).ToList();
             list.ForEach(i => ((BaseItem)(object)i).ObjId = page.ToString());
 
-            await Task.Delay(delay * 100);
+            await Task.Delay(delay * 1000);
             var response = GetResponseText(address, list);
 
             return response;

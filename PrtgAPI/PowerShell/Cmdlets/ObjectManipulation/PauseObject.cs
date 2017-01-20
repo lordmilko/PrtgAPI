@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Disable monitoring on an object.
     /// </summary>
-    [Cmdlet("Pause", "Object")]
+    [Cmdlet(VerbsLifecycle.Suspend, "Object")]
     public class PauseObject : PrtgCmdlet
     {
         /// <summary>

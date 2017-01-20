@@ -57,13 +57,6 @@ namespace PrtgAPI.PowerShell.Base
 
             foreach (var item in sendToPipeline)
             {
-                //var psObject = new PSObject(item);
-
-
-                //var propertySet = new PSPropertySet("DefaultDisplayPropertySet", visibleMembers);
-                //var memberSet = new PSMemberSet("PSStandardMembers", new[] { propertySet });
-                //psObject.Members.Add(memberSet);
-                
                 WriteObject(item);
 
                 if (settings != null)

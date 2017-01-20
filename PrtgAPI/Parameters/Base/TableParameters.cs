@@ -6,7 +6,7 @@ namespace PrtgAPI.Parameters
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving data stored in tables.
     /// </summary>
     /// <typeparam name="T">The type of PRTG Object to retrieve.</typeparam>
-    public class TableParameters<T> : ContentParameters<T> where T : SensorOrDeviceOrGroupOrProbe
+    public class TableParameters<T> : ContentParameters<T> where T : ObjectTable
     {
         /// <summary>
         /// Filter objects to those with a <see cref="Property"/> of a certain value. Specify multiple filters to limit results further.

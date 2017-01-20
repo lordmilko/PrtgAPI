@@ -193,9 +193,6 @@ namespace PrtgAPI
         [XmlElement("injected_limitwarningmsg")]
         public string WarningLimitMessage { get; set; }
 
-        internal static CustomParameter CreateCustomParameter(ChannelProperty property, int channelId, object value)
-        {
-            return new CustomParameter($"{property.GetDescription()}_{channelId}", value.ToString());
-        }
+        
     }
 }

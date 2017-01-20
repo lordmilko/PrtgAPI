@@ -42,10 +42,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Value to set the property to.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 2, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, Position = 2, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Default")]
+        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Manual")]
         [AllowEmptyString]
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
@@ -54,6 +54,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             //i think we should modify setobjectproperty to detect if we're clearing limits or one of the other ones with fields and clear the associated fields as well. we could POTENTIALLY
             //even have an enum on those properties so we can enumerate all the fields we need to clear
+
+            //what if we have a requiresvalueattribute that throws an error if value is null when its not allowed to be
+
+            //i think this logic can go insite setobjectproperty
+            
 
             if (Channel != null)
             {

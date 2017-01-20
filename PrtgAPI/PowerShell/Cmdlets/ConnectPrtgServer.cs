@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Specifies the PRTG Server requests will be made against.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, HelpMessage = "Server to connect to.")]
+        [Parameter(Mandatory = true, Position = 0, HelpMessage = "The address of the PRTG Server to connect to. If the server does not use HTTPS, http:// must be specified.")]
         public string Server { get; set; }
 
         /// <summary>

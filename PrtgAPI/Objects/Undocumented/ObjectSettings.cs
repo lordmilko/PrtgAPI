@@ -5,7 +5,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using PrtgAPI.Helpers;
 using PrtgAPI.Html;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Objects.Undocumented
 {
@@ -191,44 +193,14 @@ namespace PrtgAPI.Objects.Undocumented
                 
         }
 
-        
-        /*internal static Dictionary<string, Input> FilterInputTags1(List<Input> properties)
+        internal static CustomParameter CreateCustomParameter(int objectId, Enum property, object value)
         {
-            var dictionary = new Dictionary<string, Input>();
+            return new CustomParameter($"{property.GetDescription()}_{objectId}", value?.ToString());
+        }
 
-            foreach (var prop in properties)
-            {
-                if (!dictionary.ContainsKey(prop.Name)) //if the item is new, add it
-                    dictionary.Add(prop.Name, prop);
-                else                                    //if the item already exists
-                {
-                    if (prop.Radio && dictionary[prop.Name].Radio) //and the new and existimg items are both radio buttons
-                    {
-                        if (prop.Checked && !dictionary[prop.Name].Checked) //and we're checked and our existing one isnt, replace it
-                            dictionary[prop.Name] = prop;
-                        else
-                        {
-                            if (!prop.Checked && !dictionary[prop.Name].Checked) //neither of us are checked
-                            {
-                                if (prop.Value != dictionary[prop.Name].Value) //if we have different values
-                                {
-                                    //todo: bug: if the two values are disconnected, which property are we adding? both? neither
-                                    //none of them are ticked; thats cool
-                                    //throw new NotImplementedException("Two channel unchecked channel properties had the same name with different values");
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new NotImplementedException(
-                            "We had two channel properties that arent radio buttons, or two properties with the same name with only one of them a radio");
-                        //crash! either we have a duplicate of two things that arent radios, or a thing that is a radio and something that isnt a radio
-                    }
-                }
-            }
-
-            return dictionary;
-        }*/
+        internal static CustomParameter CreateCustomParameter(Enum property, object value)
+        {
+            return new CustomParameter($"{property.GetDescription()}", value.ToString());
+        }
     }
 }

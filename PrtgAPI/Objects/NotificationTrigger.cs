@@ -11,6 +11,9 @@ namespace PrtgAPI
 {
 #pragma warning disable CS0649
 
+    /// <summary>
+    /// Causes notification actions to occur when a sensor exhibits a specified behaviour.
+    /// </summary>
     [DataContract]
     public class NotificationTrigger
     {
@@ -71,8 +74,10 @@ namespace PrtgAPI
         [DataMember(Name = "nodest")]
         private string stateTrigger;
 
+        internal TriggerSensorState? StateTrigger => stateTrigger?.ToEnum<TriggerSensorState>();
+
         /// <summary>
-        /// Delay before this notification is activated after activation requirements have been met.
+        /// Delay (in seconds) before this notification is activated after activation requirements have been met.
         /// Applies to: State, Threshold, Speed Triggers
         /// </summary>
         [DataMember(Name = "latency")]
@@ -81,17 +86,24 @@ namespace PrtgAPI
         [DataMember(Name = "channel")]
         private string channel;
 
-        public TriggerChannel? Channel => channel?.ToEnum<TriggerChannel>(); //volume, threshold, speed
+        /// <summary>
+        /// The channel the trigger should apply to.
+        /// Applies to: Speed, Threshold, Volume Triggers
+        /// </summary>
+        public TriggerChannel? Channel => channel?.ToEnum<TriggerChannel>();
 
+        /// <summary>
+        /// The formatted units display of this trigger.
+        /// </summary>
         public string Units
         {
             get
             {
-                if (unitSize != null && UnitTime != null)
-                    return $"{unitSize}/{UnitTime}";
-                else if (unitSize != null && period != null)
-                    return $"{unitSize}/{period}";
-                else if (unitSize == null && UnitTime == null && period == null)
+                if (UnitSize != null && UnitTime != null)
+                    return $"{UnitSize}/{UnitTime}";
+                else if (UnitSize != null && Period != null)
+                    return $"{UnitSize}/{Period}";
+                else if (UnitSize == null && UnitTime == null && Period == null)
                     return null;
                 else
                     throw new Exception("not sure how to format units"); //todo: fix this up
@@ -101,17 +113,17 @@ namespace PrtgAPI
         [DataMember(Name = "unitsize")]
         private string unitSizeStr; //volume, speed
 
-        private TriggerUnitSize? unitSize => unitSizeStr?.DescriptionToEnum<TriggerUnitSize>();
+        internal TriggerUnitSize? UnitSize => unitSizeStr?.DescriptionToEnum<TriggerUnitSize>();
 
         [DataMember(Name = "unittime")]
         private string unitTimeStr; //speed
 
-        private TriggerUnitTime? UnitTime => unitTimeStr?.DescriptionToEnum<TriggerUnitTime>();
+        internal TriggerUnitTime? UnitTime => unitTimeStr?.DescriptionToEnum<TriggerUnitTime>();
 
         [DataMember(Name = "period")]
         private string periodStr; //volume
 
-        private TriggerPeriod? period => periodStr?.DescriptionToEnum<TriggerPeriod>();
+        internal TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
 
         [DataMember(Name = "onnotificationid")]
         private string onNotificationAction;
@@ -120,7 +132,7 @@ namespace PrtgAPI
         /// Notification action that will occur when trigger is activated.
         /// Applies to: State, Volume, Threshold, Change, Speed Triggers
         /// </summary>
-        public NotificationActionDescriptor OnNotificationAction => new NotificationActionDescriptor(onNotificationAction);
+        public NotificationAction OnNotificationAction => new NotificationAction(onNotificationAction);
 
         [DataMember(Name = "offnotificationid")]
         private string offNotificationAction;
@@ -129,7 +141,7 @@ namespace PrtgAPI
         /// Notification action that will occur when trigger is deactivated.
         /// Applies to: State, Threshold, Speed Triggers
         /// </summary>
-        public NotificationActionDescriptor OffNotificationAction => offNotificationAction == null ? null : new NotificationActionDescriptor(offNotificationAction);
+        public NotificationAction OffNotificationAction => offNotificationAction == null ? null : new NotificationAction(offNotificationAction);
 
         private int? threshold;
 
@@ -150,9 +162,15 @@ namespace PrtgAPI
             set { threshold = Convert.ToInt32(value); }
         }
 
-        [DataMember(Name = "condition")] //speed, threshold?
+        internal int? ThresholdInternal => threshold;
+
+        [DataMember(Name = "condition")]
         private string conditionStr;
 
+        /// <summary>
+        /// Condition that must be true for the trigger to activate.
+        /// Applies to: Speed, Threshold Triggers
+        /// </summary>
         public TriggerCondition? Condition => conditionStr?.DescriptionToEnum<TriggerCondition>() ?? TriggerCondition.Equals;
 
         /// <summary>
@@ -169,7 +187,7 @@ namespace PrtgAPI
         /// Notification action to repeat when the trigger cause does not get cleared.
         /// Applies to: State Triggers
         /// </summary>
-        public NotificationActionDescriptor EscalationNotificationAction => escalationNotificationAction == null ? null : new NotificationActionDescriptor(escalationNotificationAction);
+        public NotificationAction EscalationNotificationAction => escalationNotificationAction == null ? null : new NotificationAction(escalationNotificationAction);
 
         /// <summary>
         /// Interval to repeat the <see cref="EscalationNotificationAction"/>, in minutes.

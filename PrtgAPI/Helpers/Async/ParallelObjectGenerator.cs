@@ -36,8 +36,18 @@ namespace PrtgAPI.Helpers
         {
             var next = enumerator.MoveNext();
 
-            if (next)
-                Current = ((Task<Task<T>>)enumerator.Current).Result.Result;
+            try
+            {
+                if (next)
+                    Current = ((Task<Task<T>>) enumerator.Current).Result.Result;
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+
+                throw;
+            }
 
             return next;
         }

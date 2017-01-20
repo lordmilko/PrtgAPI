@@ -38,6 +38,7 @@ namespace PrtgAPI
         /// The maximum value allowed before the sensor goes into an error state.
         /// </summary>
         [Description("limitmaxerror")]
+        [RequireValue(false)]
         [DependentProperty(nameof(LimitsEnabled))]
         UpperErrorLimit,
         
@@ -45,26 +46,30 @@ namespace PrtgAPI
         /// The maximum value allowed before the sensor goes into a warning state.
         /// </summary>
         [Description("limitmaxwarning")]
+        [RequireValue(false)]
         [DependentProperty(nameof(LimitsEnabled))]
         UpperWarningLimit,
 
         /// <summary>
         /// The minimum value allowed before the sensor goes into an error state.
         /// </summary>
+        [RequireValue(false)]
         [Description("limitminerror")]
         [DependentProperty(nameof(LimitsEnabled))]
         LowerErrorLimit,
-            
+
         /// <summary>
         /// The minimum value allowed before the sensor goes into a warning state.
         /// </summary>
+        [RequireValue(false)]
         [Description("limitminwarning")]
         [DependentProperty(nameof(LimitsEnabled))]
         LowerWarningLimit,
-        
+
         /// <summary>
         /// The message to display when this channel causes the sensor to go into an error state.
         /// </summary>
+        [RequireValue(false)]
         [Description("limiterrormsg")]
         [DependentProperty(nameof(LimitsEnabled))]
         ErrorLimitMessage,
@@ -72,6 +77,7 @@ namespace PrtgAPI
         /// <summary>
         /// The message to display when this channel causes the sensor to go into a warning state.
         /// </summary>
+        [RequireValue(false)]
         [Description("limitwarningmsg")]
         [DependentProperty(nameof(LimitsEnabled))]
         WarningLimitMessage

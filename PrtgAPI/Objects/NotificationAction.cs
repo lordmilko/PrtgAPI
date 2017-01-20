@@ -2,20 +2,49 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
-    public class NotificationAction : PrtgObject //maybe notificationaction inherits from notificationactiondescriptor which is a prtgobject?
+    public class NotificationAction : PrtgObject, IFormattable //maybe notificationaction inherits from notificationactiondescriptor which is a prtgobject?
         //i dont think EVERY prtgobject has a comment
 
     //have an integration test that asks for every SINGLE possible property, and confirms that for each property with a value there is a property on the object for it.
     //we have our property enum so we can probably just turn every field in that into an array
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationAction"/> class.
+        /// </summary>
+        public NotificationAction()
+        {
+        }
+
+        internal NotificationAction(string raw)
+        {
+            var regex = new Regex("(.+)\\|(.+)"); //noti
+
+            var number = regex.Replace(raw, "$1");
+            var name = regex.Replace(raw, "$2");
+
+            Id = Convert.ToInt32(number);
+            Name = name;
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{Id}|{Name}|";
+            return Name;
+            //return $"{Id}|{Name}|"; //i dont think theres actually meant to be the second pipe?
+        }
+
+        string IFormattable.GetSerializedFormat()
+        {
+            return $"{Id}|{Name}";
         }
 
         /*

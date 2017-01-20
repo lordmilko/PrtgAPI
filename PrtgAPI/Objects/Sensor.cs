@@ -46,7 +46,7 @@ namespace PrtgAPI
         public string LastValue
         {
             get { return lastValue; }
-            set { lastValue = value == string.Empty ? null : value; }
+            set { lastValue = value == string.Empty || value == "-" ? null : value; }
         }
 
         // ################################## Sensor Only ##################################

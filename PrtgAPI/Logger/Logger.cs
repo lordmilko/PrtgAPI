@@ -33,7 +33,7 @@ namespace PrtgAPI
                 if (newLine)
                     System.Diagnostics.Debug.WriteLine(message);
                 else
-                    System.Diagnostics.Debug.Write(false);
+                    System.Diagnostics.Debug.Write(message);
             }            
         }
     }

@@ -1,12 +1,13 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PrtgAPI
 {
     internal interface IWebClient
     {
-        string DownloadString(string address);
+        Task<HttpResponseMessage> GetSync(string address);
 
-        Task<string> DownloadStringTaskAsync(string address);
+        Task<HttpResponseMessage> GetAsync(string address);
     }
 }
