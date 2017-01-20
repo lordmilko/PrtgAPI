@@ -844,7 +844,9 @@ namespace PrtgAPI
         {
             var response = ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
-            var items = response.Descendants("item").Where(item => item.Element("objid").Value != "-4").ToList();
+            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
+
+            var items = response.Descendants("item").ToList();
 
             foreach (var item in items)
             {
