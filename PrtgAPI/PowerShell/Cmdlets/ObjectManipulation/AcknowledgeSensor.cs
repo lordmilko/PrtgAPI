@@ -70,7 +70,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             }
 
-            client.AcknowledgeSensor(Sensor.Id, Message, duration);
+            client.AcknowledgeSensor(Sensor.Id, duration, Message);
         }
     }
 }

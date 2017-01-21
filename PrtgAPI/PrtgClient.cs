@@ -112,6 +112,13 @@ namespace PrtgAPI
             var response = ExecuteRequest(url);
         }
 
+        private async Task ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+        }
+
         private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
         {
             var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
@@ -127,19 +134,11 @@ namespace PrtgAPI
 
             try
             {
-                //var client1 = new HttpClient();
                 var response = client.GetSync(url.Url).Result;
-                //var response = client.GetAsync(url.Url).Result;
-
+                
                 responseText = response.Content.ReadAsStringAsync().Result;
 
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var xDoc = XDocument.Parse(responseText);
-                    var errorMessage = xDoc.Descendants("error").First().Value;
-
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
-                }
+                ValidateHttpResponse(response, responseText);
             }
             catch (AggregateException ex)
             {
@@ -148,42 +147,11 @@ namespace PrtgAPI
                     if (ex.InnerException.InnerException != null)
                         throw ex.InnerException.InnerException;
                 }
+                
                     throw ex.InnerException;
 
                 throw;
             }
-
-
-            /*try
-            {
-                //var client = new WebClient();
-                //var client1 = new HttpClient();
-                //var r = client1.GetAsync(url.Url).Result;
-                //var c = r.Content.ReadAsStringAsync().Result;
-                response = client.DownloadString(url.Url);
-            }
-            catch (WebException ex)
-            {
-                if (ex.Response == null)
-                    throw;
-
-                var webResponse = (HttpWebResponse)ex.Response;
-
-                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    using (var reader = new StreamReader(webResponse.GetResponseStream(), Encoding.UTF8))
-                    {
-                        response = reader.ReadToEnd();
-
-                        var xDoc = XDocument.Parse(response);
-                        var errorMessage = xDoc.Descendants("error").First().Value;
-
-                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
-                    }
-                }
-
-                throw;
-            }*/
 
             return responseText;
         }
@@ -191,28 +159,14 @@ namespace PrtgAPI
         private async Task<string> ExecuteRequestAsync(PrtgUrl url)
         {
             string responseText;
-            //HttpResponseMessage response;
 
             try
             {
-                //using (var client = new System.Net.WebClient()) //TODO - make our iwebclient implement idisposable?
-                //of course, now that our client STORES its webclient now, that means WE have to
-                //implement idisposable?
-                //{
-                //response = await client.DownloadStringTaskAsync(url.Url);
-                //var client1 = new HttpClient();
                 var response = await client.GetAsync(url.Url).ConfigureAwait(false);
 
                 responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var xDoc = XDocument.Parse(responseText);
-                    var errorMessage = xDoc.Descendants("error").First().Value;
-
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
-                }
-                //}
+                ValidateHttpResponse(response, responseText);
             }
             catch (HttpRequestException ex) //todo: test making invalid requests
             {
@@ -221,28 +175,27 @@ namespace PrtgAPI
                 if (inner != null)
                     throw ex.InnerException;
 
-                /*if (ex.Response == null)
-                    throw;
-
-                var webResponse = (HttpWebResponse) ex.Response;
-
-                if (webResponse.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    using (var reader = new StreamReader(webResponse.GetResponseStream(), System.Text.Encoding.UTF8))
-                    {
-                        responseText = reader.ReadToEnd();
-
-                        var xDoc = XDocument.Parse(responseText);
-                        var errorMessage = xDoc.Descendants("error").First().Value;
-
-                        throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}", ex);
-                    }
-                }*/
-
                 throw;
             }
 
             return responseText;
+        }
+
+        private void ValidateHttpResponse(HttpResponseMessage response, string responseText)
+        {
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var xDoc = XDocument.Parse(responseText);
+                var errorMessage = xDoc.Descendants("error").First().Value;
+
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new HttpRequestException("Could not authenticate to PRTG; the specified username and password were invalid.");
+            }
+
+            response.EnsureSuccessStatusCode();
         }
 
         #endregion
@@ -970,17 +923,17 @@ namespace PrtgAPI
 
         #endregion
 
-    #endregion
-    #region Object Manipulation
+        #endregion
+        #region Object Manipulation
         #region Sensor State
 
         /// <summary>
         /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
-        /// <param name="message">Message to display on the acknowledged sensor.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
-        public void AcknowledgeSensor(int objectId, string message = null, int? duration = null)
+        /// <param name="message">Message to display on the acknowledged sensor.</param>
+        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null)
         {
             var parameters = new Parameters.Parameters
             {
@@ -1000,9 +953,9 @@ namespace PrtgAPI
         /// Pause a PRTG Object (sensor, device, etc).
         /// </summary>
         /// <param name="objectId">ID of the object to pause.</param>
-        /// <param name="pauseMessage">Message to display on the paused object.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
-        public void Pause(int objectId, string pauseMessage = null, int? durationMinutes = null)
+        /// <param name="pauseMessage">Message to display on the paused object.</param>
+        public void Pause(int objectId, int? durationMinutes = null, string pauseMessage = null)
         {
             PauseParametersBase parameters;
 
@@ -1205,16 +1158,13 @@ namespace PrtgAPI
         /// Permanently delete an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public void Delete(int objectId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.Approve] = 1
-            };
+        public void Delete(int objectId) => ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
 
-            ExecuteRequest(CommandFunction.DeleteObject, parameters);
-        }
+        /// <summary>
+        /// Asynchronously permanently delete an object from PRTG. This cannot be undone.
+        /// </summary>
+        /// <param name="objectId">ID of the object to delete.</param>
+        public async Task DeleteAsync(int objectId) => await ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Rename an object.

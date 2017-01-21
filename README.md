@@ -92,20 +92,20 @@ The Notification Triggers of an object can be accessed via the `GetNotificationT
 var triggers = client.GetNotificationTriggers(1234);
 ```
 
-Notification triggers can also be added and modified via the `SetNotificationTrigger` method.
+Notification triggers can also be added and modified via the `AddNotificationTrigger` and `SetNotificationTrigger` methods respectively.
 
 To update triggers with `SetNotificationTrigger` you must construct a `TriggerParameters` object of the trigger type you wish to construct.
 
 The following trigger parameter types are available:
-* StateTriggerParameters
-* ChangeTriggerParameters
-* SpeedTriggerParameters
-* VolumeTriggerParameters
-* ThresholdTriggerParameters
+* `StateTriggerParameters`
+* `ChangeTriggerParameters`
+* `SpeedTriggerParameters`
+* `VolumeTriggerParameters`
+* `ThresholdTriggerParameters`
 
 Trigger parameter objects can be created in different ways for three different use cases:
 * Creating a trigger from an existing trigger
-* Editing an existing existing trigger
+* Editing an existing trigger
 * Creating a new trigger from scratch.
 
 ```c#
@@ -122,7 +122,7 @@ var parameters = new StateTriggerParameters(1234) //By default sensor state "Dow
 client.AddNotificationTrigger(parameters);
 ```
 
-Some properties *must* have values in order to prevent issues with PRTG. Attempting to nullify these properties in parameters for creating a new trigger will generate an exception.
+Some properties *must* have values in order to prevent issues with PRTG. Attempting to nullify these properties in parameters for creating new triggers will generate an exception.
 
 When editing triggers, by default all properties are null. Only properties that are set on the object will be modified when the request is executed. If you decide you no longer wish to modify a property, setting it to `null` will remove it from the object.
 
@@ -137,18 +137,18 @@ client.SetNotificationTrigger(parameters);
 
 ```
 
-Setting a *notification action* to `null` when adding or editing trigger parameters will cause the action to be set to the *empty notification action*. As a result of this, if you are editing a notification trigger and have set a notification action property, this value cannot be unset without creating a new object.
+Setting a *notification action* to `null` when adding or editing trigger parameters will cause the action to be set to the *empty notification action*. As a result of this, any notification action properties that are set when editing a notification trigger cannot be unset without creating a new object.
 
 Notification Triggers can also be removed from objects. Trigers can be removed either by specfying the the object ID/sub ID of the trigger, or a `NotificationTrigger` object retrieved from a previous call to `GetNotificationTriggers`
 
 ```c#
-client.RemoveNotificationTrigger(1234, triggers.First().SubId);
+client.RemoveNotificationTrigger(1234, 3);
 
 var trigger = client.GetNotificationTriggers(1234).First();
 client.RemoveNotificationTrigger(trigger);
 ```
 
-Please note: the former overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The second overload _does_ perform this check.
+Please note: the object ID/sub ID overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The `NotificationTrigger` overload _does_ perform this check.
 
 ### Object Settings
 Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
@@ -178,7 +178,7 @@ client.Pause(2001);
 ```
 ```c#
 //Pause object with ID 2002 for 60 minutes
-client.Pause(2002, "Paused for the next 60 minutes!", 60);
+client.Pause(2002, 60, "Paused for the next 60 minutes!");
 ```
 ```c#
 //Resume object with ID 2001
@@ -381,7 +381,7 @@ C:\> Get-Probe | Get-NotificationTrigger
 Type        ObjectId SubId Inherited ParentId Latency Condition Threshold Units      OnNotificationAction
 ----        -------- ----- --------- -------- ------- --------- --------- -----      --------------------
 Change      1        8     False     1                Change                         Ticket Notification
-State       1        1     True      0        600     Equals    Down                 Email and push notification to admin
+State       1        1     True      0        600     Equals    Down                 Email Administrator
 Threshold   1        7     False     1        60      NotEquals 5                    Email PRTG Alerts Mailbox
 Speed       1        5     False     1        60      Above     3         TByte/Day  SMS Escalation Team 1
 Volume      1        6     False     1                Equals    6         KByte/Hour SMS Escalation Team 1

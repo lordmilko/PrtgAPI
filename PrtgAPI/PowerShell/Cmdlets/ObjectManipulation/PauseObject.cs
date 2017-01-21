@@ -70,7 +70,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
             }
 
-            client.Pause(Object.Id, Message, duration);
+            client.Pause(Object.Id, duration, Message);
         }
     }
 }

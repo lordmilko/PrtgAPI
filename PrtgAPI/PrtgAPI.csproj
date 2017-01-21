@@ -76,6 +76,7 @@
     <Compile Include="Objects\NotificationTrigger.cs" />
     <Compile Include="Objects\Deserialization\SensorHistoryData.cs" />
     <Compile Include="Objects\SensorHistory.cs" />
+    <Compile Include="Parameters\ObjectManipulation\DeleteParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\ChangeTriggerParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\SpeedTriggerParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\StateTriggerParameters.cs" />

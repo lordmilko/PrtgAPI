@@ -33,6 +33,10 @@ namespace PrtgAPI
     -upload our empty settings file then say dont track it
      git update-index --assume-unchanged <file> and --no-assume-unchanged
 
+    -test failed pester tests generate errors in appveyor
+
+    -maybe create a "filter" alias for new-searchfilter?
+
     README
     -write up documentation on how to use the miscellaneous notification trigger/action
      cmdlets. also mention how to use -inherited $false
