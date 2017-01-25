@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -28,12 +29,14 @@ namespace PrtgAPI
         /// The "TrafficIn" channel (where applicable)
         /// </summary>
         [XmlEnum("0")]
+        [XmlEnumAlternateName("Traffic In")]
         TrafficIn,
 
         /// <summary>
         /// The "TrafficOut" channel (where applicable)
         /// </summary>
         [XmlEnum("1")]
+        [XmlEnumAlternateName("Traffic Out")]
         TrafficOut
     }
 }

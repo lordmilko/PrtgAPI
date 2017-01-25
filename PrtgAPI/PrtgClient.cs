@@ -140,17 +140,12 @@ namespace PrtgAPI
 
                 ValidateHttpResponse(response, responseText);
             }
-            catch (AggregateException ex)
+            catch (Exception ex) when (ex is AggregateException || ex is TaskCanceledException)
             {
-                if (ex.InnerException != null)
-                {
-                    if (ex.InnerException.InnerException != null)
-                        throw ex.InnerException.InnerException;
-                }
-                
-                    throw ex.InnerException;
+                if (ex.InnerException?.InnerException != null)
+                    throw ex.InnerException.InnerException;
 
-                throw;
+                throw ex.InnerException;
             }
 
             return responseText;

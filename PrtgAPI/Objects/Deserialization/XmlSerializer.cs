@@ -276,7 +276,7 @@ namespace PrtgAPI.Objects.Deserialization
             }
             else if (type.IsEnum)
             {
-                return EnumHelpers.XmlToEnum(value.ToString(), type);
+                return EnumHelpers.XmlToEnum<XmlEnumAttribute>(value.ToString(), type);
             }
             else if (type == typeof (DateTime))
             {

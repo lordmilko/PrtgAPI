@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.UnitTests.Helpers
 {
-    static class ReflectionHelpers
+    public static class ReflectionHelpers
     {
         public static IEnumerable<PropertyInfo> GetProperties2(this Type type)
         {

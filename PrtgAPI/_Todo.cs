@@ -11,6 +11,8 @@ namespace PrtgAPI
     ----------------
 
     Project
+    -TODO: confirm that all enums used by notificationtrigger can be deserialized. some have spaces, which can cause issues
+
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
         -maybe not, its good to be able to specify an id. maybe we should add MORE places you can specify ids!
 
@@ -37,9 +39,10 @@ namespace PrtgAPI
 
     -maybe create a "filter" alias for new-searchfilter?
 
+    -when we make a request to the ci server to do something when the core is running but the probe isnt, whats the response?
+    -maybe the ci server should check the probe and core services are started first
+
     README
-    -write up documentation on how to use the miscellaneous notification trigger/action
-     cmdlets. also mention how to use -inherited $false
     -add powershell example for getting deprecated sensors
 
     Async

@@ -41,7 +41,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var objs = GetMultipleItems();
 
-            Assert.IsTrue(objs.Count == GetItems().Length, $"The deserialization result contained {objs.Count} elements, however {GetItems().Length} were requested.");
+            Assert.AreEqual(GetItems().Length, objs.Count, "Expected number of results");
         }
 
         protected void Object_AllFields_HaveValues(Func<PropertyInfo, bool> customHandler = null)

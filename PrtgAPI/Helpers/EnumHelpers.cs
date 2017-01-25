@@ -83,16 +83,21 @@ namespace PrtgAPI.Helpers
             throw new XmlDeserializationException($"Could not find a member in type {typeof(TEnum)} with an XmlEnumAlternateNameAttribute for value '{value}'");
         }
 
-        internal static T XmlToEnum<T>(string value)
+        internal static T XmlToEnum<T>(this string value)
         {
-            return (T) XmlToEnum(value, typeof (T));
+            return (T) XmlToEnum<XmlEnumAttribute>(value, typeof (T));
         }
 
-        internal static object XmlToEnum(string value, Type type)
+        internal static T XmlAltToEnum<T>(this string value)
+        {
+            return (T) XmlToEnum<XmlEnumAlternateName>(value, typeof (T));
+        }
+
+        internal static object XmlToEnum<T>(string value, Type type) where T : XmlEnumAttribute
         {
             foreach (var field in type.GetFields())
             {
-                var attribute = Attribute.GetCustomAttributes(field, typeof(XmlEnumAttribute)).Where(a => a.GetType() == typeof(XmlEnumAttribute)).Cast<XmlEnumAttribute>().FirstOrDefault();
+                var attribute = Attribute.GetCustomAttributes(field, typeof(T)).Where(a => a.GetType() == typeof(T)).Cast<T>().FirstOrDefault();
 
                 if (attribute != null)
                 {

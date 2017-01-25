@@ -74,7 +74,7 @@ namespace PrtgAPI
         [DataMember(Name = "nodest")]
         private string stateTrigger;
 
-        internal TriggerSensorState? StateTrigger => stateTrigger?.ToEnum<TriggerSensorState>();
+        internal TriggerSensorState? StateTrigger => stateTrigger?.XmlToEnum<TriggerSensorState>();
 
         /// <summary>
         /// Delay (in seconds) before this notification is activated after activation requirements have been met.
@@ -90,7 +90,7 @@ namespace PrtgAPI
         /// The channel the trigger should apply to.
         /// Applies to: Speed, Threshold, Volume Triggers
         /// </summary>
-        public TriggerChannel? Channel => channel?.ToEnum<TriggerChannel>();
+        public TriggerChannel? Channel => channel?.XmlAltToEnum<TriggerChannel>();
 
         /// <summary>
         /// The formatted units display of this trigger.

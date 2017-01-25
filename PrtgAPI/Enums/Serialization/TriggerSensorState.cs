@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace PrtgAPI
 {
@@ -29,6 +30,7 @@ namespace PrtgAPI
         /// <summary>
         /// Trigger when the sensor is <see cref="SensorStatus.DownPartial"/>.
         /// </summary>
+        [XmlEnum("Partial Down")]
         PartialDown = 3
     }
 }
