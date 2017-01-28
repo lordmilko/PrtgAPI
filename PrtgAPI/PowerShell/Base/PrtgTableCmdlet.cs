@@ -202,8 +202,6 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="value">The value to filter for.</param>
         protected void AddPipelineFilter(Property property, object value)
         {
-            streamResults = false;
-
             var filter = new SearchFilter(property, FilterOperator.Equals, value);
 
             AddToFilter(filter);
@@ -227,6 +225,8 @@ namespace PrtgAPI.PowerShell.Base
 
         private void AddToFilter(params SearchFilter[] filters)
         {
+            streamResults = false;
+
             Filter = Filter?.Concat(filters).ToArray() ?? filters;
         }
 
