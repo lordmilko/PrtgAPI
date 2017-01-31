@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Modify the value of an object property.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ObjectProperty")]
+    [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
     public class SetObjectProperty : PrtgCmdlet
     {
         /// <summary>
@@ -38,7 +38,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.SetObjectProperty(Object.Id, Property, Value);
+            if(ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
+                client.SetObjectProperty(Object.Id, Property, Value);
         }
     }
 }

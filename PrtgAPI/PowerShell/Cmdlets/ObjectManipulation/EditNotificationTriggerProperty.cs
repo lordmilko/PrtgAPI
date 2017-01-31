@@ -14,7 +14,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Edit a notification trigger on a PRTG Server.
     /// </summary>
-    [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty")]
+    [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty", SupportsShouldProcess = true)]
     public class EditNotificationTriggerProperty : PrtgCmdlet
     {
         /// <summary>
@@ -71,7 +71,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             property.SetValue(parameters, Value);
 
-            client.SetNotificationTrigger(parameters);
+            if(ShouldProcess($"{Trigger.OnNotificationAction} (Object ID: {Trigger.ObjectId})", $"Edit-NotificationTriggerProperty {Property} = '{Value}'"))
+                client.SetNotificationTrigger(parameters);
         }
     }
 }

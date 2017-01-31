@@ -11,8 +11,6 @@ namespace PrtgAPI
     ----------------
 
     Project
-    -TODO: confirm that all enums used by notificationtrigger can be deserialized. some have spaces, which can cause issues
-
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
         -maybe not, its good to be able to specify an id. maybe we should add MORE places you can specify ids!
 

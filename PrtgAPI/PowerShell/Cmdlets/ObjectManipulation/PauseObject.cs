@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Disable monitoring on an object.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Suspend, "Object")]
+    [Cmdlet(VerbsLifecycle.Suspend, "Object", SupportsShouldProcess = true)]
     public class PauseObject : PrtgCmdlet
     {
         /// <summary>
@@ -70,7 +70,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
             }
 
-            client.Pause(Object.Id, duration, Message);
+            if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+                client.Pause(Object.Id, duration, Message);
         }
     }
 }

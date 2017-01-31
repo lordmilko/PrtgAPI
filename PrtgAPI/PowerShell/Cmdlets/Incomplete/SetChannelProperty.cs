@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Modify the value of a channel property.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ChannelProperty")]
+    [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true)]
     public class SetChannelProperty : PrtgCmdlet
     {
         /// <summary>
@@ -73,7 +73,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     throw new Exception("channelid is mandatory");
             }
 
-            client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value); //todo: how do we clear a value on a channel?
+            var str = Channel != null ? $"'{Channel.Name}' (Sensor ID: {Channel.SensorId})" : $"Channel {ChannelId} (Sensor ID: {SensorId})";
+
+            if(ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
+                client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value); //todo: how do we clear a value on a channel?
         }
     }
 }

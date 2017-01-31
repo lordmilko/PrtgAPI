@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Add a notification trigger to a PRTG Server.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "NotificationTrigger")]
+    [Cmdlet(VerbsCommon.Add, "NotificationTrigger", SupportsShouldProcess = true)]
     public class AddNotificationTrigger : BaseSetNotificationTrigger
     {
     }
@@ -41,7 +41,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.AddNotificationTrigger(Parameters);
+            if(ShouldProcess($"Object ID: {Parameters.ObjectId} (Type: {Parameters.Type}, Action: {Parameters.OnNotificationAction})"))
+                client.AddNotificationTrigger(Parameters);
         }
     }
 }

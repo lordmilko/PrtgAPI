@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Confirm, "Sensor")]
+    [Cmdlet(VerbsLifecycle.Confirm, "Sensor", SupportsShouldProcess = true)]
     public class AcknowledgeSensor : PrtgCmdlet
     {
         /// <summary>
@@ -70,7 +70,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             }
 
-            client.AcknowledgeSensor(Sensor.Id, duration, Message);
+            if(ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id})"))
+                client.AcknowledgeSensor(Sensor.Id, duration, Message);
         }
     }
 }

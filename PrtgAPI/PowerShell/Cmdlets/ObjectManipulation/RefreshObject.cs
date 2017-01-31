@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Request an object and any if its children refresh themselves immediately.
     /// </summary>
-    [Cmdlet(VerbsData.Update, "Object")]
+    [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true)]
     public class RefreshObject : PrtgCmdlet
     {
         /// <summary>
@@ -26,7 +26,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.CheckNow(Object.Id);
+            if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+                client.CheckNow(Object.Id);
         }
     }
 }

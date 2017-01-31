@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Resume an object from a paused or simulated error state.
     /// </summary>
-    [Cmdlet("Resume", "Object")]
+    [Cmdlet("Resume", "Object", SupportsShouldProcess = true)]
     public class ResumeObject : PrtgCmdlet
     {
         /// <summary>
@@ -26,7 +26,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.Resume(Object.Id);
+            if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+                client.Resume(Object.Id);
         }
     }
 }

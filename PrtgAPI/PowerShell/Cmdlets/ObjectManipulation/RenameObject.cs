@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Rename a PRTG object.
     /// </summary>
-    [Cmdlet(VerbsCommon.Rename, "Object")]
+    [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true)]
     public class RenameObject : PrtgCmdlet
     {
         /// <summary>
@@ -32,7 +32,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            client.Rename(Object.Id, Name);
+            if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+                client.Rename(Object.Id, Name);
         }
     }
 }

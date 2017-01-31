@@ -8,5 +8,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 {
     class CloneSensor
     {
+        //we should output the object id created and have it have a column. newobjectid or something better
+        //implement supportsshouldprocess
     }
 }

@@ -105,11 +105,13 @@ namespace PrtgAPI
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
 
-        private void ExecuteRequest(CommandFunction function, Parameters.Parameters parameters)
+        private string ExecuteRequest(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
             var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
 
-            var response = ExecuteRequest(url);
+            var response = ExecuteRequest(url, responseParser);
+
+            return response;
         }
 
         private async Task ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters)
@@ -128,7 +130,7 @@ namespace PrtgAPI
             return response;
         }
 
-        private string ExecuteRequest(PrtgUrl url)
+        private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
             string responseText;
 
@@ -136,7 +138,7 @@ namespace PrtgAPI
             {
                 var response = client.GetSync(url.Url).Result;
                 
-                responseText = response.Content.ReadAsStringAsync().Result;
+                responseText = responseParser == null ? response.Content.ReadAsStringAsync().Result : responseParser(response);
 
                 ValidateHttpResponse(response, responseText);
             }
@@ -151,7 +153,7 @@ namespace PrtgAPI
             return responseText;
         }
 
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url)
+        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             string responseText;
 
@@ -159,7 +161,7 @@ namespace PrtgAPI
             {
                 var response = await client.GetAsync(url.Url).ConfigureAwait(false);
 
-                responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                responseText = responseParser == null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : await responseParser(response);
 
                 ValidateHttpResponse(response, responseText);
             }
@@ -1102,7 +1104,8 @@ namespace PrtgAPI
         /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
         /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
-        public void Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
+        /// <returns>The ID of the object that was created</returns>
+        public int Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
@@ -1116,7 +1119,11 @@ namespace PrtgAPI
 
             //todo: need to implement simulateerrorparameters or get rid of it?
 
-            ExecuteRequest(CommandFunction.DuplicateObject, parameters);
+            var response = ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString());
+
+            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.+)", "$2"));
+
+            return id;
 
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
 
