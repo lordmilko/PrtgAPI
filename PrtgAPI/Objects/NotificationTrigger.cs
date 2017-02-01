@@ -199,7 +199,7 @@ namespace PrtgAPI
         [DataMember(Name = "objectlink")]
         private string objectLink;
 
-        private XElement objectLinkXml => XElement.Parse(objectLink);
+        private XElement objectLinkXml => XElement.Parse(objectLink.Replace("&", "&amp;"));
 
 #pragma warning restore CS0649
     }

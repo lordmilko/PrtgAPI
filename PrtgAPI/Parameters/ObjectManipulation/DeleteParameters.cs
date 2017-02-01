@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Parameters
 {
-    public class DeleteParameters : Parameters
+    class DeleteParameters : Parameters
     {
         public DeleteParameters(int objectId)
         {
