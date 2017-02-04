@@ -425,7 +425,7 @@ $triggers | Remove-NotificationTrigger
 
 ```
 
-To edit a notification trigger, create a new execute `New-NotificationTriggerParameter` specifying `Edit` mode instead of `Add`
+When a trigger is piped to `New-NotificationTriggerParameter` along with a separate Object ID, the trigger parameters will be used to create a trigger on the specified object. If you omit an object ID, the trigger parameters will apply to the object ID specified in the existing `NotificationTrigger`.
 
 ```powershell
 $trigger = Get-Device | Get-NotificationTrigger *admin* -Inherited $false -Type State | Select -First 1
