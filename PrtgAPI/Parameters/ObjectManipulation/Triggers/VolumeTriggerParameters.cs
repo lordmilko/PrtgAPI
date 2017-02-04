@@ -49,7 +49,7 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public VolumeTriggerParameters(int objectId) : base(TriggerType.Volume, objectId, null, ModifyAction.Add)
+        public VolumeTriggerParameters(int objectId) : base(TriggerType.Volume, objectId, (int?)null, ModifyAction.Add)
         {
             Channel = TriggerChannel.Primary;
             UnitSize = TriggerVolumeUnitSize.Byte;
@@ -70,15 +70,19 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public VolumeTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Volume, objectId, sourceTrigger)
+        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
+        public VolumeTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Volume, objectId, sourceTrigger, action)
         {
-            Channel = sourceTrigger.Channel;
-            Period = sourceTrigger.Period;
+            if (action == ModifyAction.Add)
+            {
+                Channel = sourceTrigger.Channel;
+                Period = sourceTrigger.Period;
 
-            if (sourceTrigger.UnitSize == null)
-                UnitSize = null;
-            else
-                UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
+                if (sourceTrigger.UnitSize == null)
+                    UnitSize = null;
+                else
+                    UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
+            }
         }
     }
 }

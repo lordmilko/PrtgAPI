@@ -12,6 +12,9 @@ New-Alias Set-ObjectSetting Set-ObjectProperty
 New-Alias Acknowledge-Sensor Confirm-Sensor
 New-Alias Pause-Object Suspend-Object
 New-Alias Refresh-Object Update-Object
+New-Alias Clone-Sensor Copy-Sensor
+New-Alias Clone-Group Copy-Group
+New-Alias Clone-Device Copy-Device
 
 function New-Credential
 {

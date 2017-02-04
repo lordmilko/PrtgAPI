@@ -52,7 +52,5 @@ namespace PrtgAPI
 
             return Data<T>.DeserializeList(response);
         }
-
-        
     }
 }

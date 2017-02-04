@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
@@ -13,6 +14,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
     {
         protected List<T> items;
         private string rootName;
+
+        public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
 
         protected BaseResponse(string rootName, T[] items)
         {

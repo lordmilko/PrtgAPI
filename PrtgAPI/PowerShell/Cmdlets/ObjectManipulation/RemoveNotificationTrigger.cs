@@ -17,13 +17,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Notification trigger to remove.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger to remove.")]
         public NotificationTrigger Trigger { get; set; }
 
         /// <summary>
         /// Forces a notification trigger to be removed without displaying a confirmation prompt.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, HelpMessage = "Remove the notification trigger without prompting for confirmation.")]
         public SwitchParameter Force { get; set; }
 
         /// <summary>

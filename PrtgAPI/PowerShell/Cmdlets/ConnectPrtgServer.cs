@@ -34,6 +34,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SwitchParameter PassHash { get; set; }
 
         /// <summary>
+        /// The number of times to retry a request that times out while communicating with PRTG.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public int? RetryCount { get; set; }
+
+        /// <summary>
+        /// The base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public int? RetryDelay { get; set; }
+
+        /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
@@ -43,6 +55,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 PrtgSessionState.Client = PassHash.IsPresent ?
                     new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, AuthMode.PassHash) :
                     new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password);
+
+                if (RetryCount != null)
+                    PrtgSessionState.Client.RetryCount = RetryCount.Value;
+
+                if (RetryDelay != null)
+                    PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
             }
             else
             {

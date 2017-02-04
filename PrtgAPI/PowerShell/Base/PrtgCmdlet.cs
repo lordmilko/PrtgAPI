@@ -24,6 +24,16 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (PrtgSessionState.Client == null)
                 throw new Exception("You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.");
+
+            client.RetryRequest += OnRetryRequest;
+        }
+
+        /// <summary>
+        /// Provides a one-time, post-processing functionality for the cmdlet.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            client.RetryRequest -= OnRetryRequest;
         }
 
         /// <summary>
@@ -68,6 +78,13 @@ namespace PrtgAPI.PowerShell.Base
                     WriteProgress(progress);
                 }
             }
+        }
+
+        private void OnRetryRequest(object sender, RetryRequestEventArgs args)
+        {
+            var msg = args.Exception.Message.TrimEnd('.');
+
+            WriteWarning($"'{MyInvocation.MyCommand}' timed out: {args.Exception.Message}. Retries remaining: {args.RetriesRemaining}");
         }
     }
 }

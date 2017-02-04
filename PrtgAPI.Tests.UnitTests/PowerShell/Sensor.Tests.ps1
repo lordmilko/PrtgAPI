@@ -32,13 +32,7 @@ Describe "Get-Sensor" {
 	}
 }
 
-Describe "Get-Device" {
 
-	It "can deserialize" {
-		$devices = Get-Device
-		$devices.Count | Should Be 1
-	}
-}
 
 <#Describe "Get-Group" {
 
@@ -55,23 +49,3 @@ Describe "Get-Probe" {
 		$probes.Count | Should Be 1
 	}
 }#>
-
-Describe "Get-NotificationAction" {
-
-	It "can deserialize" {
-		$actions = Get-NotificationAction
-		$actions.Count | Should Be 1
-	}
-}
-
-Describe "Get-NotificationTrigger" { # notificationtrigger doesnt support getitem; how do we make it use getitems
-	It "can pipe from sensors" {
-		$sensors = Run Sensor { Get-Sensor }
-		$sensors.Count | Should Be 1
-
-		$actions = $sensors | Get-NotificationTrigger
-		$actions.Count | Should Be 5
-	}
-
-	# should we maybe make getitem return an array, and have everyone use it?
-}

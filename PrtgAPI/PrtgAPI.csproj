@@ -49,6 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyVersion.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyVersion.tt</DependentUpon>
+    </Compile>
     <Compile Include="Attributes\RequireValueAttribute.cs" />
     <Compile Include="Attributes\SplittableStringAttribute.cs" />
     <Compile Include="Enums\Deserialization\TriggerChannel.cs" />
@@ -62,6 +67,7 @@
     <Compile Include="Enums\Serialization\TriggerProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerSensorState.cs" />
     <Compile Include="Enums\Serialization\TriggerVolumeUnitSize.cs" />
+    <Compile Include="EventArgs\RetryRequestEventArgs.cs" />
     <Compile Include="Exceptions\InvalidTriggerTypeException.cs" />
     <Compile Include="Exceptions\InvalidTypeException.cs" />
     <Compile Include="IFormattable.cs" />
@@ -84,7 +90,7 @@
     <Compile Include="Parameters\ObjectManipulation\Triggers\TriggerParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\CloneSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\CloneObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSchedule.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\New-SensorFactory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
@@ -94,8 +100,8 @@
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\NewNotificationTriggerParameter.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\RemoveNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameter.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
     <Compile Include="_Todo.cs" />
     <Compile Include="Properties\AssemblyFileVersion.cs">
@@ -145,7 +151,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetGroup.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetProbe.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetObjectProperty.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgClient.cs" />
+    <Compile Include="PowerShell\Cmdlets\GetPrtgClient.cs" />
     <Compile Include="PowerShell\Base\PrtgObjectCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTotals.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RefreshObject.cs" />
@@ -233,10 +239,22 @@
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PowerShell\Resources\PrtgAPI.psd1" />
     <None Include="PowerShell\Resources\PrtgAPI.psm1" />
+    <None Include="PowerShell\Resources\PrtgAPI.psd1">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrtgAPI.tt</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PowerShell\Resources\PrtgAPI.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PrtgAPI.psd1</LastGenOutput>
+    </Content>
+    <Content Include="Properties\AssemblyVersion.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
+    </Content>
     <Content Include="Properties\AssemblyFileVersion.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyFileVersion1.cs</LastGenOutput>
@@ -245,10 +263,11 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)\PowerShell\Resources\*.*" "$(TargetDir)"
-</PostBuildEvent>
+del "$(TargetDir)\*.tt"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>if "$(ConfigurationName)" == "Release" goto :release
@@ -258,6 +277,8 @@ goto :exit
 set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
 if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
 %25textTemplatingPath%25 "$(ProjectDir)Properties\AssemblyFileVersion.tt"
+%25textTemplatingPath%25 "$(ProjectDir)Properties\AssemblyVersion.tt"
+%25textTemplatingPath%25 "$(ProjectDir)PowerShell\Resources\PrtgAPI.tt"
 
 :exit</PreBuildEvent>
   </PropertyGroup>

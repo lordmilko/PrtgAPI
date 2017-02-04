@@ -14,6 +14,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     class SetChannelPropertyResponse : IWebResponse
     {
+        public HttpStatusCode StatusCode { get; set; }
+
         private ChannelProperty property;
         private int channelId;
         private object value;

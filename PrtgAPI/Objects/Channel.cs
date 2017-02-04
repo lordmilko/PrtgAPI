@@ -99,7 +99,7 @@ namespace PrtgAPI
         /// Controls how values are displayed in historic data of a timespan.
         /// </summary>
         [XmlElement("injected_avgmode")]
-        public HistoricValueMode ValueMode { get; set; }
+        public HistoricValueMode? ValueMode { get; set; }
 
         /// <summary>
         /// Controls how decimal places are displayed for the value of this channel.

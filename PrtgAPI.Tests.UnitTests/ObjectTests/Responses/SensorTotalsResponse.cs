@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -11,6 +12,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     class SensorTotalsResponse : IWebResponse
     {
+        public HttpStatusCode StatusCode { get; set; }
+
         protected SensorTotalsItem item;
 
         internal SensorTotalsResponse(SensorTotalsItem item)

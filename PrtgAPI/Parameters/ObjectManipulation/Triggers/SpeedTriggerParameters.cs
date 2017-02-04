@@ -92,7 +92,7 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public SpeedTriggerParameters(int objectId) : base(TriggerType.Speed, objectId, null, ModifyAction.Add)
+        public SpeedTriggerParameters(int objectId) : base(TriggerType.Speed, objectId, (int?)null, ModifyAction.Add)
         {
             OffNotificationAction = null;
             Channel = TriggerChannel.Primary;
@@ -115,15 +115,19 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public SpeedTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Speed, objectId, sourceTrigger)
+        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
+        public SpeedTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Speed, objectId, sourceTrigger, action)
         {
-            OffNotificationAction = sourceTrigger.OffNotificationAction;
-            Channel = sourceTrigger.Channel;
-            Latency = sourceTrigger.Latency;
-            Condition = sourceTrigger.Condition;
-            Threshold = sourceTrigger.ThresholdInternal;
-            UnitTime = sourceTrigger.UnitTime;
-            UnitSize = sourceTrigger.UnitSize;
+            if (action == ModifyAction.Add)
+            {
+                OffNotificationAction = sourceTrigger.OffNotificationAction;
+                Channel = sourceTrigger.Channel;
+                Latency = sourceTrigger.Latency;
+                Condition = sourceTrigger.Condition;
+                Threshold = sourceTrigger.ThresholdInternal;
+                UnitTime = sourceTrigger.UnitTime;
+                UnitSize = sourceTrigger.UnitSize;
+            }
         }
     }
 }

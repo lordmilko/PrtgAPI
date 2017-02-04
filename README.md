@@ -16,7 +16,11 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 
 ## Compilation
 
-PrtgAPI requires Visual Studio 2015. If you wish to run any unit tests, ensure *Test -> Test Settings -> Keep Test Execution Engine Running* is unticked to prevent the PowerShell tests from locking the assemblies (preventing recompilation or moving the files somewhere else)
+PrtgAPI requires Visual Studio 2015. If you wish to run any unit tests, ensure *Test -> Test Settings -> Keep Test Execution Engine Running* is unticked to prevent the PowerShell tests from locking the assemblies (preventing recompilation or moving the files somewhere else).
+
+If you wish to run unit tests, it is advised to group the tests by **Project** in *Test Explorer* to separate unit tests from integration tests.
+
+If you wish to run integration tests, it is recommended to create a separate server for integration testing. To configure PrtgAPI for integration testing against your server, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs`.
 
 ## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
@@ -411,9 +415,9 @@ $triggers = $probe | Get-NotificationTrigger -Inherited $false
 $sensors = $probe | Get-Sensor *cpu*
 
 # Add the notification triggers to each sensor
-foreach($trigger in $triggers)
+foreach($sensor in $sensors)
 {
-    $sensors | New-NotificationTriggerParameter $trigger | Add-NotificationTrigger
+	$triggers | New-NotificationTriggerParameter $sensor.Id | Add-NotificationTrigger
 }
 
 # Remove the triggers from their original source
@@ -421,12 +425,12 @@ $triggers | Remove-NotificationTrigger
 
 ```
 
-To edit a notification trigger, create a new execute `New-NotificationTriggerParameter` specifying the trigger's object ID, sub ID, and the type of the notification trigger
+To edit a notification trigger, create a new execute `New-NotificationTriggerParameter` specifying `Edit` mode instead of `Add`
 
 ```powershell
 $trigger = Get-Device | Get-NotificationTrigger *admin* -Inherited $false -Type State | Select -First 1
 
-$parameters = New-NotificationTriggerParameter $trigger.Id $trigger.SubId $trigger.Type
+$parameters = $trigger | New-NotificationTriggerParameter 
 $parameters.Latency = 120
 
 $parameters | Set-NotificationTrigger

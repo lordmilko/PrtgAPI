@@ -21,6 +21,7 @@ using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Exceptions.Internal;
 
@@ -45,6 +46,27 @@ namespace PrtgAPI
         /// The PassHash that will be used to authenticate with, in place of a password.
         /// </summary>
         public string PassHash { get; }
+
+        /// <summary>
+        /// The number of times to retry a request that times out while communicating with PRTG.
+        /// </summary>
+        public int RetryCount { get; set; } = 0;
+
+        /// <summary>
+        /// The base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.
+        /// </summary>
+        public int RetryDelay { get; set; } = 1;
+
+        /// <summary>
+        /// Occurs when a request times out while communicating with PRTG.
+        /// </summary>
+
+        public event EventHandler<RetryRequestEventArgs> RetryRequest;
+
+        void HandleEvent<T>(EventHandler<T> handler, T args)
+        {
+            handler?.Invoke(this, args);
+        }
 
         private IWebClient client;
 
@@ -132,50 +154,149 @@ namespace PrtgAPI
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
-            string responseText;
+            int retriesRemaining = RetryCount;
 
-            try
+            do
             {
-                var response = client.GetSync(url.Url).Result;
-                
-                responseText = responseParser == null ? response.Content.ReadAsStringAsync().Result : responseParser(response);
+                try
+                {
+                    var response = client.GetSync(url.Url).Result;
 
-                ValidateHttpResponse(response, responseText);
-            }
-            catch (Exception ex) when (ex is AggregateException || ex is TaskCanceledException)
-            {
-                if (ex.InnerException?.InnerException != null)
-                    throw ex.InnerException.InnerException;
+                    var responseText = responseParser == null ? response.Content.ReadAsStringAsync().Result : responseParser(response);
 
-                throw ex.InnerException;
-            }
+                    ValidateHttpResponse(response, responseText);
 
-            return responseText;
+                    return responseText;
+                }
+                catch (Exception ex) when (ex is AggregateException || ex is TaskCanceledException || ex is HttpRequestException)
+                {
+                    var result = HandleRequestException(ex.InnerException?.InnerException, ex.InnerException, url, ref retriesRemaining, () =>
+                    {
+                        if (ex.InnerException != null)
+                            throw ex.InnerException;
+                    });
+
+                    if (!result)
+                        throw;
+
+                    /*if (ex.InnerException?.InnerException != null)
+                    {
+                        if (retriesRemaining > 0)
+                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex.InnerException.InnerException, url.Url, retriesRemaining));
+                        else
+                            throw ex.InnerException.InnerException;
+                    }
+                    else
+                    {
+                        if (retriesRemaining > 0)
+                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex.InnerException ?? ex, url.Url, retriesRemaining));
+                        else
+                        {
+                            if (ex.InnerException != null)
+                                throw ex.InnerException;
+
+                            throw;
+                        }
+                    }
+
+                    if (retriesRemaining > 0)
+                    {
+                        var attemptsMade = RetryCount - retriesRemaining + 1;
+                        var delay = RetryDelay * attemptsMade;
+
+                        Thread.Sleep(delay * 1000);
+                    }
+
+                    retriesRemaining--;*/
+                }
+            } while (true);
         }
 
         private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            string responseText;
+            int retriesRemaining = RetryCount;
 
-            try
+            do
             {
-                var response = await client.GetAsync(url.Url).ConfigureAwait(false);
+                try
+                {
+                    var response = await client.GetAsync(url.Url).ConfigureAwait(false);
 
-                responseText = responseParser == null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : await responseParser(response);
+                    var responseText = responseParser == null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : await responseParser(response);
 
-                ValidateHttpResponse(response, responseText);
-            }
-            catch (HttpRequestException ex) //todo: test making invalid requests
+                    ValidateHttpResponse(response, responseText);
+
+                    return responseText;
+                }
+                catch (HttpRequestException ex) //todo: test making invalid requests
+                {
+                    var inner = ex.InnerException as WebException;
+
+                    var result = HandleRequestException(inner, ex, url, ref retriesRemaining, null);
+
+                    if (!result)
+                        throw;
+
+                    /*if (inner != null)
+                    {
+                        if (retriesRemaining > 0)
+                            HandleEvent(RetryRequest, new RetryRequestEventArgs(inner, url.Url, retriesRemaining));
+                        else
+                            throw ex.InnerException;
+                    }
+                    else
+                    {
+                        if (retriesRemaining > 0)
+                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex, url.Url, retriesRemaining));
+                        else
+                            throw;
+                    }
+
+                    if (retriesRemaining > 0)
+                    {
+                        var attemptsMade = RetryCount - retriesRemaining + 1;
+                        var delay = RetryDelay*attemptsMade;
+
+                        Thread.Sleep(delay*1000);
+                    }
+
+                    retriesRemaining--;*/
+                }
+            } while (true);
+        }
+
+        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgUrl url, ref int retriesRemaining, Action thrower)
+        {
+            if (innerMostEx != null)
             {
-                var inner = ex.InnerException as WebException;
+                if (retriesRemaining > 0)
+                    HandleEvent(RetryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
+                else
+                    throw innerMostEx;
+            }
+            else
+            {
+                if (retriesRemaining > 0)
+                    HandleEvent(RetryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
+                else
+                {
+                    thrower();
 
-                if (inner != null)
-                    throw ex.InnerException;
-
-                throw;
+                    return false;
+                }
             }
 
-            return responseText;
+            if (retriesRemaining > 0)
+            {
+                var attemptsMade = RetryCount - retriesRemaining + 1;
+                var delay = RetryDelay * attemptsMade;
+
+                Thread.Sleep(delay * 1000);
+            }
+
+            retriesRemaining--;
+
+            return true;
         }
 
         private void ValidateHttpResponse(HttpResponseMessage response, string responseText)
@@ -1136,7 +1257,7 @@ namespace PrtgAPI
         /// <param name="deviceId">The ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetGroupId">The group the device should be cloned to.</param>
+        /// <param name="targetGroupId">The group or probe the device should be cloned to.</param>
         public void Clone(int deviceId, string cloneName, string host, int targetGroupId)
         {
             if (cloneName == null)
@@ -1192,6 +1313,13 @@ namespace PrtgAPI
 #endregion
 
         #region Unsorted
+
+        private void a()
+        {
+            //wmi volume
+            //add: name=WMI+Free+Disk+Space+(Single+Disk)&parenttags_=C_OS_Win&tags_=wmivolumesensor+diskspacesensor&priority_=3&deviceidlist_=1&deviceidlist_=1&deviceidlist__check=%5C%5C%5C%5C%3F%5C%5CVolume%7B33bf348c-e1b7-11e3-80b5-806e6f6e6963%7D%5C%5C%7CC%3A%5C%5C%7Csy1-dc-01%7CLocal+Disk%7CNTFS%7CC%3A%7C%7C&deviceid=&drivetype=&wmialternative=0&driveletter_=&intervalgroup=0&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&inherittriggers=1&id=2212&sensortype=wmivolume
+            //enumerate: 
+        }
 
         /// <summary>
         /// Calcualte the total number of objects of a given type present on a PRTG Server.

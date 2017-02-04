@@ -19,26 +19,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        [Parameter(ParameterSetName = "AddFrom", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        public int Id { get; set; }
+        [Parameter(ParameterSetName = "From", Mandatory = false, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        public int? Id { get; set; }
 
         /// <summary>
         /// The notification trigger import trigger parameters from.
         /// </summary>
-        [Parameter(ParameterSetName = "AddFrom", Mandatory = true)]
+        [Parameter(ParameterSetName = "From", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
         public NotificationTrigger Source { get; set; }
 
         /// <summary>
         /// The Sub ID of the trigger to manipulate.
         /// </summary>
-        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 1)]
+        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
         public int? TriggerId { get; set; }
 
         /// <summary>
         /// The type of notification trigger to manipulate.
         /// </summary>
-        [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 1)]
-        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 2)]
+        [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
+        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]
         public TriggerType? Type { get; set; }
 
         /// <summary>
@@ -46,7 +46,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            var action = ParameterSetName == "Edit" ? ModifyAction.Edit : ModifyAction.Add;
+            ModifyAction? action = null;
+
+            //we need to write tests for all the different valid and invalid argument scenarios and try and break it
+
+            switch (ParameterSetName)
+            {
+                case "Add":
+                    action = ModifyAction.Add;
+                    break;
+                case "Edit":
+                    action = ModifyAction.Edit;
+                    break;
+                case "From":
+                    action = Id != null ? ModifyAction.Add : ModifyAction.Edit;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            //need to update the trigger constructor to allow edit mode. also need to update readme
+            //write some unit/integration tests. the unit tests will just
+
+            //var action = ParameterSetName == "Edit" ? ModifyAction.Edit : ModifyAction.Add;
 
             if (Source != null)
                 Type = Source.Type;
@@ -54,37 +76,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (Type)
             {
                 case TriggerType.Change:
-                    WriteObject(CreateParameters<ChangeTriggerParameters>());
+                    WriteObject(CreateParameters<ChangeTriggerParameters>(action.Value));
                     break;
                 case TriggerType.Speed:
-                    WriteObject(CreateParameters<SpeedTriggerParameters>());
+                    WriteObject(CreateParameters<SpeedTriggerParameters>(action.Value));
                     break;
                 case TriggerType.State:
-                    WriteObject(CreateParameters<StateTriggerParameters>());
+                    WriteObject(CreateParameters<StateTriggerParameters>(action.Value));
                     break;
                 case TriggerType.Threshold:
-                    WriteObject(CreateParameters<ThresholdTriggerParameters>());
+                    WriteObject(CreateParameters<ThresholdTriggerParameters>(action.Value));
                     break;
                 case TriggerType.Volume:
-                    WriteObject(CreateParameters<VolumeTriggerParameters>());
+                    WriteObject(CreateParameters<VolumeTriggerParameters>(action.Value));
                     break;
                 default:
                     throw new NotImplementedException($"Handler of trigger type '{Type}' is not implemented.");
             }
-
-
-
-            //todo: have some tests that confirm when we create
-            //a parameter from a trigger, ALL its properties have values that match
-            //the properties of the input trigger
-
-            //todo before making this public, we need to check that notificationaction's getserializedformat method does get called
         }
 
-        private T CreateParameters<T>()
+        private T CreateParameters<T>(ModifyAction action)
         {
             if (Source != null)
-                return (T) Activator.CreateInstance(typeof (T), Id, Source); //Use an existing notification trigger
+                return (T) Activator.CreateInstance(typeof (T), Id, Source, action); //Use an existing notification trigger
             if (TriggerId != null)
                 return (T) Activator.CreateInstance(typeof (T), Id, TriggerId); //Edit a notification trigger
             else

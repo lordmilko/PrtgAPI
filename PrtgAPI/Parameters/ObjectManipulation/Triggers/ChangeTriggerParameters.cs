@@ -15,7 +15,7 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public ChangeTriggerParameters(int objectId) : base(TriggerType.Change, objectId, null, ModifyAction.Add)
+        public ChangeTriggerParameters(int objectId) : base(TriggerType.Change, objectId, (int?)null, ModifyAction.Add)
         {
         }
 
@@ -33,7 +33,8 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public ChangeTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Change, objectId, sourceTrigger)
+        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
+        public ChangeTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Change, objectId, sourceTrigger, action)
         {
         }
     }

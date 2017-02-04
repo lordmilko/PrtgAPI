@@ -81,7 +81,7 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public StateTriggerParameters(int objectId) : base(TriggerType.State, objectId, null, ModifyAction.Add)
+        public StateTriggerParameters(int objectId) : base(TriggerType.State, objectId, (int?)null, ModifyAction.Add)
         {
             EscalationNotificationAction = null;
             OffNotificationAction = null;
@@ -102,14 +102,18 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.State, objectId, sourceTrigger)
+        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
+        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.State, objectId, sourceTrigger, action)
         {
-            OffNotificationAction = sourceTrigger.OffNotificationAction;
-            EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;
-            Latency = sourceTrigger.Latency;
-            EscalationLatency = sourceTrigger.EscalationLatency;
-            RepeatInterval = sourceTrigger.RepeatInterval;
-            State = sourceTrigger.StateTrigger;
+            if (action == ModifyAction.Add)
+            {
+                OffNotificationAction = sourceTrigger.OffNotificationAction;
+                EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;
+                Latency = sourceTrigger.Latency;
+                EscalationLatency = sourceTrigger.EscalationLatency;
+                RepeatInterval = sourceTrigger.RepeatInterval;
+                State = sourceTrigger.StateTrigger;
+            }
         }
     }
 }

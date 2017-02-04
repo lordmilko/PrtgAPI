@@ -92,10 +92,11 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="TriggerParameters"/> class for creating a new <see cref="NotificationTrigger"/> from an existing one.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="objectId"></param>
-        /// <param name="sourceTrigger"></param>
-        protected TriggerParameters(TriggerType type, int objectId, NotificationTrigger sourceTrigger) : this(type, objectId, null, ModifyAction.Add)
+        /// <param name="type">The type of notification trigger these parameters will manipulate.</param>
+        /// <param name="objectId">The ID of the object the notification trigger will apply to.</param>
+        /// <param name="sourceTrigger">The notification trigger whose properties should be used as the basis of this trigger.</param>
+        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
+        protected TriggerParameters(TriggerType type, int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : this(type, objectId, action == ModifyAction.Edit ? sourceTrigger.SubId : (int?)null, action)
         {
             if (sourceTrigger == null)
                 throw new ArgumentNullException(nameof(sourceTrigger));
@@ -103,7 +104,10 @@ namespace PrtgAPI.Parameters
             if (sourceTrigger.Type != type)
                 throw new ArgumentException($"A NotificationTrigger of type '{sourceTrigger.Type}' cannot be used to initialize trigger parameters of type '{type}'");
 
-            OnNotificationAction = sourceTrigger.OnNotificationAction;
+            if (action == ModifyAction.Add)
+            {
+                OnNotificationAction = sourceTrigger.OnNotificationAction;
+            }
         }
 
         /// <summary>

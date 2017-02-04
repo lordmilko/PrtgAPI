@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -21,20 +22,35 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
         public Task<HttpResponseMessage> GetSync(string address)
         {
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            if (response.StatusCode == 0)
+                response.StatusCode = HttpStatusCode.OK;
+
+            var message = new HttpResponseMessage(response.StatusCode)
             {
                 Content = new StringContent(response.GetResponseText(address))
-            });
-            //return await response.GetResponseTextAsync(address);
+            };
+
+            try
+            {
+                message.EnsureSuccessStatusCode();
+                return Task.FromResult(message);
+            }
+            catch (Exception ex)
+            {
+                var task = Task.FromException<HttpResponseMessage>(ex);
+                return task;
+            }
         }
 
         public async Task<HttpResponseMessage> GetAsync(string address)
         {
-            return new HttpResponseMessage(HttpStatusCode.OK)
+            if (response.StatusCode == 0)
+                response.StatusCode = HttpStatusCode.OK;
+
+            return new HttpResponseMessage(response.StatusCode)
             {
                 Content = new StringContent(await response.GetResponseTextStream(address).ConfigureAwait(false))
             };
-            //return await response.GetResponseTextAsync(address);
         }
     }
 }
