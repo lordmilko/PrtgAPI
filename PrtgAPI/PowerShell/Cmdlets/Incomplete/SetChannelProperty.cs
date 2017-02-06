@@ -48,9 +48,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object Value { get; set; }
 
         /// <summary>
-        /// Provides a record-by-record processing functionality for the cmdlet.
+        /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessPrtgRecord()
+        protected override void ProcessRecordEx()
         {
             //i think we should modify setobjectproperty to detect if we're clearing limits or one of the other ones with fields and clear the associated fields as well. we could POTENTIALLY
             //even have an enum on those properties so we can enumerate all the fields we need to clear

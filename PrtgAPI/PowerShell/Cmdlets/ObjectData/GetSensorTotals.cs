@@ -15,9 +15,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetSensorTotals : PrtgCmdlet
     {
         /// <summary>
-        /// Provides a record-by-record processing functionality for the cmdlet.
+        /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessPrtgRecord()
+        protected override void ProcessRecordEx()
         {
             var result = client.GetSensorTotals();
 
