@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\EventStack.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -67,11 +68,11 @@
     <Compile Include="Enums\Serialization\TriggerProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerSensorState.cs" />
     <Compile Include="Enums\Serialization\TriggerVolumeUnitSize.cs" />
-    <Compile Include="EventArgs\RetryRequestEventArgs.cs" />
+    <Compile Include="Events\RetryRequestEventArgs.cs" />
     <Compile Include="Exceptions\InvalidTriggerTypeException.cs" />
     <Compile Include="Exceptions\InvalidTypeException.cs" />
-    <Compile Include="IFormattable.cs" />
-    <Compile Include="IWebClient.cs" />
+    <Compile Include="Request\IFormattable.cs" />
+    <Compile Include="Request\IWebClient.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Objects\Deserialization\JsonDeserializer.cs" />
     <Compile Include="Objects\Deserialization\NotificationTriggerData.cs" />
@@ -164,7 +165,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
     <Compile Include="PrtgClient.Async.cs" />
-    <Compile Include="SearchFilter.cs" />
+    <Compile Include="Request\SearchFilter.cs" />
     <Compile Include="Enums\Deserialization\Access.cs" />
     <Compile Include="Enums\AuthMode.cs" />
     <Compile Include="Enums\Deserialization\BaseType.cs" />
@@ -231,8 +232,8 @@
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicket.cs" />
     <Compile Include="Objects\Shared\SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory.cs" />
     <Compile Include="PrtgClient.cs" />
-    <Compile Include="PrtgUrl.cs" />
-    <Compile Include="PrtgWebClient.cs" />
+    <Compile Include="Request\PrtgUrl.cs" />
+    <Compile Include="Request\PrtgWebClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PowerShell\Resources\PrtgAPI.cmd" />

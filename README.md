@@ -18,9 +18,11 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 
 PrtgAPI requires Visual Studio 2015. If you wish to run any unit tests, ensure *Test -> Test Settings -> Keep Test Execution Engine Running* is unticked to prevent the PowerShell tests from locking the assemblies (preventing recompilation or moving the files somewhere else).
 
-If you wish to run unit tests, it is advised to group the tests by **Project** in *Test Explorer* to separate unit tests from integration tests.
+If you wish to run unit tests, it is advised to group the tests in *Test Explorer* by **Project**  to separate unit tests from integration tests.
 
-If you wish to run integration tests, it is recommended to create a separate server for integration testing. To configure PrtgAPI for integration testing against your server, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs`.
+If you wish to run integration tests, it is recommended to create a separate server for integration testing. When integration tests are run, PrtgAPI will create a backup of your PRTG configuration, run its tests, and then revert the server to its original settings. If integration tests do not run to their completion, as a safety measure you will be required to manually delete (or restore) the `PRTG Configuration.dat` file under %temp% on the PRTG Server.
+
+To configure PrtgAPI for integration testing, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs` with values specific to your server. The server running integration tests must be able to connect directly to the server over the network. When specifying the credentials to connect to your server, you must specify a local user on the server; domain users are not currently supported.
 
 ## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`

@@ -34,14 +34,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             if (Probe != null)
                 AddPipelineFilter(Property.Probe, Probe.Name);
             else if (Group != null)
                 AddPipelineFilter(Property.ParentId, Group.Id);
 
-            base.ProcessRecord();
+            base.ProcessPrtgRecord();
         }
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             if (Object.Name == null && Object.Id == default(int))
                 throw new ParameterBindingException($"Cannot bind an incomplete object to parameter '{Object}'");

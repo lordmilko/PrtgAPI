@@ -10,6 +10,10 @@ namespace PrtgAPI
     Todo
     ----------------
 
+    //BUG: if you connect while prtg is starting your passhash might be "PRTG Network Monitor is starting"
+    //maybe we should verify the passhash is all digits. if not, respond with whatever message it responded with
+    //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
+
     Project
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
         -maybe not, its good to be able to specify an id. maybe we should add MORE places you can specify ids!

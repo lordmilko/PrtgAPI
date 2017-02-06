@@ -10,6 +10,11 @@ namespace PrtgAPI
         private WebClient syncClient = new WebClient();
         private HttpClient asyncClient = new HttpClient();
 
+        public PrtgWebClient()
+        {
+            //asyncClient.Timeout = new TimeSpan(0, 0, 10);
+        }
+
         public string DownloadString(string address)
         {
             using (var client = new System.Net.WebClient())

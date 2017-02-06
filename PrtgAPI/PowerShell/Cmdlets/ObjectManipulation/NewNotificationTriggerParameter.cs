@@ -19,13 +19,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        [Parameter(ParameterSetName = "From", Mandatory = false, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = "AddFrom", Mandatory = true, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         public int? Id { get; set; }
 
         /// <summary>
         /// The notification trigger import trigger parameters from.
         /// </summary>
-        [Parameter(ParameterSetName = "From", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
+        [Parameter(ParameterSetName = "AddFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
+        [Parameter(ParameterSetName = "EditFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
         public NotificationTrigger Source { get; set; }
 
         /// <summary>
@@ -53,13 +54,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (ParameterSetName)
             {
                 case "Add":
+                case "AddFrom":
                     action = ModifyAction.Add;
                     break;
                 case "Edit":
-                    action = ModifyAction.Edit;
-                    break;
-                case "From":
-                    action = Id != null ? ModifyAction.Add : ModifyAction.Edit;
+                case "EditFrom":
+                    action = ModifyAction.Edit;                
                     break;
                 default:
                     throw new NotImplementedException();

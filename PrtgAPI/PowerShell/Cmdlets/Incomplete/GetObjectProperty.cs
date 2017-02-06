@@ -18,7 +18,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             var settings = client.GetObjectProperties(Object.Id);
             WriteObject(settings);

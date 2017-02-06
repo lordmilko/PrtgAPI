@@ -57,11 +57,16 @@ namespace PrtgAPI
         /// </summary>
         public int RetryDelay { get; set; } = 1;
 
+        internal EventHandler<RetryRequestEventArgs> retryRequest;
+
         /// <summary>
         /// Occurs when a request times out while communicating with PRTG.
         /// </summary>
-
-        public event EventHandler<RetryRequestEventArgs> RetryRequest;
+        public event EventHandler<RetryRequestEventArgs> RetryRequest
+        {
+            add { retryRequest += value; }
+            remove { retryRequest -= value; }
+        }
 
         void HandleEvent<T>(EventHandler<T> handler, T args)
         {
@@ -270,14 +275,14 @@ namespace PrtgAPI
             if (innerMostEx != null)
             {
                 if (retriesRemaining > 0)
-                    HandleEvent(RetryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
+                    HandleEvent(retryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
                 else
                     throw innerMostEx;
             }
             else
             {
-                if (retriesRemaining > 0)
-                    HandleEvent(RetryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
+                if (fallbackHandlerEx != null && retriesRemaining > 0)
+                    HandleEvent(retryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
                 else
                 {
                     thrower();

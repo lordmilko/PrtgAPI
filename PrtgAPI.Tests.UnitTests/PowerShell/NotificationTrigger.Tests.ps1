@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\Utilities.ps1
+﻿. $PSScriptRoot\Support\UnitTest.ps1
 
 Describe "Get-NotificationTrigger" { # notificationtrigger doesnt support getitem; how do we make it use getitems
 	It "can pipe from sensors" {

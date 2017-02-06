@@ -44,7 +44,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             client.Clone(Device.Id, Name, Hostname ?? Device.Host, DestinationId);
         }
@@ -64,7 +64,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord() => ProcessRecord(Sensor.Id);
+        protected override void ProcessPrtgRecord() => ProcessPrtgRecord(Sensor.Id);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord() => ProcessRecord(Group.Id);
+        protected override void ProcessPrtgRecord() => ProcessPrtgRecord(Group.Id);
     }
 
     /// <summary>
@@ -100,10 +100,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int DestinationId { get; set; }
 
         /// <summary>
-        /// The ID of the device or group that will hold the cloned object.
+        /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
         /// <param name="objectId">The ID of the object to clone.</param>
-        protected void ProcessRecord(int objectId)
+        protected void ProcessPrtgRecord(int objectId)
         {
             client.Clone(objectId, Name, DestinationId);
         }

@@ -39,7 +39,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             if(ShouldProcess($"Object ID: {Parameters.ObjectId} (Type: {Parameters.Type}, Action: {Parameters.OnNotificationAction})"))
                 client.AddNotificationTrigger(Parameters);

@@ -99,12 +99,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PowerShell\Client.Tests.ps1" />
     <None Include="PowerShell\Device.Tests.ps1" />
+    <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\NotificationAction.Tests.ps1" />
     <None Include="PowerShell\NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\Sensor.Tests.ps1" />
     <None Include="PowerShell\TriggerParameter.Tests.ps1" />
-    <None Include="PowerShell\Utilities.ps1" />
+    <None Include="PowerShell\Support\UnitTest.ps1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

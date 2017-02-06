@@ -7,7 +7,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// Filters results on the PRTG Server to improve performance.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "SearchFilter")]
-    public class NewSearchFilter : PrtgCmdlet
+    public class NewSearchFilter : PSCmdlet
     {
         /// <summary>
         /// Object property to filter on.

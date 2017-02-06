@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using System.Threading.Tasks;
-using PrtgAPI.Helpers;
+using PrtgAPI.Events;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -12,6 +10,12 @@ namespace PrtgAPI.PowerShell.Base
     /// </summary>
     public abstract class PrtgCmdlet : PSCmdlet
     {
+        private static EventStack<RetryRequestEventArgs> retryEventStack = new EventStack<RetryRequestEventArgs>(
+            () => PrtgSessionState.Client.retryRequest,
+            e => PrtgSessionState.Client.retryRequest += e.Invoke,
+            e => PrtgSessionState.Client.retryRequest -= e.Invoke
+        );
+
         /// <summary>
         /// Provides access to the <see cref="PrtgClient"/> stored in the current PowerShell Session State.
         /// </summary>
@@ -24,8 +28,63 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (PrtgSessionState.Client == null)
                 throw new Exception("You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.");
+        }
 
-            client.RetryRequest += OnRetryRequest;
+        private bool retryEventAdded;
+        private bool retryEventRemoved;
+
+        private object lockEvents = new object();
+
+        private void AddEvent(Action<object, RetryRequestEventArgs> item)
+        {
+            if (!retryEventAdded)
+            {
+                lock (lockEvents)
+                {
+                    retryEventStack.Push(item);
+                    retryEventAdded = true;
+                }
+            }
+            
+        }
+
+        private void RemoveEvent()
+        {
+            if (!retryEventRemoved)
+            {
+                lock (lockEvents)
+                {
+                    retryEventStack.Pop();
+                    retryEventRemoved = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Provides a record-by-record processing functionality for the cmdlet. Do not override this method; override <see cref="ProcessPrtgRecord"/> instead. 
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            AddEvent(OnRetryRequest);
+
+            //todo: need to update all cmdlets to not use processrecord
+
+            try
+            {
+                ProcessPrtgRecord();
+            }
+            catch
+            {
+                RemoveEvent();
+                throw;
+            }
+            finally
+            {
+                if (Stopping)
+                {
+                    RemoveEvent();
+                }
+            }
         }
 
         /// <summary>
@@ -33,8 +92,10 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void EndProcessing()
         {
-            client.RetryRequest -= OnRetryRequest;
+            RemoveEvent();
         }
+
+        protected abstract void ProcessPrtgRecord();
 
         /// <summary>
         /// Writes a list to the output pipeline.
@@ -44,10 +105,6 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="settings">How progress should be displayed while the list is being enumerated.</param>
         internal void WriteList<T>(IEnumerable<T> sendToPipeline, ProgressSettings settings)
         {
-            //var visibleMembers = typeof(T).GetPSVisibleMembers().ToList();
-
-            //visibleMembers.Sort();
-
             ProgressRecord progress = null;
 
             var recordsProcessed = -1;

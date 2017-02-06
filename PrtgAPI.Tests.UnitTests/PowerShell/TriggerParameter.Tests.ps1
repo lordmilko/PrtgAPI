@@ -1,6 +1,6 @@
-﻿. $PSScriptRoot\Utilities.ps1
+﻿. $PSScriptRoot\Support\UnitTest.ps1
 
-Describe "New-TriggerParameter" {
+<#Describe "New-TriggerParameter" {
 
 	$device = Run Device { Get-Device }
 	$triggers = Run NotificationTrigger { $device | Get-NotificationTrigger -Type State }
@@ -32,4 +32,4 @@ Describe "New-TriggerParameter" {
 
 		$parameters.Action | Should Be Edit
 	}
-}
+}#>

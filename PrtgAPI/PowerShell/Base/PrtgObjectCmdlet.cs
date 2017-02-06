@@ -21,11 +21,11 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Provides a record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void ProcessPrtgRecord()
         {
             var records = GetRecords();
 
-            WriteList(records, null);
+            WriteList(records, null);   
         }
 
         /// <summary>

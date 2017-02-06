@@ -18,19 +18,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Specifies the username and password to authenticate with. If <see cref="PassHash"/> is specified, the password will be treated as a PassHash instead.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 2)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 2, HelpMessage = "The username and password to authenticate with. If -PassHash is specified, the password will be treated as a PassHash instead.")]
         public PSCredential Credential { get; set; }
 
         /// <summary>
         /// Forces a <see cref="PrtgClient"/> to be replaced if one already exists.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, HelpMessage = "Forces the sessions PrtgClient to be replaced if one already exists.")]
         public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Specifies that the <see cref="Credential"/>'s password contains a PassHash instead of a Password.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, HelpMessage = "Indicates that the password field of -Credential contains a PassHash instead of a Password.")]
         public SwitchParameter PassHash { get; set; }
 
         /// <summary>
