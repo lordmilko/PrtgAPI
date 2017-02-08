@@ -84,6 +84,9 @@ namespace PrtgAPI.PowerShell.Base
             ProcessNameFilter();
             ProcessTagsFilter();
 
+            if (Filter != null)
+                streamResults = false;
+
             if (Count != null)
             {
                 parameters.Count = Count.Value;
