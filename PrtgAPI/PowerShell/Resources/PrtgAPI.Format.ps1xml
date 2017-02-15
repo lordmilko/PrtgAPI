@@ -421,6 +421,12 @@
                             <ListItem>
                                 <PropertyName>PassHash</PropertyName>
                             </ListItem>
+                            <ListItem>
+                                <PropertyName>RetryCount</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>RetryDelay</PropertyName>
+                            </ListItem>
                         </ListItems>
                     </ListEntry>
                 </ListEntries>

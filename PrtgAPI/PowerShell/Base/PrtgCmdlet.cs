@@ -49,7 +49,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void RemoveEvent()
         {
-            if (!retryEventRemoved)
+            if (!retryEventRemoved && retryEventAdded)
             {
                 lock (lockEvents)
                 {

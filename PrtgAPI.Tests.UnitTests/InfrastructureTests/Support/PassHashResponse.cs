@@ -6,11 +6,18 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 {
     class PassHashResponse : IWebResponse
     {
+        private string response;
+
+        public PassHashResponse(string response = "12345678")
+        {
+            this.response = response;
+        }
+
         public HttpStatusCode StatusCode { get; set; }
 
         public string GetResponseText(string address)
         {
-            return "12345678";
+            return response;
         }
 
         public Task<string> GetResponseTextStream(string address)

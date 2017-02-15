@@ -50,12 +50,12 @@ namespace PrtgAPI
         /// <summary>
         /// The number of times to retry a request that times out while communicating with PRTG.
         /// </summary>
-        public int RetryCount { get; set; } = 0;
+        public int RetryCount { get; set; }
 
         /// <summary>
         /// The base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.
         /// </summary>
-        public int RetryDelay { get; set; } = 1;
+        public int RetryDelay { get; set; }
 
         internal EventHandler<RetryRequestEventArgs> retryRequest;
 
@@ -332,6 +332,9 @@ namespace PrtgAPI
             };
 
             var response = ExecuteRequest(JsonFunction.GetPassHash, parameters);
+
+            if(!Regex.Match(response, "^[0-9]+$").Success)
+                throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
 
             return response;
         }

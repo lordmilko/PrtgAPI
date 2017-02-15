@@ -327,7 +327,6 @@ C:\> Get-Sensor | Select -First 1 | Get-Channel
 
 Name                SensorId    Id    LastValue LimitsEnabled UpperErrorLimit LowerErrorLimit ErrorLimitMessage
 ----                --------    --    --------- ------------- --------------- --------------- -----------------
-Downtime            3001        -4
 Total               3001         0       0.32 %          True              95                 PANIC!! PANIC!!!
 Processor 1         3001         1         <1 %         False
 ```
@@ -435,7 +434,7 @@ $trigger = Get-Device | Get-NotificationTrigger *admin* -Inherited $false -Type 
 $parameters = $trigger | New-NotificationTriggerParameter 
 $parameters.Latency = 120
 
-$parameters | Set-NotificationTrigger
+$parameters | Add-NotificationTrigger
 ```
 
 ### Access Underlying Methods

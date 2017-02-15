@@ -10,8 +10,6 @@ namespace PrtgAPI
     Todo
     ----------------
 
-    //BUG: if you connect while prtg is starting your passhash might be "PRTG Network Monitor is starting"
-    //maybe we should verify the passhash is all digits. if not, respond with whatever message it responded with
     //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
 
     Project
@@ -36,8 +34,6 @@ namespace PrtgAPI
 
     -upload our empty settings file then say dont track it
      git update-index --assume-unchanged <file> and --no-assume-unchanged
-
-    -test failed pester tests generate errors in appveyor
 
     -maybe create a "filter" alias for new-searchfilter?
 

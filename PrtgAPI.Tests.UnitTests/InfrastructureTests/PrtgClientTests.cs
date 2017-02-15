@@ -20,6 +20,15 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             Assert.IsTrue(client.PassHash == "12345678");
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(PrtgRequestException))]
+        public void PrtgClient_Constructor_CantRetrievePassHash()
+        {
+            var webClient = new MockWebClient(new PassHashResponse("PRTG Network Monitor is starting"));
+
+            var client = new PrtgClient("prtg.example.com", "username", "password", AuthMode.Password, webClient);
+        }
+
         /*private T[] CreateNullResponseItem<T>(T obj)
         {
             //var obj = Activator.CreateInstance(typeof (T));
