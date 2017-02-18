@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using System.Reflection;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 

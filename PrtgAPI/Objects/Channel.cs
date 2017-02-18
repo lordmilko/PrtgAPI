@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
-using PrtgAPI.Objects.Undocumented;
-using PrtgAPI.Parameters;
 using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI

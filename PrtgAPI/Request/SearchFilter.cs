@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
-using System.Reflection;
 
 namespace PrtgAPI
 {

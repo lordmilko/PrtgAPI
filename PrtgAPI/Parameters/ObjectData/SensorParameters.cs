@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace PrtgAPI.Parameters
+﻿namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Sensor"/> objects.

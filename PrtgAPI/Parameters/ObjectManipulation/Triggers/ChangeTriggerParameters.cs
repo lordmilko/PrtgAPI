@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PrtgAPI.Parameters
+﻿namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/> objects.

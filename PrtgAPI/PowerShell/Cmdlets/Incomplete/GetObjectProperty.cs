@@ -1,11 +1,6 @@
-﻿using System;
-using System.Management.Automation;
-using PrtgAPI.Attributes;
+﻿using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
-using PrtgAPI.Helpers;
-using System.Linq;
-using System.Text;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {

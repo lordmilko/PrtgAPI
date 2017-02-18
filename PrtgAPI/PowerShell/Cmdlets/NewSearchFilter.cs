@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {

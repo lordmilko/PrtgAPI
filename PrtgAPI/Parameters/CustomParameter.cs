@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PrtgAPI.Parameters
+﻿namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Allows inserting custom parameters not supported by PrtgAPI.

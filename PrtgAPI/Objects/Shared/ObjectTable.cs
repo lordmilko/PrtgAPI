@@ -1,6 +1,4 @@
-﻿using System;
-using System.Management.Automation;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
 namespace PrtgAPI.Objects.Shared

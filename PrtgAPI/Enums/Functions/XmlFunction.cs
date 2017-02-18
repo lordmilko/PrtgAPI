@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
