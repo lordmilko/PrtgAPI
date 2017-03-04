@@ -7,25 +7,52 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Retrieve all channels of a sensor.
+    /// <para type="synopsis">Retrieve all channels of a sensor.</para>
+    /// 
+    /// <para type="description">The Get-Channel cmdlet retrieves all channels beloninging to a PRTG Sensor.</para>
+    /// <para type="description">Get-Channel uses APIs unsupported by Paessler to retrieve advanced channel settings (limits, thresholds, etc).
+    /// For each channel a separate request must be made in order to retrieve advanced channel details, in addition to a separate single request that retrieves general information for all channels. As such, in order to retrieve information
+    /// on n channels, n+1 requests must be made. Keep this in mind when piping sensors with a large number of channels, or piping a large number of sensors.</para> 
+    /// <para type="description">If a name is specified, Get-Channel filters the results to those that match the name expression.
+    /// Due to limitations of the PRTG API, Get-Channel filters its results post-request.</para>
+    /// <para type="description">Get-Channel does not include the Downtime channel present on all sensors (Channel ID -4) as this sensor does not contain a value in table view.</para>
+    /// 
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | Get-Channel</code>
+    ///     <para>Get all channels from all Windows CPU Load sensors.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor | Get-Channel Avail*</code>
+    ///     <para>Get all channels whose names start with "Avail" from all Windows Memory sensors.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Channel -SensorId 2001</code>
+    ///     <para>Get all channels from the sensor with ID 2001</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-Sensor</para>
+    /// <para type="link">Set-ChannelProperty</para>
     /// </summary>
+    [OutputType(typeof(Channel))]
     [Cmdlet(VerbsCommon.Get, "Channel")]
     public class GetChannel : PrtgObjectCmdlet<Channel>
     {
         /// <summary>
-        /// The Sensor to retrieve channels for.
+        /// <para type="description">The Sensor to retrieve channels for.</para>
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
-        /// The ID of the Sensor to retrieve channels for.
+        /// <para type="description">The ID of the Sensor to retrieve channels for.</para>
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public int? SensorId { get; set; }
 
         /// <summary>
-        /// Filter the channels retrieved to only those that match a specific name.
+        /// <para type="description">Filter the channels retrieved to only those that match a specific name.</para>
         /// </summary>
         [Parameter(Position = 0)]
         public string Name { get; set; }

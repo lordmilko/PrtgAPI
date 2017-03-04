@@ -4,7 +4,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies the properties of sensor channels that can be interfaced with using the PRTG API.
+    /// <para type="description">Specifies the properties of sensor channels that can be interfaced with using the PRTG API.</para>
     /// </summary>
     public enum ChannelProperty
     {

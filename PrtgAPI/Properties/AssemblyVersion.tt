@@ -2,19 +2,30 @@
 <#@ import namespace="System.IO" #>
 <#@ output extension=".cs" #>
 <#
-    int major = 0; 
-    int minor = 0; 
-    int build = 0; 
-    int revision = 0; 
+    int major = 0;
+    int minor = 0;
+    int build = 0;
+    int revision = 0;
   
     try
     {
-        using(var f = File.OpenText(Host.ResolvePath("AssemblyFileVersion.cs")))
+        using(var f = new StreamReader(Host.ResolvePath("AssemblyFileVersion.cs"), false))
         {
-            string maj = f.ReadLine().Replace("//","");
+            var firstLine = string.Empty;
+        
+            do
+            {
+                //Appveyor inserts a bunch of newlines at the top of T4 generated files sometimes
+                firstLine = f.ReadLine();
+                
+                if(firstLine.StartsWith("//"))
+                    break;
+            } while (f.Peek() >= 0);
+        
+            string maj = firstLine.Replace("//","");
             string min = f.ReadLine().Replace("//","");
   
-            major = int.Parse(maj); 
+            major = int.Parse(maj);
             minor = int.Parse(min); 
             build = 0;
             revision = 0;
@@ -22,10 +33,7 @@
     }
     catch
     {
-        major = 1; 
-        minor = 0; 
-        build = 0; 
-        revision = 0; 
+        throw;
     }
 #>
 //<#= major #>

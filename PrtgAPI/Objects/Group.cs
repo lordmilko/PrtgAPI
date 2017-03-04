@@ -5,7 +5,7 @@ using PrtgAPI.Objects.Shared;
 namespace PrtgAPI
 {
     /// <summary>
-    /// A group used to organize one or more devices.
+    /// <para type="description">A group used to organize one or more devices.</para>
     /// </summary>
     public class Group : GroupOrProbe
     {

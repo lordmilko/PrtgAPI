@@ -5,13 +5,34 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Request an object and any if its children refresh themselves immediately.
+    /// <para type="synopsis">Request an object and any if its children refresh themselves immediately.</para>
+    /// 
+    /// <para type="description">The Refresh-Object cmdlet causes an object to refresh itself. Sensor objects automatically
+    /// refresh according to their Scanning Interval. Refresh-Object allows you to bypass this interval and request
+    /// the sensor update immediately. If Refresh-Object is applied to a Device, Group or Probe, all sensors under
+    /// that object will be refreshed.</para>
+    /// <para>Sensor Factory sensors do not support being manually refreshed.</para>
+    /// 
+    /// <example>
+    ///     <code>Get-Sensor -Id 2001 | Refresh-Object</code>
+    ///     <para>Refresh the sensor with object ID 2001.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>Get-Device -Id 2000 | Refresh-Object</code>
+    ///     <para>Refresh all sensors under the device with ID 2000.</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-Sensor</para>
+    /// <para type="link">Get-Device</para>
+    /// <para type="link">Get-Group</para>
+    /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true)]
     public class RefreshObject : PrtgCmdlet
     {
         /// <summary>
-        /// The object to refresh.
+        /// <para type="description">The object to refresh.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to refresh.")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }

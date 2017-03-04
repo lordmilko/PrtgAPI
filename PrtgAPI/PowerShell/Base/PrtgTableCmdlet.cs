@@ -14,31 +14,31 @@ namespace PrtgAPI.PowerShell.Base
     public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgObjectCmdlet<TObject> where TParam : TableParameters<TObject> where TObject : ObjectTable
     {
         /// <summary>
-        /// Filter the response to objects with a certain name. Can include wildcards.
+        /// <para type="description">Filter the response to objects with a certain name. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 0, HelpMessage = "Filter the response to objects with a certain name. Can include wildcards.")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Retrieve an object with a specified ID.
+        /// <para type="description">Retrieve an object with a specified ID.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Retrieve an obejct with a specified ID.")]
         public int? Id { get; set; }
 
         /// <summary>
-        /// Filter the response to objects that match one or more criteria.
+        /// <para type="description">Filter the response to objects that match one or more criteria.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true, Position = 1, HelpMessage = "Filter the response to objects that match one or more criteria.")]
         public SearchFilter[] Filter { get; set; }
 
         /// <summary>
-        /// Filter the response to objects with certain tags. Can include wildcards.
+        /// <para type="description">Filter the response to objects with certain tags. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Filter the response to objects with certain tags. Can include wildcards.")]
         public string[] Tags { get; set; }
 
         /// <summary>
-        /// Maximum number of results to return.
+        /// <para type="description">Maximum number of results to return.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Maxmimum number of results to return.")]
         public int? Count { get; set; }

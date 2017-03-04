@@ -4,7 +4,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to all PRTG objects.
+    /// <para type="description">Properties that apply to all PRTG objects.</para>
     /// </summary>
     public class PrtgObject
     {

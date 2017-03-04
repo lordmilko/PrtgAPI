@@ -5,25 +5,25 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Modify the value of an object property.
+    /// <para type="synopsis">Modify the value of an object property.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
     public class SetObjectProperty : PrtgCmdlet
     {
         /// <summary>
-        /// The object to modify the properties of.
+        /// <para type="description">The object to modify the properties of.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public PrtgObject Object { get; set; }
 
         /// <summary>
-        /// The property to modify.
+        /// <para type="description">The property to modify.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         public ObjectProperty Property { get; set; }
 
         /// <summary>
-        /// The value to set for the specified property.
+        /// <para type="description">The value to set for the specified property.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
         public object Value { get; set; }

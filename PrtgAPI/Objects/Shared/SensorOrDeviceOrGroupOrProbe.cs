@@ -7,7 +7,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to Sensors, Devices, Groups and Probes.
+    /// <para type="description">Properties that apply to Sensors, Devices, Groups and Probes.</para>
     /// </summary>
     public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrMessageOrTicket
     {

@@ -5,19 +5,19 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Rename a PRTG object.
+    /// <para type="synopsis">Rename a PRTG object.</para> //todo: talk about whatif and force. but we dont even have those?
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true)]
     public class RenameObject : PrtgCmdlet
     {
         /// <summary>
-        /// The object to rename.
+        /// <para type="description">The object to rename.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
-        /// The new name to give the object.
+        /// <para type="description">The new name to give the object.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         public string Name { get; set; }
@@ -28,7 +28,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                client.Rename(Object.Id, Name);
+                client.RenameObject(Object.Id, Name);
         }
     }
 }

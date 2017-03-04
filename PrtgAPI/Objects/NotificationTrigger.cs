@@ -8,7 +8,7 @@ namespace PrtgAPI
 #pragma warning disable CS0649
 
     /// <summary>
-    /// Causes notification actions to occur when a sensor exhibits a specified behaviour.
+    /// <para type="description">Causes notification actions to occur when a sensor exhibits a specified behaviour.</para>
     /// </summary>
     [DataContract]
     public class NotificationTrigger

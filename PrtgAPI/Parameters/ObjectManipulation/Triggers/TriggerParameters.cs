@@ -6,7 +6,7 @@ using PrtgAPI.Helpers;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters use to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="NotificationTrigger"/> objects.
+    /// <para type="description">Represents parameters use to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="NotificationTrigger"/> objects.</para>
     /// </summary>
     public abstract class TriggerParameters : Parameters
     {

@@ -3,7 +3,7 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies types of notification triggers that can be defined on objects.
+    /// <para type="description">Specifies types of notification triggers that can be defined on objects.</para>
     /// </summary>
     [DataContract]
     public enum TriggerType

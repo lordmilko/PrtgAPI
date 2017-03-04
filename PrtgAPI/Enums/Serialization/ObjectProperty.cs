@@ -3,7 +3,7 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies the settings of objects that can be interfaced with using the PRTG HTTP API.
+    /// <para type="description">Specifies the settings of objects that can be interfaced with using the PRTG HTTP API.</para>
     /// </summary>
     public enum ObjectProperty
     {

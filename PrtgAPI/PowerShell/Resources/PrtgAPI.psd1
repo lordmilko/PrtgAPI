@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.dll'
 
 # Version number of this module.
-ModuleVersion = '0.6'
+ModuleVersion = '0.6.0'
 
 # ID used to uniquely identify this module
 GUID = '81d4380f-31ff-42c7-9d64-1678dc5cd978'
@@ -27,7 +27,7 @@ CompanyName = 'Unknown'
 Copyright = '(c) 2016 lordmilko. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'C#/PowerShell interface for interacting with the PRTG HTTP API'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''

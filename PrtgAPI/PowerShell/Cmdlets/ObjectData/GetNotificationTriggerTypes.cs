@@ -4,13 +4,28 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Retrieve all notification trigger types supported by a PRTG Object.
+    /// <para type="synopsis">Retrieve all notification trigger types supported by a PRTG Object.</para>
+    /// 
+    /// <para type="description">The Get-NotificationTriggerTypes cmdlet retrieves a list of all notification trigger
+    /// types supported by a PRTG Object. Certain objects (such as sensors) only support certain types of notification
+    /// triggers depending on what the object is used for (e.g. network traffic sensors vs disk uage sensors).
+    /// Attempting to add a trigger of an unsupported type with Add-NotificationTrigger will generate an
+    /// <see cref="InvalidTriggerTypeException"/>.</para>
+    /// 
+    /// <example>
+    ///     <code>Get-Sensor -Id 2001 | Get-NotificationTriggerTypes</code>
+    ///     <para>Get all notification trigger types supported by the sensor with object ID 2001.</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-NotificationTrigger</para>
+    /// <para type="link">New-NotificationTriggerParameter</para>
+    /// <para type="link">Add-NotificationTrigger</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "NotificationTriggerTypes")]
     public class GetNotificationTriggerTypes : PrtgCmdlet
     {
         /// <summary>
-        /// The ID of the object to retrieve notification trigger types for.
+        /// <para type="description">The ID of the object to retrieve notification trigger types for.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         public int Id { get; set; }

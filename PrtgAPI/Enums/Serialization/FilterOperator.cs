@@ -3,7 +3,7 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies operators that can be used for filtering results in a PRTG Request.
+    /// <para type="description">Specifies operators that can be used for filtering results in a PRTG Request.</para>
     /// </summary>
     public enum FilterOperator
     {

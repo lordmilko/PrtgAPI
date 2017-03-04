@@ -5,38 +5,38 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Modify the value of a channel property.
+    /// <para type="synopsis">Modify the value of a channel property.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true)]
     public class SetChannelProperty : PrtgCmdlet
     {
         /// <summary>
-        /// Channel to set the properties of.
+        /// <para type="description">Channel to set the properties of.</para>
         /// </summary>
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Default")]
         public Channel Channel { get; set; }
 
         /// <summary>
-        /// ID of the channel's parent sensor.
+        /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Manual")]
         public int? SensorId { get; set; }
 
         /// <summary>
-        /// ID of the channel to set the properties of.
+        /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Manual")]
         public int? ChannelId { get; set; }
 
         /// <summary>
-        /// Property of the channel to set.
+        /// <para type="description">Property of the channel to set.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Manual")]
         public ChannelProperty Property { get; set; }
 
         /// <summary>
-        /// Value to set the property to.
+        /// <para type="description">Value to set the property to.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Default")]
         [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Manual")]

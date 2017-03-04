@@ -11,28 +11,28 @@ namespace PrtgAPI.PowerShell.Cmdlets
     //todo: is it possible to get a list of all auto discover templates and then auto discover USING one of them
 
     /// <summary>
-    /// Clone a device within PRTG.
+    /// <para type="synopsis">Clone a device within PRTG.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Device", SupportsShouldProcess = true)]
     public class CloneDevice : PrtgCmdlet
     {
         /// <summary>
-        /// The device to clone.
+        /// <para type="description">The device to clone.</para>
         /// </summary>
         public Device Device { get; set; }
 
         /// <summary>
-        /// The name to rename the cloned object to.
+        /// <para type="description">The name to rename the cloned object to.</para>
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The ID of the group or probe the device should be cloned to.
+        /// <para type="description">The ID of the group or probe the device should be cloned to.</para>
         /// </summary>
         public int DestinationId { get; set; }
 
         /// <summary>
-        /// The hostname or IP Address to set on the cloned device.
+        /// <para type="description">The hostname or IP Address to set on the cloned device.</para>
         /// </summary>
         public string Hostname { get; set; }
 
@@ -41,42 +41,42 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            client.Clone(Device.Id, Name, Hostname ?? Device.Host, DestinationId);
+            client.CloneObject(Device.Id, Name, Hostname ?? Device.Host, DestinationId);
         }
     }
 
     /// <summary>
-    /// Clone a sensor within PRTG.
+    /// <para type="synopsis">Clone a sensor within PRTG.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Sensor", SupportsShouldProcess = true)]
     public class CloneSensor : CloneSensorOrGroup
     {
         /// <summary>
-        /// The sensor to clone.
+        /// <para type="description">The sensor to clone.</para>
         /// </summary>
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx() => ProcessPrtgRecord(Sensor.Id);
+        protected override void ProcessRecordEx() => ProcessRecordEx(Sensor.Id);
     }
 
     /// <summary>
-    /// Clone a group within PRTG.
+    /// <para type="synopsis">Clone a group within PRTG.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Group", SupportsShouldProcess = true)]
     public class CloneGroup : CloneSensorOrGroup
     {
         /// <summary>
-        /// The group to clone.
+        /// <para type="description">The group to clone.</para>
         /// </summary>
         public Group Group { get; set; }
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx() => ProcessPrtgRecord(Group.Id);
+        protected override void ProcessRecordEx() => ProcessRecordEx(Group.Id);
     }
 
     /// <summary>
@@ -85,12 +85,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public abstract class CloneSensorOrGroup : PrtgCmdlet
     {
         /// <summary>
-        /// The name to rename the cloned object to.
+        /// <para type="description">The name to rename the cloned object to.</para>
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The ID of the device or group that will hold the cloned object.
+        /// <para type="description">The ID of the device or group that will hold the cloned object.</para>
         /// </summary>
         public int DestinationId { get; set; }
 
@@ -98,9 +98,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         /// <param name="objectId">The ID of the object to clone.</param>
-        protected void ProcessPrtgRecord(int objectId)
+        protected void ProcessRecordEx(int objectId)
         {
-            client.Clone(objectId, Name, DestinationId);
+            client.CloneObject(objectId, Name, DestinationId);
         }
     }
 }

@@ -5,13 +5,18 @@ using PrtgAPI.Parameters;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Create a new set of notification trigger parameters for adding or editing a notification trigger.
+    /// <para type="synopsis">Create a new set of notification trigger parameters for adding or editing a notification trigger.</para>
+    /// 
+    /// <para></para>
+    /// 
+    /// //todo: need to talk about how setting null on an action removes it
     /// </summary>
+    [OutputType(typeof(TriggerParameters))]
     [Cmdlet(VerbsCommon.New, "NotificationTriggerParameter")]
     public class NewNotificationTriggerParameter : PSCmdlet
     {
         /// <summary>
-        /// The ID of the object the notification trigger will be created for.
+        /// <para type="description">The ID of the object the notification trigger will be created for.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
@@ -19,20 +24,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int? Id { get; set; }
 
         /// <summary>
-        /// The notification trigger import trigger parameters from.
+        /// <para type="description">The notification trigger import trigger parameters from.</para>
         /// </summary>
         [Parameter(ParameterSetName = "AddFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
         [Parameter(ParameterSetName = "EditFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
         public NotificationTrigger Source { get; set; }
 
         /// <summary>
-        /// The Sub ID of the trigger to manipulate.
+        /// <para type="description">The Sub ID of the trigger to manipulate.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
         public int? TriggerId { get; set; }
 
         /// <summary>
-        /// The type of notification trigger to manipulate.
+        /// <para type="description">The type of notification trigger to manipulate.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
         [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]

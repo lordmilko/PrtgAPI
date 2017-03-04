@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PrtgAPI
+﻿namespace PrtgAPI
 {
     /*   
     Todo
     ----------------
 
     //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
+
+    -make rename-object prompt whether you want to do it, and add a force parameter
+	-when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
+	
+    -once nuget is working, publish appveyor.yml to github
+
+    -maybe all the getsensor, device, group, probe etc cmdlets should have parameter sets for the different object types you can pipe in
+     this is needed in case someone tried to manually specify -device <> -group <>, which would cause a conflict
+     we need to establish though that all the parameters in prtgtablecmdlet NOT in a parameterset become
+     part of ALL parametersets automatically
+     BETTER YET...is this even an issue? why CANT you do multiple filters. it would work! right? test
 
     Project
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it

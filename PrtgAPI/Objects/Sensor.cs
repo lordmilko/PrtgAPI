@@ -7,7 +7,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 namespace PrtgAPI
 {
     /// <summary>
-    /// An object that monitors and collects information according to a defined schedule.
+    /// <para type="description">An object that monitors and collects information according to a defined schedule.</para>
     /// </summary>
     public class Sensor : SensorOrDeviceOrGroupOrProbe
     {

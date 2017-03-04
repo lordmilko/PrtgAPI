@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies states capable of being held by sensors.
+    /// <para type="description">Specifies states capable of being held by sensors.</para>
     /// </summary>
     [Flags]
     public enum SensorStatus

@@ -5,7 +5,7 @@ using PrtgAPI.Objects.Shared;
 namespace PrtgAPI
 {
     /// <summary>
-    /// A computer or piece of equipment containing one or more sensors monitored by PRTG.
+    /// <para type="description">A computer or piece of equipment containing one or more sensors monitored by PRTG.</para>
     /// </summary>
     public class Device : DeviceOrGroupOrProbe
     {

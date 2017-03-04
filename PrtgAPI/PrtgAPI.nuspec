@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>lordmilko</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/lordmilko/PrtgAPI</projectUrl>
+    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Implemented NuGet support.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+	<file src="bin\$configuration$\PrtgAPI\*.*" exclude="**\PrtgAPI.xml;**\*.dll;**\*.pdb;**\*.cmd" />
+    <file src="bin\$configuration$\PrtgAPI\*.pdb" target="lib\net452" />
+  </files>
+</package>

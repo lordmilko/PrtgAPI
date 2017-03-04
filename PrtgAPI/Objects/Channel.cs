@@ -7,7 +7,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 namespace PrtgAPI
 {
     /// <summary>
-    /// A value within a sensor that contains the results of monitoring operations.
+    /// <para type="description">A value within a sensor that contains the results of monitoring operations.</para>
     /// </summary>
     public class Channel : PrtgObject
     {

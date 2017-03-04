@@ -9,25 +9,25 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Edit a notification trigger on a PRTG Server.
+    /// <para type="synopsis">Edit a notification trigger on a PRTG Server.</para>
     /// </summary>
     [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty", SupportsShouldProcess = true)]
     public class EditNotificationTriggerProperty : PrtgCmdlet
     {
         /// <summary>
-        /// Notification Trigger to edit.
+        /// <para type="description">Notification Trigger to edit.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public NotificationTrigger Trigger { get; set; }
 
         /// <summary>
-        /// The property to modify.
+        /// <para type="description">The property to modify.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         public TriggerProperty Property { get; set; }
 
         /// <summary>
-        /// Value to set the property to.
+        /// <para type="description">Value to set the property to.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
         public object Value { get; set; }

@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Html;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
@@ -28,7 +20,7 @@ using PrtgAPI.Exceptions.Internal;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Makes API requests against a PRTG Network Monitor server.
+    /// <para type="description">Provides methods for generating API requests against a PRTG Network Monitor server.</para>
     /// </summary>
     public partial class PrtgClient
     {
@@ -1234,7 +1226,7 @@ namespace PrtgAPI
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
         /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
         /// <returns>The ID of the object that was created</returns>
-        public int Clone(int sourceObjectId, string cloneName, int targetLocationObjectId)
+        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
@@ -1266,7 +1258,7 @@ namespace PrtgAPI
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
         /// <param name="targetGroupId">The group or probe the device should be cloned to.</param>
-        public void Clone(int deviceId, string cloneName, string host, int targetGroupId)
+        public void CloneObject(int deviceId, string cloneName, string host, int targetGroupId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
@@ -1289,20 +1281,20 @@ namespace PrtgAPI
         /// Permanently delete an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public void Delete(int objectId) => ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
+        public void DeleteObject(int objectId) => ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
 
         /// <summary>
         /// Asynchronously permanently delete an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public async Task DeleteAsync(int objectId) => await ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
+        public async Task DeleteObjectAsync(int objectId) => await ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Rename an object.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public void Rename(int objectId, string name)
+        public void RenameObject(int objectId, string name)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));

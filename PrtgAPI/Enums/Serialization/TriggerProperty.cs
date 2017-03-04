@@ -3,7 +3,7 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies properties that can be modified on notification triggers.
+    /// <para type="description">Specifies properties that can be modified on notification triggers.</para>
     /// </summary>
     public enum TriggerProperty
     {

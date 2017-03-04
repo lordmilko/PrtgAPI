@@ -5,7 +5,7 @@ using PrtgAPI.Helpers;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Represents a filter used to limit search results returned by a PRTG Request.
+    /// <para type="description">Represents a filter used to limit search results returned by a PRTG Request.</para>
     /// </summary>
     public class SearchFilter
     {

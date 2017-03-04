@@ -87,7 +87,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public void Logic_Client_InvalidRequest()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
-            client.Delete(0);
+            client.DeleteObject(0);
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public async Task Logic_Client_InvalidRequestAsync()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
-            await client.DeleteAsync(0);
+            await client.DeleteObjectAsync(0);
         }
 
         [TestMethod]
@@ -149,6 +149,8 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private void Logic_Client_RetryRequestInternal(Action<PrtgClient> action)
         {
+            var initialThread = Thread.CurrentThread.ManagedThreadId;
+
             Impersonator.ExecuteAction(() =>
             {
                 var retriesMade = 0;
@@ -159,6 +161,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
                 client.RetryRequest += (sender, args) =>
                 {
+                    Assert.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
                     retriesMade++;
                 };
                 client.RetryCount = retriesToMake;

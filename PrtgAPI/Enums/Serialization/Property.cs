@@ -1,7 +1,7 @@
 ﻿namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies properties (referred to by PRTG as "columns") that can be retrieved for a PRTG Object.
+    /// <para type="description">Specifies properties (referred to by PRTG as "columns") that can be retrieved for a PRTG Object.</para>
     /// </summary>
     public enum Property
     {
