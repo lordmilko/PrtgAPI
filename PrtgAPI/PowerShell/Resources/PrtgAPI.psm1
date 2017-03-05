@@ -33,7 +33,7 @@ function New-Credential
     New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secureString
 }
 
-function Install-PrtgAPI
+<#function Install-PrtgAPI
 {
 	[CmdletBinding()]
 	Param()
@@ -119,19 +119,6 @@ function Update-PrtgAPI
 			$script = ([ScriptBlock]::Create($updateFunction)) 
 
 			powershell.exe -noexit -command $script
-
-			<#
-			function f
-			{
-				Write-Host 'uh oh'
-			}
-
-			$fooDef = "function foo { $((get-command f).Definition) }; foo"
-
-			. ([ScriptBlock]::Create($fooDef))
-
-			f
-			#>
 		}
 		else
 		{
@@ -142,6 +129,6 @@ function Update-PrtgAPI
 	{
 		Write-Host "Could not update PrtgAPI; last build was unsuccessful. Please see https://github.com/lordmilko/PrtgAPI to update manually."
 	}	
-}
+}#>
 
 #todo: maybe have a list of exported commands, and have a version on this file in the output of get-module

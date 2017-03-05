@@ -24,8 +24,8 @@ function ImportModules($scriptRoot)
 {
     # Get Root Folder
 
-    $root = "\PrtgAPI\"
-    $rootIndex = $scriptRoot.ToLower().IndexOf($root.ToLower()) + $root.Length
+    $root = "PrtgAPI.Tests.UnitTests"
+    $rootIndex = $scriptRoot.ToLower().IndexOf($root.ToLower())
     $rootFolder = $scriptRoot.Substring(0, $rootIndex)
 
     # Get Test Folder
