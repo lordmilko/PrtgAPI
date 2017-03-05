@@ -6,7 +6,7 @@ PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfa
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
-PrtgAPI also ships with a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see *PrtgAPI.CustomSensors* below.
+PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
 
 ## Installation
 
@@ -447,33 +447,3 @@ The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgCli
 $parameters = CreateMyAwesomeObjectParameters
 (Get-PrtgClient).UpdateAwesomeObject($parameters)
 ```
-
-## PrtgAPI.CustomSensors
-
-PrtgAPI.CustomSensors is an optional module for generating the XML output required by *EXE/Script Advanced* custom sensors. `PrtgAPI.CustomSensors` can be found in the build directory of your project, alongside `PrtgAPI`
-
-Typically, to generate a response with one channel the following XML is required
-
-```xml
-<Prtg>
-    <Result>
-        <Channel>First Channel</Channel>
-        <Value>10</Value>
-    </Result>
-</Prtg>
-```
-The equivalent XML can be generated as follows via PrtgAPI.CustomSensors
-```powershell
-Prtg {
-    Result {
-        Channel "First Channel"
-        Value 10
-    }
-}
-```
-
-To import PrtgAPI.CustomSensors, run `Import-Module C:\path\to\PrtgAPI.CustomSensors`. If PrtgAPI.CustomSensors is on your PSModulePath, you can simply run `Import-Module PrtgAPI.CustomSensors`
-
-All tags supported by *EXE/Script Advanced* sensors are supported by *PrtgAPI.CustomSensors*. For a list of tags that can be used in EXE/Script Advanced sensors, please see the [documentation on writing Custom Sensors](https://prtg.paessler.com/api.htm?tabid=7)
-
-PrtgAPI.CustomSensors has no dependency on PrtgAPI, and can be installed and run completely separately without issue.

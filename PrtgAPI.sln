@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.IntegrationTests", "PrtgAPI.Tests.IntegrationTests\PrtgAPI.Tests.IntegrationTests.csproj", "{60277601-FF8C-4712-BE9B-972921F5C763}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CustomSensors", "PrtgAPI.CustomSensors\PrtgAPI.CustomSensors.csproj", "{6EDDD09B-EFDF-483D-A62A-D307F5D153E3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EDDD09B-EFDF-483D-A62A-D307F5D153E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EDDD09B-EFDF-483D-A62A-D307F5D153E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EDDD09B-EFDF-483D-A62A-D307F5D153E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EDDD09B-EFDF-483D-A62A-D307F5D153E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
