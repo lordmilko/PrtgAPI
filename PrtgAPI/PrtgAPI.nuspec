@@ -8,14 +8,14 @@
     <owners>$author$</owners>
     <projectUrl>https://github.com/lordmilko/PrtgAPI</projectUrl>
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <licenseUrl>https://raw.githubusercontent.com/lordmilko/PrtgAPI/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Implemented NuGet support.</releaseNotes>
-    <copyright>Copyright 2015</copyright>
+    <copyright>(c) 2015 lordmilko. All rights reserved.</copyright>
     <tags></tags>
   </metadata>
   <files>
 	<file src="bin\$configuration$\PrtgAPI\*.*" exclude="**\PrtgAPI.xml;**\*.dll;**\*.pdb;**\*.cmd" />
-    <file src="bin\$configuration$\PrtgAPI\*.pdb" target="lib\net452" />
   </files>
 </package>
