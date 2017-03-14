@@ -2,13 +2,23 @@
 
 [![Build status](https://img.shields.io/appveyor/ci/lordmilko/prtgapi.svg)](https://ci.appveyor.com/project/lordmilko/prtgapi)
 
-PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2).
+PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2&username=demo&password=demodemo).
 
 PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
 
 PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
 
 ## Installation
+
+## NuGet
+
+`Install-Package PrtgAPI`
+
+PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio).
+
+If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the provider you wish to install from, e.g. `Install-Package PrtgAPI -Provider PowerShellGet`
+
+## Manual
 
 1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI/bin/Release/PrtgAPI.zip)
 2. Right click **PrtgAPI.zip** -> **Properties**
@@ -169,6 +179,12 @@ var name = client.GetObjectProperty(2001, BasicObjectSetting.Name);
 //Update the name of object with ID 2001
 var name = client.SetObjectProperty(2001, BasicObjectSetting.Name, "a brand new name!");
 ```
+Channel settings can also be manipulated
+```c#
+//Set the upper error limit of channel 1 of the sensor with object ID 2001 to 30
+client.SetObjectProperty(2001, 1, ChannelProperty.UpperErrorLimit, 30);
+```
+
 By default, `GetObjectProperty` will return a `string` containing the value you requested. If you know for a fact the property is of another type (an enum defined by PrtgAPI, or an integer) you can request GetObjectProperty cast its return value to its "true" data type.
 
 ```c#
