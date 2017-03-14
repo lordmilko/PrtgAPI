@@ -13,11 +13,16 @@ PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which
 
 ### NuGet
 
-`Install-Package PrtgAPI`
+```powershell
+Install-Package PrtgAPI
+```
 
 PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio).
 
-If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the provider you wish to install from when installing into PowerShell, e.g. `Install-Package PrtgAPI -Provider PowerShellGet`
+If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the provider you wish to install from, e.g.
+```powershell
+Install-Package PrtgAPI -Provider PowerShellGet
+```
 
 ### Manual
 
