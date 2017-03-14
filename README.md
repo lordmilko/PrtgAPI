@@ -11,7 +11,7 @@ PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which
 
 ## Installation
 
-## NuGet
+### NuGet
 
 `Install-Package PrtgAPI`
 
@@ -19,7 +19,7 @@ PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/
 
 If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the provider you wish to install from, e.g. `Install-Package PrtgAPI -Provider PowerShellGet`
 
-## Manual
+### Manual
 
 1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI/bin/Release/PrtgAPI.zip)
 2. Right click **PrtgAPI.zip** -> **Properties**
