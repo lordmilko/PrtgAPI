@@ -19,7 +19,7 @@ Describe "Get-Probe" {
 		}
 	}
 
-	It "can ignore invalid wildcards" {}
+	It "can ignore invalid wildcards" {
 		$obj1 = GetItem
 		$obj2 = GetItem
 
