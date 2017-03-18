@@ -30,22 +30,37 @@ Describe "Get-Sensor" {
 			$sensors.Count | Should Be 0
 		}
 	}
+
+	<#It "can pipe from devices" {
+
+		$deviceId = 2001
+
+		$devices = Run Device {
+			$obj = GetItem
+
+			$obj.ObjId = $deviceId
+
+			WithItems ($obj) {
+				Get-Device
+			}
+		}
+
+        $obj1 = GetItem
+		$obj2 = GetItem
+
+		$obj1.ParentId = $deviceId
+		$obj2.ParentId = $deviceId + 1
+		#isnt this incorrect. we want two sensors, and one device
+
+		WithItems ($obj1, $obj2) {
+			$sensors = $devices | Get-Sensor
+
+            #the check we need to do needs to be in the mock response - it needs to do some validation for us on the contents of the request
+
+			$sensors.Count | Should Be 1
+
+			$sensors.ParentId | Should Be $deviceId
+		}
+	}#>
 }
 
-
-
-<#Describe "Get-Group" {
-
-	It "can deserialize" {
-		$groups = Get-Group
-		$groups.Count | Should Be 1
-	}
-}
-
-Describe "Get-Probe" {
-
-	It "can deserialize" {
-		$probes = Get-Probe
-		$probes.Count | Should Be 1
-	}
-}#>

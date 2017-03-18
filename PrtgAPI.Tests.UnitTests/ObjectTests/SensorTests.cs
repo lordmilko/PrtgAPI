@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
@@ -8,10 +9,40 @@ using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class SensorTests : ObjectTests<Sensor, SensorItem, SensorResponse>
+    public class SensorTests : StreamableObjectTests<Sensor, SensorItem, SensorResponse>
     {
         [TestMethod]
         public void Sensor_CanDeserialize() => Object_CanDeserialize();
+
+        [TestMethod]
+        public async Task Sensor_CanDeserializeAsync() => await Object_CanDeserializeAsync();
+
+        [TestMethod]
+        public void Sensor_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
+
+        [TestMethod]
+        public void Sensor_GetObjectsOverloads_CanExecute()
+        {
+            Object_GetObjectsOverloads_CanExecute
+            (
+                (c1, c2, c3) => new List<Func<Property, object, object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
+                (c1, c2, c3) => new List<Func<Property, FilterOperator, string, object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
+                (c1, c2, c3) => new List<Func<SearchFilter[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
+                (c1, c2, c3) =>
+                {
+                    Sensor_GetObjectsOverloads_SensorStatus_CanExecute(new List<Func<SensorStatus[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors});
+                }
+            );
+        }
+
+        private async void Sensor_GetObjectsOverloads_SensorStatus_CanExecute(List<Func<SensorStatus[], object>> sensorStatus)
+        {
+            var status = new[] {SensorStatus.Down, SensorStatus.DownAcknowledged};
+
+            CheckResult<List<Sensor>>(sensorStatus[0](status));
+            CheckResult<List<Sensor>>(await (Task<List<Sensor>>)sensorStatus[1](status));
+            CheckResult<IEnumerable<Sensor>>(sensorStatus[2](status));
+        }
 
         [TestMethod]
         public void Sensor_AllFields_HaveValues()
@@ -23,27 +54,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
                 return false;
             });
-        }
-
-        [TestMethod]
-        public void Sensor_Stream_Ordered_FastestToSlowest()
-        {
-            var count = 2000;
-            var perPage = 500;
-            var pages = count/perPage;
-
-            //bug: the issue is our sensorresponse has no way of knowing whether to do a normal response or do a streaming response
-
-            var client = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
-            var results = client.StreamSensors().Select(i => i.Id).ToList();
-            Assert.IsTrue(results.Count == count, $"Expected {count} results but got {results.Count} instead.");
-
-            for (int pageNum = pages; pageNum > 0; pageNum--)
-            {
-                var r = results.Skip((pages - pageNum)*perPage).Take(perPage).ToList();
-                Assert.IsTrue(r.TrueForAll(item => item == pageNum));
-            }
-        }
+        }    
 
         /*class Form1 : Form
         {
@@ -56,13 +67,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             }
         }*/
 
-/*public void FormTest()
-{
-    throw new NotImplementedException();
-    var form = new Form1(Initialize_Client_WithItems(GetItem()));
+        /*public void FormTest()
+        {
+            throw new NotImplementedException();
+            var form = new Form1(Initialize_Client_WithItems(GetItem()));
 
-    form.Show();
-}*/
+            form.Show();
+        }*/
 
         //move to some objecttests class not sure what to call it yet need to reorganize objecttests, baseobjecttests
 
@@ -115,6 +126,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected override List<Sensor> GetObjects(PrtgClient client) => client.GetSensors();
+
+        protected override Task<List<Sensor>> GetObjectsAsync(PrtgClient client) => client.GetSensorsAsync();
+
+        protected override IEnumerable<Sensor> Stream(PrtgClient client) => client.StreamSensors();
 
         public override SensorItem GetItem() => new SensorItem();
 

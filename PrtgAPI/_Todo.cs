@@ -6,6 +6,8 @@
 
     //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
 
+    -what is probestatus #1? new probe not authorized to connect yet?
+
     -make rename-object prompt whether you want to do it, and add a force parameter
 	-when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
 	

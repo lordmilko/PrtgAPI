@@ -9,13 +9,6 @@ namespace PrtgAPI.Objects.Shared
     public class DeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbe
     {
         /// <summary>
-        /// If this object is a Probe, connected status of the probe. If this object is a group or device, auto-discovery progress (if one is in progress). Otherwise, null.
-        /// </summary>
-        [XmlElement("condition")]
-        [PropertyParameter(nameof(Property.Condition))]
-        public string Condition { get; set; }
-
-        /// <summary>
         /// Number of sensors in <see cref="SensorStatus.Up"/> state.
         /// </summary>
         [XmlElement("upsens_raw")]
@@ -77,12 +70,5 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("totalsens")]
         [PropertyParameter(nameof(Property.TotalSens))]
         public int TotalSensors { get; set; }
-
-        /// <summary>
-        /// Location of this object.
-        /// </summary>
-        [XmlElement("location_raw")]
-        [PropertyParameter(nameof(Property.Location))]
-        public string Location { get; set; }
     }
 }

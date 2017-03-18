@@ -8,6 +8,11 @@
         //SensorTree,
 
         /// <summary>
+        /// Site containing PRTG Network Monitor software used to monitor a network.
+        /// </summary>
+        ProbeNode,
+
+        /// <summary>
         /// Groups used to organize devices.
         /// </summary>
         Groups,

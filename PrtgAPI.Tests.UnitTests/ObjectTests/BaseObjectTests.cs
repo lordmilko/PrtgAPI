@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -30,10 +31,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         protected abstract List<TObject> GetObjects(PrtgClient client);
 
+        protected abstract Task<List<TObject>> GetObjectsAsync(PrtgClient client);
+
         protected TObject GetSingleItem()
         {
             var item = GetItem();
             var obj = GetItemsInternal(new[] {item}).FirstOrDefault();
+
+            return obj;
+        }
+
+        protected async Task<TObject> GetSingleItemAsync()
+        {
+            var item = GetItem();
+            var obj = (await GetItemsInternalAsync(new[] {item})).FirstOrDefault();
 
             return obj;
         }
@@ -45,11 +56,27 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             return GetItemsInternal(items);
         }
 
+        protected async Task<List<TObject>> GetMultipleItemsAsync()
+        {
+            var items = GetItems();
+
+            return await GetItemsInternalAsync(items);
+        }
+
         private List<TObject> GetItemsInternal(TItem[] items)
         {
             var client = Initialize_Client_WithItems(items);
 
             var obj = GetObjects(client);
+
+            return obj;
+        }
+
+        private async Task<List<TObject>> GetItemsInternalAsync(TItem[] items)
+        {
+            var client = Initialize_Client_WithItems(items);
+
+            var obj = await GetObjectsAsync(client);
 
             return obj;
         }

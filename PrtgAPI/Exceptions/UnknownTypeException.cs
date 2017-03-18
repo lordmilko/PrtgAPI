@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PrtgAPI
@@ -7,6 +8,7 @@ namespace PrtgAPI
     /// The exception that is thrown when a method does not know how to convert a generic object to its actual type.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class UnknownTypeException : Exception
     {
         /// <summary>

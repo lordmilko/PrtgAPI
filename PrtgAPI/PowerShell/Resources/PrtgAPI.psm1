@@ -18,8 +18,9 @@ New-Alias Clone-Device Copy-Device
 
 function New-Credential
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "", Scope="Function")]
 	[CmdletBinding()]
-
     param (
         [Parameter(Mandatory = $true)]
         [string]

@@ -9,6 +9,20 @@ namespace PrtgAPI
     /// </summary>
     public class Device : DeviceOrGroupOrProbe
     {
+        /// <summary>
+        /// Location of this object.
+        /// </summary>
+        [XmlElement("location_raw")]
+        [PropertyParameter(nameof(Property.Location))]
+        public string Location { get; set; }
+
+        /// <summary>
+        /// The Hostname or IP Address of this device.
+        /// </summary>
+        [XmlElement("host")]
+        [PropertyParameter(nameof(Property.Host))]
+        public string Host { get; set; }
+
         // ################################## Sensors, Devices ##################################
         // There is a copy in both Sensor and Device
 
@@ -27,11 +41,21 @@ namespace PrtgAPI
         public string Probe { get; set; }
 
         /// <summary>
-        /// The Hostname or IP Address of this device.
+        /// Whether this object has been marked as a favorite.
         /// </summary>
-        [XmlElement("host")]
-        [PropertyParameter(nameof(Property.Host))]
-        public string Host { get; set; }
+        [XmlElement("favorite_raw")]
+        [PropertyParameter(nameof(Property.Favorite))]
+        public bool Favorite { get; set; }
+
+        // ################################## Devices, Groups ##################################
+        // There is a copy in both Device and Group
+
+        /// <summary>
+        /// Auto-discovery progress (if one is in progress). Otherwise, null.
+        /// </summary>
+        [XmlElement("condition")]
+        [PropertyParameter(nameof(Property.Condition))]
+        public string Condition { get; set; }
 
         //todo: put these where they need to be
 

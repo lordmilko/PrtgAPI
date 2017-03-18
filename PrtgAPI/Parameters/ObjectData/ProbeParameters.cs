@@ -10,7 +10,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeParameters"/> class.
         /// </summary>
-        public ProbeParameters() : base(Content.Objects)
+        public ProbeParameters() : base(Content.ProbeNode)
         {
             base.SearchFilter = DefaultSearchFilter();
         }

@@ -32,6 +32,13 @@ namespace PrtgAPI
         [PropertyParameter(nameof(Property.Group))]
         public string Group { get; set; }
 
+        /// <summary>
+        /// Whether this object has been marked as a favorite.
+        /// </summary>
+        [XmlElement("favorite_raw")]
+        [PropertyParameter(nameof(Property.Favorite))]
+        public bool Favorite { get; set; }
+
         // ################################## Sensors, Channel ##################################
         // There is a copy in both Sensor and Channel
 

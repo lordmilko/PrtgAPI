@@ -47,7 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Events\EventStack.cs" />
+    <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />
+    <Compile Include="Parameters\ObjectData\NotificationTriggerParameters.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -239,12 +242,12 @@
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PowerShell\Resources\PrtgAPI.psm1" />
     <None Include="PowerShell\Resources\PrtgAPI.psd1">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PrtgAPI.tt</DependentUpon>
     </None>
+    <None Include="PowerShell\Resources\PrtgAPI.psm1" />
     <None Include="PrtgAPI.nuspec" />
   </ItemGroup>
   <ItemGroup>

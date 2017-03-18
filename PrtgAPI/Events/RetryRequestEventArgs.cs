@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// The arguments passed to an event handler when a web request is retried.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class RetryRequestEventArgs : EventArgs
     {
         /// <summary>

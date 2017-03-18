@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PrtgAPI.Exceptions.Internal
@@ -7,6 +8,7 @@ namespace PrtgAPI.Exceptions.Internal
     /// The exception that is thrown when a type property is missing a required attribute.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class MissingAttributeException : Exception
     {
         /// <summary>

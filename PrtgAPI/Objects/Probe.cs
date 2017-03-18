@@ -1,4 +1,6 @@
-﻿using PrtgAPI.Objects.Shared;
+﻿using System.Xml.Serialization;
+using PrtgAPI.Attributes;
+using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
@@ -7,5 +9,11 @@ namespace PrtgAPI
     /// </summary>
     public class Probe : GroupOrProbe
     {
+        /// <summary>
+        /// Connected status of the probe.
+        /// </summary>
+        [XmlElement("condition_raw")]
+        [PropertyParameter(nameof(Property.Condition))]
+        public ProbeStatus Condition { get; set; }
     }
 }

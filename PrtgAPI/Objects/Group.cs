@@ -19,5 +19,15 @@ namespace PrtgAPI
         [XmlElement("probe")]
         [PropertyParameter(nameof(Property.Probe))]
         public string Probe { get; set; }
+
+        // ################################## Devices, Groups ##################################
+        // There is a copy in both Device and Group
+
+        /// <summary>
+        /// Auto-discovery progress (if one is in progress). Otherwise, null.
+        /// </summary>
+        [XmlElement("condition")]
+        [PropertyParameter(nameof(Property.Condition))]
+        public string Condition { get; set; }
     }
 }

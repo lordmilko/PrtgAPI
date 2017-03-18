@@ -124,12 +124,5 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("dependency")]
         [PropertyParameter(nameof(Property.Dependency))]
         public string Dependency { get; set; }
-
-        /// <summary>
-        /// Whether this object has been marked as a favorite.
-        /// </summary>
-        [XmlElement("favorite_raw")]
-        [PropertyParameter(nameof(Property.Favorite))]
-        public bool Favorite { get; set; }
     }
 }

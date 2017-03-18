@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using PrtgAPI.Attributes;
 
@@ -8,6 +9,7 @@ namespace PrtgAPI.Exceptions.Internal
     /// The exception that is thrown when a <see cref="Parameter"/> is missing a <see cref="ParameterType"/> .
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class MissingParameterTypeException : Exception
     {
         /// <summary>

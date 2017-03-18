@@ -149,6 +149,15 @@ namespace PrtgAPI
             return response;
         }
 
+        private async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters)
+        {
+            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+
+            var response = await ExecuteRequestAsync(url);
+
+            return response;
+        }
+
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
             int retriesRemaining = RetryCount;
@@ -175,36 +184,6 @@ namespace PrtgAPI
 
                     if (!result)
                         throw;
-
-                    /*if (ex.InnerException?.InnerException != null)
-                    {
-                        if (retriesRemaining > 0)
-                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex.InnerException.InnerException, url.Url, retriesRemaining));
-                        else
-                            throw ex.InnerException.InnerException;
-                    }
-                    else
-                    {
-                        if (retriesRemaining > 0)
-                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex.InnerException ?? ex, url.Url, retriesRemaining));
-                        else
-                        {
-                            if (ex.InnerException != null)
-                                throw ex.InnerException;
-
-                            throw;
-                        }
-                    }
-
-                    if (retriesRemaining > 0)
-                    {
-                        var attemptsMade = RetryCount - retriesRemaining + 1;
-                        var delay = RetryDelay * attemptsMade;
-
-                        Thread.Sleep(delay * 1000);
-                    }
-
-                    retriesRemaining--;*/
                 }
             } while (true);
         }
@@ -233,31 +212,6 @@ namespace PrtgAPI
 
                     if (!result)
                         throw;
-
-                    /*if (inner != null)
-                    {
-                        if (retriesRemaining > 0)
-                            HandleEvent(RetryRequest, new RetryRequestEventArgs(inner, url.Url, retriesRemaining));
-                        else
-                            throw ex.InnerException;
-                    }
-                    else
-                    {
-                        if (retriesRemaining > 0)
-                            HandleEvent(RetryRequest, new RetryRequestEventArgs(ex, url.Url, retriesRemaining));
-                        else
-                            throw;
-                    }
-
-                    if (retriesRemaining > 0)
-                    {
-                        var attemptsMade = RetryCount - retriesRemaining + 1;
-                        var delay = RetryDelay*attemptsMade;
-
-                        Thread.Sleep(delay*1000);
-                    }
-
-                    retriesRemaining--;*/
                 }
             } while (true);
         }
@@ -932,15 +886,43 @@ namespace PrtgAPI
             return Data<Channel>.DeserializeList(response).Items;
         }
 
+        //TODO: how do we abstract this stuff into a single function for sync and async versions
+
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId)
+        {
+            var response = await ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId));
+
+            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
+
+            var items = response.Descendants("item").ToList();
+
+            foreach (var item in items)
+            {
+                var id = Convert.ToInt32(item.Element("objid").Value);
+
+                var properties = await GetChannelPropertiesAsync(sensorId, id);
+
+                item.Add(properties.Nodes());
+                item.Add(new XElement("injected_sensorId", sensorId));
+            }
+
+            return Data<Channel>.DeserializeList(response).Items;
+        }
+
         internal XElement GetChannelProperties(int sensorId, int channelId)
         {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = sensorId,
-                [Parameter.Channel] = channelId
-            };
+            var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
             var response = ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
+
+            return ChannelSettings.GetXml(response, channelId);
+        }
+
+        internal async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
+        {
+            var parameters = new ChannelPropertiesParameters(sensorId, channelId);
+
+            var response = await ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters);
 
             return ChannelSettings.GetXml(response, channelId);
         }
@@ -955,20 +937,36 @@ namespace PrtgAPI
         public List<NotificationAction> GetNotificationActions() => GetObjects<NotificationAction>(new NotificationActionParameters());
 
         /// <summary>
+        /// Asynchronously retrieve all notification actions on a PRTG Server.
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<NotificationAction>> GetNotificationActionsAsync() => GetObjectsAsync<NotificationAction>(new NotificationActionParameters());
+
+        /// <summary>
         /// Retrieve all notification triggers of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve triggers for.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public List<NotificationTrigger> GetNotificationTriggers(int objectId)
         {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.Content] = Content.Triggers,
-                [Parameter.Columns] = new[] { Property.Content, Property.ObjId }
-            };
+            var parameters = new NotificationTriggerParameters(objectId);
 
             var xmlResponse = ExecuteRequest(XmlFunction.TableData, parameters);
+
+            return ParseNotificationTriggerResponse(objectId, xmlResponse);
+        }
+
+        public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId)
+        {
+            var parameters = new NotificationTriggerParameters(objectId);
+
+            var xmlResponse = await ExecuteRequestAsync(XmlFunction.TableData, parameters);
+
+            return ParseNotificationTriggerResponse(objectId, xmlResponse);
+        }
+
+        private List<NotificationTrigger> ParseNotificationTriggerResponse(int objectId, XDocument xmlResponse)
+        {
             var xmlResponseContent = xmlResponse.Descendants("item").Select(x => new
             {
                 Content = x.Element("content").Value,
@@ -984,33 +982,9 @@ namespace PrtgAPI
             );
 
             return triggers;
-
-            /*
-            http://prtg.example.com/api/table.json?content=triggers&id=1&columns=content
-            using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(response)))
-            {
-                var data = (NotificationTriggerData) deserializer.ReadObject(stream);
-
-                return data.Triggers.ToList();
-            }
-            http://stackoverflow.com/questions/814001/how-to-convert-json-to-xml-or-xml-to-json
-            todo: need to handle no content
-            editsettings?inherittriggers_=0&id=1
-            configure sensor 2196 to have a go green event and compare the json
-            how do we enable/disable inheritance of notifications
-            POST /editsettings?nodest_new=0&latency_new=60&onnotificationid_new=300%7CEmail+and+push+notification+to+admin%7C&esclatency_new=300&escnotificationid_new=-1%7CNone%7C&repeatival_new=0&offnotificationid_new=-1%7CNone%7C&subid=new&objecttype=nodetrigger&class=state&ajaxrequest=1&id=2196 HTTP/1.1
-            how do we get the setting of whether inheritance is enabled/disabled
-            http://prtg.example.com/controls/triggersandnotifications.htm?id=2196
-            how do we get the values of the inherited notifications
-            i bet theres a way we can get ALL the info in a single request
-            there is a log.htm page that takes ?filter_status filters.
-            apparently its valid to set * as a valid for parameter count
-            http://prtg.example.com/api/triggers.json?id=2196&subid=1
-            all triggers: //http://prtg.example.com/api/triggers.json?id=1
-            have our get-notification cmdlet called gettriggers. maybe rename this function too?
-            todo: add sensorid to the table display for get-channelproperty
-            */
         }
+
+
 
         /// <summary>
         /// Retrieve all notification trigger types supported by a PRTG Object.
@@ -1076,16 +1050,23 @@ namespace PrtgAPI
         public void Pause(int objectId, int? durationMinutes = null, string pauseMessage = null)
         {
             PauseParametersBase parameters;
+            CommandFunction? function = null;
 
             if (durationMinutes == null)
+            {
                 parameters = new PauseParameters(objectId);
+                function = CommandFunction.Pause;
+            }
             else
+            {
                 parameters = new PauseForDurationParameters(objectId, (int)durationMinutes);
-
+                function = CommandFunction.PauseObjectFor;
+            }
+                
             if (pauseMessage != null)
                 parameters.PauseMessage = pauseMessage;
 
-            ExecuteRequest(CommandFunction.Pause, parameters);
+            ExecuteRequest(function.Value, parameters);
         }
 
         /// <summary>

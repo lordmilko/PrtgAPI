@@ -62,11 +62,17 @@
     <Compile Include="Helpers\ResponseHelpers.cs" />
     <Compile Include="InfrastructureTests\AssemblyTests.cs" />
     <Compile Include="ObjectTests\ChannelTests.cs" />
+    <Compile Include="ObjectTests\GroupTests.cs" />
+    <Compile Include="ObjectTests\Items\GroupItem.cs" />
+    <Compile Include="ObjectTests\ProbeTests.cs" />
     <Compile Include="ObjectTests\DeviceTests.cs" />
     <Compile Include="ObjectTests\Items\BaseItem.cs" />
+    <Compile Include="ObjectTests\Items\ProbeItem.cs" />
     <Compile Include="ObjectTests\Items\SensorTotalsItem.cs" />
     <Compile Include="ObjectTests\NotificationActionTests.cs" />
     <Compile Include="ObjectTests\ObjectTests.cs" />
+    <Compile Include="ObjectTests\Responses\GroupResponse.cs" />
+    <Compile Include="ObjectTests\Responses\ProbeResponse.cs" />
     <Compile Include="ObjectTests\Responses\SensorTotalsResponse.cs" />
     <Compile Include="ObjectTests\Responses\SetChannelPropertyResponse.cs" />
     <Compile Include="ObjectTests\Responses\SetObjectPropertyResponse.cs" />
@@ -83,6 +89,7 @@
     <Compile Include="ObjectTests\Items\NotificationTriggerItem.cs" />
     <Compile Include="ObjectTests\Responses\NotificationTriggerResponse.cs" />
     <Compile Include="ObjectTests\SensorTotalsTests.cs" />
+    <Compile Include="ObjectTests\StreamableObjectTests.cs" />
     <Compile Include="ObjectTests\TriggerParameterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfrastructureTests\Support\IWebResponse.cs" />
@@ -103,6 +110,8 @@
   <ItemGroup>
     <None Include="PowerShell\Client.Tests.ps1" />
     <None Include="PowerShell\Device.Tests.ps1" />
+    <None Include="PowerShell\Group.Tests.ps1" />
+    <None Include="PowerShell\Probe.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\NotificationAction.Tests.ps1" />
     <None Include="PowerShell\NotificationTrigger.Tests.ps1" />

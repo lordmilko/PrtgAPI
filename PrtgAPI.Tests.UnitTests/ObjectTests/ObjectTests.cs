@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -16,12 +19,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
     4. replace (<)(.+)(/>) with string $2 = null,
 
-    5. do it again, with the replacement text new XElement("$2", item.$2),
+    now create a new constructor for your class, copy and paste all the items in as the arguments
+
+    5. do it again, with the replacement text
+        new XElement("$2", item.$2),
     6. do 5 again with 4's search value
      
+    now create a new response class, the xml is var xml = new XElement("item",
+        <your xelements>
+    );
 
     7. replace 3. with $2 = $2;
-    8. replace 4 with $2 = $2
+    8. replace 4 with $2 = $2;
+
+        this goes in the body of your response items constructor
+
+    9. replace 3 and 4 with public string $2 { get; set; }
     */
 
     [TestClass]
@@ -37,9 +50,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             //this is slightly different from the check we did in sensor_allfields_havevalues?
         }
 
+        protected async Task Object_CanDeserializeAsync()
+        {
+            var obj = await GetSingleItemAsync();
+
+            Assert.IsTrue(obj != null, "The result of a deserialization attempt was null");
+        }
+
         protected void Object_CanDeserialize_Multiple()
         {
             var objs = GetMultipleItems();
+
+            Assert.AreEqual(GetItems().Length, objs.Count, "Expected number of results");
+        }
+
+        protected async Task Object_CanDeserializeAsync_Multiple()
+        {
+            var objs = await GetMultipleItemsAsync();
 
             Assert.AreEqual(GetItems().Length, objs.Count, "Expected number of results");
         }

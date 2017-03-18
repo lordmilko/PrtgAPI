@@ -1,6 +1,6 @@
 ﻿function Startup($type)
 {
-	InitializeModules "prtgapi.tests.unittests" $PSScriptRoot
+	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
 	$global:tester = SetState $type $null
 }
 
@@ -16,16 +16,22 @@ function InitializeModules($testProject, $scriptRoot)
 	
 	if($modules.Count -ne 2)
 	{
-		ImportModules $scriptRoot
+		ImportModules $testProject $scriptRoot
 	}
 }
 
-function ImportModules($scriptRoot)
+function ImportModules($testProject, $scriptRoot)
 {
     # Get Root Folder
 
-    $root = "PrtgAPI.Tests.UnitTests"
+    $root = $testProject
     $rootIndex = $scriptRoot.ToLower().IndexOf($root.ToLower())
+
+    if($rootIndex -eq -1)
+    {
+        throw "Could not identity root folder"
+    }
+
     $rootFolder = $scriptRoot.Substring(0, $rootIndex)
 
     # Get Test Folder

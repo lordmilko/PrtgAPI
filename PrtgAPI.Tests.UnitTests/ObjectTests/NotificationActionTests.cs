@@ -16,9 +16,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void NotificationAction_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        public async Task NotificationAction_CanDeserializeAsync() => await Object_CanDeserializeAsync();
+
+        [TestMethod]
         public void NotificationAction_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         protected override List<NotificationAction> GetObjects(PrtgClient client) => client.GetNotificationActions();
+
+        protected override Task<List<NotificationAction>> GetObjectsAsync(PrtgClient client) => client.GetNotificationActionsAsync();
 
         public override NotificationActionItem GetItem() => new NotificationActionItem();
 

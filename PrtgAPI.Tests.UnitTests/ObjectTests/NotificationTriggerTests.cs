@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
@@ -17,6 +18,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     {
         [TestMethod]
         public void NotificationTrigger_CanDeserialize() => Object_CanDeserialize_Multiple();
+
+        [TestMethod]
+        public async Task NotificationTrigger_CanDeserializeAsync() => await Object_CanDeserializeAsync_Multiple();
 
         [TestMethod]
         public void NotificationAction_AllFields_HaveValues()
@@ -140,6 +144,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         };
 
         protected override List<NotificationTrigger> GetObjects(PrtgClient client) => client.GetNotificationTriggers(1234);
+
+        protected override Task<List<NotificationTrigger>> GetObjectsAsync(PrtgClient client) => client.GetNotificationTriggersAsync(1234);
 
         public override NotificationTriggerItem GetItem()
         {

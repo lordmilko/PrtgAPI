@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PrtgAPI
@@ -8,6 +9,7 @@ namespace PrtgAPI
     /// The exception that is thrown when a trigger of an incompatible type is added to an object.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class InvalidTriggerTypeException : Exception
     {
         /// <summary>

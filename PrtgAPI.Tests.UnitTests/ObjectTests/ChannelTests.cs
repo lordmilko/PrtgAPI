@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
@@ -10,6 +12,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     {
         [TestMethod]
         public void Channel_CanDeserialize() => Object_CanDeserialize();
+
+        [TestMethod]
+        public async Task Channel_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
         public void Channel_AllFields_HaveValues() => Object_AllFields_HaveValues();
@@ -48,6 +53,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected override List<Channel> GetObjects(PrtgClient client) => client.GetChannels(1234);
+
+        protected override async Task<List<Channel>> GetObjectsAsync(PrtgClient client) => await client.GetChannelsAsync(1234);
 
         public override ChannelItem GetItem() => new ChannelItem();
 
