@@ -25,7 +25,7 @@
 	For more information and usage examples, please see the Project Site.
     </releaseNotes>
     <copyright>(c) 2015 lordmilko. All rights reserved.</copyright>
-    <tags></tags>
+    <tags>PSModule Prtg Sensor Device Group Probe Channel Notification Action Trigger Remove Pause Resume Check Acknowledge PowerShell Setting Property</tags>
   </metadata>
   <files>
 	<file src="bin\$configuration$\PrtgAPI\*.*" exclude="**\PrtgAPI.xml;**\*.dll;**\*.pdb;**\*.cmd" />
