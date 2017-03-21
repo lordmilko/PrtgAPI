@@ -237,7 +237,7 @@ PrtgAPI features a number of PowerShell cmdlets that encapsulate the core functi
 Import-Module "C:\path\to\PrtgAPI"
 ```
 
-Once loaded, you can connect to your PRTG Server
+If you have installed PrtgAPI from NuGet or have placed PrtgAPI on your PSModulePath, you do not need to run `Import-Module`.
 
 ```powershell
 Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) # ProTip: You can omit (Get-Credential)
@@ -255,7 +255,23 @@ If you are scripting against PrtgAPI, you can use the included `New-Credential` 
 Connect-PrtgServer prtg.mycoolsite.com (New-Credential prtgadmin supersecretpassword)
 ```
 
-The following cmdlets are currently supported
+To avoid entering your username and password every time you use PrtgAPI, you can define the `GoPrtg` alias in your `$Profile` to automatically connect for you.
+
+```powershell
+Install-GoPrtgAlias
+```
+```powershell
+# Connect to your preferred PRTG Server
+GoPrtg
+```
+
+`GoPrtg` stores your PassHash as a `SecureString` within your `$Profile`, however note when you connect to PRTG your PassHash can be retrieved in plaintext via `Get-PrtgClient`
+
+To uninstall `GoPrtg`, use `Uninstall-GoPrtgAlias`
+
+`GoPrtg` should only be used for casual automation on your work PC. For scripting purposes it is recommended to use `Get-Credential` or `New-Credential` instead.
+
+The following cmdlets are currently supported by PrtgAPI
 
 ```powershell
 Add-NotificationTrigger
@@ -272,6 +288,7 @@ Get-Probe
 Get-PrtgClient
 Get-Sensor
 Get-SensorTotals
+Install-GoPrtgAlias
 New-Credential
 New-NotificationTriggerParameter
 New-SearchFilter
@@ -282,6 +299,7 @@ Remove-Object
 Rename-Object
 Set-ChannelProperty # Currently supports limit and spike related properties
 Set-NotificationTrigger
+Uninstall-GoPrtgAlias
 ```
 
 All cmdlets include complete `Get-Help` documentation, including a cmdlet overview, parameter descriptions and example usages. For an overview of a cmdlet see `Get-Help <cmdlet>` or `Get-Help <cmdlet> -Full` for complete documentation.

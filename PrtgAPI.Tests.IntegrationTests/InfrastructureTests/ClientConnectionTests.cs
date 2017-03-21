@@ -135,7 +135,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestMethod]
         public void Logic_Client_RetryRequest()
         {
-            Logic_Client_RetryRequestInternal(client => client.GetSensors());
+            Logic_Client_RetryRequestInternal(client => client.GetSensors(), false);
         }
 
         [TestMethod]
@@ -144,10 +144,10 @@ namespace PrtgAPI.Tests.IntegrationTests
             Logic_Client_RetryRequestInternal(client =>
             {
                 var sensors = client.GetSensorsAsync().Result;
-            });
+            }, true);
         }
 
-        private void Logic_Client_RetryRequestInternal(Action<PrtgClient> action)
+        private void Logic_Client_RetryRequestInternal(Action<PrtgClient> action, bool isAsync)
         {
             var initialThread = Thread.CurrentThread.ManagedThreadId;
 
@@ -161,7 +161,8 @@ namespace PrtgAPI.Tests.IntegrationTests
                 var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
                 client.RetryRequest += (sender, args) =>
                 {
-                    Assert.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
+                    if(!isAsync)
+                        Assert.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
                     retriesMade++;
                 };
                 client.RetryCount = retriesToMake;
@@ -173,20 +174,27 @@ namespace PrtgAPI.Tests.IntegrationTests
                 {
                     action(client);
                 }
-                catch
+                catch (AggregateException ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.GetType() == typeof (AssertFailedException))
+                        throw ex.InnerException;
+                }
+                catch (WebException ex)
                 {
                 }
+                finally
+                {
+                    coreService.Start();
+                    coreService.WaitForStatus(ServiceControllerStatus.Running);
 
-                coreService.Start();
-                coreService.WaitForStatus(ServiceControllerStatus.Running);
+                    Thread.Sleep(20000);
 
-                Thread.Sleep(20000);
+                    client.CheckNow(Settings.Device);
 
-                client.CheckNow(Settings.Device);
+                    Thread.Sleep(20000);
+                }
 
-                Thread.Sleep(20000);
-
-                Assert.AreEqual(retriesToMake, retriesMade);
+                Assert.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
             });
         }
     }

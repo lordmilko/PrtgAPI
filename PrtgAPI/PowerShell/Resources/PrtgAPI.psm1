@@ -16,10 +16,15 @@ New-Alias Clone-Sensor Copy-Sensor
 New-Alias Clone-Group Copy-Group
 New-Alias Clone-Device Copy-Device
 
+New-Alias Install-GoPrtg Install-GoPrtgAlias
+New-Alias Uninstall-GoPrtg Uninstall-GoPrtgAlias
+
 function New-Credential
 {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "", Scope="Function")]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "", Scope="Function")]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Scope="Function")]
 	[CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -34,102 +39,99 @@ function New-Credential
     New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secureString
 }
 
-<#function Install-PrtgAPI
+
+function Install-GoPrtgAlias
 {
-	[CmdletBinding()]
-	Param()
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalAliases", "", Scope="Function")]
+	param ()
 
-	$module = Get-Module PrtgAPI | where ModuleType -eq Binary
-	$lastSlash = $module.Path.LastIndexOf("\")
-
-	$modulePath = $module.Path.Substring(0, $lastSlash)
-
-	# copy this whole folder to "whatever my program files is"\WindowsPowerShell\Modules\<insert the folder here>
-	# maybe copy to both folders
-}
-
-function Update-PrtgAPI
-{
-	[CmdletBinding()]
-	Param()
-
-	# requires powershell 5
-
-	#if $psISE, throw an exception
-	#otherwise:
-
-	$baseCI = "https://ci.appveyor.com/api/projects/lordmilko/prtgapi"
-
-	$request = Invoke-WebRequest $baseCI
-	$json = $request | ConvertFrom-Json
-
-	if($json.build.status -eq "success")
+	if(!(Get-PrtgClient))
 	{
-		$oldV = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$PSScriptRoot\PrtgAPI.dll").FileVersion
-		$newV = $json.build.version
+		throw "You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer."
+	}
 
-		Write-Host "Current version: $oldV"
-		Write-Host "Latest version: $newV"
+	$new = $false
 
-		$newVersion = New-Object Version -ArgumentList $newV
-		$oldVersion = New-Object Version -ArgumentList $oldV
+	if(!(Test-Path $Profile))
+	{
+		New-Item $Profile -Type File -Force
+		$new = $true
+	}
 
-		if($newVersion -lt $oldVersion)
+	if(!$new)
+	{
+		$contents = Get-Content $Profile
+
+		$funcExists = $false
+		$aliasExists = $false
+
+		if($contents -like "function __goPrtgConnectServer*")
 		{
-			Write-Host "Downloading version $newV"
+			$funcExists = $true
+		}
 
-			$tmp = "$env:temp\PrtgAPI.zip"
+		if($contents -like "New-Alias GoPrtg __goPrtgConnectServer")
+		{
+			$aliasExists = $true
+		}
 
-			#Invoke-WebRequest "$baseCI/artifacts/PrtgAPI/bin/Release/PrtgAPI.zip" -OutFile $tmp
-
-			#if we're installed in program files\windowspowershell\modules, we need to update both the 32-bit and 64-bit versions
-			#and we need to move them both to that temp folder and throw an error indicating which one is locked
-			#(full path) if we cant move them
-
-			#Expand-Archive c:\a.zip -OutputPath c:\a
-
-			#to update it, launch a new powershell, close this one, download the new version, create a Current folder, move everything to it
-			#if we fail, move current back. if we suceed, clear a Previous version folder and move current to Previous
-
-			#define a function, stringify it and pass it to another powershell:
-
-			function UpdateInternal
-			{
-				param($a)
-
-				#we should have a y/n prompt if we determine the versions differ confirming you want to upgrade
-
-				Write-Host $a
-
-				Write-Host "Checking if $a\PrtgAPI.dll is open"
-				if($(try { [IO.File]::OpenWrite("$PSScriptRoot\PrtgAPI.dll").close();$true } catch {$false}))
-				{
-					Write-Host "not open!"
-				}
-				else
-				{
-					Write-Host "open!"
-				}
-				#Exit
-			}
-
-			#$updateFunction = "function update { $((Get-Command UpdateInternal).Definition) }; update"
-
-			$updateFunction = 'function update { ' + (Get-Command UpdateInternal).Definition + ' }; update ' + "`"$PSScriptRoot`""
-
-			$script = ([ScriptBlock]::Create($updateFunction)) 
-
-			powershell.exe -noexit -command $script
+		if($funcExists -and $aliasExists)
+		{
+			throw "GoPrtg alias is already installed"
 		}
 		else
 		{
-			Write-Host "You are already on the latest version"
+			if($funcExists -or $aliasExists)
+			{
+				throw "GoPrtg is partially installed. Please uninstall with Uninstall-GoPrtgAlias."
+			}
 		}
 	}
-	else
-	{
-		Write-Host "Could not update PrtgAPI; last build was unsuccessful. Please see https://github.com/lordmilko/PrtgAPI to update manually."
-	}	
-}#>
 
-#todo: maybe have a list of exported commands, and have a version on this file in the output of get-module
+	$client = Get-PrtgClient
+
+	$secureString = ConvertTo-SecureString $client.PassHash -AsPlainText -Force
+	$encryptedString = ConvertFrom-SecureString $secureString
+
+	$funcBody = "function __goPrtgConnectServer { Connect-PrtgServer $($client.Server) (New-Object System.Management.Automation.PSCredential -ArgumentList $($client.UserName), (ConvertTo-SecureString $encryptedString)) -PassHash }"
+
+	Add-Content $Profile $funcBody
+	Add-Content $Profile "New-Alias GoPrtg __goPrtgConnectServer"
+
+	.([ScriptBlock]::Create(($funcBody -replace "function ","function global:")))
+
+	New-Alias GoPrtg __goPrtgConnectServer -Scope Global
+}
+
+function Uninstall-GoPrtgAlias
+{
+	if(!(Test-Path $Profile))
+	{
+		return
+	}
+
+	$contents = Get-Content $Profile
+
+	$funcStr = "function __goPrtgConnectServer*"
+	$aliasStr = "New-Alias GoPrtg __goPrtgConnectServer"
+
+	if($contents -like $funcStr)
+	{
+		$contents = $contents | Where-Object {$_ -notlike $funcStr}
+	}
+
+	if($contents -like $aliasStr)
+	{
+		$contents = $contents | Where-Object {$_ -notlike $aliasStr}
+	}
+
+	Set-Content $Profile $contents
+
+	if(Get-Alias GoPrtg*)
+	{
+		Remove-Item Alias:GoPrtg
+	}
+}
+
+Export-ModuleMember -Function * -Alias *

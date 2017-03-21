@@ -32,7 +32,7 @@ namespace PrtgAPI
         /// <summary>
         /// Gets the Username that will be used to authenticate against PRTG.
         /// </summary>
-        public string Username { get; }
+        public string UserName { get; }
 
         /// <summary>
         /// The PassHash that will be used to authenticate with, in place of a password.
@@ -89,7 +89,7 @@ namespace PrtgAPI
             this.client = client;
             
             Server = server;
-            Username = username;
+            UserName = username;
 
             PassHash = authMode == AuthMode.Password ? GetPassHash(pass) : pass;
         }
@@ -99,7 +99,7 @@ namespace PrtgAPI
 
         private string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -108,7 +108,7 @@ namespace PrtgAPI
 
         private XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -117,7 +117,7 @@ namespace PrtgAPI
 
         private async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
 
@@ -126,7 +126,7 @@ namespace PrtgAPI
 
         private string ExecuteRequest(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = ExecuteRequest(url, responseParser);
 
@@ -135,14 +135,14 @@ namespace PrtgAPI
 
         private async Task ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
         }
 
         private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -151,7 +151,7 @@ namespace PrtgAPI
 
         private async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(Server, Username, PassHash, function, parameters);
+            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
 
             var response = await ExecuteRequestAsync(url);
 

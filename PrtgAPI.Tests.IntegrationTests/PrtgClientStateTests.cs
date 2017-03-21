@@ -46,6 +46,14 @@ namespace PrtgAPI.Tests.IntegrationTests
             Assert.IsTrue(sensor2.Status != SensorStatus.PausedByUser, $"Sensor status was still {SensorStatus.PausedByUser}.");
         }
 
+        public void Action_State_PauseForDuration()
+        {
+            client.Pause(Settings.UpSensor, 1);
+            CheckAndSleep(Settings.UpSensor);
+            var sensor1 = GetSensor(Settings.UpSensor);
+            Assert.IsTrue(sensor1.Status == SensorStatus.PausedByUser);
+        }
+
         [TestMethod]
         public void Action_State_SimulateErrorAndResume()
         {

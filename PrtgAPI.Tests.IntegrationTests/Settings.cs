@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
-    enum HttpProtocol
+    public enum HttpProtocol
     {
         HTTP,
         HTTPS
     }
 
-    static class Settings
+    public static class Settings
     {
+#pragma warning disable CS0649 //Ignore 'field' is never assigned to.
         public static string ServerWithProto => $"{Protocol.ToString().ToLower()}://{Server}";
         public static bool ResetAfterTests = true;
 
@@ -29,6 +30,9 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static int Probe = -1;
         public static int Group = -1;
         public static int Device = -1;
+
+        public static string DeviceName; //Must contain "prtg" in the name
+        public static string DeviceTag;
 
         public static int UpSensor = -1;
         public static int WarningSensor = -1;
@@ -46,13 +50,25 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string ChannelWarningMessage;
 
         public static int ProbesInTestServer = -1;
+
         public static int GroupsInTestProbe = -1;
+
         public static int DevicesInTestGroup = -1;
+        public static int DevicesInTestProbe = -1;
+
         public static int SensorsInTestDevice = -1;
+        public static int SensorsInTestGroup = -1;
+        public static int SensorsInTestProbe = -1;
         public static int SensorsInTestServer = -1;
+
         public static int ChannelsInTestSensor = -1;
 
         public static int NotificationTiggersOnDevice = -1;
+        public static int NotificationActionsInTestServer = -1;
+
+#pragma warning restore CS0649 //Restore 'field' is never assigned to.
+
+        //PowerShell Settings
 
         static Settings()
         {

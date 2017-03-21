@@ -53,7 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             var list = items.Skip((page - 1)*500).Take(500).ToList();
             list.ForEach(i => ((BaseItem)(object)i).ObjId = page.ToString());
 
-            await Task.Delay(delay * 1000);
+            await Task.Delay(delay * 500);
             var response = GetResponseText(address, list);
 
             return response;
