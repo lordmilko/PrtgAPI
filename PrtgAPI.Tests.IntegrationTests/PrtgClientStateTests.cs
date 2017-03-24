@@ -35,12 +35,12 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestMethod]
         public void Action_State_PauseAndResume()
         {
-            client.Pause(Settings.UpSensor);
+            client.PauseObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor1 = GetSensor(Settings.UpSensor);
             Assert.IsTrue(sensor1.Status == SensorStatus.PausedByUser, $"Sensor status was {sensor1.Status} instead of {SensorStatus.PausedByUser}.");
 
-            client.Resume(Settings.UpSensor);
+            client.ResumeObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor2 = GetSensor(Settings.UpSensor);
             Assert.IsTrue(sensor2.Status != SensorStatus.PausedByUser, $"Sensor status was still {SensorStatus.PausedByUser}.");
@@ -48,7 +48,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public void Action_State_PauseForDuration()
         {
-            client.Pause(Settings.UpSensor, 1);
+            client.PauseObject(Settings.UpSensor, 1);
             CheckAndSleep(Settings.UpSensor);
             var sensor1 = GetSensor(Settings.UpSensor);
             Assert.IsTrue(sensor1.Status == SensorStatus.PausedByUser);
@@ -64,7 +64,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             var sensor1 = GetSensor(Settings.UpSensor);
             Assert.IsTrue(sensor1.Status == SensorStatus.Down, $"Sensor status was {sensor1.Status} instead of Down.");
 
-            client.Resume(Settings.UpSensor);
+            client.ResumeObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor2 = GetSensor(Settings.UpSensor);
             Assert.IsTrue(sensor2.Status != SensorStatus.Down, $"Sensor status was still Down.");

@@ -92,7 +92,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
-                client.Pause(Object.Id, duration, Message);
+                client.PauseObject(Object.Id, duration, Message);
         }
     }
 }

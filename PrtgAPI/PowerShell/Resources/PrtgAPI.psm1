@@ -61,10 +61,11 @@ function Install-GoPrtgAlias
 
 	if(!$new)
 	{
-		$contents = Get-Content $Profile
+		$contents = Get-Content $Profile -Raw
 
 		$funcExists = $false
 		$aliasExists = $false
+		$prependNewline = $false
 
 		if($contents -like "function __goPrtgConnectServer*")
 		{
@@ -78,13 +79,20 @@ function Install-GoPrtgAlias
 
 		if($funcExists -and $aliasExists)
 		{
-			throw "GoPrtg alias is already installed"
+			throw "GoPrtg alias is already installed. To reinstall, uninstall first with Uninstall-GoPrtgAlias"
 		}
 		else
 		{
 			if($funcExists -or $aliasExists)
 			{
 				throw "GoPrtg is partially installed. Please uninstall with Uninstall-GoPrtgAlias."
+			}
+			else
+			{
+				if(($contents -ne $null) -and !$contents.EndsWith("`n"))
+				{
+					$prependNewline = $true
+				}
 			}
 		}
 	}
@@ -96,12 +104,17 @@ function Install-GoPrtgAlias
 
 	$funcBody = "function __goPrtgConnectServer { Connect-PrtgServer $($client.Server) (New-Object System.Management.Automation.PSCredential -ArgumentList $($client.UserName), (ConvertTo-SecureString $encryptedString)) -PassHash }"
 
+	if($prependNewline)
+	{
+		$funcBody = "`r`n$funcBody"
+	}
+
 	Add-Content $Profile $funcBody
 	Add-Content $Profile "New-Alias GoPrtg __goPrtgConnectServer"
 
 	.([ScriptBlock]::Create(($funcBody -replace "function ","function global:")))
 
-	New-Alias GoPrtg __goPrtgConnectServer -Scope Global
+	New-Alias GoPrtg __goPrtgConnectServer -Scope Global -Force
 }
 
 function Uninstall-GoPrtgAlias
@@ -126,12 +139,28 @@ function Uninstall-GoPrtgAlias
 		$contents = $contents | Where-Object {$_ -notlike $aliasStr}
 	}
 
-	Set-Content $Profile $contents
+	$str = ""
 
-	if(Get-Alias GoPrtg*)
+	if($contents -ne $null)
 	{
-		Remove-Item Alias:GoPrtg
+		if($contents.GetType().BaseType.ToString() -eq "System.Array")
+		{
+			$str = [string]::Join("`r`n", $contents)
+		}
+		else
+		{
+			$str = $contents
+		}
 	}
+
+	if($str -eq "")
+	{
+		Set-Content $Profile $str -NoNewline
+	}
+	else
+	{
+		Set-Content $Profile $str
+	}	
 }
 
 Export-ModuleMember -Function * -Alias *

@@ -38,7 +38,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
-                client.Resume(Object.Id);
+                client.ResumeObject(Object.Id);
         }
     }
 }

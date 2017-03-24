@@ -1047,7 +1047,7 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused object.</param>
-        public void Pause(int objectId, int? durationMinutes = null, string pauseMessage = null)
+        public void PauseObject(int objectId, int? durationMinutes = null, string pauseMessage = null)
         {
             PauseParametersBase parameters;
             CommandFunction? function = null;
@@ -1073,7 +1073,7 @@ namespace PrtgAPI
         /// Resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
-        public void Resume(int objectId)
+        public void ResumeObject(int objectId)
         {
             var parameters = new PauseParameters(objectId, PauseAction.Resume);
 

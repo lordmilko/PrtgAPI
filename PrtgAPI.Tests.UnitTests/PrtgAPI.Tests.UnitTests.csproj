@@ -109,6 +109,7 @@
   <ItemGroup>
     <None Include="PowerShell\Client.Tests.ps1" />
     <None Include="PowerShell\Device.Tests.ps1" />
+    <None Include="PowerShell\GoPrtg.Tests.ps1" />
     <None Include="PowerShell\Group.Tests.ps1" />
     <None Include="PowerShell\Probe.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
