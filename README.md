@@ -19,9 +19,9 @@ Install-Package PrtgAPI
 
 PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio).
 
-If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the provider you wish to install from, e.g.
+If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the source you wish to install from, e.g.
 ```powershell
-Install-Package PrtgAPI -Provider PowerShellGet
+Install-Package PrtgAPI -Source PSGallery
 ```
 
 ### Manual
@@ -255,21 +255,17 @@ If you are scripting against PrtgAPI, you can use the included `New-Credential` 
 Connect-PrtgServer prtg.mycoolsite.com (New-Credential prtgadmin supersecretpassword)
 ```
 
-To avoid entering your username and password every time you use PrtgAPI, you can define the `GoPrtg` alias in your `$Profile` to automatically connect for you.
+To avoid entering your username and password every time you use PrtgAPI, you can define `GoPrtg` connections in your `$Profile` to automatically connect for you.
 
 ```powershell
-Install-GoPrtgAlias
+Install-GoPrtgServer
 ```
 ```powershell
 # Connect to your preferred PRTG Server
 GoPrtg
 ```
 
-`GoPrtg` stores your PassHash as a `SecureString` within your `$Profile`, however note when you connect to PRTG your PassHash can be retrieved in plaintext via `Get-PrtgClient`
-
-To uninstall `GoPrtg`, use `Uninstall-GoPrtgAlias`
-
-`GoPrtg` should only be used for casual automation on your work PC. For scripting purposes it is recommended to use `Get-Credential` or `New-Credential` instead.
+`GoPrtg` supports storing multiple servers, each with an optional alias. `GoPrtg` should only be used for casual automation on your work PC. For scripting purposes it is recommended to use `Get-Credential` or `New-Credential` instead. For more information on GoPrtg please see the [wiki](https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials).
 
 The following cmdlets are currently supported by PrtgAPI
 
@@ -281,6 +277,7 @@ Disconnect-PrtgServer
 Edit-NotificationTriggerProperty
 Get-Channel
 Get-Device
+Get-GoPrtgServer
 Get-Group
 Get-NotificationAction
 Get-NotificationTrigger
@@ -288,7 +285,8 @@ Get-Probe
 Get-PrtgClient
 Get-Sensor
 Get-SensorTotals
-Install-GoPrtgAlias
+Install-GoPrtgServer
+Move-Object
 New-Credential
 New-NotificationTriggerParameter
 New-SearchFilter
@@ -298,8 +296,12 @@ Remove-NotificationTrigger
 Remove-Object
 Rename-Object
 Set-ChannelProperty # Currently supports limit and spike related properties
+Set-ObjectPosition
+Set-ObjectProperty # Currently supports scanning interval related properties
 Set-NotificationTrigger
-Uninstall-GoPrtgAlias
+Sort-PrtgObject
+Start-AutoDiscovery
+Uninstall-GoPrtgServer
 ```
 
 All cmdlets include complete `Get-Help` documentation, including a cmdlet overview, parameter descriptions and example usages. For an overview of a cmdlet see `Get-Help <cmdlet>` or `Get-Help <cmdlet> -Full` for complete documentation.

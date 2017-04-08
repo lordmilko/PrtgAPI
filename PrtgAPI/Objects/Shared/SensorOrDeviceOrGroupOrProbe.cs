@@ -94,7 +94,7 @@ namespace PrtgAPI.Objects.Shared
         }
 
         /// <summary>
-        /// Raw interval value of this object. THis field is for internal use only.
+        /// Raw interval value of this object. This field is for internal use only.
         /// </summary>
         [XmlElement("interval_raw")]
         protected double? interval { get; set; }
@@ -124,5 +124,18 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("dependency")]
         [PropertyParameter(nameof(Property.Dependency))]
         public string Dependency { get; set; }
+
+        /// <summary>
+        /// Position of this object within its parent object.
+        /// </summary>
+
+        [PropertyParameter(nameof(Property.Position))]
+        public int Position => position / 10;
+
+        /// <summary>
+        /// Raw position value of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("position")]
+        protected int position { get; set; }
     }
 }

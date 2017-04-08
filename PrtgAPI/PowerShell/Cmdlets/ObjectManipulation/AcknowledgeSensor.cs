@@ -87,15 +87,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
 
                 case "Until":
-                    duration = (int)Math.Floor((Until.Value - DateTime.Now).TotalMinutes);
+                    duration = (int)Math.Ceiling((Until.Value - DateTime.Now).TotalMinutes);
                     break;
 
                 case "Forever":
                     break;
-
             }
 
-            if(ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id})"))
+            if (duration < 1)
+                throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
+
+            if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id})"))
                 client.AcknowledgeSensor(Sensor.Id, duration, Message);
         }
     }

@@ -59,6 +59,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
         public string ActiveRaw { get; set; }
         public string Comments { get; set; }
         public string Name { get; set; }
+        public string Position { get; set; }
+        public string PositionRaw { get; set; }
 
         internal ProbeItem(string fold = "True", string foldRaw = "1", string groupnum = "2", string groupnumRaw = "0000000002",
             string devicenum = "3", string devicenumRaw = "0000000003", string condition = "Connected", string conditionRaw = "2",
@@ -84,7 +86,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             string status = "Up ", string statusRaw = "3", string priority = "3",
             string message = "&lt;div class=&quot;status&quot;&gt;OK&lt;div class=&quot;moreicon&quot;&gt;&lt;/div&gt;&lt;/div&gt;",
             string messageRaw = "OK", string type = "Probe", string typeRaw = "probenode", string tags = "Office_Probe", string active = "True", string activeRaw = "-1",
-            string comments = "HP DL120 in Level 3 Storage Room", string objid = "1", string name = "127.0.0.1")
+            string comments = "HP DL120 in Level 3 Storage Room", string objid = "1", string name = "127.0.0.1", string position = "20", string positionRaw = "0000000020")
         {
             Fold = fold;
             FoldRaw = foldRaw;
@@ -138,6 +140,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             Comments = comments;
             ObjId = objid;
             Name = name;
+            Position = position;
+            PositionRaw = positionRaw;
         }
     }
 }

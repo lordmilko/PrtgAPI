@@ -53,6 +53,8 @@
         public string Comments { get; set; }
         public string Host { get; set; }
         public string Tags { get; set; }
+        public string Position { get; set; }
+        public string PositionRaw { get; set; }
 
         internal DeviceItem(
             string group = "127.0.0.1", string probe = "127.0.0.1", string condition = "Auto-Discovery in progress (2%)",
@@ -80,8 +82,7 @@
             string favoriteRaw = "1", string status = "Up ", string statusRaw = "3", string priority = "5", string message = "<div class=\"status\">OK<div class=\"moreicon\"></div></div>",
             string messageRaw = "OK", string type = "Device", string typeRaw = "device", string active = "True", string activeRaw = "-1", string objid = "40", string name = "Probe Device",
             string comments = "System Analysis: Windows Other names: dc1.contoso.com System Info: Manufacturer: VMware, Inc. Model: VMware Virtual Platform System: x64-based PC",
-            string host = "127.0.0.1",
-            string tags = "C_OS_WIN"
+            string host = "127.0.0.1", string tags = "C_OS_WIN", string position = "80", string positionRaw = "0000000080"
         )
         {
             Group = group;
@@ -136,6 +137,8 @@
             Comments = comments;
             Host = host;
             Tags = tags;
+            Position = position;
+            PositionRaw = positionRaw;
         }
     }
 }

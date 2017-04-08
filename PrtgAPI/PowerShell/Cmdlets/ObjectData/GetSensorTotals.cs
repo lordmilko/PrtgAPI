@@ -5,6 +5,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Retrieve the total number of each type of sensor in the system.</para>
+    /// 
+    /// <para type="description">The Get-SensorTotals cmdlet retrieves the total number of each type of sensor in a PRTG Server.</para>
+    /// 
+    /// <example>
+    ///     <code>Get-SensorTotals</code>
+    ///     <para>Count the number of sensors in the system.</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-Sensor</para>
     /// </summary>
     [OutputType(typeof(SensorTotals))]
     [Cmdlet(VerbsCommon.Get, "SensorTotals")]

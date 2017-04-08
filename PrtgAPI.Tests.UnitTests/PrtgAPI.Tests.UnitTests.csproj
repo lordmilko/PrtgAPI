@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="Helpers\Assert2.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
-    <Compile Include="Helpers\ResponseHelpers.cs" />
     <Compile Include="InfrastructureTests\AssemblyTests.cs" />
     <Compile Include="ObjectTests\ChannelTests.cs" />
     <Compile Include="ObjectTests\GroupTests.cs" />

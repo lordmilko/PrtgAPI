@@ -1,7 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace PrtgAPI
+namespace PrtgAPI.Request
 {
     internal interface IWebClient
     {

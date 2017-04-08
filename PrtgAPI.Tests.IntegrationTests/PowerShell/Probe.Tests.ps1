@@ -8,13 +8,13 @@ Describe "IT_Get-Probe" {
 	}
 
 	It "can filter by name" {
-		$probes = Get-Probe "Local Probe"
+		$probes = Get-Probe (Settings ProbeName)
 
 		$probes.Count | Should BeGreaterThan 0
 
 		foreach($probe in $probes)
 		{
-			$probe.Name | Should Be "Local Probe"
+			$probe.Name | Should Be (Settings ProbeName)
 		}
 	}
 
@@ -59,10 +59,18 @@ Describe "IT_Get-Probe" {
 	}
 
 	It "can filter by tags" {
-		throw
+		$probe = Get-Probe -Tags (Settings ProbeTag)
+
+		$probe.Count | Should BeGreaterThan 0
+
+		$probe.Tags | Should Match (Settings ProbeTag)
 	}
 
 	It "can pipe from search filters" {
-		throw
+		$probe = New-SearchFilter name equals "Local Probe" | Get-Probe
+
+		$probe.Count | Should BeGreaterThan 0
+
+		$probe.Name | Should Be "Local Probe"
 	}
 }

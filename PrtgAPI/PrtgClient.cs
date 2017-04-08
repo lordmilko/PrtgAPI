@@ -15,7 +15,9 @@ using PrtgAPI.Parameters;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using PrtgAPI.Exceptions.Internal;
+using PrtgAPI.Request;
 
 namespace PrtgAPI
 {
@@ -60,12 +62,12 @@ namespace PrtgAPI
             remove { retryRequest -= value; }
         }
 
-        void HandleEvent<T>(EventHandler<T> handler, T args)
+        internal void HandleEvent<T>(EventHandler<T> handler, T args)
         {
             handler?.Invoke(this, args);
         }
 
-        private IWebClient client;
+        private RequestEngine requestEngine;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgClient"/> class.
@@ -86,7 +88,7 @@ namespace PrtgAPI
             if (pass == null)
                 throw new ArgumentNullException(nameof(pass));
 
-            this.client = client;
+            requestEngine = new RequestEngine(this, client);
             
             Server = server;
             UserName = username;
@@ -95,180 +97,7 @@ namespace PrtgAPI
         }
 
 #region Requests
-    #region ExecuteRequest
-
-        private string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return response;
-        }
-
-        private XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
-        }
-
-        private async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
-
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
-        }
-
-        private string ExecuteRequest(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url, responseParser);
-
-            return response;
-        }
-
-        private async Task ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
-        }
-
-        private string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            return response;
-        }
-
-        private async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(Server, UserName, PassHash, function, parameters);
-
-            var response = await ExecuteRequestAsync(url);
-
-            return response;
-        }
-
-        private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
-        {
-            int retriesRemaining = RetryCount;
-
-            do
-            {
-                try
-                {
-                    var response = client.GetSync(url.Url).Result;
-
-                    var responseText = responseParser == null ? response.Content.ReadAsStringAsync().Result : responseParser(response);
-
-                    ValidateHttpResponse(response, responseText);
-
-                    return responseText;
-                }
-                catch (Exception ex) when (ex is AggregateException || ex is TaskCanceledException || ex is HttpRequestException)
-                {
-                    var result = HandleRequestException(ex.InnerException?.InnerException, ex.InnerException, url, ref retriesRemaining, () =>
-                    {
-                        if (ex.InnerException != null)
-                            throw ex.InnerException;
-                    });
-
-                    if (!result)
-                        throw;
-                }
-            } while (true);
-        }
-
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
-        {
-            int retriesRemaining = RetryCount;
-
-            do
-            {
-                try
-                {
-                    var response = await client.GetAsync(url.Url).ConfigureAwait(false);
-
-                    var responseText = responseParser == null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : await responseParser(response);
-
-                    ValidateHttpResponse(response, responseText);
-
-                    return responseText;
-                }
-                catch (HttpRequestException ex) //todo: test making invalid requests
-                {
-                    var inner = ex.InnerException as WebException;
-
-                    var result = HandleRequestException(inner, ex, url, ref retriesRemaining, null);
-
-                    if (!result)
-                        throw;
-                }
-            } while (true);
-        }
-
-        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgUrl url, ref int retriesRemaining, Action thrower)
-        {
-            if (innerMostEx != null)
-            {
-                if (retriesRemaining > 0)
-                    HandleEvent(retryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
-                else
-                    throw innerMostEx;
-            }
-            else
-            {
-                if (fallbackHandlerEx != null && retriesRemaining > 0)
-                    HandleEvent(retryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
-                else
-                {
-                    thrower();
-
-                    return false;
-                }
-            }
-
-            if (retriesRemaining > 0)
-            {
-                var attemptsMade = RetryCount - retriesRemaining + 1;
-                var delay = RetryDelay * attemptsMade;
-
-                Thread.Sleep(delay * 1000);
-            }
-
-            retriesRemaining--;
-
-            return true;
-        }
-
-        private void ValidateHttpResponse(HttpResponseMessage response, string responseText)
-        {
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                var xDoc = XDocument.Parse(responseText);
-                var errorMessage = xDoc.Descendants("error").First().Value;
-
-                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
-            }
-            else if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new HttpRequestException("Could not authenticate to PRTG; the specified username and password were invalid.");
-            }
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        #endregion
-        #region Object Data
+    #region Object Data
 
         private string GetPassHash(string password)
         {
@@ -277,7 +106,7 @@ namespace PrtgAPI
                 [Parameter.Password] = password
             };
 
-            var response = ExecuteRequest(JsonFunction.GetPassHash, parameters);
+            var response = requestEngine.ExecuteRequest(JsonFunction.GetPassHash, parameters);
 
             if(!Regex.Match(response, "^[0-9]+$").Success)
                 throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
@@ -287,7 +116,7 @@ namespace PrtgAPI
 
         internal List<T> GetObjects<T>(Parameters.Parameters parameters)
         {
-            var response = ExecuteRequest(XmlFunction.TableData, parameters);
+            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
             var data = Data<T>.DeserializeList(response);
 
@@ -476,7 +305,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public SensorTotals GetSensorTotals()
         {
-            var response = ExecuteRequest(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
+            var response = requestEngine.ExecuteRequest(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
 
             return Data<SensorTotals>.DeserializeType(response);
         }
@@ -867,7 +696,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Channel> GetChannels(int sensorId)
         {
-            var response = ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
+            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -890,7 +719,7 @@ namespace PrtgAPI
 
         public async Task<List<Channel>> GetChannelsAsync(int sensorId)
         {
-            var response = await ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId));
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -900,7 +729,7 @@ namespace PrtgAPI
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
-                var properties = await GetChannelPropertiesAsync(sensorId, id);
+                var properties = await GetChannelPropertiesAsync(sensorId, id).ConfigureAwait(false);
 
                 item.Add(properties.Nodes());
                 item.Add(new XElement("injected_sensorId", sensorId));
@@ -913,7 +742,7 @@ namespace PrtgAPI
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            var response = ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
+            var response = requestEngine.ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
 
             return ChannelSettings.GetXml(response, channelId);
         }
@@ -922,7 +751,7 @@ namespace PrtgAPI
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            var response = await ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters);
+            var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters);
 
             return ChannelSettings.GetXml(response, channelId);
         }
@@ -951,7 +780,7 @@ namespace PrtgAPI
         {
             var parameters = new NotificationTriggerParameters(objectId);
 
-            var xmlResponse = ExecuteRequest(XmlFunction.TableData, parameters);
+            var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
             return ParseNotificationTriggerResponse(objectId, xmlResponse);
         }
@@ -960,7 +789,7 @@ namespace PrtgAPI
         {
             var parameters = new NotificationTriggerParameters(objectId);
 
-            var xmlResponse = await ExecuteRequestAsync(XmlFunction.TableData, parameters);
+            var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
             return ParseNotificationTriggerResponse(objectId, xmlResponse);
         }
@@ -984,8 +813,6 @@ namespace PrtgAPI
             return triggers;
         }
 
-
-
         /// <summary>
         /// Retrieve all notification trigger types supported by a PRTG Object.
         /// </summary>
@@ -1007,7 +834,7 @@ namespace PrtgAPI
                 [Parameter.Id] = objectId
             };
 
-            var response = ExecuteRequest(JsonFunction.Triggers, parameters);
+            var response = requestEngine.ExecuteRequest(JsonFunction.Triggers, parameters);
             response = response.Replace("\"data\": \"(no triggers defined)\",", "");
 
             return response;
@@ -1015,8 +842,8 @@ namespace PrtgAPI
 
         #endregion
 
-        #endregion
-        #region Object Manipulation
+    #endregion
+    #region Object Manipulation
         #region Sensor State
 
         /// <summary>
@@ -1025,21 +852,15 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-            };
+        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) => requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message));
 
-            if (message != null)
-                parameters[Parameter.AcknowledgeMessage] = message;
-
-            if (duration != null)
-                parameters[Parameter.Duration] = duration;
-
-            ExecuteRequest(CommandFunction.AcknowledgeAlarm, parameters);
-        }
+        /// <summary>
+        /// Asynchronously mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
+        /// </summary>
+        /// <param name="objectId">ID of the sensor to acknowledge.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
+        /// <param name="message">Message to display on the acknowledged sensor.</param>
+        public async void AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) => await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
 
         /// <summary>
         /// Pause a PRTG Object (sensor, device, etc).
@@ -1066,28 +887,32 @@ namespace PrtgAPI
             if (pauseMessage != null)
                 parameters.PauseMessage = pauseMessage;
 
-            ExecuteRequest(function.Value, parameters);
+            requestEngine.ExecuteRequest(function.Value, parameters);
         }
 
         /// <summary>
         /// Resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
-        public void ResumeObject(int objectId)
-        {
-            var parameters = new PauseParameters(objectId, PauseAction.Resume);
+        public void ResumeObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume));
 
-            ExecuteRequest(CommandFunction.Pause, parameters);
-        }
+        /// <summary>
+        /// Asynchronously resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
+        /// </summary>
+        /// <param name="objectId">ID of the object to resume.</param>
+        public async void ResumeObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
 
         /// <summary>
         /// Simulate an error state for a sensor.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
-        public void SimulateError(int sensorId)
-        {
-            ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorId));
-        }
+        public void SimulateError(int sensorId) => requestEngine.ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorId));
+
+        /// <summary>
+        /// Asynchronously simulate an error state for a sensor.
+        /// </summary>
+        /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
+        public async void SimulateErrorAsync(int sensorId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorId)).ConfigureAwait(false);
 
         #endregion
         #region Notifications
@@ -1123,35 +948,17 @@ namespace PrtgAPI
             else
                 throw new NotImplementedException($"Handler missing for modify action '{parameters.Action}'");
 
-            ExecuteRequest(HtmlFunction.EditSettings, parameters);
+            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
         //todo make a note this doesnt check for inheritance. find out what happens if you try and remove an inherited trigger using this? whats the http response?
-        public void RemoveNotificationTrigger(int objectId, int triggerId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.SubId] = triggerId
-            };
-
-            ExecuteRequest(HtmlFunction.RemoveSubObject, parameters);
-        }
+        public void RemoveNotificationTrigger(int objectId, int triggerId) => requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(objectId, triggerId));
 
         /// <summary>
         /// Remove a notification trigger from an object.
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
-        public void RemoveNotificationTrigger(NotificationTrigger trigger)
-        {
-            if (trigger == null)
-                throw new ArgumentNullException(nameof(trigger));
-
-            if (trigger.Inherited)
-                throw new InvalidOperationException($"Cannot remove trigger {trigger.SubId} from Object {trigger.ObjectId} as it is inherited from Object {trigger.ParentId}");
-
-            RemoveNotificationTrigger(trigger.ObjectId, trigger.SubId);
-        }
+        public void RemoveNotificationTrigger(NotificationTrigger trigger) => requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger));
 
         #endregion
         #region Miscellaneous
@@ -1160,45 +967,48 @@ namespace PrtgAPI
         /// Request an object or any children of an object refresh themselves immediately.
         /// </summary>
         /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
-        public void CheckNow(int objectId)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = objectId
-            };
+        public void RefreshObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.ScanNow, new BaseActionParameters(objectId));
 
-            ExecuteRequest(CommandFunction.ScanNow, parameters);
-        }
+        /// <summary>
+        /// Asynchronously request an object or any children of an object refresh themselves immediately.
+        /// </summary>
+        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
+        public async void RefreshObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Automatically create sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        public void AutoDiscover(int objectId)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = objectId
-            };
+        public void AutoDiscover(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DiscoverNow, new BaseActionParameters(objectId));
 
-            ExecuteRequest(CommandFunction.DiscoverNow, parameters);
-        }
+        /// <summary>
+        /// Asynchronously automatically create sensors under an object based on the object's (or it's children's) device type.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        public async void AutoDiscoverAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Modify the position of an object up or down within the PRTG User Interface.
         /// </summary>
         /// <param name="objectId">The object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
-        public void SetPosition(int objectId, Position position)
+        public void SetPosition(int objectId, Position position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(objectId, position));
+
+        public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(obj, position));
+
+        //only works with devices and groups. we got redirected to error.htm. we should try and extract the error!!!
+        public void MoveObject(int objectId, int destinationId)
         {
-            var parameters = new Parameters.Parameters()
+            var parameters = new Parameters.Parameters
             {
                 [Parameter.Id] = objectId,
-                [Parameter.NewPos] = position
+                [Parameter.TargetId] = destinationId
             };
 
-            ExecuteRequest(CommandFunction.SetPosition, parameters);
+            requestEngine.ExecuteRequest(CommandFunction.MoveObjectNow, parameters);
         }
+
+        public void SortAlphabetically(int objectId) => requestEngine.ExecuteRequest(CommandFunction.SortSubObjects, new BaseActionParameters(objectId));
 
         /// <summary>
         /// Clone a sensor or group to another device or group respectively.
@@ -1221,7 +1031,7 @@ namespace PrtgAPI
 
             //todo: need to implement simulateerrorparameters or get rid of it?
 
-            var response = ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString());
+            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString()));
 
             var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.+)", "$2"));
 
@@ -1239,7 +1049,7 @@ namespace PrtgAPI
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
         /// <param name="targetGroupId">The group or probe the device should be cloned to.</param>
-        public void CloneObject(int deviceId, string cloneName, string host, int targetGroupId)
+        public int CloneObject(int deviceId, string cloneName, string host, int targetGroupId)
         {
             if (cloneName == null)
                 throw new ArgumentNullException(nameof(cloneName));
@@ -1255,6 +1065,12 @@ namespace PrtgAPI
                 [Parameter.TargetId] = targetGroupId
             };
 
+            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString()));
+
+            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.+)", "$2"));
+
+            return id;
+
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
         }
 
@@ -1262,13 +1078,13 @@ namespace PrtgAPI
         /// Permanently delete an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public void DeleteObject(int objectId) => ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
+        public void DeleteObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
 
         /// <summary>
         /// Asynchronously permanently delete an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public async Task DeleteObjectAsync(int objectId) => await ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
+        public async Task DeleteObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Rename an object.
@@ -1286,7 +1102,7 @@ namespace PrtgAPI
                 [Parameter.Value] = name
             };
 
-            ExecuteRequest(CommandFunction.Rename, parameters);
+            requestEngine.ExecuteRequest(CommandFunction.Rename, parameters);
         }
 
         #endregion
@@ -1328,7 +1144,7 @@ namespace PrtgAPI
 
             //we'll need to add support for dropdown lists too
 
-            var response = ExecuteRequest(HtmlFunction.ObjectData, parameters);
+            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
 
             var blah = SensorSettings.GetXml(response, objectId);
 
@@ -1465,23 +1281,16 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value)
-        {
-            var attrib = property.GetEnumAttribute<RequireValueAttribute>();
+        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value));
 
-            if (value == null && (attrib == null || (attrib != null && attrib.ValueRequired)))
-                throw new ArgumentNullException($"Property '{property}' does not support null values.");
-
-            var customParams = GetChannelSetObjectPropertyCustomParams(channelId, property, value);
-
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Custom] = customParams,
-                [Parameter.Id] = sensorId
-            };
-
-            ExecuteRequest(HtmlFunction.EditSettings, parameters);
-        }
+        /// <summary>
+        /// Asynchronously modify channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="property">The property of the channel to modify</param>
+        /// <param name="value">The value to set the channel's property to.</param>
+        public async void SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
 
         //move this
         public void SetObjectProperty(int objectId, ObjectProperty property, object value)
@@ -1546,52 +1355,14 @@ namespace PrtgAPI
                 [Parameter.Id] = objectId
             };
 
-            ExecuteRequest(HtmlFunction.EditSettings, parameters);
-        }
-
-        private List<CustomParameter> GetChannelSetObjectPropertyCustomParams(int channelId, ChannelProperty property, object value)
-        {
-            bool valAsBool;
-            var valIsBool = bool.TryParse(value?.ToString(), out valAsBool);
-
-            List<CustomParameter> customParams = new List<CustomParameter>();
-
-            if (valIsBool)
-            {
-                if (valAsBool)
-                {
-                    value = 1;
-                }
-
-                else //if we're disabling a property, check if there are values dependent on us. if so, disable them too!
-                {
-                    value = 0;
-
-                    var associatedProperties = property.GetDependentProperties<ChannelProperty>();
-
-                    customParams.AddRange(associatedProperties.Select(prop => ObjectSettings.CreateCustomParameter(channelId, prop, string.Empty)));
-                }
-            }
-            else //if we're enabling a property, check if there are values we depend on. if so, enable them!
-            {
-                var dependentProperty = property.GetEnumAttribute<DependentPropertyAttribute>();
-
-                if (dependentProperty != null)
-                {
-                    customParams.Add(ObjectSettings.CreateCustomParameter(channelId, dependentProperty.Name.ToEnum<ChannelProperty>(), "1"));
-                }
-            }
-
-            customParams.Add(ObjectSettings.CreateCustomParameter(channelId, property, value));
-
-            return customParams;
+            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
         #endregion
 
         private void SetObjectProperty<T>(SetObjectSettingParameters<T> parameters)
         {
-            ExecuteRequest(CommandFunction.SetObjectProperty, parameters);
+            requestEngine.ExecuteRequest(CommandFunction.SetObjectProperty, parameters);
         }
 
         #endregion
@@ -1708,7 +1479,7 @@ namespace PrtgAPI
         
         private TReturn GetObjectProperty<TReturn, TEnum>(GetObjectSettingParameters<TEnum> parameters)
         {
-            var response = ExecuteRequest(XmlFunction.GetObjectProperty, parameters);
+            var response = requestEngine.ExecuteRequest(XmlFunction.GetObjectProperty, parameters);
 
             var value = response.Descendants("result").First().Value;
 
@@ -1732,23 +1503,14 @@ namespace PrtgAPI
 
         #endregion
 
-
-
-
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
         internal ServerStatus GetStatus()
         {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = 0
-            };
-
-            var response = ExecuteRequest(XmlFunction.GetStatus, parameters);
+            var response = requestEngine.ExecuteRequest(XmlFunction.GetStatus, new BaseActionParameters(0));
 
             return Data<ServerStatus>.DeserializeType(response);
         }
-
 
         #endregion
     }

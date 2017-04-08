@@ -59,6 +59,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
         public string ActiveRaw { get; set; }
         public string Comments { get; set; }
         public string Name { get; set; }
+        public string Position { get; set; }
+        public string PositionRaw { get; set; }
 
         internal GroupItem(string probe = "127.0.0.1", string fold = "True", string foldRaw = "1", string groupnum = "1",
             string groupnumRaw = "0000000001", string devicenum = "1", string devicenumRaw = "0000000001", string condition = "Auto-Discovery in progress (44%)",
@@ -83,7 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             string status = "Up ", string statusRaw = "3", string priority = "3",
             string message = "&lt;div class=&quot;status&quot;&gt;OK&lt;div class=&quot;moreicon&quot;&gt;&lt;/div&gt;&lt;/div&gt;",
             string messageRaw = "OK", string type = "Group", string typeRaw = "group", string tags = "vm", string active = "True", string activeRaw = "-1",
-            string comments = "Virtual Machines on esxi-1 and esxi-2", string objid = "2211", string name = "Windows Infrastructure"
+            string comments = "Virtual Machines on esxi-1 and esxi-2", string objid = "2211", string name = "Windows Infrastructure", string position = "10", string positionRaw = "0000000010"
         )
         {
             Probe = probe;
@@ -138,6 +140,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             Comments = comments;
             ObjId = objid;
             Name = name;
+            Position = position;
+            PositionRaw = positionRaw;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI
 {

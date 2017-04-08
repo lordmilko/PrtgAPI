@@ -84,14 +84,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
 
                 case "Until":
-                    duration = (int)Math.Floor((Until.Value - DateTime.Now).TotalMinutes);
+                    duration = (int)Math.Ceiling((Until.Value - DateTime.Now).TotalMinutes);
                     break;
 
                 case "Forever":
                     break;
             }
 
-            if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+            if (duration < 1)
+                throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
+
+            if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
                 client.PauseObject(Object.Id, duration, Message);
         }
     }

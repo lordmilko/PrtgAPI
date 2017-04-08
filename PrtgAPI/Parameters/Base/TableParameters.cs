@@ -1,4 +1,5 @@
 ﻿using PrtgAPI.Objects.Shared;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {

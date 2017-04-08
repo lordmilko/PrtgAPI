@@ -8,23 +8,23 @@
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
-                    <TableColumnHeader>
-                        <Width>30</Width>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>28</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
                         <Width>6</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
-                      <Width>22</Width>
+                    <TableColumnHeader> <!-- Device -->
+                      <Width>20</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Group -->
                       <Width>25</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
-                      <Width>23</Width>
+                    <TableColumnHeader> <!-- Probe -->
+                      <Width>21</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
-                      <Width>25</Width>
+                    <TableColumnHeader> <!-- Status -->
+                      <Width>14</Width>
                     </TableColumnHeader>
                 </TableHeaders>
                 <TableRowEntries>
@@ -60,23 +60,23 @@
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Name -->
                         <Width>30</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
                         <Width>6</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
-                        <Width>10</Width>
+                    <TableColumnHeader> <!-- Status -->
+                        <Width>14</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- TotalSensors -->
                         <Width>10</Width>
                         <Label>Sensors</Label>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Group -->
                         <Width>25</Width>
                     </TableColumnHeader>
-                    <TableColumnHeader>
+                    <TableColumnHeader> <!-- Probe -->
                         <Width>25</Width>
                     </TableColumnHeader>
                 </TableHeaders>

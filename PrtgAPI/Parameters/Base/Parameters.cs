@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {

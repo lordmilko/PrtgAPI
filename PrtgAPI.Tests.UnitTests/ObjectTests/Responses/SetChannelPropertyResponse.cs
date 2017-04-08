@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
@@ -29,7 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
         public string GetResponseText(string address)
         {
-            var queries = ResponseHelpers.CrackUrl(address);
+            var queries = UrlHelpers.CrackUrl(address);
             queries.Remove("id");
             queries.Remove("username");
             queries.Remove("passhash");

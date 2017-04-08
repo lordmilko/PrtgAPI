@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI.Parameters
+﻿using PrtgAPI.Request;
+
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Allows inserting custom parameters not supported by PrtgAPI.

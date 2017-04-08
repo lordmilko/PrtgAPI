@@ -1,0 +1,46 @@
+﻿TOPIC
+    about_PrtgAPI
+
+SHORT DESCRIPTION
+    PrtgAPI is a C#/PowerShell library for interacting with the PRTG HTTP API.
+
+LONG DESCRIPTION
+    PrtgAPI provides a series of methods and cmdlets that abstract away the complexity serializing and deserializing
+    requests to and from the PRTG HTTP API. PrtgAPI enables the creation of scripts for customizing and standardizing
+    PRTG Deployments.
+
+    PrtgAPI cmdlets can be chained together for sophisticated object filtering, enabling object modification tasks
+    to be performed against a select set of items.
+
+EXAMPLES
+    Before you can interface with your PRTG server you must enter your server credentials
+
+        Connect-PrtgServer prtg.example.com
+
+    PrtgAPI saves your credentials under the current PowerShell session so that they may be used for all PrtgAPI
+    cmdlets.
+
+    A list of sensors present on your PRTG server can be retrieved with the Get-Sensor cmdlet
+
+        Get-Sensor
+
+    Objects can be retrieved matching specific search criteria, such as having a certain name
+
+        Get-Device *fw*
+
+    Fields not supported by PrtgAPI Cmdlets can often be filtered for via the New-SearchFilter cmdlet
+
+        New-SearchFilter type contains deprecated | Get-Sensor
+
+    Multiple cmdlets can be chained together
+
+        Get-Probe *office* | Get-Device *dc* | Get-Sensor -Tags wmipagefilesensor | Remove-Object -Force
+
+SEE ALSO
+    PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki
+    Connect-PrtgServer
+    Get-Sensor
+    Get-Device
+    Get-Group
+    Get-Probe
+    New-SearchFilter

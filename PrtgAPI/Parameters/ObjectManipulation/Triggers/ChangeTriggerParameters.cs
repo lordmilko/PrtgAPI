@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI.Parameters
+﻿using PrtgAPI.Request;
+
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/> objects.

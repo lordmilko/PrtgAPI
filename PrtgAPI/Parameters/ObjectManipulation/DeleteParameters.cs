@@ -1,17 +1,10 @@
 ﻿namespace PrtgAPI.Parameters
 {
-    class DeleteParameters : Parameters
+    class DeleteParameters : BaseActionParameters
     {
-        public DeleteParameters(int objectId)
+        public DeleteParameters(int objectId) : base(objectId)
         {
-            ObjectId = objectId;
             this[Parameter.Approve] = 1;
-        }
-
-        public int ObjectId
-        {
-            get { return (int)this[Parameter.Id]; }
-            set { this[Parameter.Id] = value; }
         }
     }
 }

@@ -433,5 +433,10 @@
         /// Used in: TicketData, Triggers
         /// </summary>
         Content,
+
+        /// <summary>
+        /// Position of the object in PRTG Tables. Internally, this value is represented as position = pos * 10
+        /// </summary>
+        Position
     }
 }

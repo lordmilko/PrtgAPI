@@ -31,14 +31,14 @@ namespace PrtgAPI
 
         private async Task<Data<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
         {
-            var response = await ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
             return Data<T>.DeserializeList(response);
         }
 
         private Data<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
         {
-            var response = ExecuteRequest(XmlFunction.TableData, parameters);
+            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
             return Data<T>.DeserializeList(response);
         }

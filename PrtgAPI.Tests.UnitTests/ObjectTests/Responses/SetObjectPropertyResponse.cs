@@ -26,7 +26,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
         public string GetResponseText(string address)
         {
-            var queries = ResponseHelpers.CrackUrl(address);
+            var queries = UrlHelpers.CrackUrl(address);
 
             var val = queries[property.GetDescription().ToLower()];
 

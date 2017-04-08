@@ -6,6 +6,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Rename a PRTG object.</para> //todo: talk about whatif and force. but we dont even have those?
+    /// 
+    /// <example>
+    ///     <code>Get-Sensor Memory | Rename-Object "Memory Free"</code>
+    ///     <para>Rename all objects named "Memory" (case insensitive) to "Memory Free"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>Get-Sensor Memory | Rename-Object "Memory Free" -WhatIf</code>
+    ///     <para>What if: Performing the operation "Rename-Object" on target "'Memory' (ID: 2001)"</para>
+    ///     <para>Preview what will happen when you attempt to rename all objects named "Memory"</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-Sensor</para>
+    /// <para type="link">Get-Device</para>
+    /// <para type="link">Get-Group</para>
+    /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true)]
     public class RenameObject : PrtgCmdlet

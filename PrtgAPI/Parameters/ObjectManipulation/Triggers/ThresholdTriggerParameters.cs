@@ -1,6 +1,7 @@
 ﻿using System;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {

@@ -64,7 +64,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                 new XElement("name", item.Name),
                 new XElement("comments", item.Comments),
                 new XElement("host", item.Host),
-                new XElement("tags", item.Tags)
+                new XElement("tags", item.Tags),
+                new XElement("position", item.Position),
+                new XElement("position_raw", item.PositionRaw)
             );
 
             return xml;

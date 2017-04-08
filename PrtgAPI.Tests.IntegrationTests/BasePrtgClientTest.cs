@@ -45,11 +45,10 @@ namespace PrtgAPI.Tests.IntegrationTests
                     File.Copy(PrtgConfig, PrtgConfigBackup);
             });
 
-            new BasePrtgClientTest().client.CheckNow(Settings.Device);
+            new BasePrtgClientTest().client.RefreshObject(Settings.Device);
         }
 
-        [AssemblyCleanup]
-        public static void AssembyCleanup()
+        [AssemblyCleanup] public static void AssemblyCleanup()
         {
             if (Settings.ResetAfterTests)
             {
@@ -112,7 +111,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         protected void CheckAndSleep(int objectId)
         {
-            client.CheckNow(objectId);
+            client.RefreshObject(objectId);
             Thread.Sleep(30000);
         }
     }

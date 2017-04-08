@@ -9,7 +9,7 @@ using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using System.Reflection;
 
-namespace PrtgAPI
+namespace PrtgAPI.Request
 {
     class PrtgUrl
     {

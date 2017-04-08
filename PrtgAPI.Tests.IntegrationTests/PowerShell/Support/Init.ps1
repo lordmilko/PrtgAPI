@@ -24,6 +24,18 @@ function StartupSafe
 	Write-Host "Performing startup tasks"
 	InitializeModules "PrtgAPI.Tests.IntegrationTests" $PSScriptRoot
 
+	#do, get the dlltestsrunning value, continue as long as its true keep sleeping for 10 seconds, then sleep for another 30 seconds
+	#after the end of the loop
+
+	if([PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::DllTestsRunning)
+	{
+		do
+		{
+			Write-Host "Sleeping 10 seconds..."
+			Sleep 10
+		} while([PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::DllTestsRunning)
+	}
+
 	if(!(Get-PrtgClient))
 	{
 		Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin)

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -48,5 +49,12 @@ namespace PrtgAPI
 
         [Description("setlonlat.htm")]
         SetLonLat,
+
+        [Undocumented]
+        [Description("moveobjectnow.htm")]
+        MoveObjectNow,
+
+        [Description("sortsubobjects.htm")]
+        SortSubObjects
     }
 }

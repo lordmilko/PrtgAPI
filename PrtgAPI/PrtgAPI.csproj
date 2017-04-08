@@ -49,8 +49,17 @@
   <ItemGroup>
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Events\EventStack.cs" />
+    <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
+    <Compile Include="Parameters\Base\BaseActionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Triggers\RemoveTriggerParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\MoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\SetObjectPosition.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\SortPrtgObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -105,6 +114,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameter.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
+    <Compile Include="Request\RequestEngine.cs" />
     <Compile Include="_Todo.cs" />
     <Compile Include="Properties\AssemblyFileVersion.cs">
       <AutoGen>True</AutoGen>
@@ -242,6 +252,7 @@
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="PowerShell\Resources\PrtgAPI.GoPrtg.ps1" />
     <None Include="PowerShell\Resources\PrtgAPI.psd1">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -251,6 +262,7 @@
     <None Include="PrtgAPI.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PowerShell\Resources\about_PrtgAPI.help.txt" />
     <Content Include="PowerShell\Resources\PrtgAPI.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrtgAPI.psd1</LastGenOutput>

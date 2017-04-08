@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\Support\IntegrationTest.ps1
+﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
 Describe "IT_Get-NotificationTrigger" {
 	It "can retrieve all triggers" {
@@ -19,15 +19,19 @@ Describe "IT_Get-NotificationTrigger" {
 	}
 
 	It "can filter by OnNotificationAction" {
-		throw
+		$triggers = Get-Device -Id (Settings Device) | Get-NotificationTrigger *ticket* -Inherited $false
+
+        $triggers.Count | Should Be 1
 	}
 
 	It "can filter by type" {
-		$triggers = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State
+		$triggers = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State -Inherited $false
 
 		$triggers.Count|Should Be 1
 	}
 }
+
+. $PSScriptRoot\Support\IntegrationTest.ps1
 
 Describe "Edit-NotificationTriggerProperty" {
 	It "can edit OnNotificationAction" {

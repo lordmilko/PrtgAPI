@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace PrtgAPI.Tests.UnitTests.Helpers
+namespace PrtgAPI.Helpers
 {
-    class ResponseHelpers
+    static class UrlHelpers
     {
         public static NameValueCollection CrackUrl(string url)
         {

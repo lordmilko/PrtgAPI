@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {

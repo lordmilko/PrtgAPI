@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.dll'
 
 # Version number of this module.
-ModuleVersion = '0.6.3'
+ModuleVersion = '0.6.4'
 
 # ID used to uniquely identify this module
 GUID = '81d4380f-31ff-42c7-9d64-1678dc5cd978'
@@ -106,13 +106,13 @@ PrivateData = @{
         # ReleaseNotes of this module
         ReleaseNotes = 'PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG HTTP API.
 
-PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. All responses from PRTG are automatically deserialized by PrtgAPI and formatted appropriately when output to the pipeline (when using PowerShell) 
+PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. All responses from PRTG are automatically deserialized by PrtgAPI and formatted appropriately when output to the pipeline (when using PowerShell)
 
-All cmdlets in PrtgAPI support some level of piping, allowing you to directly chain multiple cmdlets together, further filtering search results as you go. 
+All cmdlets in PrtgAPI support some level of piping, allowing you to directly chain multiple cmdlets together, further filtering search results as you go.
 
-PrtgAPI supports a number of undocumented features, including manipulating notification triggers, and viewing and editing channel properties (error limits, etc). 
+PrtgAPI supports a number of undocumented features, including manipulating notification triggers, and viewing and editing channel properties (error limits, etc).
 
-PrtgAPI includes full Cmdlet Comment/XmlDoc documentation. Detailed information on any cmdlet can be found within PowerShell by running Get-Help <cmdlet> or Get-Help <cmdlet> -Full 
+PrtgAPI includes full Cmdlet Comment/XmlDoc documentation. Detailed information on any cmdlet can be found within PowerShell by running Get-Help <cmdlet> or Get-Help <cmdlet> -Full
 
 For examples and usage scenarios, please see the Project Site.'
 

@@ -3,18 +3,12 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
-    class BaseObjectSettingParameters<T> : Parameters
+    class BaseObjectSettingParameters<T> : BaseActionParameters
     {
-        protected BaseObjectSettingParameters(int objectId, T name)
+        protected BaseObjectSettingParameters(int objectId, T name) : base(objectId)
         {
             ObjectId = objectId;
             Name = name;
-        }
-
-        public int ObjectId
-        {
-            get { return (int)this[Parameter.Id]; }
-            set { this[Parameter.Id] = value; }
         }
 
         public T Name

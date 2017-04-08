@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                client.CheckNow(Object.Id);
+                client.RefreshObject(Object.Id);
         }
     }
 }

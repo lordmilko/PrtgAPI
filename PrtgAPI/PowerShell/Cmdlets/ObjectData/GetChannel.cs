@@ -42,20 +42,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The Sensor to retrieve channels for.</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Sensor")]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">The ID of the Sensor to retrieve channels for.</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "SensorId")]
         public int? SensorId { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the channels retrieved to only those that match a specific name.</para>
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Mandatory = false, Position = 0)]
         public string Name { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public int? Id { get; set; }
 
         /// <summary>
         /// Retrieves a list of channels from a PRTG Server.
@@ -78,7 +81,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 var pattern = new WildcardPattern(Name.ToLower());
 
                 results = results.Where(r => pattern.IsMatch(r.Name.ToLower())).ToList();
-            }       
+            }
+
+            if (Id != null)
+            {
+                results = results.Where(r => r.Id == Id.Value).ToList();
+            }
 
             return results;
         }

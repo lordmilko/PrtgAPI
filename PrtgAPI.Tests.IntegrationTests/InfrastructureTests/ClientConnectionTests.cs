@@ -179,7 +179,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     if (ex.InnerException != null && ex.InnerException.GetType() == typeof (AssertFailedException))
                         throw ex.InnerException;
                 }
-                catch (WebException ex)
+                catch (WebException)
                 {
                 }
                 finally
@@ -189,7 +189,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
                     Thread.Sleep(20000);
 
-                    client.CheckNow(Settings.Device);
+                    client.RefreshObject(Settings.Device);
 
                     Thread.Sleep(20000);
                 }

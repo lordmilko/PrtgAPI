@@ -7,16 +7,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Resume an object from a paused or simulated error state.</para>
     /// 
-    /// <example>
-    ///     <code>Get-Sensor Memory | Rename-Object "Memory Free"</code>
-    ///     <para>Rename all objects named "Memory" (case insensitive) to "Memory Free"</para>
-    ///     <para/>
-    /// </example>
-    /// <example>
-    ///     <code>Get-Sensor Memory | Rename-Object "Memory Free" -WhatIf</code>
-    ///     <para>What if: Performing the operation "Rename-Object" on target "'Memory' (ID: 2001)"</para>
-    ///     <para>Preview what will happen when you attempt to rename all objects named "Memory"</para>
-    /// </example>
+    /// <para type="description">The Resume-Object cmdlet resumes monitoring an object that has previously been interrupted
+    /// due to manually pausing or simulating an error state on the object.</para>
     /// 
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>

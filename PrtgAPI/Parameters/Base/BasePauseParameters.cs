@@ -1,16 +1,9 @@
 ﻿namespace PrtgAPI.Parameters
 {
-    class PauseParametersBase : Parameters
+    class PauseParametersBase : BaseActionParameters
     {
-        protected PauseParametersBase(int objectId)
+        protected PauseParametersBase(int objectId) : base(objectId)
         {
-            ObjectId = objectId;
-        }
-
-        public int ObjectId
-        {
-            get { return (int)this[Parameter.Id]; }
-            set { this[Parameter.Id] = value; }
         }
 
         public string PauseMessage

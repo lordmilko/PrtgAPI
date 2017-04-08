@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace PrtgAPI
+namespace PrtgAPI.Request
 {
     internal class PrtgWebClient : IWebClient
     {

@@ -58,6 +58,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
         public string ActiveRaw { get; set; }
         public string Name { get; set; }
         public string Comments { get; set; }
+        public string Position { get; set; }
+        public string PositionRaw { get; set; }
 
         internal SensorItem(string probe = "Chicago", string group = "Servers", string lastValue = "69 %",
             string lastValueRaw = "69.000", string device = "dc1",
@@ -90,7 +92,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             string messageRaw = "OK", string type = "WMI Logical Disk I/O BETA", string typeRaw = "wmilogicaldiskv2",
             string tags = "wmilogicalsensor C_OS_Win",
             string active = "True", string activeRaw = "-1", string objid = "2203", string name = "Volume IO _Total",
-            string comments = "Do not delete!")
+            string comments = "Do not delete!", string position = "60", string positionRaw = "0000000060")
         {
             Probe = probe;
             Group = group;
@@ -149,6 +151,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Items
             ObjId = objid;
             Name = name;
             Comments = comments;
+            Position = position;
+            PositionRaw = positionRaw;
         }
     }
 }

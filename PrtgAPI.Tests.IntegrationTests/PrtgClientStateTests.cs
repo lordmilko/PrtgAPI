@@ -26,7 +26,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             Assert.AreEqual(SensorStatus.DownAcknowledged, sensor1.Status, $"Sensor status was {sensor1.Status} instead of {SensorStatus.DownAcknowledged}");
 
             Thread.Sleep(30000);
-            client.CheckNow(Settings.DownSensor);
+            client.RefreshObject(Settings.DownSensor);
 
             var sensor2 = GetSensor(Settings.DownSensor);
             Assert.IsTrue(sensor2.Status != SensorStatus.DownAcknowledged, $"Sensor status was still {SensorStatus.DownAcknowledged}");

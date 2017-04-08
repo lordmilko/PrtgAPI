@@ -15,9 +15,22 @@ New-Alias Refresh-Object Update-Object
 New-Alias Clone-Sensor Copy-Sensor
 New-Alias Clone-Group Copy-Group
 New-Alias Clone-Device Copy-Device
+New-Alias Sort-PrtgObject Start-SortPrtgObject
 
-New-Alias Install-GoPrtg Install-GoPrtgAlias
-New-Alias Uninstall-GoPrtg Uninstall-GoPrtgAlias
+New-Alias Connect-GoPrtg Connect-GoPrtgServer
+New-Alias Install-GoPrtg Install-GoPrtgServer
+New-Alias Uninstall-GoPrtg Uninstall-GoPrtgServer
+New-Alias Get-GoPrtg Get-GoPrtgServer
+
+New-Alias GoPrtg Connect-GoPrtgServer
+
+$ErrorActionPreference = "Stop"
+
+
+#bugs: 1. when you remove one prtg server, it removes the whole function from memory
+#2. when we remove an entry we need to _update_ the function in memory
+#3. when we update an alias we need to update the function in memory
+#4. for _every single test_, we need to confirm that when we do something with an entry, the function in memory is updated
 
 function New-Credential
 {
@@ -39,128 +52,11 @@ function New-Credential
     New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secureString
 }
 
-
-function Install-GoPrtgAlias
-{
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalAliases", "", Scope="Function")]
-	param ()
-
-	if(!(Get-PrtgClient))
-	{
-		throw "You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer."
-	}
-
-	$new = $false
-
-	if(!(Test-Path $Profile))
-	{
-		New-Item $Profile -Type File -Force
-		$new = $true
-	}
-
-	if(!$new)
-	{
-		$contents = Get-Content $Profile -Raw
-
-		$funcExists = $false
-		$aliasExists = $false
-		$prependNewline = $false
-
-		if($contents -like "function __goPrtgConnectServer*")
-		{
-			$funcExists = $true
-		}
-
-		if($contents -like "New-Alias GoPrtg __goPrtgConnectServer")
-		{
-			$aliasExists = $true
-		}
-
-		if($funcExists -and $aliasExists)
-		{
-			throw "GoPrtg alias is already installed. To reinstall, uninstall first with Uninstall-GoPrtgAlias"
-		}
-		else
-		{
-			if($funcExists -or $aliasExists)
-			{
-				throw "GoPrtg is partially installed. Please uninstall with Uninstall-GoPrtgAlias."
-			}
-			else
-			{
-				if(($contents -ne $null) -and !$contents.EndsWith("`n"))
-				{
-					$prependNewline = $true
-				}
-			}
-		}
-	}
-
-	$client = Get-PrtgClient
-
-	$secureString = ConvertTo-SecureString $client.PassHash -AsPlainText -Force
-	$encryptedString = ConvertFrom-SecureString $secureString
-
-	$funcBody = "function __goPrtgConnectServer { Connect-PrtgServer $($client.Server) (New-Object System.Management.Automation.PSCredential -ArgumentList $($client.UserName), (ConvertTo-SecureString $encryptedString)) -PassHash }"
-
-	if($prependNewline)
-	{
-		$funcBody = "`r`n$funcBody"
-	}
-
-	Add-Content $Profile $funcBody
-	Add-Content $Profile "New-Alias GoPrtg __goPrtgConnectServer"
-
-	.([ScriptBlock]::Create(($funcBody -replace "function ","function global:")))
-
-	New-Alias GoPrtg __goPrtgConnectServer -Scope Global -Force
-}
-
-function Uninstall-GoPrtgAlias
-{
-	if(!(Test-Path $Profile))
-	{
-		return
-	}
-
-	$contents = Get-Content $Profile
-
-	$funcStr = "function __goPrtgConnectServer*"
-	$aliasStr = "New-Alias GoPrtg __goPrtgConnectServer"
-
-	if($contents -like $funcStr)
-	{
-		$contents = $contents | Where-Object {$_ -notlike $funcStr}
-	}
-
-	if($contents -like $aliasStr)
-	{
-		$contents = $contents | Where-Object {$_ -notlike $aliasStr}
-	}
-
-	$str = ""
-
-	if($contents -ne $null)
-	{
-		if($contents.GetType().BaseType.ToString() -eq "System.Array")
-		{
-			$str = [string]::Join("`r`n", $contents)
-		}
-		else
-		{
-			$str = $contents
-		}
-	}
-
-	if($str -eq "")
-	{
-		Set-Content $Profile $str -NoNewline
-	}
-	else
-	{
-		Set-Content $Profile $str
-	}	
-}
+#what if we allowed multiple aliases to be installed
+#and then, what if we could say ok if you dont specify a server you get the default one, otherwise we switch on
+#a pattern of the server you specified
+#we could also have a get-goprtgalias cmdlet that lists all the servers we've saved and the username we're using
 
 Export-ModuleMember -Function * -Alias *
+
+. $PSScriptRoot\PrtgAPI.GoPrtg.ps1
