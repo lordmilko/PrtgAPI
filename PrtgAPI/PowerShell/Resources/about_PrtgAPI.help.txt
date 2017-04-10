@@ -15,26 +15,26 @@ LONG DESCRIPTION
 EXAMPLES
     Before you can interface with your PRTG server you must enter your server credentials
 
-        Connect-PrtgServer prtg.example.com
+    C:\> Connect-PrtgServer prtg.example.com
 
     PrtgAPI saves your credentials under the current PowerShell session so that they may be used for all PrtgAPI
     cmdlets.
 
     A list of sensors present on your PRTG server can be retrieved with the Get-Sensor cmdlet
 
-        Get-Sensor
+    C:\> Get-Sensor
 
     Objects can be retrieved matching specific search criteria, such as having a certain name
 
-        Get-Device *fw*
+    C:\> Get-Device *fw*
 
     Fields not supported by PrtgAPI Cmdlets can often be filtered for via the New-SearchFilter cmdlet
 
-        New-SearchFilter type contains deprecated | Get-Sensor
+    C:\> New-SearchFilter type contains deprecated | Get-Sensor
 
     Multiple cmdlets can be chained together
 
-        Get-Probe *office* | Get-Device *dc* | Get-Sensor -Tags wmipagefilesensor | Remove-Object -Force
+    C:\> Get-Probe *office* | Get-Device *dc* | Get-Sensor -Tags wmipagefilesensor | Remove-Object -Force
 
 SEE ALSO
     PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki

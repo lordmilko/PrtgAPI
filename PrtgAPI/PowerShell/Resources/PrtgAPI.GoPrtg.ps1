@@ -129,7 +129,8 @@ function ConnectToGoPrtgServer($server)
 	}
 	else
 	{
-		Connect-PrtgServer $server.Server (New-Credential $server.UserName $server.PassHash) -PassHash -Force
+		$credential = New-Object System.Management.Automation.PSCredential -ArgumentList $server.UserName, (ConvertTo-SecureString $server.PassHash)
+		Connect-PrtgServer $server.Server $credential -PassHash -Force
 
 		Write-ColorOutput "`nConnected to $($server.Server) as $($server.UserName)`n" -ForegroundColor Green
 	}

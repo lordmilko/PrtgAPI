@@ -1008,6 +1008,10 @@ namespace PrtgAPI
             requestEngine.ExecuteRequest(CommandFunction.MoveObjectNow, parameters);
         }
 
+        /// <summary>
+        /// Sort an object's children alphabetically within PRTG.
+        /// </summary>
+        /// <param name="objectId">The object to sort.</param>
         public void SortAlphabetically(int objectId) => requestEngine.ExecuteRequest(CommandFunction.SortSubObjects, new BaseActionParameters(objectId));
 
         /// <summary>
