@@ -4,7 +4,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to Devices, Groups and Probes
+    /// <para type="description">Properties that apply to Devices, Groups and Probes.</para>
     /// </summary>
     public class DeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbe
     {

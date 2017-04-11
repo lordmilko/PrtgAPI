@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI
+﻿using PrtgAPI.Request;
+
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies how <see cref="Parameter"/> values can be formatted when inserted in a <see cref="PrtgUrl"/>.

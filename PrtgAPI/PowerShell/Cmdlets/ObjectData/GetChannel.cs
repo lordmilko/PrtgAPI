@@ -57,6 +57,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, Position = 0)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// <para type="description">Filter the channels retrieved to only those that match a specific ID.</para>
+        /// </summary>
         [Parameter(Mandatory = false)]
         public int? Id { get; set; }
 

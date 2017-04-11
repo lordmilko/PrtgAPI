@@ -988,12 +988,17 @@ namespace PrtgAPI
         public async void AutoDiscoverAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Modify the position of an object up or down within the PRTG User Interface.
+        /// Move the position of an object up or down under its parent within the PRTG User Interface.
         /// </summary>
         /// <param name="objectId">The object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
         public void SetPosition(int objectId, Position position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(objectId, position));
 
+        /// <summary>
+        /// Set the absolute position of an object under its parent within the PRTG User Interface
+        /// </summary>
+        /// <param name="obj">The object to reposition.</param>
+        /// <param name="position">The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position.</param>
         public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(obj, position));
 
         //only works with devices and groups. we got redirected to error.htm. we should try and extract the error!!!
@@ -1009,10 +1014,16 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Sort an object's children alphabetically within PRTG.
+        /// Sort the children of a device, group or probe alphabetically.
         /// </summary>
         /// <param name="objectId">The object to sort.</param>
         public void SortAlphabetically(int objectId) => requestEngine.ExecuteRequest(CommandFunction.SortSubObjects, new BaseActionParameters(objectId));
+
+        /// <summary>
+        /// Asynchronously sort the children of a device, group or probe alphabetically.
+        /// </summary>
+        /// <param name="objectId">The object to sort.</param>
+        public async void SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Clone a sensor or group to another device or group respectively.

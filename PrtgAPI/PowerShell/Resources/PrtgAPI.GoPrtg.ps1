@@ -394,7 +394,11 @@ function GetProfileContents($newContents)
         $funcBody += [string]::Join("`r`n", $newContents.Pre) + "`r`n"
     }
 
-    $funcBody += "########################### Start GoPrtg Servers ###########################`r`n`r`n" + 
+	# Due to the way Powershell's Command Discovery works, PowerShell will detect match the Get-GoPrtg alias to the command GoPrtg
+	# before detecting GoPrtg is in fact a valid alias all by itself. By forcing the module to import, PowerShell will correctly
+	# identify that GoPrtg is the intended command.
+
+    $funcBody += "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n" + 
 				 [string]::Join("`r`n", $newContents.Func) +
 				 "`r`n`r`n############################ End GoPrtg Servers ############################"				
 
