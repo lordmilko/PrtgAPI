@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -306,7 +307,7 @@ namespace PrtgAPI.Objects.Deserialization
                 case TypeCode.Single:
                     return XmlConvert.ToSingle(str);
                 case TypeCode.Double:
-                    return XmlConvert.ToDouble(str);
+                    return ToDouble(str);
                 case TypeCode.Decimal:
                     return XmlConvert.ToDecimal(str);
                 //case TypeCode.DateTime:
@@ -329,6 +330,30 @@ namespace PrtgAPI.Objects.Deserialization
             throw new NotSupportedException(); //TODO - say the type is not deserializable
         }
 
-        
+        //Custom ToDouble with culture specific formatting (for values retrieved from scraping HTML)
+        public static double ToDouble(string s)
+        {
+            s = s.Trim(' ', '\t', '\n', '\r');
+            if (s == "-INF")
+                return double.NegativeInfinity;
+            if (s == "INF")
+                return double.PositiveInfinity;
+
+            var numberStyle = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+
+            double dVal;
+
+            //XML values should always be InvariantCulture. If value was scraped from HTML, value will be CurrentCulture PRTG Server.
+            if (!double.TryParse(s, numberStyle, NumberFormatInfo.InvariantInfo, out dVal))
+            {
+                dVal = double.Parse(s, numberStyle, NumberFormatInfo.CurrentInfo);
+            }
+
+            if (dVal == 0 && s[0] == '-')
+            {
+                return -0d;
+            }
+            return dVal;
+        }
     }
 }

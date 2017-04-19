@@ -785,6 +785,11 @@ namespace PrtgAPI
             return ParseNotificationTriggerResponse(objectId, xmlResponse);
         }
 
+        /// <summary>
+        /// Asynchronously retrieve all notification triggers of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The object to retrieve triggers for.</param>
+        /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId)
         {
             var parameters = new NotificationTriggerParameters(objectId);
@@ -1001,7 +1006,11 @@ namespace PrtgAPI
         /// <param name="position">The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position.</param>
         public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(obj, position));
 
-        //only works with devices and groups. we got redirected to error.htm. we should try and extract the error!!!
+        /// <summary>
+        /// Move a device or group (excluding the root group) to another group or probe within PRTG.
+        /// </summary>
+        /// <param name="objectId">The ID of a device or group to move.</param>
+        /// <param name="destinationId">The group or probe to move the object to.</param>
         public void MoveObject(int objectId, int destinationId)
         {
             var parameters = new Parameters.Parameters

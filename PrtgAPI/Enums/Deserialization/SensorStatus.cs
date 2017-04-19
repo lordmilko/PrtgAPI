@@ -18,6 +18,10 @@ namespace PrtgAPI
         /// Sensor is unable to collect data.
         /// </summary>
         [XmlEnum("1")] Unknown = 2,
+
+        /// <summary>
+        /// This value is no longer used by PRTG, however is considered analogous to <see cref="Up"/>.
+        /// </summary>
         [XmlEnum("2")] Collecting = 4,
 
         /// <summary>
@@ -34,6 +38,10 @@ namespace PrtgAPI
         /// Sensor is down and has failed.
         /// </summary>
         [XmlEnum("5")] Down = 32,
+
+        /// <summary>
+        /// This value is no longer used by PRTG, however is considered analogous to <see cref="Unknown"/>.
+        /// </summary>
         [XmlEnum("6")] NoProbe = 64,
 
         /// <summary>
