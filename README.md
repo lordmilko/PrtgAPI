@@ -40,7 +40,7 @@ If you wish to run unit tests, it is advised to group the tests in *Test Explore
 
 If you wish to run integration tests, it is recommended to create a separate server for integration testing. When integration tests are run, PrtgAPI will create a backup of your PRTG configuration, run its tests, and then revert the server to its original settings. If integration tests do not run to their completion, as a safety measure you will be required to manually delete (or restore) the `PRTG Configuration.dat` file under %temp% on the PRTG Server.
 
-To configure PrtgAPI for integration testing, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs` with values specific to your server. The server running integration tests must be able to connect directly to the server over the network. When specifying the credentials to connect to your server, you must specify a local user on the server; domain users are not currently supported.
+To configure PrtgAPI for integration testing, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs` with values specific to your server. The system running integration tests must be able to connect directly to the server over the network. When specifying the credentials to connect to your server, you must specify a local user on the server; domain users are not currently supported.
 
 ## Usage (C#)
 All actions in PrtgAPI revolve around a core class: `PrtgClient`
@@ -49,9 +49,9 @@ All actions in PrtgAPI revolve around a core class: `PrtgClient`
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "password");
 ```
 
-When a `PrtgClient` is created, it will immediately attempt to retrieve your user's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
+When a `PrtgClient` is created, it will immediately attempt to retrieve your account's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
 
-For further security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `request` object's private `passhash` property then tell the constructor to use the passhash instead.
+For further security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `client` object's `PassHash` property then tell the constructor to use the passhash instead.
 
 ```c#
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
@@ -163,7 +163,7 @@ client.SetNotificationTrigger(parameters);
 
 Setting a *notification action* to `null` when adding or editing trigger parameters will cause the action to be set to the *empty notification action*. As a result of this, any notification action properties that are set when editing a notification trigger cannot be unset without creating a new object.
 
-Notification Triggers can also be removed from objects. Trigers can be removed either by specfying the the object ID/sub ID of the trigger, or a `NotificationTrigger` object retrieved from a previous call to `GetNotificationTriggers`
+Notification Triggers can also be removed from objects. Triggers can be removed either by specfying the the object ID/sub ID of the trigger, or a `NotificationTrigger` object retrieved from a previous call to `GetNotificationTriggers`
 
 ```c#
 client.RemoveNotificationTrigger(1234, 3);
@@ -172,7 +172,7 @@ var trigger = client.GetNotificationTriggers(1234).First();
 client.RemoveNotificationTrigger(trigger);
 ```
 
-Please note: the object ID/sub ID overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The `NotificationTrigger` overload _does_ perform this check.
+Please note: the object ID/sub ID overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The `RemoveNotificationTrigger` overload that takes a `NotificationTrigger` as its parameter _does_ perform this check.
 
 ### Object Settings
 Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
@@ -238,6 +238,8 @@ Import-Module "C:\path\to\PrtgAPI"
 ```
 
 If you have installed PrtgAPI from NuGet or have placed PrtgAPI on your PSModulePath, you do not need to run `Import-Module`.
+
+To connect to your PRTG Server, first run
 
 ```powershell
 Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) # ProTip: You can omit (Get-Credential)
@@ -340,7 +342,7 @@ Get-Sensor # For great justice!
 Delete all sensors whose device name contains "banana"
 
 ```powershell
-Get-Sensor -Filter (New-SearchFilter device contains banana)|Remove-Object
+Get-Sensor -Filter (New-SearchFilter device contains banana) | Remove-Object
 ```
 
 Get all WMI sensors
@@ -401,7 +403,7 @@ $sensors = Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device 
 $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 ```
 
-Inner objects know how to receive a variety of objects via the pipeline. As such it is not necessary to include very intermediate object type
+Inner objects know how to receive a variety of objects via the pipeline. As such it is not necessary to include every intermediate object type
 
 ```powershell
 Get-Probe | Get-Sensor
@@ -419,6 +421,12 @@ LastValueNumeric : 27
 Name             : Available Memory
 LastValue        : 1,116 MByte
 LastValueNumeric : 1169711104
+```
+
+When entering decimal numbers with `Set-ChannelProperty` it is important the number format matches that of the PRTG Server; i.e. if PRTG uses commas to represent decimal places, you too must use commas to represent decimal places. If the correct number format is not used, PRTG will likely truncate the specified value, leading to undesirable results. As PRTG treats commas as arrays, it is important to indicate to PowerShell your value is not an array, such as by representing it as a string
+
+```powershell
+$channels | Set-ChannelProperty UpperErrorLimit "1,3"
 ```
 
 Notification Triggers can be retrieved via the `Get-NotificationTrigger` cmdlet.
@@ -447,9 +455,9 @@ $action = Get-NotificationAction *admin* | Select -First 1
 Get-Probe | Get-NotificationTrigger -Type Volume | Edit-NotificationTriggerProperty OnNotificationAction $action
 ```
 
-For advanced scenarios requiring one or more properties be manipulated, the `Add-NotificationTrigger` and `Set-NotificationTrigger` cmdlets should be used. In order to add or edit a notification trigger, a `TriggerParameters` object must first be constructed, using the `New-NotificationTriggerParameter` cmdlet. `New-NotificationTriggerParameter` has a number of parameter sets depending on the operation you are trying to perform.
+For advanced scenarios requiring multiple properties be manipulated, the `Add-NotificationTrigger` and `Set-NotificationTrigger` cmdlets should be used. In order to add or edit a notification trigger, a `TriggerParameters` object must first be constructed using the `New-NotificationTriggerParameter` cmdlet. `New-NotificationTriggerParameter` has a number of parameter sets depending on the operation you are trying to perform.
 
-The easiest way to create a new `TriggerParameters` object is to pipe in an existing notification trigger. This will pre-populate all properties of the object with the properties of the existing notification trigger. This provides an excellent means of deploying or even moving triggers across a variety of PRTG Objects.
+The easiest way to create a new `TriggerParameters` object is to pipe in an existing notification trigger. This will pre-populate all properties of the object with the properties of the existing trigger. This provides an excellent means of deploying or even moving triggers across a variety of PRTG Objects.
 
 ```powershell
 # Migrate notification triggers defined on a probe to individual sensors
@@ -462,7 +470,7 @@ $sensors = $probe | Get-Sensor *cpu*
 # Add the notification triggers to each sensor
 foreach($sensor in $sensors)
 {
-	$triggers | New-NotificationTriggerParameter $sensor.Id | Add-NotificationTrigger
+    $triggers | New-NotificationTriggerParameter $sensor.Id | Add-NotificationTrigger
 }
 
 # Remove the triggers from their original source
@@ -478,7 +486,7 @@ $trigger = Get-Device | Get-NotificationTrigger *admin* -Inherited $false -Type 
 $parameters = $trigger | New-NotificationTriggerParameter 
 $parameters.Latency = 120
 
-$parameters | Add-NotificationTrigger
+$parameters | Set-NotificationTrigger
 ```
 
 ### Access Underlying Methods

@@ -29,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Value to set the property to.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1)]
+        [Parameter(Mandatory = false, Position = 1)]
         public object Value { get; set; }
 
         /// <summary>

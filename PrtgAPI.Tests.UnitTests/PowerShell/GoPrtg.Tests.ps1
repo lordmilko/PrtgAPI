@@ -55,7 +55,7 @@ function InstallMultipleInProfile
 
 	$content = gc $Profile -Raw
 
-	$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+	$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	$expected += "function __goPrtgGetServers {@(`r`n"
 	$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
 	$expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
@@ -84,7 +84,7 @@ function InstallMultipleWithAlias
 
 	$content = gc $Profile -Raw
 
-	$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+	$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	$expected += "function __goPrtgGetServers {@(`r`n"
 	$expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
 	$expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
@@ -155,7 +155,7 @@ function GoPrtgAfterEach
 
 Describe "Install-GoPrtgServer" {
 
-    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n" + 
+    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`n`r`n" + 
                     "function __goPrtgGetServers {@(`r`n    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n)}`r`n`r`n" + 
                     "############################ End GoPrtg Servers ############################`r`n").Replace("``","````")
 
@@ -224,7 +224,7 @@ Describe "Install-GoPrtgServer" {
 		$content = gc $Profile -Raw
 
         $expected = "Write-Host `"hello`"`r`n"
-		$expected += "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
 		$expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
@@ -260,7 +260,7 @@ Describe "Install-GoPrtgServer" {
         $content = gc $Profile -Raw
 
         $expected = "Write-Host `"hello`"`r`n"
-		$expected += "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
 		$expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
@@ -278,7 +278,7 @@ Describe "Install-GoPrtgServer" {
 
 	    $content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	    $expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -294,7 +294,7 @@ Describe "Install-GoPrtgServer" {
 
 	    $content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	    $expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -310,7 +310,7 @@ Describe "Install-GoPrtgServer" {
 
 	    $content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	    $expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -341,7 +341,7 @@ Describe "Install-GoPrtgServer" {
 
 		$contents = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
 		$expected += "    `"```"prtg.example.com```",```"dev```",```"username2```",```"*```"`"`r`n"
@@ -468,7 +468,7 @@ Describe "Install-GoPrtgServer" {
 
 Describe "Uninstall-GoPrtgServer" {
 
-    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n" +
+    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`n`r`n" +
 					"function __goPrtgGetServers {@(`r`n    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n)}`r`n" +
 					"`r`n############################ End GoPrtg Servers ############################`r`n").Replace("``", "````")
 
@@ -526,7 +526,7 @@ Describe "Uninstall-GoPrtgServer" {
 
         $content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -558,7 +558,7 @@ Describe "Uninstall-GoPrtgServer" {
 
         $content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	    $expected += "function __goPrtgGetServers {@(`r`n"
 	    $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
 	    $expected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`",`r`n"
@@ -574,7 +574,7 @@ Describe "Uninstall-GoPrtgServer" {
 
         $finalContent = gc $Profile -Raw
 
-		$finalExpected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$finalExpected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 	    $finalExpected += "function __goPrtgGetServers {@(`r`n"
         $finalExpected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`"`r`n"
 	    $finalExpected += ")}`r`n`r`n"
@@ -602,7 +602,7 @@ Describe "Uninstall-GoPrtgServer" {
 
         $contents = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
         $expected += "function __goPrtgGetServers {@(`r`n"
 	    $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
 	    $expected += ")}`r`n`r`n"
@@ -940,7 +940,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -958,7 +958,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"dev```",```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -991,7 +991,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`",`r`n"
 		$expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
@@ -1025,7 +1025,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
 		$expected += "    `"```"prtg.example2.com```",```"test```",```"username2```",```"*```"`"`r`n"
@@ -1047,7 +1047,7 @@ Describe "Set-GoPrtgAlias" {
 		$content = gc $Profile -Raw
 
 		$expected = "Write-Host `"hello`"`r`n"
-		$expected += "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -1070,7 +1070,7 @@ Describe "Set-GoPrtgAlias" {
 		$content = gc $Profile -Raw
 
 		$expected = "Write-Host `"hello`"`r`n"
-		$expected += "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -1089,7 +1089,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"
@@ -1107,7 +1107,7 @@ Describe "Set-GoPrtgAlias" {
 
 		$content = gc $Profile -Raw
 
-		$expected = "########################### Start GoPrtg Servers ###########################`r`nImport-Module PrtgAPI`r`n"
+		$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
 		$expected += "function __goPrtgGetServers {@(`r`n"
 		$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
 		$expected += ")}`r`n`r`n"

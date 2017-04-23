@@ -20,7 +20,6 @@ New-Alias Sort-PrtgObject Start-SortPrtgObject
 New-Alias Connect-GoPrtg Connect-GoPrtgServer
 New-Alias Install-GoPrtg Install-GoPrtgServer
 New-Alias Uninstall-GoPrtg Uninstall-GoPrtgServer
-New-Alias Get-GoPrtg Get-GoPrtgServer
 
 New-Alias GoPrtg Connect-GoPrtgServer
 

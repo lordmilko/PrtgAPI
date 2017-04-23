@@ -117,7 +117,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private T CreateParameters<T>(ModifyAction action)
         {
             if (Source != null)
-                return (T) Activator.CreateInstance(typeof (T), Id, Source, action); //Use an existing notification trigger
+            {
+                if (Id != null)
+                    return (T) Activator.CreateInstance(typeof (T), Id, Source, action); //Add from an existing notification trigger
+                else
+                    return (T) Activator.CreateInstance(typeof (T), Source.ObjectId, Source.SubId); //Edit from an existing notification trigger
+            }
+                
             if (TriggerId != null)
                 return (T) Activator.CreateInstance(typeof (T), Id, TriggerId); //Edit a notification trigger
             else
