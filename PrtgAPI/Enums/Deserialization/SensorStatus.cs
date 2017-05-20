@@ -20,7 +20,7 @@ namespace PrtgAPI
         [XmlEnum("1")] Unknown = 2,
 
         /// <summary>
-        /// This value is no longer used by PRTG, however is considered analogous to <see cref="Up"/>.
+        /// Sensor is waiting for more monitoring data before deciding on the final sensor state. Used by Business Process Sensors.
         /// </summary>
         [XmlEnum("2")] Collecting = 4,
 

@@ -65,7 +65,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Specifies the username and password to authenticate with. If <see cref="PassHash"/> is specified, the password will be treated as a PassHash instead.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 2, HelpMessage = "The username and password to authenticate with. If -PassHash is specified, the password will be treated as a PassHash instead.")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 1, HelpMessage = "The username and password to authenticate with. If -PassHash is specified, the password will be treated as a PassHash instead.")]
         public PSCredential Credential { get; set; }
 
         /// <summary>

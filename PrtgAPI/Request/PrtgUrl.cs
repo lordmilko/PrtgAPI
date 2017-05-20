@@ -77,7 +77,7 @@ namespace PrtgAPI.Request
 #endif
         }
 
-        private string AddUrlPrefix(string server)
+        internal static string AddUrlPrefix(string server)
         {
             if (server.StartsWith("http://") || server.StartsWith("https://"))
                 return server;

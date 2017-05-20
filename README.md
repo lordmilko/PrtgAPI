@@ -51,7 +51,7 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "password");
 
 When a `PrtgClient` is created, it will immediately attempt to retrieve your account's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
 
-For further security, you are able to use your passhash to `PrtgClient` instead of using your password. Simply create a breakpoint after the `PrtgClient` constructor call has executed, copy your passhash out of your `client` object's `PassHash` property then tell the constructor to use the passhash instead.
+For further security, you are able to pass your passhash to `PrtgClient` instead of using your password. Simply extract your passhash from your `client` object's `PassHash` property, then tell the `PrtgClient` constructor to use the passhash instead.
 
 ```c#
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
@@ -206,15 +206,15 @@ Objects can be paused and resumed using the `Pause` and `Resume` methods respect
 
 ```c#
 //Pause object with ID 2001 indefinitely
-client.Pause(2001);
+client.PauseObject(2001);
 ```
 ```c#
 //Pause object with ID 2002 for 60 minutes
-client.Pause(2002, 60, "Paused for the next 60 minutes!");
+client.PauseObject(2002, 60, "Paused for the next 60 minutes!");
 ```
 ```c#
 //Resume object with ID 2001
-client.Resume(2001);
+client.PauseObject(2001);
 ```
 
 ### Custom Requests
@@ -244,13 +244,13 @@ If you have installed PrtgAPI from NuGet or have placed PrtgAPI on your PSModule
 To connect to your PRTG Server, first run
 
 ```powershell
-Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) # ProTip: You can omit (Get-Credential)
+Connect-PrtgServer prtg.mycoolsite.com
 ```
 
-To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgClient`
+You will then be prompted to enter your PRTG username and password. To use your PassHash instead of your password, specify the `-PassHash` switch. If you do not know your PassHash, you can retrieve it once authenticated via `Get-PrtgClient`
 
 ```powershell
-Connect-PrtgServer prtg.mycoolsite.com (Get-Credential) -PassHash
+Connect-PrtgServer prtg.mycoolsite.com -PassHash
 ```
 
 If you are scripting against PrtgAPI, you can use the included `New-Credential` cmdlet to bypass the authentication prompt.
@@ -294,6 +294,7 @@ Move-Object
 New-Credential
 New-NotificationTriggerParameter
 New-SearchFilter
+Open-PrtgObject
 Pause-Object
 Refresh-Object
 Remove-NotificationTrigger
@@ -347,10 +348,24 @@ Delete all sensors whose device name contains "banana"
 Get-Sensor -Filter (New-SearchFilter device contains banana) | Remove-Object
 ```
 
+The same thing can also be done using the `Get-Device` and `Get-Sensor` cmdlets in parallel, however note for each device returned a separate call will be made to retrieve each device's sensors
+
+```powershell
+Get-Device *banana* | Get-Sensor | Remove-Object # Easier to remember, but less computationally efficient
+```
+
 Get all WMI sensors
 
 ```powershell
 Get-Sensor -Tags wmi*
+```
+
+Objects can be opened in your web browser for viewing in the PRTG Web UI
+
+```powershell
+
+Get-Sensor -Count 2 | Open-PrtgObject
+
 ```
 
 Multiple filters can be specified to further limit the results (and speed up the query!)

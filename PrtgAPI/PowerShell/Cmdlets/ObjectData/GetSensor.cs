@@ -94,12 +94,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public Group Group { get; set; }
 
         /// <summary>
-        /// <para type="description">Only retrieve sensors that match a specific status.</para>
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public SensorStatus[] Status { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GetSensor"/> class.
         /// </summary>
         public GetSensor() : base(Content.Sensors, 500)

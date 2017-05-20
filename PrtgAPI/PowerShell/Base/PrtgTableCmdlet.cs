@@ -38,6 +38,12 @@ namespace PrtgAPI.PowerShell.Base
         public string[] Tags { get; set; }
 
         /// <summary>
+        /// <para type="description">Only retrieve objects that match a specific status.</para>
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public SensorStatus[] Status { get; set; }
+
+        /// <summary>
         /// <para type="description">Maximum number of results to return.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Maxmimum number of results to return.")]

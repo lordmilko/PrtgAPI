@@ -8,7 +8,6 @@ namespace PrtgAPI.Attributes
     {
         internal XmlEnumAlternateName(string name) : base(name)
         {
-            Name = name;
         }
     }
 }

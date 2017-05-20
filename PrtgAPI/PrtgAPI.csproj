@@ -59,6 +59,7 @@
     <Compile Include="PowerShell\Cmdlets\Incomplete\MoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SetObjectPosition.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SortPrtgObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>

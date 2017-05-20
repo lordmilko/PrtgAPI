@@ -15,7 +15,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet("Resume", "Object", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Resume, "Object", SupportsShouldProcess = true)]
     public class ResumeObject : PrtgCmdlet
     {
         /// <summary>
