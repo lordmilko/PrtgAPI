@@ -1,7 +1,12 @@
 ﻿function Startup($type)
 {
-	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
+	InitializeUnitTestModules
 	$global:tester = SetState $type $null
+}
+
+function InitializeUnitTestModules
+{
+	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
 }
 
 function Shutdown

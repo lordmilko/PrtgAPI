@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PrtgAPI.PowerShell;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -85,15 +86,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             if (!items.Any())
             {
-                PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(GetItems());
+                PrtgSessionState.Client = Initialize_Client_WithItems(GetItems());
             }
             else
-                PowerShell.PrtgSessionState.Client = Initialize_Client_WithItems(items);
+                PrtgSessionState.Client = Initialize_Client_WithItems(items);
         }
 
         public void SetPrtgSessionState(PrtgClient client)
         {
-            PowerShell.PrtgSessionState.Client = client;
+            PrtgSessionState.Client = client;
         }
 
         public abstract TItem GetItem();

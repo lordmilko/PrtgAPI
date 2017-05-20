@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using PrtgAPI.Events;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Request
@@ -85,6 +86,8 @@ namespace PrtgAPI.Request
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
+            prtgClient.Log($"Synchronously executing request '{url.Url}'");
+
             int retriesRemaining = prtgClient.RetryCount;
 
             do
@@ -115,6 +118,8 @@ namespace PrtgAPI.Request
 
         private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
+            prtgClient.Log($"Asynchronously executing request '{url.Url}'");
+
             int retriesRemaining = prtgClient.RetryCount;
 
             do

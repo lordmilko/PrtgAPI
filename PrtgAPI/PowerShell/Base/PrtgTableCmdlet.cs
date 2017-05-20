@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
@@ -83,6 +84,19 @@ namespace PrtgAPI.PowerShell.Base
 
             ProgressSettings progressSettings = null;
 
+
+            //var downstreamCmdlet = GetDownstreamCmdlet();
+
+            //if (downstreamCmdlet?.ModuleName == MyInvocation.MyCommand.ModuleName)
+            {
+                //we're piping to something else in prtgapi. we should show progress
+
+                //if get-channel pipes to something, how will it show progress - cos it doesnt inherit from tablecmdlet? do we need to have progress stuff in a baser class? how do we force
+                //cmdlets like get-channel to call into the method in the base class? will it work like get-sensor calls into prtgtablecmdlet?
+
+                //what if we pipe a variable containing a whole array to get-trigger?
+            }
+
             ProcessIdFilter();
             ProcessNameFilter();
             ProcessTagsFilter();
@@ -96,15 +110,13 @@ namespace PrtgAPI.PowerShell.Base
                 streamResults = false;
             }
 
-            if (streamResults)
+            if (streamResults || pipeToPrtgCmdlet || RunningPrtgCmdlets > 1)
             {
-                records = GetResultsWithProgress(out progressSettings);
+                records = GetResultsWithProgress(out progressSettings, parameters);
             }
             else
             {
-                if(Filter != null)
-                    parameters.SearchFilter = Filter;
-                records = GetObjects(parameters);
+                records = GetFilteredObjects(parameters);
             }
 
             records = FilterResponseRecords(records, Name, r => r.Name);
@@ -115,6 +127,13 @@ namespace PrtgAPI.PowerShell.Base
             //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
 
             Filter = null;
+        }
+
+        private IEnumerable<TObject> GetFilteredObjects(TParam parameters)
+        {
+            if (Filter != null)
+                parameters.SearchFilter = Filter;
+            return GetObjects(parameters);
         }
 
         private void ProcessIdFilter()
@@ -144,23 +163,89 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private IEnumerable<TObject> GetResultsWithProgress(out ProgressSettings progressSettings)
+        //todo: we need to write some unit tests for this progress business. we will need to define 
+
+        private IEnumerable<TObject> GetResultsWithProgress(out ProgressSettings progressSettings, TParam parameters)
         {
             ProgressRecord progress = null;
             int? count = null;
-
-            if (progressThreshold != null)
+            long sourceId = 0;
+            if (progressThreshold != null && !(RunningPrtgCmdlets > 1))
             {
-                progress = new ProgressRecord(1, $"PRTG {content} Search", "Detecting total number of items");
-                WriteProgress(progress);
+                //progress = new ProgressRecord(1, $"PRTG {content} Search", "Detecting total number of items");
+                progress = new ProgressRecord(RunningPrtgCmdlets, $"PRTG {content} Search", "Detecting total number of items");
+
+                if (RunningPrtgCmdlets > 1)
+                {
+                    //what if we're the middle cmdlet - how will we know we have the right ID?
+                    sourceId = CommandRuntime.GetLastProgressSourceId();
+                    progress.ParentActivityId = RunningPrtgCmdlets - 1;
+                }
+
+                WriteProgressEx(progress, sourceId);
+
                 count = client.GetTotalObjects(content);
             }
 
-            var records = GetRecords();
+            progressSettings = CreateProgressSettings();
 
-            progressSettings = CompleteTotalsProgressAndCreateProgressSettings(progress, count);
+            //when we're the first element, and we're piping to a prtg cmdlet, we need to show some initial progress
 
-            return records;
+            if (pipeToPrtgCmdlet && RunningPrtgCmdlets == 1)
+            {
+                //sourceId = CommandRuntime.GetLastProgressSourceId();
+
+                var rec = new ProgressRecord(RunningPrtgCmdlets, progressSettings.ActivityName, progressSettings.InitialDescription);
+
+                if (RunningPrtgCmdlets > 1)
+                    rec.ParentActivityId = RunningPrtgCmdlets - 1;
+
+                ProgressRecords.Push(rec);
+
+                WriteProgressEx(rec, sourceId);
+            }
+
+            if (RunningPrtgCmdlets > 1)
+            {
+                sourceId = CommandRuntime.GetLastProgressSourceId();
+
+                var record = ProgressRecords.Peek();
+
+                record.CurrentOperation = $"Retrieving all {typeof(TObject).Name.ToLower()}s";
+
+                WriteProgressEx(record, sourceId);
+
+                
+            }
+
+            var records = streamResults ? GetObjects(parameters) : GetFilteredObjects(parameters) ;
+
+            if (progress != null) //Remove "Detecting total number of items"
+            {
+                progress.RecordType = ProgressRecordType.Completed;
+                WriteProgressEx(progress, sourceId);
+            }
+
+            if (count == null) //Our IEnumerable is already a List
+            {
+                var list = records.ToList();
+
+                if (pipeToPrtgCmdlet)
+                    progressSettings.TotalRecords = list.Count;
+                else
+                    progressSettings = null;
+
+                return list.Select(s => s);
+            }
+            else //Our IEnumerable contains a series of Tasks; we don't want to enumerate the collection
+            {
+                if (count <= progressThreshold)
+                    progressSettings = null;
+                else
+                    progressSettings.TotalRecords = count.Value;
+
+                return records;
+            }
         }
 
         private IEnumerable<TObject> FilterResponseRecordsByTag(IEnumerable<TObject> records)
@@ -178,25 +263,15 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
-        private ProgressSettings CompleteTotalsProgressAndCreateProgressSettings(ProgressRecord progress, int? count) //TODO - RENAME
+        private ProgressSettings CreateProgressSettings() //TODO - RENAME
         {
             ProgressSettings progressSettings = null;
 
-            if (progress != null)
+            progressSettings = new ProgressSettings()
             {
-                progress.RecordType = ProgressRecordType.Completed;
-                WriteProgress(progress);
-
-                if (count > progressThreshold)
-                {
-                    progressSettings = new ProgressSettings()
-                    {
-                        ActivityName = $"PRTG {content.ToString().Substring(0, content.ToString().Length - 1)} Search",
-                        InitialDescription = $"Retrieving all {content.ToString().ToLower()}",
-                        TotalRecords = count.Value
-                    };
-                }
-            }
+                ActivityName = $"PRTG {typeof(TObject).Name} Search",
+                InitialDescription = $"Retrieving all {typeof(TObject).Name.ToLower()}s",
+            };
 
             return progressSettings;
         }

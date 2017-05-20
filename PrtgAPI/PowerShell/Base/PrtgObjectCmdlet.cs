@@ -24,7 +24,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             var records = GetRecords();
 
-            WriteList(records, null);   
+            WriteList(records, null);
         }
 
         /// <summary>

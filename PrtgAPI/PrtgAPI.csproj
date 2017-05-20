@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\PrtgAPI\PrtgAPI.XML</DocumentationFile>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +50,9 @@
   <ItemGroup>
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Events\EventStack.cs" />
+    <Compile Include="Events\EventState.cs" />
+    <Compile Include="Events\LogVerboseEventArgs.cs" />
+    <Compile Include="Helpers\PipelineHelpers.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationTriggerParameters.cs" />

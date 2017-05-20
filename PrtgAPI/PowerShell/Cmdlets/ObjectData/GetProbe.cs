@@ -56,7 +56,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetProbe"/> class.
         /// </summary>
-        public GetProbe() : base(Content.Objects, null)
+        public GetProbe() : base(Content.ProbeNode, null)
         {
         }
 

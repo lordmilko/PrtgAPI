@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using PrtgAPI.Events;
 using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Request;
 
@@ -60,6 +61,22 @@ namespace PrtgAPI
         {
             add { retryRequest += value; }
             remove { retryRequest -= value; }
+        }
+
+        internal EventHandler<LogVerboseEventArgs> logVerbose;
+
+        /// <summary>
+        /// Occurs when a request times out while communicating with PRTG.
+        /// </summary>
+        public event EventHandler<LogVerboseEventArgs> LogVerbose
+        {
+            add { logVerbose += value; }
+            remove { logVerbose -= value; }
+        }
+
+        internal void Log(string message)
+        {
+            HandleEvent(logVerbose, new LogVerboseEventArgs(message));
         }
 
         internal void HandleEvent<T>(EventHandler<T> handler, T args)
@@ -125,6 +142,9 @@ namespace PrtgAPI
 
         internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
         {
+            Log("Preparing to stream objects");
+            Log("Requesting total number of objects");
+
             var totalObjects = GetTotalObjects(parameters.Content);
 
             var tasks = new List<Task<List<T>>>();
@@ -141,6 +161,8 @@ namespace PrtgAPI
                 if (totalObjects - i < parameters.Count)
                     parameters.Count = totalObjects - i;
             }
+
+            Log($"Requesting {totalObjects} objects from PRTG over {tasks.Count} tasks");
 
             var result = new ParallelObjectGenerator<List<T>>(tasks.WhenAnyForAll()).SelectMany(m => m);
 

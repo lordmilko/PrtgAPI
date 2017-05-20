@@ -45,12 +45,19 @@ namespace PrtgAPI.Events
             Debug.Assert(events3?.Count == 1);
         }
 
+        public int Count => stack.Count;
+
         public void Pop()
         {
             removeEvent(stack.Pop());
 
             if (stack.Any())
                 addEvent(stack.Peek());
+        }
+
+        public Action<object, TEventArgs> Peek()
+        {
+            return stack.Peek();
         }
     }
 }

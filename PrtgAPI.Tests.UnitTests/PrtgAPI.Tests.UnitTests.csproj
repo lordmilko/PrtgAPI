@@ -89,6 +89,9 @@
     <Compile Include="ObjectTests\SensorTotalsTests.cs" />
     <Compile Include="ObjectTests\StreamableObjectTests.cs" />
     <Compile Include="ObjectTests\TriggerParameterTests.cs" />
+    <Compile Include="PowerShell\Cmdlets\TestReflection1.cs" />
+    <Compile Include="PowerShell\Cmdlets\TestReflection2.cs" />
+    <Compile Include="PowerShell\Cmdlets\TestReflection3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfrastructureTests\Support\IWebResponse.cs" />
     <Compile Include="InfrastructureTests\Support\MockWebClient.cs" />
@@ -111,6 +114,7 @@
     <None Include="PowerShell\GoPrtg.Tests.ps1" />
     <None Include="PowerShell\Group.Tests.ps1" />
     <None Include="PowerShell\Probe.Tests.ps1" />
+    <None Include="PowerShell\Reflection.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\NotificationAction.Tests.ps1" />
     <None Include="PowerShell\NotificationTrigger.Tests.ps1" />
