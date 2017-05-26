@@ -277,8 +277,10 @@ The following cmdlets are currently supported by PrtgAPI
 Add-NotificationTrigger
 Acknowledge-Sensor
 Connect-PrtgServer
+Disable-PrtgProgress
 Disconnect-PrtgServer
 Edit-NotificationTriggerProperty
+Enable-PrtgProgress
 Get-Channel
 Get-Device
 Get-GoPrtgServer
@@ -425,6 +427,8 @@ Inner objects know how to receive a variety of objects via the pipeline. As such
 ```powershell
 Get-Probe | Get-Sensor
 ```
+
+By default, PrtgAPI will display advanced progress details whenever two cmdlets are chained together. This can be modified by either setting the `$ProgressPreference` within PowerShell, specifying or omitting the `-NoProgress` parameter with `Connect-PrtgServer`, or by using the `Enable-PrtgProgress` and `Disable-PrtgProgress` cmdlets. This can be useful when you wish to use PrtgAPI in scripts but don't wish to receive constant progress updates.
 
 When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the numeric value of a channel by referring to the `LastValueNumeric` property.
 

@@ -16,7 +16,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Resume, "Object", SupportsShouldProcess = true)]
-    public class ResumeObject : PrtgCmdlet
+    public class ResumeObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to resume.</para>
@@ -29,8 +29,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if(ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
-                client.ResumeObject(Object.Id);
+            if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+            {
+                ExecuteOperation(() => client.ResumeObject(Object.Id), "Resuming PRTG Objects", $"Processing {Object.BaseType.ToString().ToLower()} '{Object}'");
+            }
         }
     }
 }

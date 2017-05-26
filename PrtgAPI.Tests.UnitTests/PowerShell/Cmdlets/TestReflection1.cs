@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Helpers;
+using PrtgAPI.PowerShell;
 
 namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 {
@@ -38,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
             switch (ParameterSetName)
             {
                 case "SourceId":
-                    WriteObject(CommandRuntime.GetLastProgressSourceId());
+                    WriteObject(ProgressManager.GetLastSourceId(CommandRuntime));
                     break;
                 case "ChainSourceId":
                     WriteProgress(new ProgressRecord(1, "Test-Reflection1 Activity", "Test-Reflection1 Description"));

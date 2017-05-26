@@ -50,10 +50,5 @@ namespace PrtgAPI.Helpers
                 return (object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator);
             }
         }
-
-        public static long GetLastProgressSourceId(this ICommandRuntime commandRuntime)
-        {
-            return Convert.ToInt64(commandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
-        }
     }
 }

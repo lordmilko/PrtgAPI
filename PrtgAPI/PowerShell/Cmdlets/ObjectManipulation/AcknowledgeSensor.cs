@@ -37,7 +37,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Pause-Object</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Confirm, "Sensor", SupportsShouldProcess = true)]
-    public class AcknowledgeSensor : PrtgCmdlet
+    public class AcknowledgeSensor : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The sensor to acknowledge.</para>
@@ -98,7 +98,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
             if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id})"))
-                client.AcknowledgeSensor(Sensor.Id, duration, Message);
+            {
+                var t = duration == 1 ? "minute" : "minutes";
+                ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), "Acknowledge PRTG Sensors", $"Acknowledging sensor '{Sensor.Name}' for {duration} {t}");
+            }
         }
     }
 }

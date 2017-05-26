@@ -73,8 +73,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if(ShouldProcess($"Object ID: {Parameters.ObjectId} (Type: {Parameters.Type}, Action: {Parameters.OnNotificationAction})"))
+            if (ShouldProcess($"Object ID: {Parameters.ObjectId} (Type: {Parameters.Type}, Action: {Parameters.OnNotificationAction})"))
+            {
                 client.AddNotificationTrigger(Parameters);
+            }
         }
     }
 }

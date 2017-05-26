@@ -93,6 +93,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int? RetryDelay { get; set; }
 
         /// <summary>
+        /// Disable PowerShell Progress when piping between cmdlets.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter NoProgress { get; set; }
+
+        /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
@@ -108,6 +114,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 if (RetryDelay != null)
                     PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
+
+                if (NoProgress.IsPresent)
+                    PrtgSessionState.DisableProgress = true;
             }
             else
             {

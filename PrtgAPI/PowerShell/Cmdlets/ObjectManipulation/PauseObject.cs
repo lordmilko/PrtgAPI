@@ -34,7 +34,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Resume-Object</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Suspend, "Object", SupportsShouldProcess = true)]
-    public class PauseObject : PrtgCmdlet
+    public class PauseObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to pause.</para>
@@ -95,7 +95,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
             if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
-                client.PauseObject(Object.Id, duration, Message);
+            {
+                var t = duration == 1 ? "minute" : "minutes";
+                ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing PRTG Objects", $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' for {duration} {t}");
+            }
         }
     }
 }

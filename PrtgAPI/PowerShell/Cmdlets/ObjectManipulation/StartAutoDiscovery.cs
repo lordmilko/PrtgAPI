@@ -29,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Device</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "AutoDiscovery")]
-    public class StartAutoDiscovery : PrtgCmdlet
+    public class StartAutoDiscovery : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The device to perform auto-discovery upon.</para>
@@ -42,7 +42,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            client.AutoDiscover(Device.Id);
+            ExecuteOperation(() => client.AutoDiscover(Device.Id), "PRTG Auto-Discovery", $"Starting Auto-Discovery on device '{Device}'");
         }
     }
 }

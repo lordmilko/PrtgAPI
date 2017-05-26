@@ -29,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true)]
-    public class RefreshObject : PrtgCmdlet
+    public class RefreshObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to refresh.</para>
@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                client.RefreshObject(Object.Id);
+                ExecuteOperation(() => client.RefreshObject(Object.Id), "Refreshing PRTG Objects", $"Refreshing object '{Object.Name}'");
         }
     }
 }
