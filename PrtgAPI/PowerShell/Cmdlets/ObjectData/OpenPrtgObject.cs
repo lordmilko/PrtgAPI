@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Request;

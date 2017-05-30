@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Items;

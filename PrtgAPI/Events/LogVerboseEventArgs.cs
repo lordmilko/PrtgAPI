@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PrtgAPI.Events
+namespace PrtgAPI
 {
     /// <summary>
     /// The arguments passed to an event handler when a informational debug data is logged.

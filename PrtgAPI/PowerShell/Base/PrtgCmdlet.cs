@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Management.Automation;
-using System.Reflection;
-using PrtgAPI.Events;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell.Base
 {

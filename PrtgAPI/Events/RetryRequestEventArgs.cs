@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PrtgAPI.Events
+namespace PrtgAPI
 {
     /// <summary>
     /// The arguments passed to an event handler when a web request is retried.
