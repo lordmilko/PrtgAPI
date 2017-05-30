@@ -26,12 +26,12 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Whether to add a new trigger or modify an existing one.
         /// </summary>
-        public ModifyAction Action { get; private set; }
+        public ModifyAction Action { get; }
 
         /// <summary>
         /// The type of notification trigger this object will manipulate.
         /// </summary>
-        public TriggerType Type { get; private set; }
+        public TriggerType Type { get; }
 
         /// <summary>
         /// The <see cref="NotificationAction"/> to execute when the trigger activates.
@@ -216,7 +216,7 @@ namespace PrtgAPI.Parameters
             if (value == null)
                 return null;
 
-            return EnumHelpers.XmlToEnum<T>(value.ToString());
+            return value.ToString().XmlToEnum<T>();
         }
 
         /// <summary>

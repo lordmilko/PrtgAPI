@@ -93,10 +93,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int? RetryDelay { get; set; }
 
         /// <summary>
-        /// Disable PowerShell Progress when piping between cmdlets.
+        /// Enable or disable PowerShell Progress when piping between cmdlets. By default, if Connect-PrtgServer is being called from within a script this value is false. Otherwise, true.
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SwitchParameter NoProgress { get; set; }
+        public bool? Progress { get; set; }
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -115,8 +115,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (RetryDelay != null)
                     PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
 
-                if (NoProgress.IsPresent)
-                    PrtgSessionState.DisableProgress = true;
+                if (Progress == false || (MyInvocation.ScriptName != string.Empty && !MyInvocation.ScriptName.EndsWith("PrtgAPI.GoPrtg.ps1")) || GetVariableValue("global:psISE") != null)
+                    PrtgSessionState.EnableProgress = false;
+                else
+                    PrtgSessionState.EnableProgress = true;
             }
             else
             {

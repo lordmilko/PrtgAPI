@@ -87,6 +87,33 @@ namespace PrtgAPI
         [XmlElement("injected_linewidth")]
         public int LineWidth { get; set; }
 
+        private string unit;
+
+        [XmlElement("injected_customunit")]
+        public string Unit
+        {
+            get { return unit; }
+            set
+            {
+                if (value != null)
+                    unit = value;
+                else
+                {
+                    if (LastValue == null || LastValue == "No data")
+                        unit = null;
+                    else
+                    {
+                        unit = LastValue?.Substring(LastValue.IndexOf(" ") + 1);
+                    }
+                }
+            }
+        }
+
+        [XmlElement("injected_valuelookup")]
+        protected string valueLookup { get; set; }
+
+        public string ValueLookup => valueLookup?.Substring(valueLookup.IndexOf("|") + 1);
+
         /// <summary>
         /// Controls how values are displayed in historic data of a timespan.
         /// </summary>

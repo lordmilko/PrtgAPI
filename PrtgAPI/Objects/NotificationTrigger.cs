@@ -1,16 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
+using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI
 {
-#pragma warning disable CS0649
+#pragma warning disable CS0649 //Field 'field' is never assigned to, and will always have its default value 'value'
 
     /// <summary>
     /// <para type="description">Causes notification actions to occur when a sensor exhibits a specified behaviour.</para>
     /// </summary>
     [DataContract]
+    [Description("Notification Trigger")]
     public class NotificationTrigger
     {
         [DataMember(Name = "type")]
@@ -80,13 +83,15 @@ namespace PrtgAPI
         public int? Latency { get; set; }
 
         [DataMember(Name = "channel")]
-        private string channel;
+        internal string channel;
+
+        internal int? channelId;
 
         /// <summary>
         /// The channel the trigger should apply to.
         /// Applies to: Speed, Threshold, Volume Triggers
         /// </summary>
-        public TriggerChannel? Channel => channel?.XmlAltToEnum<TriggerChannel>();
+        public TriggerChannel Channel => TriggerChannel.ParseFromResponse(channel, channelId);
 
         /// <summary>
         /// The formatted units display of this trigger.
@@ -196,6 +201,28 @@ namespace PrtgAPI
         private string objectLink;
 
         private XElement objectLinkXml => XElement.Parse(objectLink.Replace("&", "&amp;"));
+
+        internal bool RequiresChannelId()
+        {
+            if (Inherited == false)
+                return false;
+
+            switch (Type)
+            {
+                case TriggerType.Speed:
+                case TriggerType.Threshold:
+                case TriggerType.Volume:
+                    var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channel, typeof(GeneralTriggerChannel), false);
+
+                    if (@enum == null)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
 
 #pragma warning restore CS0649
     }

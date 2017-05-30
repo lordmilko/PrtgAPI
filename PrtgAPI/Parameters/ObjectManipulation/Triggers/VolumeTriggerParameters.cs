@@ -14,10 +14,10 @@ namespace PrtgAPI.Parameters
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Channel))]
-        public TriggerChannel? Channel
+        public TriggerChannel Channel
         {
-            get { return (TriggerChannel?) GetCustomParameterEnumXml<TriggerChannel>(TriggerProperty.Channel); }
-            set { UpdateCustomParameter(TriggerProperty.Channel, value?.EnumToXml(), true); }
+            get { return (TriggerChannel) GetCustomParameterValue(TriggerProperty.Channel); }
+            set { UpdateCustomParameter(TriggerProperty.Channel, value, true); }
         }
 
         /// <summary>

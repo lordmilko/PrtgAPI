@@ -14,8 +14,8 @@ namespace PrtgAPI.Objects.Undocumented
             var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall
 
             //return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, null);
-            var ddlXml = GetDropDownListXml(response, nameRegex);
+            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex);
+            var ddlXml = GetDropDownListXml(response, nameRegex, null);
             var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
 
             var elm = new XElement("properties", inputXml, ddlXml, dependencyXml);

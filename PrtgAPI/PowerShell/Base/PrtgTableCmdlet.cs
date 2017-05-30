@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
@@ -96,7 +94,10 @@ namespace PrtgAPI.PowerShell.Base
                 streamResults = false;
             }
 
-            if (ProgressManager.PartOfChain && !PrtgSessionState.DisableProgress)
+            if (streamResults && !ProgressManager.FirstInChain)
+                streamResults = false;
+
+            if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
             else
             {
@@ -169,70 +170,25 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
-        
-
-        
-
-        /*private IEnumerable<TObject> GetResultsWithProgress1(TParam parameters, ProgressManager progressManager)
+        protected override int DisplayFirstInChainMessage()
         {
-            ProgressRecord progress = null;
-            int? count = null;
-            long sourceId = 0;
-            if (progressThreshold != null && !(RunningPrtgCmdlets > 1))
-            {
-                
+            int count = -1;
 
+            if (streamResults)
+            {
+                ProgressManager.WriteProgress($"PRTG {content} Search", "Detecting total number of items");
                 count = client.GetTotalObjects(content);
             }
+            else
+                base.DisplayFirstInChainMessage();
 
-            progressSettings = CreateProgressSettings();
+            return count;
+        }
 
-            //when we're the first element, and we're piping to a prtg cmdlet, we need to show some initial progress
-
-            if (progressManager.FirstInChain)
-            {
-                progressManager.DisplayInitialProgress();
-            }
-
-            //todo: is it valid to turn this into an if/else?
-
-            if (progressManager.PreviousRecord != null)
-            {
-                progressManager.SetPreviousOperation($"Retrieving all {typeof (TObject).Name.ToLower()}s");
-            }
-
-            var records = streamResults ? GetObjects(parameters) : GetFilteredObjects(parameters) ;
-
-            //if (progressManager.ContainsProgress)
-            //    progressManager.CompleteProgress();
-
-            if (progress != null) //Remove "Detecting total number of items"
-            {
-                progress.RecordType = ProgressRecordType.Completed;
-                WriteProgressEx(progress, sourceId);
-            }
-
-            if (count == null) //Our IEnumerable is already a List
-            {
-                var list = records.ToList();
-
-                if (pipeToPrtgCmdlet)
-                    progressSettings.TotalRecords = list.Count;
-                else
-                    progressSettings = null;
-
-                return list.Select(s => s);
-            }
-            else //Our IEnumerable contains a series of Tasks; we don't want to enumerate the collection
-            {
-                if (count <= progressThreshold)
-                    progressSettings = null;
-                else
-                    progressSettings.TotalRecords = count.Value;
-
-                return records;
-            }
-        }*/
+        protected override IEnumerable<TObject> GetCount(IEnumerable<TObject> records, ref int count)
+        {
+            return records;
+        }
 
         private IEnumerable<TObject> FilterResponseRecordsByTag(IEnumerable<TObject> records)
         {

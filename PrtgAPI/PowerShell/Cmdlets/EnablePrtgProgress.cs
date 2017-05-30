@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Management.Automation;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -12,7 +7,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     {
         protected override void ProcessRecord()
         {
-            PrtgSessionState.DisableProgress = false;
+            PrtgSessionState.EnableProgress = true;
         }
     }
 }

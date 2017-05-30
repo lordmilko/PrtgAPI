@@ -1,6 +1,5 @@
 ﻿using System;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -60,15 +59,15 @@ namespace PrtgAPI.Parameters
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Channel))]
-        public TriggerChannel? Channel
+        public TriggerChannel Channel
         {
-            get { return (TriggerChannel?) GetCustomParameterEnumXml<TriggerChannel>(TriggerProperty.Channel); }
+            get { return TriggerChannel.ParseForRequest(GetCustomParameterValue(TriggerProperty.Channel)); }
             set
             {
-                if(value != null && value != TriggerChannel.Primary && value != TriggerChannel.Total)
-                    throw new InvalidOperationException($"Only '{nameof(TriggerChannel.Primary)}' and '{nameof(TriggerChannel.Total)}' channels are valid for threshold triggers");
+                if(value == TriggerChannel.TrafficIn || value == TriggerChannel.TrafficOut)
+                    throw new InvalidOperationException($"Only '{nameof(TriggerChannel.Primary)}', '{nameof(TriggerChannel.Total)}' and sensor specific channels are valid for threshold triggers");
 
-                UpdateCustomParameter(TriggerProperty.Channel, value?.EnumToXml(), true);
+                UpdateCustomParameter(TriggerProperty.Channel, value, true);
             }
         }
 

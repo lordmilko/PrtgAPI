@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace PrtgAPI.Objects.Undocumented
 {
@@ -9,8 +10,11 @@ namespace PrtgAPI.Objects.Undocumented
             var basicMatchRegex = "<input.+?name=\".*?_.+?\".+?value=\".*?\".+?>";
             var nameRegex = "(.+?name=\")(.+?)(\".+)";
 
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, n => n.Replace($"_{channelId}", ""));
-            var elm = new XElement("properties", inputXml);
+            Func<string, string> nameTransformer = n => n.Replace($"_{channelId}", "");
+
+            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex, nameTransformer);
+            var ddlXml = GetDropDownListXml(response, nameRegex, nameTransformer);
+            var elm = new XElement("properties", inputXml, ddlXml);
             return elm;
         }
     }

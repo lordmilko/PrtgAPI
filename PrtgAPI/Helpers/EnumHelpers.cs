@@ -93,11 +93,11 @@ namespace PrtgAPI.Helpers
             return (T) XmlToEnum<XmlEnumAlternateName>(value, typeof (T));
         }
 
-        internal static object XmlToEnum<T>(string value, Type type) where T : XmlEnumAttribute
+        internal static object XmlToEnum<TAttribute>(string value, Type type, bool requireValue = true) where TAttribute : XmlEnumAttribute
         {
             foreach (var field in type.GetFields())
             {
-                var attribute = Attribute.GetCustomAttributes(field, typeof(T)).Where(a => a.GetType() == typeof(T)).Cast<T>().FirstOrDefault();
+                var attribute = Attribute.GetCustomAttributes(field, typeof(TAttribute)).Where(a => a.GetType() == typeof(TAttribute)).Cast<TAttribute>().FirstOrDefault();
 
                 if (attribute != null)
                 {
@@ -106,10 +106,20 @@ namespace PrtgAPI.Helpers
                 }
             }
 
-            return Enum.Parse(type, value, true);
+            try
+            {
+                return Enum.Parse(type, value, true);
+            }
+            catch
+            {
+                if (requireValue)
+                    throw;
+
+                return null;
+            }
         }
 
-        internal static object EnumToXml(this Enum element)
+        internal static string EnumToXml(this Enum element)
         {
             var attribute = element.GetEnumAttribute<XmlEnumAttribute>();
 

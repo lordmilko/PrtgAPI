@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -13,10 +11,8 @@ using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using PrtgAPI.Events;
 using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Request;
 
@@ -718,6 +714,11 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Channel> GetChannels(int sensorId)
         {
+            return GetChannelsInternal(sensorId, true);
+        }
+
+        private List<Channel> GetChannelsInternal(int sensorId, bool includeAdvancedProperties)
+        {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
@@ -740,6 +741,11 @@ namespace PrtgAPI
         //TODO: how do we abstract this stuff into a single function for sync and async versions
 
         public async Task<List<Channel>> GetChannelsAsync(int sensorId)
+        {
+            return await GetChannelsInternalAsync(sensorId, true).ConfigureAwait(false);
+        }
+
+        private async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, bool includeAdvancedProperties)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
@@ -804,7 +810,11 @@ namespace PrtgAPI
 
             var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
-            return ParseNotificationTriggerResponse(objectId, xmlResponse);
+            var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
+
+            UpdateTriggerChannels(parsed);
+
+            return parsed;
         }
 
         /// <summary>
@@ -818,7 +828,11 @@ namespace PrtgAPI
 
             var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
-            return ParseNotificationTriggerResponse(objectId, xmlResponse);
+            var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
+
+            await UpdateTriggerChannelsAsync(parsed);
+
+            return parsed;
         }
 
         private List<NotificationTrigger> ParseNotificationTriggerResponse(int objectId, XDocument xmlResponse)
@@ -838,6 +852,30 @@ namespace PrtgAPI
             );
 
             return triggers;
+        }
+
+        private void UpdateTriggerChannels(List<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
+            {
+                if (trigger.RequiresChannelId())
+                {
+                    Log("Retrieving Channel ID for sensor specific channel based Notification Trigger");
+                    trigger.channelId = GetChannelsInternal(trigger.ObjectId, false).First(t => t.Name == trigger.channel).Id;
+                }
+            }
+        }
+
+        private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
+            {
+                if (trigger.RequiresChannelId())
+                {
+                    Log("Asynchronously retrieving Channel ID for sensor specific channel based Notification Trigger");
+                    trigger.channelId = (await GetChannelsInternalAsync(trigger.ObjectId, false).ConfigureAwait(false)).First(t => t.Name == trigger.channel).Id;
+                }
+            }
         }
 
         /// <summary>

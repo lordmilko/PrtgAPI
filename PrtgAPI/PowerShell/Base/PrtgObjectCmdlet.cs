@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
+using System.Reflection;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -30,7 +32,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             IEnumerable<T> records = null;
 
-            if (ProgressManager.PartOfChain && !PrtgSessionState.DisableProgress)
+            if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(GetRecords);
             else
                 records = GetRecords();
@@ -42,33 +44,77 @@ namespace PrtgAPI.PowerShell.Base
         {
             //when we're piping from a variable, we'd like to tell the user how many items we're processing
 
+            int count = DisplayInitialProgress();
+
+            var records = getResults();
+
+            return UpdatePreviousProgress(records, count);
+        }
+
+        private int DisplayInitialProgress()
+        {
+            int count = -1;
+
             if (ProgressManager.FirstInChain)
             {
-                SetObjectSearchProgress(ProcessingOperation.Retrieving, null);
-
-                ProgressManager.DisplayInitialProgress();
+                count = DisplayFirstInChainMessage();
             }
             else
             {
                 if (ProgressManager.PreviousContainsProgress)
                 {
-                    ProgressManager.SetPreviousOperation($"Retrieving all {typeof(T).Name.ToLower()}s");
+                    ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T))}s");
                 }
             }
 
-            var records = getResults().ToList();
+            return count;
+        }
 
+        private string GetTypeDescription(Type type)
+        {
+            var attribute = type.GetCustomAttribute<DescriptionAttribute>();
+
+            if (attribute != null)
+                return attribute.Description.ToLower();
+            else
+                return type.Name.ToLower();
+        }
+
+        private IEnumerable<T> UpdatePreviousProgress(IEnumerable<T> records, int count)
+        {
             if (ProgressManager.PreviousContainsProgress)
             {
-                ProgressManager.TotalRecords = records.Count;
+                records = GetCount(records, ref count);
+
+                ProgressManager.TotalRecords = count;
 
                 if (!ProgressManager.LastInChain)
                 {
-                    SetObjectSearchProgress(ProcessingOperation.Processing, records.Count);
+                    SetObjectSearchProgress(ProcessingOperation.Processing, count);
                 }
             }
 
-            return records.Select(s => s);
+            return records;
+        }
+
+        protected virtual int DisplayFirstInChainMessage()
+        {
+            int count = -1;
+
+            SetObjectSearchProgress(ProcessingOperation.Retrieving, null);
+
+            ProgressManager.DisplayInitialProgress();
+
+            return count;
+        }
+
+        protected virtual IEnumerable<T> GetCount(IEnumerable<T> records, ref int count)
+        {
+            var list = records.ToList();
+
+            count = list.Count;
+
+            return list.Select(s => s);
         }
 
         protected void SetObjectSearchProgress(ProcessingOperation operation, int? count)

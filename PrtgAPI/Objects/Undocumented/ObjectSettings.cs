@@ -28,8 +28,11 @@ namespace PrtgAPI.Objects.Undocumented
             return null;
         }
 
-        internal static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer)
+        internal static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer = null)
         {
+            if (nameTransformer == null)
+                nameTransformer = v => v;
+
             var matches = Regex.Matches(response, basicMatchRegex);
             var inputs = (matches.Cast<Match>().Select(match => match.Value)).ToList();
 
@@ -54,12 +57,12 @@ namespace PrtgAPI.Objects.Undocumented
             return list;
         }
 
-        internal static List<XElement> GetDropDownListXml(string response, string nameRegex)
+        internal static List<XElement> GetDropDownListXml(string response, string nameRegex, Func<string, string> nameTransformer)
         {
             var ddl = Regex.Matches(response, "<select.+?>.+?<\\/select>", RegexOptions.Singleline);
             var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();
 
-            var listObjs = GetLists(lists, nameRegex);
+            var listObjs = GetLists(lists, nameRegex, nameTransformer);
 
             if (listObjs.Any(l => l.Options.Any(o => o.Selected)))
             {
@@ -70,11 +73,8 @@ namespace PrtgAPI.Objects.Undocumented
             return null;
         }
 
-        private static List<Input> GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer = null)
+        private static List<Input> GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)
         {
-            if (nameTransformer == null)
-                nameTransformer = v => v;
-
             var properties = inputs.Select(input => new Input
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")), //.Replace($"_{channelId}", ""),
@@ -96,15 +96,18 @@ namespace PrtgAPI.Objects.Undocumented
             return InputType.Other;
         }
 
-        private static List<DropDownList> GetLists(List<string> lists, string nameRegex)
+        private static List<DropDownList> GetLists(List<string> lists, string nameRegex, Func<string, string> nameTransformer = null)
         {
+            if (nameTransformer == null)
+                nameTransformer = v => v;
+
             List<DropDownList> ddls = new List<DropDownList>();
 
             foreach (var list in lists)
             {
                 DropDownList ddl = new DropDownList
                 {
-                    Name = Regex.Replace(list, nameRegex, "$2", RegexOptions.Singleline),
+                    Name = nameTransformer(Regex.Replace(list, nameRegex, "$2", RegexOptions.Singleline)),
                     Options = new List<Option>()
                 };
 
@@ -124,7 +127,7 @@ namespace PrtgAPI.Objects.Undocumented
                 ddls.Add(ddl);
             }
 
-            return ddls;
+            return ddls.Where(ddl => ddl.Name != "channel").ToList();
 
            /*var properties = lists.Select(list => new DropDownList
             {
