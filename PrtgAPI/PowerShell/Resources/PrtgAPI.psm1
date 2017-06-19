@@ -25,37 +25,35 @@ New-Alias GoPrtg Connect-GoPrtgServer
 
 $ErrorActionPreference = "Stop"
 
+$functions = Get-ChildItem "$PSScriptRoot\Functions"
+
+$script:prtgAPIModule = $true
+
+. $PSScriptRoot\PrtgAPI.GoPrtg.ps1
+
+foreach($function in $functions)
+{
+	. $function.FullName
+
+	$name = $function.Name -replace ".ps1",""
+
+	Export-ModuleMember $name
+}
 
 #bugs: 1. when you remove one prtg server, it removes the whole function from memory
 #2. when we remove an entry we need to _update_ the function in memory
 #3. when we update an alias we need to update the function in memory
 #4. for _every single test_, we need to confirm that when we do something with an entry, the function in memory is updated
 
-function New-Credential
-{
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "", Scope="Function")]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "", Scope="Function")]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Scope="Function")]
-	[CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]
-        $UserName,
 
-        [string]
-        $Password
-    )
-    
-    $secureString = ConvertTo-SecureString $Password -AsPlainText -Force
-    New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secureString
-}
 
 #what if we allowed multiple aliases to be installed
 #and then, what if we could say ok if you dont specify a server you get the default one, otherwise we switch on
 #a pattern of the server you specified
 #we could also have a get-goprtgalias cmdlet that lists all the servers we've saved and the username we're using
 
-Export-ModuleMember -Function * -Alias *
+Export-ModuleMember -Alias *
+#Export-ModuleMember -Function * -Alias *
+#Export-ModuleMember -Function Install-GoPrtgServer,Uninstall-GoPrtgServer,Get-GoPrtgServer,Connect-GoPrtgServer,Set-GoPrtgAlias
 
-. $PSScriptRoot\PrtgAPI.GoPrtg.ps1
+#. $PSScriptRoot\PrtgAPI.GoPrtg.ps1

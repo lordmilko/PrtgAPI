@@ -115,7 +115,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (RetryDelay != null)
                     PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
 
-                if (Progress == false || (MyInvocation.ScriptName != string.Empty && !MyInvocation.ScriptName.EndsWith("PrtgAPI.GoPrtg.ps1")) || GetVariableValue("global:psISE") != null)
+                if (Progress == false || (MyInvocation.ScriptName != string.Empty && !MyInvocation.ScriptName.EndsWith("Connect-GoPrtgServer.ps1")) || GetVariableValue("global:psISE") != null)
                     PrtgSessionState.EnableProgress = false;
                 else
                     PrtgSessionState.EnableProgress = true;
