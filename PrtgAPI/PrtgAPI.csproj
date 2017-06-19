@@ -48,6 +48,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\Deserialization\ObjectSettings\DBAuthMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DiscoveryNameResolutionMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DiscoveryRescanMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DiscoverySchedule.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DiscoveryType.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\EncryptionType.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\HashType.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\HTTPMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\IPSelectionMethod.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\IPVersion.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\LinuxLoginMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\ProbeRestartOption.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\RetryMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPCounterMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPOverflowMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPPortIdentification.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPPortNameUpdateMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPRequestMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPVersion.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SNMPZeroValueMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SSHElevationMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SSHEngine.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\VMwareSessionMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\WmiDataSource.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\WmiTimeoutMethod.cs" />
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Events\EventStack.cs" />
     <Compile Include="Events\EventState.cs" />

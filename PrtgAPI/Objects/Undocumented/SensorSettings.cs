@@ -6,22 +6,17 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    //todo: move settings that are shared between all object types to objectsettings base class
+
+    //have a containersettings group for probe/group/device specific stuff
+
+    //todo: need to implement dependencyproperties
+    //todo: why does setobjectproperty do a lookup of sensorsettings, etc?
+    //i think its because we need to validate the type
+
+
     internal class SensorSettings : ObjectSettings
     {
-        internal static XElement GetXml(string response, int sensorId)
-        {
-            var basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
-            var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall
-
-            //return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex);
-            var ddlXml = GetDropDownListXml(response, nameRegex, null);
-            var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
-
-            var elm = new XElement("properties", inputXml, ddlXml, dependencyXml);
-            return elm;
-        }
-
         const string TimeFormat = "yyyy,MM,dd,HH,mm,ss";
 
         /// <summary>
@@ -92,7 +87,7 @@ internal string x_StackUnit { get; set; }
         }
 
         /// <summary>
-        /// Duration (in seconds) to delay resuming this sensor after its master object returns to <see cref="SensorStatus.Up"/>.
+        /// Duration (in seconds) to delay resuming this sensor after its master object returns to <see cref="Status.Up"/>.
         /// </summary>
         [XmlElement("injected_depdelay")]
         internal int z_DependencyDelay { get; set; }
@@ -156,7 +151,10 @@ internal string x_PrimaryChannel { get; set; }
 [XmlElement("injected_unitconfig__oukBytesMemory_volume")]
 internal string x_UnitConfig__OUKBytesMemory_Volume { get; set; }
 
-
+//untested! does it store the target in a wmi remote ping sensor?
+[XmlElement("injected_targetaddress")]
+[PropertyParameter(nameof(ObjectProperty.Target))]
+public string Target { get; set; }
 
 
 

@@ -772,7 +772,7 @@ namespace PrtgAPI
 
             var response = requestEngine.ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
 
-            return ChannelSettings.GetXml(response, channelId);
+            return ChannelSettings.GetChannelXml(response, channelId);
         }
 
         internal async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
@@ -781,7 +781,7 @@ namespace PrtgAPI
 
             var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters);
 
-            return ChannelSettings.GetXml(response, channelId);
+            return ChannelSettings.GetChannelXml(response, channelId);
         }
 
         #endregion
@@ -1218,12 +1218,42 @@ namespace PrtgAPI
             return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
         }
 
-        internal SensorSettings GetObjectProperties(int objectId)
+        private T GetObjectProperties<T>(int objectId, BaseType objectType)
         {
             var parameters = new Parameters.Parameters
             {
                 [Parameter.Id] = objectId,
-                [Parameter.ObjectType] = BaseType.Sensor
+                [Parameter.ObjectType] = objectType
+            };
+
+            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
+
+            var xml = ObjectSettings.GetXml(response, objectId);
+            var xDoc = new XDocument(xml);
+
+            var items = Data<T>.DeserializeType(xDoc);
+
+            return items;
+        }
+
+        internal SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor);
+
+        public DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device);
+
+        public GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group);
+
+        public ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, BaseType.Probe);
+
+        //todo: have an update-goprtgcredential cmdlet that does a get-credential -username <existing>
+        //to re-connect to prtg, update the stored passhash and then show a green connected message
+
+        internal object GetObjectProperties1(int objectId)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = 2211,
+                //[Parameter.ObjectType] = BaseType.Sensor
+                [Parameter.ObjectType] = BaseType.Group
             };
 
             //we'll need to add support for dropdown lists too
@@ -1234,7 +1264,9 @@ namespace PrtgAPI
 
             var doc = new XDocument(blah);
 
-            var aaaa = Data<SensorSettings>.DeserializeType(doc);
+            //var aaaa = Data<SensorSettings>.DeserializeType(doc);
+
+            var aaaa = Data<DeviceSettings>.DeserializeType(doc);
 
             //maybe instead of having an enum for my schedule and scanninginterval we have a class with a special getter that removes the <num>|component when you try and retrieve the property
             //the thing is, the enum IS actually dynamic - we need a list of valid options

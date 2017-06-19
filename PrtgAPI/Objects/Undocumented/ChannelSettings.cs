@@ -5,7 +5,7 @@ namespace PrtgAPI.Objects.Undocumented
 {
     class ChannelSettings : ObjectSettings
     {
-        internal static XElement GetXml(string response, int channelId)
+        internal static XElement GetChannelXml(string response, int channelId)
         {
             var basicMatchRegex = "<input.+?name=\".*?_.+?\".+?value=\".*?\".+?>";
             var nameRegex = "(.+?name=\")(.+?)(\".+)";

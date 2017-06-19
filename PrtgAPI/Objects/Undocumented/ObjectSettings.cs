@@ -11,6 +11,21 @@ namespace PrtgAPI.Objects.Undocumented
 {
     public class ObjectSettings
     {
+        internal static XElement GetXml(string response, int sensorId)
+        {
+            var basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>"; //<input name="" value="">
+            var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall
+
+            //return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
+            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex);
+            var ddlXml = GetDropDownListXml(response, nameRegex, null);
+            var textXml = GetTextAreaXml(response, nameRegex);
+            var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
+
+            var elm = new XElement("properties", inputXml, ddlXml, textXml, dependencyXml);
+            return elm;
+        }
+
         internal static XElement GetDependency(string response)
         {
             var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
@@ -71,6 +86,26 @@ namespace PrtgAPI.Objects.Undocumented
             }
 
             return null;
+        }
+
+        internal static List<XElement> GetTextAreaXml(string response, string nameRegex)
+        {
+            var pattern = "(<textarea.+?>)(.*?)(<\\/textarea>)";
+
+            //todo: what if there are none: will that cause an exception? (e.g. when doing sensor settings properties)
+
+            var text = Regex.Matches(response, pattern, RegexOptions.Singleline);
+            var matches = (text.Cast<Match>().Select(match => match.Value)).ToList();
+
+            var namesAndValues = matches.Select(m => new
+            {
+                Name = Regex.Replace(m, nameRegex, "$2"),
+                Value = Regex.Replace(m, pattern, "$2")
+            }).ToList();
+
+            var xml = namesAndValues.Select(n => new XElement($"injected_{n.Name}", n.Value)).ToList();
+
+            return xml;
         }
 
         private static List<Input> GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)
