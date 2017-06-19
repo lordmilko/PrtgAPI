@@ -38,6 +38,12 @@ namespace PrtgAPI
         [XmlElement("lastvalue_raw")]
         protected string lastValueNumeric { get; set; }
 
+        [XmlElement("injected_factorm")]
+        public string ScalingMultiplication { get; set; }
+
+        [XmlElement("injected_factord")]
+        public string ScalingDivision { get; set; }
+
         /// <summary>
         /// ID of the sensor this channel belongs to.
         /// </summary>

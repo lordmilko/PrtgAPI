@@ -187,7 +187,10 @@ namespace PrtgAPI.PowerShell.Base
 
         protected override IEnumerable<TObject> GetCount(IEnumerable<TObject> records, ref int count)
         {
-            return records;
+            if (streamResults)
+                return records;
+            else
+                return base.GetCount(records, ref count);
         }
 
         private IEnumerable<TObject> FilterResponseRecordsByTag(IEnumerable<TObject> records)

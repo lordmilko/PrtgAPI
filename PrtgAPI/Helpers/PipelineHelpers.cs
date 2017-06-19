@@ -1,5 +1,8 @@
-﻿using System.Management.Automation;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 using System.Reflection;
+using PrtgAPI.PowerShell;
 
 namespace PrtgAPI.Helpers
 {
@@ -26,23 +29,26 @@ namespace PrtgAPI.Helpers
             return prop;
         }
 
-        public static object[] GetPipelineInput(this ICommandRuntime commandRuntime, Cmdlet cmdlet)
+        public static Pipeline GetPipelineInput(this ICommandRuntime commandRuntime, Cmdlet cmdlet)
         {
             var inputPipe = commandRuntime.GetInternalProperty("InputPipe");
             var enumerator = inputPipe.GetType().GetField("_enumeratorToProcess", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(inputPipe);
 
+            var currentPS = (PSObject)cmdlet.GetInternalProperty("CurrentPipelineObject");
+            var current = currentPS.ToString() == string.Empty ? null : currentPS.BaseObject;
+
             if (enumerator == null) //Piping from a cmdlet
             {
-                var obj = cmdlet.GetInternalProperty("CurrentPipelineObject");
-
-                if (obj.ToString() == string.Empty)
+                if (current == null)
                     return null;
 
-                return new[] {obj};
+                return new Pipeline(current, new List<object> {current});
             }
             else //Piping from a variable
             {
-                return (object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator);
+                var array = ((object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Cast<PSObject>();
+
+                return new Pipeline(current, array.Select(e => e.BaseObject).ToList());
             }
         }
     }

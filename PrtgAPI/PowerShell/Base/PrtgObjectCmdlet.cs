@@ -34,10 +34,27 @@ namespace PrtgAPI.PowerShell.Base
 
             if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(GetRecords);
+            else if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+                records = GetResultsWithVariableProgress(GetRecords);
             else
                 records = GetRecords();
 
             WriteList(records);
+        }
+
+        protected IEnumerable<T> GetResultsWithVariableProgress(Func<IEnumerable<T>> getResults)
+        {
+            ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search";
+
+            ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.Pipeline.List.First().GetType()).ToLower()}s";
+            ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof (T)).ToLower()}s";
+
+            ProgressManager.DisplayInitialProgress();
+            ProgressManager.UpdateRecordsProcessed();
+
+            var records = getResults();
+
+            return records;
         }
 
         protected IEnumerable<T> GetResultsWithProgress(Func<IEnumerable<T>> getResults)
@@ -63,7 +80,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 if (ProgressManager.PreviousContainsProgress)
                 {
-                    ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T))}s");
+                    ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s");
                 }
             }
 
@@ -75,9 +92,9 @@ namespace PrtgAPI.PowerShell.Base
             var attribute = type.GetCustomAttribute<DescriptionAttribute>();
 
             if (attribute != null)
-                return attribute.Description.ToLower();
+                return attribute.Description;
             else
-                return type.Name.ToLower();
+                return type.Name;
         }
 
         private IEnumerable<T> UpdatePreviousProgress(IEnumerable<T> records, int count)
@@ -119,12 +136,12 @@ namespace PrtgAPI.PowerShell.Base
 
         protected void SetObjectSearchProgress(ProcessingOperation operation, int? count)
         {
-            ProgressManager.CurrentRecord.Activity = $"PRTG {typeof(T).Name} Search";
+            ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search";
 
             if (operation == ProcessingOperation.Processing)
-                ProgressManager.InitialDescription = $"Processing {typeof (T).Name.ToLower()}";
+                ProgressManager.InitialDescription = $"Processing {GetTypeDescription(typeof(T)).ToLower()}";
             else
-                ProgressManager.InitialDescription = $"Retrieving all {typeof (T).Name.ToLower()}s";
+                ProgressManager.InitialDescription = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
 
             if (count != null)
                 ProgressManager.TotalRecords = count;
@@ -146,13 +163,15 @@ namespace PrtgAPI.PowerShell.Base
 
             foreach (var item in sendToPipeline)
             {
-                if (ProgressManager.ContainsProgress)
+                if (ProgressManager.ContainsProgress && !ProgressManager.PipeFromVariable)
                 {
                     ProgressManager.UpdateRecordsProcessed();
                 }
 
                 WriteObject(item);
             }
+
+            //need to have multiple level progress like normal when chaining 3 together when piping from variable
 
             if (ProgressManager.ContainsProgress)
                 ProgressManager.CompleteProgress();

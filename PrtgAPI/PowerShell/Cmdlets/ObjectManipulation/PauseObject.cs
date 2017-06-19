@@ -97,7 +97,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
             {
                 var t = duration == 1 ? "minute" : "minutes";
-                ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing PRTG Objects", $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' for {duration} {t}");
+                var t2 = Forever.IsPresent ? "forever" : $"for {duration} {t}";
+                ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing PRTG Objects", $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {t2}");
             }
         }
     }

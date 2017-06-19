@@ -69,6 +69,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
+    <Compile Include="PowerShell\Pipeline.cs" />
     <Compile Include="PowerShell\ProgressManager.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>

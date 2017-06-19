@@ -32,6 +32,10 @@ namespace PrtgAPI.PowerShell
 
         public int? TotalRecords { get; set; }
 
+        public Pipeline Pipeline { get; set; }
+
+        public bool PipeFromVariable => Pipeline?.List.Count() > 1;
+
         public ProgressRecord PreviousRecord => progressRecords.Skip(1).FirstOrDefault();
 
         private PSCmdlet cmdlet;
@@ -46,6 +50,7 @@ namespace PrtgAPI.PowerShell
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
 
             this.cmdlet = cmdlet;
+            Pipeline = cmdlet.CommandRuntime.GetPipelineInput(cmdlet);
         }
 
         ~ProgressManager()
@@ -121,6 +126,9 @@ namespace PrtgAPI.PowerShell
 
         public void CompleteProgress()
         {
+            if (PipeFromVariable && Pipeline.CurrentIndex < Pipeline.List.Count - 1)
+                return;
+
             InitialDescription = null;
             TotalRecords = null;
             recordsProcessed = -1;
@@ -136,14 +144,26 @@ namespace PrtgAPI.PowerShell
 
         public void UpdateRecordsProcessed()
         {
-            recordsProcessed++;
+            if (PipeFromVariable)
+            {
+                CurrentRecord.StatusDescription = $"{InitialDescription} {Pipeline.CurrentIndex + 1}/{Pipeline.List.Count}";
 
-            CurrentRecord.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
+                if ((Pipeline.CurrentIndex + 1) > 0)
+                    CurrentRecord.PercentComplete = (int) ((Pipeline.CurrentIndex + 1)/Convert.ToDouble(Pipeline.List.Count)*100);
 
-            if(recordsProcessed > 0)
-                CurrentRecord.PercentComplete = (int)(recordsProcessed / Convert.ToDouble(TotalRecords) * 100);
+                WriteProgress();
+             }
+            else
+            {
+                recordsProcessed++;
 
-            WriteProgress();
+                CurrentRecord.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
+
+                if (recordsProcessed > 0)
+                    CurrentRecord.PercentComplete = (int)(recordsProcessed / Convert.ToDouble(TotalRecords) * 100);
+
+                WriteProgress();
+            }
         }
 
         public void TrySetPreviousOperation(string operation)
@@ -161,6 +181,9 @@ namespace PrtgAPI.PowerShell
 
         public void DisplayInitialProgress()
         {
+            if (PipeFromVariable && Pipeline.CurrentIndex > 0)
+                return;
+
             CurrentRecord.StatusDescription = InitialDescription;
 
             WriteProgress();
@@ -168,13 +191,18 @@ namespace PrtgAPI.PowerShell
 
         public void TryOverwritePreviousOperation(string activity, string progressMessage)
         {
+            //i think we need to revert the way we're doing this. say processing sensors, then if we detect we're going to pipe to someone display some progress that counts through our items
+            //i think we already use this logic for "normal" pipes, right?
+
             if (PreviousRecord != null)
             {
+                //if we're piping from a variable, that means the current count is actually a count of the variable; therefore, we need to inspect the pipeline to get the number of triggers incoming?
+
                 PreviousRecord.Activity = activity;
 
                 var p = PreviousRecord.StatusDescription.Substring(PreviousRecord.StatusDescription.LastIndexOf(" ") + 1);
 
-                PreviousRecord.StatusDescription = $"{progressMessage} ({p})";
+                PreviousRecord.StatusDescription = $"{progressMessage} ({p.Trim('(').Trim(')')})";
 
                 WriteProgress(PreviousRecord);
             }
