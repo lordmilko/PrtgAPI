@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -192,23 +194,23 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieve sensors from a PRTG Server of one or more statuses.
         /// </summary>
-        /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
+        /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns></returns>
-        public List<Sensor> GetSensors(params SensorStatus[] sensorStatuses) => GetSensors(new SensorParameters { StatusFilter = sensorStatuses });
+        public List<Sensor> GetSensors(params Status[] statuses) => GetSensors(new SensorParameters { StatusFilter = statuses });
 
         /// <summary>
         /// Asynchronously retrieve sensors from a PRTG Server of one or more statuses.
         /// </summary>
-        /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
+        /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns></returns>
-        public async Task<List<Sensor>> GetSensorsAsync(params SensorStatus[] sensorStatuses) => await GetSensorsAsync(new SensorParameters { StatusFilter = sensorStatuses }).ConfigureAwait(false);
+        public async Task<List<Sensor>> GetSensorsAsync(params Status[] statuses) => await GetSensorsAsync(new SensorParameters { StatusFilter = statuses }).ConfigureAwait(false);
 
         /// <summary>
         /// Stream sensors from a PRTG Server of one or more statuses. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <param name="sensorStatuses">A list of sensor statuses to filter for.</param>
+        /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns></returns>
-        public IEnumerable<Sensor> StreamSensors(params SensorStatus[] sensorStatuses) => StreamSensors(new SensorParameters { StatusFilter = sensorStatuses });
+        public IEnumerable<Sensor> StreamSensors(params Status[] statuses) => StreamSensors(new SensorParameters { StatusFilter = statuses });
 
             #endregion
             #region Filter (Property, Value)
@@ -912,7 +914,7 @@ namespace PrtgAPI
         #region Sensor State
 
         /// <summary>
-        /// Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
+        /// Mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
@@ -920,7 +922,7 @@ namespace PrtgAPI
         public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) => requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message));
 
         /// <summary>
-        /// Asynchronously mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="SensorStatus.Up"/>, it will not be acknowledged when it goes down again.
+        /// Asynchronously mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>

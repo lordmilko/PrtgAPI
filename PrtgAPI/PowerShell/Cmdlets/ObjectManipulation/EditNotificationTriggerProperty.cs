@@ -72,7 +72,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 ExecuteOperation(() => client.SetNotificationTrigger(parameters), "Edit Notification Triggers", $"Setting trigger property {Property} to value '{Value}'");
             }
-                
         }
     }
 }

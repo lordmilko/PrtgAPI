@@ -17,9 +17,9 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Filter PRTG Results according to one or more sensor statuses.
         /// </summary>
-        public SensorStatus[] StatusFilter
+        public Status[] StatusFilter
         {
-            get { return (SensorStatus[]) this[Parameter.FilterStatus]; }
+            get { return (Status[]) this[Parameter.FilterStatus]; }
             set { this[Parameter.FilterStatus] = value; }
         }
 

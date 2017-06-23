@@ -67,7 +67,7 @@ namespace PrtgAPI
         FilterRecordAge,
 
         /// <summary>
-        /// One or more <see cref="SensorStatus"/> values used to retrieve sensors in specified states.
+        /// One or more <see cref="Status"/> values used to retrieve sensors in specified states.
         /// </summary>
         [ParameterType(ParameterType.MultiParameter)]
         [Description("filter_status")]

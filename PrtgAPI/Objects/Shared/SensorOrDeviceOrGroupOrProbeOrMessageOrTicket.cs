@@ -11,11 +11,11 @@ namespace PrtgAPI.Objects.Shared
         // ################################## Sensors, Devices, Groups, Probes, Messages, Tickets ##################################
 
         /// <summary>
-        /// <see cref="SensorStatus"/> of this object. If this object is a Message, this value contains the category of log message.
+        /// <see cref="PrtgAPI.Status"/> of this object. If this object is a Message, this value contains the category of log message.
         /// </summary>
         [XmlElement("status_raw")]
         [PropertyParameter(nameof(Property.Status))]
-        public SensorStatus Status { get; set; }
+        public Status Status { get; set; }
 
         /// <summary>
         /// <see cref="Priority"/> of this object.

@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Mark a <see cref="SensorStatus.Down"/> sensor as <see cref="SensorStatus.DownAcknowledged"/>.</para>
+    /// <para type="synopsis">Mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>.</para>
     /// 
     /// <para type="description">The Acknowledge-Sensor cmdlet acknowledges a sensor that is currently in a 'Down' state. When a sensor
     /// is acknowledged, it no longer generates notification triggers and is moved from the 'Down' sensors page to the 'Down (Acknowledged)'

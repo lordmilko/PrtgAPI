@@ -9,7 +9,7 @@ namespace PrtgAPI
     public class SensorTotals
     {
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.Up"/> state.
+        /// Number of sensors in <see cref="Status.Up"/> state.
         /// </summary>
         public int UpSensors => DH.StrToInt(upSensors);
 
@@ -20,7 +20,7 @@ namespace PrtgAPI
         protected string upSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.Down"/> state.
+        /// Number of sensors in <see cref="Status.Down"/> state.
         /// </summary>
         public int DownSensors => DH.StrToInt(downSensors);
 
@@ -31,7 +31,7 @@ namespace PrtgAPI
         protected string downSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.Warning"/> state.
+        /// Number of sensors in <see cref="Status.Warning"/> state.
         /// </summary>
         public int WarningSensors => DH.StrToInt(warningSensors);
 
@@ -42,7 +42,7 @@ namespace PrtgAPI
         protected string warningSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.DownAcknowledged"/> state.
+        /// Number of sensors in <see cref="Status.DownAcknowledged"/> state.
         /// </summary>
         public int DownAcknowledgedSensors => DH.StrToInt(downAcknowledgedSensors);
 
@@ -53,7 +53,7 @@ namespace PrtgAPI
         protected string downAcknowledgedSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.DownPartial"/> state.
+        /// Number of sensors in <see cref="Status.DownPartial"/> state.
         /// </summary>
         public int PartialDownSensors => DH.StrToInt(partialDownSensors);
 
@@ -64,7 +64,7 @@ namespace PrtgAPI
         protected string partialDownSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.Unusual"/> state.
+        /// Number of sensors in <see cref="Status.Unusual"/> state.
         /// </summary>
         public int UnusualSensors => DH.StrToInt(unusualSensors);
 
@@ -75,7 +75,7 @@ namespace PrtgAPI
         protected string unusualSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.PausedByUser"/>, <see cref="SensorStatus.PausedByDependency"/>, <see cref="SensorStatus.PausedBySchedule"/> or <see cref="SensorStatus.PausedByLicense"/> state.
+        /// Number of sensors in <see cref="Status.PausedByUser"/>, <see cref="Status.PausedByDependency"/>, <see cref="Status.PausedBySchedule"/> or <see cref="Status.PausedByLicense"/> state.
         /// </summary>
         public int PausedSensors => DH.StrToInt(pausedSensors);
 
@@ -86,7 +86,7 @@ namespace PrtgAPI
         protected string pausedSensors { get; set; }
 
         /// <summary>
-        /// Number of sensors in <see cref="SensorStatus.Unknown"/> state.
+        /// Number of sensors in <see cref="Status.Unknown"/> state.
         /// </summary>
         public int UndefinedSensors => DH.StrToInt(undefinedSensors);
 
@@ -97,7 +97,7 @@ namespace PrtgAPI
         protected string undefinedSensors { get; set; }
 
         /// <summary>
-        /// Total number of sensors in any <see cref="SensorStatus"/> state.
+        /// Total number of sensors in any <see cref="Status"/> state.
         /// </summary>
         public int TotalSensors => DH.StrToInt(totalSensors);
 

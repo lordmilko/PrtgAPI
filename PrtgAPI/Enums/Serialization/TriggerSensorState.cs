@@ -8,22 +8,22 @@ namespace PrtgAPI
     public enum TriggerSensorState
     {
         /// <summary>
-        /// Trigger when the sensor is <see cref="SensorStatus.Down"/>.
+        /// Trigger when the sensor is <see cref="Status.Down"/>.
         /// </summary>
         Down = 0,
 
         /// <summary>
-        /// Trigger when the sensor is <see cref="SensorStatus.Warning"/>.
+        /// Trigger when the sensor is <see cref="Status.Warning"/>.
         /// </summary>
         Warning = 1,
 
         /// <summary>
-        /// Trigger when the sensor is <see cref="SensorStatus.Unusual"/>.
+        /// Trigger when the sensor is <see cref="Status.Unusual"/>.
         /// </summary>
         Unusual = 2,
 
         /// <summary>
-        /// Trigger when the sensor is <see cref="SensorStatus.DownPartial"/>.
+        /// Trigger when the sensor is <see cref="Status.DownPartial"/>.
         /// </summary>
         [XmlEnum("Partial Down")]
         PartialDown = 3
