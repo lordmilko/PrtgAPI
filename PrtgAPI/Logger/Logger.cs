@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI
+﻿using System;
+
+namespace PrtgAPI
 {
     internal class Logger
     {

@@ -75,7 +75,10 @@ namespace PrtgAPI
             if (channel == null)
                 return null;
 
-            var @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(GeneralTriggerChannel), false);
+            object @enum = null;
+
+            if (!(channel is TriggerChannel && ((TriggerChannel)channel).channel is int))
+                @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(GeneralTriggerChannel), false);
 
             if (@enum != null)
                 return Parse(@enum, null);

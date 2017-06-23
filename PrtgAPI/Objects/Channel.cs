@@ -39,10 +39,10 @@ namespace PrtgAPI
         protected string lastValueNumeric { get; set; }
 
         [XmlElement("injected_factorm")]
-        public string ScalingMultiplication { get; set; }
+        public double? ScalingMultiplication { get; set; }
 
         [XmlElement("injected_factord")]
-        public string ScalingDivision { get; set; }
+        public double? ScalingDivision { get; set; }
 
         /// <summary>
         /// ID of the sensor this channel belongs to.
@@ -166,13 +166,13 @@ namespace PrtgAPI
         /// Maximum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.
         /// </summary>
         [XmlElement("injected_axismax")]
-        public int? VerticalAxisMax { get; set; }
+        public double? VerticalAxisMax { get; set; }
 
         /// <summary>
         /// Minimum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.
         /// </summary>
         [XmlElement("injected_axismin")]
-        public int? VerticalAxisMin { get; set; }
+        public double? VerticalAxisMin { get; set; }
 
         /// <summary>
         /// Whether warning or error limits are enabled for this channel. When this channel's value crosses these limits, the channel's sensor will transition into an error or warning state.

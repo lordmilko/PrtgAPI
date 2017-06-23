@@ -35,7 +35,8 @@ namespace PrtgAPI.Helpers
             var enumerator = inputPipe.GetType().GetField("_enumeratorToProcess", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(inputPipe);
 
             var currentPS = (PSObject)cmdlet.GetInternalProperty("CurrentPipelineObject");
-            var current = currentPS.ToString() == string.Empty ? null : currentPS.BaseObject;
+
+            var current = currentPS?.ToString() == string.Empty || currentPS == null ? null : currentPS.BaseObject;
 
             if (enumerator == null) //Piping from a cmdlet
             {
