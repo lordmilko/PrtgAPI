@@ -1115,15 +1115,43 @@ namespace PrtgAPI
 
             //todo: need to implement simulateerrorparameters or get rid of it?
 
-            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString()));
+            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser));
 
-            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.+)", "$2"));
+            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.*)?", "$2"));
 
             return id;
 
             //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
 
             //get-sensor|copy-object -target $devices
+        }
+
+        private string CloneRequestParser(HttpResponseMessage response)
+        {
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return null;
+
+            var message = response.RequestMessage.RequestUri.ToString();
+
+            if (message.Contains("the object is currently not valid"))
+            {
+                var searchText = "errorurl=";
+                var expectedUrl = message.Substring(message.IndexOf(searchText, StringComparison.Ordinal) + searchText.Length);
+
+                if (expectedUrl.EndsWith("%26"))
+                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("%26"));
+                else if (expectedUrl.EndsWith("&"))
+                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("&"));
+
+                searchText = "error.htm";
+
+                var server = message.Substring(0, message.IndexOf(searchText));
+
+                message = $"{server}public/login.htm?loginurl={expectedUrl}&errormsg=";
+                response.RequestMessage.RequestUri = new Uri(message);
+            }
+
+            return message;
         }
 
         /// <summary>
@@ -1149,9 +1177,9 @@ namespace PrtgAPI
                 [Parameter.TargetId] = targetGroupId
             };
 
-            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, r => r.RequestMessage.RequestUri.ToString()));
+            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser));
 
-            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.+)", "$2"));
+            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.*)?", "$2"));
 
             return id;
 

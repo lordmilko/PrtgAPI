@@ -9,5 +9,11 @@ namespace PrtgAPI.PowerShell.Base
             ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
             action();
         }
+
+        protected T ExecuteOperation<T>(Func<T> action, string activity, string progressMessage)
+        {
+            ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
+            return action();
+        }
     }
 }

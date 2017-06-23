@@ -93,7 +93,13 @@ namespace PrtgAPI.Request
                 {
                     var response = webClient.GetSync(url.Url).Result;
 
-                    var responseText = responseParser == null ? response.Content.ReadAsStringAsync().Result : responseParser(response);
+                    string responseText = null;
+
+                    if (responseParser != null)
+                        responseText = responseParser(response);
+
+                    if (responseText == null)
+                        responseText = response.Content.ReadAsStringAsync().Result;
 
                     ValidateHttpResponse(response, responseText);
 
@@ -125,7 +131,13 @@ namespace PrtgAPI.Request
                 {
                     var response = await webClient.GetAsync(url.Url).ConfigureAwait(false);
 
-                    var responseText = responseParser == null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : await responseParser(response);
+                    string responseText = null;
+
+                    if (responseParser != null)
+                        responseText = await responseParser(response).ConfigureAwait(false);
+
+                    if (responseText == null)
+                        responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                     ValidateHttpResponse(response, responseText);
 
