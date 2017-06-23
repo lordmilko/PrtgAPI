@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI
+﻿using System.ComponentModel;
+
+namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Specifies properties (referred to by PRTG as "columns") that can be retrieved for a PRTG Object.</para>
@@ -11,7 +13,8 @@
         /// ID of the current object.
         /// Used in: All Object Tables
         /// </summary>
-        ObjId,
+        [Description("objid")]
+        Id,
 
         /// <summary>
         /// Displays the object type (group, device, report etc.) or, in case of sensors, the sensor type (ping, http, etc.).
@@ -47,13 +50,15 @@
         /// Cumulated downtime of a sensor (in minutes/hours).
         /// Used in: Sensors
         /// </summary>
-        DowntimeTime,
+        [Description("downtimetime")]
+        TotalDowntime,
 
         /// <summary>
         /// Elapsed time since last UP of a sensor.
         /// Used in: Sensors
         /// </summary>
-        DowntimeSince,
+        [Description("downtimesince")]
+        DownDuration,
 
         /// <summary>
         /// Cumulated uptime of a sensor (displayed as percentage of uptime+downtime).
@@ -65,25 +70,29 @@
         /// Cumulated uptime of a sensor (in minutes/hours).
         /// Used in: Sensors
         /// </summary>
-        UptimeTime,
+        [Description("uptimetime")]
+        TotalUptime,
 
         /// <summary>
         /// Elapsed time since last DOWN of a sensor.
         /// Used in: Sensors
         /// </summary>
-        UptimeSince,
+        [Description("uptimesince")]
+        UpDuration,
 
         /// <summary>
         /// Sum of cumulated uptime and downtime of a sensor.
         /// Used in: Sensors
         /// </summary>
-        KnownTime,
+        [Description("knowntime")]
+        TotalMonitorTime,
 
         /// <summary>
         /// Timestamp when accumulation of uptimes/downtimes began.
         /// Used in: Sensors
         /// </summary>
-        CumSince,
+        [Description("cumsince")]
+        DataCollectedSince,
 
         /// <summary>
         /// Name of the sensor.
@@ -143,13 +152,15 @@
         /// Number of each trigger type defined for this sensor tree object.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        NotifiesX,
+        [Description("notifiesx")]
+        NotificationTypes,
 
         /// <summary>
         /// Displays either 'inherited' or the current interval setting of that object.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        IntervalX,
+        [Description("intervalx")]
+        IntervalInherited,
 
         /// <summary>
         /// Displays the access rights of the current user for a sensor tree object.
@@ -164,7 +175,7 @@
         Dependency,
 
         /// <summary>
-        /// For sensor tree objects: <see cref="SensorStatus"/> of the object; For messages: category of the log message.
+        /// For sensor tree objects: <see cref="PrtgAPI.Status"/> of the object; For messages: category of the log message.
         /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets
         /// </summary>
         Status,
@@ -188,64 +199,74 @@
         LastValue,
 
         /// <summary>
-        /// Number of sensors currently in an <see cref="SensorStatus.Up"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in an <see cref="PrtgAPI.Status.Up"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        UpSens,
+        [Description("upsens")]
+        UpSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.Down"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Down"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        DownSens,
+        [Description("downsens")]
+        DownSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.DownAcknowledged"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownAcknowledged"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        DownAckSens,
+        [Description("downacksens")]
+        DownAcknowledgedSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.DownPartial"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownPartial"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        PartialDownSens,
+        [Description("partialdownsens")]
+        PartialDownSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.Warning"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Warning"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        WarnSens,
+        [Description("warnsens")]
+        WarningSensors,
 
         /// <summary>
-        /// Number of sensors currently in a PAUSED state. This includes all PAUSED states (i.e. <see cref="SensorStatus.PausedByUser"/>, <see cref="SensorStatus.PausedByDependency"/>, <see cref="SensorStatus.PausedBySchedule"/> etc.).
+        /// Number of sensors currently in a PAUSED state. This includes all PAUSED states (i.e. <see cref="PrtgAPI.Status.PausedByUser"/>, <see cref="PrtgAPI.Status.PausedByDependency"/>, <see cref="PrtgAPI.Status.PausedBySchedule"/> etc.).
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        PausedSens,
+        [Description("pausedsens")]
+        PausedSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.Unusual"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unusual"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        UnusualSens,
+        [Description("unusualsens")]
+        UnusualSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="SensorStatus.Unknown"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unknown"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        UndefinedSens,
+        [Description("undefinedsens")]
+        UndefinedSensors,
 
         /// <summary>
         /// Number of sensors. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
-        TotalSens,
+        [Description("totalsens")]
+        TotalSensors,
 
         /// <summary>
         /// Should only be used as 'value_', because then it will be expanded for all visible channels/toplist columns. Displays a channel value or a toplist value.
         /// Used in: Values, TopData
         /// </summary>
-        Value_,
+        [Description("value_")]
+        Value,
 
         /// <summary>
         /// Displays the sensor coverage of a time span in a value table.
@@ -263,7 +284,8 @@
         /// Displays the user responsible for a history entry or the user (or user group) a ticket is assigned to.
         /// Used in: History, Tickets, TicketData
         /// </summary>
-        User,
+        [Description("user")]
+        UserName,
 
         /// <summary>
         /// Name of the parent object of the associated object of a log message.
@@ -276,7 +298,7 @@
         /// Used in: Messages, Tickets, TicketData, Values, History, StoredReports, TopIDX
         /// todo: what is topidx?------------------------------------------------------------------------------
         /// </summary>
-        Datetime,
+        DateTime,
 
         /// <summary>
         /// Like 'datetime' but only the date part.
@@ -372,7 +394,8 @@
         /// URL of the object.
         /// Used in: All Tree Objects
         /// </summary>
-        BaseLink,
+        [Description("baselink")]
+        Url,
 
         /// <summary>
         /// URL of the device icon.
@@ -396,19 +419,22 @@
         /// Subobjects are folded up (true) or down (false); tickets: user (or user group) to which ticket is assinged read it since last change.
         /// Used in: Groups, Probes, Tickets
         /// </summary>
-        Fold,
+        [Description("fold")]
+        Collapsed,
 
         /// <summary>
         /// Number of groups in a probe/group node.
         /// Used in: Groups, Probes
         /// </summary>
-        GroupNum,
+        [Description("groupnum")]
+        TotalGroups,
 
         /// <summary>
         /// Number of devices in a probe/group node.
         /// Used in: Groups, Probes
         /// </summary>
-        DeviceNum,
+        [Description("devicenum")]
+        TotalDevices,
 
         /// <summary>
         /// Type of the ticket: user, notification, todo.

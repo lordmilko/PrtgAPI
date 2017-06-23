@@ -16,7 +16,7 @@ namespace PrtgAPI.Objects.Shared
         /// ID number used to uniquely identify this object within PRTG.
         /// </summary>
         [XmlElement("objid")]
-        [PropertyParameter(nameof(Property.ObjId))]
+        [PropertyParameter(nameof(Property.Id))]
         public int Id { get; set; }
 
         /// <summary>

@@ -78,7 +78,7 @@ namespace PrtgAPI
 
         internal string ToString(object value)
         {
-            return ToString($"{Parameter.FilterXyz.GetDescription()}{Property.ToString().ToLower()}", Operator, value);
+            return ToString($"{Parameter.FilterXyz.GetDescription()}{Property.GetDescription().ToLower()}", Operator, value);
         }
 
         internal static string ToString(string parameter, FilterOperator @operator, object value)

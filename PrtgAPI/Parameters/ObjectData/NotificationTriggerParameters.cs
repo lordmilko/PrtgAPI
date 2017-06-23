@@ -6,7 +6,7 @@
         {
             ObjectId = objectId;
             this[Parameter.Content] = Content.Triggers;
-            this[Parameter.Columns] = new[] { Property.Content, Property.ObjId };
+            this[Parameter.Columns] = new[] { Property.Content, Property.Id };
         }
 
         public int ObjectId

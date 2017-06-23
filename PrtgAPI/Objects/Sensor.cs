@@ -75,14 +75,14 @@ namespace PrtgAPI
         /// Total amount of time sensor has ever been in a down state.
         /// </summary>
         [XmlElement("downtimetime_raw")]
-        [PropertyParameter(nameof(Property.DowntimeTime))]
+        [PropertyParameter(nameof(Property.TotalDowntime))]
         public TimeSpan? TotalDowntime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an up state. If sensor is currently up, this value is null.
         /// </summary>
         [XmlElement("downtimesince_raw")]
-        [PropertyParameter(nameof(Property.DowntimeSince))]
+        [PropertyParameter(nameof(Property.DownDuration))]
         public TimeSpan? DownDuration { get; set; }
 
         /// <summary>
@@ -96,27 +96,27 @@ namespace PrtgAPI
         /// Total amount of time sensor has ever been in an up state.
         /// </summary>
         [XmlElement("uptimetime_raw")]
-        [PropertyParameter(nameof(Property.UptimeTime))]
+        [PropertyParameter(nameof(Property.TotalUptime))]
         public TimeSpan? TotalUptime { get; set; }
 
         /// <summary>
         /// Amount of time passed since sensor was last in an down state. If sensor is currently down, this value is null.
         /// </summary>
         [XmlElement("uptimesince_raw")]
-        [PropertyParameter(nameof(Property.UptimeSince))]
+        [PropertyParameter(nameof(Property.UpDuration))]
         public TimeSpan? UpDuration { get; set; }
 
         /// <summary>
         /// Total amount of time this sensor has been in an up or down state.
         /// </summary>
         [XmlElement("knowntime_raw")]
-        [PropertyParameter(nameof(Property.KnownTime))]
+        [PropertyParameter(nameof(Property.TotalMonitorTime))]
         public TimeSpan TotalMonitorTime { get; set; }
 
         /// <summary>
         /// When data collection on this sensor began.
         /// </summary>
-        [PropertyParameter(nameof(Property.CumSince))]
+        [PropertyParameter(nameof(Property.DataCollectedSince))]
         [XmlElement("cumsince_raw")]
         public DateTime? DataCollectedSince { get; set; }
 

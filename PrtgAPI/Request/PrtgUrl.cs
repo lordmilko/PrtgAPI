@@ -214,7 +214,7 @@ namespace PrtgAPI.Request
 
             foreach (var obj in enumerable)
             {
-                builder.Append(HttpUtility.UrlEncode(Convert.ToString(obj)) + ",");
+                builder.Append(HttpUtility.UrlEncode(obj.GetType().IsEnum ? ((Enum)obj).GetDescription() : Convert.ToString(obj)) + ",");
             }
 
             builder.Length--;

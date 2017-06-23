@@ -41,7 +41,7 @@ namespace PrtgAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationTypes"/> class.
         /// </summary>
-        /// <param name="rawNotificationTypes">Raw <see cref="Property.NotifiesX"/> value returned from a PRTG Request.</param>
+        /// <param name="rawNotificationTypes">Raw <see cref="Property.NotificationTypes"/> value returned from a PRTG Request.</param>
         public NotificationTypes(string rawNotificationTypes)
         {
             if (rawNotificationTypes != null)

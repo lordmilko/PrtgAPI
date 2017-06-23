@@ -40,7 +40,7 @@ namespace PrtgAPI.Objects.Shared
         /// URL of this object.
         /// </summary>
         [XmlElement("baselink")]
-        [PropertyParameter(nameof(Property.BaseLink))]
+        [PropertyParameter(nameof(Property.Url))]
         public string Url { get; set; }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
         /// </summary>
-        [PropertyParameter(nameof(Property.NotifiesX))]
+        [PropertyParameter(nameof(Property.NotificationTypes))]
         public NotificationTypes NotificationTypes => notificationTypes == null ? null : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
         /// </summary>
-        [PropertyParameter(nameof(Property.IntervalX))]
+        [PropertyParameter(nameof(Property.IntervalInherited))]
         public bool IntervalInherited => intervalInherited?.Contains("Inherited") ?? false; //todo: add custom handling for this
 
         /// <summary>

@@ -12,21 +12,21 @@ namespace PrtgAPI.Objects.Shared
         /// Whether the object is currently expanded or collapsed in the PRTG Interface.
         /// </summary>
         [XmlElement("fold")]
-        [PropertyParameter(nameof(Property.Fold))]
+        [PropertyParameter(nameof(Property.Collapsed))]
         public bool Collapsed { get; set; }
 
         /// <summary>
         /// Number of groups contained under this object.
         /// </summary>
         [XmlElement("groupnum")]
-        [PropertyParameter(nameof(Property.GroupNum))]
+        [PropertyParameter(nameof(Property.TotalGroups))]
         public int TotalGroups { get; set; }
 
         /// <summary>
         /// Number of devices contained under this object.
         /// </summary>
         [XmlElement("devicenum")]
-        [PropertyParameter(nameof(Property.DeviceNum))]
+        [PropertyParameter(nameof(Property.TotalDevices))]
         public int TotalDevices { get; set; }
     }
 }
