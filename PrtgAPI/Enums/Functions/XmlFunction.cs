@@ -29,6 +29,9 @@ namespace PrtgAPI
         /// Get sensor totals (up, down, paused, etc) for a PRTG Server.
         /// </summary>
         [Description("gettreenodestats.xml")]
-        GetTreeNodeStats
+        GetTreeNodeStats,
+
+        [Description("historicdata.xml")]
+        HistoricData
     }
 }

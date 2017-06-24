@@ -52,6 +52,11 @@
         /// </summary>
         Values,
 
+        /// <summary>
+        /// Object modification history.
+        /// </summary>
+        History,
+
         /*Tickets,
         TicketData,
         Messages,

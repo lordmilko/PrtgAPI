@@ -1307,7 +1307,7 @@ namespace PrtgAPI
         }
 
         //todo: move this
-        private List<SensorHistory> GetSensorHistory(int sensorId)
+        private List<SensorHistory> GetSensorHistory1(int sensorId)
         {
             Logger.DebugEnabled = false;
 
@@ -1336,7 +1336,7 @@ namespace PrtgAPI
 
             var parameters = new Parameters.Parameters
             {
-                [Parameter.Columns] = new[] { Property.Datetime, Property.Value_, Property.Coverage },
+                [Parameter.Columns] = new[] { Property.DateTime, Property.Value, Property.Coverage },
                 [Parameter.Id] = 2196,
                 [Parameter.Content] = Content.Values
             };
@@ -1354,6 +1354,51 @@ namespace PrtgAPI
             //todo: need to implement coverage column
             //todo: right now the count is just the default - 500. need to allow specifying bigger counts
             return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
+        }
+
+        public List<ObjectHistory> GetObjectHistory(int objectId)
+        {
+            var parameters = new ObjectHistoryParameters(objectId);
+
+            var response = GetObjects<ObjectHistory>(parameters);
+
+            foreach (var item in response)
+            {
+                item.ObjectId = objectId;
+            }
+
+            return response;
+        }
+
+        internal List<SensorHistoryData> GetSensorHistory(int sensorId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var parameters = new SensorHistoryParameters(sensorId);
+
+            parameters.StartDate = DateTime.Now.Date;
+            parameters.EndDate = DateTime.Now.Date.AddHours(1);
+
+            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, r =>
+            {
+                if(r == "Not enough monitoring data")
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {r}");
+            });
+
+            var items = Data<SensorHistoryData>.DeserializeList(response).Items;
+
+            foreach (var history in items)
+            {
+                history.SensorId = sensorId;
+
+                foreach (var value in history.Values)
+                {
+                    value.Name = value.Name.Replace(" ", "");
+
+                    value.DateTime = history.DateTime;
+                    value.SensorId = sensorId;
+                }
+            }
+
+            return items;
         }
 
         #region SetObjectProperty

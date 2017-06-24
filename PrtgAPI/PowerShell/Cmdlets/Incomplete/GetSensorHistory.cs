@@ -1,34 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using System.Text;
+using System.Threading.Tasks;
+using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Request;
 
-namespace PrtgAPI.PowerShell.Cmdlets
+namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 {
-    class Record
-    {
-        public DateTime DateTime { get; set; }
-        public string ChannelName { get; set; }
-        public int ChannelId { get; set; }
-        public string Value { get; set; } 
-    }
-
     [Cmdlet(VerbsCommon.Get, "SensorHistory")]
-    class GetSensorHistory : PSCmdlet
+    public class GetSensorHistory : PrtgCmdlet
     {
-        protected override void ProcessRecord()
-        {
-            /*var list = new List<Record>();
+        [Parameter(Mandatory = true, ParameterSetName = "Default", ValueFromPipeline = true)]
+        public Sensor Sensor { get; set; }
 
-            list.Add(new Record
+        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
+        public int Id { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public DateTime? StartDate { get; set; }
+
+        [Parameter(Mandatory = false)]
+        public DateTime? EndDate { get; set; }
+
+        protected override void ProcessRecordEx()
+        {
+            //todo: need to figure out how to average?
+
+            if (ParameterSetName == "Default")
+                Id = Sensor.Id;
+
+            var response = client.GetSensorHistory(Id, StartDate, EndDate);
+
+            var list = new List<PSObject>();
+
+            foreach (var date in response)
             {
-                DateTime = DateTime.Now,
-                ChannelName = "Percent Available Memory",
-                ChannelId = 1,
-                Value = "100%"
-            });
+                var obj = new PSObject();
+
+                obj.Properties.Add(new PSNoteProperty("DateTime", date.DateTime));
+                obj.Properties.Add(new PSNoteProperty("SensorId", date.SensorId));
+
+                foreach (var channel in date.Values)
+                {
+                    obj.Properties.Add(new PSNoteProperty(channel.Name, channel.Value));
+                }
+
+                list.Add(obj);
+            }
 
             WriteObject(list, true);
-            */
-            throw new NotImplementedException();
         }
     }
 }

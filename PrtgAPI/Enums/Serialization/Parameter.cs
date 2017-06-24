@@ -239,6 +239,14 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
-        ObjectType
+        ObjectType,
+
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("sdate")]
+        StartDate,
+
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("edate")]
+        EndDate
     }
 }

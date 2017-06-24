@@ -29,11 +29,13 @@ namespace PrtgAPI.Request
             return response;
         }
 
-        internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters)
+        internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters, Action<string> requestValidator = null)
         {
             var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
 
             var response = ExecuteRequest(url);
+
+            requestValidator?.Invoke(response);
 
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
