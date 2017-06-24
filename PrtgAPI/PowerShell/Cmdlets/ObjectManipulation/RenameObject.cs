@@ -24,7 +24,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true)]
-    public class RenameObject : PrtgCmdlet
+    public class RenameObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to rename.</para>
@@ -43,8 +43,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            //todo when i piped a single entry to rename-object it didnt show progress
+
+            //when i pipe a variable with a list in it for objectdata cmdlets im not getting progress
+
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                client.RenameObject(Object.Id, Name);
+                ExecuteOperation(() => client.RenameObject(Object.Id, Name), "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
         }
     }
 }

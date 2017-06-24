@@ -8,7 +8,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Modify the value of an object property.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
-    public class SetObjectProperty : PrtgCmdlet
+    public class SetObjectProperty : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to modify the properties of.</para>
@@ -34,7 +34,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if(ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
-                client.SetObjectProperty(Object.Id, Property, Value);
+                ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), "Modify PRTG Object Settings", $"Setting object {Object.Name} (ID: {Object.Id}) setting {Property} to '{Value}'");
         }
     }
 }

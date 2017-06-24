@@ -77,6 +77,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            if (MyInvocation.BoundParameters.ContainsKey("Id") && MyInvocation.BoundParameters["Id"] == null)
+                throw new ParameterBindingException("The -Id parameter was specified however the parameter value was null.");
+
             var parameters = CreateParameters();
 
             IEnumerable<TObject> records;
@@ -94,11 +97,13 @@ namespace PrtgAPI.PowerShell.Base
                 streamResults = false;
             }
 
-            if (streamResults && !ProgressManager.FirstInChain)
+            if (streamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
                 streamResults = false;
 
             if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
+            else if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
             else
             {
                 if (streamResults)
@@ -128,7 +133,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (Id != null)
             {
-                AddPipelineFilter(Property.ObjId, Id);
+                AddPipelineFilter(Property.Id, Id);
             }
         }
 

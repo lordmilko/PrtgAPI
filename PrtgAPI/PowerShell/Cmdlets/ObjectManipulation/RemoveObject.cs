@@ -34,7 +34,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Object", SupportsShouldProcess = true)]
-    public class RemoveObject : PrtgCmdlet
+    public class RemoveObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to remove.</para>
@@ -59,7 +59,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 if(Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
-                    client.DeleteObject(Object.Id);
+                    ExecuteOperation(() => client.DeleteObject(Object.Id), "Deleting PRTG Objects", $"Deleting {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
             }
         }
     }

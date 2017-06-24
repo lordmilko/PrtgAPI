@@ -32,7 +32,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-NotificationTrigger</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "NotificationTrigger", SupportsShouldProcess = true)]
-    public class RemoveNotificationTrigger : PrtgCmdlet
+    public class RemoveNotificationTrigger : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">Notification trigger to remove.</para>
@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ShouldProcess($"'{Trigger.OnNotificationAction}' (Object ID: {Trigger.ObjectId}, Sub ID: {Trigger.SubId})"))
             {
                 if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete notification trigger '{Trigger.OnNotificationAction}' (Object ID: {Trigger.ObjectId}, Sub ID: {Trigger.SubId})", "WARNING!"))
-                    client.RemoveNotificationTrigger(Trigger);
+                    ExecuteOperation(() => client.RemoveNotificationTrigger(Trigger), "Removing Notification Triggers", $"Removing notification trigger '{Trigger.OnNotificationAction}' from Object {Trigger.ObjectId}");
             }
         }
     }
