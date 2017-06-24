@@ -100,7 +100,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id})"))
             {
                 var t = duration == 1 ? "minute" : "minutes";
-                ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), "Acknowledge PRTG Sensors", $"Acknowledging sensor '{Sensor.Name}' for {duration} {t}");
+                var t2 = Forever.IsPresent ? "forever" : $"for {duration} {t}";
+                ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), "Acknowledge PRTG Sensors", $"Acknowledging sensor '{Sensor.Name}' {t2}");
             }
         }
     }

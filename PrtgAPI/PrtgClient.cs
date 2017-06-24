@@ -1486,36 +1486,47 @@ namespace PrtgAPI
         //move this
         public void SetObjectProperty(int objectId, ObjectProperty property, object value)
         {
+            //Transform the value according to its properties' data type
             var prop = typeof (SensorSettings).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
 
             if (prop == null)
-                throw new MissingAttributeException(typeof (SensorSettings), property.ToString(), typeof (PropertyParameterAttribute));
+            {
+                throw new MissingAttributeException(typeof(SensorSettings), property.ToString(), typeof(PropertyParameterAttribute));
+            }
+                
 
             var propertyType = prop.PropertyType;
             var valueType = value.GetType();
 
             object val = null;
 
-            if (propertyType == typeof(bool))
+            if (propertyType == typeof (string) || propertyType == typeof(int) || propertyType == typeof(double))
+                val = value.ToString();
+            else
             {
-                if(valueType == typeof(bool))
-                    val = ((bool)value) ? "1" : "0";
-            }
-            else if (propertyType.IsEnum)
-            {
-                if (propertyType == valueType)
-                    val = ((Enum) value).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                if (propertyType == typeof(bool))
+                {
+                    if (valueType == typeof(bool))
+                        val = ((bool)value) ? "1" : "0";
+                }
+                else if (propertyType.IsEnum)
+                {
+                    if (propertyType == valueType)
+                        val = ((Enum)value).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                    else
+                    {
+                        if (Enum.GetNames(propertyType).Any(x => x.ToLower() == value.ToString().ToLower()))
+                            val = ((Enum)Enum.Parse(propertyType, value.ToString(), true)).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                    }
+                }
                 else
                 {
-                    if(Enum.GetNames(propertyType).Any(x => x.ToLower() == value.ToString().ToLower()))
-                        val = ((Enum)Enum.Parse(propertyType, value.ToString(), true)).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                    throw new InvalidTypeException(propertyType, valueType);
                 }
-            }
-            else
-                throw new InvalidTypeException(propertyType, valueType);
 
-            if (val == null)
-                throw new ArgumentException($"Value '{value}' could not be assigned to property '{prop.Name}'. Expected type: '{propertyType}'. Actual type: '{valueType}'.");
+                if (val == null)
+                    throw new ArgumentException($"Value '{value}' could not be assigned to property '{prop.Name}'. Expected type: '{propertyType}'. Actual type: '{valueType}'.");
+            }
 
             //i dont care what the current type is, i just want to know if the type can be parsed to the type of the property type
 

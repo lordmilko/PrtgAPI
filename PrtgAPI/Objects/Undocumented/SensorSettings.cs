@@ -156,6 +156,9 @@ internal string x_UnitConfig__OUKBytesMemory_Volume { get; set; }
 [PropertyParameter(nameof(ObjectProperty.Target))]
 public string Target { get; set; }
 
+[XmlElement("injected_httpurl")]
+[PropertyParameter(nameof(ObjectProperty.Url))]
+public string Url { get; set; }
 
 
     }

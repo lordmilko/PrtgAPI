@@ -55,6 +55,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             //i think this logic can go insite setobjectproperty
             
+			//we need to talk about the unit conversion issue in the cmdlet's help
 
             if (Channel != null)
             {

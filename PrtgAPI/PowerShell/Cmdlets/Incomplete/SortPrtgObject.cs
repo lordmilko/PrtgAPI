@@ -7,6 +7,10 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
     /// <summary>
     /// <para type="synopsis">Sort the children of a device, group or probe alphabetically.</para>
     /// </summary>
+    /// <example>
+    ///     <code>C:\> Get-Group -Id 0 | Sort-PrtgObject</code>
+    ///     <para>Sort all probes under the root PRTG Group</para>
+    /// </example>
     [Cmdlet(VerbsLifecycle.Start, "SortPrtgObject")]
     public class SortPrtgObject : PrtgCmdlet
     {
