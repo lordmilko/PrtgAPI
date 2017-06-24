@@ -54,21 +54,24 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
+    <Compile Include="Assert2.cs" />
     <Compile Include="BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
     <Compile Include="DataTests\Incomplete\NotificationActionTests.cs" />
     <Compile Include="DataTests\Incomplete\SensorTotalsTests.cs" />
     <Compile Include="Impersonator.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActionTests\ChannelTests.cs" />
-    <Compile Include="InfrastructureTests\ClientConnectionTests.cs" />
+    <Compile Include="InfrastructureTests\PrtgClientConnectionTests.cs" />
     <Compile Include="DataTests\DeviceTests.cs" />
     <Compile Include="DataTests\GroupTests.cs" />
     <Compile Include="DataTests\Incomplete\NotificationTriggerTests.cs" />
     <Compile Include="DataTests\ProbeTests.cs" />
     <Compile Include="DataTests\SensorTests.cs" />
-    <Compile Include="PrtgClientStateTests.cs" />
+    <Compile Include="ActionTests\StateTests.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Settings.Local.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj">
@@ -88,6 +91,7 @@
     <None Include="PowerShell\NotificationAction.Tests.ps1" />
     <None Include="PowerShell\NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\Probe.Tests.ps1" />
+    <None Include="PowerShell\Progress.Tests.ps1" />
     <None Include="PowerShell\Sensor.Tests.ps1" />
     <None Include="PowerShell\State.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />

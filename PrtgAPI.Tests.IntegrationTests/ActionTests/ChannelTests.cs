@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests
@@ -11,7 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests
     public class ChannelTests : BasePrtgClientTest
     {
         [TestMethod]
-        public void Channel_SetChannelProperty_UpperErrorLimit()
+        public void Action_Channel_SetChannelProperty_UpperErrorLimit()
         {
             SetAndRevertChannelProperty(3000, ChannelProperty.UpperErrorLimit, c => c.UpperErrorLimit);
         }

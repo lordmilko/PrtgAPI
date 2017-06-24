@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -79,7 +74,6 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 Assert.Fail();
             }
-            
         }
 
         [TestMethod]
@@ -161,11 +155,15 @@ namespace PrtgAPI.Tests.IntegrationTests
                 var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
                 client.RetryRequest += (sender, args) =>
                 {
+                    Logger.LogTestDetail($"Handling retry {retriesMade + 1}");
+
                     if(!isAsync)
-                        Assert.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
+                        Assert2.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
                     retriesMade++;
                 };
                 client.RetryCount = retriesToMake;
+
+                Logger.LogTestDetail("Stopping PRTG Service");
 
                 coreService.Stop();
                 coreService.WaitForStatus(ServiceControllerStatus.Stopped);
@@ -184,17 +182,19 @@ namespace PrtgAPI.Tests.IntegrationTests
                 }
                 finally
                 {
+                    Logger.LogTestDetail("Starting PRTG Service");
                     coreService.Start();
                     coreService.WaitForStatus(ServiceControllerStatus.Running);
 
+                    Logger.LogTestDetail("Sleeping for 20 seconds");
                     Thread.Sleep(20000);
 
+                    Logger.LogTestDetail("Refreshing and sleeping for 20 seconds");
                     client.RefreshObject(Settings.Device);
-
                     Thread.Sleep(20000);
                 }
 
-                Assert.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
+                Assert2.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
             });
         }
     }

@@ -79,8 +79,16 @@
     <Compile Include="Events\LogVerboseEventArgs.cs" />
     <Compile Include="Helpers\PipelineHelpers.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
+    <Compile Include="Objects\SensorHistory.cs" />
+    <Compile Include="Objects\Undocumented\ContainerSettings.cs" />
+    <Compile Include="Objects\Undocumented\DeviceOrGroupSettings.cs" />
+    <Compile Include="Objects\Undocumented\DeviceSettings.cs" />
+    <Compile Include="Objects\Undocumented\GroupSettings.cs" />
+    <Compile Include="Objects\Undocumented\ProbeSettings.cs" />
     <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationTriggerParameters.cs" />
+    <Compile Include="Parameters\ObjectData\ObjectHistoryParameters.cs" />
+    <Compile Include="Parameters\ObjectData\SensorHistoryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
     <Compile Include="Parameters\Base\BaseActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
@@ -88,14 +96,23 @@
     <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\Clone\CloneSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\Clone\CloneSensorOrGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\Clone\CloneGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\Clone\CloneDevice.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\MoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SetObjectPosition.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SortPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
+    <None Include="PowerShell\Functions\New-Credential.ps1" />
+    <None Include="PowerShell\Functions\Update-GoPrtgCredential.ps1" />
+    <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
-    <Compile Include="PowerShell\ProgressManager.cs" />
+    <Compile Include="PowerShell\Progress\ProgressManager.cs" />
+    <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -128,7 +145,7 @@
     <Compile Include="Objects\NotificationAction.cs" />
     <Compile Include="Objects\NotificationTrigger.cs" />
     <Compile Include="Objects\Deserialization\SensorHistoryData.cs" />
-    <Compile Include="Objects\SensorHistory.cs" />
+    <Compile Include="Objects\ObjectHistory.cs" />
     <Compile Include="Parameters\ObjectManipulation\DeleteParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\ChangeTriggerParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\SpeedTriggerParameters.cs" />
@@ -137,7 +154,7 @@
     <Compile Include="Parameters\ObjectManipulation\Triggers\TriggerParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\CloneObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\Clone\CloneObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSchedule.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\New-SensorFactory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
@@ -146,7 +163,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTriggerTypes.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTrigger.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\GetObjectHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameter.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
@@ -165,15 +182,15 @@
     <Compile Include="Attributes\PropertyTypeAttribute.cs" />
     <Compile Include="Attributes\SetObjectNameAttribute.cs" />
     <Compile Include="Attributes\UndocumentedAttribute.cs" />
-    <Compile Include="Enums\Deserialization\AutoMode.cs" />
-    <Compile Include="Enums\Deserialization\DebugMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\AutoMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DebugMode.cs" />
     <Compile Include="Enums\Deserialization\DependencyType.cs" />
     <Compile Include="Enums\Deserialization\ErrorIntervalDown.cs" />
-    <Compile Include="Enums\Deserialization\ScanningInterval.cs" />
-    <Compile Include="Enums\Deserialization\WmiMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\ScanningInterval.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\WmiMode.cs" />
     <Compile Include="Enums\Functions\HtmlFunction.cs" />
     <Compile Include="Enums\Deserialization\HistoricValueMode.cs" />
-    <Compile Include="Enums\Deserialization\Visibility.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\Visibility.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\Async\ParallelObjectGenerator.cs" />
     <Compile Include="Helpers\TaskHelpers.cs" />
@@ -182,8 +199,8 @@
     <Compile Include="Html\InputType.cs" />
     <Compile Include="Html\Option.cs" />
     <Compile Include="Objects\Channel.cs" />
-    <Compile Include="Enums\Deserialization\PercentDisplay.cs" />
-    <Compile Include="Enums\Deserialization\DecimalMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\PercentDisplay.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DecimalMode.cs" />
     <Compile Include="Objects\Deserialization\DeserializationHelpers.cs" />
     <Compile Include="Objects\Schedule.cs" />
     <Compile Include="Objects\SensorTotals.cs" />
@@ -207,7 +224,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RenameObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ResumeObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SetChannelProperty.cs" />
-    <Compile Include="PowerShell\ProgressSettings.cs" />
+    <Compile Include="PowerShell\Progress\ProgressSettings.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
@@ -233,7 +250,7 @@
     <Compile Include="Enums\Serialization\PauseAction.cs" />
     <Compile Include="Enums\Deserialization\Priority.cs" />
     <Compile Include="Enums\Serialization\RecordAge.cs" />
-    <Compile Include="Enums\Deserialization\SensorStatus.cs" />
+    <Compile Include="Enums\Deserialization\Status.cs" />
     <Compile Include="Enums\Functions\XmlFunction.cs" />
     <Compile Include="Enums\Serialization\CustomNumberFormat.cs" />
     <Compile Include="Enums\Serialization\SubType.cs" />
@@ -284,6 +301,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="PowerShell\Functions\Connect-GoPrtgServer.ps1" />
+    <None Include="PowerShell\Functions\Get-GoPrtgServer.ps1" />
+    <None Include="PowerShell\Functions\Install-GoPrtgServer.ps1" />
+    <None Include="PowerShell\Functions\Set-GoPrtgAlias.ps1" />
+    <None Include="PowerShell\Functions\Uninstall-GoPrtgServer.ps1" />
     <None Include="PowerShell\Resources\PrtgAPI.cmd" />
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
@@ -319,6 +341,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)PowerShell\Resources\*.*" "$(TargetDir)"
+xcopy /Y "$(ProjectDir)PowerShell\Functions\*.*" "$(TargetDir)Functions\"
 del "$(TargetDir)\*.tt"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

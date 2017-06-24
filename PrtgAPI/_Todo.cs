@@ -47,6 +47,9 @@
     -when we make a request to the ci server to do something when the core is running but the probe isnt, whats the response?
     -maybe the ci server should check the probe and core services are started first
 
+
+    -should setchannelproperty be smart enough to figure out the value to specify when the unit youre using is gigabytes (e.g. multiply the value specified by a billion, etc)
+
     README
     -add powershell example for getting deprecated sensors
 
@@ -68,6 +71,7 @@
     GetChannel
     -test on drods pc. see if the output is all messed up and middle aligned. is it a windows 10 thing? we can also test on my win 10 vm
     -the downtime channel never displays a value. it should be 0% when up, 100% when down
+    -need to be able to get and set value lookup
 
     GetSensor
     -tags always need to filter using "contains. we're fine for the powershell version, but i think we need some sort of filteroperator override for the c# api. perhaps

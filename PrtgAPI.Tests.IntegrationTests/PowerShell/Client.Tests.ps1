@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Connect-PrtgServer" {
+Describe "Connect-PrtgServer_IT" {
 	It "can retry request" {
 
 		Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force -RetryCount 3
@@ -13,7 +13,13 @@ Describe "IT_Connect-PrtgServer" {
 
 		$service = gwmi win32_service -ComputerName $server -Credential $credential -filter "name='PRTGCoreService'"
 
+		LogTestDetail "Stopping service"
+
 		$service.StopService()
+
+		LogTestDetail "Waiting 30 seconds while service stops"
+
+		Sleep 30
 
 		try
 		{
@@ -29,7 +35,9 @@ Describe "IT_Connect-PrtgServer" {
 		}
 		finally
 		{
+			LogTestDetail "Starting service"
 			$service.StartService()
+			LogTestDetail "Pausing for 20 seconds while service starts"
             Sleep 20
 		}
 

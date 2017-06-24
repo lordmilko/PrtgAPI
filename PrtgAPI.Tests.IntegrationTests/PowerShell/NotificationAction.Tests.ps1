@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Get-NotificationAction" {
+Describe "Get-NotificationAction_IT" {
 	It "has correct number of actions" {
 		$actions = Get-NotificationAction
 

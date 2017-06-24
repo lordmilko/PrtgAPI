@@ -79,12 +79,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var urlWithoutArray = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.Columns] = Property.ObjId
+                [Parameter.Columns] = Property.Id
             });
 
             var urlWithArray = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.Columns] = new[] {Property.ObjId}
+                [Parameter.Columns] = new[] {Property.Id }
             });
 
             Assert.IsTrue(urlWithArray == urlWithoutArray);
@@ -111,7 +111,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var flagsUrl = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.FilterStatus] = SensorStatus.Paused
+                [Parameter.FilterStatus] = Status.Paused
             });
 
             var manualUrl = CreateUrl(new Parameters.Parameters
@@ -119,8 +119,8 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.FilterStatus] =
                     new[]
                     {
-                        SensorStatus.PausedByUser, SensorStatus.PausedByDependency, SensorStatus.PausedBySchedule, SensorStatus.PausedByLicense, 
-                        SensorStatus.PausedUntil
+                        Status.PausedByUser, Status.PausedByDependency, Status.PausedBySchedule, Status.PausedByLicense, 
+                        Status.PausedUntil
                     }
             });
 
@@ -132,7 +132,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var flagsUrl = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.FilterXyz] = new SearchFilter(Property.Status, new[] { SensorStatus.Paused })
+                [Parameter.FilterXyz] = new SearchFilter(Property.Status, new[] { Status.Paused })
             });
 
             var manualUrl = CreateUrl(new Parameters.Parameters
@@ -140,8 +140,8 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.FilterXyz] = new SearchFilter(Property.Status,
                     new[]
                     {
-                        SensorStatus.PausedByUser, SensorStatus.PausedByDependency, SensorStatus.PausedBySchedule,
-                        SensorStatus.PausedByLicense, SensorStatus.PausedUntil
+                        Status.PausedByUser, Status.PausedByDependency, Status.PausedBySchedule,
+                        Status.PausedByLicense, Status.PausedUntil
                     })
 
             });

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Get-Group" {
+Describe "Get-Group_IT" {
 	It "has correct number of groups" {
 		$groups = Get-Group
 
@@ -19,15 +19,36 @@ Describe "IT_Get-Group" {
 	}
 
 	It "can filter by starting wildcard" {
-		throw
+		$groups = Get-Group Ro*
+
+		$groups.Count | Should BeGreaterThan 0
+
+		foreach($group in $groups)
+		{
+			$group.Name | Should BeLike "Ro*"
+		}
 	}
 
 	It "can filter by ending wildcard" {
-		throw
+		$groups = Get-Group *ot
+
+		$groups.Count | Should BeGreaterThan 0
+
+		foreach($group in $groups)
+		{
+			$group.Name | Should BeLike "*ot"
+		}
 	}
 
 	It "can filter by wildcard contains" {
-		throw
+		$groups = Get-Group *oo*
+
+		$groups.Count | Should BeGreaterThan 0
+
+		foreach($group in $groups)
+		{
+			$group.Name | Should BeLike "*oo*"
+		}
 	}
 
 	It "can filter by Id" {
@@ -60,6 +81,8 @@ Describe "IT_Get-Group" {
 	}
 
 	It "can pipe from search filters" {
-		throw
+		$groups = New-SearchFilter name contains Root | Get-Group
+
+		$groups.Count | Should Be 1
 	}
 }

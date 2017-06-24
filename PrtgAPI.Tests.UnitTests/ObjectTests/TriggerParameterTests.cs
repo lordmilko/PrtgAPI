@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
-using PrtgAPI.PowerShell.Cmdlets;
 using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
-    public class TriggerParameterTests : NotificationTriggerTests
+    [TestClass]
+    public class TriggerParameterTests : NotificationTriggerBaseTests
     {
         
 #region Notification Trigger Parameter Tests
@@ -96,7 +93,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 else
                     Assert.IsTrue(prop.GetValue(parameters) == null, $"Property '{prop.Name}' was not null.");
 
-                prop.SetValue(parameters, ReflectionHelpers.GetDefaultUnderlying(prop.PropertyType));
+                var defaultValue = prop.PropertyType.Name == "TriggerChannel" ? new TriggerChannel(1234) : ReflectionHelpers.GetDefaultUnderlying(prop.PropertyType);
+
+                prop.SetValue(parameters, defaultValue);
                 Assert.IsTrue(prop.GetValue(parameters) != null, $"Property '{prop.Name}' was null.");
             }
         }
@@ -382,6 +381,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_Create_FromExistingTrigger(NotificationTrigger trigger, TriggerParameters parameters)
         {
+            //shouldnt we _actually_ be checking that the values are the same?
+            //and, shouldnt we be populating _all_ properties of the trigger first?
+
+            //then, we need to make sure we can clone a trigger into some new parameters and add them successfully
+            //and THEN, we need to write some tests for that
+
             foreach (var paramProp in parameters.GetType().GetProperties2())
             {
                 bool found = false;

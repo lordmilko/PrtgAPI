@@ -7,17 +7,8 @@ using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
-    public abstract class BaseObjectTests<TObject, TItem, TResponse> where TResponse : IWebResponse
+    public abstract class BaseObjectTests<TObject, TItem, TResponse> : BaseTest where TResponse : IWebResponse
     {
-        protected PrtgClient Initialize_Client(IWebResponse response)
-        {
-            var webClient = new MockWebClient(response);
-
-            var client = new PrtgClient("prtg.example.com", "username", "12345678", AuthMode.PassHash, webClient);
-
-            return client;
-        }
-
         protected PrtgClient Initialize_Client_WithItems(params TItem[] items)
         {
             if (items.Length == 0)

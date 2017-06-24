@@ -1,14 +1,4 @@
-﻿. $PSScriptRoot\Support\UnitTest.ps1
-
-function Describe($name, $script)
-{
-	Pester\Describe $name {
-
-		BeforeAll {	InitializeUnitTestModules }
-
-		& $script
-	}
-}
+﻿. $PSScriptRoot\Support\Standalone.ps1
 
 Describe "Test-Reflection" {
 
@@ -23,7 +13,10 @@ Describe "Test-Reflection" {
 		}
 
 		It "can detect parent source ID in chain of 3" {
-			Test-Reflection1 -ChainSourceId | Test-Reflection2 -ChainSourceId | Test-Reflection3 -ChainSourceId | Should Be 4
+
+			$sourceId = Test-Reflection1 -SourceId
+
+			Test-Reflection1 -ChainSourceId | Test-Reflection2 -ChainSourceId | Test-Reflection3 -ChainSourceId | Should Be ($sourceId + 1)
 		}
 	}
 

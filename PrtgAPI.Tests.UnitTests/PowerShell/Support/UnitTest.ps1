@@ -47,3 +47,11 @@ function Run($objectType, $script)
 
 	return $result
 }
+
+function SetPrtgClient($client)
+{
+	$type = [PrtgAPI.PrtgClient].Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
+	$property = $type.GetProperty("Client", [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic)
+
+	$property.SetValue($null, $client)
+}

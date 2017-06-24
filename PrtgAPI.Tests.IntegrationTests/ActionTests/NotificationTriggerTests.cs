@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Helpers;
@@ -17,7 +14,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         #region Add Without Customization
 
         [TestMethod]
-        public void Action_NotificationTrigger_State_AddWithoutCustomization()
+        public void Action_NotificationTrigger_AddWithoutCustomization_State()
         {
             var parameters = new StateTriggerParameters(Settings.Probe);
 
@@ -25,7 +22,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Change_AddWithoutCustomization()
+        public void Action_NotificationTrigger_AddWithoutCustomization_Change()
         {
             var parameters = new ChangeTriggerParameters(Settings.Probe);
 
@@ -33,7 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Volume_AddWithoutCustomization()
+        public void Action_NotificationTrigger_AddWithoutCustomization_Volume()
         {
             var parameters = new VolumeTriggerParameters(Settings.Probe);
 
@@ -41,7 +38,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Speed_AddWithoutCustomization()
+        public void Action_NotificationTrigger_AddWithoutCustomization_Speed()
         {
             var parameters = new SpeedTriggerParameters(Settings.Probe);
 
@@ -49,7 +46,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Threshold_AddWithoutCustomization()
+        public void Action_NotificationTrigger_AddWithoutCustomization_Threshold()
         {
             var parameters = new ThresholdTriggerParameters(Settings.Probe);
 
@@ -60,7 +57,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         #region Add With Customization
 
         [TestMethod]
-        public void Action_NotificationTrigger_State_AddWithCustomization()
+        public void Action_NotificationTrigger_AddWithCustomization_State()
         {
             var actions = client.GetNotificationActions();
 
@@ -79,7 +76,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Change_AddWithCustomization()
+        public void Action_NotificationTrigger_AddWithCustomization_Change()
         {
             var action = client.GetNotificationActions().First();
 
@@ -92,7 +89,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Volume_AddWithCustomization()
+        public void Action_NotificationTrigger_AddWithCustomization_Volume()
         {
             var actions = client.GetNotificationActions();
 
@@ -108,7 +105,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Speed_AddWithCustomization()
+        public void Action_NotificationTrigger_AddWithCustomization_Speed()
         {
             var actions = client.GetNotificationActions();
 
@@ -128,7 +125,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
-        public void Action_NotificationTrigger_Threshold_AddWithCustomization()
+        public void Action_NotificationTrigger_AddWithCustomization_Threshold()
         {
             var actions = client.GetNotificationActions();
 
@@ -146,7 +143,88 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         #endregion
+        #region Add From Existing
 
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_State()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Device()
+        {
+            var trigger = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == TriggerType.Threshold).ToList();
+
+            Assert2.AreEqual(1, trigger.Count, "Did not have expected number of threshold triggers");
+
+            var parameters = new ThresholdTriggerParameters(Settings.Device, trigger.First(), ModifyAction.Add);
+
+            client.AddNotificationTrigger(parameters);
+
+            var triggersNew = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == TriggerType.Threshold).ToList();
+
+            Assert2.AreEqual(2, triggersNew.Count, "Trigger was not added successfully");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Sensor()
+        {
+            //Create the initial trigger
+
+            var channel = client.GetChannels(Settings.ChannelSensor).First();
+
+            var parameters = new ThresholdTriggerParameters(Settings.ChannelSensor)
+            {
+                Channel = channel
+            };
+
+            //Verify it was created successfully
+
+            client.AddNotificationTrigger(parameters);
+
+            var triggers = client.GetNotificationTriggers(Settings.ChannelSensor).Where(t => t.Inherited == false).ToList();
+
+            Assert2.AreEqual(1, triggers.Count, "Initial trigger did not add successfully");
+            Assert2.IsTrue(triggers.First().Channel.ToString() == channel.Name, "Initial trigger channel did not serialize properly");
+
+            //Clone the trigger
+
+            var newParameters = new ThresholdTriggerParameters(Settings.ChannelSensor, triggers.First(), ModifyAction.Add);
+
+            client.AddNotificationTrigger(newParameters);
+
+            //Verify it was created successfully
+
+            var newTriggers = client.GetNotificationTriggers(Settings.ChannelSensor).Where(t => t.Inherited == false).ToList();
+
+            Assert2.AreEqual(2, newTriggers.Count, "Second trigger did not add successfully");
+
+            foreach (var trigger in newTriggers)
+            {
+                Assert2.IsTrue(trigger.Channel.ToString() == channel.Name, "Second trigger channel did not serialize properly");
+            }
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_Speed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_Volume()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_CreateFromExistingTrigger_Change()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         private void AddRemoveTrigger(TriggerParameters parameters, bool empty)
         {
@@ -156,7 +234,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             Thread.Sleep(5000);
             var afterTriggers = client.GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
-            Assert.IsTrue(afterTriggers.Count == initialTriggers.Count + 1, $"Initial triggers was {initialTriggers.Count}, but after adding a trigger the number of triggers was {afterTriggers.Count}");
+            Assert2.IsTrue(afterTriggers.Count == initialTriggers.Count + 1, $"Initial triggers was {initialTriggers.Count}, but after adding a trigger the number of triggers was {afterTriggers.Count}");
             var newTrigger = afterTriggers.First(a => initialTriggers.All(b => b.SubId != a.SubId));
 
             ValidateNewTrigger(parameters, newTrigger, empty);
@@ -166,7 +244,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             Thread.Sleep(5000);
             var removeTriggers = client.GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
-            Assert.IsTrue(initialTriggers.Count == removeTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {removeTriggers.Count}");
+            Assert2.IsTrue(initialTriggers.Count == removeTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {removeTriggers.Count}");
         }
 
         private void ValidateNewTrigger(TriggerParameters parameters, NotificationTrigger trigger, bool empty)
@@ -204,7 +282,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                             }
                         }
 
-                        Assert.AreEqual(paramValue, triggerValue, triggerProp.Name);
+                        Assert2.AreEqual(paramValue, triggerValue, triggerProp.Name);
 
                         //when we create a trigger without customization, some fields get default values
                         //we should have verification of those values, but ONLY when we're doing

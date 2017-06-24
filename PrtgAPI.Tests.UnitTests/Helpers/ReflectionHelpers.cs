@@ -43,15 +43,18 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
             return null;
         }
 
-        public static object GetDefaultUnderlying(Type type)
+        public static object GetDefaultUnderlying(Type type, Func<object> @override = null)
         {
             var underlying = Nullable.GetUnderlyingType(type);
 
             if (underlying != null)
                 type = underlying;
 
-            if (type.IsValueType)
-                return Activator.CreateInstance(type);
+            if (@override != null)
+                return @override();
+
+            if (type.IsValueType || type.IsClass)
+                return Activator.CreateInstance(type, true);
             return null;
         }
 

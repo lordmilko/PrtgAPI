@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell;
 
 namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
@@ -30,7 +25,8 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                         ParentActivityId = 2
                     });
                     Thread.Sleep(1000);
-                    WriteObject(Convert.ToInt32(((PSObject)Object).BaseObject) * 2);
+                    //WriteObject(Convert.ToInt32(((PSObject)Object).BaseObject) * 2);
+                    WriteObject(sourceId);
                     break;
 
                 default:

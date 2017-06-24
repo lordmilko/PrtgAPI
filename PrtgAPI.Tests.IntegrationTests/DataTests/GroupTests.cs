@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -23,7 +18,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestMethod]
         public void Data_Group_GetGroups_ReturnsJustGroups()
         {
-            ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe, BaseType.Group);
+            ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe - 1, BaseType.Group); //Subtract one for the child group
         }
     }
 }

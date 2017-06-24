@@ -31,6 +31,10 @@ Describe "Get-Sensor" {
 		}
 	}
 
+	It "throws when -Id is $null" {
+		{ Get-Sensor -Id $null } | Should Throw "The -Id parameter was specified however the parameter value was null"
+	}
+
 	<#It "can pipe from devices" {
 
 		$deviceId = 2001

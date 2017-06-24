@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -17,12 +11,14 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var triggers = client.GetNotificationTriggers(Settings.Device);
 
-            Assert.AreEqual(Settings.NotificationTiggersOnDevice, triggers.Count(t => !t.Inherited), nameof(Settings.NotificationTiggersOnDevice));
-        } 
+            Assert2.AreEqual(Settings.NotificationTiggersOnDevice, triggers.Count(t => !t.Inherited), nameof(Settings.NotificationTiggersOnDevice));
+        }
+
+        
 
         private void AssertEquals(string fieldName, object field1, object field2)
         {
-            Assert.IsTrue(field1.ToString() == field2.ToString(), $"{fieldName} was '{field1}' instead of '{field2}'");
+            Assert2.IsTrue(field1.ToString() == field2.ToString(), $"{fieldName} was '{field1}' instead of '{field2}'");
         }
     }
 }

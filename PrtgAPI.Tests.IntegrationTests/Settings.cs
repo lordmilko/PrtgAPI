@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PrtgAPI.Tests.IntegrationTests
+﻿namespace PrtgAPI.Tests.IntegrationTests
 {
     public enum HttpProtocol
     {
@@ -12,7 +6,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         HTTPS
     }
 
-    public static class Settings
+    public static partial class Settings
     {
 #pragma warning disable CS0649 //Ignore 'field' is never assigned to.
         public static string ServerWithProto => $"{Protocol.ToString().ToLower()}://{Server}";
@@ -34,6 +28,12 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string DeviceName; //Must contain "prtg" in the name
         public static string DeviceTag;
 
+        public static string GroupName;
+        public static string GroupTag;
+
+        public static string ProbeName;
+        public static string ProbeTag;
+
         public static int UpSensor = -1;
         public static int WarningSensor = -1;
         public static int DownSensor = -1;
@@ -51,10 +51,13 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static int ProbesInTestServer = -1;
 
+        public static int GroupsInTestGroup = -1;
         public static int GroupsInTestProbe = -1;
+        public static int GroupsInTestServer = -1;
 
         public static int DevicesInTestGroup = -1;
         public static int DevicesInTestProbe = -1;
+        public static int DevicesInTestServer = -1;
 
         public static int SensorsInTestDevice = -1;
         public static int SensorsInTestGroup = -1;
@@ -67,14 +70,5 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static int NotificationActionsInTestServer = -1;
 
 #pragma warning restore CS0649 //Restore 'field' is never assigned to.
-
-        //PowerShell Settings
-
-        static Settings()
-        {
-            //Specify setting values below
-
-
-        }
     }
 }

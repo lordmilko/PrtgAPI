@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Get-Device" {
+Describe "Get-Device_IT" {
 	It "has correct number of devices" {
 		$devices = Get-Device
 

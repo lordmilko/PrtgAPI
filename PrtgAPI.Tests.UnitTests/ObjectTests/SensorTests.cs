@@ -29,14 +29,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 (c1, c2, c3) => new List<Func<SearchFilter[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
                 (c1, c2, c3) =>
                 {
-                    Sensor_GetObjectsOverloads_SensorStatus_CanExecute(new List<Func<SensorStatus[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors});
+                    Sensor_GetObjectsOverloads_SensorStatus_CanExecute(new List<Func<Status[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors});
                 }
             );
         }
 
-        private async void Sensor_GetObjectsOverloads_SensorStatus_CanExecute(List<Func<SensorStatus[], object>> sensorStatus)
+        private async void Sensor_GetObjectsOverloads_SensorStatus_CanExecute(List<Func<Status[], object>> sensorStatus)
         {
-            var status = new[] {SensorStatus.Down, SensorStatus.DownAcknowledged};
+            var status = new[] {Status.Down, Status.DownAcknowledged};
 
             CheckResult<List<Sensor>>(sensorStatus[0](status));
             CheckResult<List<Sensor>>(await (Task<List<Sensor>>)sensorStatus[1](status));

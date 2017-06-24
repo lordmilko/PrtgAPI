@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Get-Probe" {
+Describe "Get-Probe_IT" {
 	It "has correct number of probes" {
 		$probes = Get-Probe
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "IT_Get-NotificationTrigger" {
+Describe "Get-NotificationTrigger_IT" {
 	It "can retrieve all triggers" {
 		$triggers = Get-Device -Id (Settings Device) | Get-NotificationTrigger
 
@@ -33,7 +33,124 @@ Describe "IT_Get-NotificationTrigger" {
 
 . $PSScriptRoot\Support\IntegrationTest.ps1
 
-Describe "Edit-NotificationTriggerProperty" {
+Describe "Add-NotificationTrigger_IT" {
+	Context "Create from scratch" {
+		It "creates a state trigger" {
+
+			$existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+			$existing | Should Be $null
+
+			$param = New-TriggerParameter (Settings Group) State
+			$param | Add-Trigger
+
+			$new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+
+			$new | Remove-Trigger
+
+			$new.Count | Should Be 1
+			$new.Type | Should Be State
+
+		}
+
+		It "creates a change trigger" {
+			$existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+			$existing | Should Be $null
+
+			$param = New-TriggerParameter (Settings Group) Change
+			$param | Add-Trigger
+
+			$new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+
+			$new | Remove-Trigger
+
+			$new.Count | Should Be 1
+			$new.Type | Should Be Change
+		}
+
+		It "creates a volume trigger" {
+			$existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+			$existing | Should Be $null
+
+			$param = New-TriggerParameter (Settings Group) Volume
+			$param | Add-Trigger
+
+			$new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+
+			$new | Remove-Trigger
+
+			$new.Count | Should Be 1
+			$new.Type | Should Be Volume
+		}
+
+		It "creates a speed trigger" {
+			$existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+			$existing | Should Be $null
+
+			$param = New-TriggerParameter (Settings Group) Speed
+			$param | Add-Trigger
+
+			$new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+
+			$new | Remove-Trigger
+
+			$new.Count | Should Be 1
+			$new.Type | Should Be Speed
+		}
+
+		It "creates a threshold trigger for a group" {
+			$existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+			$existing | Should Be $null
+
+			$param = New-TriggerParameter (Settings Group) Threshold
+			$param | Add-Trigger
+
+			$new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
+
+			$new | Remove-Trigger
+
+			$new.Count | Should Be 1
+			$new.Type | Should Be Threshold
+		}
+
+		It "creates a threshold trigger for a sensor with a Channel" {
+			throw
+		}
+
+		It "creates a threshold trigger for a sensor with a Channel ID" {
+			#todo: when adding a trigger we need to ask prtg for the device's device type, and if we're not adding a valid channel
+			#type for that object we need to throw an exception
+			throw
+		}
+	}
+
+	Context "Clone existing" {
+		It "clones a state trigger" {
+			throw
+		}
+
+		It "clones a change trigger" {
+			throw
+		}
+
+		It "clones a volume trigger" {
+			throw
+		}
+
+		It "clones a speed trigger" {
+			throw
+		}
+
+		It "clones a threshold trigger from a device" {
+			throw
+		}
+
+		It "clones a threshold trigger from a sensor" {
+			throw
+		}
+	}
+}
+
+Describe "Edit-NotificationTriggerProperty_IT" {
 	It "can edit OnNotificationAction" {
 		$trigger = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State -Inherited $false
 		$action = Get-NotificationAction *ticket*
