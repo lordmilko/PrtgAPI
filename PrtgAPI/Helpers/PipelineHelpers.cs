@@ -47,7 +47,14 @@ namespace PrtgAPI.Helpers
             }
             else //Piping from a variable
             {
-                var array = ((object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Cast<PSObject>();
+                //var array = ((object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Cast<PSObject>();
+                var array = ((object[]) enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Select(o =>
+                {
+                    if (o is PSObject)
+                        return o;
+                    else
+                        return new PSObject(o);
+                }).Cast<PSObject>();
 
                 return new Pipeline(current, array.Select(e => e.BaseObject).ToList());
             }

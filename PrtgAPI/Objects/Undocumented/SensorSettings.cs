@@ -160,6 +160,8 @@ public string Target { get; set; }
 [PropertyParameter(nameof(ObjectProperty.Url))]
 public string Url { get; set; }
 
-
+[XmlElement("injected_exeparams")]
+[PropertyParameter(nameof(ObjectProperty.ExeParameters))]
+public string ExeParameters { get; set; }
     }
 }

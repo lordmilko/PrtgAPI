@@ -73,7 +73,7 @@ Typically however, you'll want to apply one or more filters to limit the number 
 
 ```c#
 //List all sensors in a "down" state.
-var downSensors = client.GetSensors(SensorStatus.Down);
+var downSensors = client.GetSensors(Status.Down);
 ```
 ```c#
 //List all devices under probes whose name contains "chicago"
@@ -87,13 +87,13 @@ var childSensors = client.GetSensors(Property.ParentId, 2000);
 PrtgAPI methods that return values typically return a `List` of objects, allowing you to use LINQ to retrieve the values you're really after.
 
 ```c#
-var names = client.GetSensors(SensorStatus.Unknown).Select(s => s.Name).ToList();
+var names = client.GetSensors(Status.Unknown).Select(s => s.Name).ToList();
 ```
 
 Many method parameters are implemented as `params`, allowing you to specify multiple values just by adding additional commas.
 
 ```c#
-var variousSensors = client.GetSensors(SensorStatus.Down, SensorStatus.Up, SensorStatus.DownAcknowledged);
+var variousSensors = client.GetSensors(Status.Down, Status.Up, Status.DownAcknowledged);
 ```
 ```c#
 //Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
@@ -304,7 +304,7 @@ Remove-Object
 Rename-Object
 Set-ChannelProperty # Currently supports limit and spike related properties
 Set-ObjectPosition
-Set-ObjectProperty # Currently supports scanning interval related properties
+Set-ObjectProperty # See Get-Help Set-ObjectProperty for currently supported properties
 Set-NotificationTrigger
 Sort-PrtgObject
 Start-AutoDiscovery
@@ -428,7 +428,7 @@ Inner objects know how to receive a variety of objects via the pipeline. As such
 Get-Probe | Get-Sensor
 ```
 
-By default, PrtgAPI will display advanced progress details whenever two cmdlets are chained together. This can be modified by either setting the `$ProgressPreference` within PowerShell, specifying or omitting the `-NoProgress` parameter with `Connect-PrtgServer`, or by using the `Enable-PrtgProgress` and `Disable-PrtgProgress` cmdlets. This can be useful when you wish to use PrtgAPI in scripts but don't wish to receive constant progress updates.
+If `Connect-PrtgServer` is executed outside of a script or the PowerShell ISE, PrtgAPI will by default display advanced progress details whenever two cmdlets are chained together. This can be overridden by either setting the `$ProgressPreference` within PowerShell, specifying `-Progress` parameter with `Connect-PrtgServer`, or by using the `Enable-PrtgProgress` and `Disable-PrtgProgress` cmdlets respectively.
 
 When using `Set-ChannelProperty` on channels that use custom units, take into account the unit when specifying your value. e.g. a sensor may have a "display value" in megabytes, however its actual value may be in *bytes*. You can confirm the numeric value of a channel by referring to the `LastValueNumeric` property.
 
@@ -520,3 +520,96 @@ The underlying `PrtgClient` of a connection can be accessed via the `Get-PrtgCli
 $parameters = CreateMyAwesomeObjectParameters
 (Get-PrtgClient).UpdateAwesomeObject($parameters)
 ```
+
+## Intersting Things PrtgAPI Does
+
+### PrtgAPI
+
+#### Deserialization
+
+Often the values reported by PRTG need to be transformed in some way during or after the deserialization process, such as an empty string being converted into `null` or a DateTime/TimeSpan being correctly parsed. As the `System.Xml` `XmlSerializer` requires that all target properties be `public`, this presents a variety of issues, requiring "dummy" properties that accept the raw deserialized output and then are correctly parsed via the getter of the "actual" property. Such "raw" properties make a mess of your object's interface, bloat your intellisense and mess up your PowerShell output.
+
+PrtgAPI works around this by implementing its own custom `XmlSerializer`. Unlike the built in `XmlSerializer` which generates a dynamic assembly for highly efficient deserialization, PrtgAPI relies upon reflection to iterate over each object property and bind each XML value based the value of each type/propertie's `XmlElement`, `XmlAttribute` and `XmlEnum` attributes. This allows PrtgAPI to bind raw values to `protected` members that are then parsed by the getters of their `public` coutnerparts. The PrtgAPI `XmlSerializer` also has the sense to eliminate a number of common pain points, such as converting empty strings to null.
+
+#### Cmdlet Based Event Handlers
+
+#### Inter-Cmdlet Progress
+
+### PrtgAPI.Tests
+
+#### Test Startup/Shutdown
+
+Before and after each test begins, a number of common tasks must be performed. For example, in PowerShell we must load the PrtgAPI and PrtgAPI.Tests.* assemblies into the session. We cannot just do this once in one test file and forget about it, as tests are split across a number of files and could be run one at a time via Test Explorer.
+
+.NET tests perform common initialization/cleanup via `AssemblyInitialize`/`AssemblyCleanup`/`TestInitialize` methods defined in common base classes of all tests.
+
+Common startup/shutdown tasks can be defined in Pester via the `BeforeAll`/`AfterAll` functions, however PrtgAPI abstracts that a step further by completely impersonating the `Describw` function. When tests call the `Describe` function they trigger PrtgAPI's `Describe`, which in turn triggers the Pester `Describe` with our `BeforeAll`/`AfterAll` blocks pre-populated
+
+```powershell
+
+. $PSScriptRoot\Common.ps1
+
+function Describe($name, $script) {
+    
+    Pester\Describe $name {
+        BeforeAll {
+            PerformStartupTasks
+        }
+        
+        AfterAll {
+            PerformShutdownTasks
+        }
+        
+        & $script
+    }
+}
+```
+
+Different `Describe` overrides can be defined in different files, allowing tests to perform cleanup in different ways based on their functionality (such as `Get-` only tests not needing to perform cleanup on the integration test server). Methods such as `AssemblyInitialize` in our .NET test assembly can be triggered via our common startup functions, allowing existing testing functionality to be reused.
+
+### Test Server State Restoration
+
+### Mock WriteProgress
+
+#### Logging
+
+Integration tests can take an extremely long time to complete, can run in any order and can even cross contaminate. By intercepting key test methods and sprinkling tests with basic logging code, detailed state information can be written to a log file (%temp%\PrtgAPI.IntegrationTests.log) which can be tailed and monitored during the execution of tests
+
+```
+24/06/2017 11:46:00 AM [22952:58] C#     : Pinging ci-prtg-1
+24/06/2017 11:46:00 AM [22952:58] C#     : Connecting to local server
+24/06/2017 11:46:00 AM [22952:58] C#     : Retrieving service details
+24/06/2017 11:46:00 AM [22952:58] C#     : Backing up PRTG Config
+24/06/2017 11:46:01 AM [22952:58] C#     : Refreshing CI device
+24/06/2017 11:46:01 AM [22952:58] C#     : Ready for tests
+24/06/2017 11:46:01 AM [22952:58] PS     :     Running unsafe test 'Acknowledge-Sensor_IT'
+24/06/2017 11:46:01 AM [22952:58] PS     :         Running test 'can acknowledge indefinitely'
+24/06/2017 11:46:01 AM [22952:58] PS     :             Acknowledging sensor indefinitely
+24/06/2017 11:46:01 AM [22952:58] PS     :             Refreshing object and sleeping for 30 seconds
+24/06/2017 11:46:31 AM [22952:58] PS     :             Pausing object for 1 minute and sleeping 5 seconds
+24/06/2017 11:46:36 AM [22952:58] PS     :             Resuming object
+24/06/2017 11:46:37 AM [22952:58] PS     :             Refreshing object and sleeping for 30 seconds
+24/06/2017 11:47:07 AM [22952:58] PS !!! :             Expected: {Down} But was:  {PausedUntil}
+24/06/2017 11:47:07 AM [22952:58] PS     :         Running test 'can acknowledge for duration'
+24/06/2017 11:47:07 AM [22952:58] PS     :             Acknowledging sensor for 1 minute
+24/06/2017 11:47:07 AM [22952:58] PS     :             Sleeping for 60 seconds
+24/06/2017 11:48:07 AM [22952:58] PS     :             Refreshing object and sleeping for 30 seconds
+24/06/2017 11:48:37 AM [22952:58] PS     :             Test completed successfully
+24/06/2017 11:48:37 AM [22952:58] PS     :         Running test 'can acknowledge until'
+24/06/2017 11:48:38 AM [22952:58] PS     :             Acknowledging sensor until 24/06/2017 11:49:38 AM
+24/06/2017 11:48:38 AM [22952:58] PS     :             Sleeping for 60 seconds
+24/06/2017 11:49:38 AM [22952:58] PS     :             Refreshing object and sleeping for 30 seconds
+24/06/2017 11:50:08 AM [22952:58] PS     :             Test completed successfully
+24/06/2017 11:50:08 AM [22952:58] PS     : Performing cleanup tasks
+24/06/2017 11:50:08 AM [22952:58] C#     : Cleaning up after tests
+24/06/2017 11:50:08 AM [22952:58] C#     : Connecting to server
+24/06/2017 11:50:08 AM [22952:58] C#     : Retrieving service details
+24/06/2017 11:50:08 AM [22952:58] C#     : Stopping service
+24/06/2017 11:50:21 AM [22952:58] C#     : Restoring config
+24/06/2017 11:50:21 AM [22952:58] C#     : Starting service
+24/06/2017 11:50:24 AM [22952:58] C#     : Finished
+24/06/2017 11:50:25 AM [22952:63] PS     : PRTG service may still be starting up; pausing for 60 seconds
+24/06/2017 11:51:31 AM [22952:63] PS     :     Running safe test 'Get-NotificationAction_IT'
+```
+
+DateTime, PID, TID, execution environment and exception details are all easily visible. Showing three exclamation marks against rows that contain a failure is probably the greatest feature of the entire project.

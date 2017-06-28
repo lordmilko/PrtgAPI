@@ -2,7 +2,7 @@
 
 function Clear-Progress {
 
-	$val = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::ProgressSnapshot
+	$val = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::ProgressSnapshots
 
 	if($val -ne $null)
 	{

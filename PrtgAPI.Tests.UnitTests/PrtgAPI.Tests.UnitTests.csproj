@@ -77,6 +77,7 @@
     <Compile Include="ObjectTests\Items\SensorTotalsItem.cs" />
     <Compile Include="ObjectTests\NotificationActionTests.cs" />
     <Compile Include="ObjectTests\ObjectTests.cs" />
+    <Compile Include="ObjectTests\Responses\BasicResponse.cs" />
     <Compile Include="ObjectTests\Responses\DeviceSettingsResponse.cs" />
     <Compile Include="ObjectTests\Responses\GroupResponse.cs" />
     <Compile Include="ObjectTests\Responses\MultiTypeResponse.cs" />
@@ -162,6 +163,9 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rd /s /q "$(SolutionDir)TestResults"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

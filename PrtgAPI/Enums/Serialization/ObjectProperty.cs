@@ -28,6 +28,9 @@ namespace PrtgAPI
         [Description("httpurl_")]
         Url,
 
+        [Description("exeparams_")]
+        ExeParameters,
+
         /// <summary>
         /// Whether to inherit this object's scanning interval settings from its parent.
         /// </summary>

@@ -9,7 +9,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
     public class ProgressQueue
     {
         public static Queue<ProgressQueueRecord> RecordQueue = new Queue<ProgressQueueRecord>();
-        public static Queue<string> ProgressSnapshots { get; set; }
+        public static Queue<string> ProgressSnapshots { get; set; } = new Queue<string>();
 
         private static object queueLock = new object();
 
@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 
         public static string Dequeue()
         {
-            if (ProgressSnapshots == null)
+            if (!ProgressSnapshots.Any())
             {
                 List<ProgressRecord> list;
 

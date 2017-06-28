@@ -153,7 +153,7 @@ namespace PrtgAPI.PowerShell
             InitialDescription = null;
             recordsProcessed = -1;
 
-            if (TotalRecords > 0)
+            if (TotalRecords > 0 || PipeFromVariable)
             {
                 CurrentRecord.RecordType = ProgressRecordType.Completed;
 
@@ -173,6 +173,8 @@ namespace PrtgAPI.PowerShell
             {
                 var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 
+                var originalIndex = index;
+
                 if (index > Pipeline.List.Count)
                     index = Pipeline.List.Count;
 
@@ -182,7 +184,8 @@ namespace PrtgAPI.PowerShell
 
                 variableProgressDisplayed = true;
 
-                WriteProgress();
+                if(originalIndex <= Pipeline.List.Count)
+                    WriteProgress();
              }
             else
             {
@@ -198,6 +201,11 @@ namespace PrtgAPI.PowerShell
                     WriteProgress();
                 }
             }
+        }
+
+        public void VariableProgressDoesntNeedUpdating()
+        {
+            variableProgressDisplayed = true;
         }
 
         public void TrySetPreviousOperation(string operation)

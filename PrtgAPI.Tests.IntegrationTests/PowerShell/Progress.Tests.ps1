@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
-Describe "Test-Progress" {
+Describe "Test-Progress_IT" {
 	It "chains two cmdlets together" {
 		Get-Device | Get-Sensor
 	}

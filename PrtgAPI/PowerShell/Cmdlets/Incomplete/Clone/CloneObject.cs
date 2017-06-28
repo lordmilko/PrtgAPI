@@ -58,6 +58,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     delay *= 2;
                 }
 
+                if (Stopping)
+                    break;
 
             } while (@object.Count == 0);
 

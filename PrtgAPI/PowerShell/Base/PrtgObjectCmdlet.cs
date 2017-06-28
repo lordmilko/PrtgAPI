@@ -49,8 +49,12 @@ namespace PrtgAPI.PowerShell.Base
             ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.Pipeline.List.First().GetType()).ToLower()}s";
             ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof (T)).ToLower()}s";
 
-            ProgressManager.DisplayInitialProgress();
-            ProgressManager.UpdateRecordsProcessed();
+            //ProgressManager.DisplayInitialProgress();
+
+            if (ProgressManager.Pipeline.CurrentIndex == 0)
+                ProgressManager.UpdateRecordsProcessed();
+            else
+                ProgressManager.VariableProgressDoesntNeedUpdating();
 
             var records = getResults();
 
@@ -87,7 +91,7 @@ namespace PrtgAPI.PowerShell.Base
             return count;
         }
 
-        private string GetTypeDescription(Type type)
+        protected string GetTypeDescription(Type type)
         {
             var attribute = type.GetCustomAttribute<DescriptionAttribute>();
 
@@ -158,7 +162,9 @@ namespace PrtgAPI.PowerShell.Base
             if (ProgressManager.ContainsProgress)
             {
                 ProgressManager.RemovePreviousOperation();
-                ProgressManager.UpdateRecordsProcessed();
+
+                if(!ProgressManager.PipeFromVariable)
+                    ProgressManager.UpdateRecordsProcessed(); //???????
             }
 
             foreach (var item in sendToPipeline)
@@ -173,8 +179,15 @@ namespace PrtgAPI.PowerShell.Base
 
             //need to have multiple level progress like normal when chaining 3 together when piping from variable
 
+            if (ProgressManager.PipeFromVariable)
+            {
+                ProgressManager.UpdateRecordsProcessed();
+            }
+
             if (ProgressManager.ContainsProgress)
                 ProgressManager.CompleteProgress();
+
+            
         }
 
         /// <summary>

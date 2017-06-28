@@ -100,11 +100,17 @@ namespace PrtgAPI.PowerShell.Base
             if (streamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
                 streamResults = false;
 
-            if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
+            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+                records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
+            else
+
+            /*if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
             else if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
                 records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
-            else
+            else*/
             {
                 if (streamResults)
                     records = StreamResultsWithProgress();
@@ -160,7 +166,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private IEnumerable<TObject> StreamResultsWithProgress()
         {
-            ProgressManager.WriteProgress($"PRTG {content} Search", "Detecting total number of items");
+            ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
 
             var count = client.GetTotalObjects(content);
             var records = GetRecords();
@@ -181,7 +187,7 @@ namespace PrtgAPI.PowerShell.Base
 
             if (streamResults)
             {
-                ProgressManager.WriteProgress($"PRTG {content} Search", "Detecting total number of items");
+                ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
                 count = client.GetTotalObjects(content);
             }
             else
