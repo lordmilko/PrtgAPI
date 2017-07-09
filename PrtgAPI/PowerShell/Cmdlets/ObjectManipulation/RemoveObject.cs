@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Permanently remove an object from PRTG.</para>
+    /// <para type="synopsis">Permanently removes an object from PRTG.</para>
     /// 
     /// <para type="description">The Remove-Object cmdlet permanently removes an object from PRTG. Some objects cannot be deleted
     /// (e.g. the root PRTG group (ID 0) and will generate an exception if you attempt to do so.</para>

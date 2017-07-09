@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve sensors from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves sensors from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-Sensor cmdlet retrieves sensors from a PRTG Server. Sensors are the fundamental unit of monitoring
     /// in PRTG, and the most populous type of object in the system by far. Get-Sensor provides a variety of methods of filtering the sensors

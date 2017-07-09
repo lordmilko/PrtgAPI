@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Request an object and any if its children refresh themselves immediately.</para>
+    /// <para type="synopsis">Requests an object and any if its children refresh themselves immediately.</para>
     /// 
     /// <para type="description">The Refresh-Object cmdlet causes an object to refresh itself. Sensor objects automatically
     /// refresh according to their Scanning Interval. Refresh-Object allows you to bypass this interval and request

@@ -4,7 +4,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 {
     /// <summary>
-    /// <para type="synopsis">Move a device or group within the PRTG Object Tree.</para>
+    /// <para type="synopsis">Moves a device or group within the PRTG Object Tree.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Object")]
     public class MoveObject : PrtgCmdlet

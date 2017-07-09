@@ -7,7 +7,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Open the URL of a PRTG Object in the PRTG Web Interface.</para>
+    /// <para type="synopsis">Opens the URL of a PRTG Object in the PRTG Web Interface.</para>
     /// 
     /// <para type="description">The Open-PrtgObject cmdlet opens the web page of a PRTG Object in your default browser.
     /// Care should be taken with Open-PrtgObject, as your system may experience performance issues if too many URLs are opened at one time.</para>

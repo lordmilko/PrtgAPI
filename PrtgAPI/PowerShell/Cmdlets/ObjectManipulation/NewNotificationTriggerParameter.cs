@@ -5,7 +5,7 @@ using PrtgAPI.Parameters;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Create a new set of notification trigger parameters for adding or editing a notification trigger.</para>
+    /// <para type="synopsis">Creates a new set of notification trigger parameters for adding or editing a notification trigger.</para>
     /// 
     /// <para type="description">The New-NotificationTriggerParameter cmdlet creates a set of trigger parameters for creating or editing
     /// a notification trigger. When editing notification triggers, New-NotificationTriggerParameter should only be used when multiple

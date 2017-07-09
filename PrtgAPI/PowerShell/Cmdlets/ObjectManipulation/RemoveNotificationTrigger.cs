@@ -4,7 +4,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Remove a notification trigger from a PRTG Object.</para>
+    /// <para type="synopsis">Removes a notification trigger from a PRTG Object.</para>
     /// 
     /// <para type="description">The Remove-NotificationTrigger cmdlet removes a notification trigger from a PRTG Object.
     /// Notification triggers can only be removed from the objects on which they are explicitly defined. Attempting to

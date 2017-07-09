@@ -7,7 +7,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve notification triggers from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves notification triggers from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-NotificationTrigger cmdlet retrieves notification triggers that are defined on a PRTG Object.
     /// Notification triggers define conditions that when met by a sensor or one of its channels, should result in the firing of a notification

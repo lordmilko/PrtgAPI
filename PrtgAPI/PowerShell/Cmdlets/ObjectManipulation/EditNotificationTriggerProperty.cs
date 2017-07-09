@@ -9,7 +9,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Edit a notification trigger on a PRTG Server.</para>
+    /// <para type="synopsis">Edits a notification trigger on a PRTG Server.</para>
     /// </summary>
     [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty", SupportsShouldProcess = true)]
     public class EditNotificationTriggerProperty : PrtgOperationCmdlet

@@ -4,7 +4,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Auto-discover sensors on a PRTG Device.</para>
+    /// <para type="synopsis">Auto-discovers sensors on a PRTG Device.</para>
     /// 
     /// <para type="description">The Start-AutoDiscovery cmdlet initiates an auto-discovery task against a PRTG Device.</para>
     /// <para type="description">When auto-discovery runs, PRTG will attempt to automatically create sensors under the device

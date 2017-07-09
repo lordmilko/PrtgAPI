@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve probes from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves probes from a PRTG Server.</para>
     /// </summary>
     /// 
     /// <para type="description">The Get-Probe cmdlet retrieves probes from a PRTG Server. Probes represent sites where the 

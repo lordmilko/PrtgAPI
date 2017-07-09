@@ -4,7 +4,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve all notification trigger types supported by a PRTG Object.</para>
+    /// <para type="synopsis">Retrieves all notification trigger types supported by a PRTG Object.</para>
     /// 
     /// <para type="description">The Get-NotificationTriggerTypes cmdlet retrieves a list of all notification trigger
     /// types supported by a PRTG Object. Certain objects (such as sensors) only support certain types of notification

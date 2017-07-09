@@ -3,7 +3,7 @@ using System.Management.Automation;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Clone a group within PRTG.</para>
+    /// <para type="synopsis">Clones a group within PRTG.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Group", SupportsShouldProcess = true)]
     public class CloneGroup : CloneSensorOrGroup<Group>

@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Rename a PRTG object.</para> //todo: talk about whatif and force. but we dont even have those?
+    /// <para type="synopsis">Renames a PRTG object.</para> //todo: talk about whatif and force. but we dont even have those?
     /// 
     /// <example>
     ///     <code>Get-Sensor Memory | Rename-Object "Memory Free"</code>

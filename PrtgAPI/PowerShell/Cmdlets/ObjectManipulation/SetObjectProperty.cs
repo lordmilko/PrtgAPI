@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Modify the value of an object property.</para>
+    /// <para type="synopsis">Modifies the value of an object property.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
     public class SetObjectProperty : PrtgOperationCmdlet

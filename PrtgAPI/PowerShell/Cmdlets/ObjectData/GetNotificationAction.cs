@@ -6,7 +6,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve all Notification Actions from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves all Notification Actions from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-NotificationAction retrieves notification actions present on a PRTG Server. Notification actions
     /// can be triggered under various circumstances via notification triggers. For more information on notification triggers, see

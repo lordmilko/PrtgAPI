@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 {
     /// <summary>
-    /// <para type="synopsis">Sort the children of a device, group or probe alphabetically.</para>
+    /// <para type="synopsis">Sorts the children of a device, group or probe alphabetically.</para>
     /// </summary>
     /// <example>
     ///     <code>C:\> Get-Group -Id 0 | Sort-PrtgObject</code>

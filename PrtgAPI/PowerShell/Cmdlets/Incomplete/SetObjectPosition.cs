@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 {
     /// <summary>
-    /// <para type="synopsis">Adjust the position of an object within its parent.</para>
+    /// <para type="synopsis">Adjusts the position of an object within its parent.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectPosition")]
     public class SetObjectPosition : PrtgCmdlet

@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve devices from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves devices from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-Device cmdlet retrieves devices from a PRTG Server. Devices hold sensors used to monitor a particular system.
     /// Get-Device provides a variety of methods of filtering the devices requested from PRTG, including by device name, ID and tags, as well as parent probe/group.

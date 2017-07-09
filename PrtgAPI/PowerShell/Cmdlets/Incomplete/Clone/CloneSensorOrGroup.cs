@@ -5,7 +5,7 @@ using System.Management.Automation;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// Clone a sensor or group within PRTG.
+    /// Clones a sensor or group within PRTG.
     /// </summary>
     public abstract class CloneSensorOrGroup<T> : CloneObject<T>
     {

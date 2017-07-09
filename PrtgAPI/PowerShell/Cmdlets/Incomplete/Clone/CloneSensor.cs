@@ -3,7 +3,7 @@
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Clone a sensor within PRTG.</para>
+    /// <para type="synopsis">Clones a sensor within PRTG.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Sensor 5678</code>
@@ -13,6 +13,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Sensor 5678 MyNewSensor</code>
     ///     <para>Clone the sensor with ID 1234 to the device, group or probe with ID 5678 renamed as "MyNewSensor"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Sensor 5678 -Resolve</code>
+    ///     <para>Clone the sensor with ID 1234 into the device, group or probe with ID 5678 and retrieve the resultant PrtgObject</para>
     /// </example>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Sensor", SupportsShouldProcess = true)]

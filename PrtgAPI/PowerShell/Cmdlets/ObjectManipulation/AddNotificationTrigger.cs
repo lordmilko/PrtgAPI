@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Add a notification trigger to a PRTG Server.</para>
+    /// <para type="synopsis">Adds a notification trigger to a PRTG Server.</para>
     /// 
     /// <para type="description">The Add-NotificationTrigger cmdlet adds a new notification  trigger to an object in PRTG. When adding
     /// a notification trigger, you must first create  a <see cref="TriggerParameters"/>  object that defines the settings to use in

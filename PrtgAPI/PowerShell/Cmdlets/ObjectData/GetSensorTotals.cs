@@ -4,7 +4,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve the total number of each type of sensor in the system.</para>
+    /// <para type="synopsis">Retrieves the total number of each type of sensor in the system.</para>
     /// 
     /// <para type="description">The Get-SensorTotals cmdlet retrieves the total number of each type of sensor in a PRTG Server.</para>
     /// 

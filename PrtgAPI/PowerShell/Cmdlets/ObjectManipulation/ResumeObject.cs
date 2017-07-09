@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Resume an object from a paused or simulated error state.</para>
+    /// <para type="synopsis">Resumes an object from a paused or simulated error state.</para>
     /// 
     /// <para type="description">The Resume-Object cmdlet resumes monitoring an object that has previously been interrupted
     /// due to manually pausing or simulating an error state on the object.</para>

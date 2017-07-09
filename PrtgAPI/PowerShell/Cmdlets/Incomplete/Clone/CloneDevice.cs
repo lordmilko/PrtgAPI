@@ -2,8 +2,28 @@
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
+    //things to note: if you dont specify a name it gets clone of "original name"
+    //                if you dont specify a hostname it uses the hostname/ip of the original device
+    //objects are paused after you clone them
+
     /// <summary>
-    /// <para type="synopsis">Clone a device within PRTG.</para>
+    /// <para type="synopsis">Clones a device within PRTG.</para>
+    /// 
+    /// <example>
+    ///     <code>C:\> Get-Device -Id 1234 | Clone-Device 5678</code>
+    ///     <para>Clone the device with ID 1234 to the group or probe with ID 5678</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device -Id 1234 | Clone-Device 5678 MyNewDevice 192.168.1.1</code>
+    ///     <para>Clone the device with ID 1234 into the group or probe with ID 5678 renamed as "MyNewDevice" with IP Address 192.168.1.1</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device -Id 1234 | Clone-Device 5678 -Resolve</code>
+    ///     <para>Clone the device with ID 1234 to the group or probe with ID 5678 and retrieve the resultant PrtgObject</para>
+    ///     <para/>
+    /// </example>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Device", SupportsShouldProcess = true)]
     public class CloneDevice : CloneObject<Device>
@@ -30,8 +50,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (ShouldProcess($"{Device.Name} (ID: {Device.Id}) to destination ID {DestinationId}"))
             {
-                var hostnameTouse = HostName ?? Device.Host;
-                var id = ExecuteOperation(() => client.CloneObject(Device.Id, Name, HostName ?? Device.Host, DestinationId), Name, Device.Id);
+                var hostnameToUse = HostName ?? Device.Host;
+                var id = ExecuteOperation(() => client.CloneObject(Device.Id, Name, hostnameToUse, DestinationId), Device.Name, Device.Id);
 
                 if (Resolve)
                 {
@@ -42,7 +62,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     var response = new PSObject();
                     response.Properties.Add(new PSNoteProperty("ObjectId", id));
                     response.Properties.Add(new PSNoteProperty("Name", Name));
-                    response.Properties.Add(new PSNoteProperty("HostName", hostnameTouse));
+                    response.Properties.Add(new PSNoteProperty("HostName", hostnameToUse));
 
                     WriteObject(response);
                 }

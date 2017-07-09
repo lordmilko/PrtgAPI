@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Retrieve groups from a PRTG Server.</para>
+    /// <para type="synopsis">Retrieves groups from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-Group cmdlet retrieves groups from a PRTG Server. Groups allow you to organize devices and other groups together.
     /// In addition, the root node of PRTG containing all probes in the system is marked as a group. Get-Group provides a variety of methods of
