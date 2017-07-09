@@ -927,7 +927,7 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public async void AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) => await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) => await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
 
         /// <summary>
         /// Pause a PRTG Object (sensor, device, etc).
@@ -967,7 +967,7 @@ namespace PrtgAPI
         /// Asynchronously resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
-        public async void ResumeObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
+        public async Task ResumeObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
 
         /// <summary>
         /// Simulate an error state for a sensor.
@@ -979,7 +979,7 @@ namespace PrtgAPI
         /// Asynchronously simulate an error state for a sensor.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
-        public async void SimulateErrorAsync(int sensorId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorId)).ConfigureAwait(false);
+        public async Task SimulateErrorAsync(int sensorId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorId)).ConfigureAwait(false);
 
         #endregion
         #region Notifications
@@ -1040,7 +1040,7 @@ namespace PrtgAPI
         /// Asynchronously request an object or any children of an object refresh themselves immediately.
         /// </summary>
         /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
-        public async void RefreshObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        public async Task RefreshObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Automatically create sensors under an object based on the object's (or it's children's) device type.
@@ -1052,7 +1052,7 @@ namespace PrtgAPI
         /// Asynchronously automatically create sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        public async void AutoDiscoverAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        public async Task AutoDiscoverAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Move the position of an object up or down under its parent within the PRTG User Interface.
@@ -1069,20 +1069,32 @@ namespace PrtgAPI
         public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(obj, position));
 
         /// <summary>
+        /// Asynchronously move the position of an object up or down under its parent within the PRTG User Interface.
+        /// </summary>
+        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="position">The direction to move in.</param>
+        public async Task SetPositionAsync(int objectId, Position position) => await requestEngine.ExecuteRequestAsync(CommandFunction.SetPosition, new SetPositionParameters(objectId, position)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously set the absolute position of an object under its parent within the PRTG User Interface
+        /// </summary>
+        /// <param name="obj">The object to reposition.</param>
+        /// <param name="position">The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position.</param>
+        public async Task SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position) => await requestEngine.ExecuteRequestAsync(CommandFunction.SetPosition, new SetPositionParameters(obj, position)).ConfigureAwait(false);
+
+        /// <summary>
         /// Move a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
         /// <param name="objectId">The ID of a device or group to move.</param>
         /// <param name="destinationId">The group or probe to move the object to.</param>
-        public void MoveObject(int objectId, int destinationId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.TargetId] = destinationId
-            };
+        public void MoveObject(int objectId, int destinationId) => requestEngine.ExecuteRequest(CommandFunction.MoveObjectNow, new MoveObjectParameters(objectId, destinationId));
 
-            requestEngine.ExecuteRequest(CommandFunction.MoveObjectNow, parameters);
-        }
+        /// <summary>
+        /// Asynchronously Move a device or group (excluding the root group) to another group or probe within PRTG.
+        /// </summary>
+        /// <param name="objectId">The ID of a device or group to move.</param>
+        /// <param name="destinationId">The group or probe to move the object to.</param>
+        public async Task MoveObjectAsync(int objectId, int destinationId) => await requestEngine.ExecuteRequestAsync(CommandFunction.MoveObjectNow, new MoveObjectParameters(objectId, destinationId)).ConfigureAwait(false);
 
         /// <summary>
         /// Sort the children of a device, group or probe alphabetically.
@@ -1094,7 +1106,7 @@ namespace PrtgAPI
         /// Asynchronously sort the children of a device, group or probe alphabetically.
         /// </summary>
         /// <param name="objectId">The object to sort.</param>
-        public async void SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Clone a sensor or group to another device or group respectively.
@@ -1103,29 +1115,26 @@ namespace PrtgAPI
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
         /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
         /// <returns>The ID of the object that was created</returns>
-        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId)
+        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId) => CloneObject(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId));
+
+        /// <summary>
+        /// Clone a device to another group.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned device.</param>
+        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
+        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        public int CloneObject(int deviceId, string cloneName, string host, int targetLocationObjectId) => CloneObject(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host));
+
+        private int CloneObject(CloneSensorOrGroupParameters parameters)
         {
-            if (cloneName == null)
-                throw new ArgumentNullException(nameof(cloneName));
+            var response = requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser);
 
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = sourceObjectId,
-                [Parameter.Name] = cloneName,
-                [Parameter.TargetId] = targetLocationObjectId
-            };
+            var decodedResponse = HttpUtility.UrlDecode(response);
 
-            //todo: need to implement simulateerrorparameters or get rid of it?
-
-            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser));
-
-            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.*)?", "$2"));
+            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
 
             return id;
-
-            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
-
-            //get-sensor|copy-object -target $devices
         }
 
         private string CloneRequestParser(HttpResponseMessage response)
@@ -1154,38 +1163,6 @@ namespace PrtgAPI
             }
 
             return message;
-        }
-
-        /// <summary>
-        /// Clone a device to another group.
-        /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
-        /// <param name="cloneName">The name that should be given to the cloned device.</param>
-        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetGroupId">The group or probe the device should be cloned to.</param>
-        public int CloneObject(int deviceId, string cloneName, string host, int targetGroupId)
-        {
-            if (cloneName == null)
-                throw new ArgumentNullException(nameof(cloneName));
-
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
-
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Id] = deviceId,
-                [Parameter.Name] = cloneName,
-                [Parameter.Host] = host,
-                [Parameter.TargetId] = targetGroupId
-            };
-
-            var response = HttpUtility.UrlDecode(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser));
-
-            var id = Convert.ToInt32(Regex.Replace(response, "(.+id=)(\\d+)(&.*)?", "$2"));
-
-            return id;
-
-            //todo: apparently the server replies with the url of the new page, which we could parse into an object containing the id of the new object and return from this method
         }
 
         /// <summary>
@@ -1481,7 +1458,7 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public async void SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
 
         //move this
         public void SetObjectProperty(int objectId, ObjectProperty property, object value)
