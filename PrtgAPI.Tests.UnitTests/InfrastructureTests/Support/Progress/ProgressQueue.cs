@@ -54,9 +54,6 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                     var headerIndent = new string(' ', i * 4);
                     var recordIndent = new string(' ', (i + 1) * 4);
 
-                    if (builder.ToString() != string.Empty)
-                        builder.Append("\n");
-
                     builder.Append($"{headerIndent}{snapshot[i].Activity}");
 
                     if (snapshot[i].RecordType == ProgressRecordType.Completed)
@@ -67,7 +64,27 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                     builder.Append($"{recordIndent}{snapshot[i].StatusDescription}\n");
 
                     if (snapshot[i].PercentComplete >= 0)
-                        builder.Append($"{recordIndent}Percent Complete: {snapshot[i].PercentComplete}\n");
+                    {
+                        var maxChars = 40;
+
+                        var percentChars = ((double)snapshot[i].PercentComplete/100)*maxChars;
+
+                        var spaceChars = maxChars - percentChars;
+
+                        var percentBuilder = new StringBuilder();
+
+                        percentBuilder.Append("[");
+
+                        for (int j = 0; j < percentChars; j++)
+                            percentBuilder.Append("o");
+
+                        for (int j = 0; j < spaceChars; j++)
+                            percentBuilder.Append(" ");
+
+                        percentBuilder.Append($"] ({snapshot[i].PercentComplete}%)");
+
+                        builder.Append($"{recordIndent}{percentBuilder}\n");
+                    }
 
                     if (snapshot[i].CurrentOperation != null)
                         builder.Append($"{recordIndent}{snapshot[i].CurrentOperation}\n");

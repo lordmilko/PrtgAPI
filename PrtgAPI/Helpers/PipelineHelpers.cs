@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Reflection;
 using PrtgAPI.PowerShell;
+using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.Helpers
 {
@@ -29,7 +32,7 @@ namespace PrtgAPI.Helpers
             return prop;
         }
 
-        public static Pipeline GetPipelineInput(this ICommandRuntime commandRuntime, Cmdlet cmdlet)
+        public static Pipeline GetCmdletPipelineInput(this ICommandRuntime commandRuntime, InternalCommand cmdlet)
         {
             var inputPipe = commandRuntime.GetInternalProperty("InputPipe");
             var enumerator = inputPipe.GetType().GetField("_enumeratorToProcess", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(inputPipe);
@@ -47,7 +50,6 @@ namespace PrtgAPI.Helpers
             }
             else //Piping from a variable
             {
-                //var array = ((object[])enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Cast<PSObject>();
                 var array = ((object[]) enumerator.GetType().GetField("_array", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(enumerator)).Select(o =>
                 {
                     if (o is PSObject)
@@ -58,6 +60,51 @@ namespace PrtgAPI.Helpers
 
                 return new Pipeline(current, array.Select(e => e.BaseObject).ToList());
             }
+        }
+
+        public static Pipeline GetPipelineInput(this ICommandRuntime commandRuntime)
+        {
+            var processor = commandRuntime.GetInternalProperty("PipelineProcessor");
+            var commands = processor.GetInternalProperty("Commands");
+
+            var list = ((IEnumerable) commands).Cast<object>().ToList();
+            var first = list.First();
+            var command = (InternalCommand) first.GetInternalProperty("Command");
+
+            var runtime = (ICommandRuntime)first.GetInternalProperty("CommandRuntime");
+
+            return runtime.GetCmdletPipelineInput(command);
+        }
+
+        /// <summary>
+        /// Returns the previous PrtgCmdlet directly before this one. If the previous cmdlet was not a PrtgCmdlet, this method returns null.
+        /// </summary>
+        /// <param name="cmdlet">The cmdlet to retrieve the previous cmdlet of.</param>
+        /// <returns>If the previous cmdlet if that cmdlet is part of PrtgAPI. Otherwise, null.</returns>
+        public static PrtgCmdlet GetPreviousCmdlet(this PSCmdlet cmdlet)
+        {
+            var processor = cmdlet.CommandRuntime.GetInternalProperty("PipelineProcessor");
+            var commandProcessors = processor.GetInternalProperty("Commands");
+
+            var commandProcessorsList = ((IEnumerable)commandProcessors).Cast<object>().ToList();
+
+            var commands = commandProcessorsList.Select(c => c.GetInternalProperty("Command")).ToList();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            if (myIndex <= 0)
+                return null;
+
+            var previousIndex = myIndex - 1;
+
+            var previousCmdlet = commands[previousIndex];
+
+            if (previousCmdlet is PrtgCmdlet)
+            {
+                return (PrtgCmdlet) previousCmdlet;
+            }
+
+            return null;
         }
     }
 }

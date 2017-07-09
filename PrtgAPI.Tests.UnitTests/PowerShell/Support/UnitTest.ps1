@@ -23,13 +23,18 @@ function WithItems($items, $assert)
 
 	$global:tester.SetPrtgSessionState($items)
 
-	$result = & $assert
-
-	$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
-
-	if($result)
+	try
 	{
-		return $result
+		$result = & $assert
+
+		if($result)
+		{
+			return $result
+		}
+	}
+	finally
+	{
+		$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
 	}
 }
 
@@ -40,10 +45,15 @@ function Run($objectType, $script)
 	$global:tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
 	$global:tester.SetPrtgSessionState()
 
-	$result = & $script
-
-	$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
-    $global:tester = $oldTester
+	try
+	{
+		$result = & $script
+	}
+	finally
+	{
+		$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
+		$global:tester = $oldTester
+	}	
 
 	return $result
 }

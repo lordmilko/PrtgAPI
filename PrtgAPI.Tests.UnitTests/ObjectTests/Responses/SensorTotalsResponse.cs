@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             this.item = item;
         }
 
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             var xml = new XElement("data",
                 new XElement("prtg-version", item.PrtgVersion),

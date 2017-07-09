@@ -17,7 +17,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             this.responseText = responseText;
         }
 
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             return responseText;
         }

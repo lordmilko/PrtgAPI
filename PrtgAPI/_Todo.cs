@@ -4,6 +4,8 @@
     Todo
     ----------------
 
+    how do we get channels that are configured to hide from tables to show in get-channel
+
     //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
 
     -what is probestatus #1? new probe not authorized to connect yet?

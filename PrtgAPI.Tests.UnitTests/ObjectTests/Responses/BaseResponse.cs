@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
+using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
 
@@ -23,18 +24,37 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             this.items = items.ToList();
         }
 
-        public virtual string GetResponseText(string address)
+        public virtual string GetResponseText(ref string address)
         {
-            return GetResponseText(address, items);
+            return GetResponseText(ref address, items);
         }
 
-        private string GetResponseText(string address, List<T> list)
+        private string GetResponseText(ref string address, List<T> list)
         {
-            var xmlList = list.Select(GetItem).ToList();
+            var queries = UrlHelpers.CrackUrl(address);
+
+            List<XElement> xmlList = null;
+            var count = list.Count;
+
+            if (queries["count"] != null)
+            {
+                var c = Convert.ToInt32(queries["count"]);
+
+                if (c < list.Count && c > 0)
+                {
+                    count = c;
+
+                    xmlList = list.Take(count).Select(GetItem).ToList();
+                }
+                else
+                    xmlList = list.Select(GetItem).ToList();
+            }
+            else
+                xmlList = list.Select(GetItem).ToList();
 
             var xml = new XElement(rootName,
                 new XAttribute("listend", 1),
-                new XAttribute("totalcount", list.Count),
+                new XAttribute("totalcount", count),
                 new XElement("prtg-version", "1.2.3.4"),
                 xmlList
             );
@@ -54,7 +74,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             list.ForEach(i => ((BaseItem)(object)i).ObjId = page.ToString());
 
             await Task.Delay(delay * 600);
-            var response = GetResponseText(address, list);
+            var response = GetResponseText(ref address, list);
 
             return response;
         }

@@ -77,12 +77,55 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            ValidateParameters();
+
+            var parameters = ProcessParameters();
+            var records = GetRecordsInternal(parameters);
+
+            WriteList(records);
+
+            //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
+            Filter = null;
+        }
+
+        private void ValidateParameters()
+        {
             if (MyInvocation.BoundParameters.ContainsKey("Id") && MyInvocation.BoundParameters["Id"] == null)
                 throw new ParameterBindingException("The -Id parameter was specified however the parameter value was null.");
+        }
 
-            var parameters = CreateParameters();
+        private IEnumerable<TObject> GetFilteredObjects(TParam parameters)
+        {
+            if (Filter != null)
+                parameters.SearchFilter = Filter;
+            return GetObjects(parameters);
+        }
 
+        private IEnumerable<TObject> GetRecordsInternal(TParam parameters)
+        {
             IEnumerable<TObject> records;
+
+            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
+            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+                records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
+            else
+            {
+                if (streamResults)
+                    records = StreamResultsWithProgress();
+                else
+                    records = GetFilteredObjects(parameters);
+            }
+
+            records = FilterResponseRecords(records, Name, r => r.Name);
+            records = FilterResponseRecordsByTag(records);
+
+            return records;
+        }
+
+        private TParam ProcessParameters()
+        {
+            var parameters = CreateParameters();
 
             ProcessIdFilter();
             ProcessNameFilter();
@@ -100,39 +143,7 @@ namespace PrtgAPI.PowerShell.Base
             if (streamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
                 streamResults = false;
 
-            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
-                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
-            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
-                records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
-            else
-
-            /*if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
-                records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
-            else if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
-                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
-            else*/
-            {
-                if (streamResults)
-                    records = StreamResultsWithProgress();
-                else
-                    records = GetFilteredObjects(parameters);
-            }
-
-            records = FilterResponseRecords(records, Name, r => r.Name);
-            records = FilterResponseRecordsByTag(records);
-
-            WriteList(records);
-
-            //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
-
-            Filter = null;
-        }
-
-        private IEnumerable<TObject> GetFilteredObjects(TParam parameters)
-        {
-            if (Filter != null)
-                parameters.SearchFilter = Filter;
-            return GetObjects(parameters);
+            return parameters;
         }
 
         private void ProcessIdFilter()
@@ -166,6 +177,8 @@ namespace PrtgAPI.PowerShell.Base
 
         private IEnumerable<TObject> StreamResultsWithProgress()
         {
+            ProgressManager.Scenario = ProgressScenario.StreamProgress;
+
             ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
 
             var count = client.GetTotalObjects(content);

@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
         public string DownloadString(string address)
         {
-            return response.GetResponseText(address);
+            return response.GetResponseText(ref address);
         }
 
         public Task<HttpResponseMessage> GetSync(string address)
@@ -28,7 +28,11 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
             var message = new HttpResponseMessage(response.StatusCode)
             {
-                Content = new StringContent(response.GetResponseText(address))
+                Content = new StringContent(response.GetResponseText(ref address)),
+                RequestMessage = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(address)
+                }
             };
 
             try
@@ -62,7 +66,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             {
                 //If the method is in fact async, or is called as part of a streaming method, we execute the request as async
                 //This implies we do not consider nested streaming methods to be an implemented scenario
-                responseStr = await Task.FromResult(response.GetResponseText(address)).ConfigureAwait(false);
+                responseStr = await Task.FromResult(response.GetResponseText(ref address)).ConfigureAwait(false);
             }
             //we should check whether the method is a streamer or an async, and if its async we should to task.fromresult
 

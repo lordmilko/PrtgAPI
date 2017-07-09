@@ -20,8 +20,8 @@ namespace PrtgAPI.PowerShell
         public ProgressRecord CurrentRecord => progressRecords.Peek();
 
         public bool ContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
-
-        public bool PreviousContainsProgress => PreviousRecord?.Activity != DefaultActivity && PreviousRecord?.StatusDescription != DefaultDescription;
+        
+        public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
 
         public bool FirstInChain => pipeToPrtgCmdlet && progressRecords.Count == 1;
 
@@ -37,6 +37,8 @@ namespace PrtgAPI.PowerShell
 
         public Pipeline Pipeline { get; set; }
 
+        public Pipeline CmdletPipeline { get; set; }
+
         public bool PipeFromVariable => Pipeline?.List.Count() > 1;
 
         public ProgressRecord PreviousRecord => progressRecords.Skip(1).FirstOrDefault();
@@ -45,11 +47,13 @@ namespace PrtgAPI.PowerShell
 
         private int recordsProcessed = -1;
 
-        bool variableProgressDisplayed = false;
+        private bool variableProgressDisplayed;
 
         private IProgressWriter progressWriter;
 
         internal static IProgressWriter CustomWriter { get; set; }
+
+        internal ProgressScenario Scenario { get; set; }
 
         public ProgressManager(PSCmdlet cmdlet)
         {
@@ -59,9 +63,30 @@ namespace PrtgAPI.PowerShell
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
 
             this.cmdlet = cmdlet;
-            Pipeline = cmdlet.CommandRuntime.GetPipelineInput(cmdlet);
+            Pipeline = cmdlet.CommandRuntime.GetPipelineInput();
+            CmdletPipeline = cmdlet.CommandRuntime.GetCmdletPipelineInput(cmdlet);
 
             progressWriter = GetWriter();
+
+            CalculateProgressScenario();
+        }
+
+        private void CalculateProgressScenario()
+        {
+            if (PartOfChain)
+            {
+                if (PipeFromVariable)
+                    Scenario = ProgressScenario.VariableToMultipleCmdlets;
+                else
+                    Scenario = ProgressScenario.MultipleCmdlets;
+            }
+            else
+            {
+                if (PipeFromVariable)
+                    Scenario = ProgressScenario.VariableToSingleCmdlet;
+                else
+                    Scenario = ProgressScenario.NoProgress;
+            }
         }
 
         private IProgressWriter GetWriter()
@@ -147,8 +172,22 @@ namespace PrtgAPI.PowerShell
 
         public void CompleteProgress()
         {
-            if (PipeFromVariable && Pipeline.CurrentIndex < Pipeline.List.Count - 1)
-                return;
+            if (PipeFromVariable)
+            {
+                if (!PartOfChain || FirstInChain)
+                {
+                    if (CmdletPipeline.CurrentIndex < CmdletPipeline.List.Count - 1)
+                        return;
+                }
+                else
+                {
+                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousManager = previousCmdlet.ProgressManager;
+
+                    if (previousManager.recordsProcessed < previousManager.TotalRecords)
+                        return;                    
+                }
+            }
 
             InitialDescription = null;
             recordsProcessed = -1;
@@ -157,7 +196,7 @@ namespace PrtgAPI.PowerShell
             {
                 CurrentRecord.RecordType = ProgressRecordType.Completed;
 
-                WriteProgress();
+                WriteProgress(CurrentRecord);
             }
 
             TotalRecords = null;
@@ -167,45 +206,64 @@ namespace PrtgAPI.PowerShell
             CurrentRecord.RecordType = ProgressRecordType.Processing;
         }
 
-        public void UpdateRecordsProcessed()
+        public void UpdateRecordsProcessed(ProgressRecord record)
         {
             if (PipeFromVariable)
             {
-                var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
+                if (!PartOfChain || FirstInChain)
+                {
+                    var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
 
-                var originalIndex = index;
+                    var originalIndex = index;
 
-                if (index > Pipeline.List.Count)
-                    index = Pipeline.List.Count;
+                    if (index > CmdletPipeline.List.Count)
+                        index = CmdletPipeline.List.Count;
 
-                CurrentRecord.StatusDescription = $"{InitialDescription} {index}/{Pipeline.List.Count}";
+                    record.StatusDescription = $"{InitialDescription} {index}/{CmdletPipeline.List.Count}";
 
-                CurrentRecord.PercentComplete = (int) ((index) /Convert.ToDouble(Pipeline.List.Count)*100);
+                    record.PercentComplete = (int) ((index)/Convert.ToDouble(CmdletPipeline.List.Count)*100);
 
-                variableProgressDisplayed = true;
+                    variableProgressDisplayed = true;
 
-                if(originalIndex <= Pipeline.List.Count)
-                    WriteProgress();
-             }
+                    if (originalIndex <= CmdletPipeline.List.Count)
+                        WriteProgress(record);
+                }
+                else
+                {
+                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousManager = previousCmdlet.ProgressManager;
+                    var totalRecords = previousManager.TotalRecords;
+
+                    if (totalRecords > 0)
+                    {
+                        if (previousManager.recordsProcessed < 0)
+                            previousManager.recordsProcessed++;
+
+                        previousManager.recordsProcessed++;
+
+                        record.StatusDescription = $"{InitialDescription} {previousManager.recordsProcessed}/{totalRecords}";
+
+                        if (previousManager.recordsProcessed > 0)
+                            record.PercentComplete = (int)(previousManager.recordsProcessed / Convert.ToDouble(totalRecords) * 100);
+
+                        WriteProgress();
+                    }
+                }
+            }
             else
             {
                 if (TotalRecords > 0)
                 {
                     recordsProcessed++;
 
-                    CurrentRecord.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
+                    record.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
 
                     if (recordsProcessed > 0)
-                        CurrentRecord.PercentComplete = (int)(recordsProcessed / Convert.ToDouble(TotalRecords) * 100);
+                        record.PercentComplete = (int)(recordsProcessed / Convert.ToDouble(TotalRecords) * 100);
 
                     WriteProgress();
                 }
             }
-        }
-
-        public void VariableProgressDoesntNeedUpdating()
-        {
-            variableProgressDisplayed = true;
         }
 
         public void TrySetPreviousOperation(string operation)
@@ -223,7 +281,7 @@ namespace PrtgAPI.PowerShell
 
         public void DisplayInitialProgress()
         {
-            if (PipeFromVariable && Pipeline.CurrentIndex > 0)
+            if (PipeFromVariable && CmdletPipeline.CurrentIndex > 0)
                 return;
 
             CurrentRecord.StatusDescription = InitialDescription;
@@ -254,14 +312,14 @@ namespace PrtgAPI.PowerShell
             {
                 if (PipeFromVariable)
                 {
-                    var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
+                    var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
 
-                    if (index > Pipeline.List.Count)
-                        index = Pipeline.List.Count;
+                    if (index > CmdletPipeline.List.Count)
+                        index = CmdletPipeline.List.Count;
 
                     CurrentRecord.Activity = activity;
-                    CurrentRecord.PercentComplete = (int)((index) / Convert.ToDouble(Pipeline.List.Count) * 100);
-                    CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{Pipeline.List.Count})";
+                    CurrentRecord.PercentComplete = (int)((index) / Convert.ToDouble(CmdletPipeline.List.Count) * 100);
+                    CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{CmdletPipeline.List.Count})";
 
                     variableProgressDisplayed = true;
 

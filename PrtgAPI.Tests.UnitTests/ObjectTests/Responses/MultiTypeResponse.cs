@@ -14,12 +14,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     public class MultiTypeResponse : IWebResponse
     {
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
-            return GetResponse(address).GetResponseText(address);
+            return GetResponse(ref address).GetResponseText(ref address);
         }
 
-        private IWebResponse GetResponse(string address)
+        private IWebResponse GetResponse(ref string address)
         {
             var function = GetFunction(address);
 
@@ -30,24 +30,47 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                 case nameof(CommandFunction.Pause):
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
+                case nameof(HtmlFunction.ChannelEdit):
+                    return new ChannelResponse(new[] {new ChannelItem()});
+                case nameof(CommandFunction.DuplicateObject):
+                    address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
+                    return new BasicResponse("");
                 default:
-                    throw new NotImplementedException($"Unknown function '{function}'");
+                    throw new NotImplementedException($"Unknown function '{function}' passed to MultiTypeResponse");
             }
         }
 
         private IWebResponse GetTableResponse(string address)
         {
-            var content = GetContent(address);
+            var components = UrlHelpers.CrackUrl(address);
+
+            Content content = components["content"].ToEnum<Content>();
+
+            var countStr = components["count"];
+
+            var count = 2;
+
+            if (countStr != null && countStr != "0" && countStr != "500" && countStr != "50000")
+                count = Convert.ToInt32(countStr);
+
+            if (components["filter_objid"] != null)
+                count = 1;
 
             switch (content)
             {
                 case Content.Sensors:   return new SensorResponse(new[] { new SensorItem() });
-                case Content.Devices:   return new DeviceResponse(new[] { new DeviceItem() });
-                case Content.Groups:    return new GroupResponse(new[] { new GroupItem() });
-                case Content.ProbeNode: return new ProbeResponse(new[] { new ProbeItem() });
+                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(), count));
+                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(), count));
+                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(), count));
+                case Content.Channels:  return new ChannelResponse(new[] { new ChannelItem() });
                 default:
-                    throw new NotImplementedException($"Unknown content '{content}'");
+                    throw new NotImplementedException($"Unknown content '{content}' requested from MultiTypeResponse");
             }
+        }
+
+        private T[] GetItems<T>(Func<int, T> func, int count)
+        {
+            return Enumerable.Range(0, count).Select(func).ToArray();
         }
 
         private string GetFunction(string address)
@@ -84,31 +107,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             var query = first.LastIndexOf('?');
 
             var end = query > 0 ? query : first.Length - 1;
-            var start = first.LastIndexOf('/') + 1;
+            var start = first.LastIndexOf(".com/", StringComparison.InvariantCulture) + 5;
 
             var page = first.Substring(start, end - start);
+
+            if (page.StartsWith("api/"))
+                page = page.Substring(4);
 
             return page;
         }
 
-        private Content GetContent(string address)
-        {
-            var components = UrlHelpers.CrackUrl(address);
-
-            Content content = components["content"].ToEnum<Content>();
-
-            return content;
-        }
-
-        private string GetContent1(string address)
-        {
-            var components = UrlHelpers.CrackUrl(address);
-
-            if (components["content"] != null)
-                return components["content"];
-
-            throw new NotImplementedException("unknown address");
-        }
 
         private bool TryParseEnumDescription<TEnum>(string description, out TEnum result)
         {

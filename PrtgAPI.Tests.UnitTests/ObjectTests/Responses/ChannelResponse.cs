@@ -449,14 +449,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return xml;
         }
 
-        public override string GetResponseText(string address)
+        public override string GetResponseText(ref string address)
         {
             if (address.Contains(HtmlFunction.ChannelEdit.GetDescription()))
             {
                 return GetSettingsResponseText();
             }
 
-            return base.GetResponseText(address);
+            return base.GetResponseText(ref address);
         }
     }
 }

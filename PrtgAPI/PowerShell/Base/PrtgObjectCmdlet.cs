@@ -32,10 +32,10 @@ namespace PrtgAPI.PowerShell.Base
         {
             IEnumerable<T> records = null;
 
-            if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
-                records = GetResultsWithProgress(GetRecords);
-            else if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
                 records = GetResultsWithVariableProgress(GetRecords);
+            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+                records = GetResultsWithProgress(GetRecords);
             else
                 records = GetRecords();
 
@@ -46,30 +46,27 @@ namespace PrtgAPI.PowerShell.Base
         {
             ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search";
 
-            ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.Pipeline.List.First().GetType()).ToLower()}s";
-            ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof (T)).ToLower()}s";
+            ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
+            ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
 
-            //ProgressManager.DisplayInitialProgress();
+            ProgressManager.RemovePreviousOperation();
+            ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
 
-            if (ProgressManager.Pipeline.CurrentIndex == 0)
-                ProgressManager.UpdateRecordsProcessed();
-            else
-                ProgressManager.VariableProgressDoesntNeedUpdating();
+            var records = getResults().ToList();
 
-            var records = getResults();
+            ProgressManager.TotalRecords = records.Count;
 
             return records;
         }
 
         protected IEnumerable<T> GetResultsWithProgress(Func<IEnumerable<T>> getResults)
         {
-            //when we're piping from a variable, we'd like to tell the user how many items we're processing
-
+            //May return the count of records we'll be retrieving if we're streaming (for example)
             int count = DisplayInitialProgress();
 
             var records = getResults();
 
-            return UpdatePreviousProgress(records, count);
+            return UpdatePreviousProgressCount(records, count);
         }
 
         private int DisplayInitialProgress()
@@ -78,6 +75,8 @@ namespace PrtgAPI.PowerShell.Base
 
             if (ProgressManager.FirstInChain)
             {
+                //If DisplayFirstInChainMessage is overridden, count _may_ be set (e.g. if we are streaming records,
+                //in which case we will get the total number of records we _will_ retrieve before returning)
                 count = DisplayFirstInChainMessage();
             }
             else
@@ -101,18 +100,15 @@ namespace PrtgAPI.PowerShell.Base
                 return type.Name;
         }
 
-        private IEnumerable<T> UpdatePreviousProgress(IEnumerable<T> records, int count)
+        private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count) //todo: should we rename this method to make it more clear what it does?
         {
-            if (ProgressManager.PreviousContainsProgress)
+            records = GetCount(records, ref count);
+
+            ProgressManager.TotalRecords = count;
+
+            if (!ProgressManager.LastInChain)
             {
-                records = GetCount(records, ref count);
-
-                ProgressManager.TotalRecords = count;
-
-                if (!ProgressManager.LastInChain)
-                {
-                    SetObjectSearchProgress(ProcessingOperation.Processing, count);
-                }
+                SetObjectSearchProgress(ProcessingOperation.Processing, count);
             }
 
             return records;
@@ -159,35 +155,109 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressManager"></param>
         internal void WriteList<T>(IEnumerable<T> sendToPipeline)
         {
-            if (ProgressManager.ContainsProgress)
-            {
-                ProgressManager.RemovePreviousOperation();
-
-                if(!ProgressManager.PipeFromVariable)
-                    ProgressManager.UpdateRecordsProcessed(); //???????
-            }
+            PreUpdateProgress(sendToPipeline);
 
             foreach (var item in sendToPipeline)
             {
-                if (ProgressManager.ContainsProgress && !ProgressManager.PipeFromVariable)
-                {
-                    ProgressManager.UpdateRecordsProcessed();
-                }
+                DuringUpdateProgress();
 
                 WriteObject(item);
             }
 
-            //need to have multiple level progress like normal when chaining 3 together when piping from variable
+            PostUpdateProgress();
+        }
 
-            if (ProgressManager.PipeFromVariable)
+        private void PreUpdateProgress<T>(IEnumerable<T> sendToPipeline)
+        {
+            switch (ProgressManager.Scenario)
             {
-                ProgressManager.UpdateRecordsProcessed();
+                case ProgressScenario.NoProgress:
+                    break;
+                case ProgressScenario.StreamProgress:
+                case ProgressScenario.MultipleCmdlets:
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PreLoop);
+                    break;
+                case ProgressScenario.VariableToSingleCmdlet:
+                case ProgressScenario.VariableToMultipleCmdlets:
+                    break;
+                default:
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
             }
+        }
 
+        private void DuringUpdateProgress()
+        {
+            switch (ProgressManager.Scenario)
+            {
+                case ProgressScenario.NoProgress:
+                    break;
+                case ProgressScenario.StreamProgress:
+                case ProgressScenario.MultipleCmdlets:
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach);
+                    break;
+                case ProgressScenario.VariableToSingleCmdlet:
+                case ProgressScenario.VariableToMultipleCmdlets:
+                    break;
+
+                default:
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
+            }
+        }
+
+        private void PostUpdateProgress()
+        {
+            switch (ProgressManager.Scenario)
+            {
+                case ProgressScenario.NoProgress:
+                    break;
+                case ProgressScenario.StreamProgress:
+                case ProgressScenario.MultipleCmdlets:
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PostLoop);
+                    break;
+                case ProgressScenario.VariableToSingleCmdlet:
+                case ProgressScenario.VariableToMultipleCmdlets:
+                    UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage.PostLoop);
+                    break;
+
+                default:
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
+            }
+        }
+
+        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage)
+        {
             if (ProgressManager.ContainsProgress)
-                ProgressManager.CompleteProgress();
+            {
+                if (stage == ProgressStage.PreLoop)
+                {
+                    ProgressManager.RemovePreviousOperation();
 
-            
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                }
+                else if (stage == ProgressStage.BeforeEach)
+                {
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                }
+                else //PostLoop
+                {
+                    ProgressManager.CompleteProgress();
+                }
+            }
+        }
+
+        private void UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage stage)
+        {
+            if (stage == ProgressStage.PreLoop)
+            {
+            }
+            else if (stage == ProgressStage.BeforeEach)
+            {
+            }
+            else //PostLoop
+            {
+                if (ProgressManager.ContainsProgress)
+                    ProgressManager.CompleteProgress();
+            }
         }
 
         /// <summary>

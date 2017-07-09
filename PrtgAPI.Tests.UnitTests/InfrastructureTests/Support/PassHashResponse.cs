@@ -15,7 +15,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
         public HttpStatusCode StatusCode { get; set; }
 
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             return response;
         }

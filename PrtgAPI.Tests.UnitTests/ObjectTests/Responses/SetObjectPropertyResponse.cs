@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             this.expectedValue = expectedValue;
         }
 
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             var queries = UrlHelpers.CrackUrl(address);
 

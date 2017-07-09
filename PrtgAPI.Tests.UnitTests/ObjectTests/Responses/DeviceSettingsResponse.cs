@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     class DeviceSettingsResponse : IWebResponse
     {
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             var builder = new StringBuilder();
 

@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             this.value = value;
         }
 
-        public string GetResponseText(string address)
+        public string GetResponseText(ref string address)
         {
             var queries = UrlHelpers.CrackUrl(address);
             queries.Remove("id");

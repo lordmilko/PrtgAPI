@@ -91,6 +91,9 @@
     <Compile Include="Parameters\ObjectData\SensorHistoryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
     <Compile Include="Parameters\Base\BaseActionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\CloneDeviceParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\CloneSensorOrGroupParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\MoveObjectParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\RemoveTriggerParameters.cs" />
     <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSensorHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\MoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SetObjectPosition.cs" />
+    <Compile Include="PowerShell\Cmdlets\Incomplete\SimulateObjectError.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\SortPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
@@ -112,6 +116,8 @@
     <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
     <Compile Include="PowerShell\Progress\ProgressManager.cs" />
+    <Compile Include="PowerShell\Progress\ProgressScenario.cs" />
+    <Compile Include="PowerShell\Progress\ProgressStage.cs" />
     <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>

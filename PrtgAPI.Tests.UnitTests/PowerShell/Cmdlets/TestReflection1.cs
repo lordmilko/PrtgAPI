@@ -50,7 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     break;
                 case "VariableInputArray":
                 case "VariableInputObject":
-                    WriteObject(CommandRuntime.GetPipelineInput(this).List, true);
+                    WriteObject(CommandRuntime.GetCmdletPipelineInput(this).List, true);
                     break;
 
                 default:
