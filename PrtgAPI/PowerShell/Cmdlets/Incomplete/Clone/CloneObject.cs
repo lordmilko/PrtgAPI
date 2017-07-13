@@ -30,11 +30,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Name { get; set; }
 
         [Parameter(Mandatory = false)]
-        public SwitchParameter Resolve { get; set; }
+        public SwitchParameter Resolve { get; set; } = SwitchParameter.Present;
 
-        protected TRet ExecuteOperation<TRet>(Func<TRet> action, string name, int objectId)
+        protected void ExecuteOperation(Action action, string name, int objectId)
         {
-            return ExecuteOperation(action, $"Cloning PRTG {typeof(T).Name}s", $"Cloning {typeof(T).Name.ToLower()} '{name}' (ID: {objectId})");
+            ExecuteOperation(action, $"Cloning PRTG {typeof(T).Name}s", $"Cloning {typeof(T).Name.ToLower()} '{name}' (ID: {objectId})");
         }
 
         protected void ResolveObject(int id, Func<int, List<T>> getObjects)

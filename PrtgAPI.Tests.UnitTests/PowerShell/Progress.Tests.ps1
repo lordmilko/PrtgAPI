@@ -34,7 +34,7 @@ function InitializeClient {
 
 function ItWorks($a, $b)
 {
-	#It $a $b
+	It $a $b
 }
 
 function ItsNotImplemented($a, $b)
@@ -68,7 +68,9 @@ Describe "Test-Progress" {
 
 	the following scenarios need support:
 
-	---
+	### WORKING ###
+
+	WORKING!
 
 	$devices|clone-device 5678|get-sensor
 
@@ -80,7 +82,7 @@ Describe "Test-Progress" {
 	current issue: retrieving all sensors doesnt set itself on the previous item
 	possible solution: look at the logic used in normal piping to see how it updates the previous item
 
-	---
+	### WORKING ###
 
 	$devices|clone-device 5678|get-sensor|get-channel
 
@@ -94,7 +96,7 @@ Describe "Test-Progress" {
 
 	look at the logic used in normal piping to see how we should present the sensor search progress to allow get-channel to modify it
 
-	---
+	##########################################
 
 	$groups|get-device|clone-device 5678|get-sensor
 
@@ -254,7 +256,7 @@ Describe "Test-Progress" {
 	
 	ItWorks "3a: Table -> Action -> Table" {
 
-		Get-Device | Clone-Device 5678 -Resolve | Get-Sensor
+		Get-Device | Clone-Device 5678 | Get-Sensor
 
 		Validate (@(
 			"PRTG Device Search`n" +
@@ -308,24 +310,46 @@ Describe "Test-Progress" {
 		))
 	}
 
-	It "3b: Variable -> Action -> Table" {
+	ItWorks "3b: Variable -> Action -> Table" {
 
 		$devices = Get-Device
 
-		try
-		{
-			$devices | Clone-Device 5678 -Resolve | Get-Sensor
-		}
-		catch [exception]
-		{
-			Write-Host $_.exception.stacktrace
-			throw
-		}
-		
+		$devices | Clone-Device 5678 | Get-Sensor
 
 		Validate(@(
-			#how come clone-device here crashes but $devices | Pause-Object -Forever in 1b doesnt crash
-				#get-sensor is crashing
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Retrieving all sensors"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Retrieving all sensors"
+
+			###################################################################
+
+			"Cloning PRTG Devices (Completed)`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Retrieving all sensors"
 		))
 	}
 
@@ -504,7 +528,7 @@ Describe "Test-Progress" {
 	#region 5: Something -> Table -> Action -> Table
 
 	ItWorks "5a: Table -> Table -> Action -> Table" {
-		Get-Group | Get-Device | Clone-Device 5678 -Resolve | Get-Sensor
+		Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor
 
 		Validate(@(
 			"PRTG Group Search`n" +
@@ -959,9 +983,132 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
-	#region 8: Variable -> Table -> Table -> Table
+	#region 8: Variable -> Action -> Table -> Table
 
-	ItsNotImplemented "8: Variable -> Table -> Table -> Table" {
+	ItWorks "8: Variable -> Action -> Table -> Table" {
+		# an extension of 3b. variable -> action -> table. Confirms that we can transform our setpreviousoperation into a
+		# proper progress item when required
+
+		$devices = Get-Device
+
+		try
+		{
+			$devices | Clone-Device 5678 | Get-Sensor | Get-Channel
+		}
+		catch
+		{
+			Write-Host $_.exception.stacktrace
+			throw
+		}
+		
+
+		Validate(@(
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Retrieving all sensors"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    PRTG Sensor Search`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    PRTG Sensor Search`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all channels"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    PRTG Sensor Search (Completed)`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all channels"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Retrieving all sensors"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Sensor Search`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Sensor Search`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all channels"
+
+			###################################################################
+
+			"Cloning PRTG Devices`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Sensor Search (Completed)`n" +
+			"        Processing sensor 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all channels"
+
+			###################################################################
+
+			"Cloning PRTG Devices (Completed)`n" +
+			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+		))
+	}
+
+	#endregion
+	#region 9: Variable -> Table -> Table -> Table
+
+	ItsNotImplemented "9: Variable -> Table -> Table -> Table" {
 		$probes = Get-Probe
 
 		$probes | Get-Group | Get-Device | Get-Sensor

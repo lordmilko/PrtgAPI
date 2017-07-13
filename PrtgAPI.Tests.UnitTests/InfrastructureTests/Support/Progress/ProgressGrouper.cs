@@ -28,6 +28,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             /*
              * Given a list of ParentID/ID pairs in the form
              * -1 1
+             * -1 1
              *  1 2
              *  1 2
              *  2 3
@@ -41,12 +42,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
              * 
              * This information will be later used to create a unique tree for each branch of the relationship, i.e.
              * 
-             * -1 1
+             * -1 1    (Grandfather1 [Standalone])
              * 
-             * -1 1
+             * -1 1    (Grandfather2)
+             * 
+             * -1 1    (Grandfather2 -> Father1)
              *    1 2
              *    
-             * -1 1
+             * -1 1    (Grandfather2 -> Father2 -> Child)
              *    1 2
              *      2 3
              */
@@ -72,7 +75,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                     //Get the children of THAT record
                     var result = GetChildren(nextChild, list, i + 1);
 
-                    //If we skipped over more than 1 record, we'll need to update our position
+                    //If we skipped over more than 1 record while evaluating our children, we'll need to update our position
                     if (result > i + 1)
                         i = result;
 
@@ -90,21 +93,27 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             {
                 foreach (var item in hierarchy.Children)
                 {
+                    //Add a child to its parent
                     soFar.Add(item.Record);
 
+                    //Retrieve the rest of the hierarchy for this child
                     var result = GetProgressSnapshots(item, soFar);
 
+                    //Return the entire evaluated hierarchy. result will only contain a single IEnumerable<ProgressRecord>,
+                    //which we'll transform into a List<List<ProgressRecord>> when we're done.
                     foreach (var r in result)
                         yield return r;
 
+                    //Remove the child from its parent, so we can replace it with the next child if we loop again
                     soFar.Remove(item.Record);
                 }
             }
             else
             {
+                //It's the end of the line. Return any ProgressRecords we collected up to this point as an
+                //IEnumerable(of size 1)<IEnumerable<ProgressRecord>>
                 if (soFar.Any())
                     yield return soFar.Select(f => f);
-                //yield return soFar.Select(s => soFar.Select(s2 => s2));
             }
         }
     }

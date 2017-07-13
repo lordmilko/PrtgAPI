@@ -14,10 +14,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         /// <param name="objectId">The ID of the object to clone.</param>
         /// <param name="name">The name of the object to clone. If <see cref="Name"/> is not specified, this value will be used.</param>
+        /// <param name="getObjects">The function to execute to retrieve the cloned object that was created.</param>
         protected void ProcessRecordEx(int objectId, string name, Func<int, List<T>> getObjects)
         {
             var nameToUse = Name ?? name;
-            var id = ExecuteOperation(() => client.CloneObject(objectId, nameToUse, DestinationId), name, objectId);
+            ExecuteOperation(() => CloneObject(objectId, nameToUse, getObjects), name, objectId);
+        }
+
+        private void CloneObject(int objectId, string nameToUse, Func<int, List<T>> getObjects)
+        {
+            var id = client.CloneObject(objectId, nameToUse, DestinationId);
 
             if (Resolve)
             {

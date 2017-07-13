@@ -44,13 +44,18 @@ namespace PrtgAPI.PowerShell.Base
 
         protected IEnumerable<T> GetResultsWithVariableProgress(Func<IEnumerable<T>> getResults)
         {
-            ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search";
+            if (!ProgressManager.PipelineContainsOperation)
+            {
+                ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
 
-            ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
-            ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
+                ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
+                ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
 
-            ProgressManager.RemovePreviousOperation();
-            ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                ProgressManager.RemovePreviousOperation();
+                ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+            }
+            else
+                ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s");
 
             var records = getResults().ToList();
 
@@ -152,7 +157,6 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <typeparam name="T">The type of the list that will be output.</typeparam>
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
-        /// <param name="progressManager"></param>
         internal void WriteList<T>(IEnumerable<T> sendToPipeline)
         {
             PreUpdateProgress(sendToPipeline);
@@ -178,7 +182,9 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PreLoop);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
+                    break;
                 case ProgressScenario.VariableToMultipleCmdlets:
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -196,9 +202,10 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
-                case ProgressScenario.VariableToMultipleCmdlets:
                     break;
-
+                case ProgressScenario.VariableToMultipleCmdlets:
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
+                    break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
             }
@@ -215,8 +222,10 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PostLoop);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
-                case ProgressScenario.VariableToMultipleCmdlets:
                     UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage.PostLoop);
+                    break;
+                case ProgressScenario.VariableToMultipleCmdlets:
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop);
                     break;
 
                 default:
@@ -255,6 +264,30 @@ namespace PrtgAPI.PowerShell.Base
             {
                 if (ProgressManager.ContainsProgress)
                     ProgressManager.CompleteProgress();
+            }
+        }
+
+        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage)
+        {
+            if (stage == ProgressStage.PreLoop)
+            {
+                if (ProgressManager.PipelineContainsOperation)
+                {
+                    if (!ProgressManager.LastInChain)
+                        SetObjectSearchProgress(ProcessingOperation.Processing, ProgressManager.TotalRecords);
+
+                    if(ProgressManager.ContainsProgress)
+                        ProgressManager.RemovePreviousOperation();
+                }
+            }
+            else if (stage == ProgressStage.BeforeEach)
+            {
+                if (ProgressManager.PipelineContainsOperation && ProgressManager.ContainsProgress)
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+            }
+            else //PostLoop
+            {
+                UpdateScenarioProgress_VariableToSingleCmdlet(stage);
             }
         }
 

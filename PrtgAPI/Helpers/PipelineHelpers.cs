@@ -83,12 +83,7 @@ namespace PrtgAPI.Helpers
         /// <returns>If the previous cmdlet if that cmdlet is part of PrtgAPI. Otherwise, null.</returns>
         public static PrtgCmdlet GetPreviousCmdlet(this PSCmdlet cmdlet)
         {
-            var processor = cmdlet.CommandRuntime.GetInternalProperty("PipelineProcessor");
-            var commandProcessors = processor.GetInternalProperty("Commands");
-
-            var commandProcessorsList = ((IEnumerable)commandProcessors).Cast<object>().ToList();
-
-            var commands = commandProcessorsList.Select(c => c.GetInternalProperty("Command")).ToList();
+            var commands = GetPipelineCommands(cmdlet);
 
             var myIndex = commands.IndexOf(cmdlet);
 
@@ -105,6 +100,34 @@ namespace PrtgAPI.Helpers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Indicates whether the current pipeline contains a cmdlet of a specified type
+        /// </summary>
+        /// <typeparam name="T">The type of cmdlet to check for.</typeparam>
+        /// <param name="cmdlet">The cmdlet whose pipeline should be inspected.</param>
+        /// <returns>True if the pipeline history contains a cmdlet of the specified type. Otherwise, false.</returns>
+        public static bool PipelineHasCmdlet<T>(this PSCmdlet cmdlet) where T : Cmdlet
+        {
+            if (cmdlet is T)
+                return true;
+
+            var commands = GetPipelineCommands(cmdlet);
+
+            return commands.Any(c => c is T);
+        }
+
+        private static List<object> GetPipelineCommands(PSCmdlet cmdlet)
+        {
+            var processor = cmdlet.CommandRuntime.GetInternalProperty("PipelineProcessor");
+            var commandProcessors = processor.GetInternalProperty("Commands");
+
+            var commandProcessorsList = ((IEnumerable)commandProcessors).Cast<object>().ToList();
+
+            var commands = commandProcessorsList.Select(c => c.GetInternalProperty("Command")).ToList();
+
+            return commands;
         }
     }
 }

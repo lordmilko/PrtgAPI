@@ -16,8 +16,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Sensor 5678 -Resolve</code>
-    ///     <para>Clone the sensor with ID 1234 into the device, group or probe with ID 5678 and retrieve the resultant PrtgObject</para>
+    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Sensor 5678 -Resolve:$false</code>
+    ///     <para>Clone the sensor with ID 1234 into the device, group or probe with ID 5678 without resolving the resultant PrtgObject</para>
     /// </example>
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Sensor", SupportsShouldProcess = true)]

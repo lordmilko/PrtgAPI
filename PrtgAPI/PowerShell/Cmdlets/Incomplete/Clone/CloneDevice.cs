@@ -20,8 +20,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Device -Id 1234 | Clone-Device 5678 -Resolve</code>
-    ///     <para>Clone the device with ID 1234 to the group or probe with ID 5678 and retrieve the resultant PrtgObject</para>
+    ///     <code>C:\> Get-Device -Id 1234 | Clone-Device 5678 -Resolve:$false</code>
+    ///     <para>Clone the device with ID 1234 to the group or probe with ID 5678 without resolving the resultant PrtgObject.</para>
     ///     <para/>
     /// </example>
     /// </summary>
@@ -51,21 +51,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ShouldProcess($"{Device.Name} (ID: {Device.Id}) to destination ID {DestinationId}"))
             {
                 var hostnameToUse = HostName ?? Device.Host;
-                var id = ExecuteOperation(() => client.CloneObject(Device.Id, Name, hostnameToUse, DestinationId), Device.Name, Device.Id);
+                ExecuteOperation(() => Clone(hostnameToUse), Device.Name, Device.Id);
+            }
+        }
 
-                if (Resolve)
-                {
-                    ResolveObject(id, i => client.GetDevices(Property.Id, i));
-                }
-                else
-                {
-                    var response = new PSObject();
-                    response.Properties.Add(new PSNoteProperty("ObjectId", id));
-                    response.Properties.Add(new PSNoteProperty("Name", Name));
-                    response.Properties.Add(new PSNoteProperty("HostName", hostnameToUse));
+        private void Clone(string hostnameToUse)
+        {
+            var id = client.CloneObject(Device.Id, Name, hostnameToUse, DestinationId);
 
-                    WriteObject(response);
-                }
+            if (Resolve)
+            {
+                ResolveObject(id, i => client.GetDevices(Property.Id, i));
+            }
+            else
+            {
+                var response = new PSObject();
+                response.Properties.Add(new PSNoteProperty("ObjectId", id));
+                response.Properties.Add(new PSNoteProperty("Name", Name));
+                response.Properties.Add(new PSNoteProperty("HostName", hostnameToUse));
+
+                WriteObject(response);
             }
         }
     }

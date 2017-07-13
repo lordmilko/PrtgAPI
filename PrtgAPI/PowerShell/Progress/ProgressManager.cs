@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using PrtgAPI.Helpers;
+using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell
 {
@@ -42,6 +43,20 @@ namespace PrtgAPI.PowerShell
         public Pipeline CmdletPipeline { get; set; }
 
         public bool PipeFromVariable => Pipeline?.List.Count() > 1;
+
+        private bool? pipelineContainsOperation;
+
+        public bool PipelineContainsOperation
+        {
+            get
+            {
+                //Cache the result for performance
+                if (pipelineContainsOperation == null)
+                    pipelineContainsOperation = cmdlet.PipelineHasCmdlet<PrtgOperationCmdlet>();
+
+                return pipelineContainsOperation.Value;
+            }
+        }
 
         public ProgressRecord PreviousRecord => progressRecords.Skip(1).FirstOrDefault();
 
@@ -176,7 +191,7 @@ namespace PrtgAPI.PowerShell
         {
             if (PipeFromVariable)
             {
-                if (!PartOfChain || FirstInChain)
+                if (!PartOfChain || FirstInChain || PipelineContainsOperation)
                 {
                     if (CmdletPipeline.CurrentIndex < CmdletPipeline.List.Count - 1)
                         return;
@@ -212,7 +227,7 @@ namespace PrtgAPI.PowerShell
         {
             if (PipeFromVariable)
             {
-                if (!PartOfChain || FirstInChain)
+                if (!PartOfChain || FirstInChain || PipelineContainsOperation) //todo: will pipelinecontainsoperation break the other tests?
                 {
                     var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
 
@@ -250,9 +265,6 @@ namespace PrtgAPI.PowerShell
 
                         WriteProgress();
                     }
-
-                    //if totalrecords is null maybe we should check if we're last in the chain - if so update the previous progress. if theres more progress after us though we'll need to show our current progress properly
-                    //so clone-device|get-sensor should just be "retrieving all sensors", but clone-device|get-sensor|get-channel should be ...normal?
                 }
             }
             else
