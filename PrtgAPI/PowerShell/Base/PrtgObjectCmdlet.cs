@@ -231,8 +231,6 @@ namespace PrtgAPI.PowerShell.Base
                 if (stage == ProgressStage.PreLoop)
                 {
                     ProgressManager.RemovePreviousOperation();
-
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
                 }
                 else if (stage == ProgressStage.BeforeEach)
                 {

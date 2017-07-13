@@ -23,6 +23,8 @@ namespace PrtgAPI.PowerShell
         
         public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
 
+        public bool FirstRecord => progressRecords.Count == 1;
+
         public bool FirstInChain => pipeToPrtgCmdlet && progressRecords.Count == 1;
 
         public bool PartOfChain => pipeToPrtgCmdlet || progressRecords.Count > 1;
@@ -248,12 +250,18 @@ namespace PrtgAPI.PowerShell
 
                         WriteProgress();
                     }
+
+                    //if totalrecords is null maybe we should check if we're last in the chain - if so update the previous progress. if theres more progress after us though we'll need to show our current progress properly
+                    //so clone-device|get-sensor should just be "retrieving all sensors", but clone-device|get-sensor|get-channel should be ...normal?
                 }
             }
             else
             {
                 if (TotalRecords > 0)
                 {
+                    if (recordsProcessed < 0)
+                        recordsProcessed++;
+
                     recordsProcessed++;
 
                     record.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
@@ -274,9 +282,12 @@ namespace PrtgAPI.PowerShell
 
         public void SetPreviousOperation(string operation)
         {
-            PreviousRecord.CurrentOperation = operation;
+            if (PreviousRecord.CurrentOperation != operation)
+            {
+                PreviousRecord.CurrentOperation = operation;
 
-            WriteProgress(PreviousRecord);
+                WriteProgress(PreviousRecord);
+            }
         }
 
         public void DisplayInitialProgress()
@@ -293,6 +304,12 @@ namespace PrtgAPI.PowerShell
         {
             //i think we need to revert the way we're doing this. say processing sensors, then if we detect we're going to pipe to someone display some progress that counts through our items
             //i think we already use this logic for "normal" pipes, right?
+            //yep - so we need to be able to detect this scenario is in place doing an action cmdlet effectively resets things to be normal methoda again
+            //NOPE!!! when doing pipe from variable we DONT want to be overwriting - this overwrites the info about what number group we're processing
+            //so we need to make it have its own progress record
+                //more specifically, $devices|clone-device works, but $groups|get-device|clone-device doesnt work
+                //and then regardless, theres still the issue of how to handle piping from clone-device to 1 or 2 more cmdlets
+                //need to add tests for ALL of this
 
             if (PreviousRecord != null)
             {
@@ -318,8 +335,10 @@ namespace PrtgAPI.PowerShell
                         index = CmdletPipeline.List.Count;
 
                     CurrentRecord.Activity = activity;
-                    CurrentRecord.PercentComplete = (int)((index) / Convert.ToDouble(CmdletPipeline.List.Count) * 100);
-                    CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{CmdletPipeline.List.Count})";
+                    TotalRecords = CmdletPipeline.List.Count;
+
+                    CurrentRecord.PercentComplete = (int)((index) / Convert.ToDouble(TotalRecords) * 100);
+                    CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{TotalRecords})";
 
                     variableProgressDisplayed = true;
 
