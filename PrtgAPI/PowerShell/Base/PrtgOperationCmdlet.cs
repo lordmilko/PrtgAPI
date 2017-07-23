@@ -17,8 +17,8 @@ namespace PrtgAPI.PowerShell.Base
         {
             ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
             action();
-
-            if (ProgressManager.PipeFromVariable && ProgressManager.FirstRecord)
+            
+            if (ProgressManager.PipeFromVariable)
                 ProgressManager.CompleteProgress();
         }
 
@@ -35,7 +35,7 @@ namespace PrtgAPI.PowerShell.Base
             ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
             var result = action();
 
-            if (ProgressManager.PipeFromVariable && ProgressManager.FirstRecord)
+            if (ProgressManager.PipeFromVariable)
                 ProgressManager.CompleteProgress();
 
             return result;

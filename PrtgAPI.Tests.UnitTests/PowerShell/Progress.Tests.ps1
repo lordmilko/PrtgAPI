@@ -34,7 +34,7 @@ function InitializeClient {
 
 function ItWorks($a, $b)
 {
-	It $a $b
+	#It $a $b
 }
 
 function ItsNotImplemented($a, $b)
@@ -718,8 +718,100 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItsNotImplemented "5b: Variable -> Table -> Action -> Table" {
-		throw
+	ItWorks "5b: Variable -> Table -> Action -> Table" {
+		$probes = Get-Probe
+
+		$probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
+
+		Validate(@(
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Retrieving all groups"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Cloning PRTG Groups`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Cloning PRTG Groups`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"    Cloning PRTG Groups (Completed)`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Retrieving all groups"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Cloning PRTG Groups`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Cloning PRTG Groups`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Cloning PRTG Groups (Completed)`n" +
+			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search (Completed)`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+		))
 	}
 
 	#endregion
@@ -793,9 +885,22 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
-	#region 7: Something -> Table -> Object
+	#region 7: Stream -> Something
 
-	ItWorks "7a: Table -> Table -> Object" {
+	ItsNotImplemented "Stream -> Table" {
+		#maybe it SHOULD show stream like progress?
+		
+		throw
+	}
+
+	ItsNotImplemented "Stream -> Action" {
+		throw
+	}
+
+	#endregion
+	#region 8: Something -> Table -> Object
+
+	ItWorks "8a: Table -> Table -> Object" {
 		Get-Device | Get-Sensor | Get-Channel
 
 		Validate(@(
@@ -906,7 +1011,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "7b: Variable -> Table -> Object" {
+	ItWorks "8b: Variable -> Table -> Object" {
 		$probes = Get-Probe
 
 		$probes | Get-Sensor | Get-Channel
@@ -983,24 +1088,15 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
-	#region 8: Variable -> Action -> Table -> Table
+	#region 9: Variable -> Action -> Table -> Table
 
-	ItWorks "8: Variable -> Action -> Table -> Table" {
+	ItWorks "9: Variable -> Action -> Table -> Table" {
 		# an extension of 3b. variable -> action -> table. Confirms that we can transform our setpreviousoperation into a
 		# proper progress item when required
 
 		$devices = Get-Device
 
-		try
-		{
-			$devices | Clone-Device 5678 | Get-Sensor | Get-Channel
-		}
-		catch
-		{
-			Write-Host $_.exception.stacktrace
-			throw
-		}
-		
+		$devices | Clone-Device 5678 | Get-Sensor | Get-Channel		
 
 		Validate(@(
 			"Cloning PRTG Devices`n" +
@@ -1106,20 +1202,151 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
-	#region 9: Variable -> Table -> Table -> Table
+	#region 10: Variable -> Table -> Table -> Table
 
-	ItsNotImplemented "9: Variable -> Table -> Table -> Table" {
+	ItWorks "10: Variable -> Table -> Table -> Table" {
+		# Validates we can get at least two progress bars out of a variable
 		$probes = Get-Probe
 
-		$probes | Get-Group | Get-Device | Get-Sensor
+		$probes | Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
-		throw
+		Validate(@(
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+			
+			"    Retrieving all groups"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        PRTG Sensor Search`n" +
+			"            Processing all devices 1/1`n" +
+			"            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"            Retrieving all sensors"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        PRTG Sensor Search (Completed)`n" +
+			"            Processing all devices 1/1`n" +
+			"            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"            Retrieving all sensors"
+
+			###################################################################
+
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/2`n" +
+			"    [oooooooooooooooooooo                    ] (50%)`n" +
+			
+			"    PRTG Device Search (Completed)`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			
+			"    Retrieving all groups"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        PRTG Sensor Search`n" +
+			"            Processing all devices 1/1`n" +
+			"            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"            Retrieving all sensors"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        PRTG Sensor Search (Completed)`n" +
+			"            Processing all devices 1/1`n" +
+			"            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"            Retrieving all sensors"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			
+			"    PRTG Device Search (Completed)`n" +
+			"        Processing all groups 1/1`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
+
+			"PRTG Group Search (Completed)`n" +
+			"    Processing all probes 2/2`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+		))
+	}
 	}
 
 	#endregion
 	#region Sanity Checks	
 
-	ItWorks "Shows progress on streamable cmdlets" {
+	ItWorks "Streams when the number of returned objects is above the threshold" {
 		Run "Sensor" {
 
 			$objs = @()

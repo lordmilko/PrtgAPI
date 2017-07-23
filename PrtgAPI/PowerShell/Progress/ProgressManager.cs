@@ -24,8 +24,6 @@ namespace PrtgAPI.PowerShell.Progress
         
         public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
 
-        public bool FirstRecord => progressRecords.Count == 1;
-
         public bool FirstInChain => pipeToPrtgCmdlet && progressRecords.Count == 1;
 
         public bool PartOfChain => pipeToPrtgCmdlet || progressRecords.Count > 1;
@@ -52,7 +50,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 //Cache the result for performance
                 if (pipelineContainsOperation == null)
-                    pipelineContainsOperation = cmdlet.PipelineHasCmdlet<PrtgOperationCmdlet>();
+                    pipelineContainsOperation = cmdlet.PipelineSoFarHasCmdlet<PrtgOperationCmdlet>();
 
                 return pipelineContainsOperation.Value;
             }
@@ -227,6 +225,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (PipeFromVariable)
             {
+                //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 if (!PartOfChain || FirstInChain || PipelineContainsOperation) //todo: will pipelinecontainsoperation break the other tests?
                 {
                     var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
@@ -286,12 +285,6 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        public void TrySetPreviousOperation(string operation)
-        {
-            if (PreviousRecord != null)
-                SetPreviousOperation(operation);
-        }
-
         public void SetPreviousOperation(string operation)
         {
             if (PreviousRecord.CurrentOperation != operation)
@@ -319,42 +312,52 @@ namespace PrtgAPI.PowerShell.Progress
             //yep - so we need to be able to detect this scenario is in place doing an action cmdlet effectively resets things to be normal methoda again
             //NOPE!!! when doing pipe from variable we DONT want to be overwriting - this overwrites the info about what number group we're processing
             //so we need to make it have its own progress record
-                //more specifically, $devices|clone-device works, but $groups|get-device|clone-device doesnt work
-                //and then regardless, theres still the issue of how to handle piping from clone-device to 1 or 2 more cmdlets
-                //need to add tests for ALL of this
+            //more specifically, $devices|clone-device works, but $groups|get-device|clone-device doesnt work
+            //and then regardless, theres still the issue of how to handle piping from clone-device to 1 or 2 more cmdlets
+            //need to add tests for ALL of this
 
-            if (PreviousRecord != null)
+            if (PipeFromVariable)
             {
-                //if we're piping from a variable, that means the current count is actually a count of the variable; therefore, we need to inspect the pipeline to get the number of triggers incoming?              
+                RemovePreviousOperation();
 
-                PreviousRecord.Activity = activity;
+                var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
 
-                var count = PreviousRecord.StatusDescription.Substring(PreviousRecord.StatusDescription.LastIndexOf(" ") + 1);
+                if (index > CmdletPipeline.List.Count)
+                    index = CmdletPipeline.List.Count;
 
-                PreviousRecord.StatusDescription = $"{progressMessage} ({count.Trim('(').Trim(')')})";
+                CurrentRecord.Activity = activity;
 
-                WriteProgress(PreviousRecord);
+                if (PreviousRecord == null)
+                    TotalRecords = CmdletPipeline.List.Count;
+                else
+                {
+                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousManager = previousCmdlet.ProgressManager;
+                    TotalRecords = previousManager.TotalRecords;
+                }
 
-                SkipCurrentRecord();
+                CurrentRecord.PercentComplete = (int) ((index)/Convert.ToDouble(TotalRecords)*100);
+                CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{TotalRecords})";
+
+                variableProgressDisplayed = true;
+
+                WriteProgress();
             }
             else
             {
-                if (PipeFromVariable)
+                if (PreviousRecord != null)
                 {
-                    var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
+                    //if we're piping from a variable, that means the current count is actually a count of the variable; therefore, we need to inspect the pipeline to get the number of triggers incoming?              
 
-                    if (index > CmdletPipeline.List.Count)
-                        index = CmdletPipeline.List.Count;
+                    PreviousRecord.Activity = activity;
 
-                    CurrentRecord.Activity = activity;
-                    TotalRecords = CmdletPipeline.List.Count;
+                    var count = PreviousRecord.StatusDescription.Substring(PreviousRecord.StatusDescription.LastIndexOf(" ") + 1);
 
-                    CurrentRecord.PercentComplete = (int)((index) / Convert.ToDouble(TotalRecords) * 100);
-                    CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{TotalRecords})";
+                    PreviousRecord.StatusDescription = $"{progressMessage} ({count.Trim('(').Trim(')')})";
 
-                    variableProgressDisplayed = true;
+                    WriteProgress(PreviousRecord);
 
-                    WriteProgress();
+                    SkipCurrentRecord();
                 }
             }
         }

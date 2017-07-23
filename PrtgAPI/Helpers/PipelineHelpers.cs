@@ -118,6 +118,18 @@ namespace PrtgAPI.Helpers
             return commands.Any(c => c is T);
         }
 
+        public static bool PipelineSoFarHasCmdlet<T>(this PSCmdlet cmdlet) where T : Cmdlet
+        {
+            if (cmdlet is T)
+                return true;
+
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            return commands.Take(myIndex + 1).Any(c => c is T);
+        }
+
         private static List<object> GetPipelineCommands(PSCmdlet cmdlet)
         {
             var processor = cmdlet.CommandRuntime.GetInternalProperty("PipelineProcessor");
