@@ -5,14 +5,29 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI
 {
+    /// <summary>
+    /// Represents a channel that can cause a Notification Trigger to activate.
+    /// </summary>
     public class TriggerChannel : IFormattable
     {
+        /// <summary>
+        /// The sensor's primary channel.
+        /// </summary>
         public static readonly TriggerChannel Primary = new TriggerChannel(GeneralTriggerChannel.Primary);
 
+        /// <summary>
+        /// The sensor's "Total" channel (where applicable).
+        /// </summary>
         public static readonly TriggerChannel Total = new TriggerChannel(GeneralTriggerChannel.Total);
 
+        /// <summary>
+        /// The sensor's "Traffic In" channel (where applicable).
+        /// </summary>
         public static readonly TriggerChannel TrafficIn = new TriggerChannel(GeneralTriggerChannel.TrafficIn);
 
+        /// <summary>
+        /// The sensor's "Traffic Out" channel (where applicable).
+        /// </summary>
         public static readonly TriggerChannel TrafficOut = new TriggerChannel(GeneralTriggerChannel.TrafficOut);
 
         internal object channel;
@@ -91,11 +106,18 @@ namespace PrtgAPI
                 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TriggerChannel"/> from a Channel.
+        /// </summary>
+        /// <param name="channel"></param>
         public TriggerChannel(Channel channel)
         {
             this.channel = channel;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TriggerChannel"/> class from a Channel ID.
+        /// </summary>
         public TriggerChannel(int channelId)
         {
             this.channel = channelId;
@@ -112,22 +134,34 @@ namespace PrtgAPI
             this.channelId = channelId;
         }
 
+        /// <summary>
+        /// Creates a new <see cref="TriggerChannel"/> object from a specified Channel.
+        /// </summary>
+        /// <param name="channel"></param>
         public static implicit operator TriggerChannel(Channel channel)
         {
             return new TriggerChannel(channel);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="TriggerChannel"/> from a specified <see cref="GeneralTriggerChannel"/>.
+        /// </summary>
+        /// <param name="channel"></param>
         public static implicit operator TriggerChannel(GeneralTriggerChannel channel)
         {
             return Parse(channel, null);
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return channel.ToString();
         }
 
-        public string GetSerializedFormat()
+        string IFormattable.GetSerializedFormat()
         {
             if (channel is Channel)
             {
@@ -157,7 +191,7 @@ namespace PrtgAPI
     //XmlEnumAlternateName is used when receiving incoming trigger details
 
     /// <summary>
-    /// Specifies the sensor channels a notification trigger can monitor.
+    /// Specifies standard sensor channels a notification trigger can monitor.
     /// </summary>
     public enum GeneralTriggerChannel
     {

@@ -5,7 +5,7 @@ using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.PowerShell
+namespace PrtgAPI.PowerShell.Progress
 {
     interface IProgressWriter
     {

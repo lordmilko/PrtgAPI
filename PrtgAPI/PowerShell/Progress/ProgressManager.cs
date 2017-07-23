@@ -6,7 +6,7 @@ using System.Reflection;
 using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Base;
 
-namespace PrtgAPI.PowerShell
+namespace PrtgAPI.PowerShell.Progress
 {
     internal class ProgressManager : IDisposable
     {

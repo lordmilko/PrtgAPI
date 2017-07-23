@@ -6,15 +6,14 @@ using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
-    //we should output the object id created and have it have a column. newobjectid or something better
     //implement supportsshouldprocess
-
-    //input object, new name, target location
 
     //todo: is it possible to get a list of all auto discover templates and then auto discover USING one of them
 
-    //make a note that when you clone an object by default we set it to use the same name as the source
-
+    /// <summary>
+    /// Base class for cmdlets that clone PRTG Objects.
+    /// </summary>
+    /// <typeparam name="T">The type of object the cmdlet will clone.</typeparam>
     public abstract class CloneObject<T> : PrtgOperationCmdlet
     {
         /// <summary>
@@ -29,14 +28,28 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, Position = 1)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// <para type="description">Indicates whether or not the cloned object should be resolved into a PrtgObject. By default this value is true. If this value is false, a summary of the clone operation will be provided.</para> 
+        /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter Resolve { get; set; } = SwitchParameter.Present;
 
+        /// <summary>
+        /// Executes this cmdlet's clone action and displays a progress message (if required).
+        /// </summary>
+        /// <param name="action">The action to be performed.</param>
+        /// <param name="name">The name of the object that will be cloned.</param>
+        /// <param name="objectId">The ID of the object that will be cloned.</param>
         protected void ExecuteOperation(Action action, string name, int objectId)
         {
             ExecuteOperation(action, $"Cloning PRTG {typeof(T).Name}s", $"Cloning {typeof(T).Name.ToLower()} '{name}' (ID: {objectId})");
         }
 
+        /// <summary>
+        /// Resolves the object ID returned from a clone method to its resultant PrtgObject.
+        /// </summary>
+        /// <param name="id">The object ID to resolve.</param>
+        /// <param name="getObjects">The method to execute to retrieve the resultant object.</param>
         protected void ResolveObject(int id, Func<int, List<T>> getObjects)
         {
             List<T> @object;
@@ -46,8 +59,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             do
             {
-                //todo: maybe show some progress here to show the number of attempts we'll make
-
                 @object = getObjects(id);
 
                 if (@object.Count == 0)

@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    public class DeviceOrGroupSettings : ContainerSettings
+    internal class DeviceOrGroupSettings : ContainerSettings
     {
         [XmlElement("injected_discoverytype")]
         DiscoveryType DiscoveryType { get; set; }

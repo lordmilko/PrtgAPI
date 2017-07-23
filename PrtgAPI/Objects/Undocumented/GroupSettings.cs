@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    public class GroupSettings : DeviceOrGroupSettings
+    internal class GroupSettings : DeviceOrGroupSettings
     {
         [XmlElement("injected_injected_ipselectmethod")]
         IPSelectionMethod DiscoveryIPSelectionMethod { get; set; }

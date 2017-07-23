@@ -1,8 +1,5 @@
-﻿using System;
-using System.Management.Automation;
-using System.Reflection;
-using System.Threading.Tasks;
-using PrtgAPI.PowerShell;
+﻿using System.Management.Automation;
+using PrtgAPI.PowerShell.Progress;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support

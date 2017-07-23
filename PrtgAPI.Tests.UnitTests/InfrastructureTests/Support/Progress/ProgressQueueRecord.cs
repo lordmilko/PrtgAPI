@@ -1,5 +1,5 @@
 ﻿using System.Management.Automation;
-using PrtgAPI.PowerShell;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 {

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -209,6 +210,12 @@ namespace PrtgAPI.PowerShell.Base
             return count;
         }
 
+        /// <summary>
+        /// Retrieves the number of elements returned from a request that may or may not have been streamed.
+        /// </summary>
+        /// <param name="records">The records to count. This collection will only be enumerated if results were not retrieved via streaming (indicating the collection is not yet complete)</param>
+        /// <param name="count">If results were streamed, the total number of objects initially reported by the server. Otherwise, will be-1.</param>
+        /// <returns></returns>
         protected override IEnumerable<TObject> GetCount(IEnumerable<TObject> records, ref int count)
         {
             if (streamResults)

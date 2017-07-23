@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    public class ProbeSettings : ContainerSettings
+    internal class ProbeSettings : ContainerSettings
     {
         //outgoing ipv4, outgoing ipv4, restart options
 

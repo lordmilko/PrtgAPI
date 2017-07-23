@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.PowerShell
+﻿namespace PrtgAPI.PowerShell.Progress
 {
     internal class ProgressSettings
     {

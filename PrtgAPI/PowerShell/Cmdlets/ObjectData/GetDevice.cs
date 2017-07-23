@@ -18,12 +18,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <example>
     ///     <code>C:\> Get-Device dc-1</code>
-    ///     <para>C:\> Get all devices named "dc-1" (case insensitive)</para>
+    ///     <para>Get all devices named "dc-1" (case insensitive)</para>
     ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-Device *exch*</code>
-    ///     <para>C:\> Get all devices whose name contains "exch" (case insensitive)</para>
+    ///     <para>Get all devices whose name contains "exch" (case insensitive)</para>
     ///     <para/>
     /// </example>
     /// <example>

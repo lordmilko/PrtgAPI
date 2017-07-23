@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -13,12 +14,6 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="T">The type of objects that will be retrieved.</typeparam>
     public abstract class PrtgObjectCmdlet<T> : PrtgCmdlet
     {
-        protected enum ProcessingOperation
-        {
-            Retrieving,
-            Processing
-        };
-
         /// <summary>
         /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a <see cref="PrtgClient"/> based on the type they wish to retrieve.
         /// </summary>
@@ -44,6 +39,8 @@ namespace PrtgAPI.PowerShell.Base
 
         protected IEnumerable<T> GetResultsWithVariableProgress(Func<IEnumerable<T>> getResults)
         {
+            //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
+            //(causing them to SetPreviousOperation, which would fail)
             if (!ProgressManager.PipelineContainsOperation)
             {
                 ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
@@ -95,14 +92,19 @@ namespace PrtgAPI.PowerShell.Base
             return count;
         }
 
+        /// <summary>
+        /// Retrieves the value of a <see cref="DescriptionAttribute"/> of the specified type. If the type does not have a <see cref="DescriptionAttribute"/>, its name is used instead.
+        /// </summary>
+        /// <param name="type">The type whose description should be retrieved.</param>
+        /// <returns>The type's name or description.</returns>
         protected string GetTypeDescription(Type type)
         {
             var attribute = type.GetCustomAttribute<DescriptionAttribute>();
 
             if (attribute != null)
                 return attribute.Description;
-            else
-                return type.Name;
+
+            return type.Name;
         }
 
         private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count) //todo: should we rename this method to make it more clear what it does?
@@ -155,9 +157,8 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Writes a list to the output pipeline.
         /// </summary>
-        /// <typeparam name="T">The type of the list that will be output.</typeparam>
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
-        internal void WriteList<T>(IEnumerable<T> sendToPipeline)
+        internal void WriteList(IEnumerable<T> sendToPipeline)
         {
             PreUpdateProgress(sendToPipeline);
 
@@ -171,7 +172,7 @@ namespace PrtgAPI.PowerShell.Base
             PostUpdateProgress();
         }
 
-        private void PreUpdateProgress<T>(IEnumerable<T> sendToPipeline)
+        private void PreUpdateProgress(IEnumerable<T> sendToPipeline)
         {
             switch (ProgressManager.Scenario)
             {

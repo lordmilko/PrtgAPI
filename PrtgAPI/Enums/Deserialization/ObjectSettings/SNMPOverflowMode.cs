@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI
 {
+    /// <summary>
+    /// Specifies how PRTG should process overflow values.
+    /// </summary>
     public enum SNMPOverflowMode
     {
         [XmlEnum("0")]

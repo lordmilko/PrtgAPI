@@ -220,6 +220,20 @@ namespace PrtgAPI
         Approve,
 
         /// <summary>
+        /// The start date to retrieve data for.
+        /// </summary>
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("sdate")]
+        StartDate,
+
+        /// <summary>
+        /// The end date to retrieve data for.
+        /// </summary>
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("edate")]
+        EndDate,
+
+        /// <summary>
         /// Allows using custom parameters not known to PrtgAPI, including parameters whose names are dynamically generated. For use with <see cref="CustomParameter"/> 
         /// </summary>
         [ParameterType(ParameterType.MultiParameter)]
@@ -239,14 +253,6 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
-        ObjectType,
-
-        [ParameterType(ParameterType.SingleValue)]
-        [Description("sdate")]
-        StartDate,
-
-        [ParameterType(ParameterType.SingleValue)]
-        [Description("edate")]
-        EndDate
+        ObjectType
     }
 }

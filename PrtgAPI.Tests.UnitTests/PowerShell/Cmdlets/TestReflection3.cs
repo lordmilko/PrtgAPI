@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 using System.Threading;
-using PrtgAPI.PowerShell;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 {
