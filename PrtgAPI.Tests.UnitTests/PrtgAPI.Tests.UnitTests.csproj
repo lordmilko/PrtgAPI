@@ -120,26 +120,28 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PowerShell\Client.Tests.ps1" />
-    <None Include="PowerShell\Device.Tests.ps1" />
+    <None Include="PowerShell\Get-Channel.Tests.ps1" />
+    <None Include="PowerShell\Connect-PrtgServer.Tests.ps1" />
+    <None Include="PowerShell\Get-Device.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Connect-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Get-GoPrtgServer.Tests.ps1" />
+    <None Include="PowerShell\New-SensorFactoryDefinition.Tests.ps1" />
     <None Include="PowerShell\Support\GoPrtg.Shared.ps1" />
     <None Include="PowerShell\GoPrtg\Install-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Set-GoPrtgAlias.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Uninstall-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Update-GoPrtgCredential.Tests.ps1" />
-    <None Include="PowerShell\Group.Tests.ps1" />
-    <None Include="PowerShell\Probe.Tests.ps1" />
+    <None Include="PowerShell\Get-Group.Tests.ps1" />
+    <None Include="PowerShell\Get-Probe.Tests.ps1" />
     <None Include="PowerShell\Progress.Tests.ps1" />
     <None Include="PowerShell\Reflection.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
-    <None Include="PowerShell\NotificationAction.Tests.ps1" />
-    <None Include="PowerShell\NotificationTrigger.Tests.ps1" />
-    <None Include="PowerShell\Sensor.Tests.ps1" />
+    <None Include="PowerShell\Get-NotificationAction.Tests.ps1" />
+    <None Include="PowerShell\Get-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Get-Sensor.Tests.ps1" />
     <None Include="PowerShell\Support\Progress.ps1" />
     <None Include="PowerShell\Support\Standalone.ps1" />
-    <None Include="PowerShell\TriggerParameter.Tests.ps1" />
+    <None Include="PowerShell\New-TriggerParameter.Tests.ps1" />
     <None Include="PowerShell\Support\UnitTest.ps1" />
   </ItemGroup>
   <ItemGroup />
