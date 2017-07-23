@@ -11,7 +11,7 @@ namespace PrtgAPI.Objects.Undocumented
 {
     public class ObjectSettings
     {
-        internal static XElement GetXml(string response, int sensorId)
+        internal static XElement GetXml(string response)
         {
             var basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>"; //<input name="" value="">
             var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall

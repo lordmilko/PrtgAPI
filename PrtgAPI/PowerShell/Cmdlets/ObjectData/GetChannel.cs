@@ -72,20 +72,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Sensor == null && SensorId == null)
                 throw new ArgumentException("Please specify either a Sensor or a SensorId");
-            
-            if (Sensor != null)
-            {
-                SensorId = Sensor.Id;
-            }
 
-            var results = client.GetChannels(SensorId.Value).OrderBy(c => c.Id).ToList();
+            Func<string, bool> filter = null;
 
             if (Name != null)
             {
                 var pattern = new WildcardPattern(Name.ToLower());
-
-                results = results.Where(r => pattern.IsMatch(r.Name.ToLower())).ToList();
+                filter = name => pattern.IsMatch(name.ToLower());
             }
+
+            var results = client.GetChannelsInternal(SensorId ?? Sensor.Id, true, filter).OrderBy(c => c.Id).ToList();
 
             if (Id != null)
             {

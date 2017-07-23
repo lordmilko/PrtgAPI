@@ -109,15 +109,21 @@ namespace PrtgAPI
                         unit = null;
                     else
                     {
-                        unit = LastValue?.Substring(LastValue.IndexOf(" ") + 1);
+                        unit = LastValue?.Substring(LastValue.LastIndexOf(' ') + 1);
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// The raw value lookup of this object. This field is for internal use only.
+        /// </summary>
         [XmlElement("injected_valuelookup")]
         protected string valueLookup { get; set; }
 
+        /// <summary>
+        /// A standard or custom value lookup that allows this sensor's value to be displayed as text in a gauge or a switch.
+        /// </summary>
         public string ValueLookup => valueLookup?.Substring(valueLookup.IndexOf("|") + 1);
 
         /// <summary>

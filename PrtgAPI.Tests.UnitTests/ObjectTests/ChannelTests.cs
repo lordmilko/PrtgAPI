@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
@@ -49,6 +51,46 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = Initialize_Client(new SetChannelPropertyResponse(property, channelId, value));
 
             client.SetObjectProperty(1234, channelId, property, value);
+        }
+
+        [TestMethod]
+        public void Channel_Unit_CalculatesProperly()
+        {
+            Func<ChannelItem, Channel> func = i => GetObjects(Initialize_Client_WithItems(i)).First();
+
+            var pairs = new Dictionary<string, string>
+            {
+                ["%"] = "26 %",
+                ["m"] = "12 h 32 m",
+                ["kbps"] = "<1 kbps",
+                ["mbps"] = "< 1 mbps"
+            };
+
+            foreach (var pair in pairs)
+            {
+                var item = new ChannelItem(pair.Value);
+                Assert.AreEqual(pair.Key, func(item).Unit);
+            }
+        }
+
+        [TestMethod]
+        public void Channel_Filter_ByName_NoMatches()
+        {
+            var client = Initialize_Client_WithItems(GetItem());
+
+            var channels = client.GetChannels(1234, "blah");
+
+            Assert.AreEqual(0, channels.Count);
+        }
+
+        [TestMethod]
+        public void Channel_Filter_ByName_Match()
+        {
+            var client = Initialize_Client_WithItems(GetItem());
+
+            var channels = client.GetChannels(1234, "Percent Available Memory");
+
+            Assert.AreEqual(1, channels.Count);
         }
 
         protected override List<Channel> GetObjects(PrtgClient client) => client.GetChannels(1234);

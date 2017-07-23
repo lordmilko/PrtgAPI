@@ -714,12 +714,17 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
-        public List<Channel> GetChannels(int sensorId)
-        {
-            return GetChannelsInternal(sensorId, true);
-        }
+        public List<Channel> GetChannels(int sensorId) => GetChannelsInternal(sensorId, true);
 
-        private List<Channel> GetChannelsInternal(int sensorId, bool includeAdvancedProperties)
+        /// <summary>
+        /// Retrieve all channels of a sensor that match the specified name.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="channelName">The name of the channel to retrieve.</param>
+        /// <returns></returns>
+        public List<Channel> GetChannels(int sensorId, string channelName) => GetChannelsInternal(sensorId, true, name => name == channelName);
+
+        internal List<Channel> GetChannelsInternal(int sensorId, bool includeAdvancedProperties, Func<string, bool> nameFilter = null)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
@@ -727,6 +732,10 @@ namespace PrtgAPI
 
             var items = response.Descendants("item").ToList();
 
+            if (nameFilter != null)
+                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
+
+            items = response.Descendants("item").ToList();
             foreach (var item in items)
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
@@ -737,23 +746,39 @@ namespace PrtgAPI
                 item.Add(new XElement("injected_sensorId", sensorId));
             }
 
-            return Data<Channel>.DeserializeList(response).Items;
+            if (items.Count > 0)
+                return Data<Channel>.DeserializeList(response).Items;
+
+            return new List<Channel>();
         }
 
         //TODO: how do we abstract this stuff into a single function for sync and async versions
 
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId)
-        {
-            return await GetChannelsInternalAsync(sensorId, true).ConfigureAwait(false);
-        }
+        /// <summary>
+        /// Asynchronously retrieve all channels of a sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <returns></returns>
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId) => await GetChannelsInternalAsync(sensorId, true).ConfigureAwait(false);
 
-        private async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, bool includeAdvancedProperties)
+        /// <summary>
+        /// Asynchronously retrieve all channels of a sensor that match the specified name.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="channelName">The name of the channel to retrieve.</param>
+        /// <returns></returns>
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string channelName) => await GetChannelsInternalAsync(sensorId, true, name => name == channelName).ConfigureAwait(false);
+
+        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, bool includeAdvancedProperties, Func<string, bool> nameFilter = null)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
             var items = response.Descendants("item").ToList();
+
+            if (nameFilter != null)
+                items = items.Where(e => nameFilter(e.Element("name").Value?.ToString())).ToList();
 
             foreach (var item in items)
             {
@@ -765,7 +790,10 @@ namespace PrtgAPI
                 item.Add(new XElement("injected_sensorId", sensorId));
             }
 
-            return Data<Channel>.DeserializeList(response).Items;
+            if (items.Count > 0)
+                return Data<Channel>.DeserializeList(response).Items;
+
+            return new List<Channel>();
         }
 
         internal XElement GetChannelProperties(int sensorId, int channelId)
@@ -1235,7 +1263,7 @@ namespace PrtgAPI
 
             var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
 
-            var xml = ObjectSettings.GetXml(response, objectId);
+            var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
 
             var items = Data<T>.DeserializeType(xDoc);
@@ -1267,7 +1295,7 @@ namespace PrtgAPI
 
             var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
 
-            var blah = SensorSettings.GetXml(response, objectId);
+            var blah = SensorSettings.GetXml(response);
 
             var doc = new XDocument(blah);
 
