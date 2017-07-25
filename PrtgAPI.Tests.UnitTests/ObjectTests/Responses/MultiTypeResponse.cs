@@ -14,6 +14,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
     public class MultiTypeResponse : IWebResponse
     {
+        //what if we had an optional constructor that took a dictionary of content to int that said how many items each content should return
+
+        public MultiTypeResponse()
+        {
+        }
+
+        public MultiTypeResponse(Dictionary<Content, int> countOverride)
+        {
+            this.countOverride = countOverride;
+        }
+
+        private Dictionary<Content, int> countOverride;
+
         public string GetResponseText(ref string address)
         {
             return GetResponse(ref address).GetResponseText(ref address);
@@ -46,19 +59,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
             Content content = components["content"].ToEnum<Content>();
 
-            var countStr = components["count"];
-
             var count = 2;
 
-            if (countStr != null && countStr != "0" && countStr != "500" && countStr != "50000")
-                count = Convert.ToInt32(countStr);
+            if (countOverride == null) //question: will this cause issues with streaming cos the second page have the wrong count
+            {
+                var countStr = components["count"];
 
-            if (components["filter_objid"] != null)
-                count = 1;
+                if (countStr != null && countStr != "0" && countStr != "500" && countStr != "50000")
+                    count = Convert.ToInt32(countStr);
+
+                if (components["filter_objid"] != null)
+                    count = 1;
+            }
+            else
+            {
+                if (countOverride.ContainsKey(content))
+                    count = countOverride[content];
+            }
+
 
             switch (content)
             {
-                case Content.Sensors:   return new SensorResponse(new[] { new SensorItem() });
+                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(), count));
                 case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(), count));
                 case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(), count));
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(), count));
@@ -116,7 +138,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
             return page;
         }
-
 
         private bool TryParseEnumDescription<TEnum>(string description, out TEnum result)
         {

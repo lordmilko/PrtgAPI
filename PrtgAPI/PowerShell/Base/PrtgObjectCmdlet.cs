@@ -43,13 +43,16 @@ namespace PrtgAPI.PowerShell.Base
             //(causing them to SetPreviousOperation, which would fail)
             if (!ProgressManager.PipelineContainsOperation)
             {
-                ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
+                if(ProgressManager.PipelineIsPure)
+                {
+                    ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
 
-                ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
-                ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
+                    ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
+                    ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
 
-                ProgressManager.RemovePreviousOperation();
-                ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                    ProgressManager.RemovePreviousOperation();
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                }
             }
             else
                 ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s");

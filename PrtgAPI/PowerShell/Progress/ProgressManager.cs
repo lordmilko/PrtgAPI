@@ -15,17 +15,20 @@ namespace PrtgAPI.PowerShell.Progress
         internal const string DefaultActivity = "Activity";
         internal const string DefaultDescription = "Description";
 
-        private const string SkipActivity = "SkipActivity";
-        private const string SkipDescription = "SkipDescription";
-
         public ProgressRecord CurrentRecord => progressRecords.Peek();
 
         public bool ContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
         
         public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
 
+        /// <summary>
+        /// Indicates whether the current cmdlet is first in a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
+        /// </summary>
         public bool FirstInChain => pipeToPrtgCmdlet && progressRecords.Count == 1;
 
+        /// <summary>
+        /// Indicates whether the current cmdlet is part of a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
+        /// </summary>
         public bool PartOfChain => pipeToPrtgCmdlet || progressRecords.Count > 1;
 
         private bool pipeToPrtgCmdlet => cmdlet.MyInvocation.MyCommand.ModuleName == cmdlet.CommandRuntime.GetDownstreamCmdlet()?.ModuleName;
@@ -41,6 +44,8 @@ namespace PrtgAPI.PowerShell.Progress
         public Pipeline CmdletPipeline { get; set; }
 
         public bool PipeFromVariable => Pipeline?.List.Count() > 1;
+
+        public Cmdlet PreviousCmdlet { get; set; }
 
         private bool? pipelineContainsOperation;
 
@@ -70,9 +75,25 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal ProgressScenario Scenario { get; set; }
 
+        private bool? pipelineIsPure;
+
+        /// <summary>
+        /// Indicates whether the pipeline has been contamined by non-PrtgAPI cmdlets.
+        /// </summary>
+        public bool PipelineIsPure
+        {
+            get
+            {
+                if (pipelineIsPure == null)
+                    pipelineIsPure = cmdlet.PipelineIsPure();
+
+                return pipelineIsPure.Value;
+            }
+        }
+
         public ProgressManager(PSCmdlet cmdlet)
         {
-            progressRecords.Push(new ProgressRecord(progressRecords.Count + 1, "Activity", "Description"));
+            progressRecords.Push(new ProgressRecord(progressRecords.Count + 1, DefaultActivity, DefaultDescription));
 
             if (PreviousRecord != null)
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
@@ -196,7 +217,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else
                 {
-                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
                     var previousManager = previousCmdlet.ProgressManager;
 
                     if (previousManager.recordsProcessed < previousManager.TotalRecords)
@@ -246,7 +267,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else
                 {
-                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
                     var previousManager = previousCmdlet.ProgressManager;
                     var totalRecords = previousManager.TotalRecords;
 
@@ -318,6 +339,9 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (PipeFromVariable)
             {
+                if (!PipelineIsPure)
+                    return;
+
                 RemovePreviousOperation();
 
                 var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
@@ -331,7 +355,7 @@ namespace PrtgAPI.PowerShell.Progress
                     TotalRecords = CmdletPipeline.List.Count;
                 else
                 {
-                    var previousCmdlet = cmdlet.GetPreviousCmdlet();
+                    var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
                     var previousManager = previousCmdlet.ProgressManager;
                     TotalRecords = previousManager.TotalRecords;
                 }
@@ -345,7 +369,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
             else
             {
-                if (PreviousRecord != null)
+                if (PreviousContainsProgress)
                 {
                     //if we're piping from a variable, that means the current count is actually a count of the variable; therefore, we need to inspect the pipeline to get the number of triggers incoming?              
 

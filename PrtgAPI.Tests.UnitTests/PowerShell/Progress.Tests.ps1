@@ -32,9 +32,47 @@ function InitializeClient {
 	Enable-PrtgProgress
 }
 
+function RunCustomCount($hashtable, $action)
+{
+	$dictionary = GetCustomCountDictionary $hashtable
+
+	$oldClient = Get-PrtgClient
+
+	$newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse -ArgumentList $dictionary))
+
+	try
+	{
+		SetPrtgClient $newClient
+
+		& $action
+	}
+	catch
+	{
+		throw
+	}
+	finally
+	{
+		SetPrtgClient $oldClient
+	}
+}
+
+function GetCustomCountDictionary($hashtable)
+{
+	$dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
+
+	foreach($entry in $hashtable.GetEnumerator())
+	{
+		$newKey = $entry.Key -as "PrtgAPI.Content"
+
+		$dictionary.Add($newKey, $entry.Value)
+	}
+
+	return $dictionary
+}
+
 function ItWorks($a, $b)
 {
-	#It $a $b
+	It $a $b
 }
 
 function ItsNotImplemented($a, $b)
@@ -43,89 +81,9 @@ function ItsNotImplemented($a, $b)
 	#todo: add some tests for having some other cmdlet at the start of the pipeline. need to modify getpipelineinput to handle this properly, e.g. what if Where-Object is at the start or middle?
 }
 
-
 Describe "Test-Progress" {
 	
 	InitializeClient
-
-	<#
-
-	Scenarios needing support
-
-	so the issue is
-
-	in $probes|get-device|get-sensors we wanna go
-
-	###
-
-	PRTG Device Search
-		Processing probe 1/2
-
-		PRTG Sensor Search
-			Processing device 1/2
-
-	###
-
-	the following scenarios need support:
-
-	### WORKING ###
-
-	WORKING!
-
-	$devices|clone-device 5678|get-sensor
-
-	Cloning PRTG Devices
-		Cloning device 1/2
-
-		Retrieving all sensors
-
-	current issue: retrieving all sensors doesnt set itself on the previous item
-	possible solution: look at the logic used in normal piping to see how it updates the previous item
-
-	### WORKING ###
-
-	$devices|clone-device 5678|get-sensor|get-channel
-
-	Cloning PRTG Devices
-		Cloning device 1/2
-
-		PRTG Sensor Search
-			Processing sensor 1/30
-
-			Retrieving all channels
-
-	look at the logic used in normal piping to see how we should present the sensor search progress to allow get-channel to modify it
-
-	##########################################
-
-	$groups|get-device|clone-device 5678|get-sensor
-
-	PRTG Device Search
-		Processing group 1/2
-
-		Cloning PRTG Devices
-			Cloning device 1/5
-
-			Retrieving all sensors
-
-	current issue: clone-device needs to know to not replace the previous cmdlet when its pipe from variable and its not the first
-	               in the chain
-
-	               need to fix the first issue above to make "retrieving all sensors" display properly
-
-	---
-
-	this is the same as above
-
-	$probes|get-group|get-device|clone-device 5678|get-sensor            # do we have a test for this, or just a test for $group|get-device|clone-device?
-
-	PRTG Group Search
-		Processing probe 1/2
-
-		PRTG Device Search
-			Processing group 1/2
-
-	#>
 
 	#region 1: Something -> Action
 	
@@ -818,7 +776,7 @@ Describe "Test-Progress" {
 	#region 6: Something -> Object
 
 	ItWorks "6a: Table -> Object" {
-		Get-Sensor -Count 2 | Get-Channel
+		Get-Sensor -Count 1 | Get-Channel
 
 		Validate(@(
 			"PRTG Sensor Search`n" +
@@ -887,21 +845,158 @@ Describe "Test-Progress" {
 	#endregion
 	#region 7: Stream -> Something
 
-	ItsNotImplemented "Stream -> Table" {
-		#maybe it SHOULD show stream like progress?
+	ItWorks "7a: Stream -> Object" {
+		# Good enough for a test to Stream -> Table as well
 		
-		throw
+		$counts = @{
+			Sensors = 501
+		}
+
+		RunCustomCount $counts {
+			Get-Sensor | Get-Channel
+		}
+
+		$records = @()
+		$total = 501
+
+		# Create progress records for processing each object
+
+		for($i = 1; $i -le $total; $i++)
+		{
+			$maxChars = 40
+
+			$percent = [Math]::Floor($i/$total*100)
+
+			if($percent -ge 0)
+			{
+				$percentChars = $percent/100*$maxChars
+
+				$spaceChars = $maxChars - $percentChars
+
+				$percentBar = ""
+
+				for($j = 0; $j -lt $percentChars; $j++)
+				{
+					$percentBar += "o"
+				}
+
+				for($j = 0; $j -lt $spaceChars; $j++)
+				{
+					$percentBar += " "
+				}
+
+				$percentBar = "[$percentBar] ($percent%)"
+			}
+
+			$records += "PRTG Sensor Search`n" +
+						"    Processing sensor $i/$total`n" +
+						"    $percentBar`n" +
+						"    Retrieving all channels"
+		}
+
+		Validate(@(
+			"PRTG Sensor Search`n" +
+			"    Detecting total number of items"
+
+			"PRTG Sensor Search`n" +
+			"    Processing sensor 1/501`n" +
+			"    [                                        ] (0%)"
+
+			$records
+
+			"PRTG Sensor Search (Completed)`n" +
+			"    Processing sensor 501/501`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+			"    Retrieving all channels"
+		))
 	}
 
-	ItsNotImplemented "Stream -> Action" {
-		throw
+	ItWorks "7b: Stream -> Action" {
+
+		# Besides the initial "Detecting total number of items", there is nothing special about a streamed, non-streamed and streaming-unsupported (e.g. devices) run
+
+		$counts = @{
+			Sensors = 501
+		}
+
+		RunCustomCount $counts {
+			Get-Sensor | Pause-Object -Forever
+		}
+
+		$records = @()
+		$total = 501
+
+		# Create progress records for processing each object
+
+		for($i = 1; $i -le $total; $i++)
+		{
+			$maxChars = 40
+
+			$percent = [Math]::Floor($i/$total*100)
+
+			if($percent -ge 0)
+			{
+				$percentChars = $percent/100*$maxChars
+
+				$spaceChars = $maxChars - $percentChars
+
+				$percentBar = ""
+
+				for($j = 0; $j -lt $percentChars; $j++)
+				{
+					$percentBar += "o"
+				}
+
+				for($j = 0; $j -lt $spaceChars; $j++)
+				{
+					$percentBar += " "
+				}
+
+				$percentBar = "[$percentBar] ($percent%)"
+			}
+
+			if($i -gt 1)
+			{
+				$records += "Pausing PRTG Objects`n" +
+							"    Processing sensor $i/$total`n" +
+							"    $percentBar"
+			}
+
+			$records += "Pausing PRTG Objects`n" +
+						"    Pausing sensor 'Volume IO _Total' forever ($i/$total)`n" +
+						"    $percentBar"
+		}
+
+		#todo: maybe try replace the original stream one with this
+
+		Validate(@(
+			"PRTG Sensor Search`n" +
+			"    Detecting total number of items"
+
+			"PRTG Sensor Search`n" +
+			"    Processing sensor 1/501`n" +
+			"    [                                        ] (0%)"
+
+			$records
+
+			"Pausing PRTG Objects (Completed)`n" +
+			"    Pausing sensor 'Volume IO _Total' forever (501/501)`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+		))
 	}
 
 	#endregion
 	#region 8: Something -> Table -> Object
 
 	ItWorks "8a: Table -> Table -> Object" {
-		Get-Device | Get-Sensor | Get-Channel
+
+		$counts = @{
+			Sensors = 1
+		}
+
+		RunCustomCount $counts {
+			Get-Device | Get-Sensor | Get-Channel
+		}
 
 		Validate(@(
 			"PRTG Device Search`n" +
@@ -1014,7 +1109,13 @@ Describe "Test-Progress" {
 	ItWorks "8b: Variable -> Table -> Object" {
 		$probes = Get-Probe
 
-		$probes | Get-Sensor | Get-Channel
+		$counts = @{
+			Sensors = 1
+		}
+
+		RunCustomCount $counts {
+			$probes | Get-Sensor | Get-Channel
+		}
 
 		Validate (@(
 			"PRTG Sensor Search`n" +
@@ -1341,6 +1442,73 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
+
+	#endregion
+	#region 11: Table -> Filter -> Something
+
+	ItWorks "11a: Table -> Filter -> Table" {
+		Get-Probe | Select-Object -First 2 | Get-Device
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	ItWorks "11b: Table -> Filter -> Action" {
+		Get-Probe | Select-Object -First 2 | Pause-Object -Forever
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	#endregion
+	#region 12: Variable -> Filter -> Something
+
+	ItWorks "12a: Variable -> Filter -> Table" {
+		$probes = Get-Probe
+
+		$probes | Select-Object -First 2 | Get-Device
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	ItWorks "12b: Variable -> Filter -> Action" {
+		$probes = Get-Probe
+
+		$probes | Select-Object -First 2 | Pause-Object -Forever
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	#endregion
+	#region 13: Table -> Filter -> Table -> Something
+
+	ItWorks "13a: Table -> Filter -> Table -> Table" {
+		Get-Probe | Select-Object -First 2 | Get-Device | Get-Sensor
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	ItWorks "13b: Table -> Filter -> Table -> Action" {
+		Get-Probe | Select-Object -First 2 | Get-Device | Pause-Object -Forever
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	#endregion
+	#region 14: Variable -> Filter -> Table -> Something
+
+	ItWorks "14a: Variable -> Filter -> Table -> Table" {
+		$probes = Get-Probe
+
+		$probes | Select-Object -First 2 | Get-Device | Get-Sensor
+
+		{ Get-Progress } | Should Throw "Queue empty"
+	}
+
+	ItWorks "14b: Variable -> Filter -> Table -> Action" {
+		$probes = Get-Probe
+
+		$probes | Select-Object -First 2 | Get-Device | Pause-Object -Forever
+
+		{ Get-Progress } | Should Throw "Queue empty"
 	}
 
 	#endregion
@@ -1411,10 +1579,13 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItsNotImplemented "Doesn't show stream-like progress when a streamable cmdlet is piped into another cmdlet" {
-		#maybe it SHOULD show stream like progress?
-		
-		throw
+	ItWorks "Doesn't stream when the number of returned objects is below the threshold" {
+		Get-Sensor
+
+		Validate(@(
+			"PRTG Sensor Search`n" +
+			"    Detecting total number of items"
+		))
 	}
 
 	ItWorks "Doesn't show progress when a variable contains only 1 object" {
@@ -1428,4 +1599,24 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
+
+    ItsNotImplemented "Variable(1) -> Table -> Table" {
+
+		$probe = Get-Probe -Count 1
+
+		$probe.Count | Should Be 1
+
+		$probe | Get-Group | Get-Device
+
+		Validate(@(
+
+		))
+
+        throw "todo: need to move this to a proper position"
+    }
+
+	ItsNotImplemented "blah2" {
+		throw "unrelated: when you have a taskcancelledexception, it has a cancellation token which should be true if actually cancelled, false otherwise"
+		#should we modify executerequest to check whether the token is true? if we've enabled a whole bunch of retries and try and ctrl+c will it keep retrying?
+	}
 }

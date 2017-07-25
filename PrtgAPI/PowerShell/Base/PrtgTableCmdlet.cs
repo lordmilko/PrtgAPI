@@ -174,8 +174,6 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        //todo: we need to write some unit tests for this progress business. we will need to define 
-
         private IEnumerable<TObject> StreamResultsWithProgress()
         {
             ProgressManager.Scenario = ProgressScenario.StreamProgress;

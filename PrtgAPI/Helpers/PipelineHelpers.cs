@@ -81,7 +81,7 @@ namespace PrtgAPI.Helpers
         /// </summary>
         /// <param name="cmdlet">The cmdlet to retrieve the previous cmdlet of.</param>
         /// <returns>If the previous cmdlet if that cmdlet is part of PrtgAPI. Otherwise, null.</returns>
-        public static PrtgCmdlet GetPreviousCmdlet(this PSCmdlet cmdlet)
+        public static PrtgCmdlet GetPreviousPrtgCmdlet(this PSCmdlet cmdlet)
         {
             var commands = GetPipelineCommands(cmdlet);
 
@@ -100,6 +100,26 @@ namespace PrtgAPI.Helpers
             }
 
             return null;
+        }
+
+        public static bool PipelineIsPure(this PSCmdlet cmdlet)
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            if (myIndex <= 0)
+                return true;
+
+            for (int i = 0; i < myIndex; i++)
+            {
+                var command = commands[i];
+
+                if (!(command is PrtgCmdlet))
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
