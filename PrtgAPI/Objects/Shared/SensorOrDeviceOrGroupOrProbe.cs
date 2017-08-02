@@ -114,7 +114,7 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.
         /// </summary>
-        [XmlElement("access")]
+        [XmlElement("access_raw")]
         [PropertyParameter(nameof(Property.Access))]
         public Access Access { get; set; }
 
