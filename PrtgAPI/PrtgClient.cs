@@ -167,6 +167,30 @@ namespace PrtgAPI
             return result;
         }
 
+        internal List<T> Amend<T>(List<T> objects, Action<T> action)
+        {
+            foreach (var obj in objects)
+            {
+                action(obj);
+            }
+
+            return objects;
+        }
+
+        internal T Amend<T>(T obj, Action<T> action)
+        {
+            action(obj);
+
+            return obj;
+        }
+
+        internal TRet Amend<TSource, TRet>(TSource obj, Func<TSource, TRet> action)
+        {
+            var val = action(obj);
+
+            return val;
+        }
+
         #region Sensors
             #region Default
 
@@ -1361,19 +1385,19 @@ namespace PrtgAPI
             return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
         }
 
-        public List<ObjectHistory> GetObjectHistory(int objectId)
-        {
-            var parameters = new ObjectHistoryParameters(objectId);
+        /// <summary>
+        /// Retrieve the setting/state modification history of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <returns>A list of all setting/state modifications to the specified object.</returns>
+        public List<ModificationEvent> GetModificationHistory(int objectId) => Amend(GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
 
-            var response = GetObjects<ObjectHistory>(parameters);
-
-            foreach (var item in response)
-            {
-                item.ObjectId = objectId;
-            }
-
-            return response;
-        }
+        /// <summary>
+        /// Asynchronously retrieve the setting/state modification history of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <returns>A list of all setting/state modifications to the specified object.</returns>
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) => Amend(await GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId)).ConfigureAwait(false), e => e.ObjectId = objectId);
 
         internal List<SensorHistoryData> GetSensorHistory(int sensorId, DateTime? startDate = null, DateTime? endDate = null)
         {

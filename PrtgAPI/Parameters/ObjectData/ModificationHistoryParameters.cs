@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI.Parameters
 {
-    class ObjectHistoryParameters : ContentParameters<ObjectHistory>
+    class ModificationHistoryParameters : ContentParameters<ModificationEvent>
     {
-        public ObjectHistoryParameters(int objectId) : base(Content.History)
+        public ModificationHistoryParameters(int objectId) : base(Content.History)
         {
             this[Parameter.Id] = objectId;
         }
