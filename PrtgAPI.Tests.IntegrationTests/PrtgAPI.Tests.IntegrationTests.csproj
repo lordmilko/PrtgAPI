@@ -54,13 +54,13 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
-    <Compile Include="Assert2.cs" />
-    <Compile Include="BasePrtgClientTest.cs" />
+    <Compile Include="Support\Assert2.cs" />
+    <Compile Include="Support\BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
     <Compile Include="DataTests\Incomplete\NotificationActionTests.cs" />
     <Compile Include="DataTests\Incomplete\SensorTotalsTests.cs" />
-    <Compile Include="Impersonator.cs" />
-    <Compile Include="Logger.cs" />
+    <Compile Include="Support\Impersonator.cs" />
+    <Compile Include="Support\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActionTests\ChannelTests.cs" />
     <Compile Include="InfrastructureTests\PrtgClientConnectionTests.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="DataTests\ProbeTests.cs" />
     <Compile Include="DataTests\SensorTests.cs" />
     <Compile Include="ActionTests\StateTests.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Support\Settings.cs" />
     <Compile Include="Settings.Local.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,16 +84,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PowerShell\Channel.Tests.ps1" />
-    <None Include="PowerShell\Client.Tests.ps1" />
-    <None Include="PowerShell\Device.Tests.ps1" />
-    <None Include="PowerShell\Group.Tests.ps1" />
-    <None Include="PowerShell\NotificationAction.Tests.ps1" />
-    <None Include="PowerShell\NotificationTrigger.Tests.ps1" />
-    <None Include="PowerShell\Probe.Tests.ps1" />
-    <None Include="PowerShell\Progress.Tests.ps1" />
-    <None Include="PowerShell\Sensor.Tests.ps1" />
-    <None Include="PowerShell\State.Tests.ps1" />
+    <None Include="New-TestSettings.ps1" />
+    <None Include="PowerShell\Add-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Edit-NotificationTriggerProperty.Tests.ps1" />
+    <None Include="PowerShell\Get-Channel.Tests.ps1" />
+    <None Include="PowerShell\Connect-PrtgServer.Tests.ps1" />
+    <None Include="PowerShell\Get-Device.Tests.ps1" />
+    <None Include="PowerShell\Get-Group.Tests.ps1" />
+    <None Include="PowerShell\Get-NotificationAction.Tests.ps1" />
+    <None Include="PowerShell\Get-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Get-Probe.Tests.ps1" />
+    <None Include="PowerShell\Get-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Pause-Object.Tests.ps1" />
+    <None Include="PowerShell\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />

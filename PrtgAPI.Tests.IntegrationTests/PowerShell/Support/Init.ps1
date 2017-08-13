@@ -28,7 +28,6 @@ function LogTest($message, $error)
 function LogTestName($message, $error = $false)
 {
 	[PrtgAPI.Tests.IntegrationTests.Logger]::LogTestDetail($message, $error, "PS")
-	Write-Host $message
 }
 
 function LogTestDetail($message, $error = $false)
@@ -156,8 +155,6 @@ function It($name, $script) {
 		try
 		{
 			& $script
-
-			LogTestDetail "Test completed successfully"
 		}
 		catch [exception]
 		{

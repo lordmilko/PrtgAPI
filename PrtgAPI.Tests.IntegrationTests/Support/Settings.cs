@@ -9,31 +9,42 @@
     public static partial class Settings
     {
 #pragma warning disable CS0649 //Ignore 'field' is never assigned to.
-        public static string ServerWithProto => $"{Protocol.ToString().ToLower()}://{Server}";
+        public static string ServerWithProto { get { return Protocol.ToString().ToLower() + "://" + Server; } } //C# 5 syntax required by New-Settings.ps1
         public static bool ResetAfterTests = true;
 
         public static HttpProtocol? Protocol = null;
 
+        //PRTG Server
         public static string Server = null;
         public static string Username = null;
         public static string Password = null;
 
+        //Local Server
         public static string WindowsUsername;
         public static string WindowsPassword;
 
+        //Objects
         public static int Probe = -1;
         public static int Group = -1;
         public static int Device = -1;
+        public static int Channel = -1;
 
+        //Channel
+        public static string ChannelName;
+
+        //Device
         public static string DeviceName; //Must contain "prtg" in the name
         public static string DeviceTag;
 
+        //Group
         public static string GroupName;
         public static string GroupTag;
 
+        //Probe
         public static string ProbeName;
         public static string ProbeTag;
 
+        //Sensor Types/States
         public static int UpSensor = -1;
         public static int WarningSensor = -1;
         public static int DownSensor = -1;
@@ -43,11 +54,13 @@
         public static int UnknownSensor = -1; //NetFlow sensors work best
         public static int ChannelSensor = -1;
 
-        public static int Channel = -1;
+        //Channel Limits
         public static int ChannelErrorLimit = -1;   //Max: positive of value. Min: negative of value
         public static int ChannelWarningLimit = -1; //Max: positive of value. Min: negative of value
         public static string ChannelErrorMessage;
         public static string ChannelWarningMessage;
+
+        //Object Counts
 
         public static int ProbesInTestServer = -1;
 

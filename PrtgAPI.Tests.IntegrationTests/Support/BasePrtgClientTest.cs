@@ -44,10 +44,31 @@ namespace PrtgAPI.Tests.IntegrationTests
                 if (probeService.Status != ServiceControllerStatus.Running)
                     Assert.Fail("Probe Service is not running");
 
-                Logger.Log("Backing up PRTG Config");
-
                 if (Settings.ResetAfterTests)
+                {
+                    if (File.Exists(PrtgConfigBackup))
+                    {
+                        Logger.Log("Restoring PRTG Config leftover from previous aborted test");
+                        Logger.Log("    Stopping PRTGCoreService");
+                        coreService.Stop();
+                        coreService.WaitForStatus(ServiceControllerStatus.Stopped);
+
+                        Logger.Log("    Copying PRTG Config");
+                        File.Copy(PrtgConfigBackup, PrtgConfig, true);
+                        File.Delete(PrtgConfigBackup);
+
+                        Logger.Log("    Starting PRTGCoreService");
+                        coreService.Start();
+                        coreService.WaitForStatus(ServiceControllerStatus.Running);
+
+                        Logger.Log("    Sleeping for 30 seconds while PRTG starts up");
+                        Thread.Sleep(30 * 1000);
+                    }
+
+                    Logger.Log("Backing up PRTG Config");
+
                     File.Copy(PrtgConfig, PrtgConfigBackup);
+                }
             });
 
             Logger.Log("Refreshing CI device");
@@ -95,7 +116,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log(ex.Message);
+                        Logger.Log(ex.Message, true);
                         throw;
                     }
 
@@ -117,6 +138,8 @@ namespace PrtgAPI.Tests.IntegrationTests
             Logger.LogTest($"Running test '{TestContext.TestName}'");
 
             var properties = typeof (Settings).GetFields();
+
+            //todo: this part should be in a separate function that is then called from the powershell init.ps1 in startup
 
             foreach (var property in properties)
             {
