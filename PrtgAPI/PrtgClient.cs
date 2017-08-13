@@ -738,7 +738,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
-        public List<Channel> GetChannels(int sensorId) => GetChannelsInternal(sensorId, true);
+        public List<Channel> GetChannels(int sensorId) => GetChannelsInternal(sensorId);
 
         /// <summary>
         /// Retrieve all channels of a sensor that match the specified name.
@@ -746,9 +746,9 @@ namespace PrtgAPI
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <param name="channelName">The name of the channel to retrieve.</param>
         /// <returns></returns>
-        public List<Channel> GetChannels(int sensorId, string channelName) => GetChannelsInternal(sensorId, true, name => name == channelName);
+        public List<Channel> GetChannels(int sensorId, string channelName) => GetChannelsInternal(sensorId, name => name == channelName);
 
-        internal List<Channel> GetChannelsInternal(int sensorId, bool includeAdvancedProperties, Func<string, bool> nameFilter = null)
+        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
@@ -760,6 +760,7 @@ namespace PrtgAPI
                 items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
 
             items = response.Descendants("item").ToList();
+
             foreach (var item in items)
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
@@ -783,7 +784,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId) => await GetChannelsInternalAsync(sensorId, true).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId) => await GetChannelsInternalAsync(sensorId).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieve all channels of a sensor that match the specified name.
@@ -791,9 +792,9 @@ namespace PrtgAPI
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <param name="channelName">The name of the channel to retrieve.</param>
         /// <returns></returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string channelName) => await GetChannelsInternalAsync(sensorId, true, name => name == channelName).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string channelName) => await GetChannelsInternalAsync(sensorId, name => name == channelName).ConfigureAwait(false);
 
-        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, bool includeAdvancedProperties, Func<string, bool> nameFilter = null)
+        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
@@ -1080,6 +1081,92 @@ namespace PrtgAPI
         public void RemoveNotificationTrigger(NotificationTrigger trigger) => requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger));
 
         #endregion
+        #region Clone Object
+
+        /// <summary>
+        /// Clone a sensor or group to another device or group.
+        /// </summary>
+        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned object.</param>
+        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        /// <returns>The ID of the object that was created</returns>
+        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
+            CloneObject(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId));
+
+        /// <summary>
+        /// Clone a device to another group or probe.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned device.</param>
+        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
+        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        public int CloneObject(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
+            CloneObject(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host));
+
+        private int CloneObject(CloneSensorOrGroupParameters parameters) =>
+            Amend(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser), CloneResponseParser);
+
+        /// <summary>
+        /// Asynchronously clone a sensor or group to another device or group.
+        /// </summary>
+        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned object.</param>
+        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        /// <returns>The ID of the object that was created</returns>
+        public async Task<int> CloneObjectAsync(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
+            await CloneObjectAsync(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously clone a device to another group or probe.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="cloneName">The name that should be given to the cloned device.</param>
+        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
+        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        public async Task<int> CloneObjectAsync(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
+            await CloneObjectAsync(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host)).ConfigureAwait(false);
+
+        private async Task<int> CloneObjectAsync(CloneSensorOrGroupParameters parameters) =>
+            Amend(await requestEngine.ExecuteRequestAsync(CommandFunction.DuplicateObject, parameters, CloneRequestParser).ConfigureAwait(false), CloneResponseParser);
+
+        private string CloneRequestParser(HttpResponseMessage response)
+        {
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return null;
+            
+            var message = response.RequestMessage.RequestUri.ToString();
+
+            if (message.Contains("the object is currently not valid"))
+            {
+                var searchText = "errorurl=";
+                var expectedUrl = message.Substring(message.IndexOf(searchText, StringComparison.Ordinal) + searchText.Length);
+
+                if (expectedUrl.EndsWith("%26"))
+                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("%26"));
+                else if (expectedUrl.EndsWith("&"))
+                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("&"));
+
+                searchText = "error.htm";
+
+                var server = message.Substring(0, message.IndexOf(searchText));
+
+                message = $"{server}public/login.htm?loginurl={expectedUrl}&errormsg=";
+                response.RequestMessage.RequestUri = new Uri(message);
+            }
+
+            return message;
+        }
+
+        private int CloneResponseParser(string response)
+        {
+            var decodedResponse = HttpUtility.UrlDecode(response);
+
+            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
+
+            return id;
+        }
+
+        #endregion
         #region Miscellaneous
 
         /// <summary>
@@ -1159,63 +1246,6 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The object to sort.</param>
         public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
-
-        /// <summary>
-        /// Clone a sensor or group to another device or group respectively.
-        /// </summary>
-        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
-        /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
-        /// <returns>The ID of the object that was created</returns>
-        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId) => CloneObject(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId));
-
-        /// <summary>
-        /// Clone a device to another group.
-        /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
-        /// <param name="cloneName">The name that should be given to the cloned device.</param>
-        /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
-        public int CloneObject(int deviceId, string cloneName, string host, int targetLocationObjectId) => CloneObject(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host));
-
-        private int CloneObject(CloneSensorOrGroupParameters parameters)
-        {
-            var response = requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser);
-
-            var decodedResponse = HttpUtility.UrlDecode(response);
-
-            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
-
-            return id;
-        }
-
-        private string CloneRequestParser(HttpResponseMessage response)
-        {
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-                return null;
-
-            var message = response.RequestMessage.RequestUri.ToString();
-
-            if (message.Contains("the object is currently not valid"))
-            {
-                var searchText = "errorurl=";
-                var expectedUrl = message.Substring(message.IndexOf(searchText, StringComparison.Ordinal) + searchText.Length);
-
-                if (expectedUrl.EndsWith("%26"))
-                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("%26"));
-                else if (expectedUrl.EndsWith("&"))
-                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("&"));
-
-                searchText = "error.htm";
-
-                var server = message.Substring(0, message.IndexOf(searchText));
-
-                message = $"{server}public/login.htm?loginurl={expectedUrl}&errormsg=";
-                response.RequestMessage.RequestUri = new Uri(message);
-            }
-
-            return message;
-        }
 
         /// <summary>
         /// Permanently delete an object from PRTG. This cannot be undone.

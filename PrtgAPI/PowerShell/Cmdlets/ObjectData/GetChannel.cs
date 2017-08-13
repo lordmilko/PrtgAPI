@@ -81,7 +81,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 filter = name => pattern.IsMatch(name.ToLower());
             }
 
-            var results = client.GetChannelsInternal(SensorId ?? Sensor.Id, true, filter).OrderBy(c => c.Id).ToList();
+            var results = client.GetChannelsInternal(SensorId ?? Sensor.Id, filter).OrderBy(c => c.Id).ToList();
 
             if (Id != null)
             {

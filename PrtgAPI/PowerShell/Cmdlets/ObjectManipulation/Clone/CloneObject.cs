@@ -29,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Name { get; set; }
 
         /// <summary>
-        /// <para type="description">Indicates whether or not the cloned object should be resolved into a PrtgObject. By default this value is true. If this value is false, a summary of the clone operation will be provided.</para> 
+        /// <para type="description">Indicates whether or not the cloned object should be resolved into a PrtgObject. By default this value is true (perform resolution). If this value is false, a summary of the clone operation will be provided.</para> 
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter Resolve { get; set; } = SwitchParameter.Present;

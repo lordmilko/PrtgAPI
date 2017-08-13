@@ -63,7 +63,6 @@
     -have our new streaming methods specify a Count where we want to, and then make streamobjects check if count is null and if so set it to 500
 
     Clone
-    -Parse the response and get the new object id
     -whats the response when theres an error?
 
     Get[Sensor|Device|Group|Probe]

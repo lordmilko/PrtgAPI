@@ -103,7 +103,7 @@ function GoPrtgBeforeAll
 {
 	if(!$Profile)
 	{
-		$Global:Profile = "$env:username\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+		$Global:Profile = "$TestDrive\Microsoft.PowerShell_profile.ps1"
 	}
 
 	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
