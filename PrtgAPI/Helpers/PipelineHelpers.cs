@@ -23,15 +23,6 @@ namespace PrtgAPI.Helpers
             return commandInfo;
         }
 
-        public static object GetInternalProperty(this object obj, string name)
-        {
-            var internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-
-            var prop = obj.GetType().GetProperty(name, internalFlags).GetValue(obj);
-
-            return prop;
-        }
-
         public static Pipeline GetCmdletPipelineInput(this ICommandRuntime commandRuntime, InternalCommand cmdlet)
         {
             var inputPipe = commandRuntime.GetInternalProperty("InputPipe");

@@ -18,6 +18,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// as well as the number of retries remaining before PrtgAPI gives up. Each request invocation uses a separate retry count.</para>
     /// <para>If a protocol is not specified, PrtgAPI will connect with HTTPS. If your PRTG Server is HTTP only, this will cause an exception.
     /// For HTTP only servers, prefix your URL with http://</para>
+    /// <para type="description">When Connect-PrtgServer is run from outside of a script or the PowerShell ISE, PrtgAPI will
+    /// display PowerShell progress when piping between PrtgAPI cmdlets or when piping from variables containing PrtgAPI objects.
+    /// This default setting can be overridden by specifying a value to the -Progress parameter, or by using the Enable-PrtgProgress
+    /// and Disable-PrtgProgress cmdlets.</para>
     /// <para type="description">Attempting to invoke Connect-PrtgServer after a <see cref="PrtgClient"/> has already been initialized
     /// for the current session will generate an exception. To override the existing <see cref="PrtgClient"/>, specify the -Force
     /// parameter to Connect-PrtgServer, or invalidate the <see cref="PrtgClient"/> by calling Disconnect-PrtgServer.</para>
@@ -52,6 +56,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="link">Get-PrtgClient</para>
     /// <para type="link">Disconnect-PrtgServer</para>
+    /// <para type="link">Enable-PrtgProgress</para>
+    /// <para type="link">Disable-PrtgProgress</para>
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "PrtgServer")]
     public class ConnectPrtgServer : PSCmdlet
@@ -84,16 +90,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The number of times to retry a request that times out while communicating with PRTG.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public int? RetryCount { get; set; }
+        public int? RetryCount { get; set; } = 1;
 
         /// <summary>
         /// <para type="description">The base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public int? RetryDelay { get; set; }
+        public int? RetryDelay { get; set; } = 3;
 
         /// <summary>
-        /// Enable or disable PowerShell Progress when piping between cmdlets. By default, if Connect-PrtgServer is being called from within a script this value is false. Otherwise, true.
+        /// <para type="description">Enable or disable PowerShell Progress when piping between cmdlets. By default, if Connect-PrtgServer is being called from within a script or the PowerShell ISE this value is false. Otherwise, true.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public bool? Progress { get; set; }

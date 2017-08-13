@@ -43,7 +43,8 @@ namespace PrtgAPI.PowerShell.Progress
 
         public Pipeline CmdletPipeline { get; set; }
 
-        public bool PipeFromVariable => Pipeline?.List.Count() > 1;
+        //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
+        public bool PipeFromVariableWithProgress => Pipeline?.List.Count > 1 || (Pipeline?.List.Count == 1 && PartOfChain);
 
         public Cmdlet PreviousCmdlet { get; set; }
 
@@ -111,14 +112,14 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (PartOfChain)
             {
-                if (PipeFromVariable)
+                if (PipeFromVariableWithProgress)
                     Scenario = ProgressScenario.VariableToMultipleCmdlets;
                 else
                     Scenario = ProgressScenario.MultipleCmdlets;
             }
             else
             {
-                if (PipeFromVariable)
+                if (PipeFromVariableWithProgress)
                     Scenario = ProgressScenario.VariableToSingleCmdlet;
                 else
                     Scenario = ProgressScenario.NoProgress;
@@ -208,7 +209,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void CompleteProgress()
         {
-            if (PipeFromVariable)
+            if (PipeFromVariableWithProgress)
             {
                 if (!PartOfChain || FirstInChain || PipelineContainsOperation)
                 {
@@ -228,7 +229,7 @@ namespace PrtgAPI.PowerShell.Progress
             InitialDescription = null;
             recordsProcessed = -1;
 
-            if (TotalRecords > 0 || PipeFromVariable)
+            if (TotalRecords > 0 || PipeFromVariableWithProgress)
             {
                 CurrentRecord.RecordType = ProgressRecordType.Completed;
 
@@ -244,7 +245,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void UpdateRecordsProcessed(ProgressRecord record)
         {
-            if (PipeFromVariable)
+            if (PipeFromVariableWithProgress)
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 if (!PartOfChain || FirstInChain || PipelineContainsOperation) //todo: will pipelinecontainsoperation break the other tests?
@@ -318,7 +319,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void DisplayInitialProgress()
         {
-            if (PipeFromVariable && CmdletPipeline.CurrentIndex > 0)
+            if (PipeFromVariableWithProgress && CmdletPipeline.CurrentIndex > 0)
                 return;
 
             CurrentRecord.StatusDescription = InitialDescription;
@@ -337,7 +338,7 @@ namespace PrtgAPI.PowerShell.Progress
             //and then regardless, theres still the issue of how to handle piping from clone-device to 1 or 2 more cmdlets
             //need to add tests for ALL of this
 
-            if (PipeFromVariable)
+            if (PipeFromVariableWithProgress)
             {
                 if (!PipelineIsPure)
                     return;

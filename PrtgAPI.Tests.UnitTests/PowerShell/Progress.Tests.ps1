@@ -1,106 +1,31 @@
 ﻿. $PSScriptRoot\Support\Progress.ps1
 
-function Get-Progress {
-	return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
-}
-
-function Validate($list)	{
-
-	foreach($progress in $list)
-	{
-		Get-Progress | Should Be $progress
-	}
-
-	try
-	{
-        { $result = Get-Progress; throw "`n`nProgress Queue contains more records than expected. Next record is:`n`n$result`n`n" } | Should Throw "Queue empty"
-	}
-	catch [exception]
-	{
-		Clear-Progress
-		throw
-	}
-}
-
-function InitializeClient {
-	[PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Bind()
-
-	$client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
-
-	SetPrtgClient $client
-
-	Enable-PrtgProgress
-}
-
-function RunCustomCount($hashtable, $action)
-{
-	$dictionary = GetCustomCountDictionary $hashtable
-
-	$oldClient = Get-PrtgClient
-
-	$newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse -ArgumentList $dictionary))
-
-	try
-	{
-		SetPrtgClient $newClient
-
-		& $action
-	}
-	catch
-	{
-		throw
-	}
-	finally
-	{
-		SetPrtgClient $oldClient
-	}
-}
-
-function GetCustomCountDictionary($hashtable)
-{
-	$dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
-
-	foreach($entry in $hashtable.GetEnumerator())
-	{
-		$newKey = $entry.Key -as "PrtgAPI.Content"
-
-		$dictionary.Add($newKey, $entry.Value)
-	}
-
-	return $dictionary
-}
-
-function ItWorks($a, $b)
-{
-	It $a $b
-}
-
-function ItsNotImplemented($a, $b)
-{
-	#It $a { throw }
-	#todo: add some tests for having some other cmdlet at the start of the pipeline. need to modify getpipelineinput to handle this properly, e.g. what if Where-Object is at the start or middle?
-}
-
 Describe "Test-Progress" {
 	
 	InitializeClient
 
 	#region 1: Something -> Action
 	
-	ItWorks "1a: Table -> Action" {
+	It "1a: Table -> Action" {
 		Get-Sensor -Count 1 | Pause-Object -Forever
 
 		Validate (@(
 			"PRTG Sensor Search`n" +
 			"    Retrieving all sensors"
 
+			###################################################################
+
 			"PRTG Sensor Search`n" +
 			"    Processing sensor 1/1`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
+			###################################################################
+
 			"Pausing PRTG Objects`n" +
 			"    Pausing sensor 'Volume IO _Total' forever (1/1)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			###################################################################
 
 			"Pausing PRTG Objects (Completed)`n" +
 			"    Pausing sensor 'Volume IO _Total' forever (1/1)`n" +
@@ -108,7 +33,7 @@ Describe "Test-Progress" {
 		))
 	}
 	
-	ItWorks "1b: Variable -> Action" {
+	It "1b: Variable -> Action" {
 		$devices = Get-Device
 
 		$devices.Count | Should Be 2
@@ -137,7 +62,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 2: Something -> Table
 
-	ItWorks "2a: Table -> Table" {
+	It "2a: Table -> Table" {
 		Get-Probe | Get-Group
 
 		Validate(@(
@@ -176,7 +101,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "2b: Variable -> Table" {
+	It "2b: Variable -> Table" {
 
 		$probes = Get-Probe
 
@@ -212,7 +137,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 3: Something -> Action -> Table
 	
-	ItWorks "3a: Table -> Action -> Table" {
+	It "3a: Table -> Action -> Table" {
 
 		Get-Device | Clone-Device 5678 | Get-Sensor
 
@@ -268,7 +193,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "3b: Variable -> Action -> Table" {
+	It "3b: Variable -> Action -> Table" {
 
 		$devices = Get-Device
 
@@ -314,7 +239,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 4: Something -> Table -> Table
 
-	ItWorks "4a: Table -> Table -> Table" {
+	It "4a: Table -> Table -> Table" {
 
 		Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
@@ -376,7 +301,7 @@ Describe "Test-Progress" {
 		))
 	}
 	
-	ItWorks "4b: Variable -> Table -> Table" {
+	It "4b: Variable -> Table -> Table" {
 		$probes = Get-Probe
 
 		#we need to find a way to detect if the entire chain we're piping along
@@ -485,7 +410,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 5: Something -> Table -> Action -> Table
 
-	ItWorks "5a: Table -> Table -> Action -> Table" {
+	It "5a: Table -> Table -> Action -> Table" {
 		Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor
 
 		Validate(@(
@@ -676,7 +601,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "5b: Variable -> Table -> Action -> Table" {
+	It "5b: Variable -> Table -> Action -> Table" {
 		$probes = Get-Probe
 
 		$probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
@@ -775,7 +700,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 6: Something -> Object
 
-	ItWorks "6a: Table -> Object" {
+	It "6a: Table -> Object" {
 		Get-Sensor -Count 1 | Get-Channel
 
 		Validate(@(
@@ -806,7 +731,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "6b: Variable -> Object" {
+	It "6b: Variable -> Object" {
 
 		#1. why is pipes three data cmdlets together being infected by the crash here
 		#2. why is injected_showchart failing to deserialize?
@@ -828,16 +753,23 @@ Describe "Test-Progress" {
 			"PRTG Channel Search`n" +
 			"    Processing all sensors 1/2`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
+
 			"    Retrieving all channels"
+
+			###################################################################
 
 			"PRTG Channel Search`n" +
 			"    Processing all sensors 2/2`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
 			"    Retrieving all channels"
+
+			###################################################################
 
 			"PRTG Channel Search (Completed)`n" +
 			"    Processing all sensors 2/2`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
 			"    Retrieving all channels"
 		))
 	}
@@ -845,7 +777,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 7: Stream -> Something
 
-	ItWorks "7a: Stream -> Object" {
+	It "7a: Stream -> Object" {
 		# Good enough for a test to Stream -> Table as well
 		
 		$counts = @{
@@ -911,7 +843,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "7b: Stream -> Action" {
+	It "7b: Stream -> Action" {
 
 		# Besides the initial "Detecting total number of items", there is nothing special about a streamed, non-streamed and streaming-unsupported (e.g. devices) run
 
@@ -988,7 +920,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 8: Something -> Table -> Object
 
-	ItWorks "8a: Table -> Table -> Object" {
+	It "8a: Table -> Table -> Object" {
 
 		$counts = @{
 			Sensors = 1
@@ -1106,7 +1038,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "8b: Variable -> Table -> Object" {
+	It "8b: Variable -> Table -> Object" {
 		$probes = Get-Probe
 
 		$counts = @{
@@ -1191,7 +1123,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 9: Variable -> Action -> Table -> Table
 
-	ItWorks "9: Variable -> Action -> Table -> Table" {
+	It "9: Variable -> Action -> Table -> Table" {
 		# an extension of 3b. variable -> action -> table. Confirms that we can transform our setpreviousoperation into a
 		# proper progress item when required
 
@@ -1305,7 +1237,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 10: Variable -> Table -> Table -> Table
 
-	ItWorks "10: Variable -> Table -> Table -> Table" {
+	It "10: Variable -> Table -> Table -> Table" {
 		# Validates we can get at least two progress bars out of a variable
 		$probes = Get-Probe
 
@@ -1446,13 +1378,13 @@ Describe "Test-Progress" {
 	#endregion
 	#region 11: Table -> Filter -> Something
 
-	ItWorks "11a: Table -> Filter -> Table" {
+	It "11a: Table -> Filter -> Table" {
 		Get-Probe | Select-Object -First 2 | Get-Device
 
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
 
-	ItWorks "11b: Table -> Filter -> Action" {
+	It "11b: Table -> Filter -> Action" {
 		Get-Probe | Select-Object -First 2 | Pause-Object -Forever
 
 		{ Get-Progress } | Should Throw "Queue empty"
@@ -1461,7 +1393,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 12: Variable -> Filter -> Something
 
-	ItWorks "12a: Variable -> Filter -> Table" {
+	It "12a: Variable -> Filter -> Table" {
 		$probes = Get-Probe
 
 		$probes | Select-Object -First 2 | Get-Device
@@ -1469,7 +1401,7 @@ Describe "Test-Progress" {
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
 
-	ItWorks "12b: Variable -> Filter -> Action" {
+	It "12b: Variable -> Filter -> Action" {
 		$probes = Get-Probe
 
 		$probes | Select-Object -First 2 | Pause-Object -Forever
@@ -1480,13 +1412,13 @@ Describe "Test-Progress" {
 	#endregion
 	#region 13: Table -> Filter -> Table -> Something
 
-	ItWorks "13a: Table -> Filter -> Table -> Table" {
+	It "13a: Table -> Filter -> Table -> Table" {
 		Get-Probe | Select-Object -First 2 | Get-Device | Get-Sensor
 
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
 
-	ItWorks "13b: Table -> Filter -> Table -> Action" {
+	It "13b: Table -> Filter -> Table -> Action" {
 		Get-Probe | Select-Object -First 2 | Get-Device | Pause-Object -Forever
 
 		{ Get-Progress } | Should Throw "Queue empty"
@@ -1495,7 +1427,7 @@ Describe "Test-Progress" {
 	#endregion
 	#region 14: Variable -> Filter -> Table -> Something
 
-	ItWorks "14a: Variable -> Filter -> Table -> Table" {
+	It "14a: Variable -> Filter -> Table -> Table" {
 		$probes = Get-Probe
 
 		$probes | Select-Object -First 2 | Get-Device | Get-Sensor
@@ -1503,7 +1435,7 @@ Describe "Test-Progress" {
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
 
-	ItWorks "14b: Variable -> Filter -> Table -> Action" {
+	It "14b: Variable -> Filter -> Table -> Action" {
 		$probes = Get-Probe
 
 		$probes | Select-Object -First 2 | Get-Device | Pause-Object -Forever
@@ -1512,9 +1444,76 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
+	#region 15: Variable(1) -> Table -> Table
+
+	It "Variable(1) -> Table -> Table" {
+
+		$probe = Get-Probe -Count 1
+
+		$probe.Count | Should Be 1
+
+		$probe | Get-Group | Get-Device
+
+		Validate(@(
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/1`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    Retrieving all groups"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/1`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Device Search`n" +
+			"        Processing all groups 1/2`n" +
+			"        [oooooooooooooooooooo                    ] (50%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/1`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Device Search`n" +
+			"        Processing all groups 2/2`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search`n" +
+			"    Processing all probes 1/1`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"    PRTG Device Search (Completed)`n" +
+			"        Processing all groups 2/2`n" +
+			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+			"        Retrieving all devices"
+
+			###################################################################
+
+			"PRTG Group Search (Completed)`n" +
+			"    Processing all probes 1/1`n" +
+			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+			#the next record should be a prtg device search
+
+			#i think that if we have 1 variable and we're piping to multiple that deserves progress. maybe have PipeFromVariable detect we're also pipetocmdlet
+		))
+    }
+
+	#endregion
 	#region Sanity Checks	
 
-	ItWorks "Streams when the number of returned objects is above the threshold" {
+	It "Streams when the number of returned objects is above the threshold" {
 		Run "Sensor" {
 
 			$objs = @()
@@ -1579,7 +1578,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "Doesn't stream when the number of returned objects is below the threshold" {
+	It "Doesn't stream when the number of returned objects is below the threshold" {
 		Get-Sensor
 
 		Validate(@(
@@ -1588,7 +1587,7 @@ Describe "Test-Progress" {
 		))
 	}
 
-	ItWorks "Doesn't show progress when a variable contains only 1 object" {
+	It "Doesn't show progress when a variable contains only 1 object" {
 		$probe = Get-Probe -Count 1
 
 		$probe.Count | Should Be 1
@@ -1599,24 +1598,4 @@ Describe "Test-Progress" {
 	}
 
 	#endregion
-
-    ItsNotImplemented "Variable(1) -> Table -> Table" {
-
-		$probe = Get-Probe -Count 1
-
-		$probe.Count | Should Be 1
-
-		$probe | Get-Group | Get-Device
-
-		Validate(@(
-
-		))
-
-        throw "todo: need to move this to a proper position"
-    }
-
-	ItsNotImplemented "blah2" {
-		throw "unrelated: when you have a taskcancelledexception, it has a cancellation token which should be true if actually cancelled, false otherwise"
-		#should we modify executerequest to check whether the token is true? if we've enabled a whole bunch of retries and try and ctrl+c will it keep retrying?
-	}
 }

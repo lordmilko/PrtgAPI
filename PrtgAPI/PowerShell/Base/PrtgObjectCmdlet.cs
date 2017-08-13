@@ -27,7 +27,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             IEnumerable<T> records = null;
 
-            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
                 records = GetResultsWithVariableProgress(GetRecords);
             else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(GetRecords);

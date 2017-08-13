@@ -106,7 +106,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             IEnumerable<TObject> records;
 
-            if (ProgressManager.PipeFromVariable && PrtgSessionState.EnableProgress)
+            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
                 records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
             else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
