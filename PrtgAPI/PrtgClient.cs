@@ -129,13 +129,22 @@ namespace PrtgAPI
             return response;
         }
 
-        internal List<T> GetObjects<T>(Parameters.Parameters parameters)
+        internal List<T> GetObjects<T>(Parameters.Parameters parameters) => GetObjectsRaw<T>(parameters).Items;
+
+        private Data<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
-            var data = Data<T>.DeserializeList(response);
+            return Data<T>.DeserializeList(response);
+        }
 
-            return data.Items;
+        private async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters) => (await GetObjectsRawAsync<T>(parameters).ConfigureAwait(false)).Items;
+
+        private async Task<Data<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+
+            return Data<T>.DeserializeList(response);
         }
 
         internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
@@ -995,31 +1004,29 @@ namespace PrtgAPI
         public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) => await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
 
         /// <summary>
-        /// Pause a PRTG Object (sensor, device, etc).
+        /// Pause a PRTG Object.
         /// </summary>
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused object.</param>
         public void PauseObject(int objectId, int? durationMinutes = null, string pauseMessage = null)
         {
-            PauseParametersBase parameters;
-            CommandFunction? function = null;
+            var parameters = new PauseRequestParameters(objectId, durationMinutes, pauseMessage);
 
-            if (durationMinutes == null)
-            {
-                parameters = new PauseParameters(objectId);
-                function = CommandFunction.Pause;
-            }
-            else
-            {
-                parameters = new PauseForDurationParameters(objectId, (int)durationMinutes);
-                function = CommandFunction.PauseObjectFor;
-            }
-                
-            if (pauseMessage != null)
-                parameters.PauseMessage = pauseMessage;
+            requestEngine.ExecuteRequest(parameters.Function, parameters.Parameters);
+        }
 
-            requestEngine.ExecuteRequest(function.Value, parameters);
+        /// <summary>
+        /// Asynchronously pause a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">ID of the object to pause.</param>
+        /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
+        /// <param name="pauseMessage">Message to display on the paused object.</param>
+        public async Task PauseObjectAsync(int objectId, int? durationMinutes = null, string pauseMessage = null)
+        {
+            var parameters = new PauseRequestParameters(objectId, durationMinutes, pauseMessage);
+
+            await requestEngine.ExecuteRequestAsync(parameters.Function, parameters.Parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1319,19 +1326,14 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public void RenameObject(int objectId, string name)
-        {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
+        public void RenameObject(int objectId, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectId, name));
 
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.Value] = name
-            };
-
-            requestEngine.ExecuteRequest(CommandFunction.Rename, parameters);
-        }
+        /// <summary>
+        /// Asynchronously rename an object.
+        /// </summary>
+        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="name">New name to give the object.</param>
+        public async Task RenameObjectAsync(int objectId, string name) => await requestEngine.ExecuteRequestAsync(CommandFunction.Rename, new RenameParameters(objectId, name)).ConfigureAwait(false);
 
         #endregion
     #endregion
@@ -1351,16 +1353,14 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="content">The type of object to total.</param>
         /// <returns>The total number of objects of a given type.</returns>
-        public int GetTotalObjects(Content content)
-        {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Count] = 0,
-                [Parameter.Content] = content
-            };
+        public int GetTotalObjects(Content content) => Convert.ToInt32(GetObjectsRaw<PrtgObject>(new TotalObjectsParameters(content)).TotalCount);
 
-            return Convert.ToInt32(GetObjectsRaw<PrtgObject>(parameters).TotalCount);
-        }
+        /// <summary>
+        /// Asynchronously calcualte the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of a given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
 
         private T GetObjectProperties<T>(int objectId, BaseType objectType)
         {

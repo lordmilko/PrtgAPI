@@ -65,7 +65,7 @@ namespace PrtgAPI.Objects.Shared
         protected string notificationTypes { get; set; }
 
         /// <summary>
-        /// Scanning interval for this sensor.
+        /// Scanning interval for this sensor or default scanning interval for sensors under this object.
         /// </summary>
         [PropertyParameter(nameof(Property.Interval))]
         public TimeSpan Interval //todo: add custom handling for this

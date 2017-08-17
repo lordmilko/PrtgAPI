@@ -26,10 +26,13 @@ Describe "Acknowledge-Sensor_IT" {
 		Sleep 5
 		LogTestDetail "Resuming object"
 		$acknowledgedSensor | Resume-Object
+		Sleep 5
 
 		LogTestDetail "Refreshing object and sleeping for 30 seconds"
 		$acknowledgedSensor | Refresh-Object
-		Sleep 30
+		Sleep 20
+		$acknowledgedSensor | Refresh-Object
+		Sleep 10
 
 		$finalSensor = Get-Sensor -Id (Settings DownSensor)
 		$finalSensor.Status | Should Be Down

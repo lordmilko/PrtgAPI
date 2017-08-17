@@ -65,6 +65,7 @@ Describe "New-SensorFactoryDefinition" {
 					"100 - channel(2203,5) + channel(2203,20)"
 		(
 			$sensors | New-SensorFactoryDefinition {"Sum"} -Expression {"100 - channel($($_.Id),5)"} -Aggregator {"$acc + channel($($_.Id),20)"} 10
+
 		) -join "`n" | Should Be $expected
 	}
 
@@ -102,9 +103,20 @@ Describe "New-SensorFactoryDefinition" {
 					"channel(2203,3)"
 
 		$aggr = $s | New-SensorFactoryDefinition {"Max Value"} -Aggregator {"max($expr,$acc)"} 3
-		$chan = $s | New-SensorFactoryDefinition {$_.Device} 3 -StartIndex 2
+		$channels = $s | New-SensorFactoryDefinition {$_.Device} 3 -StartIndex 2
 
-		($aggr + $chan) -join "`n" | Should Be $expected
+		($aggr + $channels) -join "`n" | Should Be $expected
+	}
+
+	It "Calculates an average by executing a finalizer" {
+		
+		$expected = "#1:Average`n" +
+					"(channel(2203,0) + channel(2203,0))/2"
+
+		(
+			$sensors | New-SensorFactoryDefinition {"Average"} -Aggregator {"$acc + $expr"} -Finalizer {"($acc)/$($sensors.Count)"} 0
+
+		) -join "`n" | Should Be $expected
 	}
 
 	# Miscellaneous Tests
@@ -118,6 +130,7 @@ Describe "New-SensorFactoryDefinition" {
 
 		(
 			$sensors | New-SensorFactoryDefinition { "$($_.Device) [bananas]" } 0
+
 		) -join "`n" | Should Be $expected
 	}
 

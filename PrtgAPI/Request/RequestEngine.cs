@@ -40,11 +40,13 @@ namespace PrtgAPI.Request
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
 
-        internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters)
+        internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> requestValidator = null)
         {
             var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
 
             var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+
+            requestValidator?.Invoke(response);
 
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
@@ -58,11 +60,13 @@ namespace PrtgAPI.Request
             return response;
         }
 
-        internal async Task ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters)
+        internal async Task<string> ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
             var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
 
-            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
+
+            return response;
         }
 
         internal string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
@@ -121,7 +125,7 @@ namespace PrtgAPI.Request
             } while (true);
         }
 
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
             prtgClient.Log($"Asynchronously executing request '{url.Url}'");
 
@@ -136,7 +140,7 @@ namespace PrtgAPI.Request
                     string responseText = null;
 
                     if (responseParser != null)
-                        responseText = await responseParser(response).ConfigureAwait(false);
+                        responseText = responseParser(response);
 
                     if (responseText == null)
                         responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

@@ -110,6 +110,14 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
         [Parameter(Mandatory = false, ParameterSetName = "Aggregate")]
         public ScriptBlock Aggregator { get; set; }
 
+        /// <summary>
+        /// <para type="description">A post-processing action to perform on an aggregated expresion before emititing to the pipeline.</para>
+        /// <para type="description">Provides the following automatic variables:</para>
+        /// <para type="description">    '$acc' (the accumulated result)</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = "Aggregate")]
+        public ScriptBlock Finalizer { get; set; }
+
         private int index;
         private PSVariable accumulation = new PSVariable("acc");
 
@@ -133,30 +141,11 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
 
             var rows = new List<string>();
 
-            string expression = $"channel({Item.Id},{ChannelId})";
-
-            if (Expression != null)
-                expression = Expression.InvokeWithContext(null, new List<PSVariable>
-                {
-                    new PSVariable("expr", expression),
-                    new PSVariable("_", Item)
-                }).First().ToString();
+            var expression = GetExpression();
 
             if (Aggregator != null)
             {
-                if (accumulation.Value == null)
-                {
-                    accumulation.Value = expression;
-                }
-                else
-                {
-                    accumulation.Value = Aggregator.InvokeWithContext(null, new List<PSVariable>
-                    {
-                        accumulation,
-                        new PSVariable("_", Item),
-                        new PSVariable("expr", expression)
-                    }).First();
-                }
+                ProcessAggregtor(expression);
             }
             else
             {
@@ -168,6 +157,39 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
             }
         }
 
+        private string GetExpression()
+        {
+            string expression = $"channel({Item.Id},{ChannelId})";
+
+            if (Expression != null)
+            {
+                expression = Expression.InvokeWithContext(null, new List<PSVariable>
+                {
+                    new PSVariable("expr", expression),
+                    new PSVariable("_", Item)
+                }).First().ToString();
+            }
+
+            return expression;
+        }
+
+        private void ProcessAggregtor(string expression)
+        {
+            if (accumulation.Value == null)
+            {
+                accumulation.Value = expression;
+            }
+            else
+            {
+                accumulation.Value = Aggregator.InvokeWithContext(null, new List<PSVariable>
+                {
+                    accumulation,
+                    new PSVariable("_", Item),
+                    new PSVariable("expr", expression)
+                }).First();
+            }
+        }
+
         /// <summary>
         /// Provides a one-time, postprocessing functionality for the cmdlet.
         /// </summary>
@@ -175,6 +197,14 @@ namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
         {
             if (Aggregator != null)
             {
+                if (Finalizer != null)
+                {
+                    accumulation.Value = Finalizer.InvokeWithContext(null, new List<PSVariable>
+                    {
+                        accumulation
+                    }).First();
+                }
+
                 var name = Name.InvokeWithDollarUnderscore(Item).ToString();
                 WriteObject($"#{index}:{name}");
                 WriteObject(accumulation.Value);
