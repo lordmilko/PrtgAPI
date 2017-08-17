@@ -54,7 +54,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             {
                 case nameof(NotificationTrigger.Latency):
                 case nameof(NotificationTrigger.Channel):
-                case nameof(NotificationTrigger.Units):
+                case nameof(NotificationTrigger.Unit):
                 case nameof(NotificationTrigger.OffNotificationAction):
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
@@ -72,7 +72,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             switch (propertyName)
             {
                 case nameof(NotificationTrigger.Channel):
-                case nameof(NotificationTrigger.Units):
+                case nameof(NotificationTrigger.Unit):
                     break;
                 default:
                     Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.State}' had value did not have a value.");
@@ -84,7 +84,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             switch (propertyName)
             {
-                case nameof(NotificationTrigger.Units):
+                case nameof(NotificationTrigger.Unit):
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
                 case nameof(NotificationTrigger.RepeatInterval):

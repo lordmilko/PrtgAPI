@@ -21,6 +21,16 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
+        /// The value which, once reached, will cause this trigger will activate.
+        /// </summary>
+        [PropertyParameter(nameof(TriggerProperty.Threshold))]
+        public int? Threshold
+        {
+            get { return (int?)GetCustomParameterValue(TriggerProperty.Threshold); }
+            set { UpdateCustomParameter(TriggerProperty.Threshold, value); }
+        }
+
+        /// <summary>
         /// The time component of the volume limit that causes this trigger to activate.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Period))]
@@ -49,6 +59,7 @@ namespace PrtgAPI.Parameters
             Channel = TriggerChannel.Primary;
             UnitSize = TriggerVolumeUnitSize.Byte;
             Period = TriggerPeriod.Hour;
+            Threshold = 0;
         }
 
         /// <summary>
@@ -61,7 +72,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
@@ -77,6 +88,8 @@ namespace PrtgAPI.Parameters
                     UnitSize = null;
                 else
                     UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
+
+                Threshold = sourceTrigger.ThresholdInternal;
             }
         }
     }

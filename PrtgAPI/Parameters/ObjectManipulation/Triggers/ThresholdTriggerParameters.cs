@@ -80,6 +80,8 @@ namespace PrtgAPI.Parameters
             OffNotificationAction = null;
             Channel = TriggerChannel.Primary;
             Condition = TriggerCondition.Above;
+            Threshold = 0;
+            Latency = 60;
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>

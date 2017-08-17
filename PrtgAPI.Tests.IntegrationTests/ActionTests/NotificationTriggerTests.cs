@@ -148,23 +148,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_State()
         {
-            throw new NotImplementedException();
+            AddRemoveTriggerFromExisting(TriggerType.State, trigger => new StateTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Device()
         {
-            var trigger = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == TriggerType.Threshold).ToList();
-
-            Assert2.AreEqual(1, trigger.Count, "Did not have expected number of threshold triggers");
-
-            var parameters = new ThresholdTriggerParameters(Settings.Device, trigger.First(), ModifyAction.Add);
-
-            client.AddNotificationTrigger(parameters);
-
-            var triggersNew = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == TriggerType.Threshold).ToList();
-
-            Assert2.AreEqual(2, triggersNew.Count, "Trigger was not added successfully");
+            AddRemoveTriggerFromExisting(TriggerType.Threshold, trigger => new ThresholdTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
         }
 
         [TestMethod]
@@ -209,19 +199,41 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Speed()
         {
-            throw new NotImplementedException();
+            AddRemoveTriggerFromExisting(TriggerType.Speed, trigger => new SpeedTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Volume()
         {
-            throw new NotImplementedException();
+            AddRemoveTriggerFromExisting(TriggerType.Volume, trigger => new VolumeTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Change()
         {
-            throw new NotImplementedException();
+            AddRemoveTriggerFromExisting(TriggerType.Change, trigger => new ChangeTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+        }
+
+        private void AddRemoveTriggerFromExisting(TriggerType triggerType, Func<NotificationTrigger, TriggerParameters> getParameters)
+        {
+            var initialTriggers = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
+
+            Assert2.AreEqual(1, initialTriggers.Count, $"Did not have initial expected number of {triggerType} triggers");
+
+            var parameters = getParameters(initialTriggers.First());
+
+            client.AddNotificationTrigger(parameters);
+
+            var triggersNew = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
+
+            Assert2.AreEqual(2, triggersNew.Count, "Trigger was not added successfully");
+
+            var newTrigger = triggersNew.First(a => initialTriggers.All(b => b.SubId != a.SubId));
+            client.RemoveNotificationTrigger(newTrigger);
+
+            var postRemoveTriggers = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
+
+            Assert2.IsTrue(initialTriggers.Count == postRemoveTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {postRemoveTriggers.Count}");
         }
 
         #endregion

@@ -31,45 +31,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             Logger.Log("Connecting to local server");
 
-            Impersonator.ExecuteAction(() =>
-            {
-                Logger.Log("Retrieving service details");
-
-                var coreService = new ServiceController("PRTGCoreService", Settings.Server);
-                var probeService = new ServiceController("PRTGProbeService", Settings.Server);
-
-                if (coreService.Status != ServiceControllerStatus.Running)
-                    Assert.Fail("Core Service is not running");
-
-                if (probeService.Status != ServiceControllerStatus.Running)
-                    Assert.Fail("Probe Service is not running");
-
-                if (Settings.ResetAfterTests)
-                {
-                    if (File.Exists(PrtgConfigBackup))
-                    {
-                        Logger.Log("Restoring PRTG Config leftover from previous aborted test");
-                        Logger.Log("    Stopping PRTGCoreService");
-                        coreService.Stop();
-                        coreService.WaitForStatus(ServiceControllerStatus.Stopped);
-
-                        Logger.Log("    Copying PRTG Config");
-                        File.Copy(PrtgConfigBackup, PrtgConfig, true);
-                        File.Delete(PrtgConfigBackup);
-
-                        Logger.Log("    Starting PRTGCoreService");
-                        coreService.Start();
-                        coreService.WaitForStatus(ServiceControllerStatus.Running);
-
-                        Logger.Log("    Sleeping for 30 seconds while PRTG starts up");
-                        Thread.Sleep(30 * 1000);
-                    }
-
-                    Logger.Log("Backing up PRTG Config");
-
-                    File.Copy(PrtgConfig, PrtgConfigBackup);
-                }
-            });
+            Impersonator.ExecuteAction(RemoteInit);
 
             Logger.Log("Refreshing CI device");
 
@@ -88,7 +50,48 @@ namespace PrtgAPI.Tests.IntegrationTests
             Logger.Log("Ready for tests");
         }
 
-        [AssemblyCleanup] public static void AssemblyCleanup()
+        private static void RemoteInit()
+        {
+            Logger.Log("Retrieving service details");
+
+            var coreService = new ServiceController("PRTGCoreService", Settings.Server);
+            var probeService = new ServiceController("PRTGProbeService", Settings.Server);
+
+            if (coreService.Status != ServiceControllerStatus.Running)
+                Assert.Fail("Core Service is not running");
+
+            if (probeService.Status != ServiceControllerStatus.Running)
+                Assert.Fail("Probe Service is not running");
+
+            if (Settings.ResetAfterTests)
+            {
+                if (File.Exists(PrtgConfigBackup))
+                {
+                    Logger.Log("Restoring PRTG Config leftover from previous aborted test");
+                    Logger.Log("    Stopping PRTGCoreService");
+                    coreService.Stop();
+                    coreService.WaitForStatus(ServiceControllerStatus.Stopped);
+
+                    Logger.Log("    Copying PRTG Config");
+                    File.Copy(PrtgConfigBackup, PrtgConfig, true);
+                    File.Delete(PrtgConfigBackup);
+
+                    Logger.Log("    Starting PRTGCoreService");
+                    coreService.Start();
+                    coreService.WaitForStatus(ServiceControllerStatus.Running);
+
+                    Logger.Log("    Sleeping for 30 seconds while PRTG starts up");
+                    Thread.Sleep(30 * 1000);
+                }
+
+                Logger.Log("Backing up PRTG Config");
+
+                File.Copy(PrtgConfig, PrtgConfigBackup);
+            }
+        }
+
+        [AssemblyCleanup]
+        public static void AssemblyCleanup()
         {
             Logger.Log("Cleaning up after tests");
 
@@ -96,38 +99,62 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 Logger.Log("Connecting to server");
 
-                Impersonator.ExecuteAction(() =>
-                {
-                    Logger.Log("Retrieving service details");
-
-                    var controller = new ServiceController("PRTGCoreService", Settings.Server);
-
-                    Logger.Log("Stopping service");
-
-                    controller.Stop();
-                    controller.WaitForStatus(ServiceControllerStatus.Stopped);
-
-                    Logger.Log("Restoring config");
-
-                    try
-                    {
-                        File.Copy(PrtgConfigBackup, PrtgConfig, true);
-                        File.Delete(PrtgConfigBackup);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex.Message, true);
-                        throw;
-                    }
-
-                    Logger.Log("Starting service");
-
-                    controller.Start();
-                    controller.WaitForStatus(ServiceControllerStatus.Running);
-
-                    Logger.Log("Finished");
-                });
+                Impersonator.ExecuteAction(() => RemoteCleanup(true));
             }
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            var a = TestContext.GetType().Assembly;
+
+            if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
+                Logger.LogTestDetail($"Test completed with outcome '{TestContext.CurrentTestOutcome}'", true);
+        }
+
+
+        private static void RemoteCleanup(bool deleteConfig)
+        {
+            Logger.Log("Retrieving service details");
+
+            var controller = new ServiceController("PRTGCoreService", Settings.Server);
+
+            Logger.Log("Stopping service");
+
+            controller.Stop();
+            controller.WaitForStatus(ServiceControllerStatus.Stopped);
+
+            Logger.Log("Restoring config");
+
+            try
+            {
+                File.Copy(PrtgConfigBackup, PrtgConfig, true);
+
+                if(deleteConfig)
+                    File.Delete(PrtgConfigBackup);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex.Message, true);
+                throw;
+            }
+
+            Logger.Log("Starting service");
+
+            controller.Start();
+            controller.WaitForStatus(ServiceControllerStatus.Running);
+
+            Logger.Log("Finished");
+        }
+
+        protected static void RepairConfig()
+        {
+            Logger.Log("Repairing config");
+
+            Impersonator.ExecuteAction(() => RemoteCleanup(false));
+
+            Logger.Log("Sleeping for 60 seconds while service starts up");
+            Thread.Sleep(60 * 1000);
         }
 
         public TestContext TestContext { get; set; }

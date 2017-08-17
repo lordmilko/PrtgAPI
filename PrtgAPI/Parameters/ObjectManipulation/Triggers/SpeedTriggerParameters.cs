@@ -95,6 +95,8 @@ namespace PrtgAPI.Parameters
             Condition = TriggerCondition.Above;
             UnitSize = TriggerUnitSize.Byte;
             UnitTime = TriggerUnitTime.Hour;
+            Threshold = 0;
+            Latency = 60;
         }
 
         /// <summary>
@@ -107,7 +109,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>

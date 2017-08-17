@@ -38,14 +38,4 @@ Describe "Get-NotificationTrigger_IT" {
 
 		$triggers.Channel | Should Be "Total"
 	}
-
-	It "throws when a device has an invalid trigger channel" {
-		#also: we should check what the value of commentStr was when we failed to get the channel
-		#we DO need those corruption tests, and we need async ones as well! (i dont think we've implemented it at all and im not sure what sort of exception we need to catch
-		throw
-	}
-
-	It "throws when a sensor has an invalid trigger channel" {
-		throw
-	}
 }

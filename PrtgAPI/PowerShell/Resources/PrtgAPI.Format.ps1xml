@@ -392,7 +392,7 @@
                                 <PropertyName>Threshold</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Units</PropertyName>
+                                <PropertyName>Unit</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>OnNotificationAction</PropertyName>
@@ -474,5 +474,6 @@
                 </ListEntries>
             </ListControl>
         </View>
+      
     </ViewDefinitions>
 </Configuration>

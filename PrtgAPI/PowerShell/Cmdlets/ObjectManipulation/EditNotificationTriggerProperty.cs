@@ -66,11 +66,36 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var property = parameters.GetType().GetProperties().First(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
 
+            ParseValueIfRequired(property);
+
             property.SetValue(parameters, Value);
 
             if (ShouldProcess($"{Trigger.OnNotificationAction} (Object ID: {Trigger.ObjectId})", $"Edit-NotificationTriggerProperty {Property} = '{Value}'"))
             {
                 ExecuteOperation(() => client.SetNotificationTrigger(parameters), "Edit Notification Triggers", $"Setting trigger property {Property} to value '{Value}'");
+            }
+        }
+
+        private void ParseValueIfRequired(PropertyInfo property)
+        {
+            //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
+            //Only parse types that are defined in the PrtgAPI assembly.
+            if (property.PropertyType.Assembly.FullName == GetType().Assembly.FullName)
+            {
+                var method = property.PropertyType.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
+
+                if (method != null)
+                {
+                    try
+                    {
+                        var newValue = method.Invoke(null, new[] { Value });
+                        Value = newValue;
+                    }
+                    catch (Exception ex)
+                    {
+                        //Don't care if our value wasn't parsable
+                    }
+                }
             }
         }
     }

@@ -13,54 +13,53 @@ namespace PrtgAPI
         /// <summary>
         /// The sensor's primary channel.
         /// </summary>
-        public static readonly TriggerChannel Primary = new TriggerChannel(GeneralTriggerChannel.Primary);
+        public static readonly TriggerChannel Primary = new TriggerChannel(StandardTriggerChannel.Primary);
 
         /// <summary>
         /// The sensor's "Total" channel (where applicable).
         /// </summary>
-        public static readonly TriggerChannel Total = new TriggerChannel(GeneralTriggerChannel.Total);
+        public static readonly TriggerChannel Total = new TriggerChannel(StandardTriggerChannel.Total);
 
         /// <summary>
         /// The sensor's "Traffic In" channel (where applicable).
         /// </summary>
-        public static readonly TriggerChannel TrafficIn = new TriggerChannel(GeneralTriggerChannel.TrafficIn);
+        public static readonly TriggerChannel TrafficIn = new TriggerChannel(StandardTriggerChannel.TrafficIn);
 
         /// <summary>
         /// The sensor's "Traffic Out" channel (where applicable).
         /// </summary>
-        public static readonly TriggerChannel TrafficOut = new TriggerChannel(GeneralTriggerChannel.TrafficOut);
+        public static readonly TriggerChannel TrafficOut = new TriggerChannel(StandardTriggerChannel.TrafficOut);
 
         internal object channel;
 
-        internal int? channelId;
-
-        internal static TriggerChannel Parse(object channel, int? channelId)
+        /// <summary>
+        /// Converts an object of one of several types to a <see cref="TriggerChannel"/>. If the specified value is not convertable to <see cref="TriggerChannel"/>, an <see cref="InvalidCastException"/> is thrown.
+        /// </summary>
+        /// <param name="channel">The value to parse.</param>
+        /// <returns>A TriggerChannel that encapsulates the passed value.</returns>
+        public static TriggerChannel Parse(object channel)
         {
+            if (channel is TriggerChannel)
+                return (TriggerChannel)channel;
+
             if (channel is string)
             {
-                GeneralTriggerChannel value;
+                StandardTriggerChannel value;
 
+                //Convert it to an enum, and then let the enum handler below convert it to a static member
                 if (Enum.TryParse(channel.ToString(), true, out value))
                 {
                     channel = value;
                 }
             }
-
-            if (channel is GeneralTriggerChannel)
+            
+            if (channel is StandardTriggerChannel)
             {
-                switch ((GeneralTriggerChannel) channel)
-                {
-                    case GeneralTriggerChannel.Primary:
-                        return Primary;
-                    case GeneralTriggerChannel.Total:
-                        return Total;
-                    case GeneralTriggerChannel.TrafficIn:
-                        return TrafficIn;
-                    case GeneralTriggerChannel.TrafficOut:
-                        return TrafficOut;
-                    default:
-                        throw new NotImplementedException($"Handler missing for channel '{channel}'");
-                }
+                return ParseChannelEnum((StandardTriggerChannel) channel);
+            }
+            else if (channel is Channel)
+            {
+                return new TriggerChannel((Channel) channel);
             }
             else
             {
@@ -70,22 +69,39 @@ namespace PrtgAPI
                     return new TriggerChannel(value);
                 else
                 {
-                    return new TriggerChannel(channel.ToString(), channelId.Value);
+                    throw new InvalidCastException($"Cannot convert '{channel}' of type '{channel.GetType()}' to type '{nameof(TriggerChannel)}'. Value type must be convertable to one of PrtgAPI.StandardTriggerChannel, PrtgAPI.Channel or System.Int32.");
                 }
+            }
+        }
+
+        private static TriggerChannel ParseChannelEnum(StandardTriggerChannel channel)
+        {
+            switch (channel)
+            {
+                case StandardTriggerChannel.Primary:
+                    return Primary;
+                case StandardTriggerChannel.Total:
+                    return Total;
+                case StandardTriggerChannel.TrafficIn:
+                    return TrafficIn;
+                case StandardTriggerChannel.TrafficOut:
+                    return TrafficOut;
+                default:
+                    throw new NotImplementedException($"Handler missing for channel '{channel}'");
             }
         }
 
         internal static TriggerChannel ParseForRequest(object channel)
         {
-            return ParseInternal<XmlEnumAttribute>(channel, null);
+            return ParseInternal<XmlEnumAttribute>(channel);
         }
 
-        internal static TriggerChannel ParseFromResponse(object channel, int? channelId)
+        internal static TriggerChannel ParseFromResponse(object channel)
         {
-            return ParseInternal<XmlEnumAlternateName>(channel, channelId);
+            return ParseInternal<XmlEnumAlternateName>(channel);
         }
 
-        private static TriggerChannel ParseInternal<T>(object channel, int? channelId) where T : XmlEnumAttribute
+        private static TriggerChannel ParseInternal<T>(object channel) where T : XmlEnumAttribute
         {
             if (channel == null)
                 return null;
@@ -93,17 +109,16 @@ namespace PrtgAPI
             object @enum = null;
 
             if (!(channel is TriggerChannel && ((TriggerChannel)channel).channel is int))
-                @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(GeneralTriggerChannel), false);
+                @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(StandardTriggerChannel), false);
 
             if (@enum != null)
-                return Parse(@enum, null);
+                return Parse(@enum);
             else
             {
-                var result = Parse(channel, channelId);
+                var result = Parse(channel);
 
                 return result;
             }
-                
         }
 
         /// <summary>
@@ -123,33 +138,27 @@ namespace PrtgAPI
             this.channel = channelId;
         }
 
-        private TriggerChannel(GeneralTriggerChannel channel)
+        private TriggerChannel(StandardTriggerChannel channel)
         {
             this.channel = channel;
-        }
-
-        private TriggerChannel(string channel, int channelId)
-        {
-            this.channel = channel;
-            this.channelId = channelId;
         }
 
         /// <summary>
         /// Creates a new <see cref="TriggerChannel"/> object from a specified Channel.
         /// </summary>
-        /// <param name="channel"></param>
+        /// <param name="channel">A custom channel that will apply to a trigger.</param>
         public static implicit operator TriggerChannel(Channel channel)
         {
             return new TriggerChannel(channel);
         }
 
         /// <summary>
-        /// Creates a new <see cref="TriggerChannel"/> from a specified <see cref="GeneralTriggerChannel"/>.
+        /// Creates a new <see cref="TriggerChannel"/> from a specified <see cref="StandardTriggerChannel"/>.
         /// </summary>
-        /// <param name="channel"></param>
-        public static implicit operator TriggerChannel(GeneralTriggerChannel channel)
+        /// <param name="channel">A standard channel that will apply to a trigger.</param>
+        public static implicit operator TriggerChannel(StandardTriggerChannel channel)
         {
-            return Parse(channel, null);
+            return Parse(channel);
         }
 
         /// <summary>
@@ -163,13 +172,15 @@ namespace PrtgAPI
 
         string IFormattable.GetSerializedFormat()
         {
+            //The serialized format of a TriggerChannel is an integer.
+
             if (channel is Channel)
             {
                 return ((Channel)channel).Id.ToString();
             }
-            else if (channel is GeneralTriggerChannel)
+            else if (channel is StandardTriggerChannel)
             {
-                return ((GeneralTriggerChannel) channel).EnumToXml();
+                return ((StandardTriggerChannel) channel).EnumToXml();
             }
             else
             {
@@ -181,7 +192,7 @@ namespace PrtgAPI
                 }
                 else
                 {
-                    return channelId.ToString();
+                    return channel.ToString();
                 }
             }
         }
@@ -193,7 +204,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies standard sensor channels a notification trigger can monitor.
     /// </summary>
-    public enum GeneralTriggerChannel
+    public enum StandardTriggerChannel
     {
         /// <summary>
         /// The primary channel.

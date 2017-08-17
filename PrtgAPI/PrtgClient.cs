@@ -861,9 +861,7 @@ namespace PrtgAPI
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public List<NotificationTrigger> GetNotificationTriggers(int objectId)
         {
-            var parameters = new NotificationTriggerParameters(objectId);
-
-            var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
+            var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, new NotificationTriggerParameters(objectId));
 
             var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -879,9 +877,7 @@ namespace PrtgAPI
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId)
         {
-            var parameters = new NotificationTriggerParameters(objectId);
-
-            var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new NotificationTriggerParameters(objectId)).ConfigureAwait(false);
 
             var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -913,10 +909,18 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if (trigger.RequiresChannelId())
+                if (trigger.SetEnumChannel())
                 {
-                    Log("Retrieving Channel ID for sensor specific channel based Notification Trigger");
-                    trigger.channelId = GetChannelsInternal(trigger.ObjectId, false).First(t => t.Name == trigger.channel).Id;
+                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
+                    try
+                    {
+                        trigger.channelObj = GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName).First();
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        if (ex.Message.Contains("Sequence contains no elements"))
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check notification triggers of object ID {trigger.ObjectId} in PRTG UI.", ex);
+                    }
                 }
             }
         }
@@ -925,10 +929,18 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if (trigger.RequiresChannelId())
+                if (trigger.SetEnumChannel())
                 {
-                    Log("Asynchronously retrieving Channel ID for sensor specific channel based Notification Trigger");
-                    trigger.channelId = (await GetChannelsInternalAsync(trigger.ObjectId, false).ConfigureAwait(false)).First(t => t.Name == trigger.channel).Id;
+                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
+                    try
+                    {
+                        trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        if (ex.Message.Contains("Sequence contains no elements"))
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check notification triggers of object ID {trigger.ObjectId} in PRTG UI.", ex);
+                    }
                 }
             }
         }
@@ -1068,11 +1080,54 @@ namespace PrtgAPI
             else
                 throw new NotImplementedException($"Handler missing for modify action '{parameters.Action}'");
 
+            ValidateTriggerParameters(parameters);
+
             requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
-        //todo make a note this doesnt check for inheritance. find out what happens if you try and remove an inherited trigger using this? whats the http response?
-        public void RemoveNotificationTrigger(int objectId, int triggerId) => requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(objectId, triggerId));
+        private void ValidateTriggerParameters(TriggerParameters parameters)
+        {
+            TriggerChannel channel = null;
+
+            switch (parameters.Type)
+            {
+                case TriggerType.Speed:
+                    channel = ((SpeedTriggerParameters) parameters).Channel;
+                    break;
+                case TriggerType.Volume:
+                    channel = ((VolumeTriggerParameters) parameters).Channel;
+                    break;
+                case TriggerType.Threshold:
+                    channel = ((ThresholdTriggerParameters) parameters).Channel;
+                    break;
+            }
+
+            if (channel == null)
+                return;
+
+            var sensor = GetSensors(Property.Id, parameters.ObjectId);
+
+            if (sensor.Count > 0) //Validate this sensor has this channel
+            {
+                if(channel.channel is StandardTriggerChannel)
+                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
+
+                bool anyResponse = false;
+
+                if (channel.channel is Channel)
+                    anyResponse = GetChannels(parameters.ObjectId, ((Channel)channel.channel).Name).Any();
+                else
+                    anyResponse = GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())).Descendants().Any();
+
+                if (!anyResponse)
+                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor ID {parameters.ObjectId}. Channel could not be found.");
+            }
+            else //It's a container. Only enum values are permitted.
+            {
+                if (!(channel.channel is StandardTriggerChannel))
+                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
+            }
+        }
 
         /// <summary>
         /// Remove a notification trigger from an object.

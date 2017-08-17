@@ -9,7 +9,7 @@ using PrtgAPI.Tests.UnitTests.Helpers;
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class TriggerParameterTests : NotificationTriggerBaseTests
+    public class NotificationTriggerParameterTests : NotificationTriggerBaseTests
     {
         
 #region Notification Trigger Parameter Tests

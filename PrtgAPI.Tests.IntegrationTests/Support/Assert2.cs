@@ -36,5 +36,19 @@ namespace PrtgAPI.Tests.IntegrationTests
                 throw;
             }
         }
+
+        public static void Fail(string message)
+        {
+            try
+            {
+                Assert.Fail(message);
+            }
+            catch (Exception ex)
+            {
+                var text = "Assert.Fail failed. ";
+                Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
+                throw;
+            }
+        }
     }
 }

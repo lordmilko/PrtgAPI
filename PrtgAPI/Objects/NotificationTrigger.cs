@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
@@ -14,6 +15,7 @@ namespace PrtgAPI
     /// </summary>
     [DataContract]
     [Description("Notification Trigger")]
+    [DebuggerDisplay("Type = {Type}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}")]
     public class NotificationTrigger
     {
         [DataMember(Name = "type")]
@@ -83,20 +85,23 @@ namespace PrtgAPI
         public int? Latency { get; set; }
 
         [DataMember(Name = "channel")]
-        internal string channel;
+        internal string channelName;
 
-        internal int? channelId;
+        //Manually assigned to by GetNotificationTriggers
+        internal Channel channelObj;
+
+        internal TriggerChannel channel;
 
         /// <summary>
         /// The channel the trigger should apply to.
         /// Applies to: Speed, Threshold, Volume Triggers
         /// </summary>
-        public TriggerChannel Channel => TriggerChannel.ParseFromResponse(channel, channelId);
+        public TriggerChannel Channel => channel ?? (channel = TriggerChannel.ParseFromResponse(channelObj));
 
         /// <summary>
         /// The formatted units display of this trigger.
         /// </summary>
-        public string Units
+        public string Unit
         {
             get
             {
@@ -148,7 +153,7 @@ namespace PrtgAPI
 
         /// <summary>
         /// Value threshold required before this notification is activated.
-        /// Applies to: Threshold, Speed Triggers
+        /// Applies to: Threshold, Speed, Volume Triggers
         /// </summary>
         [DataMember(Name = "threshold")]
         public string Threshold
@@ -202,22 +207,27 @@ namespace PrtgAPI
 
         private XElement objectLinkXml => XElement.Parse(objectLink.Replace("&", "&amp;"));
 
-        internal bool RequiresChannelId()
+        /// <summary>
+        /// Indicates whether the notification trigger can use a <see cref="StandardTriggerChannel"/> as its <see cref="Channel"/> (where applicable).
+        /// If so, the object's channel is set to the resolved enum value.
+        /// </summary>
+        /// <returns></returns>
+        internal bool SetEnumChannel()
         {
-            if (Inherited == false)
-                return false;
-
             switch (Type)
             {
                 case TriggerType.Speed:
                 case TriggerType.Threshold:
                 case TriggerType.Volume:
-                    var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channel, typeof(GeneralTriggerChannel), false);
+                    var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
 
                     if (@enum == null)
                     {
                         return true;
                     }
+
+                    channel = (StandardTriggerChannel)@enum;
+
                     break;
             }
 

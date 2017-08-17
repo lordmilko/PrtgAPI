@@ -81,6 +81,9 @@ namespace PrtgAPI.Parameters
             EscalationNotificationAction = null;
             OffNotificationAction = null;
             State = TriggerSensorState.Down;
+            Latency = 60;
+            EscalationLatency = 300;
+            RepeatInterval = 0;
         }
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>

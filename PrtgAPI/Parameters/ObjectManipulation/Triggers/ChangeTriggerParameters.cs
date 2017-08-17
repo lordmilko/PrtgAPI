@@ -25,7 +25,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
