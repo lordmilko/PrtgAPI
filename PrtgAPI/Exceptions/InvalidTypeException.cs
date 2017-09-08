@@ -27,6 +27,14 @@ namespace PrtgAPI
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidTypeException"/> class with a specified error message.
+        /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        public InvalidTypeException(string message) : base(message)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="InvalidTypeException"/> class with a specified type and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="type">The type that was not valid in the given context.</param>

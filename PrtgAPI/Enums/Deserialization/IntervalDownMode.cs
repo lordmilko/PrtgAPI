@@ -5,7 +5,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies the number of scanning intervals to wait before setting the sensor <see cref="Status.Down"/> when an error is reported. When an error clears, the sensor will go <see cref="Status.Up"/> immediately.
     /// </summary>
-    public enum ErrorIntervalDown
+    public enum IntervalErrorMode
     {
         /// <summary>
         /// Set the sensor to <see cref="Status.Down"/>  immediately.

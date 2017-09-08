@@ -2,8 +2,8 @@
 
 namespace PrtgAPI.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    sealed class UndocumentedAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Field)]
+    internal sealed class UndocumentedAttribute : Attribute
     {
     }
 }

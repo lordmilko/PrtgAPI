@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI.Tests.IntegrationTests
+﻿using System;
+
+namespace PrtgAPI.Tests.IntegrationTests
 {
     public enum HttpProtocol
     {
@@ -81,6 +83,16 @@
 
         public static int NotificationTiggersOnDevice = -1;
         public static int NotificationActionsInTestServer = -1;
+
+        //Settings
+
+        public static string[] ParentTags;
+        public static TimeSpan? CustomInterval;
+        public static TimeSpan? CustomUnsupportedInterval;
+
+        //Sensor Types
+        public static int WmiRemotePing = -1;
+        public static int ExeXml = -1;
 
 #pragma warning restore CS0649 //Restore 'field' is never assigned to.
     }

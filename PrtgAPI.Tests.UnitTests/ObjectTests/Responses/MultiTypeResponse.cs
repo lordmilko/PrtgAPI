@@ -47,7 +47,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                     return new ChannelResponse(new[] {new ChannelItem()});
                 case nameof(CommandFunction.DuplicateObject):
                     address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
-                    return new BasicResponse("");
+                    return new BasicResponse(string.Empty);
+                case nameof(HtmlFunction.EditSettings):
+                    return new BasicResponse(string.Empty);
                 default:
                     throw new NotImplementedException($"Unknown function '{function}' passed to MultiTypeResponse");
             }

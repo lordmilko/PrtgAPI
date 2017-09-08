@@ -93,11 +93,11 @@ namespace PrtgAPI.Helpers
             return (T) XmlToEnum<XmlEnumAlternateName>(value, typeof (T));
         }
 
-        internal static object XmlToEnum<TAttribute>(string value, Type type, bool requireValue = true) where TAttribute : XmlEnumAttribute
+        internal static object XmlToEnum<TXmlEnumAttribute>(string value, Type type, bool requireValue = true) where TXmlEnumAttribute : XmlEnumAttribute
         {
             foreach (var field in type.GetFields())
             {
-                var attribute = Attribute.GetCustomAttributes(field, typeof(TAttribute)).Where(a => a.GetType() == typeof(TAttribute)).Cast<TAttribute>().FirstOrDefault();
+                var attribute = Attribute.GetCustomAttributes(field, typeof(TXmlEnumAttribute)).Where(a => a.GetType() == typeof(TXmlEnumAttribute)).Cast<TXmlEnumAttribute>().FirstOrDefault();
 
                 if (attribute != null)
                 {

@@ -17,6 +17,12 @@ namespace PrtgAPI
         /// Save debug information to disk. Debug information is stored under C:\ProgramData\Paessler\PRTG Network Monitor\Logs (Sensors) on the sensors probe server.
         /// </summary>
         [XmlEnum("1")]
-        WriteToDisk
+        WriteToDisk,
+
+        /// <summary>
+        /// Save debug information to disk if the scan results in an error. Not supported with WMI sensors. Debug information is stored under C:\ProgramData\Paessler\PRTG Network Monitor\Logs (Sensors) on the sensors probe server.
+        /// </summary>
+        [XmlEnum("2")]
+        WriteToDiskWhenError
     }
 }

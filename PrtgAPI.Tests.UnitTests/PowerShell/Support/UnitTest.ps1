@@ -58,6 +58,13 @@ function Run($objectType, $script)
 	return $result
 }
 
+function SetMultiTypeResponse
+{
+	$client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
+
+	SetPrtgClient $client
+}
+
 function SetPrtgClient($client)
 {
 	$type = [PrtgAPI.PrtgClient].Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")

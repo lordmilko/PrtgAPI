@@ -218,6 +218,8 @@ namespace PrtgAPI.Request
                 var queries = UrlHelpers.CrackUrl(errorUrl);
                 var errorMsg = queries["errormsg"];
 
+                errorMsg = errorMsg.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ");
+
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMsg}");
             }
         }

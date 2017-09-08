@@ -80,13 +80,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [ExpectedException(typeof(ArgumentException))]
         public void Object_SetProperty_Enum_With_Int()
         {
-            Object_SetProperty(ObjectProperty.ErrorIntervalDown, 1);
+            Object_SetProperty(ObjectProperty.IntervalErrorMode, 1);
         }
 
         [TestMethod]
         public void Object_SetProperty_Enum_With_Enum()
         {
-            Object_SetProperty(ObjectProperty.ErrorIntervalDown, ErrorIntervalDown.DownImmediately, ((int)ErrorIntervalDown.DownImmediately).ToString());
+            Object_SetProperty(ObjectProperty.IntervalErrorMode, IntervalErrorMode.DownImmediately, ((int)IntervalErrorMode.DownImmediately).ToString());
         }
 
         private void Object_SetProperty(ObjectProperty property, object value, string serializedValue = null)
@@ -101,7 +101,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void Object_SetProperty_Bool_With_Bool()
         {
-            Object_SetProperty(ObjectProperty.InheritScanningInterval, false, "0");
+            Object_SetProperty(ObjectProperty.InheritInterval, false, "0");
         }
 
         public void Object_SetProperty_Bool_With_Int()

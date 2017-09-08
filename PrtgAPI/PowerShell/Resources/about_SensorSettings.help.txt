@@ -1,0 +1,101 @@
+﻿TOPIC
+    about_PrtgAPI
+
+SHORT DESCRIPTION
+    Describes PRTG Sensor properties that can be used in conjunction with Set-ObjectProperty and Get-ObjectProperty
+
+LONG DESCRIPTION
+
+    PrtgAPI supports the retrieval and modification of dozens of Sensor Setting values in a reliable, typesafe manner.
+	The following tables outline the properties that are currently supported/unsupported by PrtgAPI, as well as the
+	setting values each property corresponds to within the PRTG Web Interface.
+
+	For properties that are not currently supported, it is possible to interact with these values via the "Raw" cmdlet
+	parameter sets. For more information, see the help pages of Get-ObjectProperty and Set-ObjectProperty
+
+	In the tables below, the following keys are used to indicate typesafe support status.
+
+    Yes       : Supported
+    Read-Only : Supports Get, and will never support Set
+    No        : Not currently supported
+
+    Basic Sensor Settings
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | Name               |    Yes    |             |
+    | ParentTags         | Read-Only |             |
+    | Tags               | Yes | No  |             |
+    | Priority           |    Yes    |             |
+
+    HTTP Specific
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | Timeout            |    Yes    |             |
+    | Url                |    Yes    |             |
+    | HttpRequestMethod  |    Yes    |             |
+    | SNI                |    No     |             |
+    | UseSNIFromUrl      |    Yes    |             |
+
+    Ping Settings
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | Timeout            |    Yes    |             |
+    | PingPacketSize     |    Yes    |             |
+    | PingMode           |    Yes    |             |
+    | PingCount          |    Yes    |             |
+    | PingDelay          |    Yes    |             |
+    | AutoAcknowledge    |    Yes    |             |
+
+    Scanning Interval
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | InheritInterval    |    Yes    |             |
+    | Interval           |    Yes    |             |
+    | IntervalErrorMode  |    Yes    |             |
+
+    Schedules, Dependencies and Maintenance Window
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | InheritDependency  |    Yes    |             |
+    | Schedule           |    No     |             |
+    | MaintenanceEnabled |    No     |             |
+    | MaintenanceEnd     |    No     |             |
+    | DependencyType     |    No     |             |
+    | Dependency         |    No     |             |
+    | DependencyDelay    |    No     |             |
+
+    Sensor Display
+
+    | Property           | Get | Set | Description |
+    | ------------------ | --------- | ----------- |
+    | PrimaryChannel     |    No     |             |
+    | GraphType          |    Yes    |             |
+    | StackUnit          |    No     |             |
+
+EXAMPLES
+    Retrieve all object properties of sensor with ID 1001
+
+    C:\> Get-Sensor -Id 1001 | Get-ObjectProperty
+
+    Modify the scanning interval of sensor with ID 1001
+
+    C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval "00:00:30"
+
+    Retrieve raw property "name" of sensor with ID 1001
+
+    C:\> Get-Sensor -Id 1001 | Get-ObjectProperty -RawProperty Name
+
+    Set raw property "name" of sensor with ID 1001
+
+    C:\> Get-Sensor -Id 1001 | Set-ObjectProperty -RawProperty name_ -RawValue test
+
+SEE ALSO
+    PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki
+    Get-Sensor
+    Get-ObjectProperty
+    Set-ObjectProperty

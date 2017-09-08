@@ -172,7 +172,7 @@ namespace PrtgAPI.Objects.Deserialization
 
                 if (value != null)
                 {
-                    finalVal = value.Value.Split(attribute.Character);
+                    finalVal = value.Value.Trim().Split(attribute.Character);
                 }
 
                 mapping.Property.SetValue(obj, finalVal);

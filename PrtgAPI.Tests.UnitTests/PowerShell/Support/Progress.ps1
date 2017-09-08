@@ -49,9 +49,7 @@ function Validate($list)	{
 function InitializeClient {
 	[PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Bind()
 
-	$client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
-
-	SetPrtgClient $client
+	SetMultiTypeResponse
 
 	Enable-PrtgProgress
 }

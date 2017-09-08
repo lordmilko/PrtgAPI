@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -39,6 +40,31 @@ namespace PrtgAPI.PowerShell.Base
                 ProgressManager.CompleteProgress();
 
             return result;
+        }
+
+        protected object ParseValueIfRequired(PropertyInfo property, object value)
+        {
+            //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
+            //Only parse types that are defined in the PrtgAPI assembly.
+            if (property.PropertyType.Assembly.FullName == GetType().Assembly.FullName && !property.PropertyType.IsEnum)
+            {
+                var method = property.PropertyType.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
+
+                if (method != null)
+                {
+                    try
+                    {
+                        var newValue = method.Invoke(null, new[] { value });
+                        value = newValue;
+                    }
+                    catch (Exception ex)
+                    {
+                        //Don't care if our value wasn't parsable
+                    }
+                }
+            }
+
+            return value;
         }
     }
 }

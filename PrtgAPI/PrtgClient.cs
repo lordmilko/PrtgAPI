@@ -928,7 +928,7 @@ namespace PrtgAPI
                     catch (InvalidOperationException ex)
                     {
                         if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check notification triggers of object ID {trigger.ObjectId} in PRTG UI.", ex);
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
                     }
                 }
             }
@@ -948,7 +948,7 @@ namespace PrtgAPI
                     catch (InvalidOperationException ex)
                     {
                         if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check notification triggers of object ID {trigger.ObjectId} in PRTG UI.", ex);
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
                     }
                 }
             }
@@ -1229,6 +1229,136 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Get Object Properties
+
+        public SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor);
+
+        internal DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device);
+
+        internal GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group);
+
+        internal ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, BaseType.Probe);
+
+        public string GetObjectPropertyRaw(int objectId, string property)
+        {
+            var parameters = new GetObjectPropertyRawParameters(objectId, property);
+
+            var response = requestEngine.ExecuteRequest(XmlFunction.GetObjectProperty, parameters);
+
+            return ValidateRawObjectProperty(response, parameters);
+        }
+
+        public async Task<string> GetObjectPropertyRawAsync(int objectId, string property)
+        {
+            var parameters = new GetObjectPropertyRawParameters(objectId, property);
+
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.GetObjectProperty, parameters).ConfigureAwait(false);
+
+            return ValidateRawObjectProperty(response, parameters);
+        }
+
+        private string ValidateRawObjectProperty(XDocument response, GetObjectPropertyRawParameters parameters)
+        {
+            var value = response.Descendants("result").First().Value;
+
+            if (value == "(Property not found)")
+                throw new PrtgRequestException($"PRTG was unable to complete the request. A value for property '{parameters.Name}' could not be found.");
+
+            return value;
+        }
+
+        private T GetObjectProperties<T>(int objectId, BaseType objectType)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Id] = objectId,
+                [Parameter.ObjectType] = objectType
+            };
+
+            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
+
+            var xml = ObjectSettings.GetXml(response);
+            var xDoc = new XDocument(xml);
+
+            var items = Data<T>.DeserializeType(xDoc);
+
+            return items;
+        }
+
+        #endregion
+        #region Set Object Properties
+
+            #region Normal
+
+        /// <summary>
+        /// Modify properties and settings of a PRTG Object.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="property">The property of the object to modify.</param>
+        /// <param name="value">The value to set the object's property to.</param>
+        public void SetObjectProperty(int objectId, ObjectProperty property, object value) => SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+
+        /// <summary>
+        /// Asynchronously modify properties and settings of a PRTG Object.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="property">The property of the object to modify.</param>
+        /// <param name="value">The value to set the object's property to.</param>
+        public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) => await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+
+            #endregion Normal
+            #region Channel
+
+        /// <summary>
+        /// Modify channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="property">The property of the channel to modify</param>
+        /// <param name="value">The value to set the channel's property to.</param>
+        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) => SetObjectProperty(new SetChannelPropertyParameters(sensorId, channelId, property, value));
+
+        /// <summary>
+        /// Asynchronously modify channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="property">The property of the channel to modify</param>
+        /// <param name="value">The value to set the channel's property to.</param>
+        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
+
+            #endregion Channel
+            #region Custom
+
+        /// <summary>
+        /// Modify unsupported properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the 'name' attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
+        public void SetObjectPropertyRaw(int objectId, string property, string value) => SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+
+        /// <summary>
+        /// Asynchronously modify unsupported properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the 'name' attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
+        public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) => await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+
+            #endregion
+
+        private void SetObjectProperty(BaseSetObjectPropertyParameters parameters) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
+
+        private async Task SetObjectPropertyAsync(BaseSetObjectPropertyParameters parameters) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+
+        #endregion
         #region Miscellaneous
 
         /// <summary>
@@ -1341,13 +1471,6 @@ namespace PrtgAPI
 
         #region Unsorted
 
-        private void a()
-        {
-            //wmi volume
-            //add: name=WMI+Free+Disk+Space+(Single+Disk)&parenttags_=C_OS_Win&tags_=wmivolumesensor+diskspacesensor&priority_=3&deviceidlist_=1&deviceidlist_=1&deviceidlist__check=%5C%5C%5C%5C%3F%5C%5CVolume%7B33bf348c-e1b7-11e3-80b5-806e6f6e6963%7D%5C%5C%7CC%3A%5C%5C%7Csy1-dc-01%7CLocal+Disk%7CNTFS%7CC%3A%7C%7C&deviceid=&drivetype=&wmialternative=0&driveletter_=&intervalgroup=0&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&inherittriggers=1&id=2212&sensortype=wmivolume
-            //enumerate: 
-        }
-
         /// <summary>
         /// Calcualte the total number of objects of a given type present on a PRTG Server.
         /// </summary>
@@ -1361,32 +1484,6 @@ namespace PrtgAPI
         /// <param name="content">The type of object to total.</param>
         /// <returns>The total number of objects of a given type.</returns>
         public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
-
-        private T GetObjectProperties<T>(int objectId, BaseType objectType)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.ObjectType] = objectType
-            };
-
-            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
-
-            var xml = ObjectSettings.GetXml(response);
-            var xDoc = new XDocument(xml);
-
-            var items = Data<T>.DeserializeType(xDoc);
-
-            return items;
-        }
-
-        internal SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor);
-
-        public DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device);
-
-        public GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group);
-
-        public ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, BaseType.Probe);
 
         //todo: have an update-goprtgcredential cmdlet that does a get-credential -username <existing>
         //to re-connect to prtg, update the stored passhash and then show a green connected message
@@ -1515,310 +1612,6 @@ namespace PrtgAPI
             return items;
         }
 
-        #region SetObjectProperty
-
-        #region BasicObjectSetting
-
-        /// <summary>
-        /// Modify basic object settings (name, tags, priority, etc.) for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        public void SetObjectProperty(int objectId, BasicObjectSetting name, string value)
-        {
-            SetObjectProperty(new SetObjectSettingParameters<BasicObjectSetting>(objectId, name, value));
-        }
-
-        #endregion
-
-        #region ScanningInterval
-
-        /// <summary>
-        /// Modify scanning interval settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ScanningInterval name, object value)
-        {
-            SetObjectProperty(new SetObjectSettingParameters<ScanningInterval>(objectId, name, value));
-        }
-
-        #endregion
-
-        #region SensorDisplay
-
-        /// <summary>
-        /// Modify sensor display settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, SensorDisplay name, object value)
-        {
-            SetObjectProperty(new SetObjectSettingParameters<SensorDisplay>(objectId, name, value));
-        }
-
-        #endregion
-
-        #region ExeScriptSetting
-
-        /// <summary>
-        /// Modify EXE/Script settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to modify.</param>
-        /// <param name="name">The setting to whose value will be overwritten.</param>
-        /// <param name="value">Value of the setting to apply.</param>
-        private void SetObjectProperty(int objectId, ExeScriptSetting name, object value)
-        {
-            SetObjectProperty(new SetObjectSettingParameters<ExeScriptSetting>(objectId, name, value));
-        }
-
-        #endregion
-
-        #region Channel
-
-        /// <summary>
-        /// Modify channel properties for a PRTG Sensor.
-        /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
-        /// <param name="channelId">The ID of the channel to modify.</param>
-        /// <param name="property">The property of the channel to modify</param>
-        /// <param name="value">The value to set the channel's property to.</param>
-        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value));
-
-        /// <summary>
-        /// Asynchronously modify channel properties for a PRTG Sensor.
-        /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
-        /// <param name="channelId">The ID of the channel to modify.</param>
-        /// <param name="property">The property of the channel to modify</param>
-        /// <param name="value">The value to set the channel's property to.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, new SetChannelSettingParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
-
-        //move this
-        public void SetObjectProperty(int objectId, ObjectProperty property, object value)
-        {
-            //Transform the value according to its properties' data type
-            var prop = typeof (SensorSettings).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
-
-            if (prop == null)
-            {
-                throw new MissingAttributeException(typeof(SensorSettings), property.ToString(), typeof(PropertyParameterAttribute));
-            }
-                
-
-            var propertyType = prop.PropertyType;
-            var valueType = value.GetType();
-
-            object val = null;
-
-            if (propertyType == typeof (string) || propertyType == typeof(int) || propertyType == typeof(double))
-                val = value.ToString();
-            else
-            {
-                if (propertyType == typeof(bool))
-                {
-                    if (valueType == typeof(bool))
-                        val = ((bool)value) ? "1" : "0";
-                }
-                else if (propertyType.IsEnum)
-                {
-                    if (propertyType == valueType)
-                        val = ((Enum)value).GetEnumAttribute<XmlEnumAttribute>(true).Name;
-                    else
-                    {
-                        if (Enum.GetNames(propertyType).Any(x => x.ToLower() == value.ToString().ToLower()))
-                            val = ((Enum)Enum.Parse(propertyType, value.ToString(), true)).GetEnumAttribute<XmlEnumAttribute>(true).Name;
-                    }
-                }
-                else
-                {
-                    throw new InvalidTypeException(propertyType, valueType);
-                }
-
-                if (val == null)
-                    throw new ArgumentException($"Value '{value}' could not be assigned to property '{prop.Name}'. Expected type: '{propertyType}'. Actual type: '{valueType}'.");
-            }
-
-            //i dont care what the current type is, i just want to know if the type can be parsed to the type of the property type
-
-            //maybe we'll create an instance of the property type and check we're assignable to it?
-
-
-            //then we ultimately do need to serialize that property
-
-
-
-            //i think the properties in sensorsetting need an enum that links them to an object property
-            //and then we use reflection to get the param with a given property and then confirm
-            //that the value we were given is convertable to the given type
-
-            //we should then implement this type safety for setchannelproperty as well
-
-
-
-            //we need to add handling for inherit error interval
-
-
-            //GetEnumAttributepqp
-
-
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Custom] = ObjectSettings.CreateCustomParameter(property, val),
-                [Parameter.Id] = objectId
-            };
-
-            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
-        }
-
-        #endregion
-
-        private void SetObjectProperty<T>(SetObjectSettingParameters<T> parameters)
-        {
-            requestEngine.ExecuteRequest(CommandFunction.SetObjectProperty, parameters);
-        }
-
-        #endregion
-
-        #region GetObjectProperty
-
-        #region BasicObjectSetting
-
-        /// <summary>
-        /// Retrieves basic object settings (name, tags, priority, etc.) for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        public string GetObjectProperty(int objectId, BasicObjectSetting name)
-        {
-            return GetObjectProperty<string>(objectId, name);
-        }
-
-        /// <summary>
-        /// Retrieves basic object settings (name, tags, priority, etc.) in their true data type for a PRTG Object.
-        /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="BasicObjectSetting"/> specified in <paramref name="name"/>.</typeparam>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        public T GetObjectProperty<T>(int objectId, BasicObjectSetting name)
-        {
-            return GetObjectProperty<T, BasicObjectSetting>(new GetObjectSettingParameters<BasicObjectSetting>(objectId, name));
-        }
-
-        #endregion
-
-        #region ScanningInterval
-
-        /// <summary>
-        /// Retrieves scanning interval related settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private string GetObjectProperty(int objectId, ScanningInterval name)
-        {
-            return GetObjectProperty<string, ScanningInterval>(new GetObjectSettingParameters<ScanningInterval>(objectId, name));
-        }
-
-        /// <summary>
-        /// Retrieves scanning interval related settings in their true data type for a PRTG Object.
-        /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="ScanningInterval"/> specified in <paramref name="name"/>.</typeparam>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private T GetObjectProperty<T>(int objectId, ScanningInterval name)
-        {
-            return GetObjectProperty<T, ScanningInterval>(new GetObjectSettingParameters<ScanningInterval>(objectId, name));
-        }
-
-        #endregion
-
-        #region SensorDisplay
-
-        /// <summary>
-        /// Retrieves sensor display settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private string GetObjectProperty(int objectId, SensorDisplay name)
-        {
-            return GetObjectProperty<string, SensorDisplay>(new GetObjectSettingParameters<SensorDisplay>(objectId, name));
-        }
-
-        /// <summary>
-        /// Retrieves sensor display settings in their true data type for a PRTG Object.
-        /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="SensorDisplay"/> specified in <paramref name="name"/>.</typeparam>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private T GetObjectProperty<T>(int objectId, SensorDisplay name)
-        {
-            return GetObjectProperty<T, SensorDisplay>(new GetObjectSettingParameters<SensorDisplay>(objectId, name));
-        }
-
-        #endregion
-
-        #region ExeScriptSetting
-
-        /// <summary>
-        /// Retrieves EXE/Script settings for a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private string GetObjectProperty(int objectId, ExeScriptSetting name)
-        {
-            return GetObjectProperty<string, ExeScriptSetting>(new GetObjectSettingParameters<ExeScriptSetting>(objectId, name));
-        }
-
-        /// <summary>
-        /// Retrieves EXE/Script settings in their true data type for a PRTG Object.
-        /// </summary>
-        /// <typeparam name="T">The return type suggested by the documentation for the <see cref="ExeScriptSetting"/> specified in <paramref name="name"/>.</typeparam>
-        /// <param name="objectId">ID of the object to retrieve settings for.</param>
-        /// <param name="name">The setting to retrieve.</param>
-        /// <returns>The value of the requested setting.</returns>
-        private T GetObjectProperty<T>(int objectId, ExeScriptSetting name)
-        {
-            return GetObjectProperty<T, ExeScriptSetting>(new GetObjectSettingParameters<ExeScriptSetting>(objectId, name));
-        }
-
-        #endregion
-        
-        private TReturn GetObjectProperty<TReturn, TEnum>(GetObjectSettingParameters<TEnum> parameters)
-        {
-            var response = requestEngine.ExecuteRequest(XmlFunction.GetObjectProperty, parameters);
-
-            var value = response.Descendants("result").First().Value;
-
-            if (value == "(Property not found)")
-                throw new PrtgRequestException("PRTG was unable to complete the request. A value for property '" + parameters.Name + "' could not be found.");
-
-            if (typeof(TReturn).IsEnum)
-            {
-                return (TReturn)(object)Convert.ToInt32(value);
-            }
-            if (typeof (TReturn) == typeof (int))
-            {
-                return (TReturn)(object)Convert.ToInt32(value);
-            }
-            if (typeof (TReturn) == typeof (string))
-            {
-                return (TReturn) (object)value;
-            }
-            throw new UnknownTypeException(typeof(TReturn));
-        }
-
-        #endregion
-
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
         internal ServerStatus GetStatus()
@@ -1827,7 +1620,7 @@ namespace PrtgAPI
 
             return Data<ServerStatus>.DeserializeType(response);
         }
-
+        
         #endregion
     }
 }

@@ -7,7 +7,7 @@ using PrtgAPI.Objects.Undocumented;
 
 namespace PrtgAPI.Parameters
 {
-    class SetChannelSettingParameters : Parameters
+    class SetChannelPropertyParameters : BaseSetObjectPropertyParameters
     {
         public int SensorId
         {
@@ -21,7 +21,7 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Custom] = value; }
         }
 
-        public SetChannelSettingParameters(int sensorId, int channelId, ChannelProperty property, object value)
+        public SetChannelPropertyParameters(int sensorId, int channelId, ChannelProperty property, object value)
         {
             var attrib = property.GetEnumAttribute<RequireValueAttribute>();
 
@@ -54,7 +54,7 @@ namespace PrtgAPI.Parameters
 
                     var associatedProperties = property.GetDependentProperties<ChannelProperty>();
 
-                    customParams.AddRange(associatedProperties.Select(prop => ObjectSettings.CreateCustomParameter(channelId, prop, string.Empty)));
+                    customParams.AddRange(associatedProperties.Select(prop => CreateCustomParameter(channelId, prop, string.Empty)));
                 }
             }
             else //if we're enabling a property, check if there are values we depend on. if so, enable them!
@@ -63,13 +63,18 @@ namespace PrtgAPI.Parameters
 
                 if (dependentProperty != null)
                 {
-                    customParams.Add(ObjectSettings.CreateCustomParameter(channelId, dependentProperty.Name.ToEnum<ChannelProperty>(), "1"));
+                    customParams.Add(CreateCustomParameter(channelId, dependentProperty.Name.ToEnum<ChannelProperty>(), "1"));
                 }
             }
 
-            customParams.Add(ObjectSettings.CreateCustomParameter(channelId, property, value));
+            customParams.Add(CreateCustomParameter(channelId, property, value));
 
             return customParams;
+        }
+
+        CustomParameter CreateCustomParameter(int objectId, Enum property, object value)
+        {
+            return new CustomParameter($"{property.GetDescription()}_{objectId}", value?.ToString());
         }
     }
 }

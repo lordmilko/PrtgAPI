@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 {
@@ -24,7 +25,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
         {
             var queries = UrlHelpers.CrackUrl(address);
 
-            var val = queries[property.GetDescription().ToLower()];
+            var info = SetObjectPropertyParameters.GetPropertyInfoForProperty(property);
+            var queryName = SetObjectPropertyParameters.GetParameterName(info, property);
+
+            var val = queries[queryName];
 
             Assert.IsTrue(val == expectedValue, $"The value of property '{property.ToString().ToLower()}' did not match the expected value. Expected '{expectedValue}', received: '{val}'");
 

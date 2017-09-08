@@ -24,6 +24,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Tags that are inherited from this object's parent.
         /// </summary>
         [XmlElement("injected_parenttags")]
+        [SplittableString(' ')]
         public string[] ParentTags { get; set; }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// The priority of the object.
         /// </summary>
         [XmlElement("injected_priority")]
-        public Priority Priority { get; set; }
+        public Priority? Priority { get; set; }
 
         //Location
 
@@ -44,7 +45,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's location is inherited from its parent.
         /// </summary>
         [XmlElement("injected_locationgroup")]
-        public bool InheritLocation { get; set; }
+        public bool? InheritLocation { get; set; }
 
         /// <summary>
         /// The location of this object.
@@ -58,7 +59,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's Windows Credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_windowsconnection")]
-        public bool InheritWindowsCredentials { get; set; }
+        public bool? InheritWindowsCredentials { get; set; }
 
         /// <summary>
         /// The domain or local hostname used for Windows Authentication.
@@ -81,7 +82,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's Linux Credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_linuxconnection")]
-        public bool InheritLinuxCredentials { get; set; }
+        public bool? InheritLinuxCredentials { get; set; }
 
         /// <summary>
         /// The username used for Linux Authentication.
@@ -140,7 +141,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's VMware/XenServer credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_vmwareconnection")]
-        public bool InheritVMwareCredentials { get; set; }
+        public bool? InheritVMwareCredentials { get; set; }
 
         /// <summary>
         /// The username to use for VMware/XenServer authentication.
@@ -169,7 +170,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's SNMP credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_snmpversiongroup")]
-        public bool InheritSNMPCredentials { get; set; }
+        public bool? InheritSNMPCredentials { get; set; }
 
         /// <summary>
         /// The version to use for SNMP.
@@ -237,7 +238,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's DBMS credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_dbcredentials")]
-        public bool InheritDBCredentials { get; set; }
+        public bool? InheritDBCredentials { get; set; }
 
         /// <summary>
         /// Indicates whether PRTG automatically determines the port of the DBMS or the port is set manually.
@@ -276,7 +277,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's Amazon Cloudwatch credentials are inherited from its parent.
         /// </summary>
         [XmlElement("injected_cloudcredentials")]
-        public bool InheritAmazonCredentials { get; set; }
+        public bool? InheritAmazonCredentials { get; set; }
 
         /// <summary>
         /// The access key to use for AWS.
@@ -293,7 +294,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's Windows Compatibility settings are inherited from its parent.
         /// </summary>
         [XmlElement("injected_wmicompatibility")]
-        public bool InheritWindowsCompatibility { get; set; }
+        public bool? InheritWindowsCompatibility { get; set; }
 
         /// <summary>
         /// The data source to use for performing WMI queries.
@@ -320,7 +321,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Whether this object's SNMP Compatibility settings are inherited from its parent.
         /// </summary>
         [XmlElement("injected_snmpcompatibility")]
-        public bool InheritSNMPCompatibility { get; set; }
+        public bool? InheritSNMPCompatibility { get; set; }
 
         /// <summary>
         /// The delay (in ms) PRTG should wait between multiple SNMP requests to a single device. This value must be 0-100ms. Higher values are not supported.

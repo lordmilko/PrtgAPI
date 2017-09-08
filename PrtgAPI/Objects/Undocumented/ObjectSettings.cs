@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Html;
@@ -59,13 +60,20 @@ namespace PrtgAPI.Objects.Undocumented
 
             foreach (var prop in props)
             {
-                if (prop.Value.Type == InputType.Checkbox)
+                try
                 {
-                    list.Add(new XElement($"injected_{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
+                    if (prop.Value.Type == InputType.Checkbox)
+                    {
+                        list.Add(new XElement($"injected_{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
+                    }
+                    else
+                    {
+                        list.Add(new XElement($"injected_{prop.Value.Name}", prop.Value.Value));
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    list.Add(new XElement($"injected_{prop.Value.Name}", prop.Value.Value));
+                    throw new HttpDeserializationException($"An error occurred while attempting to deserialize property '{prop.Key}': {ex.Message}", ex);
                 }
             }
 
@@ -99,8 +107,8 @@ namespace PrtgAPI.Objects.Undocumented
 
             var namesAndValues = matches.Select(m => new
             {
-                Name = Regex.Replace(m, nameRegex, "$2"),
-                Value = Regex.Replace(m, pattern, "$2")
+                Name = Regex.Replace(m, nameRegex, "$2", RegexOptions.Singleline),
+                Value = Regex.Replace(m, pattern, "$2", RegexOptions.Singleline)
             }).ToList();
 
             var xml = namesAndValues.Select(n => new XElement($"injected_{n.Name}", n.Value)).ToList();
@@ -112,13 +120,13 @@ namespace PrtgAPI.Objects.Undocumented
         {
             var properties = inputs.Select(input => new Input
             {
-                Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")), //.Replace($"_{channelId}", ""),
-                Value = Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2"),
+                Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
+                Value = HttpUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")), //todo: should we maybe be decoding the value for all other input types? (text, ddl). test put \\ and " in a sensor factor definition and see if prtg encoded it
                 Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success
             }).ToList();
-
+            
             return properties; //todo: allow hidden items, and in the filter if theres a conflict overwrite the hidden one
         }
 
@@ -227,16 +235,6 @@ namespace PrtgAPI.Objects.Undocumented
                     throw new NotImplementedException($"Two properties were found with the same name but had different types: '{prop.Type}', '{dictionary[prop.Name]}'");
             }
                 
-        }
-
-        internal static CustomParameter CreateCustomParameter(int objectId, Enum property, object value)
-        {
-            return new CustomParameter($"{property.GetDescription()}_{objectId}", value?.ToString());
-        }
-
-        internal static CustomParameter CreateCustomParameter(Enum property, object value)
-        {
-            return new CustomParameter($"{property.GetDescription()}", value.ToString());
         }
     }
 }
