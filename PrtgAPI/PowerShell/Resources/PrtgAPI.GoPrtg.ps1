@@ -305,7 +305,6 @@ function Write-ColorOutput($Object, $ForegroundColor)
 
 #todo: if you remove the last server, the second last server should remove its semicolon
 
-#make nuget.org and powershellgallery nuspecs able to show whats new by querying appveyor
 #push notes
 
 #maybe we should consider using the password vault?
@@ -313,3 +312,11 @@ function Write-ColorOutput($Object, $ForegroundColor)
 
 #note: if we use the windows credential store, our module wont be cross platform compatible
 
+# Export nothing
+try
+{
+	Export-ModuleMember -Function Connect-GoPrtgServer, Get-GoPrtgServer, Install-GoPrtgServer, Set-GoPrtgAlias, Uninstall-GoPrtgServer, Update-GoPrtgCredential
+}
+catch
+{
+}

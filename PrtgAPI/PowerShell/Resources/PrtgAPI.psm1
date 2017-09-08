@@ -32,16 +32,24 @@ $functions = Get-ChildItem "$PSScriptRoot\Functions"
 
 $script:prtgAPIModule = $true
 
-. $PSScriptRoot\PrtgAPI.GoPrtg.ps1
 
+
+# Each function also needs to be manually exported in the psd1
 foreach($function in $functions)
 {
 	. $function.FullName
 
-	$name = $function.Name -replace ".ps1",""
+	#$name = $function.Name -replace ".ps1",""
 
-	Export-ModuleMember $name
+	#exporting the module member from a variable doesnt work. a string literal works fine
 }
+
+# Import PrtgAPI.GoPrtg.ps1 after dot sourcing each function so that the Export-ModuleMember refers to a function that actually exists
+. $PSScriptRoot\PrtgAPI.GoPrtg.ps1
+
+# GoPrtg cmdlets are exported in PrtgAPI.GoPrtg.ps1, as not exporting anything in there causes everything to be exported.
+# Export-ModuleMember with no arguments should export nothing, but this doesn't work
+Export-ModuleMember New-Credential
 
 #bugs: 1. when you remove one prtg server, it removes the whole function from memory
 #2. when we remove an entry we need to _update_ the function in memory

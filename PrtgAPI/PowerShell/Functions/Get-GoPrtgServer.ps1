@@ -1,4 +1,4 @@
-﻿if(!$prtgAPIModule)
+﻿if(!$script:prtgAPIModule)
 {
 	. "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
 }

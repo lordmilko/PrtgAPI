@@ -16,15 +16,15 @@ namespace PrtgAPI.Tests.IntegrationTests
         private void SetAndRevertChannelProperty<T>(T newValue, ChannelProperty property, Func<Channel, T> getProperty)
         {
             var initialChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
-            Assert.AreNotEqual(getProperty(initialChannel), newValue);
+            Assert2.AreNotEqual(getProperty(initialChannel), newValue, "Initial channel value was not expected value");
 
             client.SetObjectProperty(Settings.ChannelSensor, Settings.Channel, property, newValue);
             var newChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
-            Assert.AreEqual(newValue, getProperty(newChannel));
+            Assert2.AreEqual(newValue, getProperty(newChannel), "New channel value did not apply properly");
 
             client.SetObjectProperty(Settings.ChannelSensor, Settings.Channel, property, getProperty(initialChannel));
             var finalChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
-            Assert.AreEqual(getProperty(initialChannel), getProperty(finalChannel));
+            Assert2.AreEqual(getProperty(initialChannel), getProperty(finalChannel), "Channel value did not revert properly");
         }
     }
 }

@@ -141,7 +141,7 @@ function Settings($property)
 
 	if($val -eq $null)
 	{
-		throw "Property '$property' could not be found."
+		throw "Setting '$property' could not be found."
 	}
 
 	return $val

@@ -1,4 +1,4 @@
-﻿if(!$prtgAPIModule)
+﻿if(!$script:prtgAPIModule)
 {
 	. "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
 }
@@ -38,7 +38,7 @@ function Connect-GoPrtgServer
 			}
 			else
 			{
-				Write-ColorOutput "`nCould not find server that matches name or alias '$Server'`n" -ForegroundColor Red
+				Write-ColorOutput "`nCould not find a server that matches the name or alias '$Server'`n" -ForegroundColor Red
 			}
 		}	
 	}

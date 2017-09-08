@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
     [TestClass]
-    public class PrtgClientConnectionTests
+    public class PrtgClientConnectionTests : BasePrtgClientTest
     {
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -32,18 +34,18 @@ namespace PrtgAPI.Tests.IntegrationTests
             try
             {
                 var client = new PrtgClient(server, username, password);
-                Assert.Fail("Invalid credentials were specified however an exception was not thrown");
+                Assert2.Fail("Invalid credentials were specified however an exception was not thrown");
             }
             catch (HttpRequestException ex)
             {
                 if (ex.Message != "Could not authenticate to PRTG; the specified username and password were invalid.")
                 {
-                    Assert.Fail(ex.Message);
+                    Assert2.Fail(ex.Message);
                 }
             }
             catch (Exception ex)
             {
-                Assert.Fail(ex.Message);
+                Assert2.Fail(ex.Message);
             }
         }
 
@@ -68,11 +70,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             catch (WebException ex)
             {
                 if (ex.Message != $"The remote name could not be resolved: '{server}'")
-                    Assert.Fail();
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
+                    Assert2.Fail($"Request did not fail with expected error message: {ex.Message}");
             }
         }
 
@@ -116,7 +114,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     if (ex.InnerException.Message.StartsWith("No connection could be made because the target machine actively refused it"))
                     {
                         if(Settings.Protocol != HttpProtocol.HTTP)
-                            Assert.Fail($"{ex.Message}. This may indicate your PRTG Server does not accept HTTPS or that your certificate is invalid. If your server does not accept HTTPS please change your Protocol in Settings.cs");
+                            Assert2.Fail($"{ex.Message}. This may indicate your PRTG Server does not accept HTTPS or that your certificate is invalid. If your server does not accept HTTPS please change your Protocol in Settings.cs");
                     }
                     else
                         throw;

@@ -9,44 +9,57 @@ namespace PrtgAPI.Tests.IntegrationTests
 {
     class Assert2
     {
+        internal static bool HadFailure { get; set; }
+
         public static void AreEqual<T>(T expected, T actual, string message)
         {
-            try
-            {
-                Assert.AreEqual(expected, actual, message);
-            }
-            catch(Exception ex)
-            {
-                var text = "Assert.AreEqual failed. ";
-                Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
-                throw;
-            }
+            ExecuteAssert(() => Assert.AreEqual(expected, actual, message), "Assert.AreEqual");
         }
 
         public static void IsTrue(bool condition, string message)
         {
+            ExecuteAssert(() => Assert.IsTrue(condition, message), "Assert.IsTrue");
+        }
+
+        public static void AreNotEqual<T>(T notExpected, T actual, string message)
+        {
+            ExecuteAssert(() => Assert.AreNotEqual(notExpected, actual, message), "Assert.AreNotEqual");
+        }
+
+        private static void ExecuteAssert(Action assert, string assertName)
+        {
             try
             {
-                Assert.IsTrue(condition, message);
+                HadFailure = false;
+                assert();
             }
             catch (Exception ex)
             {
-                var text = "Assert.IsTrue failed. ";
+                HadFailure = true;
+
+                var text = $"{assertName} failed. ";
                 Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
                 throw;
             }
         }
 
-        public static void Fail(string message)
+        public static void Fail(string message, bool nonTest = false)
         {
             try
             {
+                HadFailure = false;
                 Assert.Fail(message);
             }
             catch (Exception ex)
             {
+                HadFailure = true;
+
                 var text = "Assert.Fail failed. ";
-                Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
+
+                if (nonTest)
+                    Logger.LogTest(ex.Message.Substring(text.Length), true);
+                else
+                    Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
                 throw;
             }
         }

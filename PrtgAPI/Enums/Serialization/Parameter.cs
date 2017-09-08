@@ -107,7 +107,7 @@ namespace PrtgAPI
         Id,
 
         /// <summary>
-        /// The <see cref="Property"/> of <see cref="Id"/> to operate upon.
+        /// The <see cref="Property.Name"/> to use for <see cref="Id"/> or to operate upon.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
         Name,

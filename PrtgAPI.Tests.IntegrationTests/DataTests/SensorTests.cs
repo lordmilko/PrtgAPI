@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var sensors = client.GetSensors();
 
-            Assert.AreEqual(Settings.SensorsInTestServer, sensors.Count);
+            Assert2.AreEqual(Settings.SensorsInTestServer, sensors.Count, "Server did not contain expected number of sensors");
         }
 
         [TestMethod]
@@ -21,7 +21,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             var sensors = client.GetSensors(Property.Name, FilterOperator.Contains, str);
 
-            Assert.IsTrue(sensors.TrueForAll(s => s.Name.IndexOf(str, StringComparison.OrdinalIgnoreCase) >= 0));
+            Assert2.IsTrue(sensors.TrueForAll(s => s.Name.IndexOf(str, StringComparison.OrdinalIgnoreCase) >= 0), $"One or more object names did not include the substring '{str}'");
         }
 
         [TestMethod]

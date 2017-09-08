@@ -19,7 +19,9 @@ Describe "Simulate-ErrorStatus_IT" {
 		$redSensor | Resume-Object
 
 		$sensor | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds while object refreshes"
+        LogTestDetail "Sleeping for 60 seconds while object refreshes"
+		Sleep 30
+		$sensor | Refresh-Object
 		Sleep 30
 
 		$finalSensor = Get-Sensor -Id (Settings UpSensor)

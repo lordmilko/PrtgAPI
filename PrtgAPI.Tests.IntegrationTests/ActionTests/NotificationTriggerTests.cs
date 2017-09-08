@@ -305,7 +305,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                 }
 
                 if (!found)
-                    Assert.Fail($"Couldn't find notification trigger property that corresponded to parameter property '{paramProp.Name}'");
+                    Assert2.Fail($"Couldn't find notification trigger property that corresponded to parameter property '{paramProp.Name}'");
             }
         }
     }

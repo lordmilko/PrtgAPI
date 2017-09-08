@@ -59,9 +59,9 @@ Describe "Get-Group_IT" {
 	}
 
 	It "can filter by tags" {
-		$group = Get-Device -Tags (Settings GroupTag)
+		$group = Get-Group -Tags (Settings GroupTag)
 
-		$group.Count | Should Be 1
+		$group.Count | Should Be 2
 	}
 
 	It "can pipe from groups" {
