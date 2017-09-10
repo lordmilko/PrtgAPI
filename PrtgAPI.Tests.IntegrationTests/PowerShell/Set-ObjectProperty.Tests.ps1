@@ -81,7 +81,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 	{
 		LogTestDetail "Processing property $property"
 
-		$sensor | Should Not BeNullorEmpty
+		$sensor | Assert-True -Message "Sensor was not initialized"
 		$expected | Should Not BeNullOrEmpty
 
 		$initialSettings = $sensor | Get-ObjectProperty
@@ -93,7 +93,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 	{
 		LogTestDetail "Processing property $property"
 
-		$sensor | Should Not BeNullorEmpty
+		$sensor | Assert-True -Message "Sensor was not initialized"
 
 		$initialSettings = $sensor | Get-ObjectProperty
 
@@ -101,10 +101,36 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 
 		$newSettings = $sensor | Get-ObjectProperty
 
-		$newSettings.$property | Should Not Be $initialSettings.$property
+		$newSettings.$property | Assert-NotEqual $initialSettings.$property -Message "Expected initial and new value to be different, but they were both '<actual>'"
 		$newSettings.$property | Should Not BeNullOrEmpty
 
 		$newSettings.$property | Should Be $value
+	}
+
+	function SetChild($property, $value, $dependentProperty, $dependentValue)
+	{
+		LogTestDetail "Processing property $property"
+
+		$sensor | Assert-True -Message "Sensor was not initialized"
+
+		$initialSettings = $sensor | Get-ObjectProperty
+		$initialValue = $initialSettings.$property
+		$initialDependent = $initialSettings.$dependentProperty
+
+		$sensor | Set-ObjectProperty $property $value
+
+		$newSettings = $sensor | Get-ObjectProperty
+		$newValue = $newSettings.$property
+		$newDependent = $newSettings.$dependentProperty
+
+		$newValue | Assert-NotEqual $initialValue -Message "Expected initial and new value to be different, but they were both '<actual>'"
+		$newDependent | Assert-NotEqual $initialDependent -Message "Expected initial and new dependent to be different, but they were both '<actual>'"
+		$newValue | Should Not BeNullOrEmpty
+
+		$newValue | Assert-Equal $value
+		$newDependent | Assert-Equal $dependentValue
+
+		$sensor | Set-ObjectProperty $dependentProperty $initialDependent
 	}
 
 	It "Basic Sensor Settings" {
@@ -144,23 +170,23 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 		$sensor = Get-Sensor -Id (Settings UpSensor)
 
 		SetValue "InheritInterval"   $true
-		SetValue "Interval"          "00:01:00"
-		SetValue "IntervalErrorMode" OneWarningThenDown
+		SetChild "Interval"          "00:01:00"         "InheritInterval" $false
+		SetChild "IntervalErrorMode" OneWarningThenDown "InheritInterval" $false
 	}
 
 	It "Schedules, Dependencies and Maintenance Window" {
 		$sensor = Get-Sensor -Id (Settings PausedByDependencySensor)
 
 		SetValue "InheritDependency" $true
-		#SetValue "Schedule" BLAH
-		#SetValue "MaintenanceEnabled" $true
-		#SetValue MaintenanceStart
-		#SetValue MaintenanceEnd
-		#SetValue DependencyType Object #todo: will this not work if i havent also specified the object to use at the same time?
+		#SetChild "Schedule" BLAH
+		#SetChild "MaintenanceEnabled" $true
+		#SetChild MaintenanceStart
+		#SetChild MaintenanceEnd
+		#SetChild DependencyType Object #todo: will this not work if i havent also specified the object to use at the same time?
 		#should we maybe create a dependency attribute between the two? and would the same be true vice versa? (so when you set it to master,
 		#the dependencyvalue goes away? check how its meant to work with fiddler)
-		#SetValue Dependency (Settings DownSensor)
-		#SetValue DependencyDelay 3
+		#SetChild Dependency (Settings DownSensor)
+		#SetChild DependencyDelay 3
 	}
 
 	It "Access Rights" {
@@ -243,6 +269,6 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 	###progress
 		#todo: maybe we SHOULD show progress when theres a cmdlet in the midde. e.g. $a|get-channel 'free bytes'|where lowererrorlimit -ne $null|set-channellproperty lowerwarninglimit $null
 				
-		throw "NEED TO HAVE DEPENDENT PROPERTIES BEFORE COMMITTING SETTINGS"
+		throw "need to rewrite the get/set object settings bit of the readme"
 	}
 }

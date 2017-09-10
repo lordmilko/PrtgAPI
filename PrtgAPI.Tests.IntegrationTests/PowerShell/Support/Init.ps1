@@ -1,5 +1,10 @@
 ﻿. "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\PowerShell\Support\Init.ps1"
 
+if(!(Get-Module -ListAvailable Assert))
+{
+    Install-Package Assert -ForceBootstrap -Force | Out-Null
+}
+
 function Startup
 {
 	StartupSafe
@@ -99,7 +104,7 @@ function StartupSafe
 		}		
 	}
 
-	if($global:PreviousTest)
+	if($global:PreviousTest -and !$psISE)
 	{
 		Log "Sleeping for 30 seconds as tests have run previously"
 		Sleep 30
@@ -161,7 +166,5 @@ function It($name, $script) {
 			LogTestDetail ($_.Exception.Message -replace "`n"," ") $true
 			throw
 		}
-
-		
 	}
 }

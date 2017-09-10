@@ -93,6 +93,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         //Sensor Types
         public static int WmiRemotePing = -1;
         public static int ExeXml = -1;
+        public static int SNMP = -1;
 
 #pragma warning restore CS0649 //Restore 'field' is never assigned to.
     }

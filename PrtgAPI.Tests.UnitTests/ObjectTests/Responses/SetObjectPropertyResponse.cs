@@ -25,8 +25,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
         {
             var queries = UrlHelpers.CrackUrl(address);
 
-            var info = SetObjectPropertyParameters.GetPropertyInfoForProperty(property);
-            var queryName = SetObjectPropertyParameters.GetParameterName(info, property);
+            var info = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+            var queryName = SetObjectPropertyParameters.GetParameterNameStatic(property, info);
 
             var val = queries[queryName];
 

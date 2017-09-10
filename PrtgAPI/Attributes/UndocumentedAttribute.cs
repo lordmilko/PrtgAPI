@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     internal sealed class UndocumentedAttribute : Attribute
     {
     }

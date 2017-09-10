@@ -25,7 +25,7 @@ Describe "Set-ObjectProperty" {
 	}
 
 	It "sets a property with null on a type that disallows null" {
-		{ $sensor | Set-ObjectProperty InheritAccess $null } | Should Throw "Null may only be assigned to properties of type"
+		{ $sensor | Set-ObjectProperty InheritAccess $null } | Should Throw "Null may only be assigned to properties of type string, int and double"
 	}
 
 	It "sets a nullable type with its underlying type" {

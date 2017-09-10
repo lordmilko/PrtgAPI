@@ -78,6 +78,7 @@ namespace PrtgAPI.Parameters
         static Property[] GetDefaultProperties()
         {
             return typeof(T).GetProperties()
+                .Where(e => e.GetCustomAttributes(typeof(UndocumentedAttribute), false).Length == 0)
                 .Select(e => e.GetCustomAttributes(typeof(PropertyParameterAttribute), false))
                 .Where(el => el.Length > 0)
                 .Select(elm => ((PropertyParameterAttribute)elm.First()).Name.ToEnum<Property>())

@@ -57,11 +57,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ParameterSetName == "Default")
             {
                 //Value is not required, but is required in that we need to explicitly say null
-
                 if (!MyInvocation.BoundParameters.ContainsKey("Value"))
                     throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
-                var prop = SetObjectPropertyParameters.GetPropertyInfoForProperty(Property);
+                var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
 
                 Value = ParseValueIfRequired(prop, Value);
 

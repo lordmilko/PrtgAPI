@@ -1354,9 +1354,9 @@ namespace PrtgAPI
 
             #endregion
 
-        private void SetObjectProperty(BaseSetObjectPropertyParameters parameters) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
 
-        private async Task SetObjectPropertyAsync(BaseSetObjectPropertyParameters parameters) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
 
         #endregion
         #region Miscellaneous

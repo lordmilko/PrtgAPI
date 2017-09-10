@@ -19,27 +19,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
         public int? SensorId { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
         public int? ChannelId { get; set; }
 
         /// <summary>
         /// <para type="description">Property of the channel to set.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, Position = 2, ParameterSetName = "Manual")]
         public ChannelProperty Property { get; set; }
 
         /// <summary>
         /// <para type="description">Value to set the property to.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Default")]
-        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Default")]
+        [Parameter(Mandatory = false, Position = 3, ParameterSetName = "Manual")]
         [AllowEmptyString]
         public object Value { get; set; }
 
@@ -48,32 +48,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            //i think we should modify setobjectproperty to detect if we're clearing limits or one of the other ones with fields and clear the associated fields as well. we could POTENTIALLY
-            //even have an enum on those properties so we can enumerate all the fields we need to clear
+			//todo we need to talk about the unit conversion issue in the cmdlet's help
 
-            //what if we have a requiresvalueattribute that throws an error if value is null when its not allowed to be
+            var str = string.Empty;
 
-            //i think this logic can go insite setobjectproperty
-            
-			//we need to talk about the unit conversion issue in the cmdlet's help
+            if (!MyInvocation.BoundParameters.ContainsKey("Value"))
+                throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
-            if (Channel != null)
+            if (ParameterSetName == "Default")
             {
+                str = Channel != null ? $"'{Channel.Name}' (Sensor ID: {Channel.SensorId})" : $"Channel {ChannelId} (Sensor ID: {SensorId})";
+
                 SensorId = Channel.SensorId;
                 ChannelId = Channel.Id;
             }
-            else
-            {
-                if (SensorId == null)
-                    throw new Exception("sensorid is mandatory");
-                else if (ChannelId == null)
-                    throw new Exception("channelid is mandatory");
-            }
 
-            var str = Channel != null ? $"'{Channel.Name}' (Sensor ID: {Channel.SensorId})" : $"Channel {ChannelId} (Sensor ID: {SensorId})";
-
-            if(ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
-                client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value); //todo: how do we clear a value on a channel?
+            if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
+                client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value);
         }
     }
 }

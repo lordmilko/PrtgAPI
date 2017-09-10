@@ -87,12 +87,14 @@ namespace PrtgAPI
         /// </summary>
         [Description("interval")]
         [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(InheritInterval), false)]
         Interval,
 
         /// <summary>
         /// The <see cref="PrtgAPI.IntervalErrorMode"/> indicating the number of scanning intervals to wait before setting a sensor to <see cref="Status.Down"/> when an error is reported.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(InheritInterval), false)]
         IntervalErrorMode,
 
         #endregion
