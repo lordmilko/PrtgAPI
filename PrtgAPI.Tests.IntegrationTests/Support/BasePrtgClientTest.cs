@@ -16,9 +16,13 @@ namespace PrtgAPI.Tests.IntegrationTests
         private static string PrtgConfig => $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor\\PRTG Configuration.dat";
         public static string PrtgConfigBackup => $"\\\\{Settings.Server}\\c$\\Users\\{Settings.WindowsUsername}\\AppData\\Local\\Temp\\PRTG Configuration.dat";
 
+        private static bool initialized = false;
+
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
+            initialized = false;
+
             Logger.Log($"Pinging {Settings.Server}");
 
             var sender = new Ping();
@@ -26,7 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             if (reply.Status != IPStatus.Success)
             {
-                Assert.Fail("Ping responded with" + reply.Status.ToString());
+                Assert2.Fail("Ping responded with" + reply.Status.ToString());
             }
 
             Logger.Log("Connecting to local server");
@@ -46,7 +50,6 @@ namespace PrtgAPI.Tests.IntegrationTests
                 throw;
             }
 
-
             Logger.Log("Ready for tests");
         }
 
@@ -58,41 +61,70 @@ namespace PrtgAPI.Tests.IntegrationTests
             var probeService = new ServiceController("PRTGProbeService", Settings.Server);
 
             if (coreService.Status != ServiceControllerStatus.Running)
-                Assert.Fail("Core Service is not running");
+                StartService(coreService, "Core Service");
 
             if (probeService.Status != ServiceControllerStatus.Running)
-                Assert.Fail("Probe Service is not running");
+                StartService(probeService, "Probe Service");
+
+            RepairState();
 
             if (Settings.ResetAfterTests)
             {
                 if (File.Exists(PrtgConfigBackup))
                 {
                     Logger.Log("Restoring PRTG Config leftover from previous aborted test");
-                    Logger.Log("    Stopping PRTGCoreService");
+                    Logger.LogTest("Stopping PRTGCoreService");
                     coreService.Stop();
                     coreService.WaitForStatus(ServiceControllerStatus.Stopped);
 
-                    Logger.Log("    Copying PRTG Config");
+                    Logger.LogTest("Copying PRTG Config");
                     File.Copy(PrtgConfigBackup, PrtgConfig, true);
                     File.Delete(PrtgConfigBackup);
 
-                    Logger.Log("    Starting PRTGCoreService");
+                    Logger.LogTest("Starting PRTGCoreService");
                     coreService.Start();
                     coreService.WaitForStatus(ServiceControllerStatus.Running);
 
-                    Logger.Log("    Sleeping for 30 seconds while PRTG starts up");
+                    Logger.LogTest("Sleeping for 30 seconds while PRTG starts up");
                     Thread.Sleep(30 * 1000);
                 }
 
                 Logger.Log("Backing up PRTG Config");
 
                 File.Copy(PrtgConfig, PrtgConfigBackup);
+
+                initialized = true;
             }
+        }
+
+        private static void StartService(ServiceController service, string friendlyName)
+        {
+            if (!File.Exists(PrtgConfigBackup))
+            {
+                if (service.Status == ServiceControllerStatus.Stopped)
+                {
+                    Logger.LogTest($"{service.ServiceName} is not running. Starting service");
+                    service.Start();
+                    service.WaitForStatus(ServiceControllerStatus.Running);
+                    Logger.LogTest("Sleeping for 30 seconds while PRTG service starts");
+                    Thread.Sleep(30 * 1000);
+                }
+                else
+                    Assert2.Fail($"{friendlyName} is not running. Service status is {service.Status}", true);
+            }
+            else
+                Logger.LogTest($"{service.ServiceName} is not running. Aborting restart as found leftover PRTG Config");
         }
 
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
+            if (!initialized)
+            {
+                Logger.Log("Did not initialize properly; not cleaning up");
+                return;
+            }
+                
             Logger.Log("Cleaning up after tests");
 
             if (Settings.ResetAfterTests)
@@ -106,15 +138,19 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestCleanup]
         public void TestCleanup()
         {
-            var a = TestContext.GetType().Assembly;
-
-            if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
-                Logger.LogTestDetail($"Test completed with outcome '{TestContext.CurrentTestOutcome}'", true);
+            if (Assert2.HadFailure) //We've already logged that we failed; no need to log it again
+                Assert2.HadFailure = false;
+            else
+            {
+                if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)
+                    Logger.LogTestDetail($"Test completed with outcome '{TestContext.CurrentTestOutcome}'", true);
+            }
         }
-
 
         private static void RemoteCleanup(bool deleteConfig)
         {
+            RepairState();
+
             Logger.Log("Retrieving service details");
 
             var controller = new ServiceController("PRTGCoreService", Settings.Server);
@@ -145,6 +181,17 @@ namespace PrtgAPI.Tests.IntegrationTests
             controller.WaitForStatus(ServiceControllerStatus.Running);
 
             Logger.Log("Finished");
+        }
+
+        private static void RepairState()
+        {
+            var client = new BasePrtgClientTest().client;
+
+            if (client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
+            {
+                Logger.Log("Restoring probe name");
+                client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+            }
         }
 
         protected static void RepairConfig()
@@ -191,7 +238,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var results = method();
 
-            Assert.IsTrue(results.Any());
+            Assert2.IsTrue(results.Any(), "Response did not contain any results");
         }
 
         protected void ReturnsJustObjectsOfType<T>(Func<Property, object, List<T>> method, int parentId, int expectedCount, BaseType baseType) where T : SensorOrDeviceOrGroupOrProbe
@@ -199,7 +246,8 @@ namespace PrtgAPI.Tests.IntegrationTests
             var results = method(Property.ParentId, parentId);
 
             Assert2.AreEqual(expectedCount, results.Count, "Expected number of results was incorrect");
-            Assert.IsTrue(results.Count(r => r.BaseType != baseType) == 0);
+            var different = results.Where(r => r.BaseType != baseType).ToList();
+            Assert2.IsTrue(!different.Any(), $"One or more objects had a type other than {baseType}: {string.Join(", ", different)}");
         }
 
         protected void CheckAndSleep(int objectId)

@@ -47,8 +47,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             //when i pipe a variable with a list in it for objectdata cmdlets im not getting progress
 
-            if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                ExecuteOperation(() => client.RenameObject(Object.Id, Name), "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
+            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+            {
+                ExecuteOperation(() =>
+                {
+                    if (Object.BaseType == BaseType.Probe)
+                        client.SetObjectProperty(Object.Id, ObjectProperty.Name, Name);
+                    else
+                        client.RenameObject(Object.Id, Name);
+                }, "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
+            }
+                
         }
     }
 }

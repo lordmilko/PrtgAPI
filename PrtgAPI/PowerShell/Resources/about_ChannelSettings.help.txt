@@ -1,0 +1,62 @@
+﻿TOPIC
+    about_ChannelSettings
+
+SHORT DESCRIPTION
+    Describes PRTG Channel properties that can be used in conjunction with Set-ChannelProperty.
+
+LONG DESCRIPTION
+    PrtgAPI supports the retrieval and modification of Channel Setting values in a reliable, typesafe manner.
+    The following table outlines the properties that are currently supported/unsupported by PrtgAPI.
+
+    In the tables below, the following keys are used to indicate typesafe support status.
+
+    Yes       : Supported
+    No        : Not currently supported
+
+    Set-ChannelProperty does not currently support the modification of raw channel properties. As such, any
+    properties not listed as supported in the table below cannot currently be interfaced with in the desired
+    manner by PrtgAPI.
+
+    | Property              | Get | Set | Description                                                             |
+    | --------------------- | --------- | ----------------------------------------------------------------------- |
+    | Unit                  |    Yes    | Unit of the channel. Note: not all channels support modifying units     |
+    | ValueLookup           |    Yes    | Value Lookup name. For more info see the PRTG Manual (referenced below) |
+    | ScalingMultiplication |    Yes    | Value to multiply the raw result of this channel by                     |
+    | ScalingDivision       |    Yes    | Value to divide the raw result of this channel by                       |
+    | ShowInGraph           |    Yes    | Whether this channel should be shown in graphs                          |
+    | ShowInTable           | Yes | No  | Whether this channel should be shown in tables and API results          |
+    | ColorMode             |    Yes    | Whether to use an automatic or custom color for this channel            |
+    | LineColor             |    Yes    | Custom color to use for this channel                                    |
+    | LineWidth             |    Yes    | Width of this channels graph line (pixels)                              |
+    | PercentMode           |    Yes    | Whether to display the value as a percentage of a maximum               |
+    | PercentValue          |    Yes    | Maximum value to use when PercentMode is PercentOfMax                   |
+    | ValueMode             |    Yes    | How data is grouped together in historical graphs                       |
+    | DecimalMode           |    Yes    | How the number of decimal places to display is determined               |
+    | DecimalPlaces         |    Yes    | Number of decimal places to display when DecimalMode is Custom          |
+    | SpikeFilterEnabled    |    Yes    | Whether to truncate invalid values to within expected ranges            |
+    | SpikeFilterMax        |    Yes    | Upper value limit. High values will be reduced to this threshold        |
+    | SpikeFilterMin        |    Yes    | Lower value limit. Low values will be increased to this threshold       |
+    | VerticalAxisScaling   | Yes | No  | Whether to scale this sensor automatically in graphs                    |
+    | VerticalAxisMax       | Yes | No  | Maximum display value when VerticalAxisScaling is Manual                |
+    | VerticalAxisMin       | Yes | No  | Minimum display value when VerticalAxisScaling is Manual                |
+    | LimitsEnabled         |    Yes    | Whether warning/error limits are enabled                                |
+    | UpperErrorLimit       |    Yes    | Upper limit for entering this channel's sensor into a warning state     |
+    | UpperWarningLimit     |    Yes    | Upper limit for entering this channel's sensor into a warning state     |
+    | LowerErrorLimit       |    Yes    | Lower limit for entering this channel's sensor into an error state      |
+    | LowerWarningLimit     |    Yes    | Lower limit for entering this channel's sensor into a warning state     |
+    | ErrorLimitMessage     |    Yes    | Message to display when upper or lower error limit is met               |
+    | WarningLimitMessage   |    Yes    | Message to display when upper or lower warning limit is met             |
+
+EXAMPLES
+    Set the UpperErrorLimit of the "Total" channel to 90 on all WMI CPU Load sensors
+
+
+    C:\> Get-Sensor -Tags wmicpuloadsensor | Get-Channel Total | Set-ChannelProperty UpperErrorLimit 90
+
+SEE ALSO
+    PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki
+    Set-ChannelProperty
+    Get-Channel
+    about_ObjectSettings
+    about_SensorSettings
+    PRTG Manual (Value Lookups): https://www.paessler.com/manuals/prtg/define_lookups

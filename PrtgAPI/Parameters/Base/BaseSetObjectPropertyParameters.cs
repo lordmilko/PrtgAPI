@@ -21,7 +21,7 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Custom] = value; }
         }
 
-        protected void AddTypeSafeValue(Enum property, object value, bool disableDependentsOnFalse)
+        protected void AddTypeSafeValue(Enum property, object value, bool disableDependentsOnNotReqiuiredValue)
         {
             CustomParameters = new List<CustomParameter>();
 
@@ -30,7 +30,7 @@ namespace PrtgAPI.Parameters
             var parser = new DynamicPropertyTypeParser(property, info, value);
 
             AddValue(parser);
-            AddDependents(parser, disableDependentsOnFalse);
+            AddDependents(parser, disableDependentsOnNotReqiuiredValue);
         }
 
         void AddValue(DynamicPropertyTypeParser parser)
@@ -38,76 +38,128 @@ namespace PrtgAPI.Parameters
             var val = parser.ParseValue();
 
             AddParameter(parser.Property, parser.Info, val);
+
+            var secondaryPropertyAttrib = parser.Property.GetEnumAttribute<SecondaryPropertyAttribute>();
+
+            if (secondaryPropertyAttrib != null)
+            {
+                if (parser.Value is IFormattableMultiple)
+                {
+                    var val2 = ((IFormattableMultiple)parser.Value).GetSerializedFormats().Last();
+
+                    CustomParameters.Add(new CustomParameter($"{secondaryPropertyAttrib.Name}_", val2));
+                }
+            }
         }
 
         
 
-        void AddDependents(DynamicPropertyTypeParser parser, bool disableDependentsOnFalse)
+        void AddDependents(DynamicPropertyTypeParser parser, bool disableDependentsOnNotReqiuiredValue)
         {
-            var parentOfChild = parser.Property.GetEnumAttribute<DependentPropertyAttribute>();
+            //var parentOfChild = parser.Property.GetEnumAttribute<DependentPropertyAttribute>();
             var childrenOfParent = parser.Property.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
 
-            bool isChild = parentOfChild != null;
+            //bool isChild = parentOfChild != null;
             bool isParent = childrenOfParent.Any();
 
-            if (isChild && isParent)
-                throw new NotSupportedException($"Property {parser.Property} is the child of property {parentOfChild} and parent of properties {string.Join(", ", childrenOfParent)} however multi-level relationships are not supported.");
+            //if (isChild && isParent)
+            //    throw new NotSupportedException($"Property {parser.Property} is the child of property {parentOfChild} and parent of properties {string.Join(", ", childrenOfParent)} however multi-level relationships are not supported.");
 
-            if (isChild) //No need to worry about disabling things, since children can't also be parents
-            {
-                AddDependentProperty(parentOfChild);
-            }
+            AddDependentPropertyRecursiveUp(parser.Property);
 
-            if (isParent) //Parents can't be children
+            //if (isChild) //No need to worry about disabling things, since children can't also be parents
+            //{
+                //todo: need to recursively add dependent properties for grandchild relationships
+                //AddDependentProperty(parentOfChild);
+                //AddDependentPropertyRecursive(parentOfChild);
+            //}
+
+            if (isParent)
             {
-                //We don't require any children be set when a parent is modified, only potentially that they be unset (when the parent is disabled)
-                TryDisableDependentProperties(parser, disableDependentsOnFalse, childrenOfParent);
+                TryDisableDependentProperties(parser, disableDependentsOnNotReqiuiredValue, childrenOfParent);
             }
         }
 
-        private void AddDependentProperty(DependentPropertyAttribute attrib)
+        private void AddDependentProperty(DependentPropertyAttribute attrib, Enum parent)
         {
-            var dependentProperty = (Enum)(object)attrib.Name.ToEnum<TObjectProperty>();
-            var info = GetPropertyInfo(dependentProperty);
+            //var dependentProperty = (Enum)(object)attrib.Name.ToEnum<TObjectProperty>();
+            var info = GetPropertyInfo(parent);
 
-            var dependencyParser = new DynamicPropertyTypeParser(dependentProperty, info, attrib.RequiredValue);
-            AddParameter(dependentProperty, info, dependencyParser.ParseValue());
+            var dependencyParser = new DynamicPropertyTypeParser(parent, info, attrib.RequiredValue);
+            AddParameter(parent, info, dependencyParser.ParseValue());
         }
 
-        private void TryDisableDependentProperties(DynamicPropertyTypeParser parser, bool disableDependentsOnFalse, List<Enum> childrenOfParent)
+        private void AddDependentPropertyRecursiveUp(Enum property)
         {
-            if (disableDependentsOnFalse)
-            {
-                var asPropertyType = parser.ToPrimitivePropertyType();
+            //Given a property, get that objects parent, and then that objects parent, and so on
 
-                var diff = childrenOfParent.Where(child =>
+            var parentOfChild = property.GetEnumAttribute<DependentPropertyAttribute>();
+
+            bool isChild = parentOfChild != null;
+
+            if (isChild)
+            {
+                var parent = (Enum)(object)parentOfChild.Name.ToEnum<TObjectProperty>();
+                AddDependentProperty(parentOfChild, parent);
+                AddDependentPropertyRecursiveUp(parent);
+            }
+        }
+
+        private void TryDisableDependentProperties(DynamicPropertyTypeParser parser, bool disableDependentsOnNotReqiuiredValue, List<Enum> childrenOfParent)
+        {
+            //If we reach this method, we know that our property is a parent
+
+            if (parser != null)
+                TryDisableDependentPropertiesWithTypeCheck(parser, disableDependentsOnNotReqiuiredValue, childrenOfParent);
+            else
+                TryDisableDependentPropertiesWithoutTypeCheck(childrenOfParent);
+        }
+
+        private void TryDisableDependentPropertiesWithTypeCheck(DynamicPropertyTypeParser parser, bool disableDependentsOnNotReqiuiredValue, List<Enum> childrenOfParent)
+        {
+            var parentValueAsTypeRequiredByProperty = parser.ToPrimitivePropertyType();
+
+            foreach (var child in childrenOfParent)
+            {
+                var attrib = child.GetEnumAttribute<DependentPropertyAttribute>();
+                var propertyRequiredValue = attrib?.RequiredValue;
+
+                if (propertyRequiredValue != null && propertyRequiredValue.GetType() != parentValueAsTypeRequiredByProperty.GetType())
+                    throw new InvalidTypeException($"Dependencies of property '{parser.Property}' should be of type {parser.PropertyType}, however property '{child}' is dependent on type '{propertyRequiredValue.GetType()}'");
+
+                if (parentValueAsTypeRequiredByProperty.Equals(propertyRequiredValue)) // == does not work since we are potentially comparing value types wrapped as type object
                 {
-                    var attrib = child.GetEnumAttribute<DependentPropertyAttribute>();
-                    var val = attrib?.RequiredValue;
-
-                    if (val != null && val.GetType() != asPropertyType.GetType())
-                        throw new InvalidTypeException($"Dependencies of property '{parser.Property}' should be of type {parser.PropertyType}, however property '{child}' is dependent on type '{val.GetType()}'");
-
-                    //If the specified value is equal to the RequiredValue (e.g. LimitsEnabled = true) we don't need to modify any of the children
-                    //(e.g. UpperErrorLimit, which has a dependency on LimitsEnabled = true
-                    if (asPropertyType.Equals(val)) // == does not work since we are potentially comparing value types wrapped as type object
+                    //If a child has a reverse dependency (e.g. VerticalAxisMin must be included when VerticalAxisScaling = Manual)
+                    //Then we should include those children, where they will be set to empty causing PRTG to throw an exception
+                    if (attrib?.ReverseDependency == true)
                     {
-                        //However, completely separately to this, if a child has a reverse dependency (e.g. VerticalAxisMin must be included when VerticalAxisScaling = Manual)
-                        //Then we should include those children, where they will be set to empty causing PRTG to throw an exception
-                        if (attrib?.ReverseDependency == true)
-                            return true;
-
-                        //Indicate the child does not need to be set as originally planned
-                        return false;
+                        AddParameter(child, GetPropertyInfo(child), string.Empty);
+                        var newChildren = child.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
+                        TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
                     }
-                        
-
-                    return true;
-                }).ToList();
-
-                foreach (var property in diff)
+                }
+                else
                 {
-                    AddParameter(property, GetPropertyInfo(property), string.Empty);
+                    //If we wish to disable dependents when their parent value does not match their required value, add and assign them an empty value
+                    if (disableDependentsOnNotReqiuiredValue)
+                    {
+                        AddParameter(child, GetPropertyInfo(child), string.Empty);
+                        var newChildren = child.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
+                        TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
+                    }
+                }
+            }
+        }
+
+        private void TryDisableDependentPropertiesWithoutTypeCheck(List<Enum> childrenOfParent)
+        {
+            foreach (var child in childrenOfParent)
+            {
+                var attrib = child.GetEnumAttribute<DependentPropertyAttribute>();
+
+                if (attrib.ReverseDependency)
+                {
+                    AddParameter(child, GetPropertyInfo(child), string.Empty);
                 }
             }
         }

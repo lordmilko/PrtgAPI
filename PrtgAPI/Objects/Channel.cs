@@ -97,11 +97,11 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_percent")]
-        [PropertyParameter(nameof(ChannelProperty.PercentDisplay))]
-        public PercentDisplay? PercentDisplay { get; set; }
+        [PropertyParameter(nameof(ChannelProperty.PercentMode))]
+        public PercentDisplay? PercentMode { get; set; }
 
         /// <summary>
-        /// The maximum to use for calculating the percentage to display this channel's value as. Applies when <see cref="PercentDisplay"/> is <see cref="PrtgAPI.PercentDisplay.PercentOfMax"/>.
+        /// The maximum to use for calculating the percentage to display this channel's value as. Applies when <see cref="PercentMode"/> is <see cref="PrtgAPI.PercentDisplay.PercentOfMax"/>.
         /// </summary>
         [Undocumented]
         [XmlElement("injected_ref100percent")]
@@ -158,8 +158,8 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_avgmode")]
-        [PropertyParameter(nameof(ChannelProperty.ValueMode))]
-        public HistoricValueMode? ValueMode { get; set; }
+        [PropertyParameter(nameof(ChannelProperty.HistoricValueMode))]
+        public HistoricValueMode? HistoricValueMode { get; set; }
 
         /// <summary>
         /// Controls how decimal places are displayed for the value of this channel.
@@ -206,7 +206,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismode")]
-        [PropertyParameter(nameof(ChannelProperty.VerticalAxisScaling))]
+        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisScaling))]
         public AutoMode VerticalAxisScaling { get; set; } //Automatic or Manual
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismax")]
-        [PropertyParameter(nameof(ChannelProperty.VerticalAxisMax))]
+        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisMax))]
         public double? VerticalAxisMax { get; set; }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismin")]
-        [PropertyParameter(nameof(ChannelProperty.VerticalAxisMin))]
+        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisMin))]
         public double? VerticalAxisMin { get; set; }
 
         /// <summary>

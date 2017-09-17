@@ -22,7 +22,6 @@ namespace PrtgAPI.Request
         public string Url
         {
             get { return url; }
-            //private set { url = value.ToLower(); } //bug: this will mess up your password if it contains uppercase letters
             private set { url = value; }
         }
 
@@ -76,7 +75,7 @@ namespace PrtgAPI.Request
             Debug.WriteLine(Url);
 #endif
         }
-
+        
         internal static string AddUrlPrefix(string server)
         {
             if (server.StartsWith("http://") || server.StartsWith("https://"))
@@ -109,8 +108,6 @@ namespace PrtgAPI.Request
                 delim = "&";
             }
 
-            //get the content. if its not a password, capitalize it
-
             urlBuilder.Append(delim + GetUrlComponent(parameter, value));
         }
 
@@ -138,6 +135,11 @@ namespace PrtgAPI.Request
             return FormatSingleParameterWithValEncode(description, value);
         }
 
+        /// <summary>
+        /// Serialize one or more <see cref="CustomParameter"/> objects.
+        /// </summary>
+        /// <param name="value">The value to serialize</param>
+        /// <returns></returns>
         private string ProcessCustomParameter(object value)
         {
             var arr = value as IEnumerable<CustomParameter>;
@@ -164,7 +166,7 @@ namespace PrtgAPI.Request
             if (singleParam != null)
                 return FormatSingleParameterWithValEncode(singleParam.Name, singleParam.Value);
 
-            throw new NotImplementedException(); //actually you just passed the wrong type, so its an argument exception?
+            throw new ArgumentException($"Expected one or more objects of type {nameof(CustomParameter)}, however argument was of type {value.GetType()}", nameof(value));
         }
 
         private string ProcessIEnumerableParameter(ParameterType parameterType, IEnumerable value, string description)
@@ -178,9 +180,16 @@ namespace PrtgAPI.Request
             if (parameterType == ParameterType.MultiParameter)
                 return FormatMultiParameter(value, description);
 
-            throw new NotImplementedException();
+            throw new NotImplementedException($"Implementation missing for handling parameter type '{parameterType}'");
         }
 
+        /// <summary>
+        /// Formats a parameter in the format name=value with a URL encoded value.
+        /// </summary>
+        /// <param name="name">The name to use for the parameter</param>
+        /// <param name="val">The value to assign to the parameter</param>
+        /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/> </param>
+        /// <returns></returns>
         private string FormatSingleParameterWithValEncode(string name, object val, bool isEnum = false)
         {
             var str = val is IFormattable ? ((IFormattable) val).GetSerializedFormat() : Convert.ToString(val);
@@ -188,6 +197,13 @@ namespace PrtgAPI.Request
             return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(str), isEnum);
         }
 
+        /// <summary>
+        /// Formats a parameter in the format name=value without URL encoding the specified value.
+        /// </summary>
+        /// <param name="name">The name to use for the parameter</param>
+        /// <param name="val">The value to assign to the parameter</param>
+        /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/> </param>
+        /// <returns></returns>
         private string FormatSingleParameterWithoutValEncode(string name, object val, bool isEnum = false)
         {
             var str = string.Empty;
@@ -208,6 +224,11 @@ namespace PrtgAPI.Request
             return $"{name.ToLower()}={str}";
         }
 
+        /// <summary>
+        /// Retrieves the value of a <see cref="ParameterType.MultiValue"/> parameter. Result is in the form val1,val2,val3
+        /// </summary>
+        /// <param name="enumerable">The values to assign to the parameter</param>
+        /// <returns></returns>
         private string GetMultiValueStr(IEnumerable enumerable)
         {
             var builder = new StringBuilder();
@@ -222,6 +243,12 @@ namespace PrtgAPI.Request
             return builder.ToString().ToLower();
         }
 
+        /// <summary>
+        /// Formats a <see cref="ParameterType.MultiParameter"/>. Result is in the form name=val1&amp;name=val2&amp;name=val3
+        /// </summary>
+        /// <param name="enumerable">The values to assign to the parameter</param>
+        /// <param name="description">The serialized name of the parameter</param>
+        /// <returns></returns>
         private string FormatMultiParameter(IEnumerable enumerable, string description)
         {
             var builder = new StringBuilder();
@@ -266,6 +293,12 @@ namespace PrtgAPI.Request
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Split a bitmask enum into multiple parameters, for use with <see cref="ParameterType.MultiParameter"/> parameters.
+        /// </summary>
+        /// <param name="e">The enumeration to split</param>
+        /// <param name="formatter">A function that defines how the enumeration value should be serialized</param>
+        /// <returns>A sequence of one or more URL queries, in the format name=val1&amp;name=val2&amp;name=val3</returns>
         private string FormatFlagEnum(Enum e, Func<Enum, string> formatter)
         {
             string query = null;

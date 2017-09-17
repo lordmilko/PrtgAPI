@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     [Cmdlet(VerbsCommon.Get, "SensorHistory")]
     public class GetSensorHistory : PrtgCmdlet

@@ -2,9 +2,9 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    internal class GroupSettings : DeviceOrGroupSettings
+    public class GroupSettings : DeviceOrGroupSettings
     {
-        [XmlElement("injected_ipselectmethod")]
+        /*[XmlElement("injected_ipselectmethod")]
         IPSelectionMethod? DiscoveryIPSelectionMethod { get; set; }
 
         [XmlElement("injected_ipbase")]
@@ -29,7 +29,7 @@ namespace PrtgAPI.Objects.Undocumented
         public bool? UseDNS { get; set; }
 
         [XmlElement("injected_skipknownips")]
-        public DiscoveryRescanMode? DiscoveryRescanMode { get; set; } //todo: we can probably change this to a bool
+        public DiscoveryRescanMode? DiscoveryRescanMode { get; set; } //todo: we can probably change this to a bool*/
 
         //number of sensors limitation
     }

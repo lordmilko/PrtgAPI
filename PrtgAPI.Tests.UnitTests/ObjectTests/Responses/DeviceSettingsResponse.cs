@@ -307,12 +307,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             builder.Append("<label class=\"control-label has_help \" for=\"wbemprotocol_\">For WBEM Use Protocol</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a protocol for access to the WBEM server.<p><a class='morehelp nohjax' target='_blank' href='/help/device_settings.htm#linuxconnection'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<div class=\"radio-control\">\n");
-            builder.Append("<input type=\"radio\" class=\"hidden radio \" name=\"wbemprotocol_\" value=\"http\" id=\"wbemprotocolhttp\" >\n");
+            builder.Append("<input type=\"radio\" class=\"hidden radio \" name=\"wbemprotocol_\" value=\"http\" checked id=\"wbemprotocolhttp\" >\n");
             builder.Append("<label for=\"wbemprotocolhttp\" class=\"radio-control-label\">\n");
             builder.Append("<i class=\"icon-gray icon-radio-on\"></i>\n");
             builder.Append("HTTP\n");
             builder.Append("</label>\n");
-            builder.Append("<input type=\"radio\" class=\"hidden radio \" name=\"wbemprotocol_\" value=\"https\" checked  id=\"wbemprotocolhttps\" >\n");
+            builder.Append("<input type=\"radio\" class=\"hidden radio \" name=\"wbemprotocol_\" value=\"https\"  id=\"wbemprotocolhttps\" >\n");
             builder.Append("<label for=\"wbemprotocolhttps\" class=\"radio-control-label\">\n");
             builder.Append("<i class=\"icon-gray icon-radio-on\"></i>\n");
             builder.Append("HTTPS\n");

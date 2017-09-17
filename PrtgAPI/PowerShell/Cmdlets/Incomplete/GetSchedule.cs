@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+﻿namespace PrtgAPI.PowerShell.Cmdlets
 {
     class GetSchedule
     {

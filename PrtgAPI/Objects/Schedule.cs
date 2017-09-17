@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents a schedule used to indicate when monitoring should be active on an object.
     /// </summary>
-    internal class Schedule
+    public class Schedule
     {
         public string Name { get; set; }
 

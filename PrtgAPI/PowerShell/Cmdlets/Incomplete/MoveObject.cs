@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
-namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Moves a device or group within the PRTG Object Tree.</para>

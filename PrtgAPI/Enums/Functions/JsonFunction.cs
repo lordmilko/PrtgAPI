@@ -8,6 +8,9 @@ namespace PrtgAPI
         GetPassHash,
 
         [Description("triggers.json")]
-        Triggers
+        Triggers,
+
+        [Description("geolocator.htm")]
+        GeoLocator
     }
 }

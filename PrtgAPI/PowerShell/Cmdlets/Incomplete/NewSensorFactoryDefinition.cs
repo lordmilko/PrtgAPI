@@ -4,7 +4,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
 
-namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Creates a channel definition for use in a Sensor Factory.</para>

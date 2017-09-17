@@ -18,7 +18,7 @@ namespace PrtgAPI.Attributes
         /// <summary>
         /// Indicates whether the property specified by <see cref="Name"/> has a dependency on this field when its value is <see cref="RequiredValue"/>
         /// </summary>
-        public bool ReverseDependency { get; set; }
+        public bool ReverseDependency { get; private set; }
 
         public DependentPropertyAttribute(string name, object requiredValue, bool reverseDependency = false)
         {

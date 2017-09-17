@@ -1,0 +1,145 @@
+﻿TOPIC
+    about_ObjectSettings
+
+SHORT DESCRIPTION
+    Describes PRTG Device, Group and Probe properties that can be used in conjunction with Set-ObjectProperty and
+    Get-ObjectProperty.
+
+LONG DESCRIPTION
+    PrtgAPI supports the retrieval and modification of dozens of Object Setting values in a reliable, typesafe manner.
+    The following tables outline the properties that are currently supported/unsupported by PrtgAPI, as well as the
+    setting values each property corresponds to within the PRTG Web Interface.
+
+    For properties that are not currently supported, it is possible to interact with these values via the "Raw" cmdlet
+    parameter sets. For more information, see the help pages of Get-ObjectProperty and Set-ObjectProperty
+
+    In the tables below, the following keys are used to indicate typesafe support status.
+
+    Yes       : Supported
+    No        : Not currently supported
+    N/A       : Not Applicable
+
+    This help topic describes properties that are supported on Devices, Groups and Probes. For information about
+    properties that are specific to sensors, see about_SensorSettings
+
+    Device, Group, Probe Settings
+
+    | Basic Settings              | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | Name                        |    Yes    |            Yes            | Name of the object                       |
+    | Tags                        | Yes | No  |            Yes            | Tags applied to the object               |
+    | ParentTags                  | Yes | No  |   Yes   |  Yes   |  N/A   | Tags inherit from the parent object      |
+    | Active                      |    Yes    |            Yes            | Whether this object is active            |
+    | Priority                    |    Yes    |            Yes            | Priority of the object                   |
+
+    | Basic Settings              | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritLocation             |    Yes    |            Yes            | Whether to inherit Location Settings     |
+    | Location                    |    Yes    |            Yes            | Location of the object                   |
+
+    | Credentials for Windows     | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritWindowsCredentials   |    Yes    |            Yes            | Whether to inherit Windows Credentials   |
+    | WindowsDomain               |    Yes    |            Yes            | Windows Domain or Computer HostName      |
+    | WindowsUserName             |    Yes    |            Yes            | Windows UserName                         |
+    | WindowsPassword             |    No     |                           | Windows Password                         |
+    
+    | Credentials for Linux       | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritLinuxCredentials     |    Yes    |            Yes            | Whether to inherit Linux Credentials     |
+    | LinuxUserName               |    Yes    |            Yes            | Linux UserName for SSH                   |
+    | LinuxPassword               |    No     |                           | Linux Password for SSH                   |
+    | LinuxLoginMode              |    Yes    |            Yes            | Whether to use password or private key   |
+    | LinuxPrivateKey             |    No     |                           | Private Key for SSH                      |
+    | WbemProtocolMode            |    Yes    |            Yes            | Whether to use HTTP or HTTPS             |
+    | WbemPortMode                |    Yes    |            Yes            | Whether to use default port or custom    |
+    | WbemPort                    |    Yes    |            Yes            | Custom WBEM Port to use                  |
+    | SSHPort                     |    Yes    |            Yes            | Port to use for SSH                      |
+    | SSHElevationMode            |    Yes    |            Yes            | How su/sudo should be used               |
+    | SSHElevationUser            | Yes | No  |            Yes            | User to use with su/sudo                 |
+    | SSHElevationPassword        |    No     |                           | Password to use with su/sudo             |
+    | SSHEngine                   |    Yes    |            Yes            | SSH engine to use                        |
+
+    | Credentials for VMware      | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritVMwareCredentials    |    Yes    |            Yes            | Whether to inherit VMware Credentials    |
+    | VMwareUserName              |    Yes    |            Yes            | VMware ESXi/vCenter UserName             |
+    | VMwarePassword              |    No     |                           | VMware ESXi/vCenter Password             |
+    | VMwareProtocol              |    Yes    |            Yes            | Whether to use HTTP or HTTPS             |
+    | VMwareSessionMode           |    Yes    |            Yes            | Whether to reuse sessions across scans   |
+
+    | Credentials for SNMP        | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | SNMPVersion                 |    Yes    |            Yes            | Whether to use SNMP v1, v2c or v3        |
+    | SNMPCommunityStringV1       |    Yes    |            Yes            | Community string to use for SNMP v1      |
+    | SNMPCommunityStringV2       |    Yes    |            Yes            | Community string to use for SNMP v2c     |
+    | SNMPv3AuthType              |    Yes    |            Yes            | Whether to use MD5 or SHA                |
+    | SNMPv3UserName              |    Yes    |            Yes            | UserName to use for SNMP v3              |
+    | SNMPv3Password              |    No     |                           | Password to use for SNMP v3              |
+    | SNMPv3EncryptionType        |    Yes    |            Yes            | Whether to use DES or AES                |
+    | SNMPv3EncryptionKey         |    No     |                           | Encryption key to use for data packets   |
+    | SNMPv3Context               |    Yes    |            Yes            | Context name to use for SNMP v3          |
+    | SNMPPort                    |    Yes    |            Yes            | Port to use for SNMP                     |
+    | SNMPTimeout                 |    Yes    |            Yes            | Timeout for SNMP requests (secs)         |
+
+    | Credentials for Databases   | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritDBCredentials        |    Yes    |            Yes            | Whether to inherit DB Credentials        |
+    | DBPortMode                  |    Yes    |            Yes            | Whether to use default port or custom    |
+    | DBPort                      |    Yes    |            Yes            | Custom DB Port to use                    |
+    | DBAuthMode                  |    Yes    |            Yes            | Whether to use Windows or SQL auth       |
+    | DBUserName                  |    Yes    |            Yes            | SQL authentication username              |
+    | DBPassword                  |    No     |                           | SQL authentication password              |
+    | DBTimeout                   |    Yes    |            Yes            | Timeout for database requests (secs)     |
+
+    | Credentials for Amazon      | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritAmazonCredentials    |    Yes    |            Yes            | Whether to inherit Amazon Credentials    |
+    | AmazonAccessKey             |    Yes    |            Yes            | Amazon Web Services Access Key           |
+    | AmazonSecretKey             |    No     |                           | Amazon Web Services Secret Key           |
+
+    | Windows Compatibility       | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritWindowsCompatibility |    Yes    |            Yes            | Whether to inherit Windows Compatibility |
+    | WmiDataSource               |    Yes    |            Yes            | Whether to use perf counters and/or WMI  |
+    | WmiTimeoutMethod            |    Yes    |            Yes            | Whether to use 1.5x interval or custom   |
+    | WmiTimeout                  |    Yes    |            Yes            | Custom timeout for WMI requests (secs)   |
+
+    | SNMP Compatibility          | Get | Set | Devices | Groups | Probes | Description                              |
+    | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
+    | InheritSNMPCompatibility    |    Yes    |            Yes            | Whether to inherit SNMP Compatibility    |
+    | SNMPDelay                   |    Yes    |            Yes            | Delay between each SNMP sensor (0-100ms) |
+    | SNMPRetryMode               |    Yes    |            Yes            | Whether to retry request on failure      |
+    | SNMPOverflowMode            |    Yes    |            Yes            | Whether to handle/ignore overflow values |
+    | SNMPZeroValueMode           |    Yes    |            Yes            | Whether to handle/ignore zero values     |
+    | SNMPCounterMode             |    Yes    |            Yes            | Whether to use 64-bit + 32-bit counters  |
+    | SNMPRequestMode             |    Yes    |            Yes            | Whether to use milti get or single get   |
+    | SNMPPortNameTemplate        |    Yes    |            Yes            | Template for default sensor name         |
+    | SNMPPortNameUpdateMode      |    Yes    |            Yes            | Whether to update SNMP ports ensor names |
+    | SNMPPortIdMode              |    Yes    |            Yes            | How to identify ports on order changes   |
+    | SNMPInterfaceStartIndex     |    Yes    |            Yes            | Start index for SNMP Traffic sensors     |
+    | SNMPInterfaceEndIndex       |    Yes    |            Yes            | End index for SNMP Traffic sensors       |
+
+EXAMPLES
+    Set the Windows UserName to "Administrator" on all probes named "contoso"
+
+    C:\> Get-Probe contoso | Set-ObjectProperty WindowsUserName Administrator
+
+    Retrieve the Windows UserName on all probes named contoso
+
+    C:\> Get-Probe contoso | Get-ObjectProperty | select WindowsUserName
+
+    Raw the raw Windows UserName on all probes named contoso
+
+    C:\> Get-Probe contoso | Get-ObjectProperty -RawProperty windowsloginusername_
+
+    Set the raw Windows UserName on all probes named contoso
+
+    C:\> Get-Probe contoso | Set-ObjectProperty -RawProperty windowsloginusername_ -RawValue Administrator
+
+SEE ALSO
+    PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki
+    Get-ObjectProperty
+    Set-ObjectProperty
+    about_SensorSettings
+    about_ChannelSettings

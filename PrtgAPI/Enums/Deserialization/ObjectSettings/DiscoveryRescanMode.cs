@@ -10,7 +10,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies whether known devices should be re-auto-discovered when performing a group auto-discovery.
     /// </summary>
-    public enum DiscoveryRescanMode
+    internal enum DiscoveryRescanMode
     {
         /// <summary>
         /// Do not rescan existing devices.

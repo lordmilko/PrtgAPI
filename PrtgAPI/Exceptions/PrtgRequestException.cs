@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace PrtgAPI
 {
     /// <summary>
-    /// The exception that is thrown when a PRTG Request contains any error messages.
+    /// The exception that is thrown when a PRTG Request returns any error messages.
     /// </summary>
     [Serializable]
     [ExcludeFromCodeCoverage]

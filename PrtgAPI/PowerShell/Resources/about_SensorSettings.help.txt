@@ -1,11 +1,10 @@
 ﻿TOPIC
-    about_PrtgAPI
+    about_SensorSettings
 
 SHORT DESCRIPTION
     Describes PRTG Sensor properties that can be used in conjunction with Set-ObjectProperty and Get-ObjectProperty
 
 LONG DESCRIPTION
-
     PrtgAPI supports the retrieval and modification of dozens of Sensor Setting values in a reliable, typesafe manner.
 	The following tables outline the properties that are currently supported/unsupported by PrtgAPI, as well as the
 	setting values each property corresponds to within the PRTG Web Interface.
@@ -19,63 +18,83 @@ LONG DESCRIPTION
     Read-Only : Supports Get, and will never support Set
     No        : Not currently supported
 
-    Basic Sensor Settings
+    | Access Rights              | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | InheritAccess              |    Yes    | Whether to inherit Access Rights                                |
 
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | Name               |    Yes    |             |
-    | ParentTags         | Read-Only |             |
-    | Tags               | Yes | No  |             |
-    | Priority           |    Yes    |             |
+    | Debug Options              | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | DebugMode                  |    Yes    | How debug data should be stored                                 |
 
-    HTTP Specific
+    | Basic Sensor Settings      | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | Name                       |    Yes    | Name of the sensor                                              |
+    | ParentTags                 | Read-Only | Tags inherited from the parent object                           |
+    | Tags                       | Yes | No  | Tags applied to this object                                     |
+    | Priority                   |    Yes    | Priority of the sensor                                          |
 
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | Timeout            |    Yes    |             |
-    | Url                |    Yes    |             |
-    | HttpRequestMethod  |    Yes    |             |
-    | SNI                |    No     |             |
-    | UseSNIFromUrl      |    Yes    |             |
+    | HTTP Specific              | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | Timeout                    |    Yes    | Timeout for HTTP requests                                       |
+    | Url                        |    Yes    | URL to monitor. If protocol is ommitted, HTTP is used           |
+    | HttpRequestMethod          |    Yes    | Request method to use to access URL                             |
+    | SNI                        |    No     | Server Name Indication of target                                |
+    | UseSNIFromUrl              |    Yes    | Whether to use SNI from the Url or parent device                |
 
-    Ping Settings
+    | Ping Settings              | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | Timeout                    |    Yes    | Timeout for Ping requests                                       |
+    | PingPacketSize             |    Yes    | Packet size of each request. Must be 1-10,000 bytes             |
+    | PingMode                   |    Yes    | Whether to send a single or multiple pings                      |
+    | PingCount                  |    Yes    | Number of pings to send when PingMode is MultiPing              |
+    | PingDelay                  |    Yes    | Delay between each ping when PingMode is MultiPing              |
+    | AutoAcknowledge            |    Yes    | Whether to auto acknowledge when sensor goes down               |
 
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | Timeout            |    Yes    |             |
-    | PingPacketSize     |    Yes    |             |
-    | PingMode           |    Yes    |             |
-    | PingCount          |    Yes    |             |
-    | PingDelay          |    Yes    |             |
-    | AutoAcknowledge    |    Yes    |             |
+    | Scanning Interval          | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | InheritInterval            |    Yes    | Whether to inherit Scanning Interval                            |
+    | Interval                   |    Yes    | Interval with which sensor refreshes                            |
+    | IntervalErrorMode          |    Yes    | How sensor transitions from Up -> Warning -> Error              |
 
-    Scanning Interval
+    | Schedules, Dependencies    | Get | Set | Description                                                     |
+    | and Maintenance Window     |           |                                                                 |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | InheritDependency          |    Yes    | Whether to inherit Schedules/Dependencies/Maintenance           |
+    | Schedule                   | Yes | No  | Schedule during which this object is active                     |
+    | MaintenanceEnabled         | Yes | No  | Whether a one time maintenance window has been set              |
+    | MaintenanceStart           | Yes | No  | Maintenance window start, or default start time                 |
+    | MaintenanceEnd             | Yes | No  | Maintenance window end, or default end time                     |
+    | DependencyType             | Yes | No  | The type of object this object uses as its dependency           |
+    | Dependency                 | Yes | No  | The object this object depends on when DependencyType is Object |
+    | DependencyDelay            | Yes | No  | The delay before resuming when DependencyType is Object (secs)  |
 
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | InheritInterval    |    Yes    |             |
-    | Interval           |    Yes    |             |
-    | IntervalErrorMode  |    Yes    |             |
+    | Sensor Display             | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | PrimaryChannel             |    No     | The primary channel of this sensor                              |
+    | GraphType                  |    Yes    | Whether channels should be independent or stacked in graphs     |
+    | StackUnit                  |    No     | The unit of channels to include in stacked graphs               |
 
-    Schedules, Dependencies and Maintenance Window
+    | Sensor Settings (EXE/XML)  | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | ExeName                    |    No     | EXE/Script file to execute                                      |
+    | ExeParameters              |    Yes    | Parameters to pass to EXE/Script file                           |
+    | SetExeEnvironmentVariables |    Yes    | Whether to set PRTG variables as environment variables          |
+    | UseWindowsAuthentication   |    Yes    | Whether run with credentials of Device or of Probe Service      |
+    | Mutex                      |    Yes    | Mutex to execute related sensors sequentially                   |
+    | EnableChangeTriggers       |    Yes    |
+    | ExeValueType               |    No     | How the channel value is numerically represented                |
+    | DebugMode                  |    Yes    | How debug data should be stored                                 |
 
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | InheritDependency  |    Yes    |             |
-    | Schedule           |    No     |             |
-    | MaintenanceEnabled |    No     |             |
-    | MaintenanceEnd     |    No     |             |
-    | DependencyType     |    No     |             |
-    | Dependency         |    No     |             |
-    | DependencyDelay    |    No     |             |
+    | WMI Alternate Query        | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | WmiMode                    |    Yes    | Whether to use default or alternate query mode                  |
 
-    Sensor Display
-
-    | Property           | Get | Set | Description |
-    | ------------------ | --------- | ----------- |
-    | PrimaryChannel     |    No     |             |
-    | GraphType          |    Yes    |             |
-    | StackUnit          |    No     |             |
+    | WMI Remote Ping            | Get | Set | Description                                                     |
+    | Configuration              |           |                                                                 |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | Target                     |    Yes    | IP Address or DNS name to ping                                  |
+    | Timeout                    |    Yes    | Timeout for Ping requests                                       |
+    | PingRemotePacketSize       |    Yes    | Packet size of each request. Must be 1-10,000 bytes             |
 
 EXAMPLES
     Retrieve all object properties of sensor with ID 1001
@@ -99,3 +118,5 @@ SEE ALSO
     Get-Sensor
     Get-ObjectProperty
     Set-ObjectProperty
+    about_ObjectSettings
+    about_SensorSettings

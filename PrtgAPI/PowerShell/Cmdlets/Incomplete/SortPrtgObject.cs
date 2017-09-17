@@ -2,7 +2,7 @@
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
-namespace PrtgAPI.PowerShell.Cmdlets.Incomplete
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Sorts the children of a device, group or probe alphabetically.</para>

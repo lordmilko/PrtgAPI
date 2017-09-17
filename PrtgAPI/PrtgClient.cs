@@ -1231,14 +1231,41 @@ namespace PrtgAPI
         #endregion
         #region Get Object Properties
 
-        public SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor);
+        /// <summary>
+        /// Retrieve properties and settings of a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
+        /// <returns></returns>
+        public SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor.ToString());
 
-        internal DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device);
+        /// <summary>
+        /// Retrieve properties and settings of a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve settings for.</param>
+        /// <returns></returns>
+        public DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device.ToString());
 
-        internal GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group);
+        /// <summary>
+        /// Retrieve properties and settings of a PRTG Group.
+        /// </summary>
+        /// <param name="groupId">ID of the group to retrieve settings for.</param>
+        /// <returns></returns>
+        public GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group.ToString());
 
-        internal ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, BaseType.Probe);
+        /// <summary>
+        /// Retrieve properties and settings of a PRTG Probe.
+        /// </summary>
+        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
+        /// <returns></returns>
+        public ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, Content.ProbeNode.ToString());
 
+        /// <summary>
+        /// Retrieve unsupported properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <returns>The raw value of the object's property.</returns>
         public string GetObjectPropertyRaw(int objectId, string property)
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
@@ -1248,6 +1275,13 @@ namespace PrtgAPI
             return ValidateRawObjectProperty(response, parameters);
         }
 
+        /// <summary>
+        /// Asynchronously retrieve unsupported properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <returns>The raw value of the object's property.</returns>
         public async Task<string> GetObjectPropertyRawAsync(int objectId, string property)
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
@@ -1267,7 +1301,7 @@ namespace PrtgAPI
             return value;
         }
 
-        private T GetObjectProperties<T>(int objectId, BaseType objectType)
+        private T GetObjectProperties<T>(int objectId, string objectType)
         {
             var parameters = new Parameters.Parameters
             {
@@ -1298,7 +1332,8 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
-        public void SetObjectProperty(int objectId, ObjectProperty property, object value) => SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+        public void SetObjectProperty(int objectId, ObjectProperty property, object value) =>
+            SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
 
         /// <summary>
         /// Asynchronously modify properties and settings of a PRTG Object.<para/>
@@ -1308,7 +1343,8 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
-        public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) => await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) =>
+            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
 
             #endregion Normal
             #region Channel
@@ -1320,7 +1356,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) => SetObjectProperty(new SetChannelPropertyParameters(sensorId, channelId, property, value));
+        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) =>
+            SetObjectProperty(new SetChannelPropertyParameters(sensorId, channelId, property, value));
 
         /// <summary>
         /// Asynchronously modify channel properties for a PRTG Sensor.
@@ -1329,7 +1366,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) => await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) =>
+            await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
 
             #endregion Channel
             #region Custom
@@ -1338,25 +1376,29 @@ namespace PrtgAPI
         /// Modify unsupported properties and settings of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
-        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the 'name' attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
-        public void SetObjectPropertyRaw(int objectId, string property, string value) => SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+        public void SetObjectPropertyRaw(int objectId, string property, string value) =>
+            SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
 
         /// <summary>
         /// Asynchronously modify unsupported properties and settings of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
-        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the 'name' attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
-        public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) => await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+        public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) =>
+            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
 
             #endregion
 
-        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters) => requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters) =>
+            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
 
-        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters) => await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters) =>
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
 
         #endregion
         #region Miscellaneous
@@ -1452,14 +1494,14 @@ namespace PrtgAPI
         public async Task DeleteObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Rename an object.
+        /// Rename a Sensor, Device or Group within PRTG. Renaming probes is not supported. To rename a probe, use <see cref="SetObjectProperty(int, ObjectProperty, object)"/> 
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
         public void RenameObject(int objectId, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectId, name));
 
         /// <summary>
-        /// Asynchronously rename an object.
+        /// Asynchronously rename a Sensor, Device or Group within PRTG. Renaming probes is not supported. To rename a probe, use <see cref="SetObjectProperty(int, ObjectProperty, object)"/> 
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
@@ -1619,6 +1661,25 @@ namespace PrtgAPI
             var response = requestEngine.ExecuteRequest(XmlFunction.GetStatus, new BaseActionParameters(0));
 
             return Data<ServerStatus>.DeserializeType(response);
+        }
+
+        internal List<Location> ResolveAddress(string address)
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Custom] = new List<CustomParameter>
+                {
+                    new CustomParameter("cache", false),
+                    new CustomParameter("dom", 0),
+                    new CustomParameter("path", address)
+                }
+            };
+
+            var response = requestEngine.ExecuteRequest(JsonFunction.GeoLocator, parameters);
+
+            var result = JsonDeserializer<GeoResult>.DeserializeType(response);
+
+            return result.Results.ToList();
         }
         
         #endregion

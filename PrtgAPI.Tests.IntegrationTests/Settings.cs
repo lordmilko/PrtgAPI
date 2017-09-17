@@ -89,6 +89,8 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string[] ParentTags;
         public static TimeSpan? CustomInterval;
         public static TimeSpan? CustomUnsupportedInterval;
+        public static DateTime? MaintenanceStart;
+        public static DateTime? MaintenanceEnd;
 
         //Sensor Types
         public static int WmiRemotePing = -1;

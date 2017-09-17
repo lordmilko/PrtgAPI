@@ -19,9 +19,9 @@ namespace PrtgAPI
         Ignore,
 
         /// <summary>
-        /// Don't ignore 0 values.
+        /// Handle 0 values as valid results.
         /// </summary>
         [XmlEnum("0")]
-        DontIgnore
+        Handle
     }
 }

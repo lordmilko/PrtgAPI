@@ -135,21 +135,21 @@ Describe "Set-ChannelProperty_IT" {
 	It "Data" {
 		$channel = { Get-Sensor -Id (Settings WarningSensor) | Get-Channel Total }
 
-		SetChild "PercentValue" "30" "PercentDisplay" "PercentOfMax"
+		SetChild "PercentValue" "30" "PercentMode" "PercentOfMax"
 		
 		#Logically this should throw, however in PRTG if you set the PercentDisplay to PercentOfMax, it doesn't make you specify a value
 		#As such, we do not create a reverse dependency on PercentValue
-		SetValue "PercentDisplay" "PercentOfMax"
+		SetValue "PercentMode" "PercentOfMax"
 
 		(& $channel) | Set-ChannelProperty PercentValue 40
 
-		ClearDependents "PercentDisplay" "Actual" @("PercentValue")
+		ClearDependents "PercentMode" "Actual" @("PercentValue")
 	}
 
 	It "Value Mode" {
 		$channel = DefaultChannel
 
-		SetValue "ValueMode" "Minimum"
+		SetValue "HistoricValueMode" "Minimum"
 	}
 
 	It "Decimal Places" {
@@ -176,7 +176,7 @@ Describe "Set-ChannelProperty_IT" {
 		ClearDependents "SpikeFilterEnabled" $false @("SpikeFilterMin", "SpikeFilterMax")
 	}
 
-	It "Vertical Axis Scaling" {
+	<#It "Vertical Axis Scaling" {
 		$channel = DefaultChannel
 
 		SetChild "VerticalAxisMin" 10 "VerticalAxisScaling" "Manual"
@@ -187,7 +187,9 @@ Describe "Set-ChannelProperty_IT" {
 		(& $channel) | Set-ChannelProperty VerticalAxisMax 70
 
 		ClearDependents "VerticalAxisScaling" "Automatic" @("VerticalAxisMin", "VerticalAxisMax")
-	}
+
+		throw "we need to say you have to set both the min AND max; im pretty sure if we checked prtg itd show an error if you just set one of them?"
+	}#>
 	
 	It "Limits" {
 		$channel = DefaultChannel

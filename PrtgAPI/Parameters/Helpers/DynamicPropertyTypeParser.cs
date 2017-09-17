@@ -76,6 +76,18 @@ namespace PrtgAPI.Parameters.Helpers
 
             //Transform the value according to its properties' data type
 
+            if (Property.GetEnumAttribute<TypeAttribute>() != null)
+            {
+                if (Value is IFormattable)
+                {
+                    Type = TypeCategory.Other;
+                    return ((IFormattable)Value).GetSerializedFormat();
+                }
+                    
+                else
+                    throw new NotSupportedException("Serializng TypeAttribute type that does not implement IFormattable is not currently supportd");
+            }
+
             //String, Int and Double can be used as is
             if (PropertyType == typeof (string) || PropertyType == typeof (int) || PropertyType == typeof (double))
             {
@@ -97,7 +109,12 @@ namespace PrtgAPI.Parameters.Helpers
                     val = ParseBoolValue();
                 else if (PropertyType.IsEnum)
                 {
-                    val = ParseEnumValue();
+                    var useAlternateXml = Info.GetCustomAttribute<TypeLookupAttribute>()?.Class == typeof(XmlEnumAlternateName);
+
+                    if (useAlternateXml)
+                        val = ParseEnumValue<XmlEnumAlternateName>();
+                    else
+                        val = ParseEnumValue<XmlEnumAttribute>();
 
                     if (val == null)
                         ThrowEnumArgumentException();
@@ -114,18 +131,18 @@ namespace PrtgAPI.Parameters.Helpers
             return val;
         }
 
-        private object ParseEnumValue()
+        private object ParseEnumValue<T>() where T : XmlEnumAttribute
         {
             object val = null;
 
             //If our value type was an enum, get its XmlEnumAttribute immediately
             if (PropertyType == ValueType)
-                val = ((Enum)Value).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                val = ((Enum)Value).GetEnumAttribute<T>(true).Name;
             else
             {
                 //Otherwise, our value may have been a string. See if any enum members are named after the specified value
                 if (Enum.GetNames(PropertyType).Any(x => x.ToLower() == Value.ToString().ToLower()))
-                    val = ((Enum)Enum.Parse(PropertyType, Value.ToString(), true)).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                    val = ((Enum)Enum.Parse(PropertyType, Value.ToString(), true)).GetEnumAttribute<T>(true).Name;
                 else
                 {
                     //If the enum represents a set of numeric values and our value was an integer,
@@ -135,7 +152,7 @@ namespace PrtgAPI.Parameters.Helpers
                     {
                         var enumVal = Enum.Parse(PropertyType, Value.ToString());
 
-                        val = ((Enum)enumVal).GetEnumAttribute<XmlEnumAttribute>(true).Name;
+                        val = ((Enum)enumVal).GetEnumAttribute<T>(true).Name;
                     }
                 }
             }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PrtgAPI
 {
-    public enum ExeValueType
+    enum ExeValueType
     {
         Integer,
         Float,

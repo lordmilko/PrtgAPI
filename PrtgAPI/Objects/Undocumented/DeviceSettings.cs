@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Objects.Undocumented
 {
-    internal class DeviceSettings : DeviceOrGroupSettings
+    public class DeviceSettings : DeviceOrGroupSettings
     {
         [XmlElement("injected_ipversion")]
         public IPVersion IPVersion { get; set; }
