@@ -12,6 +12,8 @@ namespace PrtgAPI.Helpers
     /// </summary>
     public static class ReflectionHelpers
     {
+        private static BindingFlags internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+
         /// <summary>
         /// Retrieve the value of an internal property of an object.
         /// </summary>
@@ -20,9 +22,12 @@ namespace PrtgAPI.Helpers
         /// <returns>The value of the retrieved property.</returns>
         public static object GetInternalProperty(this object obj, string name)
         {
-            var internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            return obj.GetInternalPropertyInfo(name).GetValue(obj);
+        }
 
-            var prop = obj.GetType().GetProperty(name, internalFlags).GetValue(obj);
+        public static PropertyInfo GetInternalPropertyInfo(this object obj, string name)
+        {
+            var prop = obj.GetType().GetProperty(name, internalFlags);
 
             return prop;
         }
@@ -35,11 +40,21 @@ namespace PrtgAPI.Helpers
         /// <returns>The value of the retrieved field.</returns>
         public static object GetInternalField(this object obj, string name)
         {
-            var internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            return obj.GetInternalFieldInfo(name).GetValue(obj);
+        }
 
-            var field = obj.GetType().GetField(name, internalFlags).GetValue(obj);
+        public static FieldInfo GetInternalFieldInfo(this object obj, string name)
+        {
+            var field = obj.GetType().GetField(name, internalFlags);
 
             return field;
+        }
+
+        public static MethodInfo GetInternalMethod(this object obj, string name)
+        {
+            var method = obj.GetType().GetMethod(name, internalFlags);
+
+            return method;
         }
     }
 }

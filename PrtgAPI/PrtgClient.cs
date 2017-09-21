@@ -1559,8 +1559,8 @@ namespace PrtgAPI
             return aaaa;
         }
 
-        //todo: move this
-        private List<SensorHistory> GetSensorHistory1(int sensorId)
+        //todo: compare this to our new getsensorhistory
+        private List<ChannelHistoryRecord> GetSensorHistory2(int sensorId)
         {
             Logger.DebugEnabled = false;
 
@@ -1598,7 +1598,7 @@ namespace PrtgAPI
 
             foreach (var history in items)
             {
-                foreach (var value in history.Values)
+                foreach (var value in history.ChannelRecords)
                 {
                     value.DateTime = history.DateTime;
                     value.SensorId = sensorId;
@@ -1606,7 +1606,7 @@ namespace PrtgAPI
             }
             //todo: need to implement coverage column
             //todo: right now the count is just the default - 500. need to allow specifying bigger counts
-            return items.SelectMany(i => i.Values).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
+            return items.SelectMany(i => i.ChannelRecords).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
         }
 
         /// <summary>
@@ -1623,12 +1623,9 @@ namespace PrtgAPI
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
         public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) => Amend(await GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId)).ConfigureAwait(false), e => e.ObjectId = objectId);
 
-        internal List<SensorHistoryData> GetSensorHistory(int sensorId, DateTime? startDate = null, DateTime? endDate = null)
+        public List<SensorHistoryData> GetSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
         {
-            var parameters = new SensorHistoryParameters(sensorId);
-
-            parameters.StartDate = DateTime.Now.Date;
-            parameters.EndDate = DateTime.Now.Date.AddHours(1);
+            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
 
             var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, r =>
             {
@@ -1638,13 +1635,18 @@ namespace PrtgAPI
 
             var items = Data<SensorHistoryData>.DeserializeList(response).Items;
 
+            var regex = new Regex("^(.+)(\\(.+\\))$");
+
             foreach (var history in items)
             {
                 history.SensorId = sensorId;
 
-                foreach (var value in history.Values)
+                foreach (var value in history.ChannelRecords)
                 {
                     value.Name = value.Name.Replace(" ", "");
+
+                    if (regex.Match(value.Name).Success)
+                        value.Name = regex.Replace(value.Name, "$1");
 
                     value.DateTime = history.DateTime;
                     value.SensorId = sensorId;

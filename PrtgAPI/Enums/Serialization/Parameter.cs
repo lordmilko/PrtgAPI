@@ -234,6 +234,13 @@ namespace PrtgAPI
         EndDate,
 
         /// <summary>
+        /// The value to average with.
+        /// </summary>
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("avg")]
+        Average,
+
+        /// <summary>
         /// Allows using custom parameters not known to PrtgAPI, including parameters whose names are dynamically generated. For use with <see cref="CustomParameter"/> 
         /// </summary>
         [ParameterType(ParameterType.MultiParameter)]

@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI
 {
-    internal class SensorHistory
+    public class ChannelHistoryRecord
     {
         public DateTime DateTime { get; set; }
 

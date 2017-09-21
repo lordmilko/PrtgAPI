@@ -96,6 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static int WmiRemotePing = -1;
         public static int ExeXml = -1;
         public static int SNMP = -1;
+        public static int SSLSecurityCheck = -1;
 
 #pragma warning restore CS0649 //Restore 'field' is never assigned to.
     }
