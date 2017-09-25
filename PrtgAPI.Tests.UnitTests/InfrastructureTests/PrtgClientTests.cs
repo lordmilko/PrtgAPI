@@ -47,6 +47,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var client = new PrtgClient("prtg.example.com", "username", null);
         }
 
+        [TestMethod]
+        public void PrtgClient_SyncAsync_Counterparts()
+        {
+            //get all public method names that dont have async in them then make sure each one has one that does
+            //need to handle overloads as well
+
+        }
+
         /*private T[] CreateNullResponseItem<T>(T obj)
         {
             //var obj = Activator.CreateInstance(typeof (T));
@@ -59,6 +67,6 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             }
 
             return new[] {obj};
-        }*/       
+        }*/
     }
 }

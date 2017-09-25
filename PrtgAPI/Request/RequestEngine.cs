@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -29,24 +31,33 @@ namespace PrtgAPI.Request
             return response;
         }
 
-        internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters, Action<string> requestValidator = null)
-        {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
-
-            var response = ExecuteRequest(url);
-
-            requestValidator?.Invoke(response);
-
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
-        }
-
-        internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> requestValidator = null)
+        internal async Task<string> ExecuteRequestAsync(JsonFunction function, Parameters.Parameters parameters)
         {
             var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
 
             var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
 
-            requestValidator?.Invoke(response);
+            return response;
+        }
+
+        internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
+        {
+            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+
+            var response = ExecuteRequest(url);
+
+            responseValidator?.Invoke(response);
+
+            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
+        }
+
+        internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
+        {
+            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+
+            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+
+            responseValidator?.Invoke(response);
 
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
@@ -89,7 +100,7 @@ namespace PrtgAPI.Request
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
-            prtgClient.Log($"Synchronously executing request '{url.Url}'");
+            prtgClient.Log($"Synchronously executing request {url.Url}");
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -113,10 +124,15 @@ namespace PrtgAPI.Request
                 }
                 catch (Exception ex) when (ex is AggregateException || ex is TaskCanceledException || ex is HttpRequestException)
                 {
-                    var result = HandleRequestException(ex.InnerException?.InnerException, ex.InnerException, url, ref retriesRemaining, () =>
+                    var innerException = ex.InnerException;
+
+                    if (ex.InnerException is TaskCanceledException)
+                        innerException = new TimeoutException($"The server timed out while executing request.", ex.InnerException);
+
+                    var result = HandleRequestException(ex.InnerException?.InnerException, innerException, url, ref retriesRemaining, () =>
                     {
-                        if (ex.InnerException != null)
-                            throw ex.InnerException;
+                        if (innerException != null)
+                            throw innerException;
                     });
 
                     if (!result)
@@ -127,7 +143,7 @@ namespace PrtgAPI.Request
 
         private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
-            prtgClient.Log($"Asynchronously executing request '{url.Url}'");
+            prtgClient.Log($"Asynchronously executing request {url.Url}");
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -149,7 +165,7 @@ namespace PrtgAPI.Request
 
                     return responseText;
                 }
-                catch (HttpRequestException ex) //todo: test making invalid requests
+                catch (HttpRequestException ex)
                 {
                     var inner = ex.InnerException as WebException;
 
@@ -158,17 +174,46 @@ namespace PrtgAPI.Request
                     if (!result)
                         throw;
                 }
+                catch (TaskCanceledException ex)
+                {
+                    throw new TimeoutException($"The server timed out while executing request.", ex);
+                }
             } while (true);
+        }
+
+        private void HandleSocketException(Exception ex, string url)
+        {
+            var socketException = ex?.InnerException as SocketException;
+
+            if (socketException != null)
+            {
+                var port = socketException.Message.Substring(socketException.Message.LastIndexOf(':') + 1);
+
+                var protocol = url.Substring(0, url.IndexOf(':')).ToUpper();
+
+                if (socketException.SocketErrorCode == SocketError.TimedOut)
+                {
+                    throw new TimeoutException($"Connection timed out while communicating with remote server via {protocol} on port {port}. Confirm server address and port are valid and PRTG Service is running", ex);
+                }
+                else if (socketException.SocketErrorCode == SocketError.ConnectionRefused)
+                {
+                    throw new WebException($"Server rejected {protocol} connection on port {port}. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted", ex);
+                }
+            }
         }
 
         private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgUrl url, ref int retriesRemaining, Action thrower)
         {
-            if (innerMostEx != null)
+            if (innerMostEx != null) //Synchronous + Asynchronous
             {
                 if (retriesRemaining > 0)
                     prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
                 else
+                {
+                    HandleSocketException(innerMostEx, url.Url);
+
                     throw innerMostEx;
+                }
             }
             else
             {
@@ -221,6 +266,20 @@ namespace PrtgAPI.Request
                 errorMsg = errorMsg.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ");
 
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMsg}");
+            }
+
+            if (responseText.StartsWith("<div class=\"errormsg\">")) //Example: GetProbeProperties specifying a content type of Probe instead of ProbeNode
+            {
+                var msgEnd = responseText.IndexOf("</h3>");
+
+                var substr = responseText.Substring(0, msgEnd);
+
+                var substr1 = Regex.Replace(substr, "\\.</.+?><.+?>", ". ");
+
+                var regex = new Regex("<.+?>");
+                var newStr = regex.Replace(substr1, "");
+
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {newStr}");
             }
         }
     }

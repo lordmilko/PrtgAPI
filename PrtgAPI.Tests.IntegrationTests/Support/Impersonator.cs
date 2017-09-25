@@ -69,7 +69,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static void ExecuteAction(Action action)
         {
-            using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUsername, Settings.WindowsPassword))
+            using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
             {
                 action();
             }

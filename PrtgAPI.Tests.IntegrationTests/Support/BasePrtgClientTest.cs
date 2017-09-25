@@ -14,7 +14,7 @@ namespace PrtgAPI.Tests.IntegrationTests
     public class BasePrtgClientTest
     {
         private static string PrtgConfig => $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor\\PRTG Configuration.dat";
-        public static string PrtgConfigBackup => $"\\\\{Settings.Server}\\c$\\Users\\{Settings.WindowsUsername}\\AppData\\Local\\Temp\\PRTG Configuration.dat";
+        public static string PrtgConfigBackup => $"\\\\{Settings.Server}\\c$\\Users\\{Settings.WindowsUserName}\\AppData\\Local\\Temp\\PRTG Configuration.dat";
 
         private static bool initialized = false;
 
@@ -30,7 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             if (reply.Status != IPStatus.Success)
             {
-                Assert2.Fail("Ping responded with" + reply.Status.ToString());
+                Assert2.Fail("Ping responded with " + reply.Status.ToString());
             }
 
             Logger.Log("Connecting to local server");
@@ -223,16 +223,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        protected PrtgClient client
-        {
-            get
-            {
-                if (Settings.Protocol == null)
-                    throw new Exception("Please specify either HTTP or HTTPS in file Settings.cs");
-
-                return new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
-            }
-        }
+        protected PrtgClient client => new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
 
         protected void HasAnyResults<T>(Func<List<T>> method)
         {

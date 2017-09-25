@@ -11,18 +11,16 @@ namespace PrtgAPI.Tests.IntegrationTests
     public static partial class Settings
     {
 #pragma warning disable CS0649 //Ignore 'field' is never assigned to.
-        public static string ServerWithProto { get { return Protocol.ToString().ToLower() + "://" + Server; } } //C# 5 syntax required by New-Settings.ps1
+        public static string ServerWithProto { get { return "http://" + Server; } } //C# 5 syntax required by New-Settings.ps1
         public static bool ResetAfterTests = true;
 
-        public static HttpProtocol? Protocol = null;
-
         //PRTG Server
-        public static string Server = null;
-        public static string Username = null;
+        public static string Server = null; //Must not support HTTPS
+        public static string UserName = null;
         public static string Password = null;
 
         //Local Server
-        public static string WindowsUsername;
+        public static string WindowsUserName;
         public static string WindowsPassword;
 
         //Objects

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -55,7 +56,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             string server = null;
 
-            var client = new PrtgClient(server, Settings.Username, Settings.Password);
+            var client = new PrtgClient(server, Settings.UserName, Settings.Password);
         }
 
         [TestMethod]
@@ -65,7 +66,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             try
             {
-                var client = new PrtgClient(server, Settings.Username, Settings.Password);
+                var client = new PrtgClient(server, Settings.UserName, Settings.Password);
             }
             catch (WebException ex)
             {
@@ -78,7 +79,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         [ExpectedException(typeof(PrtgRequestException))]
         public void Logic_Client_InvalidRequest()
         {
-            var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
+            var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
             client.DeleteObject(0);
         }
 
@@ -86,7 +87,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         [ExpectedException(typeof(PrtgRequestException))]
         public async Task Logic_Client_InvalidRequestAsync()
         {
-            var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
+            var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
             await client.DeleteObjectAsync(0);
         }
 
@@ -95,7 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var server = $"http://{Settings.Server}";
 
-            var client = new PrtgClient(server, Settings.Username, Settings.Password);
+            var client = new PrtgClient(server, Settings.UserName, Settings.Password);
         }
 
         [TestMethod]
@@ -105,38 +106,100 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             try
             {
-                var client = new PrtgClient(server, Settings.Username, Settings.Password);
+                var localClient = new PrtgClient(server, Settings.UserName, Settings.Password);
             }
             catch (WebException ex)
             {
-                if (ex.InnerException != null)
+                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted")
                 {
-                    if (ex.InnerException.Message.StartsWith("No connection could be made because the target machine actively refused it"))
-                    {
-                        if(Settings.Protocol != HttpProtocol.HTTP)
-                            Assert2.Fail($"{ex.Message}. This may indicate your PRTG Server does not accept HTTPS or that your certificate is invalid. If your server does not accept HTTPS please change your Protocol in Settings.cs");
-                    }
-                    else
-                        throw;
-                }
-                else
                     throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Logic_Client_ConnectWithHttps_Async()
+        {
+            var server = $"https://{Settings.Server}";
+
+            var localClient = new PrtgClient(server, Settings.UserName, client.PassHash, AuthMode.PassHash);
+
+            //Get the method
+            var engine = localClient.GetInternalField("requestEngine");
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            var methods = engine.GetType().GetMethods(flags).Where(m => m.Name == "ExecuteRequestAsync").ToList();
+            var method = methods.First(m => m.GetParameters().Any(p => p.ParameterType.Name == "JsonFunction"));
+
+            //Get the enum
+            var jsonFunctionEnum = typeof(PrtgClient).Assembly.GetType("PrtgAPI.JsonFunction");
+            var getPassHash = Enum.Parse(jsonFunctionEnum, "GetPassHash");
+
+            //Construct the parameters
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Password] = Settings.Password
+            };
+
+            try
+            {
+                await (Task<string>)method.Invoke(engine, new[] {getPassHash, parameters});
+            }
+            catch (WebException ex)
+            {
+                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted")
+                {
+                    throw;
+                }
             }
         }
 
         [TestMethod]
         public void Logic_Client_RetryRequest()
         {
-            Logic_Client_RetryRequestInternal(client => client.GetSensors(), false);
+            Logic_Client_RetryRequestInternal(localClient => localClient.GetSensors(), false);
         }
 
         [TestMethod]
         public void Logic_Client_RetryRequest_Async()
         {
-            Logic_Client_RetryRequestInternal(client =>
+            Logic_Client_RetryRequestInternal(localClient =>
             {
-                var sensors = client.GetSensorsAsync().Result;
+                var sensors = localClient.GetSensorsAsync().Result;
             }, true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(System.TimeoutException))]
+        public void Logic_Client_Timeout()
+        {
+            var localClient = GetTimeoutClient();
+
+            localClient.GetSensors();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(System.TimeoutException))]
+        public async Task Logic_Client_Timeout_Async()
+        {
+            var localClient = GetTimeoutClient();
+
+            await localClient.GetSensorsAsync();
+        }
+
+        private PrtgClient GetTimeoutClient()
+        {
+            var localClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
+            var engine = localClient.GetInternalField("requestEngine");
+            var webInterface = engine.GetInternalField("webClient");
+
+            var httpClient = new HttpClient
+            {
+                Timeout = new TimeSpan(0, 0, 0, 0, 1)
+            };
+
+            webInterface.GetType().GetField("asyncClient", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(webInterface, httpClient);            
+
+            return localClient;
         }
 
         private void Logic_Client_RetryRequestInternal(Action<PrtgClient> action, bool isAsync)
@@ -150,16 +213,16 @@ namespace PrtgAPI.Tests.IntegrationTests
 
                 var coreService = new ServiceController("PRTGCoreService", Settings.Server);
 
-                var client = new PrtgClient(Settings.ServerWithProto, Settings.Username, Settings.Password);
-                client.RetryRequest += (sender, args) =>
+                var localClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
+                localClient.RetryRequest += (sender, args) =>
                 {
                     Logger.LogTestDetail($"Handling retry {retriesMade + 1}");
 
-                    if(!isAsync)
+                    if (!isAsync)
                         Assert2.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
                     retriesMade++;
                 };
-                client.RetryCount = retriesToMake;
+                localClient.RetryCount = retriesToMake;
 
                 Logger.LogTestDetail("Stopping PRTG Service");
 
@@ -168,7 +231,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
                 try
                 {
-                    action(client);
+                    action(localClient);
                 }
                 catch (AggregateException ex)
                 {
@@ -188,7 +251,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     Thread.Sleep(20000);
 
                     Logger.LogTestDetail("Refreshing and sleeping for 20 seconds");
-                    client.RefreshObject(Settings.Device);
+                    localClient.RefreshObject(Settings.Device);
                     Thread.Sleep(20000);
                 }
 

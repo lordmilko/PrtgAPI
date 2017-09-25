@@ -31,7 +31,7 @@ Describe "Connect-PrtgServer_IT" {
 
 			$output | Should Be $expected
 
-            { Get-Sensor | Get-Channel } | Should Throw "Unable to connect to the remote server"
+            { Get-Sensor | Get-Channel } | Should Throw "Server rejected HTTP connection on port 80"
 		}
 		finally
 		{
