@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
@@ -33,6 +31,9 @@ namespace PrtgAPI
 
         string[] IFormattableMultiple.GetSerializedFormats()
         {
+            if (Address == null)
+                return new string[] {null, null};
+
             return new[]
             {
                 Address,
@@ -40,9 +41,45 @@ namespace PrtgAPI
             };
         }
 
-        internal static Location Resolve(PrtgClient client, PrtgObject @object, object value)
+        internal static Location Resolve(PrtgClient client, int objectId, object value)
         {
-            var result = client.ResolveAddress(value.ToString());
+            if (value == null)
+                return new Location();
+
+            List<Location> result = new List<Location>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                result = client.ResolveAddress(value.ToString());
+
+                if (result.Any())
+                    break;
+
+                Thread.Sleep(1000);
+            }
+
+            if (!result.Any())
+                throw new PrtgRequestException($"Could not resolve '{value}' to an actual address");
+
+            return result.First();
+        }
+
+        internal static async Task<Location> ResolveAsync(PrtgClient client, int objectId, object value)
+        {
+            if (value == null)
+                return new Location();
+
+            List<Location> result = new List<Location>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                result = await client.ResolveAddressAsync(value.ToString());
+
+                if (result.Any())
+                    break;
+
+                Thread.Sleep(1000);
+            }
 
             if (!result.Any())
                 throw new PrtgRequestException($"Could not resolve '{value}' to an actual address");

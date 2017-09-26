@@ -1235,29 +1235,56 @@ namespace PrtgAPI
         /// Retrieve properties and settings of a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
-        /// <returns></returns>
+        /// <returns>All settings of the specified sensor.</returns>
         public SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor.ToString());
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Device.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
-        /// <returns></returns>
-        public DeviceSettings GetDeviceProperties(int deviceId) => GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device.ToString());
+        /// <returns>All settings of the specified device.</returns>
+        public DeviceSettings GetDeviceProperties(int deviceId) =>
+            GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device.ToString());
+
+        /// <summary>
+        /// Asynchronously retrieve properties and settings of a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve settings for.</param>
+        /// <returns>All settings of the specified device.</returns>
+        public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId) =>
+            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, BaseType.Device.ToString()).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Group.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
-        /// <returns></returns>
-        public GroupSettings GetGroupProperties(int groupId) => GetObjectProperties<GroupSettings>(groupId, BaseType.Group.ToString());
+        /// <returns>All settings of the specified group.</returns>
+        public GroupSettings GetGroupProperties(int groupId) =>
+            GetObjectProperties<GroupSettings>(groupId, BaseType.Group.ToString());
+
+        /// <summary>
+        /// Asynchronously retrieve properties and settings of a PRTG Group.
+        /// </summary>
+        /// <param name="groupId">ID of the group to retrieve settings for.</param>
+        /// <returns>All settings of the specified group.</returns>
+        public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId) =>
+            await GetObjectPropertiesAsync<GroupSettings>(groupId, BaseType.Group.ToString()).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Probe.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <returns></returns>
-        public ProbeSettings GetProbeProperties(int probeId) => GetObjectProperties<ProbeSettings>(probeId, Content.ProbeNode.ToString());
+        /// <returns>All settings of the specified probe.</returns>
+        public ProbeSettings GetProbeProperties(int probeId) =>
+            GetObjectProperties<ProbeSettings>(probeId, Content.ProbeNode.ToString());
+
+        /// <summary>
+        /// Asynchronously retrieve properties and settings of a PRTG Probe.
+        /// </summary>
+        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
+        /// <returns>All settings of the specified probe.</returns>
+        public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
+            await GetObjectPropertiesAsync<ProbeSettings>(probeId, Content.ProbeNode.ToString()).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve unsupported properties and settings of a PRTG Object.
@@ -1303,14 +1330,20 @@ namespace PrtgAPI
 
         private T GetObjectProperties<T>(int objectId, string objectType)
         {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId,
-                [Parameter.ObjectType] = objectType
-            };
+            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType));
 
-            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
+            return GetObjectProperties<T>(response);
+        }
 
+        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, string objectType)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
+
+            return GetObjectProperties<T>(response);
+        }
+
+        private T GetObjectProperties<T>(string response)
+        {
             var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
 
@@ -1333,7 +1366,7 @@ namespace PrtgAPI
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         public void SetObjectProperty(int objectId, ObjectProperty property, object value) =>
-            SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+            SetObjectProperty(CreateSetObjectPropertyParameters(objectId, property, value));
 
         /// <summary>
         /// Asynchronously modify properties and settings of a PRTG Object.<para/>
@@ -1344,7 +1377,7 @@ namespace PrtgAPI
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) =>
-            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+            await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectId, property, value).ConfigureAwait(false)).ConfigureAwait(false);
 
             #endregion Normal
             #region Channel
@@ -1399,6 +1432,61 @@ namespace PrtgAPI
 
         private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters) =>
             await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+
+        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int objectId, ObjectProperty property, object value)
+        {
+            var attrib = property.GetEnumAttribute<TypeAttribute>();
+
+            if (attrib != null)
+            {
+                try
+                {
+                    var method = attrib.Class.GetMethod("Resolve", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+
+                    if (method != null)
+                    {
+                        value = method.Invoke(null, new[] { this, objectId, value });
+                    }
+                }
+                catch (TargetInvocationException ex)
+                {
+                    throw ex.InnerException;
+                }
+            }
+            var parameters = new SetObjectPropertyParameters(objectId, property, value);
+
+            return parameters;
+        }
+
+        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int objectId, ObjectProperty property, object value)
+        {
+            var attrib = property.GetEnumAttribute<TypeAttribute>();
+
+            if (attrib != null)
+            {
+                try
+                {
+                    var method = attrib.Class.GetMethod("ResolveAsync", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+
+                    if (method != null)
+                    {
+                        var task = ((Task)method.Invoke(null, new[] { this, objectId, value }));
+
+                        await task.ConfigureAwait(false);
+
+                        value = task.GetType().GetProperty("Result").GetValue(task);
+                    }
+                }
+                catch (TargetInvocationException ex)
+                {
+                    throw ex.InnerException;
+                }
+            }
+
+            var parameters = new SetObjectPropertyParameters(objectId, property, value);
+
+            return parameters;
+        }
 
         #endregion
         #region Miscellaneous
@@ -1527,38 +1615,6 @@ namespace PrtgAPI
         /// <returns>The total number of objects of a given type.</returns>
         public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
 
-        //todo: have an update-goprtgcredential cmdlet that does a get-credential -username <existing>
-        //to re-connect to prtg, update the stored passhash and then show a green connected message
-
-        internal object GetObjectProperties1(int objectId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = 2211,
-                //[Parameter.ObjectType] = BaseType.Sensor
-                [Parameter.ObjectType] = BaseType.Group
-            };
-
-            //we'll need to add support for dropdown lists too
-
-            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, parameters);
-
-            var blah = SensorSettings.GetXml(response);
-
-            var doc = new XDocument(blah);
-
-            //var aaaa = Data<SensorSettings>.DeserializeType(doc);
-
-            var aaaa = Data<DeviceSettings>.DeserializeType(doc);
-
-            //maybe instead of having an enum for my schedule and scanninginterval we have a class with a special getter that removes the <num>|component when you try and retrieve the property
-            //the thing is, the enum IS actually dynamic - we need a list of valid options
-
-            //todo: whenever we use _raw attributes dont we need to add xmlignore on the one that accesses it/
-
-            return aaaa;
-        }
-
         //todo: compare this to our new getsensorhistory
         private List<ChannelHistoryRecord> GetSensorHistory2(int sensorId)
         {
@@ -1665,19 +1721,28 @@ namespace PrtgAPI
             return Data<ServerStatus>.DeserializeType(response);
         }
 
+        /// <summary>
+        /// Resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
+        /// </summary>
+        /// <param name="address">The address to resolve.</param>
+        /// <returns></returns>
         internal List<Location> ResolveAddress(string address)
         {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Custom] = new List<CustomParameter>
-                {
-                    new CustomParameter("cache", false),
-                    new CustomParameter("dom", 0),
-                    new CustomParameter("path", address)
-                }
-            };
+            var response = requestEngine.ExecuteRequest(JsonFunction.GeoLocator, new ResolveAddressParameters(address));
 
-            var response = requestEngine.ExecuteRequest(JsonFunction.GeoLocator, parameters);
+            var result = JsonDeserializer<GeoResult>.DeserializeType(response);
+
+            return result.Results.ToList();
+        }
+
+        /// <summary>
+        /// Asynchronously resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
+        /// </summary>
+        /// <param name="address">The address to resolve.</param>
+        /// <returns></returns>
+        internal async Task<List<Location>> ResolveAddressAsync(string address)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).ConfigureAwait(false);
 
             var result = JsonDeserializer<GeoResult>.DeserializeType(response);
 

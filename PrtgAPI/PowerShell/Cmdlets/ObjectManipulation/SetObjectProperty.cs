@@ -116,22 +116,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ParseValue()
         {
-            var attrib = Property.GetEnumAttribute<TypeAttribute>();
-
-            if (attrib != null)
-            {
-                var method = attrib.Class.GetMethod("Resolve", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (method != null)
-                {
-                    Value = method.Invoke(null, new[] { client, Object, Value });
-                }
-            }
-            else
-            {
-                var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
-                Value = ParseValueIfRequired(prop, Value);
-            }
+            var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
+            Value = ParseValueIfRequired(prop, Value);
         }
     }
 }

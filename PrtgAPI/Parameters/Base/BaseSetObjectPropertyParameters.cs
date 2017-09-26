@@ -52,8 +52,6 @@ namespace PrtgAPI.Parameters
             }
         }
 
-        
-
         void AddDependents(DynamicPropertyTypeParser parser, bool disableDependentsOnNotReqiuiredValue)
         {
             //var parentOfChild = parser.Property.GetEnumAttribute<DependentPropertyAttribute>();
