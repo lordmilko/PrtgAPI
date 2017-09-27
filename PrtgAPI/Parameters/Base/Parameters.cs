@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -38,14 +40,16 @@ namespace PrtgAPI.Parameters
                 }
                 else
                 {
-                    //we can only have one authentication type
-                    if (parameter == Parameter.PassHash && parameters.ContainsKey(Parameter.Password))
+                    //If this parameter is mutually exclusive with another parameter (such as password/passhash),
+                    //if our parameter's counterpart has already been added, replace it
+                    var attrib = parameter.GetEnumAttribute<MutuallyExclusiveAttribute>();
+
+                    if (attrib != null)
                     {
-                        parameters.Remove(Parameter.Password);
-                    }
-                    else if (parameter == Parameter.Password && parameters.ContainsKey(Parameter.PassHash))
-                    {
-                        parameters.Remove(Parameter.PassHash);
+                        var counterpart = attrib.Name.ToEnum<Parameter>();
+
+                        if (parameters.ContainsKey(counterpart))
+                            parameters.Remove(counterpart);
                     }
 
                     parameters.Add(parameter, value);

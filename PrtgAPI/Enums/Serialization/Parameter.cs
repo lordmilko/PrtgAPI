@@ -20,12 +20,14 @@ namespace PrtgAPI
         /// <summary>
         /// Password to authenticate against PRTG.
         /// </summary>
+        [MutuallyExclusive(nameof(PassHash))]
         [ParameterType(ParameterType.SingleValue)]
         Password,
 
         /// <summary>
         /// PassHash to authenticate against PRTG. Alternative to using <see cref="Password"/>
         /// </summary>
+        [MutuallyExclusive(nameof(Password))]
         [ParameterType(ParameterType.SingleValue)]
         PassHash,
 
