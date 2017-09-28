@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
@@ -18,13 +19,13 @@ namespace PrtgAPI.PowerShell.Base
         /// <para type="description">Filter the response to objects with a certain name. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 0, HelpMessage = "Filter the response to objects with a certain name. Can include wildcards.")]
-        public string Name { get; set; }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// <para type="description">Retrieve an object with a specified ID.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Retrieve an obejct with a specified ID.")]
-        public int? Id { get; set; }
+        public int?[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects that match one or more criteria.</para>
@@ -118,7 +119,14 @@ namespace PrtgAPI.PowerShell.Base
                     records = GetFilteredObjects(parameters);
             }
 
-            records = FilterResponseRecords(records, Name, r => r.Name);
+            records = PostProcessRecords(records);
+
+            return records;
+        }
+
+        private IEnumerable<TObject> PostProcessRecords(IEnumerable<TObject> records)
+        {
+            records = FilterResponseRecordsByName(records);
             records = FilterResponseRecordsByTag(records);
 
             return records;
@@ -151,15 +159,21 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (Id != null)
             {
-                AddPipelineFilter(Property.Id, Id);
+                foreach (var id in Id)
+                {
+                    AddPipelineFilter(Property.Id, id);
+                }
             }
         }
 
         private void ProcessNameFilter()
         {
-            if (!string.IsNullOrEmpty(Name))
+            if (Name != null)
             {
-                AddWildcardFilter(Property.Name, Name);
+                foreach (var value in Name)
+                {
+                    AddWildcardFilter(Property.Name, value);
+                }
             }
         }
 
@@ -219,7 +233,20 @@ namespace PrtgAPI.PowerShell.Base
             if (streamResults)
                 return records;
             else
-                return base.GetCount(records, ref count);
+                return base.GetCount(PostProcessRecords(records), ref count);
+        }
+
+        private IEnumerable<TObject> FilterResponseRecordsByName(IEnumerable<TObject> records)
+        {
+            if (Name != null)
+            {
+                records = records.Where(record => Name
+                    .Select(name => new WildcardPattern(name, WildcardOptions.IgnoreCase))
+                    .Any(filter => filter.IsMatch(record.Name))
+                );
+            }
+
+            return records;
         }
 
         private IEnumerable<TObject> FilterResponseRecordsByTag(IEnumerable<TObject> records)
@@ -229,25 +256,12 @@ namespace PrtgAPI.PowerShell.Base
                 foreach (var tag in Tags)
                 {
                     //if any of our tags are ismatch, include that record
-                    var filter = new WildcardPattern(tag.ToLower());
-                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1.ToLower())));
+                    var filter = new WildcardPattern(tag, WildcardOptions.IgnoreCase);
+                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1)));
                 }
             }
 
             return records;
-        }
-
-        private ProgressSettings CreateProgressSettings() //TODO - RENAME
-        {
-            ProgressSettings progressSettings = null;
-
-            progressSettings = new ProgressSettings()
-            {
-                ActivityName = $"PRTG {typeof(TObject).Name} Search",
-                InitialDescription = $"Retrieving all {typeof(TObject).Name.ToLower()}s",
-            };
-
-            return progressSettings;
         }
 
         /// <summary>
@@ -307,7 +321,5 @@ namespace PrtgAPI.PowerShell.Base
             else
                 return client.GetObjects<TObject>(parameters);
         }
-
-        //protected abstract IEnumerable<TObject> GetRecords(TParam parameters);
     }
 }

@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Base
             //(causing them to SetPreviousOperation, which would fail)
             if (!ProgressManager.PipelineContainsOperation)
             {
-                if(ProgressManager.PipelineIsPure)
+                if(ProgressManager.PipelineIsProgressPure)
                 {
                     ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
 

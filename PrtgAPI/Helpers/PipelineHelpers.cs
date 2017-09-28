@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using Microsoft.PowerShell.Commands;
 using PrtgAPI.PowerShell;
 using PrtgAPI.PowerShell.Base;
 
@@ -93,7 +94,7 @@ namespace PrtgAPI.Helpers
             return null;
         }
 
-        public static bool PipelineIsPure(this PSCmdlet cmdlet)
+        public static bool PipelineIsProgressPure(this PSCmdlet cmdlet)
         {
             var commands = GetPipelineCommands(cmdlet);
 
@@ -106,7 +107,7 @@ namespace PrtgAPI.Helpers
             {
                 var command = commands[i];
 
-                if (!(command is PrtgCmdlet))
+                if (!(command is PrtgCmdlet || command is WhereObjectCommand))
                     return false;
             }
 

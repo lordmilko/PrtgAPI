@@ -31,7 +31,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Sensor</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true)]
-    public class SetChannelProperty : PrtgCmdlet
+    public class SetChannelProperty : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">Channel to set the properties of.</para>
@@ -87,7 +87,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
-                client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value);
+            {
+                string message;
+
+                if (ParameterSetName == "Default")
+                    message = $"Setting channel {Channel.Name} (Sensor ID: {Channel.SensorId}) setting {Property} to '{Value}'";
+                else
+                    message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
+
+                ExecuteOperation(() => client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value), "Modify PRTG Channel Settings", message);
+            }
         }
     }
 }

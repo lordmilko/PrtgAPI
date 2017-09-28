@@ -3,7 +3,7 @@
 Describe "Test-Progress" {
 	
 	InitializeClient
-
+    
 	#region 1: Something -> Action
 	
 	It "1a: Table -> Action" {
@@ -22,13 +22,13 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Pausing PRTG Objects`n" +
-			"    Pausing sensor 'Volume IO _Total' forever (1/1)`n" +
+			"    Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
 
 			"Pausing PRTG Objects (Completed)`n" +
-			"    Pausing sensor 'Volume IO _Total' forever (1/1)`n" +
+			"    Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -42,19 +42,19 @@ Describe "Test-Progress" {
 
 		Validate (@(
 			"Pausing PRTG Objects`n" +
-			"    Pausing device 'Probe Device' forever (1/2)`n" +
+			"    Pausing device 'Probe Device0' forever (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
 
 			"Pausing PRTG Objects`n" +
-			"    Pausing device 'Probe Device' forever (2/2)`n" +
+			"    Pausing device 'Probe Device1' forever (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
 
 			"Pausing PRTG Objects (Completed)`n" +
-			"    Pausing device 'Probe Device' forever (2/2)`n" +
+			"    Pausing device 'Probe Device1' forever (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -154,13 +154,13 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Retrieving all sensors"
@@ -174,13 +174,13 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Retrieving all sensors"
@@ -188,7 +188,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices (Completed)`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -201,13 +201,13 @@ Describe "Test-Progress" {
 
 		Validate(@(
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Retrieving all sensors"
@@ -215,13 +215,13 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Retrieving all sensors"
@@ -229,7 +229,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices (Completed)`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Retrieving all sensors"
@@ -448,7 +448,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"        [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
@@ -458,7 +458,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"        [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"        Retrieving all sensors"
@@ -480,7 +480,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -490,7 +490,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all sensors"
@@ -502,7 +502,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Devices (Completed)`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -536,7 +536,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"        [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
@@ -546,7 +546,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"        [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"        Retrieving all sensors"
@@ -568,7 +568,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -578,7 +578,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Devices`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all sensors"
@@ -590,7 +590,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Devices (Completed)`n" +
-			"        Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -620,7 +620,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Groups`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -630,7 +630,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Groups`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all devices"
@@ -642,7 +642,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Cloning PRTG Groups (Completed)`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all devices"
@@ -662,7 +662,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Groups`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
@@ -672,7 +672,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Groups`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all devices"
@@ -684,7 +684,7 @@ Describe "Test-Progress" {
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Cloning PRTG Groups (Completed)`n" +
-			"        Cloning group 'Windows Infrastructure' (ID: 2211) (1/1)`n" +
+			"        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
 			"        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"        Retrieving all devices"
@@ -776,7 +776,7 @@ Describe "Test-Progress" {
 
 	#endregion
 	#region 7: Stream -> Something
-
+    
 	It "7a: Stream -> Object" {
 		# Good enough for a test to Stream -> Table as well
 		
@@ -801,7 +801,7 @@ Describe "Test-Progress" {
 
 			if($percent -ge 0)
 			{
-				$percentChars = $percent/100*$maxChars
+				$percentChars = [Math]::Floor($percent/100*$maxChars)
 
 				$spaceChars = $maxChars - $percentChars
 
@@ -868,7 +868,7 @@ Describe "Test-Progress" {
 
 			if($percent -ge 0)
 			{
-				$percentChars = $percent/100*$maxChars
+				$percentChars = [Math]::Floor($percent/100*$maxChars)
 
 				$spaceChars = $maxChars - $percentChars
 
@@ -894,8 +894,15 @@ Describe "Test-Progress" {
 							"    $percentBar"
 			}
 
+            $nameSuffix = $i - 2
+
+            if($i -le 2)
+            {
+                $nameSuffix = 0
+            }
+
 			$records += "Pausing PRTG Objects`n" +
-						"    Pausing sensor 'Volume IO _Total' forever ($i/$total)`n" +
+						"    Pausing sensor 'Volume IO _Total$nameSuffix' forever ($i/$total)`n" +
 						"    $percentBar"
 		}
 
@@ -912,7 +919,7 @@ Describe "Test-Progress" {
 			$records
 
 			"Pausing PRTG Objects (Completed)`n" +
-			"    Pausing sensor 'Volume IO _Total' forever (501/501)`n" +
+			"    Pausing sensor 'Volume IO _Total499' forever (501/501)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -1133,13 +1140,13 @@ Describe "Test-Progress" {
 
 		Validate(@(
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    Retrieving all sensors"
@@ -1147,7 +1154,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    PRTG Sensor Search`n" +
@@ -1157,7 +1164,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    PRTG Sensor Search`n" +
@@ -1169,7 +1176,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (1/2)`n" +
+			"    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
 			"    [oooooooooooooooooooo                    ] (50%)`n" +
 
 			"    PRTG Sensor Search (Completed)`n" +
@@ -1181,13 +1188,13 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    Retrieving all sensors"
@@ -1195,7 +1202,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    PRTG Sensor Search`n" +
@@ -1205,7 +1212,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    PRTG Sensor Search`n" +
@@ -1217,7 +1224,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
 			"    PRTG Sensor Search (Completed)`n" +
@@ -1229,7 +1236,7 @@ Describe "Test-Progress" {
 			###################################################################
 
 			"Cloning PRTG Devices (Completed)`n" +
-			"    Cloning device 'Probe Device' (ID: 40) (2/2)`n" +
+			"    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -1442,11 +1449,416 @@ Describe "Test-Progress" {
 
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
-
+    
 	#endregion
-	#region 15: Variable(1) -> Table -> Table
+    #region 15: Something -> Where -> Something
+    
+    It "15a: Table -> Where -> Table" {
 
-	It "Variable(1) -> Table -> Table" {
+        $counts = @{
+			ProbeNode = 3
+		}
+
+        RunCustomCount $counts {
+            Get-Probe | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device
+        }
+
+        Validate(@(
+            "PRTG Probe Search`n" +
+            "    Retrieving all probes"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 2/3`n" +
+            "    [oooooooooooooooooooooooooo              ] (66%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Probe Search (Completed)`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+        ))
+    }
+
+    It "15b: Variable -> Where -> Table" {
+        $counts = @{
+			ProbeNode = 3
+		}
+        
+        $probes = RunCustomCount $counts {
+            Get-Probe
+        }
+
+        $probes.Count | Should Be 3
+
+        $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Processing all probes 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+        ))
+    }
+
+    It "15c: Table -> Where -> Action" {
+        
+        $counts = @{
+			ProbeNode = 3
+		}
+
+        RunCustomCount $counts {
+            Get-Probe | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Pause-Object -Forever
+        }
+
+        Validate(@(
+            "PRTG Probe Search`n" +
+            "    Retrieving all probes"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)"
+
+            ###################################################################
+
+            "Pausing PRTG Objects`n" +
+            "    Pausing probe '127.0.0.10' forever (1/3)`n" +
+            "    [ooooooooooooo                           ] (33%)"
+
+            ###################################################################
+
+            "Pausing PRTG Objects`n" +
+            "    Processing probe 2/3`n" +
+            "    [oooooooooooooooooooooooooo              ] (66%)"
+
+            ###################################################################
+
+            "Pausing PRTG Objects`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "Pausing PRTG Objects`n" +
+            "    Pausing probe '127.0.0.12' forever (3/3)`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "Pausing PRTG Objects (Completed)`n" +
+            "    Pausing probe '127.0.0.12' forever (3/3)`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    #endregion
+    #region 16: Something -> Where -> Something -> Something
+
+    It "16a: Table -> Where -> Table -> Table" {
+        $counts = @{
+			ProbeNode = 3
+		}
+        
+        RunCustomCount $counts {
+            Get-Probe | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device | Get-Sensor
+        }
+
+        Validate(@(
+            "PRTG Probe Search`n" +
+            "    Retrieving all probes"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 2/3`n" +
+            "    [oooooooooooooooooooooooooo              ] (66%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Probe Search (Completed)`n" +
+            "    Processing probe 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "16b: Variable -> Where -> Table -> Table" {
+        $counts = @{
+			ProbeNode = 3
+		}
+        
+        $probes = RunCustomCount $counts {
+            Get-Probe
+        }
+
+        $probes.Count | Should Be 3
+
+        $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device | Get-Sensor
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Processing all probes 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing all devices 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 1/3`n" +
+            "    [ooooooooooooo                           ] (33%)`n" +
+
+            "    PRTG Sensor Search (Completed)`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing all devices 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search (Completed)`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing all probes 3/3`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+    
+    #endregion
+	#region 17: Variable(1) -> Table -> Table
+
+	It "17: Variable(1) -> Table -> Table" {
 
 		$probe = Get-Probe -Count 1
 
@@ -1542,7 +1954,7 @@ Describe "Test-Progress" {
 
 			if($percent -ge 0)
 			{
-				$percentChars = $percent/100*$maxChars
+				$percentChars = [Math]::Floor($percent/100*$maxChars)
 
 				$spaceChars = $maxChars - $percentChars
 
@@ -1596,6 +2008,6 @@ Describe "Test-Progress" {
 
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
-
+    
 	#endregion
 }

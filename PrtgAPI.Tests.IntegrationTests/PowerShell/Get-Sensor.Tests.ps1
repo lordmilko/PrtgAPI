@@ -61,6 +61,30 @@ Describe "Get-Sensor_IT" {
 		($sensors|Where Status -eq Down).Count | Should Be 1
 	}
 
+    It "can filter by multiple IDs" {
+        $upSensor = Get-Sensor -Id (Settings UpSensor)
+        $upSensor | Should Not BeNullOrEmpty
+
+        $downSensor = Get-Sensor -Id (Settings DownSensor)
+        $downSensor | Should Not BeNullOrEmpty
+
+        $sensors = Get-Sensor $upSensor.Name,$downSensor.Name
+
+        $sensors.Count | Should Be 2
+
+        ($sensors|Where Id -EQ (Settings UpSensor)).Count | Should Be 1
+        ($sensors|Where Id -EQ (Settings DownSensor)).Count | Should Be 1
+    }
+
+    It "can filter by multiple names" {
+        $sensors = Get-Sensor -Id (Settings UpSensor),(Settings DownSensor)
+
+        $sensors.Count | Should Be 2
+
+        ($sensors|Where Id -EQ (Settings UpSensor)).Count | Should Be 1
+        ($sensors|Where Id -EQ (Settings DownSensor)).Count | Should Be 1
+    }
+
 	It "can pipe from devices" {
 		$device = Get-Device -Id (Settings Device)
 

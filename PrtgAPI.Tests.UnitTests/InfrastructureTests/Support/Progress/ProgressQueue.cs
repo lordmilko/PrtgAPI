@@ -67,7 +67,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                     {
                         var maxChars = 40;
 
-                        var percentChars = ((double)snapshot[i].PercentComplete/100)*maxChars;
+                        var percentChars = (int)((double)snapshot[i].PercentComplete/100*maxChars);
 
                         var spaceChars = maxChars - percentChars;
 

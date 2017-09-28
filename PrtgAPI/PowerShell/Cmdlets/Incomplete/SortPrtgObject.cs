@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Sort all probes under the root PRTG Group</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Start, "SortPrtgObject")]
-    public class SortPrtgObject : PrtgCmdlet
+    public class SortPrtgObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The device, group or probe whose children should be sorted.</para>
@@ -25,7 +25,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            client.SortAlphabetically(Object.Id);
+            ExecuteOperation(() => client.SortAlphabetically(Object.Id), "Sorting PRTG Objects", $"Sorting children of object {Object.Name} (ID: {Object.Id})");
         }
     }
 }

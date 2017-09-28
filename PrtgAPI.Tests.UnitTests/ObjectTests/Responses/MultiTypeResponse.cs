@@ -82,10 +82,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
             switch (content)
             {
-                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(), count));
-                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(), count));
-                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(), count));
-                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(), count));
+                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}"), count));
+                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}"), count));
+                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}"), count));
+                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}"), count));
                 case Content.Channels:  return new ChannelResponse(new[] { new ChannelItem() });
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from MultiTypeResponse");

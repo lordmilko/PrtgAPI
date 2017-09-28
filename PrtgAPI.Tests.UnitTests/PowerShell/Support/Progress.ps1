@@ -86,6 +86,11 @@ function GetCustomCountDictionary($hashtable)
 	{
 		$newKey = $entry.Key -as "PrtgAPI.Content"
 
+        if($newKey -eq $null)
+        {
+            throw "$($entry.Key) is not a valid PrtgAPI.Content value"
+        }
+
 		$dictionary.Add($newKey, $entry.Value)
 	}
 

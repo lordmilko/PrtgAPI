@@ -7,7 +7,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Moves a device or group within the PRTG Object Tree.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Object")]
-    public class MoveObject : PrtgCmdlet
+    public class MoveObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The device to move to another group or probe.</para>
@@ -35,10 +35,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (ParameterSetName)
             {
                 case "Device":
-                    client.MoveObject(Device.Id, DestinationId);
+                    ExecuteOperation(() => client.MoveObject(Device.Id, DestinationId), "Moving PRTG Objects", $"Moving device {Device.Name} (ID: {Device.Id}) to object ID {DestinationId}");
                     break;
                 case "Group":
-                    client.MoveObject(Group.Id, DestinationId);
+                    ExecuteOperation(() => client.MoveObject(Group.Id, DestinationId), "Moving PRTG Objects", $"Moving group {Group.Name} (ID: {Group.Id}) to object ID {DestinationId}");
                     break;
             }
         }

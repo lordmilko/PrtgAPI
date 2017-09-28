@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using Microsoft.PowerShell.Commands;
 using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Base;
 
@@ -24,27 +25,59 @@ namespace PrtgAPI.PowerShell.Progress
         /// <summary>
         /// Indicates whether the current cmdlet is first in a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
         /// </summary>
-        public bool FirstInChain => pipeToPrtgCmdlet && progressRecords.Count == 1;
+        public bool FirstInChain => pipeToProgressCompatibleCmdlet && progressRecords.Count == 1;
 
         /// <summary>
         /// Indicates whether the current cmdlet is part of a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
         /// </summary>
-        public bool PartOfChain => pipeToPrtgCmdlet || progressRecords.Count > 1;
+        public bool PartOfChain => pipeToProgressCompatibleCmdlet || progressRecords.Count > 1;
 
-        private bool pipeToPrtgCmdlet => cmdlet.MyInvocation.MyCommand.ModuleName == cmdlet.CommandRuntime.GetDownstreamCmdlet()?.ModuleName;
+        /// <summary>
+        /// Indicates whether the next cmdlet in the pipeline is compatible with PrtgAPI Progress.
+        /// </summary>
+        private bool pipeToProgressCompatibleCmdlet
+        {
+            get
+            {
+                var downstreamCmdlet = cmdlet.CommandRuntime.GetDownstreamCmdlet();
 
-        public bool LastInChain => !pipeToPrtgCmdlet;
+                if (cmdlet.MyInvocation.MyCommand.ModuleName == downstreamCmdlet?.ModuleName)
+                    return true;
+
+                var downstreamCmdletType = downstreamCmdlet?.GetType().GetProperty("ImplementingType")?.GetValue(downstreamCmdlet) as Type;
+
+                if (downstreamCmdletType == typeof(WhereObjectCommand))
+                    return true;
+
+                return false;
+            }
+        }
+
+        public bool LastInChain => !pipeToProgressCompatibleCmdlet;
 
         public string InitialDescription { get; set; }
 
         public int? TotalRecords { get; set; }
 
-        public Pipeline Pipeline { get; set; }
+        /// <summary>
+        /// The object collection that was piped into all subsequent statements at the start of the entire pipeline.
+        /// </summary>
+        public Pipeline EntirePipeline { get; set; }
 
+        /// <summary>
+        /// The object collection being piped into this cmdlet.<para/>
+        /// If Variable -> Where -> PrtgCmdlet, the EntirePipeline will be used (allowing us to bypass the where-object and retrieve the original array)<para/>
+        /// If PrtgCmdlet -> Where -> PrtgCmdlet, for the first PrtgCmdlet the CmdletPipeline and EntirePipeline will be the same. For the second PrtgCmdlet, the CmdletPipeline will be used
+        /// </summary>
+        public Pipeline Pipeline => progressRecords.Count == 1 ? EntirePipeline : CmdletPipeline;
+
+        /// <summary>
+        /// The object collection that was piped into this cmdlet from the previous statement.
+        /// </summary>
         public Pipeline CmdletPipeline { get; set; }
 
         //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
-        public bool PipeFromVariableWithProgress => Pipeline?.List.Count > 1 || (Pipeline?.List.Count == 1 && PartOfChain);
+        public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain);
 
         public Cmdlet PreviousCmdlet { get; set; }
 
@@ -79,14 +112,14 @@ namespace PrtgAPI.PowerShell.Progress
         private bool? pipelineIsPure;
 
         /// <summary>
-        /// Indicates whether the pipeline has been contamined by non-PrtgAPI cmdlets.
+        /// Indicates whether the pipeline has been contamined by non-PrtgAPI cmdlets or cmdlets that don't support PrtgAPI progress.
         /// </summary>
-        public bool PipelineIsPure
+        public bool PipelineIsProgressPure
         {
             get
             {
                 if (pipelineIsPure == null)
-                    pipelineIsPure = cmdlet.PipelineIsPure();
+                    pipelineIsPure = cmdlet.PipelineIsProgressPure();
 
                 return pipelineIsPure.Value;
             }
@@ -100,7 +133,7 @@ namespace PrtgAPI.PowerShell.Progress
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
 
             this.cmdlet = cmdlet;
-            Pipeline = cmdlet.CommandRuntime.GetPipelineInput();
+            EntirePipeline = cmdlet.CommandRuntime.GetPipelineInput();
             CmdletPipeline = cmdlet.CommandRuntime.GetCmdletPipelineInput(cmdlet);
 
             progressWriter = GetWriter();
@@ -213,7 +246,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 if (!PartOfChain || FirstInChain || PipelineContainsOperation)
                 {
-                    if (CmdletPipeline.CurrentIndex < CmdletPipeline.List.Count - 1)
+                    if (Pipeline.CurrentIndex < Pipeline.List.Count - 1)
                         return;
                 }
                 else
@@ -250,20 +283,20 @@ namespace PrtgAPI.PowerShell.Progress
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 if (!PartOfChain || FirstInChain || PipelineContainsOperation) //todo: will pipelinecontainsoperation break the other tests?
                 {
-                    var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
+                    var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 
                     var originalIndex = index;
 
-                    if (index > CmdletPipeline.List.Count)
-                        index = CmdletPipeline.List.Count;
+                    if (index > Pipeline.List.Count)
+                        index = Pipeline.List.Count;
+                    
+                    record.StatusDescription = $"{InitialDescription} {index}/{Pipeline.List.Count}";
 
-                    record.StatusDescription = $"{InitialDescription} {index}/{CmdletPipeline.List.Count}";
-
-                    record.PercentComplete = (int) ((index)/Convert.ToDouble(CmdletPipeline.List.Count)*100);
+                    record.PercentComplete = (int) ((index)/Convert.ToDouble(Pipeline.List.Count)*100);
 
                     variableProgressDisplayed = true;
 
-                    if (originalIndex <= CmdletPipeline.List.Count)
+                    if (originalIndex <= Pipeline.List.Count)
                         WriteProgress(record);
                 }
                 else
@@ -319,7 +352,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void DisplayInitialProgress()
         {
-            if (PipeFromVariableWithProgress && CmdletPipeline.CurrentIndex > 0)
+            if (PipeFromVariableWithProgress && Pipeline.CurrentIndex > 0)
                 return;
 
             CurrentRecord.StatusDescription = InitialDescription;
@@ -340,20 +373,20 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (PipeFromVariableWithProgress)
             {
-                if (!PipelineIsPure)
+                if (!PipelineIsProgressPure)
                     return;
 
                 RemovePreviousOperation();
 
-                var index = variableProgressDisplayed ? CmdletPipeline.CurrentIndex + 2 : CmdletPipeline.CurrentIndex + 1;
+                var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 
-                if (index > CmdletPipeline.List.Count)
-                    index = CmdletPipeline.List.Count;
+                if (index > Pipeline.List.Count)
+                    index = Pipeline.List.Count;
 
                 CurrentRecord.Activity = activity;
 
                 if (PreviousRecord == null)
-                    TotalRecords = CmdletPipeline.List.Count;
+                    TotalRecords = Pipeline.List.Count;
                 else
                 {
                     var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();

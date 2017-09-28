@@ -60,7 +60,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// Shared functionality for use in <see cref="AddNotificationTrigger"/> and <see cref="SetNotificationTrigger"/>.
     /// </summary>
-    public abstract class BaseSetNotificationTrigger : PrtgCmdlet
+    public abstract class BaseSetNotificationTrigger : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The parameters to use to add/modify a <see cref="NotificationTrigger"/>.</para>
@@ -75,7 +75,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ShouldProcess($"Object ID: {Parameters.ObjectId} (Type: {Parameters.Type}, Action: {Parameters.OnNotificationAction})"))
             {
-                client.AddNotificationTrigger(Parameters);
+                if (this is AddNotificationTrigger)
+                    ExecuteOperation(() => client.SetNotificationTrigger(Parameters), "Updating Notification Triggers", $"Updating notification trigger with ID {Parameters.ObjectId} (Sub ID: {Parameters.SubId})");
+                else
+                    ExecuteOperation(() => client.AddNotificationTrigger(Parameters), "Adding Notification Triggers", $"Adding notification trigger '{Parameters.OnNotificationAction}' to object ID {Parameters.ObjectId}");
             }
         }
     }

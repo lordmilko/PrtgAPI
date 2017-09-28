@@ -8,7 +8,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Adjusts the position of an object within its parent.</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectPosition")]
-    public class SetObjectPosition : PrtgCmdlet
+    public class SetObjectPosition : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to move.</para>
@@ -28,7 +28,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            client.SetPosition(Object, Position);
+            ExecuteOperation(() => client.SetPosition(Object, Position), "Modify PRTG Object Positions", $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
         }
     }
 }
