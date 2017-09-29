@@ -129,6 +129,8 @@ namespace PrtgAPI
             return response;
         }
 
+        #region Get Objects
+
         internal List<T> GetObjects<T>(Parameters.Parameters parameters) => GetObjectsRaw<T>(parameters).Items;
 
         private Data<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
@@ -146,6 +148,40 @@ namespace PrtgAPI
 
             return Data<T>.DeserializeList(response);
         }
+
+        private T GetObject<T>(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
+        {
+            var response = requestEngine.ExecuteRequest(function, new Parameters.Parameters(), responseValidator);
+
+            return Data<T>.DeserializeType(response);
+        }
+
+        private async Task<T> GetObjectAsync<T>(XmlFunction function, Parameters.Parameters parameters)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(function, new Parameters.Parameters()).ConfigureAwait(false);
+
+            return Data<T>.DeserializeType(response);
+        }
+
+        private T GetObject<T>(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        {
+            var response = requestEngine.ExecuteRequest(function, parameters, responseParser);
+
+            var data = JsonDeserializer<T>.DeserializeType(response);
+
+            return data;
+        }
+
+        private async Task<T> GetObjectAsync<T>(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(function, parameters, responseParser).ConfigureAwait(false);
+
+            var data = JsonDeserializer<T>.DeserializeType(response);
+
+            return data;
+        }
+
+        #endregion
 
         internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
         {
@@ -176,6 +212,13 @@ namespace PrtgAPI
             return result;
         }
 
+        /// <summary>
+        /// Apply a modification function to each element of a response.
+        /// </summary>
+        /// <typeparam name="T">The type of objects returned by the response.</typeparam>
+        /// <param name="objects">The collection of objects to amend.</param>
+        /// <param name="action">A modification function to apply to each element of the collection.</param>
+        /// <returns>A collection of modified objects.</returns>
         internal List<T> Amend<T>(List<T> objects, Action<T> action)
         {
             foreach (var obj in objects)
@@ -186,6 +229,13 @@ namespace PrtgAPI
             return objects;
         }
 
+        /// <summary>
+        /// Apply a modification function to the properties of a nobject.
+        /// </summary>
+        /// <typeparam name="T">The type of object returned by the response.</typeparam>
+        /// <param name="obj">The object to amend.</param>
+        /// <param name="action">A modification function to apply to the object.</param>
+        /// <returns></returns>
         internal T Amend<T>(T obj, Action<T> action)
         {
             action(obj);
@@ -193,6 +243,14 @@ namespace PrtgAPI
             return obj;
         }
 
+        /// <summary>
+        /// Apply a modification action to a response, transforming the response to another type.
+        /// </summary>
+        /// <typeparam name="TSource">The type of object to transform.</typeparam>
+        /// <typeparam name="TRet">The type of object to return.</typeparam>
+        /// <param name="obj">The object to transform.</param>
+        /// <param name="action">A modification function that transforms the response from one type to another.</param>
+        /// <returns></returns>
         internal TRet Amend<TSource, TRet>(TSource obj, Func<TSource, TRet> action)
         {
             var val = action(obj);
@@ -356,12 +414,11 @@ namespace PrtgAPI
         /// Retrieve the number of sensors of each sensor type in the system.
         /// </summary>
         /// <returns></returns>
-        public SensorTotals GetSensorTotals()
-        {
-            var response = requestEngine.ExecuteRequest(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
+        public SensorTotals GetSensorTotals() =>
+            GetObject<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
 
-            return Data<SensorTotals>.DeserializeType(response);
-        }
+        public async Task<SensorTotals> GetSensorTotalsAsync() =>
+            await GetObjectAsync<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
 
         #endregion
         #region Devices
@@ -757,37 +814,6 @@ namespace PrtgAPI
         /// <returns></returns>
         public List<Channel> GetChannels(int sensorId, string channelName) => GetChannelsInternal(sensorId, name => name == channelName);
 
-        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null)
-        {
-            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
-
-            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
-
-            var items = response.Descendants("item").ToList();
-
-            if (nameFilter != null)
-                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
-
-            items = response.Descendants("item").ToList();
-
-            foreach (var item in items)
-            {
-                var id = Convert.ToInt32(item.Element("objid").Value);
-
-                var properties = GetChannelProperties(sensorId, id);
-
-                item.Add(properties.Nodes());
-                item.Add(new XElement("injected_sensorId", sensorId));
-            }
-
-            if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
-
-            return new List<Channel>();
-        }
-
-        //TODO: how do we abstract this stuff into a single function for sync and async versions
-
         /// <summary>
         /// Asynchronously retrieve all channels of a sensor.
         /// </summary>
@@ -802,33 +828,6 @@ namespace PrtgAPI
         /// <param name="channelName">The name of the channel to retrieve.</param>
         /// <returns></returns>
         public async Task<List<Channel>> GetChannelsAsync(int sensorId, string channelName) => await GetChannelsInternalAsync(sensorId, name => name == channelName).ConfigureAwait(false);
-
-        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null)
-        {
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
-
-            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
-
-            var items = response.Descendants("item").ToList();
-
-            if (nameFilter != null)
-                items = items.Where(e => nameFilter(e.Element("name").Value?.ToString())).ToList();
-
-            foreach (var item in items)
-            {
-                var id = Convert.ToInt32(item.Element("objid").Value);
-
-                var properties = await GetChannelPropertiesAsync(sensorId, id).ConfigureAwait(false);
-
-                item.Add(properties.Nodes());
-                item.Add(new XElement("injected_sensorId", sensorId));
-            }
-
-            if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
-
-            return new List<Channel>();
-        }
 
         internal XElement GetChannelProperties(int sensorId, int channelId)
         {
@@ -913,78 +912,41 @@ namespace PrtgAPI
 
             return triggers;
         }
-
-        private void UpdateTriggerChannels(List<NotificationTrigger> triggers)
-        {
-            foreach (var trigger in triggers)
-            {
-                if (trigger.SetEnumChannel())
-                {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
-                    try
-                    {
-                        trigger.channelObj = GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName).First();
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
-                    }
-                }
-            }
-        }
-
-        private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers)
-        {
-            foreach (var trigger in triggers)
-            {
-                if (trigger.SetEnumChannel())
-                {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
-                    try
-                    {
-                        trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
-                    }
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Retrieve all notification trigger types supported by a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve supported trigger types for.</param>
-        /// <returns></returns>
-        public List<TriggerType> GetNotificationTriggerTypes(int objectId)
-        {
-            var response = GetNotificationTriggerData(objectId);
+        /// <returns>The trigger types supported by the object.</returns>
+        public List<TriggerType> GetNotificationTriggerTypes(int objectId) =>
+            GetNotificationTriggerData(objectId).SupportedTypes.ToList();
 
-            var data = JsonDeserializer<NotificationTriggerData>.DeserializeType(response);
+        /// <summary>
+        /// Asynchronously retrieve all notification trigger types supported by a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The object to retrieve supported trigger types for.</param>
+        /// <returns>The trigger types supported by the object.</returns>
+        public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(int objectId) =>
+            (await GetNotificationTriggerDataAsync(objectId)).SupportedTypes.ToList();
 
-            return data.SupportedTypes.ToList();
-        }
+        private NotificationTriggerData GetNotificationTriggerData(int objectId) =>
+            GetObject<NotificationTriggerData>(
+                JsonFunction.Triggers,
+                new BaseActionParameters(objectId),
+                ParseNotificationTriggerTypes
+            );
 
-        private string GetNotificationTriggerData(int objectId)
-        {
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Id] = objectId
-            };
-
-            var response = requestEngine.ExecuteRequest(JsonFunction.Triggers, parameters);
-            response = response.Replace("\"data\": \"(no triggers defined)\",", "");
-
-            return response;
-        }
+        private async Task<NotificationTriggerData> GetNotificationTriggerDataAsync(int objectId) =>
+            await GetObjectAsync<NotificationTriggerData>(
+                JsonFunction.Triggers,
+                new BaseActionParameters(objectId),
+                ParseNotificationTriggerTypesAsync
+            ).ConfigureAwait(false);
 
         #endregion
 
-    #endregion
-    #region Object Manipulation
+        #endregion
+        #region Object Manipulation
         #region Sensor State
 
         /// <summary>
@@ -993,7 +955,8 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) => requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message));
+        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) =>
+            requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message));
 
         /// <summary>
         /// Asynchronously mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
@@ -1001,7 +964,8 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) => await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
 
         /// <summary>
         /// Pause a PRTG Object.
@@ -1063,36 +1027,34 @@ namespace PrtgAPI
         public void AddNotificationTrigger(TriggerParameters parameters) => SetNotificationTrigger(parameters);
 
         /// <summary>
+        /// Asynchronously add a notification trigger to a PRTG Server.
+        /// </summary>
+        /// <param name="parameters"></param>
+        public async Task AddNotificationTriggerAsync(TriggerParameters parameters) => await SetNotificationTriggerAsync(parameters).ConfigureAwait(false);
+
+        /// <summary>
         /// Add or edit a notification trigger on a PRTG Server.
         /// </summary>
         /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
         public void SetNotificationTrigger(TriggerParameters parameters)
         {
-            if (parameters.Action == ModifyAction.Add)
-            {
-                var response = GetNotificationTriggerData(parameters.ObjectId);
-
-                var data = JsonDeserializer<NotificationTriggerData>.DeserializeType(response);
-
-                if (!data.SupportedTypes.Contains(parameters.Type))
-                    throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
-            }
-            else if (parameters.Action == ModifyAction.Edit)
-            {
-                var properties = parameters.GetType().GetProperties().Where(p => p.GetCustomAttribute<RequireValueAttribute>()?.ValueRequired == true).Where(p => p.GetValue(parameters) == null).ToList();
-
-                //if(properties.Count > 0)
-                //    throw new Exception
-            }
-            else
-                throw new NotImplementedException($"Handler missing for modify action '{parameters.Action}'");
-
             ValidateTriggerParameters(parameters);
 
             requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
         }
 
-        private void ValidateTriggerParameters(TriggerParameters parameters)
+        /// <summary>
+        /// Asynchronously add or edit a notification trigger on a PRTG Server.
+        /// </summary>
+        /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
+        public async Task SetNotificationTriggerAsync(TriggerParameters parameters)
+        {
+            ValidateTriggerParameters(parameters);
+
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+        }
+
+        private TriggerChannel GetTriggerChannel(TriggerParameters parameters)
         {
             TriggerChannel channel = null;
 
@@ -1109,38 +1071,22 @@ namespace PrtgAPI
                     break;
             }
 
-            if (channel == null)
-                return;
-
-            var sensor = GetSensors(Property.Id, parameters.ObjectId);
-
-            if (sensor.Count > 0) //Validate this sensor has this channel
-            {
-                if(channel.channel is StandardTriggerChannel)
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
-
-                bool anyResponse = false;
-
-                if (channel.channel is Channel)
-                    anyResponse = GetChannels(parameters.ObjectId, ((Channel)channel.channel).Name).Any();
-                else
-                    anyResponse = GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())).Descendants().Any();
-
-                if (!anyResponse)
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor ID {parameters.ObjectId}. Channel could not be found.");
-            }
-            else //It's a container. Only enum values are permitted.
-            {
-                if (!(channel.channel is StandardTriggerChannel))
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
-            }
+            return channel;
         }
 
         /// <summary>
         /// Remove a notification trigger from an object.
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
-        public void RemoveNotificationTrigger(NotificationTrigger trigger) => requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger));
+        public void RemoveNotificationTrigger(NotificationTrigger trigger) =>
+            requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger));
+
+        /// <summary>
+        /// Asynchronously remove a notification trigger from an object.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to remove.</param>
+        public async Task RemoveNotificationTriggerAsync(NotificationTrigger trigger) =>
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger)).ConfigureAwait(false);
 
         #endregion
         #region Clone Object
@@ -1189,7 +1135,13 @@ namespace PrtgAPI
             await CloneObjectAsync(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host)).ConfigureAwait(false);
 
         private async Task<int> CloneObjectAsync(CloneSensorOrGroupParameters parameters) =>
-            Amend(await requestEngine.ExecuteRequestAsync(CommandFunction.DuplicateObject, parameters, CloneRequestParser).ConfigureAwait(false), CloneResponseParser);
+            Amend(
+                await requestEngine.ExecuteRequestAsync(
+                    CommandFunction.DuplicateObject,
+                    parameters,
+                    async r => await Task.FromResult(CloneRequestParser(r))
+                ).ConfigureAwait(false), CloneResponseParser
+            );
 
         private string CloneRequestParser(HttpResponseMessage response)
         {
@@ -1236,7 +1188,16 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <returns>All settings of the specified sensor.</returns>
-        public SensorSettings GetSensorProperties(int sensorId) => GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor.ToString());
+        public SensorSettings GetSensorProperties(int sensorId) =>
+            GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor.ToString());
+
+        /// <summary>
+        /// Asynchronously retrieve properties and settings of a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
+        /// <returns>All settings of the specified sensor.</returns>
+        public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId) =>
+            await GetObjectPropertiesAsync<SensorSettings>(sensorId, BaseType.Sensor.ToString()).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Device.
@@ -1716,9 +1677,8 @@ namespace PrtgAPI
 
         internal ServerStatus GetStatus()
         {
-            var response = requestEngine.ExecuteRequest(XmlFunction.GetStatus, new BaseActionParameters(0));
-
-            return Data<ServerStatus>.DeserializeType(response);
+            //todo: complete, and then make =>, and also implement an async version
+            return GetObject<ServerStatus>(XmlFunction.GetStatus, new BaseActionParameters(0));
         }
 
         /// <summary>
@@ -1726,29 +1686,17 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
-        internal List<Location> ResolveAddress(string address)
-        {
-            var response = requestEngine.ExecuteRequest(JsonFunction.GeoLocator, new ResolveAddressParameters(address));
-
-            var result = JsonDeserializer<GeoResult>.DeserializeType(response);
-
-            return result.Results.ToList();
-        }
+        internal List<Location> ResolveAddress(string address) =>
+            GetObject<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).Results.ToList();
 
         /// <summary>
         /// Asynchronously resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
-        internal async Task<List<Location>> ResolveAddressAsync(string address)
-        {
-            var response = await requestEngine.ExecuteRequestAsync(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).ConfigureAwait(false);
+        internal async Task<List<Location>> ResolveAddressAsync(string address) =>
+            (await GetObjectAsync<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).ConfigureAwait(false)).Results.ToList();
 
-            var result = JsonDeserializer<GeoResult>.DeserializeType(response);
-
-            return result.Results.ToList();
-        }
-        
         #endregion
     }
 }

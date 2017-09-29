@@ -22,27 +22,32 @@ namespace PrtgAPI.Request
             this.webClient = webClient;
         }
 
-        internal string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters)
-        {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+        #region JSON + Response Parser
 
-            var response = ExecuteRequest(url);
+        internal string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        {
+            var url = GetPrtgUrl(function, parameters);
+
+            var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(JsonFunction function, Parameters.Parameters parameters)
+        internal async Task<string> ExecuteRequestAsync(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
-            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
             return response;
         }
+
+        #endregion
+        #region XML + Response Validator
 
         internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -53,7 +58,7 @@ namespace PrtgAPI.Request
 
         internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
 
@@ -62,27 +67,33 @@ namespace PrtgAPI.Request
             return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
         }
 
+        #endregion
+        #region Command + Response Parser
+
         internal string ExecuteRequest(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
             return response;
         }
 
+        #endregion
+        #region HTML
+
         internal string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = ExecuteRequest(url);
 
@@ -91,12 +102,14 @@ namespace PrtgAPI.Request
 
         internal async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            var url = GetPrtgUrl(function, parameters);
 
             var response = await ExecuteRequestAsync(url);
 
             return response;
         }
+
+        #endregion
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
@@ -141,7 +154,7 @@ namespace PrtgAPI.Request
             } while (true);
         }
 
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
+        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             prtgClient.Log($"Asynchronously executing request {url.Url}");
 
@@ -156,7 +169,7 @@ namespace PrtgAPI.Request
                     string responseText = null;
 
                     if (responseParser != null)
-                        responseText = responseParser(response);
+                        responseText = await responseParser(response).ConfigureAwait(false);
 
                     if (responseText == null)
                         responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -282,5 +295,17 @@ namespace PrtgAPI.Request
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {newStr}");
             }
         }
+
+        private PrtgUrl GetPrtgUrl(CommandFunction function, Parameters.Parameters parameters) =>
+            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+
+        private PrtgUrl GetPrtgUrl(HtmlFunction function, Parameters.Parameters parameters) =>
+            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+
+        private PrtgUrl GetPrtgUrl(JsonFunction function, Parameters.Parameters parameters) =>
+            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+
+        private PrtgUrl GetPrtgUrl(XmlFunction function, Parameters.Parameters parameters) =>
+            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
     }
 }

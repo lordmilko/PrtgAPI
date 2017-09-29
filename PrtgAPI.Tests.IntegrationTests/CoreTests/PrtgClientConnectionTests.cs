@@ -142,7 +142,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             try
             {
-                await (Task<string>)method.Invoke(engine, new[] {getPassHash, parameters});
+                await (Task<string>)method.Invoke(engine, new[] {getPassHash, parameters, null});
             }
             catch (WebException ex)
             {

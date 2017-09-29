@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
@@ -50,23 +54,42 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgClient_SyncAsync_Counterparts()
         {
-            //get all public method names that dont have async in them then make sure each one has one that does
-            //need to handle overloads as well
+            var methods = typeof (PrtgClient).GetMethods().ToList();
 
-        }
-
-        /*private T[] CreateNullResponseItem<T>(T obj)
-        {
-            //var obj = Activator.CreateInstance(typeof (T));
-
-            var properties = obj.GetType().GetProperties();
-
-            foreach (var prop in properties)
+            var skipStartsWith = new List<string>
             {
-                prop.SetValue(obj, GetDefault(prop.PropertyType));
+                "Stream",
+                "get_",
+                "set_",
+                "add_",
+                "remove_"
+            };
+
+            var skipFull = new List<string>
+            {
+                "ToString",
+                "Equals",
+                "GetHashCode",
+                "GetType"
+            };
+
+            var syncMethods = methods.Where(m => !m.Name.EndsWith("Async") && !skipStartsWith.Any(m.Name.StartsWith) && !skipFull.Any(m.Name.StartsWith)).ToList();
+
+            var methodFullNames = methods.Select(m => m.GetInternalProperty("FullName")).ToList();
+
+            var missingAsync = new List<MethodInfo>();
+
+            foreach (var s in syncMethods)
+            {
+                var fullName = (string)s.GetInternalProperty("FullName");
+
+                var asyncName = fullName.Replace(s.Name, $"{s.Name}Async");
+
+                if (!methodFullNames.Contains(asyncName))
+                    missingAsync.Add(s);
             }
 
-            return new[] {obj};
-        }*/
+            Assert.AreEqual(0, missingAsync.Count, $"Async counterparts of the following methods are missing: {string.Join(", ", missingAsync.Select(m => m.GetInternalProperty("FullName").ToString().Substring("PrtgAPI.PrtgClient.".Length)))}");
+        }
     }
 }
