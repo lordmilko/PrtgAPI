@@ -254,7 +254,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
@@ -326,7 +325,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-        
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
@@ -402,6 +400,49 @@
                 </TableRowEntries>
             </TableControl>
         </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.TriggerTypePSObject</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- ObjectId -->
+                    <TableColumnHeader/> <!-- State -->
+                    <TableColumnHeader/> <!-- Speed -->
+                    <TableColumnHeader/> <!-- Volume -->
+                    <TableColumnHeader/> <!-- Threshold -->
+                    <TableColumnHeader/> <!-- Change -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                            <TableColumnItems><TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ObjectId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>State</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Speed</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Volume</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Threshold</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Change</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
         
         <View>
             <Name>Default</Name>
@@ -432,7 +473,6 @@
                 </ListEntries>
             </ListControl>
         </View>
-
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
@@ -474,6 +514,5 @@
                 </ListEntries>
             </ListControl>
         </View>
-      
     </ViewDefinitions>
 </Configuration>

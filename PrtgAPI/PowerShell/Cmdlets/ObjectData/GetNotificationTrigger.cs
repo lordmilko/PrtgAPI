@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
@@ -45,32 +46,60 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// </summary>
     [OutputType(typeof(NotificationTrigger))]
-    [Cmdlet(VerbsCommon.Get, "NotificationTrigger")]
+    [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = "Default")]
     public class GetNotificationTrigger : PrtgObjectCmdlet<NotificationTrigger>
     {
         /// <summary>
         /// <para type="description">The object to retrieve notification triggers for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to retrieve notification triggers for.")]
-        public PrtgObject Object { get; set; }
+        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain OnNotificationAction. Can include wildcards.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 0)]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Default")]
         public string OnNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects of a certain type.</para>
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, ParameterSetName = "Default")]
         public TriggerType? Type { get; set; }
+
+        [Parameter(Mandatory = true, ParameterSetName = "Types")]
+        public SwitchParameter Types { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates whether to include inherited triggers in the response.</para>
         /// </summary>
-        [Parameter(Mandatory = false, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
+        [Parameter(Mandatory = false, ParameterSetName = "Default", HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
         public bool? Inherited { get; set; }
+
+        protected override void ProcessRecordEx()
+        {
+            if (ParameterSetName == "Default")
+                base.ProcessRecordEx();
+            else
+            {
+                var types = client.GetNotificationTriggerTypes(Object.Id);
+
+                var names = Enum.GetValues(typeof (TriggerType)).Cast<TriggerType>().ToList();
+
+                var obj = new PSObject();
+                obj.TypeNames.Insert(0, "PrtgAPI.TriggerTypePSObject");
+
+                obj.Properties.Add(new PSNoteProperty("Name", Object.Name));
+                obj.Properties.Add(new PSNoteProperty("ObjectId", Object.Id));
+
+                foreach (var name in names)
+                {
+                    obj.Properties.Add(new PSNoteProperty(name.ToString(), types.Contains(name)));
+                }
+                
+                WritePSObjectWithProgress(obj, "Notification Trigger Type");
+            }
+        }
 
         /// <summary>
         /// Retrieves all notification triggers from a PRTG Server.

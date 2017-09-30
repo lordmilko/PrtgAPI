@@ -1923,6 +1923,316 @@ Describe "Test-Progress" {
     }
 
 	#endregion
+    #region 18: Something -> PSObject
+    
+    It "18a: Table -> PSObject" {
+        Get-Device | Get-Trigger -Types
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all notification trigger types"
+        ))
+    }
+
+    It "18b: Variable -> PSObject" {
+        $devices = Get-Device
+
+        $devices | Get-Trigger -Types
+
+        Validate(@(
+            "PRTG Notification Trigger Type Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Notification Trigger Type Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Notification Trigger Type Search (Completed)`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all notification trigger types"
+        ))
+    }
+
+    #endregion
+    #endregion 19: Something -> Table -> PSObject
+
+    It "19a: Table -> Table -> PSObject" {
+        Get-Group | Get-Device | Get-Trigger -Types
+
+        Validate(@(
+            "PRTG Group Search`n" +
+            "    Retrieving all groups"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Group Search (Completed)`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "19b: Variable -> Table -> PSObject" {
+        $groups = Get-Group
+
+        $groups | Get-Device | Get-Trigger -Types
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Notification Trigger Type Search`n" +
+            "        Processing all devices 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Notification Trigger Type Search`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Notification Trigger Type Search (Completed)`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Notification Trigger Type Search`n" +
+            "        Processing all devices 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Notification Trigger Type Search`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Notification Trigger Type Search (Completed)`n" +
+            "        Processing all devices 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all notification trigger types"
+
+            ###################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+    
+    #endregion
 	#region Sanity Checks	
 
 	It "Streams when the number of returned objects is above the threshold" {
@@ -2010,4 +2320,5 @@ Describe "Test-Progress" {
 	}
     
 	#endregion
+    
 }

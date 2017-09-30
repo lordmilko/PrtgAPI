@@ -50,6 +50,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditSettings):
                     return new BasicResponse(string.Empty);
+                case nameof(JsonFunction.Triggers):
+                    return new TriggerOverviewResponse();
                 default:
                     throw new NotImplementedException($"Unknown function '{function}' passed to MultiTypeResponse");
             }

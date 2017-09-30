@@ -39,23 +39,7 @@ namespace PrtgAPI.PowerShell.Base
 
         protected IEnumerable<T> GetResultsWithVariableProgress(Func<IEnumerable<T>> getResults)
         {
-            //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
-            //(causing them to SetPreviousOperation, which would fail)
-            if (!ProgressManager.PipelineContainsOperation)
-            {
-                if(ProgressManager.PipelineIsProgressPure)
-                {
-                    ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search"; //moving this into the if statement caused the exception
-
-                    ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
-                    ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
-
-                    ProgressManager.RemovePreviousOperation();
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
-                }
-            }
-            else
-                ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s");
+            UpdatePreviousAndCurrentVariableProgressOperations();
 
             var records = getResults().ToList();
 
@@ -72,6 +56,47 @@ namespace PrtgAPI.PowerShell.Base
             var records = getResults();
 
             return UpdatePreviousProgressCount(records, count);
+        }
+
+        protected void WritePSObjectWithProgress(PSObject obj, string typeDescription)
+        {
+            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
+                UpdatePreviousAndCurrentVariableProgressOperations(typeDescription);
+            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+            {
+                if (ProgressManager.PreviousContainsProgress)
+                {
+                    ProgressManager.SetPreviousOperation($"Retrieving all {typeDescription.ToLower()}s");
+                }
+            }
+
+            WriteObject(obj);
+
+            PostUpdateProgress();
+        }
+
+        private void UpdatePreviousAndCurrentVariableProgressOperations(string retrievingType = null)
+        {
+            if (retrievingType == null)
+                retrievingType = GetTypeDescription(typeof(T));
+
+            //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
+            //(causing them to SetPreviousOperation, which would fail)
+            if (!ProgressManager.PipelineContainsOperation)
+            {
+                if (ProgressManager.PipelineIsProgressPure)
+                {
+                    ProgressManager.CurrentRecord.Activity = $"PRTG {retrievingType} Search";
+
+                    ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
+                    ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {retrievingType.ToLower()}s";
+
+                    ProgressManager.RemovePreviousOperation();
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                }
+            }
+            else
+                ProgressManager.SetPreviousOperation($"Retrieving all {retrievingType.ToLower()}s");
         }
 
         private int DisplayInitialProgress()
@@ -110,7 +135,7 @@ namespace PrtgAPI.PowerShell.Base
             return type.Name;
         }
 
-        private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count) //todo: should we rename this method to make it more clear what it does?
+        private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count)
         {
             records = GetCount(records, ref count);
 

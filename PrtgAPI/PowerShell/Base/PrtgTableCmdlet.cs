@@ -253,12 +253,13 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (Tags != null)
             {
-                foreach (var tag in Tags)
-                {
-                    //if any of our tags are ismatch, include that record
-                    var filter = new WildcardPattern(tag, WildcardOptions.IgnoreCase);
-                    records = records.Where(r => r.Tags.Any(r1 => filter.IsMatch(r1)));
-                }
+                //Select all records where at least one of the filter tags is present
+                records = from record in records
+                          from tag in Tags
+                          let filter = new WildcardPattern(tag, WildcardOptions.IgnoreCase)
+                          from t in record.Tags
+                          where filter.IsMatch(t)
+                          select record;
             }
 
             return records;
