@@ -212,6 +212,27 @@ namespace PrtgAPI
             return result;
         }
 
+        internal IEnumerable<T> SerialStreamObjects<T>(ContentParameters<T> parameters)
+        {
+            var totalObjects = GetTotalObjects(parameters.Content);
+
+            parameters.Count = 500;
+
+            for (int i = 0; i < totalObjects;)
+            {
+                var response = GetObjects<T>(parameters);
+
+                foreach (var obj in response)
+                    yield return obj;
+
+                i = i + parameters.Count;
+                parameters.Page++;
+
+                if (totalObjects - i < parameters.Count)
+                    parameters.Count = totalObjects - i;
+            }
+        }
+
         /// <summary>
         /// Apply a modification function to each element of a response.
         /// </summary>

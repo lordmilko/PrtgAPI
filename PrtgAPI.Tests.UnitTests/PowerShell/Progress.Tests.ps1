@@ -842,7 +842,7 @@ Describe "Test-Progress" {
 			"    Retrieving all channels"
 		))
 	}
-
+    
 	It "7b: Stream -> Action" {
 
 		# Besides the initial "Detecting total number of items", there is nothing special about a streamed, non-streamed and streaming-unsupported (e.g. devices) run
@@ -894,11 +894,11 @@ Describe "Test-Progress" {
 							"    $percentBar"
 			}
 
-            $nameSuffix = $i - 2
+            $nameSuffix = $i - 1
 
-            if($i -le 2)
+            if($i -ge 501)
             {
-                $nameSuffix = 0
+                $nameSuffix -= 500
             }
 
 			$records += "Pausing PRTG Objects`n" +
@@ -919,7 +919,7 @@ Describe "Test-Progress" {
 			$records
 
 			"Pausing PRTG Objects (Completed)`n" +
-			"    Pausing sensor 'Volume IO _Total499' forever (501/501)`n" +
+			"    Pausing sensor 'Volume IO _Total0' forever (501/501)`n" +
 			"    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 		))
 	}
@@ -2318,6 +2318,18 @@ Describe "Test-Progress" {
 
 		{ Get-Progress } | Should Throw "Queue empty"
 	}
+
+    It "Doesn't show progress when using Table -> Where" {
+        Get-Device | where name -EQ "Probe Device0"
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+    It "Doesn't show progress when using Table -> Where -> Other" {
+        Get-Device | where name -EQ "Probe Device0" | fl
+        
+        { Get-Progress } | Should Throw "Queue empty"
+    }
     
 	#endregion
     

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Progress;
@@ -318,7 +319,17 @@ namespace PrtgAPI.PowerShell.Base
         private IEnumerable<TObject> GetObjects(TParam parameters)
         {
             if (streamResults)
-                return client.StreamObjects(parameters);
+            {
+                //Depending on the number of items we're streaming, we may have made so many requests to PRTG that it can't possibly
+                //respond to any cmdlets further downstream until all of the streaming requests have been completed
+
+                //As such, if there are no other PRTG cmdlets after us, stream as normal. Otherwise, only request a couple at a time
+                //so the PRTG will be able to handle the next cmdlet's request
+                if (ProgressManager.Scenario == ProgressScenario.StreamProgress && !this.PipelineRemainingHasCmdlet<PrtgCmdlet>()) //There are no other cmdlets after us
+                    return client.StreamObjects(parameters);
+                else
+                    return client.SerialStreamObjects(parameters); //There are other cmdlets after us; do one request at a time
+            }
             else
                 return client.GetObjects<TObject>(parameters);
         }

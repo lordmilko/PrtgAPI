@@ -142,6 +142,38 @@ namespace PrtgAPI.Helpers
             return commands.Take(myIndex + 1).Any(c => c is T);
         }
 
+        public static bool PipelineRemainingHasCmdlet<T>(this PSCmdlet cmdlet) where T : Cmdlet
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            return commands.Skip(myIndex + 1).Any(c => c is T);
+        }
+
+        /// <summary>
+        /// Indicates whether the current pipeline contains progress compatible cmdlets all the way to the next <see cref="PrtgCmdlet"/>. Returns false if there are no more <see cref="PrtgCmdlet"/> objects in the pipeline.
+        /// </summary>
+        /// <param name="cmdlet">The currently executing cmdlet.</param>
+        /// <returns></returns>
+        public static bool PipelineIsProgressPureToPrtgCmdlet(this PSCmdlet cmdlet)
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex + 1; i < commands.Count; i++)
+            {
+                if (commands[i] is PrtgCmdlet)
+                    return true;
+
+                if (!(commands[i] is WhereObjectCommand))
+                    return false;
+            }
+
+            return false;
+        }
+
         private static List<object> GetPipelineCommands(PSCmdlet cmdlet)
         {
             var processor = cmdlet.CommandRuntime.GetInternalProperty("PipelineProcessor");

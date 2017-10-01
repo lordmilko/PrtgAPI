@@ -46,8 +46,12 @@ namespace PrtgAPI.PowerShell.Progress
 
                 var downstreamCmdletType = downstreamCmdlet?.GetType().GetProperty("ImplementingType")?.GetValue(downstreamCmdlet) as Type;
 
-                if (downstreamCmdletType == typeof(WhereObjectCommand))
-                    return true;
+                if (downstreamCmdletType == typeof (WhereObjectCommand))
+                {
+                    if(cmdlet.PipelineIsProgressPureToPrtgCmdlet())
+                        return true;
+                    return false;
+                }
 
                 return false;
             }
