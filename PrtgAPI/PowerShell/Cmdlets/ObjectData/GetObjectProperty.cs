@@ -37,7 +37,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ObjectProperty")]
-    public class GetObjectProperty : PrtgCmdlet
+    public class GetObjectProperty : PrtgProgressCmdlet
     {
         /// <summary>
         /// <para type="description">The object to retrieve properties of.</para>
@@ -53,6 +53,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string RawProperty { get; set; }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="GetObjectProperty"/> class.
+        /// </summary>
+        public GetObjectProperty() : base("Object Properties")
+        {
+        }
+
+        /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
@@ -63,19 +70,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
+                TypeDescription = $"{Object.BaseType} Properties";
+
                 switch (Object.BaseType)
                 {
                     case BaseType.Sensor:
-                        WriteObject(client.GetSensorProperties(Object.Id));
+                        WriteObjectWithProgress(client.GetSensorProperties(Object.Id));
                         break;
                     case BaseType.Device:
-                        WriteObject(client.GetDeviceProperties(Object.Id));
+                        WriteObjectWithProgress(client.GetDeviceProperties(Object.Id));
                         break;
                     case BaseType.Group:
-                        WriteObject(client.GetGroupProperties(Object.Id));
+                        WriteObjectWithProgress(client.GetGroupProperties(Object.Id));
                         break;
                     case BaseType.Probe:
-                        WriteObject(client.GetProbeProperties(Object.Id));
+                        WriteObjectWithProgress(client.GetProbeProperties(Object.Id));
                         break;
                 }
             }

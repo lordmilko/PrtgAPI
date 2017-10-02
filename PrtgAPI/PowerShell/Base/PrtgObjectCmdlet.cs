@@ -12,8 +12,15 @@ namespace PrtgAPI.PowerShell.Base
     /// Base class for all cmdlets that return a list of objects.
     /// </summary>
     /// <typeparam name="T">The type of objects that will be retrieved.</typeparam>
-    public abstract class PrtgObjectCmdlet<T> : PrtgCmdlet
+    public abstract class PrtgObjectCmdlet<T> : PrtgProgressCmdlet
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrtgObjectCmdlet{T}"/> class.
+        /// </summary>
+        public PrtgObjectCmdlet() : base(GetTypeDescription(typeof(T)))
+        {
+        }
+
         /// <summary>
         /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a <see cref="PrtgClient"/> based on the type they wish to retrieve.
         /// </summary>
@@ -37,6 +44,11 @@ namespace PrtgAPI.PowerShell.Base
             WriteList(records);
         }
 
+        /// <summary>
+        /// Retrieve results from a PRTG server while displaying progress for objects that have been piped from a variable.
+        /// </summary>
+        /// <param name="getResults">The function to execute to retrieve this cmdlet's results.</param>
+        /// <returns>A collection of objects returned from a PRTG Server. that match the specified search criteria.</returns>
         protected IEnumerable<T> GetResultsWithVariableProgress(Func<IEnumerable<T>> getResults)
         {
             UpdatePreviousAndCurrentVariableProgressOperations();
@@ -48,6 +60,11 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
+        /// <summary>
+        /// Retrieve results from a PRTG server while displaying progress for objects that have been piped between cmdlets.
+        /// </summary>
+        /// <param name="getResults">The function to execute to retrieve this cmdlet's results.</param>
+        /// <returns>A collection of objects returned from a PRTG Server. that match the specified search criteria.</returns>
         protected IEnumerable<T> GetResultsWithProgress(Func<IEnumerable<T>> getResults)
         {
             //May return the count of records we'll be retrieving if we're streaming (for example)
@@ -56,47 +73,6 @@ namespace PrtgAPI.PowerShell.Base
             var records = getResults();
 
             return UpdatePreviousProgressCount(records, count);
-        }
-
-        protected void WritePSObjectWithProgress(PSObject obj, string typeDescription)
-        {
-            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
-                UpdatePreviousAndCurrentVariableProgressOperations(typeDescription);
-            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
-            {
-                if (ProgressManager.PreviousContainsProgress)
-                {
-                    ProgressManager.SetPreviousOperation($"Retrieving all {typeDescription.ToLower()}s");
-                }
-            }
-
-            WriteObject(obj);
-
-            PostUpdateProgress();
-        }
-
-        private void UpdatePreviousAndCurrentVariableProgressOperations(string retrievingType = null)
-        {
-            if (retrievingType == null)
-                retrievingType = GetTypeDescription(typeof(T));
-
-            //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
-            //(causing them to SetPreviousOperation, which would fail)
-            if (!ProgressManager.PipelineContainsOperation)
-            {
-                if (ProgressManager.PipelineIsProgressPure)
-                {
-                    ProgressManager.CurrentRecord.Activity = $"PRTG {retrievingType} Search";
-
-                    ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
-                    ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {retrievingType.ToLower()}s";
-
-                    ProgressManager.RemovePreviousOperation();
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
-                }
-            }
-            else
-                ProgressManager.SetPreviousOperation($"Retrieving all {retrievingType.ToLower()}s");
         }
 
         private int DisplayInitialProgress()
@@ -113,26 +89,11 @@ namespace PrtgAPI.PowerShell.Base
             {
                 if (ProgressManager.PreviousContainsProgress)
                 {
-                    ProgressManager.SetPreviousOperation($"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s");
+                    ProgressManager.SetPreviousOperation($"Retrieving all {TypeDescription.ToLower()}s");
                 }
             }
 
             return count;
-        }
-
-        /// <summary>
-        /// Retrieves the value of a <see cref="DescriptionAttribute"/> of the specified type. If the type does not have a <see cref="DescriptionAttribute"/>, its name is used instead.
-        /// </summary>
-        /// <param name="type">The type whose description should be retrieved.</param>
-        /// <returns>The type's name or description.</returns>
-        protected string GetTypeDescription(Type type)
-        {
-            var attribute = type.GetCustomAttribute<DescriptionAttribute>();
-
-            if (attribute != null)
-                return attribute.Description;
-
-            return type.Name;
         }
 
         private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count)
@@ -149,6 +110,11 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
+        /// <summary>
+        /// Display the initial progress message for the first cmdlet in the chain.<para/>
+        /// Returns an integer so that overridden instances of this method may support progress scenarios such as streaming (where a "detecting total number of items" message is displayed before requesting the object totals.
+        /// </summary>
+        /// <returns>-1. Override this method in a derived class to optionally return the total number of objects that will be retrieved.</returns>
         protected virtual int DisplayFirstInChainMessage()
         {
             int count = -1;
@@ -160,27 +126,23 @@ namespace PrtgAPI.PowerShell.Base
             return count;
         }
 
+        /// <summary>
+        /// Retrieves the number of elements returned from a request. Generally the collection of records should internally be a <see cref="List{T}"/>.<para/>
+        /// For scenarios where this is not the case, this method can be overridden in derived classes.
+        /// </summary>
+        /// <param name="records">The collection of records to count.Should be a <see cref="List{T}"/></param>
+        /// <param name="count">The count of records to be returned from this method.</param>
+        /// <returns></returns>
         protected virtual IEnumerable<T> GetCount(IEnumerable<T> records, ref int count)
         {
-            var list = records.ToList();
+            var list = records as List<T> ?? records.ToList();
 
             count = list.Count;
 
-            return list.Select(s => s);
+            return list;
         }
 
-        protected void SetObjectSearchProgress(ProcessingOperation operation, int? count)
-        {
-            ProgressManager.CurrentRecord.Activity = $"PRTG {GetTypeDescription(typeof(T))} Search";
-
-            if (operation == ProcessingOperation.Processing)
-                ProgressManager.InitialDescription = $"Processing {GetTypeDescription(typeof(T)).ToLower()}";
-            else
-                ProgressManager.InitialDescription = $"Retrieving all {GetTypeDescription(typeof(T)).ToLower()}s";
-
-            if (count != null)
-                ProgressManager.TotalRecords = count;
-        }
+        
 
         /// <summary>
         /// Writes a list to the output pipeline.
@@ -188,7 +150,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
         internal void WriteList(IEnumerable<T> sendToPipeline)
         {
-            PreUpdateProgress(sendToPipeline);
+            PreUpdateProgress();
 
             foreach (var item in sendToPipeline)
             {
@@ -198,126 +160,6 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             PostUpdateProgress();
-        }
-
-        private void PreUpdateProgress(IEnumerable<T> sendToPipeline)
-        {
-            switch (ProgressManager.Scenario)
-            {
-                case ProgressScenario.NoProgress:
-                    break;
-                case ProgressScenario.StreamProgress:
-                case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PreLoop);
-                    break;
-                case ProgressScenario.VariableToSingleCmdlet:
-                    break;
-                case ProgressScenario.VariableToMultipleCmdlets:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop);
-                    break;
-                default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
-            }
-        }
-
-        private void DuringUpdateProgress()
-        {
-            switch (ProgressManager.Scenario)
-            {
-                case ProgressScenario.NoProgress:
-                    break;
-                case ProgressScenario.StreamProgress:
-                case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach);
-                    break;
-                case ProgressScenario.VariableToSingleCmdlet:
-                    break;
-                case ProgressScenario.VariableToMultipleCmdlets:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
-                    break;
-                default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
-            }
-        }
-
-        private void PostUpdateProgress()
-        {
-            switch (ProgressManager.Scenario)
-            {
-                case ProgressScenario.NoProgress:
-                    break;
-                case ProgressScenario.StreamProgress:
-                case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PostLoop);
-                    break;
-                case ProgressScenario.VariableToSingleCmdlet:
-                    UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage.PostLoop);
-                    break;
-                case ProgressScenario.VariableToMultipleCmdlets:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop);
-                    break;
-
-                default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
-            }
-        }
-
-        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage)
-        {
-            if (ProgressManager.ContainsProgress)
-            {
-                if (stage == ProgressStage.PreLoop)
-                {
-                    ProgressManager.RemovePreviousOperation();
-                }
-                else if (stage == ProgressStage.BeforeEach)
-                {
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
-                }
-                else //PostLoop
-                {
-                    ProgressManager.CompleteProgress();
-                }
-            }
-        }
-
-        private void UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage stage)
-        {
-            if (stage == ProgressStage.PreLoop)
-            {
-            }
-            else if (stage == ProgressStage.BeforeEach)
-            {
-            }
-            else //PostLoop
-            {
-                if (ProgressManager.ContainsProgress)
-                    ProgressManager.CompleteProgress();
-            }
-        }
-
-        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage)
-        {
-            if (stage == ProgressStage.PreLoop)
-            {
-                if (ProgressManager.PipelineContainsOperation)
-                {
-                    if (!ProgressManager.LastInChain)
-                        SetObjectSearchProgress(ProcessingOperation.Processing, ProgressManager.TotalRecords);
-
-                    if(ProgressManager.ContainsProgress)
-                        ProgressManager.RemovePreviousOperation();
-                }
-            }
-            else if (stage == ProgressStage.BeforeEach)
-            {
-                if (ProgressManager.PipelineContainsOperation && ProgressManager.ContainsProgress)
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
-            }
-            else //PostLoop
-            {
-                UpdateScenarioProgress_VariableToSingleCmdlet(stage);
-            }
         }
 
         /// <summary>

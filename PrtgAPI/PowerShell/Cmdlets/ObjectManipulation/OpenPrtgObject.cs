@@ -25,7 +25,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Open, "PrtgObject")]
-    public class OpenPrtgObject : PrtgCmdlet
+    public class OpenPrtgObject : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to open.</para>
@@ -40,7 +40,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var server = PrtgUrl.AddUrlPrefix(client.Server);
 
-            Process.Start($"{server}{Object.Url}");
+            ExecuteOperation(() => Process.Start($"{server}{Object.Url}"), "Opening PRTG Objects", $"Opening {Object.BaseType.ToString().ToLower()} '{Object.Name}'");
         }
     }
 }

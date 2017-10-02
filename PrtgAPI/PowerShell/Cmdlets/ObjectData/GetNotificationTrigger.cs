@@ -10,15 +10,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Retrieves notification triggers from a PRTG Server.</para>
     /// 
-    /// <para type="description">The Get-NotificationTrigger cmdlet retrieves notification triggers that are defined on a PRTG Object.
-    /// Notification triggers define conditions that when met by a sensor or one of its channels, should result in the firing of a notification
-    /// action. When notification triggers are defined on a device, group, or probe, the triggers are inherited by all nodes under the object.
-    /// Individual objects can choose to block inheritance of notification triggers, preventing those triggers from trickling down.</para>
+    /// <para type="description">The Get-NotificationTrigger cmdlet retrieves notification triggers that are defined on a PRTG Object
+    /// as well as the types of triggers an object supports. Notification triggers define conditions that when met by a sensor or one
+    /// of its channels, should result in the firing of a notification action. When notification triggers are defined on a device,
+    /// group, or probe, the triggers are inherited by all nodes under the object. Individual objects can choose to block inheritance
+    /// of notification triggers, preventing those triggers from trickling down.</para>
     /// <para type="description">When looking at notification triggers defined on a single object, Get-NotificationTrigger can be invoked with no arguments.
     /// When looking at notification triggers across multiple objects, it is often useful to filter out notification triggers inherited from a parent object via
     /// the -Inherited parameter.</para>
     /// <para type="description"><see cref="NotificationTrigger"/> objects returned from Get-NotificationTrigger can be passed to Edit-NotificationTriggerProperty
     /// or  New-NotificationTriggerParameter, to allow cloning or editing the trigger's properties.</para>
+    /// <para type="description">Notification trigger types that are supported by a specified object can be determined using the -Types parameter.
+    /// While there is no restriction on the types of triggers assignable to container-like objects (including devices, groups and probes)
+    /// each sensor can only be assigned specific types based on the types of channels it contains. When adding a new trigger,
+    /// Add-NotificationTrigger will automatically validate whether the specified TriggerParameters are assignable to the target object.
+    /// If the new trigger's type is incompatible with the target object, PrtgAPI will throw an exception alerting you to this error.</para>
     /// 
     /// <example>
     ///     <code>Get-Probe | Get-NotificationTrigger</code>
@@ -34,6 +40,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>Get-Probe -Id 2001 | Get-NotificationTrigger -Type State</code>
     ///     <para>Get all State notification triggers from the sensor with ID 2001</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>Get-Sensor -Id 1001 | Get-NotificationTrigger -Types</code>
+    ///     <para>Get all notification trigger types supported by the object with ID 1001.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -67,6 +78,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = "Default")]
         public TriggerType? Type { get; set; }
 
+        /// <summary>
+        /// <para type="description">List all notification trigger types compatible with the specified object.</para> 
+        /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Types")]
         public SwitchParameter Types { get; set; }
 
@@ -76,6 +90,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = "Default", HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
         public bool? Inherited { get; set; }
 
+        /// <summary>
+        /// Performs record-by-record processing functionality for the cmdlet.
+        /// </summary>
         protected override void ProcessRecordEx()
         {
             if (ParameterSetName == "Default")
@@ -96,8 +113,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 {
                     obj.Properties.Add(new PSNoteProperty(name.ToString(), types.Contains(name)));
                 }
+
+                TypeDescription = "Notification Trigger Type";
                 
-                WritePSObjectWithProgress(obj, "Notification Trigger Type");
+                WriteObjectWithProgress(obj);
             }
         }
 
