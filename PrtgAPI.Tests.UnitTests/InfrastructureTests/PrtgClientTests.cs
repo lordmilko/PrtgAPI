@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
+using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 {
@@ -49,6 +52,35 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         public void PrtgClient_Constructor_PasswordCannotBeNull()
         {
             var client = new PrtgClient("prtg.example.com", "username", null);
+        }
+
+        [TestMethod]
+        public void PrtgClient_RetriesWhileStreaming()
+        {
+            var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());
+
+            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response));
+
+            var retriesToMake = 3;
+            var retriesMade = 0;
+
+            client.RetryCount = retriesToMake;
+
+            client.RetryRequest += (sender, args) =>
+            {
+                retriesMade++;
+            };
+
+            try
+            {
+                var sensors = client.StreamSensors().ToList();
+                Assert.Fail("StreamSensors did not throw");
+            }
+            catch (WebException)
+            {
+            }
+
+            Assert.AreEqual(retriesToMake * 2, retriesMade, "An incorrect number of retries were made.");
         }
 
         [TestMethod]
