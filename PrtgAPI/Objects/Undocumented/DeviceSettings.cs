@@ -2,9 +2,12 @@
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    /// <summary>
+    /// Settings that apply to Devices within PRTG.
+    /// </summary>
     public class DeviceSettings : DeviceOrGroupSettings
     {
-        [XmlElement("injected_ipversion")]
+        /*[XmlElement("injected_ipversion")]
         public IPVersion IPVersion { get; set; }
 
         [XmlElement("injected_host")]
@@ -14,7 +17,7 @@ namespace PrtgAPI.Objects.Undocumented
         public string Icon { get; set; }
 
         [XmlElement("injected_serviceurl")]
-        public string ServiceUrl { get; set; }
+        public string ServiceUrl { get; set; }*/
 
         //name, status, ip version, ipv4 address, parent tags, tags, priority, device icon, service url, sensor management, discovery schedule
 

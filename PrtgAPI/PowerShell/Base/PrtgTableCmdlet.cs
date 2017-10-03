@@ -208,19 +208,20 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
+        /// <summary>
+        /// Display the initial progress message for the first cmdlet in a chain.<para/>
+        /// If the cmdlet is streaming results, will display "detecting total number of items" and return the total number of items that will be retrieved.
+        /// </summary>
+        /// <returns>If the cmdlet is streaming, the total number of objects that will be retrieved. Otherwise, -1.</returns>
         protected override int DisplayFirstInChainMessage()
         {
-            int count = -1;
-
             if (streamResults)
             {
                 ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
-                count = client.GetTotalObjects(content);
+                return client.GetTotalObjects(content);
             }
-            else
-                base.DisplayFirstInChainMessage();
 
-            return count;
+            return base.DisplayFirstInChainMessage();
         }
 
         /// <summary>

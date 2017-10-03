@@ -59,7 +59,7 @@ LONG DESCRIPTION
     | Schedules, Dependencies    | Get | Set | Description                                                     |
     | and Maintenance Window     |           |                                                                 |
     | -------------------------- | --------- | --------------------------------------------------------------- |
-    | InheritDependency          |    Yes    | Whether to inherit Schedules/Dependencies/Maintenance           |
+    | InheritDependency          | Yes | No  | Whether to inherit Schedules/Dependencies/Maintenance           |
     | Schedule                   | Yes | No  | Schedule during which this object is active                     |
     | MaintenanceEnabled         | Yes | No  | Whether a one time maintenance window has been set              |
     | MaintenanceStart           | Yes | No  | Maintenance window start, or default start time                 |

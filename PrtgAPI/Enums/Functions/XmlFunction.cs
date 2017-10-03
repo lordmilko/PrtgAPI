@@ -26,11 +26,14 @@ namespace PrtgAPI
         GetObjectProperty,
 
         /// <summary>
-        /// Get sensor totals (up, down, paused, etc) for a PRTG Server.
+        /// Retrieve the total number sensors in each sensor status (up, down, paused, etc) on a PRTG Server.
         /// </summary>
         [Description("gettreenodestats.xml")]
         GetTreeNodeStats,
-
+        
+        /// <summary>
+        /// Retrieve historic channel data over a custom timeframe for a PRTG Sensor.
+        /// </summary>
         [Description("historicdata.xml")]
         HistoricData
     }

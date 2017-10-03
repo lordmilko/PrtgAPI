@@ -130,7 +130,7 @@ namespace PrtgAPI.Objects.Undocumented
         public int? Timeout { get; set; }
 
         /// <summary>
-        /// The packet size to use for Ping Requests. The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
+        /// The packet size to use for Ping Requests (bytes). The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
         /// Corresponds to Ping Settings -> Packet Size.
         /// </summary>
         [XmlElement("injected_size")]
@@ -174,11 +174,21 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_intervalgroup")]
         public bool? InheritInterval { get; set; }
 
+        /// <summary>
+        /// The raw interval of this object. This field is for internal use only.
+        /// </summary>
         [XmlElement("injected_interval")]
         protected string intervalStr { get; set; }
 
+        /// <summary>
+        /// The backing field of this object's <see cref="Interval"/>. This field is for internal use only.
+        /// </summary>
         protected ScanningInterval interval;
 
+        /// <summary>
+        /// The scanning interval of this object.<para/>
+        /// Corresponds to Scanning Interval -> Scanning Interval.
+        /// </summary>
         public ScanningInterval Interval
         {
             get
@@ -195,6 +205,10 @@ namespace PrtgAPI.Objects.Undocumented
         //maybe we have an internal raw property and a public one that creates an object from it. need to store with a private field, and also change Schedule to do the same
         //what happens if you assign an invalid interval via set-objectproperty?
 
+        /// <summary>
+        /// How this sensor should react in the event of a sensor query failure.<para/>
+        /// Corresponds to Scanning Interval -> If a Sensor Query Fails
+        /// </summary>
         [XmlElement("injected_errorintervalsdown")]
         public IntervalErrorMode? IntervalErrorMode { get; set; }
 
@@ -360,6 +374,12 @@ namespace PrtgAPI.Objects.Undocumented
         //[XmlElement("injected_valuetype")]
         //public ExeValueType? ExeValueType { get; set; } //todo: we're not currently retrieving this value property
 
+        //todo: im pretty sure i saw this under exexml settings as well, but i cant seem to find it again
+
+        /// <summary>
+        /// Whether change triggers defined on this sensor will be activated when this sensor's value changes.<para/>
+        /// Corresponds to OID Values -> If Value Changes
+        /// </summary>
         [XmlElement("injected_monitorchange")]
         public bool? EnableChangeTriggers { get; set; }
 
@@ -385,6 +405,10 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_targetaddress")]
         public string Target { get; set; }
 
+        /// <summary>
+        /// The packet size to use for Remote Ping Requests (bytes). The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
+        /// Corresponds to WMI remote Ping Configuration -> Packet Size.
+        /// </summary>
         [XmlElement("injected_buffersize")]
         public int? PingRemotePacketSize { get; set; } //note it can be between 1-10,000 bytes
 

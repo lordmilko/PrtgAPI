@@ -2,6 +2,9 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    /// <summary>
+    /// Settings that apply to Groups within PRTG.
+    /// </summary>
     public class GroupSettings : DeviceOrGroupSettings
     {
         /*[XmlElement("injected_ipselectmethod")]

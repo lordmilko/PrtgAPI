@@ -118,6 +118,9 @@ namespace PrtgAPI
 
         private string unit;
 
+        /// <summary>
+        /// The unit this channel's value is measured in.
+        /// </summary>
         [Undocumented]
         [XmlElement("injected_customunit")]
         [PropertyParameter(nameof(ChannelProperty.Unit))]

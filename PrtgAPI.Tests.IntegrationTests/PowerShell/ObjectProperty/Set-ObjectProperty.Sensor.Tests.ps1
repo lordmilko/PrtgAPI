@@ -53,11 +53,11 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         GetValue "DependencyType"     "Object"
         GetValue "DependentObjectId"  (Settings DownAcknowledgedSensor)
         GetValue "DependencyDelay"    0
-        SetValue "InheritDependency"  $true
+        #SetValue "InheritDependency"  $true
 		#SetChild "Schedule" BLAH #todo - get rid of the getchild "schedule"
 		#SetChild "MaintenanceEnabled" $true
-		#SetChild MaintenanceStart
-		#SetChild MaintenanceEnd
+		#SetGrandChild MaintenanceStart
+		#SetGrandChild MaintenanceEnd
 		#SetChild DependencyType Object #todo: will this not work if i havent also specified the object to use at the same time?
 		#should we maybe create a dependency attribute between the two? and would the same be true vice versa? (so when you set it to master,
 		#the dependencyvalue goes away? check how its meant to work with fiddler)
@@ -113,17 +113,5 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 		SetValue "EnableChangeTriggers" $true
 		#GetValue "ExeValueType" #todo: need to test that setting readonly on exevaluetype still retrieves the value
 		SetValue "DebugMode" "WriteToDiskWhenError"
-	}
-
-	It "todo" {
-
-	###miscellaneous
-		#maybe we should make priority a fancy class? then we can say tostring is numeric
-		##todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
-
-	###progress
-		#todo: maybe we SHOULD show progress when theres a cmdlet in the midde. e.g. $a|get-channel 'free bytes'|where lowererrorlimit -ne $null|set-channellproperty lowerwarninglimit $null
-				
-		throw "need to rewrite the get/set object settings bit of the readme"
 	}
 }

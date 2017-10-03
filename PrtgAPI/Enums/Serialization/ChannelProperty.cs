@@ -8,6 +8,9 @@ namespace PrtgAPI
     /// </summary>
     public enum ChannelProperty
     {
+        /// <summary>
+        /// The unit that is displayed next to this sensor's value. Note that only certain sensor types (such as SNMP) support modifying the channel unit.
+        /// </summary>
         Unit,
 
         /// <summary>

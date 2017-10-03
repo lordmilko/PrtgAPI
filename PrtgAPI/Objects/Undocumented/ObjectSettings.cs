@@ -10,6 +10,9 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    /// <summary>
+    /// Settings that apply to Objects within PRTG.
+    /// </summary>
     public class ObjectSettings
     {
         internal static XElement GetXml(string response)

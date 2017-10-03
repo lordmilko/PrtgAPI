@@ -2,6 +2,9 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    /// <summary>
+    /// Settings that apply to Probes within PRTG.
+    /// </summary>
     public class ProbeSettings : ContainerSettings
     {
         //outgoing ipv4, outgoing ipv4, restart options

@@ -42,6 +42,12 @@ namespace PrtgAPI.PowerShell.Base
             return result;
         }
 
+        /// <summary>
+        /// Parse a value into its expected type. Requires the target <paramref name="property"/> contain a Parse method.
+        /// </summary>
+        /// <param name="property">The property the value applies to.</param>
+        /// <param name="value">The value to apply to the property.</param>
+        /// <returns>If the target property type contains a Parse method which did not throw upon being called, the parsed value. Otherwise, the original value.</returns>
         protected object ParseValueIfRequired(PropertyInfo property, object value)
         {
             //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
@@ -57,7 +63,7 @@ namespace PrtgAPI.PowerShell.Base
                         var newValue = method.Invoke(null, new[] { value });
                         value = newValue;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //Don't care if our value wasn't parsable
                     }

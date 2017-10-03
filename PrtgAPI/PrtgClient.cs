@@ -434,10 +434,14 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public SensorTotals GetSensorTotals() =>
             GetObject<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
 
+        /// <summary>
+        /// Asynchronously retrieve the number of sensors of each sensor type in the system.
+        /// </summary>
+        /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public async Task<SensorTotals> GetSensorTotalsAsync() =>
             await GetObjectAsync<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
 
@@ -933,7 +937,7 @@ namespace PrtgAPI
 
             return triggers;
         }
-        
+
         /// <summary>
         /// Retrieve all notification trigger types supported by a PRTG Object.
         /// </summary>
@@ -1661,16 +1665,47 @@ namespace PrtgAPI
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
         public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) => Amend(await GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId)).ConfigureAwait(false), e => e.ObjectId = objectId);
 
+        /// <summary>
+        /// Retrieve the historical values of a sensor's channels from within a specified time period.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="startDate">The start date and time to retrieve data from.</param>
+        /// <param name="endDate">The end date and time to retrieve data to.</param>
+        /// <returns>Historical data for the specified sensor within the desired date range.</returns>
         public List<SensorHistoryData> GetSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
         {
             var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
 
-            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, r =>
-            {
-                if(r == "Not enough monitoring data")
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {r}");
-            });
+            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, ValidateSensorHistoryResponse);
 
+            return ParseSensorHistoryResponse(response, sensorId);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieve the historical values of a sensor's channels from within a specified time period.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="startDate">The start date and time to retrieve data from.</param>
+        /// <param name="endDate">The end date and time to retrieve data to.</param>
+        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
+
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.HistoricData, parameters, ValidateSensorHistoryResponse).ConfigureAwait(false);
+
+            return ParseSensorHistoryResponse(response, sensorId);
+        }
+
+        private void ValidateSensorHistoryResponse(string response)
+        {
+            if (response == "Not enough monitoring data")
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+        }
+
+        private List<SensorHistoryData> ParseSensorHistoryResponse(XDocument response, int sensorId)
+        {
             var items = Data<SensorHistoryData>.DeserializeList(response).Items;
 
             var regex = new Regex("^(.+)(\\(.+\\))$");

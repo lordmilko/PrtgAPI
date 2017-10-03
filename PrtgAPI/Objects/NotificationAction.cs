@@ -4,6 +4,9 @@ using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
+    /// <summary>
+    /// An action to be performed by PRTG when a <see cref="NotificationTrigger"/> activates.
+    /// </summary>
     public class NotificationAction : PrtgObject, IFormattable //maybe notificationaction inherits from notificationactiondescriptor which is a prtgobject?
         //i dont think EVERY prtgobject has a comment
 

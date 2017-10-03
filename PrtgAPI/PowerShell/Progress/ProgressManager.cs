@@ -28,7 +28,7 @@ namespace PrtgAPI.PowerShell.Progress
         public bool FirstInChain => pipeToProgressCompatibleCmdlet && progressRecords.Count == 1;
 
         /// <summary>
-        /// Indicates whether the current cmdlet is part of a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
+        /// Indicates whether the current cmdlet is part of a chain of PrtgAPI cmdlets (with no unsupported third party filters in between, etc)
         /// </summary>
         public bool PartOfChain => pipeToProgressCompatibleCmdlet || progressRecords.Count > 1;
 

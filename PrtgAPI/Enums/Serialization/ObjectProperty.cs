@@ -566,7 +566,7 @@ namespace PrtgAPI
         Timeout,
 
         /// <summary>
-        /// The packet size to use for Ping Requests. The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
+        /// The packet size to use for Ping Requests (bytes). The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
         /// Corresponds to Ping Settings -> Packet Size.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
@@ -632,22 +632,26 @@ namespace PrtgAPI
         //we need to make this a dependent property. note that it would work on devices, just not sensors
         //todo: also note this on sensorsettings and whatever base class we end up using
 
-        [LiteralValue]
-        [TypeLookup(typeof(SensorSettings))]
-        InheritDependency,
+        //[LiteralValue]
+        //[TypeLookup(typeof(SensorSettings))]
+        //InheritDependency,
 
-        /// <summary>
-        /// Whether a one-time maintenance window has been defined.<para/>
-        /// Corresponds to Schedules, Dependencies and Maintenance Window -> Maintenance Window.
-        /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
-        MaintenanceEnabled,
+        ///// <summary>
+        ///// Whether a one-time maintenance window has been defined.<para/>
+        ///// Corresponds to Schedules, Dependencies and Maintenance Window -> Maintenance Window.
+        ///// </summary>
+        //[TypeLookup(typeof(SensorSettings))]
+        //MaintenanceEnabled,
 
         #endregion
         #region Sensor Display
 
         //PrimaryChannel,
 
+        /// <summary>
+        /// Whether channels should be shown independently in graphs, or stacked on top of each other.<para/>
+        /// Corresponds to Sensor Display -> Graph Type.
+        /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         GraphType,
 
@@ -684,12 +688,20 @@ namespace PrtgAPI
         [TypeLookup(typeof(SensorSettings))]
         Mutex,
 
+        /// <summary>
+        /// Whether change triggers defined on this sensor will be activated when this sensor's value changes.<para/>
+        /// Corresponds to OID Values -> If Value Changes
+        /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         EnableChangeTriggers,
 
         #endregion
         #region WMI Alternative Query
 
+        /// <summary>
+        /// The method used for performing WMI queries.<para/>
+        /// Corresponds to WMI Alternative Query -> Alternative Query.
+        /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         WmiMode,
 
@@ -702,6 +714,10 @@ namespace PrtgAPI
         [TypeLookup(typeof(SensorSettings))]
         Target,
 
+        /// <summary>
+        /// The packet size to use for Remote Ping Requests (bytes). The default value is 32 bytes. This value must be between 1-10,000 bytes.<para/>
+        /// Corresponds to WMI remote Ping Configuration -> Packet Size.
+        /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         PingRemotePacketSize,
 

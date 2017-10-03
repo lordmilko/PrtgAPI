@@ -6,13 +6,13 @@
 
     how do we get channels that are configured to hide from tables to show in get-channel
 
-    //add a test that checks that anything that derives from prtgcmdlet does not override processrecord
-
-    -what is probestatus #1? new probe not authorized to connect yet?
+    -add support for all commented out object properties in all the various object property tests
+    -add support for properties we havent written up yet across sensors, devices, groups and probes
 
     -make rename-object prompt whether you want to do it, and add a force parameter
 	-when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
-	
+     maybe we should make priority a fancy class? then we can say tostring is numeric <- dont know what that means, but if we're a class we can set priority using numbers instead of words
+	 todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
     -once nuget is working, publish appveyor.yml to github
 
     -maybe all the getsensor, device, group, probe etc cmdlets should have parameter sets for the different object types you can pipe in
@@ -43,8 +43,6 @@
 
     -upload our empty settings file then say dont track it
      git update-index --assume-unchanged <file> and --no-assume-unchanged
-
-    -maybe create a "filter" alias for new-searchfilter?
 
     -when we make a request to the ci server to do something when the core is running but the probe isnt, whats the response?
     -maybe the ci server should check the probe and core services are started first
@@ -77,7 +75,6 @@
     GetSensor
     -tags always need to filter using "contains. we're fine for the powershell version, but i think we need some sort of filteroperator override for the c# api. perhaps
         a filteroperatoroverrideattribute. we can override it during the prtgurl construction, but then we need to filter the results once the request has completed
-    -if you specify a status filter of "acknowledged" does it autocomplete to downacknowledged?
     -should the LastValue property be a number? if so, when sensors are paused they are "-" so clearly it should be a nullable double or something?
     -there is a "listend" property when you make a request. 1 means you've gotten all the sensors now. i dont think this will help considering previously we asked for the remaining ones and we got more than we expected
     -when getsensors fails it throws an aggregateexception. i think we should unwrap the inner exception, or count how many there were and iterate through them?
@@ -123,14 +120,6 @@
 
     ServerStatus
     -Remove _raw values
-
-    SetChannelProperty
-    -what if we have a requiresvalueattribute that throws an error if value is null when its not allowed to be
-    -add all other properties to the channelproperties enum/appropriate dependency handling
-
-    SetObjectProperty
-    -get rid of all the unneeded setobjectproperty methods in prtgclient when we finish our new version
-    -i think we should replace getsensorsetting with get-objectproperty!
 
     */
 }

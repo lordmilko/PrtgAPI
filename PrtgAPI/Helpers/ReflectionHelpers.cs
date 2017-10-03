@@ -25,6 +25,12 @@ namespace PrtgAPI.Helpers
             return obj.GetInternalPropertyInfo(name).GetValue(obj);
         }
 
+        /// <summary>
+        /// Retrieve the property info metadata of an internal property.
+        /// </summary>
+        /// <param name="obj">The object to retrieve the property from.</param>
+        /// <param name="name">The name of the property whose info should be retrieved.</param>
+        /// <returns>The property info of the specified property. If the property cannot be found or is not internal, this method returns null.</returns>
         public static PropertyInfo GetInternalPropertyInfo(this object obj, string name)
         {
             var prop = obj.GetType().GetProperty(name, internalFlags);
@@ -43,6 +49,12 @@ namespace PrtgAPI.Helpers
             return obj.GetInternalFieldInfo(name).GetValue(obj);
         }
 
+        /// <summary>
+        /// Retrieve the field info metadata of an internal field.
+        /// </summary>
+        /// <param name="obj">The object to retrieve the field from.</param>
+        /// <param name="name">The name of the field whose info should be retrieved.</param>
+        /// <returns>The field info of the specified field. If the field cannot be found or is not internal, this method returns null.</returns>
         public static FieldInfo GetInternalFieldInfo(this object obj, string name)
         {
             var field = obj.GetType().GetField(name, internalFlags);
@@ -50,6 +62,13 @@ namespace PrtgAPI.Helpers
             return field;
         }
 
+        /// <summary>
+        /// Retrieve an internal method from an object.
+        /// </summary>
+        /// <param name="obj">The object to retrieve the method from.</param>
+        /// <param name="name">The name of the method to retrieve.</param>
+        /// <returns>The method info of the specified method. If the specified method cannot be found or is not internal, this method returns null.<para/>
+        /// If more than one method is found with the specified name, this method throws a <see cref="AmbiguousMatchException"/></returns>
         public static MethodInfo GetInternalMethod(this object obj, string name)
         {
             var method = obj.GetType().GetMethod(name, internalFlags);

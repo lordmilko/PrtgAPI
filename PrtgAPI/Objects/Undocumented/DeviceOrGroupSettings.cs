@@ -3,6 +3,9 @@ using PrtgAPI.Attributes;
 
 namespace PrtgAPI.Objects.Undocumented
 {
+    /// <summary>
+    /// Settings that apply to Devices and Groups within PRTG.
+    /// </summary>
     public class DeviceOrGroupSettings : ContainerSettings
     {
         /// <summary>
@@ -12,10 +15,10 @@ namespace PrtgAPI.Objects.Undocumented
         [SplittableString(' ')]
         public string[] ParentTags { get; set; }
 
-        [XmlElement("injected_discoverytype")]
+        /*[XmlElement("injected_discoverytype")]
         DiscoveryType DiscoveryType { get; set; }
 
         [XmlElement("injected_discoveryschedule")]
-        DiscoverySchedule DiscoverySchedule { get; set; }
+        DiscoverySchedule DiscoverySchedule { get; set; }*/
     }
 }

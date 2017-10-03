@@ -8,13 +8,17 @@ namespace PrtgAPI
     /// </summary>
     public class Schedule
     {
+        /// <summary>
+        /// The name of the monitoring schedule.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// The index of the monitoring schedule within PRTG.
+        /// </summary>
         public int Index { get; set; }
 
-        public string RawName { get; set; }
-
-        public Schedule(string raw)
+        internal Schedule(string raw)
         {
             var regex = new Regex("(.+?)\\|(.+?)\\|");
 
@@ -23,10 +27,12 @@ namespace PrtgAPI
 
             Index = Convert.ToInt32(number);
             Name = name;
-
-            RawName = raw;
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return Name;

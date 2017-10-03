@@ -134,11 +134,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            //todo: we need to make it so a. Expression is invoked with context with an $expr value, and b. we can invoke
-            //with context with $_
-            //then need to document you can use $_ or $expr in the aggregator and expression. the expr in Expression
-            //is the default expression, and the $expr in aggregator is the Expression expression
-
             var rows = new List<string>();
 
             var expression = GetExpression();
