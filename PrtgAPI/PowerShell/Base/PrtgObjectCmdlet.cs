@@ -104,7 +104,7 @@ namespace PrtgAPI.PowerShell.Base
 
             if (!ProgressManager.LastInChain)
             {
-                SetObjectSearchProgress(ProcessingOperation.Processing, count);
+                SetObjectSearchProgress(ProcessingOperation.Processing);
             }
 
             return records;
@@ -119,7 +119,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             int count = -1;
 
-            SetObjectSearchProgress(ProcessingOperation.Retrieving, null);
+            SetObjectSearchProgress(ProcessingOperation.Retrieving);
 
             ProgressManager.DisplayInitialProgress();
 
@@ -141,8 +141,6 @@ namespace PrtgAPI.PowerShell.Base
 
             return list;
         }
-
-        
 
         /// <summary>
         /// Writes a list to the output pipeline.

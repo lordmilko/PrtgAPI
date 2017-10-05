@@ -16,12 +16,12 @@ namespace PrtgAPI.PowerShell.Progress
             this.cmdlet = cmdlet;
         }
 
-        public void WriteProgress(ProgressRecord progressRecord)
+        public void WriteProgress(ProgressRecordEx progressRecord)
         {
             cmdlet.WriteProgress(progressRecord);
         }
 
-        public void WriteProgress(long sourceId, ProgressRecord progressRecord)
+        public void WriteProgress(long sourceId, ProgressRecordEx progressRecord)
         {
             cmdlet.CommandRuntime.WriteProgress(sourceId, progressRecord);
         }

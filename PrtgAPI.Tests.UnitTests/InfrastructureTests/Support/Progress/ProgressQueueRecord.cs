@@ -9,13 +9,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 
         public bool ContainsProgress => ProgressRecord.Activity != ProgressManager.DefaultActivity && (ProgressRecord.StatusDescription != ProgressManager.DefaultDescription);
 
-        //public bool ChildRecord { get; }
-
-        public ProgressQueueRecord(ProgressRecord progressRecord)
+        public ProgressQueueRecord(ProgressRecordEx progressRecord)
         {
             ProgressRecord = ProgressManager.CloneRecord(progressRecord);
-
-            //ChildRecord = childRecord;
         }
 
         public override string ToString()

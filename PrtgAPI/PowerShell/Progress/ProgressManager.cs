@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
@@ -11,12 +9,14 @@ namespace PrtgAPI.PowerShell.Progress
 {
     internal class ProgressManager : IDisposable
     {
-        private static Stack<ProgressRecord> progressRecords = new Stack<ProgressRecord>();
+        private static ProgressPipelineStack progressPipelines = new ProgressPipelineStack();
+
+        internal int ProgressPipelinesCount => progressPipelines.Count;
 
         internal const string DefaultActivity = "Activity";
         internal const string DefaultDescription = "Description";
 
-        public ProgressRecord CurrentRecord => progressRecords.Peek();
+        public ProgressRecordEx CurrentRecord => progressPipelines.CurrentRecordInPipeline;
 
         public bool ContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
         
@@ -25,12 +25,12 @@ namespace PrtgAPI.PowerShell.Progress
         /// <summary>
         /// Indicates whether the current cmdlet is first in a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
         /// </summary>
-        public bool FirstInChain => pipeToProgressCompatibleCmdlet && progressRecords.Count == 1;
+        public bool FirstInChain => pipeToProgressCompatibleCmdlet && progressPipelines.RecordsInCurrentPipeline == 1;
 
         /// <summary>
         /// Indicates whether the current cmdlet is part of a chain of PrtgAPI cmdlets (with no unsupported third party filters in between, etc)
         /// </summary>
-        public bool PartOfChain => pipeToProgressCompatibleCmdlet || progressRecords.Count > 1;
+        public bool PartOfChain => pipeFromProgressCompatibleCmdlet && (pipeToProgressCompatibleCmdlet || progressPipelines.RecordsInCurrentPipeline > 1);
 
         /// <summary>
         /// Indicates whether the next cmdlet in the pipeline is compatible with PrtgAPI Progress.
@@ -57,6 +57,31 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
+        private bool pipeFromProgressCompatibleCmdlet
+        {
+            get
+            {
+                var upstreamCmdlet = (CommandInfo)cmdlet.GetUpstreamCmdlet()?.GetInternalProperty("CommandInfo");
+
+                if (upstreamCmdlet == null)
+                    return true;
+
+                if (cmdlet.MyInvocation.MyCommand.ModuleName == upstreamCmdlet?.ModuleName)
+                    return true;
+
+                var upstreamCmdletType = upstreamCmdlet?.GetType().GetProperty("ImplementingType")?.GetValue(upstreamCmdlet) as Type;
+
+                if (upstreamCmdletType == typeof (WhereObjectCommand))
+                {
+                    if (cmdlet.PipelineIsProgressPureFromPrtgCmdlet())
+                        return true;
+                    return false;
+                }
+
+                return false;
+            }
+        }
+
         public bool LastInChain => !pipeToProgressCompatibleCmdlet;
 
         public string InitialDescription { get; set; }
@@ -73,7 +98,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// If Variable -> Where -> PrtgCmdlet, the EntirePipeline will be used (allowing us to bypass the where-object and retrieve the original array)<para/>
         /// If PrtgCmdlet -> Where -> PrtgCmdlet, for the first PrtgCmdlet the CmdletPipeline and EntirePipeline will be the same. For the second PrtgCmdlet, the CmdletPipeline will be used
         /// </summary>
-        public Pipeline Pipeline => progressRecords.Count == 1 ? EntirePipeline : CmdletPipeline;
+        public Pipeline Pipeline => progressPipelines.RecordsInCurrentPipeline == 1 ? EntirePipeline : CmdletPipeline;
 
         /// <summary>
         /// The object collection that was piped into this cmdlet from the previous statement.
@@ -82,8 +107,6 @@ namespace PrtgAPI.PowerShell.Progress
 
         //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
         public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain);
-
-        public Cmdlet PreviousCmdlet { get; set; }
 
         private bool? pipelineContainsOperation;
 
@@ -99,7 +122,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        public ProgressRecord PreviousRecord => progressRecords.Skip(1).FirstOrDefault();
+        public ProgressRecordEx PreviousRecord => progressPipelines.PreviousRecordInPipeline;
 
         private PSCmdlet cmdlet;
 
@@ -114,6 +137,8 @@ namespace PrtgAPI.PowerShell.Progress
         internal ProgressScenario Scenario { get; set; }
 
         private bool? pipelineIsPure;
+
+        private bool sourceIdUpdated;
 
         /// <summary>
         /// Indicates whether the pipeline has been contamined by non-PrtgAPI cmdlets or cmdlets that don't support PrtgAPI progress.
@@ -131,7 +156,8 @@ namespace PrtgAPI.PowerShell.Progress
 
         public ProgressManager(PSCmdlet cmdlet)
         {
-            progressRecords.Push(new ProgressRecord(progressRecords.Count + 1, DefaultActivity, DefaultDescription));
+            var sourceId = GetLastSourceId(cmdlet.CommandRuntime);
+            progressPipelines.Push(DefaultActivity, DefaultDescription, cmdlet, sourceId);
 
             if (PreviousRecord != null)
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
@@ -193,7 +219,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (disposing)
             {
-                progressRecords.Pop();
+                progressPipelines.Pop();
             }
 
             disposed = true;
@@ -224,16 +250,25 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress();
         }
 
-        private void WriteProgress(ProgressRecord progressRecord)
+        private void WriteProgress(ProgressRecordEx progressRecord)
         {
             if (progressRecord.Activity == DefaultActivity || progressRecord.StatusDescription == DefaultDescription)
                 throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
 
             if (PreviousRecord == null)
+            {
                 progressWriter.WriteProgress(progressRecord);
+
+                if (!sourceIdUpdated)
+                {
+                    progressRecord.SourceId = GetLastSourceId(cmdlet.CommandRuntime);
+                    sourceIdUpdated = true;
+                }
+            }
             else
             {
-                var sourceId = GetLastSourceId(cmdlet.CommandRuntime);
+                var sourceId = PreviousRecord.SourceId;
+                progressRecord.SourceId = sourceId;
 
                 progressWriter.WriteProgress(sourceId, progressRecord);
             }
@@ -248,18 +283,29 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (PipeFromVariableWithProgress)
             {
-                if (!PartOfChain || FirstInChain || PipelineContainsOperation)
+                //If we're not part of a chain, the first in the chain, or the pipeline contains an operation
+                if (!PartOfChain || FirstInChain || (PipelineContainsOperation && PreviousRecord == null))
                 {
                     if (Pipeline.CurrentIndex < Pipeline.List.Count - 1)
                         return;
                 }
                 else
                 {
-                    var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
-                    var previousManager = previousCmdlet.ProgressManager;
+                    //We're the Object or Action in Variable -> Object -> Action
+                    if (!PipelineContainsOperation || cmdlet is PrtgOperationCmdlet)
+                    {
+                        var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
+                        var previousManager = previousCmdlet.ProgressManager;
 
-                    if (previousManager.recordsProcessed < previousManager.TotalRecords)
-                        return;                    
+                        if (previousManager.recordsProcessed < previousManager.TotalRecords) //new issue: get-sensor doesnt update records processed
+                            return;
+                    }
+                    else
+                    {
+                        //We're the second object in Variable -> Object -> Action -> Object. We're responsible for our own record keeping
+                        if (recordsProcessed < TotalRecords)
+                            return;
+                    }
                 }
             }
 
@@ -280,17 +326,16 @@ namespace PrtgAPI.PowerShell.Progress
             CurrentRecord.RecordType = ProgressRecordType.Processing;
         }
 
-        public void UpdateRecordsProcessed(ProgressRecord record)
+        public void UpdateRecordsProcessed(ProgressRecordEx record)
         {
-            if (PipeFromVariableWithProgress)
+            if (PipeFromVariableWithProgress && !PipelineContainsOperation)
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
-                if (!PartOfChain || FirstInChain || PipelineContainsOperation) //todo: will pipelinecontainsoperation break the other tests?
+                if (!PartOfChain || FirstInChain) //todo: will pipelinecontainsoperation break the other tests?
                 {
                     var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 
                     var originalIndex = index;
-
                     if (index > Pipeline.List.Count)
                         index = Pipeline.List.Count;
                     
@@ -364,63 +409,109 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress();
         }
 
-        public void TryOverwritePreviousOperation(string activity, string progressMessage)
+        public void ProcessOperationProgress(string activity, string progressMessage)
         {
-            //i think we need to revert the way we're doing this. say processing sensors, then if we detect we're going to pipe to someone display some progress that counts through our items
-            //i think we already use this logic for "normal" pipes, right?
-            //yep - so we need to be able to detect this scenario is in place doing an action cmdlet effectively resets things to be normal methoda again
-            //NOPE!!! when doing pipe from variable we DONT want to be overwriting - this overwrites the info about what number group we're processing
-            //so we need to make it have its own progress record
-            //more specifically, $devices|clone-device works, but $groups|get-device|clone-device doesnt work
-            //and then regardless, theres still the issue of how to handle piping from clone-device to 1 or 2 more cmdlets
-            //need to add tests for ALL of this
-
             if (PipeFromVariableWithProgress)
             {
-                if (!PipelineIsProgressPure)
-                    return;
-
-                RemovePreviousOperation();
-
-                var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
-
-                if (index > Pipeline.List.Count)
-                    index = Pipeline.List.Count;
-
-                CurrentRecord.Activity = activity;
-
-                if (PreviousRecord == null)
-                    TotalRecords = Pipeline.List.Count;
-                else
-                {
-                    var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
-                    var previousManager = previousCmdlet.ProgressManager;
-                    TotalRecords = previousManager.TotalRecords;
-                }
-
-                CurrentRecord.PercentComplete = (int) ((index)/Convert.ToDouble(TotalRecords)*100);
-                CurrentRecord.StatusDescription = $"{progressMessage} ({index}/{TotalRecords})";
-
-                variableProgressDisplayed = true;
-
-                WriteProgress();
+                //Variable -> Action
+                //Variable -> Action -> Object
+                //Variable -> Object -> Action
+                //Variable -> Object -> Action -> Object
+                ProcessOperationProgressForVariable(activity, progressMessage);
             }
             else
             {
-                if (PreviousContainsProgress)
-                {
-                    //if we're piping from a variable, that means the current count is actually a count of the variable; therefore, we need to inspect the pipeline to get the number of triggers incoming?              
+                //Object -> Action
+                //Object -> Action -> Object
+                ProcessOperationProgressForCmdlet(activity, progressMessage);
+            }
+        }
 
-                    PreviousRecord.Activity = activity;
+        private void ProcessOperationProgressForVariable(string activity, string progressMessage)
+        {
+            if (!PipelineIsProgressPure)
+                return;
 
-                    var count = PreviousRecord.StatusDescription.Substring(PreviousRecord.StatusDescription.LastIndexOf(" ") + 1);
+            RemovePreviousOperation();
 
-                    PreviousRecord.StatusDescription = $"{progressMessage} ({count.Trim('(').Trim(')')})";
+            if (PreviousRecord == null)
+            {
+                //Variable -> Action
+                //Variable -> Action -> Object
+                ProcessOperationProgressStraightFromVariable(activity, progressMessage);
+            }
+            else
+            {
+                //Variable -> Object -> Action
+                //Variable -> Object -> Action -> Object
+                ProcessOperationProgressFromCmdletFromVariable(activity, progressMessage);
+            }
+        }
 
-                    WriteProgress(PreviousRecord);
+        private void ProcessOperationProgressStraightFromVariable(string activity, string progressMessage)
+        {
+            //1b: Variable -> Action
+            //Variable -> Action -> Object
+            //    We know the total number of records and where we're up to as we can read this information straight from the pipeline
 
-                    SkipCurrentRecord();
-                }
+            //Variable -> Action -> Object
+            //    HOW DO WE TELL THE NEXT TABLE THE NUMBER OF ITEMS WE'VE PROCESSED????
+
+            TotalRecords = Pipeline.List.Count;
+            var count = Pipeline.CurrentIndex + 1;
+
+            CurrentRecord.Activity = activity;
+            CurrentRecord.PercentComplete = (int)((count) / Convert.ToDouble(TotalRecords) * 100);
+            CurrentRecord.StatusDescription = $"{progressMessage} ({count}/{TotalRecords})";
+
+            WriteProgress();
+        }
+
+        private void ProcessOperationProgressFromCmdletFromVariable(string activity, string progressMessage)
+        {
+            //5b: Variable -> Object -> Action
+            //Variable -> Object -> Action -> Object
+            //    We know the total number of records and where we're up to as we can read this information from the previous cmdlet's ProgressManager
+
+            //Variable -> Action -> Object
+            //    HOW DO WE TELL THE NEXT TABLE THE NUMBER OF ITEMS WE'VE PROCESSED????
+
+            var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
+            var previousManager = previousCmdlet.ProgressManager;
+            TotalRecords = previousManager.TotalRecords;
+
+            //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,
+            //but for REASONS UNKNOWN (TODO: WHY) thats not the case, so we have to do it instead
+            if (previousManager.recordsProcessed < 0)
+                previousManager.recordsProcessed++;
+
+            previousManager.recordsProcessed++;
+
+            var count = previousManager.recordsProcessed;
+
+            CurrentRecord.Activity = activity;
+            CurrentRecord.PercentComplete = (int)((count) / Convert.ToDouble(TotalRecords) * 100);
+            CurrentRecord.StatusDescription = $"{progressMessage} ({count}/{TotalRecords})";
+
+            WriteProgress();
+        }
+
+        private void ProcessOperationProgressForCmdlet(string activity, string progressMessage)
+        {
+            if (PreviousContainsProgress)
+            {
+                //Overwrite the previous cmdlet's ProgressRecord with our operation's activity and status description.
+
+                PreviousRecord.Activity = activity;
+
+                var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
+                var previousManager = previousCmdlet.ProgressManager;
+
+                PreviousRecord.StatusDescription = $"{progressMessage} ({previousManager.recordsProcessed}/{previousManager.TotalRecords})";
+
+                WriteProgress(PreviousRecord);
+
+                SkipCurrentRecord();
             }
         }
 
@@ -429,9 +520,9 @@ namespace PrtgAPI.PowerShell.Progress
             CloneRecord(PreviousRecord, CurrentRecord);
         }
 
-        public static ProgressRecord CloneRecord(ProgressRecord progressRecord)
+        public static ProgressRecordEx CloneRecord(ProgressRecordEx progressRecord)
         {
-            var record = new ProgressRecord(progressRecord.ActivityId, progressRecord.Activity, progressRecord.StatusDescription)
+            var record = new ProgressRecordEx(progressRecord.ActivityId, progressRecord.Activity, progressRecord.StatusDescription, progressRecord.SourceId)
             {
                 CurrentOperation = progressRecord.CurrentOperation,
                 ParentActivityId = progressRecord.ParentActivityId,
@@ -443,9 +534,9 @@ namespace PrtgAPI.PowerShell.Progress
             return record;
         }
 
-        public static void CloneRecord(ProgressRecord sourceRecord, ProgressRecord destinationRecord)
+        public static void CloneRecord(ProgressRecordEx sourceRecord, ProgressRecordEx destinationRecord)
         {
-            destinationRecord.GetType().GetField("id", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(destinationRecord, sourceRecord.ActivityId);
+            destinationRecord.GetType().BaseType.GetField("id", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(destinationRecord, sourceRecord.ActivityId);
             destinationRecord.Activity = sourceRecord.Activity;
             destinationRecord.StatusDescription = sourceRecord.StatusDescription;
             destinationRecord.CurrentOperation = sourceRecord.CurrentOperation;
@@ -453,6 +544,7 @@ namespace PrtgAPI.PowerShell.Progress
             destinationRecord.PercentComplete = sourceRecord.PercentComplete;
             destinationRecord.RecordType = sourceRecord.RecordType;
             destinationRecord.SecondsRemaining = sourceRecord.SecondsRemaining;
+            destinationRecord.SourceId = sourceRecord.SourceId;
         }
     }
 }

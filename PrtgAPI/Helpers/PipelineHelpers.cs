@@ -14,14 +14,28 @@ namespace PrtgAPI.Helpers
     {
         public static CommandInfo GetDownstreamCmdlet(this ICommandRuntime runtime)
         {
-            CommandInfo commandInfo = null;
-
             var pipe = runtime.GetInternalProperty("OutputPipe");
             var downstreamCmdlet = pipe.GetInternalProperty("DownstreamCmdlet");
 
-            commandInfo = (CommandInfo)downstreamCmdlet?.GetInternalProperty("CommandInfo");                
+            CommandInfo commandInfo = (CommandInfo)downstreamCmdlet?.GetInternalProperty("CommandInfo");                
 
             return commandInfo;
+        }
+
+        public static object GetUpstreamCmdlet(this PSCmdlet cmdlet)
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            if (myIndex <= 0)
+                return null;
+
+            var previousIndex = myIndex - 1;
+
+            var previousCmdlet = commands[previousIndex];
+
+            return previousCmdlet;
         }
 
         public static Pipeline GetCmdletPipelineInput(this ICommandRuntime commandRuntime, InternalCommand cmdlet)
@@ -69,26 +83,20 @@ namespace PrtgAPI.Helpers
         }
 
         /// <summary>
-        /// Returns the previous PrtgCmdlet directly before this one. If the previous cmdlet was not a PrtgCmdlet, this method returns null.
+        /// Returns the previous PrtgCmdlet before this one. If no previous cmdlet was a PrtgCmdlet, this method returns null.
         /// </summary>
         /// <param name="cmdlet">The cmdlet to retrieve the previous cmdlet of.</param>
-        /// <returns>If the previous cmdlet if that cmdlet is part of PrtgAPI. Otherwise, null.</returns>
+        /// <returns>If a previous cmdlet is a PrtgCmdlet, that cmdlet. Otherwise, null.</returns>
         public static PrtgCmdlet GetPreviousPrtgCmdlet(this PSCmdlet cmdlet)
         {
             var commands = GetPipelineCommands(cmdlet);
 
             var myIndex = commands.IndexOf(cmdlet);
 
-            if (myIndex <= 0)
-                return null;
-
-            var previousIndex = myIndex - 1;
-
-            var previousCmdlet = commands[previousIndex];
-
-            if (previousCmdlet is PrtgCmdlet)
+            for (int i = myIndex - 1; i >= 0; i--)
             {
-                return (PrtgCmdlet) previousCmdlet;
+                if (commands[i] is PrtgCmdlet)
+                    return (PrtgCmdlet) commands[i];
             }
 
             return null;
@@ -172,6 +180,29 @@ namespace PrtgAPI.Helpers
             }
 
             return false;
+        }
+
+        public static bool PipelineIsProgressPureFromPrtgCmdlet(this PSCmdlet cmdlet)
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex - 1; i >= 0; i--)
+            {
+                if (commands[i] is PrtgCmdlet)
+                    return true;
+
+                if (!(commands[i] is WhereObjectCommand))
+                    return false;
+            }
+
+            return false;
+        }
+
+        public static object GetFirstObjectInPipeline(this PSCmdlet cmdlet)
+        {
+            return GetPipelineCommands(cmdlet).First();
         }
 
         private static List<object> GetPipelineCommands(PSCmdlet cmdlet)

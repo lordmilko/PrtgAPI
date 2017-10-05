@@ -16,7 +16,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressMessage">The body of the progress message to display.</param>
         protected void ExecuteOperation(Action action, string activity, string progressMessage)
         {
-            ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
+            ProgressManager.ProcessOperationProgress(activity, progressMessage);
             action();
             
             if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
@@ -33,7 +33,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns></returns>
         protected T ExecuteOperation<T>(Func<T> action, string activity, string progressMessage)
         {
-            ProgressManager.TryOverwritePreviousOperation(activity, progressMessage);
+            ProgressManager.ProcessOperationProgress(activity, progressMessage);
             var result = action();
 
             if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)

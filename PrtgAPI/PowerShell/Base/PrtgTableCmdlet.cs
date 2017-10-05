@@ -198,11 +198,18 @@ namespace PrtgAPI.PowerShell.Base
             var count = client.GetTotalObjects(content);
             var records = GetRecords();
 
-            ProgressManager.CompleteProgress();
-
             if (count > progressThreshold)
             {
-                SetObjectSearchProgress(ProcessingOperation.Retrieving, count);
+                //We'll be replacing this progress record, so just null it out via a call to CompleteProgress()
+                //We strategically set the TotalRecords AFTER calling this method, to avoid CompleteProgress truly completing the record
+                ProgressManager.CompleteProgress();
+                SetObjectSearchProgress(ProcessingOperation.Retrieving);
+                ProgressManager.TotalRecords = count;
+            }
+            else //We won't be showing progress, so complete this record
+            {
+                ProgressManager.TotalRecords = count;
+                ProgressManager.CompleteProgress();
             }
 
             return records;
@@ -326,7 +333,7 @@ namespace PrtgAPI.PowerShell.Base
 
                 //As such, if there are no other PRTG cmdlets after us, stream as normal. Otherwise, only request a couple at a time
                 //so the PRTG will be able to handle the next cmdlet's request
-                if (ProgressManager.Scenario == ProgressScenario.StreamProgress && !this.PipelineRemainingHasCmdlet<PrtgCmdlet>()) //There are no other cmdlets after us
+                if (ProgressManager.Scenario == ProgressScenario.StreamProgress && !this.PipelineRemainingHasCmdlet<PrtgCmdlet>() && ProgressManager.ProgressPipelinesCount == 1) //There are no other cmdlets after us
                     return client.StreamObjects(parameters);
                 else
                     return client.SerialStreamObjects(parameters); //There are other cmdlets after us; do one request at a time

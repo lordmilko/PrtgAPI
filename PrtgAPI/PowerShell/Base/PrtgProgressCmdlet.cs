@@ -186,7 +186,7 @@ namespace PrtgAPI.PowerShell.Base
                 if (ProgressManager.PipelineContainsOperation)
                 {
                     if (!ProgressManager.LastInChain)
-                        SetObjectSearchProgress(ProcessingOperation.Processing, ProgressManager.TotalRecords);
+                        SetObjectSearchProgress(ProcessingOperation.Processing);
 
                     if (ProgressManager.ContainsProgress)
                         ProgressManager.RemovePreviousOperation();
@@ -207,8 +207,7 @@ namespace PrtgAPI.PowerShell.Base
         /// Set the progress activity, initial description and total number of records (where applicable) for the current cmdlet.
         /// </summary>
         /// <param name="operation">The type of processing that is being performed by this cmdlet.</param>
-        /// <param name="count">The number of records that will be output from this cmdlet. If this value is null, this cmdlet will not modify this value.</param>
-        protected void SetObjectSearchProgress(ProcessingOperation operation, int? count)
+        protected void SetObjectSearchProgress(ProcessingOperation operation)
         {
             ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} Search";
 
@@ -216,9 +215,6 @@ namespace PrtgAPI.PowerShell.Base
                 ProgressManager.InitialDescription = $"Processing {TypeDescription.ToLower()}";
             else
                 ProgressManager.InitialDescription = $"Retrieving all {GetTypePlural()}";
-
-            if (count != null)
-                ProgressManager.TotalRecords = count;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 {
@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 
         private static object queueLock = new object();
 
-        public static void Enqueue(ProgressRecord progressRecord)
+        public static void Enqueue(ProgressRecordEx progressRecord)
         {
             lock (queueLock)
             {

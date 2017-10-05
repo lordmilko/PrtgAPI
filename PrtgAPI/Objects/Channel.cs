@@ -178,7 +178,7 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_decimaldigits")]
         [PropertyParameter(nameof(ChannelProperty.DecimalPlaces))]
-        public int? DecimalPlaces { get; set; } //Automatic, All or a value you specify - todo
+        public double? DecimalPlaces { get; set; } //Automatic, All or a value you specify - todo
 
         /// <summary>
         /// Whether values that are too high or too low should be filtered out of graphs and tables.

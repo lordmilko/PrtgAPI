@@ -11,12 +11,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             ProgressManager.CustomWriter = new MockProgressWriter();
         }
 
-        public void WriteProgress(ProgressRecord progressRecord)
+        public void WriteProgress(ProgressRecordEx progressRecord)
         {
             ProgressQueue.Enqueue(progressRecord);
         }
 
-        public void WriteProgress(long sourceId, ProgressRecord progressRecord)
+        public void WriteProgress(long sourceId, ProgressRecordEx progressRecord)
         {
             ProgressQueue.Enqueue(progressRecord);
         }
