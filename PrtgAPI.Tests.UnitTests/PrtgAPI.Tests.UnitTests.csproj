@@ -60,6 +60,7 @@
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="InfrastructureTests\AssemblyTests.cs" />
     <Compile Include="InfrastructureTests\Support\MockProgressWriter.cs" />
+    <Compile Include="InfrastructureTests\Support\MockRetryWebClient.cs" />
     <Compile Include="InfrastructureTests\Support\Progress\ProgressQueue.cs" />
     <Compile Include="InfrastructureTests\Support\Progress\ProgressQueueRecord.cs" />
     <Compile Include="InfrastructureTests\Support\Progress\ProgressGrouper.cs" />
@@ -69,6 +70,8 @@
     <Compile Include="ObjectTests\DeviceSettingsTests.cs" />
     <Compile Include="ObjectTests\GroupTests.cs" />
     <Compile Include="ObjectTests\Items\GroupItem.cs" />
+    <Compile Include="ObjectTests\Items\ModificationHistoryItem.cs" />
+    <Compile Include="ObjectTests\ModificationHistoryTests.cs" />
     <Compile Include="ObjectTests\NotificationTriggerBaseTests.cs" />
     <Compile Include="ObjectTests\ProbeTests.cs" />
     <Compile Include="ObjectTests\DeviceTests.cs" />
@@ -80,11 +83,13 @@
     <Compile Include="ObjectTests\Responses\BasicResponse.cs" />
     <Compile Include="ObjectTests\Responses\DeviceSettingsResponse.cs" />
     <Compile Include="ObjectTests\Responses\GroupResponse.cs" />
+    <Compile Include="ObjectTests\Responses\ModificationHistoryResponse.cs" />
     <Compile Include="ObjectTests\Responses\MultiTypeResponse.cs" />
     <Compile Include="ObjectTests\Responses\ProbeResponse.cs" />
     <Compile Include="ObjectTests\Responses\SensorTotalsResponse.cs" />
     <Compile Include="ObjectTests\Responses\SetChannelPropertyResponse.cs" />
     <Compile Include="ObjectTests\Responses\SetObjectPropertyResponse.cs" />
+    <Compile Include="ObjectTests\Responses\TriggerOverviewResponse.cs" />
     <Compile Include="ObjectTests\SensorTests.cs" />
     <Compile Include="ObjectTests\BaseObjectTests.cs" />
     <Compile Include="ObjectTests\Responses\BaseResponse.cs" />
@@ -99,7 +104,7 @@
     <Compile Include="ObjectTests\Responses\NotificationTriggerResponse.cs" />
     <Compile Include="ObjectTests\SensorTotalsTests.cs" />
     <Compile Include="ObjectTests\StreamableObjectTests.cs" />
-    <Compile Include="ObjectTests\TriggerParameterTests.cs" />
+    <Compile Include="ObjectTests\NotificationTriggerParameterTests.cs" />
     <Compile Include="PowerShell\Cmdlets\TestReflection1.cs" />
     <Compile Include="PowerShell\Cmdlets\TestReflection2.cs" />
     <Compile Include="PowerShell\Cmdlets\TestReflection3.cs" />
@@ -123,9 +128,12 @@
     <None Include="PowerShell\Get-Channel.Tests.ps1" />
     <None Include="PowerShell\Connect-PrtgServer.Tests.ps1" />
     <None Include="PowerShell\Get-Device.Tests.ps1" />
+    <None Include="PowerShell\Get-ModificationHistory.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Connect-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Get-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\New-SensorFactoryDefinition.Tests.ps1" />
+    <None Include="PowerShell\Set-ChannelProperty.Tests.ps1" />
+    <None Include="PowerShell\Set-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Support\GoPrtg.Shared.ps1" />
     <None Include="PowerShell\GoPrtg\Install-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\GoPrtg\Set-GoPrtgAlias.Tests.ps1" />
@@ -141,7 +149,7 @@
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
     <None Include="PowerShell\Support\Progress.ps1" />
     <None Include="PowerShell\Support\Standalone.ps1" />
-    <None Include="PowerShell\New-TriggerParameter.Tests.ps1" />
+    <None Include="PowerShell\New-NotificationTriggerParameter.Tests.ps1" />
     <None Include="PowerShell\Support\UnitTest.ps1" />
   </ItemGroup>
   <ItemGroup />

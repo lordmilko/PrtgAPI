@@ -9,6 +9,14 @@ PrtgAPI implements a collection of methods and enumerations that help create and
 
 PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
 
+Useful things you can do with PrtgAPI:
+* Generate reports based on custom queries
+* Monitor missing sensors (such as Veeam Backups) and devices (in your domain)
+* Create and modify new sensors (from existing ones)
+* Deploy notification triggers to individual sensors for specific clients
+* Maintain standard naming/alerting settings across your environment
+* Pause/resume items from external systems (such as pre/post event scripts and scheduled tasks)
+
 ## Installation
 
 ### NuGet
@@ -38,7 +46,7 @@ PrtgAPI requires Visual Studio 2015. If you wish to run any unit tests, ensure *
 
 If you wish to run unit tests, it is advised to group the tests in *Test Explorer* by **Project**  to separate unit tests from integration tests.
 
-If you wish to run integration tests, it is recommended to create a separate server for integration testing. When integration tests are run, PrtgAPI will create a backup of your PRTG configuration, run its tests, and then revert the server to its original settings. If integration tests do not run to their completion, as a safety measure you will be required to manually delete (or restore) the `PRTG Configuration.dat` file under %temp% on the PRTG Server.
+If you wish to run integration tests, it is recommended to create a separate server for integration testing. When integration tests are run, PrtgAPI will create a backup of your PRTG configuration, run its tests, and then revert the server to its original settings. If integration tests do not run to their completion, PrtgAPI will automatically restore the previous config upon next executing integration tests.
 
 To configure PrtgAPI for integration testing, please specify values for all fields listed in `PrtgAPI.Tests.IntegrationTests\Settings.cs` with values specific to your server. The system running integration tests must be able to connect directly to the server over the network. When specifying the credentials to connect to your server, you must specify a local user on the server; domain users are not currently supported.
 
@@ -177,28 +185,45 @@ client.RemoveNotificationTrigger(trigger);
 Please note: the object ID/sub ID overload of `RemoveNotificationTrigger` does not currently prevent you from removing a trigger from an object when that trigger is in fact inherited from another object. It is unknown whether PRTG allows this behaviour. The `RemoveNotificationTrigger` overload that takes a `NotificationTrigger` as its parameter _does_ perform this check.
 
 ### Object Settings
-Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `GetObjectProperty` and `SetObjectProperty`
+Values of object settings can be enumerated and manipulated via two groups of overloaded methods: `Get<type>Properties` and `SetObjectProperty` where `<type>` is one of Sensor, Device, Group or Probe.
 
 ```c#
-//Retrieve the name of object with ID 2001
-var name = client.GetObjectProperty(2001, BasicObjectSetting.Name);
+//Retrieve all properties of sensor 2001
+var settings = client.GetSensorProperties(2001);
 ```
+
+If a property has a dependent property (e.g. the Inheritance setting of a section), modifying the child property will automatically update the parent property such that the child properly can properly take effect
 ```c#
-//Update the name of object with ID 2001
-var name = client.SetObjectProperty(2001, BasicObjectSetting.Name, "a brand new name!");
+//Update the scanning interval of object with ID 2001. Will also set ObjectProperty.InheritInterval to false.
+client.SetObjectProperty(2001, ObjectProperty.Interval, ScanningInterval.ThirtySeconds);
 ```
+
+Properties supported by `SetObjectProperty` are type safe. When a value is specified, PrtgAPI looks up the type of the object against the corresponding property that would be returned in `Get<type>Properties`.
+Values do not necessarily need to exactly match the target property type (e.g. string values for enums), however if PrtgAPI cannot parse the value into the target type an exception will be thrown indicating the failure.
+
+```c#
+//Specify the string representation of a ScanningInterval. TimeSpans are also supported
+client.SetObjectProperty(2001, ObjectProperty.Interval, "00:00:30");
+```
+
 Channel settings can also be manipulated
 ```c#
 //Set the upper error limit of channel 1 of the sensor with object ID 2001 to 30
 client.SetObjectProperty(2001, 1, ChannelProperty.UpperErrorLimit, 30);
 ```
 
-By default, `GetObjectProperty` will return a `string` containing the value you requested. If you know for a fact the property is of another type (an enum defined by PrtgAPI, or an integer) you can request GetObjectProperty cast its return value to its "true" data type.
+Settings that are not currently by PrtgAPI can still be interfaced with, via `GetObjectPropertyRaw` and `SetObjectPropertyRaw` respectively. Raw property methods are not type safe, and can cause minor corruption to objects
+if not used carefully (can be easily rectified in the PRTG UI).
+
+To use raw methods, the raw property name must be specified. This can typically be determined by inspecting the `name` attribute of each setting's corresponding `<input/>` tag
 
 ```c#
-var priorityNum = client.GetObjectProperty<int>(2001, BasicObjectSetting.Priority);
-var priorityEnum = client.GetObjectProperty<Priority>(2001, BasicObjectSetting.Priority);
+//Update the name property of object with ID 1001
+client.SetObjectProperty(1001, "name_", "newName");
 ```
+
+Typically property names end in an underscore, with the exception being properties that control inheritance. If an invalid property name is specified, PRTG will silently ignore your request. As such, it is important to verify
+your property name works before continuing to use it in your program.
 
 ### Pausing / Resuming
 
@@ -214,7 +239,7 @@ client.PauseObject(2002, 60, "Paused for the next 60 minutes!");
 ```
 ```c#
 //Resume object with ID 2001
-client.PauseObject(2001);
+client.ResumeObject(2001);
 ```
 
 ### Custom Requests
@@ -276,6 +301,10 @@ The following cmdlets are currently supported by PrtgAPI
 ```powershell
 Add-NotificationTrigger
 Acknowledge-Sensor
+Clone-Device
+Clone-Group
+Clone-Sensor
+Connect-GoPrtgServer
 Connect-PrtgServer
 Disable-PrtgProgress
 Disconnect-PrtgServer
@@ -285,30 +314,37 @@ Get-Channel
 Get-Device
 Get-GoPrtgServer
 Get-Group
+Get-ModificationHistory
 Get-NotificationAction
 Get-NotificationTrigger
 Get-Probe
 Get-PrtgClient
 Get-Sensor
+Get-SensorHistory
 Get-SensorTotals
 Install-GoPrtgServer
 Move-Object
 New-Credential
 New-NotificationTriggerParameter
-New-SearchFilter
+New-SearchFilter # Alias: flt
+New-SensorFactoryDefinition
 Open-PrtgObject
 Pause-Object
 Refresh-Object
 Remove-NotificationTrigger
 Remove-Object
 Rename-Object
-Set-ChannelProperty # Currently supports limit and spike related properties
+Resume-Object
+Set-ChannelProperty
+Set-GoPrtgAlias
 Set-ObjectPosition
-Set-ObjectProperty # See Get-Help Set-ObjectProperty for currently supported properties
+Set-ObjectProperty # See Get-Help about_SensorSettings for currently supported properties
 Set-NotificationTrigger
+Simulate-ErrorStatus
 Sort-PrtgObject
 Start-AutoDiscovery
 Uninstall-GoPrtgServer
+Update-GoPrtgCredential
 ```
 
 All cmdlets include complete `Get-Help` documentation, including a cmdlet overview, parameter descriptions and example usages. For an overview of a cmdlet see `Get-Help <cmdlet>` or `Get-Help <cmdlet> -Full` for complete documentation.
@@ -401,6 +437,18 @@ You can also get the channels of a sensor by specifying its Sensor ID
 Get-Channel -SensorId 1234
 ```
 
+Properties/settings of objects can be retrieved and modified via the `Get-ObjectProperty` and `Set-ObjectProperty` cmdlets respectively.
+
+```powershell
+# Retrieve all settings of sensor with ID 1001
+Get-Sensor -Id 1001 | Get-ObjectProperty
+```
+Properties will automatically set the values of any properties they depend on to be activated
+```powershell
+# Set the scanning interval of the device with ID 2002. Will also set InheritInterval to $false
+Get-Device -Id 2002 | Set-ObjectProperty Interval "00:00:30"
+```
+
 Acknowledge all down sensors
 
 ```powershell
@@ -444,7 +492,7 @@ LastValue        : 1,116 MByte
 LastValueNumeric : 1169711104
 ```
 
-When entering decimal numbers with `Set-ChannelProperty` it is important the number format matches that of the PRTG Server; i.e. if PRTG uses commas to represent decimal places, you too must use commas to represent decimal places. If the correct number format is not used, PRTG will likely truncate the specified value, leading to undesirable results. As PRTG treats commas as arrays, it is important to indicate to PowerShell your value is not an array, such as by representing it as a string
+When entering decimal numbers with `Set-ChannelProperty` it is important the number format matches that of the PRTG Server; i.e. if PRTG uses commas to represent decimal places, you too must use commas to represent decimal places. If the correct number format is not used, PRTG will likely truncate the specified value, leading to undesirable results. As PowerShell treats commas as arrays, it is important to indicate to PowerShell your value is not an array, such as by representing it as a string
 
 ```powershell
 $channels | Set-ChannelProperty UpperErrorLimit "1,3"

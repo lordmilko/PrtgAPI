@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.dll'
 
 # Version number of this module.
-ModuleVersion = '0.6.9'
+ModuleVersion = '0.7.0'
 
 # ID used to uniquely identify this module
 GUID = '81d4380f-31ff-42c7-9d64-1678dc5cd978'

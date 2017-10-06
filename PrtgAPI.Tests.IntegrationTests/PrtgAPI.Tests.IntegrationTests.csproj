@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
+    <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
     <Compile Include="Support\Assert2.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
@@ -63,14 +64,14 @@
     <Compile Include="Support\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActionTests\ChannelTests.cs" />
-    <Compile Include="InfrastructureTests\PrtgClientConnectionTests.cs" />
+    <Compile Include="CoreTests\PrtgClientConnectionTests.cs" />
     <Compile Include="DataTests\DeviceTests.cs" />
     <Compile Include="DataTests\GroupTests.cs" />
     <Compile Include="DataTests\Incomplete\NotificationTriggerTests.cs" />
     <Compile Include="DataTests\ProbeTests.cs" />
     <Compile Include="DataTests\SensorTests.cs" />
     <Compile Include="ActionTests\StateTests.cs" />
-    <Compile Include="Support\Settings.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Settings.Local.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,14 +94,25 @@
     <None Include="PowerShell\Get-Group.Tests.ps1" />
     <None Include="PowerShell\Get-NotificationAction.Tests.ps1" />
     <None Include="PowerShell\Get-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Get-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Get-Probe.Tests.ps1" />
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Get-SensorHistory.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Group.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Probe.Tests.ps1" />
     <None Include="PowerShell\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Set-ChannelProperty.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Device.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Sensor.Tests.ps1" />
+    <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />
+    <None Include="PowerShell\Support\ObjectProperty.ps1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
