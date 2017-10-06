@@ -117,8 +117,6 @@ var perthDCPingSensors = client.GetSensors(filters);
 
 ### Notification Triggers
 
-**Warning: PrtgAPI does not currently properly handle channel based triggers (such as Threshold triggers) applied directly to sensor objects. Avoid using PrtgAPI to interact with these triggers**
-
 The Notification Triggers of an object can be accessed via the `GetNotificationTriggers` method
 
 ```c#
@@ -499,8 +497,6 @@ $channels | Set-ChannelProperty UpperErrorLimit "1,3"
 ```
 
 Notification Triggers can be retrieved via the `Get-NotificationTrigger` cmdlet.
-
-**Warning: PrtgAPI does not currently properly handle channel based triggers (such as Threshold triggers) applied directly to sensor objects. Avoid using PrtgAPI to interact with these triggers**
 
 ```powershell
 
