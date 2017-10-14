@@ -572,7 +572,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public IEnumerable<Device> StreamDevices(DeviceParameters parameters) => StreamObjects<Device>(parameters);
 
-        #endregion
+            #endregion
         #endregion
         #region Groups
             #region Default

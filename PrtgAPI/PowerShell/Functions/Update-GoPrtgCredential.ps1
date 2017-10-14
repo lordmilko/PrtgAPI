@@ -7,6 +7,7 @@ $ErrorActionPreference = "Stop"
 
 function Update-GoPrtgCredential
 {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope="Function")]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false, Position = 0)]

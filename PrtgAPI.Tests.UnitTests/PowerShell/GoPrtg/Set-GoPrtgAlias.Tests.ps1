@@ -269,6 +269,21 @@ Describe "Set-GoPrtgAlias" {
 		}
 	}
 
+    It "throws trying to update the alias of an uninstalled server when another server exists under different credentials" {
+        Install-GoPrtgServer first
+
+        try
+		{
+			Connect-PrtgServer prtg.example.com (New-Credential username2 12345678) -PassHash -Force
+
+			{ Set-GoPrtgAlias second } | Should Throw "is a valid GoPrtg server, however you are not authenticated as a valid user"
+		}
+		finally
+		{
+			Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+		}
+    }
+
 	<#
 	it sets an alias on a record that doesnt have one
 on one that does have one

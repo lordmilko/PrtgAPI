@@ -188,7 +188,16 @@ function UpdateServerRunner([ScriptBlock]$script)
 
 		if($targetServer.Count -eq 0)
 		{
-			throw "Server '$($client.Server)' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>]"
+            $serverIgnoringUserName = @($servers | Where-Object {$_.Server -eq $client.Server})
+
+            if($serverIgnoringUserName.Count -eq 0)
+            {
+                throw "Server '$($client.Server)' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>]"
+            }
+            else
+            {
+                throw "Server '$($client.Server)' is a valid GoPrtg server, however you are not authenticated as a valid user for this server. To modify this server, first run GoPrtg [<alias>], then re-run the original command"
+            }
 		}
 		elseif($targetServer.Count -eq 1)
 		{
