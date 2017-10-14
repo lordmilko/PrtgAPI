@@ -89,29 +89,33 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
         public StateTriggerParameters(int objectId, int triggerId) : base(TriggerType.State, objectId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.State, objectId, sourceTrigger, action)
+        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.State, objectId, sourceTrigger, ModifyAction.Add)
         {
-            if (action == ModifyAction.Add)
-            {
-                OffNotificationAction = sourceTrigger.OffNotificationAction;
-                EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;
-                Latency = sourceTrigger.Latency;
-                EscalationLatency = sourceTrigger.EscalationLatency;
-                RepeatInterval = sourceTrigger.RepeatInterval;
-                State = sourceTrigger.StateTrigger;
-            }
+            OffNotificationAction = sourceTrigger.OffNotificationAction;
+            EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;
+            Latency = sourceTrigger.Latency;
+            EscalationLatency = sourceTrigger.EscalationLatency;
+            RepeatInterval = sourceTrigger.RepeatInterval;
+            State = sourceTrigger.StateTrigger;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
+        public StateTriggerParameters(NotificationTrigger sourceTrigger) : base(TriggerType.State, sourceTrigger.ObjectId, sourceTrigger, ModifyAction.Edit)
+        {
         }
     }
 }

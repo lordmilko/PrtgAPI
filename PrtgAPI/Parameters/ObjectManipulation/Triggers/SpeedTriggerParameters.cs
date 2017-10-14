@@ -102,30 +102,34 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
         public SpeedTriggerParameters(int objectId, int triggerId) : base(TriggerType.Speed, objectId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        public SpeedTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Speed, objectId, sourceTrigger, action)
+        public SpeedTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Speed, objectId, sourceTrigger, ModifyAction.Add)
         {
-            if (action == ModifyAction.Add)
-            {
-                OffNotificationAction = sourceTrigger.OffNotificationAction;
-                Channel = sourceTrigger.Channel;
-                Latency = sourceTrigger.Latency;
-                Condition = sourceTrigger.Condition;
-                Threshold = sourceTrigger.ThresholdInternal;
-                UnitTime = sourceTrigger.UnitTime;
-                UnitSize = sourceTrigger.UnitSize;
-            }
+            OffNotificationAction = sourceTrigger.OffNotificationAction;
+            Channel = sourceTrigger.Channel;
+            Latency = sourceTrigger.Latency;
+            Condition = sourceTrigger.Condition;
+            Threshold = sourceTrigger.ThresholdInternal;
+            UnitTime = sourceTrigger.UnitTime;
+            UnitSize = sourceTrigger.UnitSize;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for editing an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
+        public SpeedTriggerParameters(NotificationTrigger sourceTrigger) : base(TriggerType.Speed, sourceTrigger.ObjectId, sourceTrigger, ModifyAction.Edit)
+        {
         }
     }
 }

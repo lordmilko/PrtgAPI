@@ -323,7 +323,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void StateTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.State);
-            var parameters = new StateTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new StateTriggerParameters(1234, trigger);
 
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
@@ -332,7 +332,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void ChangeTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Change);
-            var parameters = new ChangeTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new ChangeTriggerParameters(1234, trigger);
 
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
@@ -341,7 +341,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void VolumeTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Volume);
-            var parameters = new VolumeTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new VolumeTriggerParameters(1234, trigger);
 
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
@@ -350,7 +350,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void SpeedTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Speed);
-            var parameters = new SpeedTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new SpeedTriggerParameters(1234, trigger);
 
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
@@ -359,7 +359,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void ThresholdTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Threshold);
-            var parameters = new ThresholdTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new ThresholdTriggerParameters(1234, trigger);
 
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
@@ -368,7 +368,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [ExpectedException(typeof(ArgumentNullException))]
         public void TriggerParameters_Create_FromNullTrigger()
         {
-            var parameters = new StateTriggerParameters(1234, null, ModifyAction.Add);
+            var parameters = new StateTriggerParameters(1234, null);
         }
 
         [TestMethod]
@@ -376,7 +376,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void TriggerParameters_Create_FromInvalidTriggerType()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.State);
-            var parameters = new ChangeTriggerParameters(1234, trigger, ModifyAction.Add);
+            var parameters = new ChangeTriggerParameters(1234, trigger);
         }
 
         private void TriggerParameters_Create_FromExistingTrigger(NotificationTrigger trigger, TriggerParameters parameters)

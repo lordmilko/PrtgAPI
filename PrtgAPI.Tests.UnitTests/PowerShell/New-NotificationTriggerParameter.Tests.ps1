@@ -26,9 +26,14 @@ Describe "New-NotificationTriggerParameter" {
 	}
 
 	It "can create EditFrom parameter set" {
-		$triggers.Count | Should Be 1
+        $device2 = Run Device { Get-Device }
+        $device2.Id = 0
 
-		$parameters = $triggers | New-TriggerParameter
+        $trigger = Run NotificationTrigger { $device2 | Get-NotificationTrigger -Type State }
+
+		$trigger.Count | Should Be 1
+
+		$parameters = $trigger | New-TriggerParameter
 
 		$parameters.Action | Should Be Edit
 	}
@@ -66,4 +71,10 @@ Describe "New-NotificationTriggerParameter" {
 
 		{ $parameters.Channel = "Banana" } | Should Throw "type must be convertable"
 	}
+
+    It "throws creating parameters from an inherited trigger" {
+        $triggers.Count | Should Be 1
+
+		{ $triggers | New-TriggerParameter } | Should Throw "trigger is inherited"
+    }
 }

@@ -18,19 +18,26 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
         public ChangeTriggerParameters(int objectId, int triggerId) : base(TriggerType.Change, objectId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        public ChangeTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Change, objectId, sourceTrigger, action)
+        public ChangeTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Change, objectId, sourceTrigger, ModifyAction.Add)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChangeTriggerParameters"/> class for editing an existing <see cref="TriggerType.Change"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
+        public ChangeTriggerParameters(NotificationTrigger sourceTrigger) : base(TriggerType.Change, sourceTrigger.ObjectId, sourceTrigger, ModifyAction.Edit)
         {
         }
     }

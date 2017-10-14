@@ -106,6 +106,11 @@ namespace PrtgAPI.Parameters
             {
                 OnNotificationAction = sourceTrigger.OnNotificationAction;
             }
+            else
+            {
+                if (sourceTrigger.Inherited)
+                    throw new InvalidOperationException($"Cannot modify NotificationTrigger '{sourceTrigger.OnNotificationAction}' applied to object ID {sourceTrigger.ObjectId} as this trigger is inherited from object ID {sourceTrigger.ParentId}. To modify this trigger, retrieve it from its parent object");
+            }
         }
 
         /// <summary>

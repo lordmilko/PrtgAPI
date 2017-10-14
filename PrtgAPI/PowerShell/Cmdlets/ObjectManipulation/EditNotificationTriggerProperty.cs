@@ -43,19 +43,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (Trigger.Type)
             {
                 case TriggerType.Change:
-                    SetProperty(new ChangeTriggerParameters(Trigger.ObjectId, Trigger.SubId));
+                    SetProperty(new ChangeTriggerParameters(Trigger));
                     break;
                 case TriggerType.Speed:
-                    SetProperty(new SpeedTriggerParameters(Trigger.ObjectId, Trigger.SubId));
+                    SetProperty(new SpeedTriggerParameters(Trigger));
                     break;
                 case TriggerType.State:
-                    SetProperty(new StateTriggerParameters(Trigger.ObjectId, Trigger.SubId));
+                    SetProperty(new StateTriggerParameters(Trigger));
                     break;
                 case TriggerType.Threshold:
-                    SetProperty(new ThresholdTriggerParameters(Trigger.ObjectId, Trigger.SubId));
+                    SetProperty(new ThresholdTriggerParameters(Trigger));
                     break;
                 case TriggerType.Volume:
-                    SetProperty(new VolumeTriggerParameters(Trigger.ObjectId, Trigger.SubId));
+                    SetProperty(new VolumeTriggerParameters(Trigger));
                     break;
                 default:
                     throw new NotImplementedException($"Handler of trigger type '{Trigger.Type}' is not implemented.");

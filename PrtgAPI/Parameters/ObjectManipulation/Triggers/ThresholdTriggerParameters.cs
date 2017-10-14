@@ -87,28 +87,32 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
         public ThresholdTriggerParameters(int objectId, int triggerId) : base(TriggerType.Threshold, objectId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        public ThresholdTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Threshold, objectId, sourceTrigger, action)
+        public ThresholdTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Threshold, objectId, sourceTrigger, ModifyAction.Add)
         {
-            if (action == ModifyAction.Add)
-            {
-                OffNotificationAction = sourceTrigger.OffNotificationAction;
-                Latency = sourceTrigger.Latency;
-                Threshold = sourceTrigger.ThresholdInternal;
-                Condition = sourceTrigger.Condition;
-                Channel = sourceTrigger.Channel;
-            }
+            OffNotificationAction = sourceTrigger.OffNotificationAction;
+            Latency = sourceTrigger.Latency;
+            Threshold = sourceTrigger.ThresholdInternal;
+            Condition = sourceTrigger.Condition;
+            Channel = sourceTrigger.Channel;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThresholdTriggerParameters"/> class for editing an existing <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="sourceTrigger">The notification trigger to modify.</param>
+        public ThresholdTriggerParameters(NotificationTrigger sourceTrigger) : base(TriggerType.Threshold, sourceTrigger.ObjectId, sourceTrigger, ModifyAction.Edit)
+        {
         }
     }
 }

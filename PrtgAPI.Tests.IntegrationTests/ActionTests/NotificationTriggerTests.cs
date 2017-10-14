@@ -148,13 +148,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_State()
         {
-            AddRemoveTriggerFromExisting(TriggerType.State, trigger => new StateTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+            AddRemoveTriggerFromExisting(TriggerType.State, trigger => new StateTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Device()
         {
-            AddRemoveTriggerFromExisting(TriggerType.Threshold, trigger => new ThresholdTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+            AddRemoveTriggerFromExisting(TriggerType.Threshold, trigger => new ThresholdTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             //Clone the trigger
 
-            var newParameters = new ThresholdTriggerParameters(Settings.ChannelSensor, triggers.First(), ModifyAction.Add);
+            var newParameters = new ThresholdTriggerParameters(Settings.ChannelSensor, triggers.First());
 
             client.AddNotificationTrigger(newParameters);
 
@@ -199,19 +199,19 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Speed()
         {
-            AddRemoveTriggerFromExisting(TriggerType.Speed, trigger => new SpeedTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+            AddRemoveTriggerFromExisting(TriggerType.Speed, trigger => new SpeedTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Volume()
         {
-            AddRemoveTriggerFromExisting(TriggerType.Volume, trigger => new VolumeTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+            AddRemoveTriggerFromExisting(TriggerType.Volume, trigger => new VolumeTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Change()
         {
-            AddRemoveTriggerFromExisting(TriggerType.Change, trigger => new ChangeTriggerParameters(Settings.Device, trigger, ModifyAction.Add));
+            AddRemoveTriggerFromExisting(TriggerType.Change, trigger => new ChangeTriggerParameters(Settings.Device, trigger));
         }
 
         private void AddRemoveTriggerFromExisting(TriggerType triggerType, Func<NotificationTrigger, TriggerParameters> getParameters)

@@ -42,6 +42,30 @@ Describe "Edit-NotificationTriggerProperty_IT" {
 		{ $trigger | Edit-NotificationTriggerProperty Channel "blah" } | Should Throw "Object of type 'System.String' cannot be converted to type 'PrtgAPI.TriggerChannel'"
 	}
 
+    It "can assign an enum value" {
+        $trigger = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State -Inherited $false
+        $trigger.Count | Should Be 1
+
+        $trigger | Edit-NotificationTriggerProperty State Warning
+
+        $newTrigger = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State -Inherited $false
+
+        $newTrigger.Threshold | Should Be Warning
+
+        #todo: should we maybe make state public?
+    }
+
+    It "throws editing an inherited notification trigger" {
+        $device = Get-Device -Id (Settings Device)
+
+        $trigger = @($device | Get-Trigger | where Inherited -EQ $true)
+
+        $trigger.Count | Should Be 1
+        $trigger.Threshold | Should Be "Down"
+
+        { $trigger | Edit-TriggerProperty State Warning } | Should Throw "this trigger is inherited"
+    }
+
 	It "throws setting an Channel TriggerChannel on a device" {
 		$device = Get-Device -Id (Settings Device)
 
@@ -71,7 +95,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
 		}
 		finally
 		{
-			$trigger | Remove-Trigger
+			$trigger | Remove-Trigger -Force
 		}
 	}
 
@@ -96,7 +120,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
 		}
 		finally
 		{
-			$trigger | Remove-Trigger
+			$trigger | Remove-Trigger -Force
 		}
 	}
 }

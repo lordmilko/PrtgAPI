@@ -65,32 +65,36 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to.</param>
+        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
         public VolumeTriggerParameters(int objectId, int triggerId) : base(TriggerType.Volume, objectId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for editing or creating a new trigger from an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
+        /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
         /// </summary>
         /// <param name="objectId">The object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        public VolumeTriggerParameters(int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : base(TriggerType.Volume, objectId, sourceTrigger, action)
+        public VolumeTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Volume, objectId, sourceTrigger, ModifyAction.Add)
         {
-            if (action == ModifyAction.Add)
-            {
-                Channel = sourceTrigger.Channel;
-                Period = sourceTrigger.Period;
+            Channel = sourceTrigger.Channel;
+            Period = sourceTrigger.Period;
 
-                if (sourceTrigger.UnitSize == null)
-                    UnitSize = null;
-                else
-                    UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
+            if (sourceTrigger.UnitSize == null)
+                UnitSize = null;
+            else
+                UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
 
-                Threshold = sourceTrigger.ThresholdInternal;
-            }
+            Threshold = sourceTrigger.ThresholdInternal;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for editing an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
+        /// </summary>
+        /// <param name="sourceTrigger">The notification trigger to modify.</param>
+        public VolumeTriggerParameters(NotificationTrigger sourceTrigger) : base(TriggerType.Volume, sourceTrigger.ObjectId, sourceTrigger, ModifyAction.Edit)
+        {
         }
     }
 }

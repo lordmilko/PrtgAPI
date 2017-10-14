@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management.Automation;
+using System.Reflection;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -122,68 +123,55 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            ModifyAction? action = null;
-
-            //we need to write tests for all the different valid and invalid argument scenarios and try and break it
-
-            switch (ParameterSetName)
-            {
-                case "Add":
-                case "AddFrom":
-                    action = ModifyAction.Add;
-                    break;
-                case "Edit":
-                case "EditFrom":
-                    action = ModifyAction.Edit;                
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            //need to update the trigger constructor to allow edit mode. also need to update readme
-            //write some unit/integration tests. the unit tests will just
-
-            //var action = ParameterSetName == "Edit" ? ModifyAction.Edit : ModifyAction.Add;
-
             if (Source != null)
                 Type = Source.Type;
 
             switch (Type)
             {
                 case TriggerType.Change:
-                    WriteObject(CreateParameters<ChangeTriggerParameters>(action.Value));
+                    WriteObject(CreateParameters<ChangeTriggerParameters>());
                     break;
                 case TriggerType.Speed:
-                    WriteObject(CreateParameters<SpeedTriggerParameters>(action.Value));
+                    WriteObject(CreateParameters<SpeedTriggerParameters>());
                     break;
                 case TriggerType.State:
-                    WriteObject(CreateParameters<StateTriggerParameters>(action.Value));
+                    WriteObject(CreateParameters<StateTriggerParameters>());
                     break;
                 case TriggerType.Threshold:
-                    WriteObject(CreateParameters<ThresholdTriggerParameters>(action.Value));
+                    WriteObject(CreateParameters<ThresholdTriggerParameters>());
                     break;
                 case TriggerType.Volume:
-                    WriteObject(CreateParameters<VolumeTriggerParameters>(action.Value));
+                    WriteObject(CreateParameters<VolumeTriggerParameters>());
                     break;
                 default:
                     throw new NotImplementedException($"Handler of trigger type '{Type}' is not implemented.");
             }
         }
 
-        private T CreateParameters<T>(ModifyAction action)
+        private T CreateParameters<T>()
         {
-            if (Source != null)
+            try
             {
-                if (Id != null)
-                    return (T) Activator.CreateInstance(typeof (T), Id, Source, action); //Add from an existing notification trigger
+                if (Source != null)
+                {
+                    if (Id != null)
+                        return (T)Activator.CreateInstance(typeof(T), Id, Source); //Add from an existing notification trigger
+                    else
+                        return (T)Activator.CreateInstance(typeof(T), Source); //Edit from an existing notification trigger
+                }
+
+                if (TriggerId != null)
+                    return (T)Activator.CreateInstance(typeof(T), Id, TriggerId); //Edit a notification trigger
                 else
-                    return (T) Activator.CreateInstance(typeof (T), Source.ObjectId, Source.SubId); //Edit from an existing notification trigger
+                    return (T)Activator.CreateInstance(typeof(T), Id); //Create a new notification trigger
             }
-                
-            if (TriggerId != null)
-                return (T) Activator.CreateInstance(typeof (T), Id, TriggerId); //Edit a notification trigger
-            else
-                return (T) Activator.CreateInstance(typeof (T), Id); //Create a new notification trigger
+            catch(TargetInvocationException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+
+                throw;
+            }
         }
     }
 }

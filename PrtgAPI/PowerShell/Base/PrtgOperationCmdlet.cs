@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace PrtgAPI.PowerShell.Base
@@ -67,6 +68,20 @@ namespace PrtgAPI.PowerShell.Base
                     {
                         //Don't care if our value wasn't parsable
                     }
+                }
+            }
+            else
+            {
+                //Try and parse the value if the property type is an Enum or Nullable Enum
+                var type = property.PropertyType;
+
+                if (!type.IsEnum)
+                    type = Nullable.GetUnderlyingType(property.PropertyType);
+
+                if (type?.IsEnum == true)
+                {
+                    if (Enum.GetNames(type).Any(e => e.ToLower() == value?.ToString().ToLower()))
+                        return Enum.Parse(type, value.ToString(), true);
                 }
             }
 

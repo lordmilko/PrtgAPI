@@ -152,7 +152,7 @@ namespace PrtgAPI
         private int? threshold;
 
         /// <summary>
-        /// Value threshold required before this notification is activated.
+        /// Value threshold or object state required before this notification is activated.
         /// Applies to: Threshold, Speed, Volume Triggers
         /// </summary>
         [DataMember(Name = "threshold")]
