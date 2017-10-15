@@ -32,7 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return GetResponse(ref address).GetResponseText(ref address);
         }
 
-        private IWebResponse GetResponse(ref string address)
+        protected virtual IWebResponse GetResponse(ref string address)
         {
             var function = GetFunction(address);
 
@@ -53,7 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                 case nameof(JsonFunction.Triggers):
                     return new TriggerOverviewResponse();
                 default:
-                    throw new NotImplementedException($"Unknown function '{function}' passed to MultiTypeResponse");
+                    throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(MultiTypeResponse)}");
             }
         }
 
@@ -99,7 +99,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return Enumerable.Range(0, count).Select(func).ToArray();
         }
 
-        private string GetFunction(string address)
+        protected string GetFunction(string address)
         {
             var page = GetPage(address);
 

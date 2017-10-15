@@ -81,6 +81,7 @@
     <Compile Include="ObjectTests\NotificationActionTests.cs" />
     <Compile Include="ObjectTests\ObjectTests.cs" />
     <Compile Include="ObjectTests\Responses\BasicResponse.cs" />
+    <Compile Include="ObjectTests\Responses\CloneResponse.cs" />
     <Compile Include="ObjectTests\Responses\DeviceSettingsResponse.cs" />
     <Compile Include="ObjectTests\Responses\GroupResponse.cs" />
     <Compile Include="ObjectTests\Responses\ModificationHistoryResponse.cs" />
@@ -125,6 +126,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PowerShell\Clone-Object.Tests.ps1" />
     <None Include="PowerShell\Get-Channel.Tests.ps1" />
     <None Include="PowerShell\Connect-PrtgServer.Tests.ps1" />
     <None Include="PowerShell\Get-Device.Tests.ps1" />

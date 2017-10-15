@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             List<T> @object;
 
-            var retriesRemaining = 10;
+            var retriesRemaining = 5;
             var delay = 3;
 
             do
@@ -63,7 +63,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 if (@object.Count == 0)
                 {
+                    if (retriesRemaining == 0)
+                    {
+                        throw new ObjectResolutionException($"Could not resolve object with ID '{id}': PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                    }
+
                     WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeof(T).Name.ToLower()}: object is still being created. Retries remaining: {retriesRemaining}");
+                    retriesRemaining--;
+
                     Thread.Sleep(delay * 1000);
 
                     delay *= 2;

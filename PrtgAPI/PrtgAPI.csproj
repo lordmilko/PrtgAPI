@@ -89,6 +89,7 @@
     <Compile Include="Events\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
     <Compile Include="Exceptions\InvalidStateException.cs" />
+    <Compile Include="Exceptions\ObjectResolutionException.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\PipelineHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
