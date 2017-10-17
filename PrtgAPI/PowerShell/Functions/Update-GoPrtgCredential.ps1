@@ -1,6 +1,6 @@
 ﻿if(!$script:prtgAPIModule)
 {
-	. "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
+    . "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
 }
 
 $ErrorActionPreference = "Stop"
@@ -20,23 +20,23 @@ function Update-GoPrtgCredential
     UpdateServerRunner {
         param($servers, $targetServer)
 
-		$oldClient = Get-PrtgClient
+        $oldClient = Get-PrtgClient
         $newClient = GetNewClient $Credential
 
-		if($oldClient.UserName -ne $newClient.UserName)
-		{
-			$duplicateServer = @($servers | Where-Object {$_.Server -eq $newClient.Server -and $_.UserName -eq $newClient.UserName })
+        if($oldClient.UserName -ne $newClient.UserName)
+        {
+            $duplicateServer = @($servers | Where-Object {$_.Server -eq $newClient.Server -and $_.UserName -eq $newClient.UserName })
 
-			if($duplicateServer.Count -gt 0)
-			{
-				throw "Cannot update credential: a record with username '$($newClient.UserName)' for server '$($newClient.Server)' already exists"
-			}
-		}
+            if($duplicateServer.Count -gt 0)
+            {
+                throw "Cannot update credential: a record with username '$($newClient.UserName)' for server '$($newClient.Server)' already exists"
+            }
+        }
 
         #encrypt the new passhash, store it in a variable, pass it in our call to create new line
 
         $secureString = ConvertTo-SecureString $newClient.PassHash -AsPlainText -Force
-	    $encryptedString = ConvertFrom-SecureString $secureString
+        $encryptedString = ConvertFrom-SecureString $secureString
 
         return {
             param($row, $createRow)
@@ -47,7 +47,7 @@ function Update-GoPrtgCredential
 
     $client = Get-PrtgClient
 
-	Write-ColorOutput "`nSuccessfully updated credential" -ForegroundColor Green
+    Write-ColorOutput "`nSuccessfully updated credential" -ForegroundColor Green
 
     Write-ColorOutput "`nConnected to $($client.Server) as $($client.UserName)`n" -ForegroundColor Green
 
@@ -71,5 +71,5 @@ function GetNewClient($credential)
 # Visual Studio Test Engine doesn't support Get-Credential, so we'll mock GetNewCredential instead
 function GetNewCredential($username)
 {
-	return Get-Credential -UserName $username -Message "Enter your credentials."
+    return Get-Credential -UserName $username -Message "Enter your credentials."
 }

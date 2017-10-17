@@ -5,70 +5,70 @@
 function Describe($name, $script) {
 
     Pester\Describe $name {
-		BeforeAll { Startup $name.Substring($name.indexof("-") + 1) }
-		AfterAll { Shutdown }
+        BeforeAll { Startup $name.Substring($name.indexof("-") + 1) }
+        AfterAll { Shutdown }
 
-		& $script
-	}
+        & $script
+    }
 }
 
 function GetItem
 {
-	return $global:tester.GetItem()
+    return $global:tester.GetItem()
 }
 
 function WithItems($items, $assert)
 {
-	$oldClient = Get-PrtgClient
+    $oldClient = Get-PrtgClient
 
-	$global:tester.SetPrtgSessionState($items)
+    $global:tester.SetPrtgSessionState($items)
 
-	try
-	{
-		$result = & $assert
+    try
+    {
+        $result = & $assert
 
-		if($result)
-		{
-			return $result
-		}
-	}
-	finally
-	{
-		$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
-	}
+        if($result)
+        {
+            return $result
+        }
+    }
+    finally
+    {
+        $global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
+    }
 }
 
 function Run($objectType, $script)
 {
-	$oldClient = Get-PrtgClient
+    $oldClient = Get-PrtgClient
     $oldTester = $global:tester
-	$global:tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
-	$global:tester.SetPrtgSessionState()
+    $global:tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
+    $global:tester.SetPrtgSessionState()
 
-	try
-	{
-		$result = & $script
-	}
-	finally
-	{
-		$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
-		$global:tester = $oldTester
-	}	
+    try
+    {
+        $result = & $script
+    }
+    finally
+    {
+        $global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$oldClient)
+        $global:tester = $oldTester
+    }    
 
-	return $result
+    return $result
 }
 
 function SetMultiTypeResponse
 {
-	$client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
+    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
 
-	SetPrtgClient $client
+    SetPrtgClient $client
 }
 
 function SetPrtgClient($client)
 {
-	$type = [PrtgAPI.PrtgClient].Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
-	$property = $type.GetProperty("Client", [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic)
+    $type = [PrtgAPI.PrtgClient].Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
+    $property = $type.GetProperty("Client", [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic)
 
-	$property.SetValue($null, $client)
+    $property.SetValue($null, $client)
 }

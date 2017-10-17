@@ -1,28 +1,28 @@
 ﻿function Startup($type)
 {
-	InitializeUnitTestModules
-	$global:tester = SetState $type $null
+    InitializeUnitTestModules
+    $global:tester = SetState $type $null
 }
 
 function InitializeUnitTestModules
 {
-	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
+    InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
 }
 
 function Shutdown
 {
-	$global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$null)
-	$global:tester = $null
+    $global:tester.SetPrtgSessionState([PrtgAPI.PrtgClient]$null)
+    $global:tester = $null
 }
 
 function InitializeModules($testProject, $scriptRoot)
 {
-	$modules = Get-Module prtgapi,$testProject
-	
-	if($modules.Count -ne 2)
-	{
-		ImportModules $testProject $scriptRoot
-	}
+    $modules = Get-Module prtgapi,$testProject
+    
+    if($modules.Count -ne 2)
+    {
+        ImportModules $testProject $scriptRoot
+    }
 }
 
 function ImportModules($testProject, $scriptRoot)
@@ -64,18 +64,18 @@ function ImportModules($testProject, $scriptRoot)
 
 function SetState($objectType, $items)
 {
-	$tester = $null
+    $tester = $null
 
-	if(!$items)
-	{
-		$tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
-	}
-	else
-	{
-		$tester = New-Object "PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests" -ArgumentList ($items)
-	}
-	
-	$tester.SetPrtgSessionState()
+    if(!$items)
+    {
+        $tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
+    }
+    else
+    {
+        $tester = New-Object "PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests" -ArgumentList ($items)
+    }
+    
+    $tester.SetPrtgSessionState()
 
-	return $tester
+    return $tester
 }

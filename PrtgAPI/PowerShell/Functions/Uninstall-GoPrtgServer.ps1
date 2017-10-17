@@ -1,23 +1,23 @@
 ﻿if(!$script:prtgAPIModule)
 {
-	. "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
+    . "$PSScriptRoot\..\Resources\PrtgAPI.GoPrtg.ps1"
 }
 
 function Uninstall-GoPrtgServer([string]$Server, [switch]$Force)
 {
-	if(!(Test-Path $Profile))
-	{
-		throw "No GoPrtg servers are installed. To install a GoPrtg server, run Install-GoPrtgServer."
-	}
+    if(!(Test-Path $Profile))
+    {
+        throw "No GoPrtg servers are installed. To install a GoPrtg server, run Install-GoPrtgServer."
+    }
 
-	$contents = Get-Content $Profile
+    $contents = Get-Content $Profile
 
-	$functionStart = GetGoPrtgStart $contents
-	$functionEnd = GetGoPrtgEnd $contents $functionStart
+    $functionStart = GetGoPrtgStart $contents
+    $functionEnd = GetGoPrtgEnd $contents $functionStart
 
-	$functionExists = Get-Command __goPrtgGetServers -ErrorAction SilentlyContinue
+    $functionExists = Get-Command __goPrtgGetServers -ErrorAction SilentlyContinue
 
-	ValidateGoPrtgBlock $functionStart $functionEnd $functionExists
+    ValidateGoPrtgBlock $functionStart $functionEnd $functionExists
 
     if($functionExists)
     {
@@ -28,21 +28,21 @@ function Uninstall-GoPrtgServer([string]$Server, [switch]$Force)
 
         $filtered = GetFiltered $contents $matches $functionStart $functionEnd
 
-		if($filtered)
-		{
-			$filtered = AddGoPrtgFunctionHeaderAndFooter $contents $filtered $functionStart $functionEnd
-		}
+        if($filtered)
+        {
+            $filtered = AddGoPrtgFunctionHeaderAndFooter $contents $filtered $functionStart $functionEnd
+        }
 
         UpdateGoPrtgFunctionBody $filtered $contents $functionStart $functionEnd
 
-		if($null -ne $filtered)
-		{
-			.([ScriptBlock]::Create(($filtered -replace "function ","function global:")))
-		}
-		else
-		{
-			Remove-Item Function:\__goPrtgGetServers
-		}
+        if($null -ne $filtered)
+        {
+            .([ScriptBlock]::Create(($filtered -replace "function ","function global:")))
+        }
+        else
+        {
+            Remove-Item Function:\__goPrtgGetServers
+        }
     }
     else
     {
@@ -52,35 +52,35 @@ function Uninstall-GoPrtgServer([string]$Server, [switch]$Force)
 
 function SetServerWildcardIfMissing($server, $servers, $force)
 {
-	if($force)
-	{
-		$server = "*"
-	}
-	else
-	{
-		if(!$server)
-		{
-			if($servers.Count -gt 1)
-			{
-				throw "Cannot remove servers; server name or alias must be specified when multiple entries exist. To remove all servers, specify -Force"
-			}
-			else
-			{
-				$server = "*"
-			}
-		}
-	}
+    if($force)
+    {
+        $server = "*"
+    }
+    else
+    {
+        if(!$server)
+        {
+            if($servers.Count -gt 1)
+            {
+                throw "Cannot remove servers; server name or alias must be specified when multiple entries exist. To remove all servers, specify -Force"
+            }
+            else
+            {
+                $server = "*"
+            }
+        }
+    }
 
     return $server
 }
 
 function GetMatches($server, $servers)
 {
-	$matches = @()
+    $matches = @()
 
-	foreach($s in $servers)
-	{
-		if($s.Server -like $server)
+    foreach($s in $servers)
+    {
+        if($s.Server -like $server)
         {
             $matches += $s
         }
@@ -94,7 +94,7 @@ function GetMatches($server, $servers)
                 }
             }
         }
-	}
+    }
 
     if(!$matches)
     {

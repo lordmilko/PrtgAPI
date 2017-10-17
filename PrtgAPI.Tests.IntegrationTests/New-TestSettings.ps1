@@ -1,9 +1,9 @@
 ﻿<#function New-TestSettings
 {
 
-	#import settings and, if it exists, settings.local. then do reflection and analyze all the values
-	#we wrote some code in basetest or something which validates every field has a value. property must not be null or the string -1
-	#todo: also need to use that validation function before integration tests in general (albiet from the imported module, not importing a cs file)
+    #import settings and, if it exists, settings.local. then do reflection and analyze all the values
+    #we wrote some code in basetest or something which validates every field has a value. property must not be null or the string -1
+    #todo: also need to use that validation function before integration tests in general (albiet from the imported module, not importing a cs file)
 
     #need to have the nuget.org package source, and then need to install codedom
 

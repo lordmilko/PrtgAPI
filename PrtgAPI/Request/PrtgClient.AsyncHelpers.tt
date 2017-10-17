@@ -20,19 +20,19 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI
 {
-	public partial class PrtgClient
-	{
-		//######################################
-		// GetChannelsInternal
-		//######################################
+    public partial class PrtgClient
+    {
+        //######################################
+        // GetChannelsInternal
+        //######################################
 
 <#
 for(int i = 0; i < 2; i++)
 {
 #>
-		internal <#= GetSignature("GetChannelsInternal", "List<Channel>", i) #>(int sensorId, Func<string, bool> nameFilter = null)
-		{
-			var response = <#= CallFunction("requestEngine.ExecuteRequest", "XmlFunction.TableData, new ChannelParameters(sensorId)", i) #>;
+        internal <#= GetSignature("GetChannelsInternal", "List<Channel>", i) #>(int sensorId, Func<string, bool> nameFilter = null)
+        {
+            var response = <#= CallFunction("requestEngine.ExecuteRequest", "XmlFunction.TableData, new ChannelParameters(sensorId)", i) #>;
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -47,7 +47,7 @@ for(int i = 0; i < 2; i++)
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
-				var properties = <#= CallFunction("GetChannelProperties", "sensorId, id", i) #>;
+                var properties = <#= CallFunction("GetChannelProperties", "sensorId, id", i) #>;
 
                 item.Add(properties.Nodes());
                 item.Add(new XElement("injected_sensorId", sensorId));
@@ -57,22 +57,22 @@ for(int i = 0; i < 2; i++)
                 return Data<Channel>.DeserializeList(response).Items;
 
             return new List<Channel>();
-		}
+        }
 
 <#
 }
 #>
-		//######################################
-		// ValidateTriggerParameters
-		//######################################
+        //######################################
+        // ValidateTriggerParameters
+        //######################################
 
 <#
 for(int i = 0; i < 2; i++)
 {
 #>
-		private <#= GetSignature("ValidateTriggerParameters", "void", i) #>(TriggerParameters parameters)
-		{
-			if (parameters.Action == ModifyAction.Add)
+        private <#= GetSignature("ValidateTriggerParameters", "void", i) #>(TriggerParameters parameters)
+        {
+            if (parameters.Action == ModifyAction.Add)
             {
                 var data = <#= CallFunction("GetNotificationTriggerData", "parameters.ObjectId", i) #>;
 
@@ -80,14 +80,14 @@ for(int i = 0; i < 2; i++)
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-			var channel = GetTriggerChannel(parameters);
+            var channel = GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
 
             var sensor = <#= CallFunction("GetSensors", "Property.Id, parameters.ObjectId", i) #>;
 
-			if (sensor.Count > 0) //Validate this sensor has this channel
+            if (sensor.Count > 0) //Validate this sensor has this channel
             {
                 if(channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
@@ -95,7 +95,7 @@ for(int i = 0; i < 2; i++)
                 bool anyResponse = false;
 
                 if (channel.channel is Channel)
-					anyResponse = (<#= CallFunction("GetChannels", "parameters.ObjectId, ((Channel)channel.channel).Name", i) #>).Any();
+                    anyResponse = (<#= CallFunction("GetChannels", "parameters.ObjectId, ((Channel)channel.channel).Name", i) #>).Any();
                 else
                     anyResponse = (<#= CallFunction("GetChannelProperties", "parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())", i) #>).Descendants().Any();
 
@@ -107,29 +107,29 @@ for(int i = 0; i < 2; i++)
                 if (!(channel.channel is StandardTriggerChannel))
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
             }
-		}
+        }
 
 <#
 }
 #>
-		//######################################
-		// UpdateTriggerChannels
-		//######################################
+        //######################################
+        // UpdateTriggerChannels
+        //######################################
 
 <#
 for(int i = 0; i < 2; i++)
 {
 #>
-		private <#= GetSignature("UpdateTriggerChannels", "void", i) #>(List<NotificationTrigger> triggers)
-		{
-			foreach (var trigger in triggers)
+        private <#= GetSignature("UpdateTriggerChannels", "void", i) #>(List<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
             {
                 if (trigger.SetEnumChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
                     try
                     {
-						trigger.channelObj = (<#= CallFunction("GetChannelsInternal", "trigger.ObjectId, n => n == trigger.channelName", i) #>).First();
+                        trigger.channelObj = (<#= CallFunction("GetChannelsInternal", "trigger.ObjectId, n => n == trigger.channelName", i) #>).First();
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -138,19 +138,19 @@ for(int i = 0; i < 2; i++)
                     }
                 }
             }
-		}
+        }
 <#
 }
 #>
-		//######################################
-		// ParseNotificationTriggerTypes
-		//######################################
+        //######################################
+        // ParseNotificationTriggerTypes
+        //######################################
 
 <#
 for(int i = 0; i < 2; i++)
 {
 #>
-		private <#= GetSignature("ParseNotificationTriggerTypes", "string", i) #>(HttpResponseMessage response)
+        private <#= GetSignature("ParseNotificationTriggerTypes", "string", i) #>(HttpResponseMessage response)
         {
             var responseText = <#= AwaitOrForceResult("response.Content.ReadAsStringAsync()", i) #>
 
@@ -160,40 +160,40 @@ for(int i = 0; i < 2; i++)
         }
 <#
 if(i == 0)
-	WriteLine("");
+    WriteLine("");
 }
 #>
-	}
+    }
 }
 
 <#+
     public string GetSignature(string name, string returnType, int i)
     {
-		if(i == 0)
-			return $"{returnType} {name}";
-		else
-		{
-			if(returnType == "void")
-				returnType = "Task";
-			else
-				returnType = $"Task<{returnType}>";
-		}
-			return $"async {returnType} {name}Async";
+        if(i == 0)
+            return $"{returnType} {name}";
+        else
+        {
+            if(returnType == "void")
+                returnType = "Task";
+            else
+                returnType = $"Task<{returnType}>";
+        }
+            return $"async {returnType} {name}Async";
     }
 
-	public string CallFunction(string name, string parameters, int i)
-	{
-		if(i == 0)
-			return $"{name}({parameters})";
-		else
-			return $"await {name}Async({parameters}).ConfigureAwait(false)";
-	}
+    public string CallFunction(string name, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters})";
+        else
+            return $"await {name}Async({parameters}).ConfigureAwait(false)";
+    }
 
-	public string AwaitOrForceResult(string function, int i)
-	{
-		if(i == 0)
-			return $"{function}.Result;";
-		else
-			return $"await {function}.ConfigureAwait(false);";
-	}
+    public string AwaitOrForceResult(string function, int i)
+    {
+        if(i == 0)
+            return $"{function}.Result;";
+        else
+            return $"await {function}.ConfigureAwait(false);";
+    }
 #>

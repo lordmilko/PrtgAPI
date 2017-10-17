@@ -2,10 +2,10 @@
 
 function Describe($name, $script)
 {
-	Pester\Describe $name {
+    Pester\Describe $name {
 
-		BeforeAll {	InitializeUnitTestModules }
+        BeforeAll {    InitializeUnitTestModules }
 
-		& $script
-	}
+        & $script
+    }
 }

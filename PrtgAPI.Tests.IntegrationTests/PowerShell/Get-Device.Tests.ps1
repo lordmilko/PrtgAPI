@@ -1,89 +1,89 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
 Describe "Get-Device_IT" {
-	It "has correct number of devices" {
-		$devices = Get-Device
+    It "has correct number of devices" {
+        $devices = Get-Device
 
-		$devices.Count | Should Be (Settings DevicesInTestServer)
-	}
+        $devices.Count | Should Be (Settings DevicesInTestServer)
+    }
 
-	It "can filter by name" {
-		$devices = Get-Device (Settings DeviceName)
+    It "can filter by name" {
+        $devices = Get-Device (Settings DeviceName)
 
-		$devices.Count | Should BeGreaterThan 0
+        $devices.Count | Should BeGreaterThan 0
 
-		foreach($device in $devices)
-		{
-			$device.Name | Should Be (Settings DeviceName)
-		}
-	}
+        foreach($device in $devices)
+        {
+            $device.Name | Should Be (Settings DeviceName)
+        }
+    }
 
-	It "can filter by starting wildcard" {
-		$devices = Get-Device Probe*
+    It "can filter by starting wildcard" {
+        $devices = Get-Device Probe*
 
-		$devices.Count | Should BeGreaterThan 0
+        $devices.Count | Should BeGreaterThan 0
 
-		foreach($device in $devices)
-		{
-			$device.Name | Should BeLike "Probe*"
-		}
-	}
+        foreach($device in $devices)
+        {
+            $device.Name | Should BeLike "Probe*"
+        }
+    }
 
-	It "can filter by ending wildcard" {
-		$devices = Get-Device *Device
+    It "can filter by ending wildcard" {
+        $devices = Get-Device *Device
 
-		$devices.Count | Should BeGreaterThan 0
+        $devices.Count | Should BeGreaterThan 0
 
-		foreach($device in $devices)
-		{
-			$device.Name | Should BeLike "*Device"
-		}
-	}
+        foreach($device in $devices)
+        {
+            $device.Name | Should BeLike "*Device"
+        }
+    }
 
-	It "can filter by wildcard contains" {
-		$devices = Get-Device *prtg*
+    It "can filter by wildcard contains" {
+        $devices = Get-Device *prtg*
 
-		$devices.Count | Should BeGreaterThan 0
+        $devices.Count | Should BeGreaterThan 0
 
-		foreach($device in $devices)
-		{
-			$device.Name | Should BeLike "*prtg*"
-		}
-	}
+        foreach($device in $devices)
+        {
+            $device.Name | Should BeLike "*prtg*"
+        }
+    }
 
-	It "can filter by Id" {
-		$device = Get-Device -Id (Settings Device)
+    It "can filter by Id" {
+        $device = Get-Device -Id (Settings Device)
 
-		$device.Count | Should Be 1
-		$device.Id | Should Be (Settings Device)
-	}
+        $device.Count | Should Be 1
+        $device.Id | Should Be (Settings Device)
+    }
 
-	It "can filter by tags" {
-		$device = Get-Device -Tags (Settings DeviceTag)
+    It "can filter by tags" {
+        $device = Get-Device -Tags (Settings DeviceTag)
 
-		$device.Count | Should Be 1
-	}
+        $device.Count | Should Be 1
+    }
 
-	It "can pipe from groups" {
+    It "can pipe from groups" {
 
-		$group = Get-Group -Id (Settings Group)
+        $group = Get-Group -Id (Settings Group)
 
-		$devices = $group | Get-Device
+        $devices = $group | Get-Device
 
-		$devices.Count | Should be (Settings DevicesInTestGroup)
-	}
+        $devices.Count | Should be (Settings DevicesInTestGroup)
+    }
 
-	It "can pipe from probes" {
-		$probe = Get-Probe -Id (Settings Probe)
+    It "can pipe from probes" {
+        $probe = Get-Probe -Id (Settings Probe)
 
-		$devices = $probe | Get-Device
+        $devices = $probe | Get-Device
 
-		$devices.Count | Should Be (Settings DevicesInTestProbe)
-	}
+        $devices.Count | Should Be (Settings DevicesInTestProbe)
+    }
 
-	It "can pipe from search filters" {
-		$devices = New-SearchFilter name contains probe | Get-Device
+    It "can pipe from search filters" {
+        $devices = New-SearchFilter name contains probe | Get-Device
 
-		$devices.Count | Should Be 1
-	}
+        $devices.Count | Should Be 1
+    }
 }

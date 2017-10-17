@@ -10,9 +10,9 @@
     -add support for properties we havent written up yet across sensors, devices, groups and probes
 
     -make rename-object prompt whether you want to do it, and add a force parameter
-	-when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
+    -when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
      maybe we should make priority a fancy class? then we can say tostring is numeric <- dont know what that means, but if we're a class we can set priority using numbers instead of words
-	 todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
+     todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
     -once nuget is working, publish appveyor.yml to github
 
     -maybe all the getsensor, device, group, probe etc cmdlets should have parameter sets for the different object types you can pipe in

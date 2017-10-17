@@ -37,11 +37,11 @@ $script:prtgAPIModule = $true
 # Each function also needs to be manually exported in the psd1
 foreach($function in $functions)
 {
-	. $function.FullName
+    . $function.FullName
 
-	#$name = $function.Name -replace ".ps1",""
+    #$name = $function.Name -replace ".ps1",""
 
-	#exporting the module member from a variable doesnt work. a string literal works fine
+    #exporting the module member from a variable doesnt work. a string literal works fine
 }
 
 # Import PrtgAPI.GoPrtg.ps1 after dot sourcing each function so that the Export-ModuleMember refers to a function that actually exists

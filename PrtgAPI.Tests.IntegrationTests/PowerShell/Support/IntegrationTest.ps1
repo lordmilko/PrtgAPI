@@ -3,13 +3,13 @@
 function Describe($name, $script) {
 
     Pester\Describe $name {
-		BeforeAll {
-			Startup
+        BeforeAll {
+            Startup
 
-			LogTest "Running unsafe test '$name'"
-		}
-		AfterAll { Shutdown }
+            LogTest "Running unsafe test '$name'"
+        }
+        AfterAll { Shutdown }
 
-		& $script
-	}
+        & $script
+    }
 }

@@ -8,9 +8,9 @@ function InstallInEmptyProfile($baseExpected)
 
     Install-GoPrtgServer
 
-	$content = gc $Profile -Raw
+    $content = gc $Profile -Raw
 
-	$content | Should BeLike $baseExpected
+    $content | Should BeLike $baseExpected
 }
 
 function InstallInProfileWithContent($baseExpected, $multiLine)
@@ -21,79 +21,79 @@ function InstallInProfileWithContent($baseExpected, $multiLine)
 
     if($multiLine)
     {
-		Add-Content $Profile "Write-Host `"what what?`""
+        Add-Content $Profile "Write-Host `"what what?`""
     }
 
     Install-GoPrtgServer
 
-	$content = gc $Profile -Raw
+    $content = gc $Profile -Raw
 
-	$expected = "Write-Host `"hello`"`r`n$baseExpected"
+    $expected = "Write-Host `"hello`"`r`n$baseExpected"
 
     if($multiLine)
     {
-		$expected = "Write-Host `"hello`"`r`nWrite-Host `"what what?`"`r`n$baseExpected"
+        $expected = "Write-Host `"hello`"`r`nWrite-Host `"what what?`"`r`n$baseExpected"
     }
 
-	$content | Should BeLike $expected
+    $content | Should BeLike $expected
 }
 
 function InstallMultipleInProfile
 {
     Install-GoPrtgServer
 
-	try
-	{
-		Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
+    try
+    {
+        Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
 
-		Install-GoPrtgServer
-	}
-	finally
-	{
-		Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
-	}
+        Install-GoPrtgServer
+    }
+    finally
+    {
+        Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+    }
 
-	$content = gc $Profile -Raw
+    $content = gc $Profile -Raw
 
-	$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-	$expected += "function __goPrtgGetServers {@(`r`n"
-	$expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
-	$expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
-	$expected += ")}`r`n`r`n"
-	$expected += "############################ End GoPrtg Servers ############################`r`n"
+    $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
+    $expected += "function __goPrtgGetServers {@(`r`n"
+    $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
+    $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
+    $expected += ")}`r`n`r`n"
+    $expected += "############################ End GoPrtg Servers ############################`r`n"
 
-	$expected = $expected.Replace("``", "````")
+    $expected = $expected.Replace("``", "````")
 
-	$content | Should BeLike $expected
+    $content | Should BeLike $expected
 }
 
 function InstallMultipleWithAlias
 {
     Install-GoPrtgServer prod
 
-	try
-	{
-		Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
+    try
+    {
+        Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
 
-		Install-GoPrtgServer dev
-	}
-	finally
-	{
-		Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
-	}
+        Install-GoPrtgServer dev
+    }
+    finally
+    {
+        Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+    }
 
-	$content = gc $Profile -Raw
+    $content = gc $Profile -Raw
 
-	$expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-	$expected += "function __goPrtgGetServers {@(`r`n"
-	$expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
-	$expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
-	$expected += ")}`r`n`r`n"
-	$expected += "############################ End GoPrtg Servers ############################`r`n"
+    $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
+    $expected += "function __goPrtgGetServers {@(`r`n"
+    $expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
+    $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
+    $expected += ")}`r`n`r`n"
+    $expected += "############################ End GoPrtg Servers ############################`r`n"
 
-	$expected = $expected.Replace("``", "````")
+    $expected = $expected.Replace("``", "````")
 
-	$content | Should BeLike $expected
+    $content | Should BeLike $expected
 }
 
 #endregion
@@ -101,54 +101,54 @@ function InstallMultipleWithAlias
 
 function GoPrtgBeforeAll
 {
-	if(!$Profile)
-	{
-		$Global:Profile = "$TestDrive\Microsoft.PowerShell_profile.ps1"
-	}
+    if(!$Profile)
+    {
+        $Global:Profile = "$TestDrive\Microsoft.PowerShell_profile.ps1"
+    }
 
-	InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
+    InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
 }
 
 function GoPrtgBeforeEach
 {
-	if(Test-Path $Profile)
-	{
-		if(Test-Path "$Profile.tmp")
-		{
-			throw "Cannot create temp profile; $Profile.tmp already exists"
-		}
-		else
-		{
-			mv $Profile "$Profile.tmp"
-		}
-	}
+    if(Test-Path $Profile)
+    {
+        if(Test-Path "$Profile.tmp")
+        {
+            throw "Cannot create temp profile; $Profile.tmp already exists"
+        }
+        else
+        {
+            mv $Profile "$Profile.tmp"
+        }
+    }
 
-	if(Get-Command __goPrtgGetServers -ErrorAction SilentlyContinue)
-	{
-		Remove-Item Function:\__goPrtgGetServers
-	}
+    if(Get-Command __goPrtgGetServers -ErrorAction SilentlyContinue)
+    {
+        Remove-Item Function:\__goPrtgGetServers
+    }
 
-	if(Test-Path $Profile)
-	{
-		throw "Could not rename PowerShell Profile"
-	}
+    if(Test-Path $Profile)
+    {
+        throw "Could not rename PowerShell Profile"
+    }
 
-	Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+    Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
 }
 
 function GoPrtgAfterEach
 {
-	if(Test-Path $Profile)
-	{
-		Remove-Item $Profile -Force
-	}
+    if(Test-Path $Profile)
+    {
+        Remove-Item $Profile -Force
+    }
 
-	if(Test-Path "$Profile.tmp")
-	{
-		mv "$Profile.tmp" $Profile
-	}
+    if(Test-Path "$Profile.tmp")
+    {
+        mv "$Profile.tmp" $Profile
+    }
 
-	Disconnect-PrtgServer
+    Disconnect-PrtgServer
 }
 
 #endregion

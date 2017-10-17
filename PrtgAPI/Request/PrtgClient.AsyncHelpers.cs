@@ -18,44 +18,15 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI
 {
-	public partial class PrtgClient
-	{
-		//######################################
-		// GetChannelsInternal
-		//######################################
+    public partial class PrtgClient
+    {
+        //######################################
+        // GetChannelsInternal
+        //######################################
 
-		internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null)
-		{
-			var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
-
-            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
-
-            var items = response.Descendants("item").ToList();
-
-            if (nameFilter != null)
-                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
-
-            items = response.Descendants("item").ToList();
-
-            foreach (var item in items)
-            {
-                var id = Convert.ToInt32(item.Element("objid").Value);
-
-				var properties = GetChannelProperties(sensorId, id);
-
-                item.Add(properties.Nodes());
-                item.Add(new XElement("injected_sensorId", sensorId));
-            }
-
-            if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
-
-            return new List<Channel>();
-		}
-
-		internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null)
-		{
-			var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
+        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null)
+        {
+            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -70,7 +41,7 @@ namespace PrtgAPI
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
-				var properties = await GetChannelPropertiesAsync(sensorId, id).ConfigureAwait(false);
+                var properties = GetChannelProperties(sensorId, id);
 
                 item.Add(properties.Nodes());
                 item.Add(new XElement("injected_sensorId", sensorId));
@@ -80,15 +51,44 @@ namespace PrtgAPI
                 return Data<Channel>.DeserializeList(response).Items;
 
             return new List<Channel>();
-		}
+        }
 
-		//######################################
-		// ValidateTriggerParameters
-		//######################################
+        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
-		private void ValidateTriggerParameters(TriggerParameters parameters)
-		{
-			if (parameters.Action == ModifyAction.Add)
+            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
+
+            var items = response.Descendants("item").ToList();
+
+            if (nameFilter != null)
+                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
+
+            items = response.Descendants("item").ToList();
+
+            foreach (var item in items)
+            {
+                var id = Convert.ToInt32(item.Element("objid").Value);
+
+                var properties = await GetChannelPropertiesAsync(sensorId, id).ConfigureAwait(false);
+
+                item.Add(properties.Nodes());
+                item.Add(new XElement("injected_sensorId", sensorId));
+            }
+
+            if (items.Count > 0)
+                return Data<Channel>.DeserializeList(response).Items;
+
+            return new List<Channel>();
+        }
+
+        //######################################
+        // ValidateTriggerParameters
+        //######################################
+
+        private void ValidateTriggerParameters(TriggerParameters parameters)
+        {
+            if (parameters.Action == ModifyAction.Add)
             {
                 var data = GetNotificationTriggerData(parameters.ObjectId);
 
@@ -96,14 +96,14 @@ namespace PrtgAPI
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-			var channel = GetTriggerChannel(parameters);
+            var channel = GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
 
             var sensor = GetSensors(Property.Id, parameters.ObjectId);
 
-			if (sensor.Count > 0) //Validate this sensor has this channel
+            if (sensor.Count > 0) //Validate this sensor has this channel
             {
                 if(channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
@@ -111,7 +111,7 @@ namespace PrtgAPI
                 bool anyResponse = false;
 
                 if (channel.channel is Channel)
-					anyResponse = (GetChannels(parameters.ObjectId, ((Channel)channel.channel).Name)).Any();
+                    anyResponse = (GetChannels(parameters.ObjectId, ((Channel)channel.channel).Name)).Any();
                 else
                     anyResponse = (GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat()))).Descendants().Any();
 
@@ -123,11 +123,11 @@ namespace PrtgAPI
                 if (!(channel.channel is StandardTriggerChannel))
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
             }
-		}
+        }
 
-		private async Task ValidateTriggerParametersAsync(TriggerParameters parameters)
-		{
-			if (parameters.Action == ModifyAction.Add)
+        private async Task ValidateTriggerParametersAsync(TriggerParameters parameters)
+        {
+            if (parameters.Action == ModifyAction.Add)
             {
                 var data = await GetNotificationTriggerDataAsync(parameters.ObjectId).ConfigureAwait(false);
 
@@ -135,14 +135,14 @@ namespace PrtgAPI
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-			var channel = GetTriggerChannel(parameters);
+            var channel = GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
 
             var sensor = await GetSensorsAsync(Property.Id, parameters.ObjectId).ConfigureAwait(false);
 
-			if (sensor.Count > 0) //Validate this sensor has this channel
+            if (sensor.Count > 0) //Validate this sensor has this channel
             {
                 if(channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
@@ -150,7 +150,7 @@ namespace PrtgAPI
                 bool anyResponse = false;
 
                 if (channel.channel is Channel)
-					anyResponse = (await GetChannelsAsync(parameters.ObjectId, ((Channel)channel.channel).Name).ConfigureAwait(false)).Any();
+                    anyResponse = (await GetChannelsAsync(parameters.ObjectId, ((Channel)channel.channel).Name).ConfigureAwait(false)).Any();
                 else
                     anyResponse = (await GetChannelPropertiesAsync(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())).ConfigureAwait(false)).Descendants().Any();
 
@@ -162,22 +162,22 @@ namespace PrtgAPI
                 if (!(channel.channel is StandardTriggerChannel))
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
             }
-		}
+        }
 
-		//######################################
-		// UpdateTriggerChannels
-		//######################################
+        //######################################
+        // UpdateTriggerChannels
+        //######################################
 
-		private void UpdateTriggerChannels(List<NotificationTrigger> triggers)
-		{
-			foreach (var trigger in triggers)
+        private void UpdateTriggerChannels(List<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
             {
                 if (trigger.SetEnumChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
                     try
                     {
-						trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName)).First();
+                        trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName)).First();
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -186,17 +186,17 @@ namespace PrtgAPI
                     }
                 }
             }
-		}
-		private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers)
-		{
-			foreach (var trigger in triggers)
+        }
+        private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
             {
                 if (trigger.SetEnumChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
                     try
                     {
-						trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();
+                        trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();
                     }
                     catch (InvalidOperationException ex)
                     {
@@ -205,12 +205,12 @@ namespace PrtgAPI
                     }
                 }
             }
-		}
-		//######################################
-		// ParseNotificationTriggerTypes
-		//######################################
+        }
+        //######################################
+        // ParseNotificationTriggerTypes
+        //######################################
 
-		private string ParseNotificationTriggerTypes(HttpResponseMessage response)
+        private string ParseNotificationTriggerTypes(HttpResponseMessage response)
         {
             var responseText = response.Content.ReadAsStringAsync().Result;
 
@@ -219,7 +219,7 @@ namespace PrtgAPI
             return responseText;
         }
 
-		private async Task<string> ParseNotificationTriggerTypesAsync(HttpResponseMessage response)
+        private async Task<string> ParseNotificationTriggerTypesAsync(HttpResponseMessage response)
         {
             var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -227,6 +227,6 @@ namespace PrtgAPI
 
             return responseText;
         }
-	}
+    }
 }
 

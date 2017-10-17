@@ -2,7 +2,7 @@
 
 <#Describe "Set-ObjectProperty_Groups_IT" {
 
-	It "Group Type" {
+    It "Group Type" {
 
-	}
+    }
 }#>

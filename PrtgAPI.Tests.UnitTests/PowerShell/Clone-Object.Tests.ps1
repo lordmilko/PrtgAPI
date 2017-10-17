@@ -2,9 +2,9 @@
 
 function SetCloneResponse
 {
-	$client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.CloneResponse))
+    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.CloneResponse))
 
-	SetPrtgClient $client
+    SetPrtgClient $client
 }
 
 Describe "Clone-Sensor" {

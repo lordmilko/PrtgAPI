@@ -1,46 +1,46 @@
 ﻿. $PSScriptRoot\Support\IntegrationTestSafe.ps1
 
 Describe "Connect-PrtgServer_IT" {
-	It "can retry request" {
+    It "can retry request" {
 
-		Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force -RetryCount 3
-		$server = (Settings Server)
-		$credential = (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
+        Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force -RetryCount 3
+        $server = (Settings Server)
+        $credential = (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
 
-		<#Invoke-Command -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword)) -ScriptBlock {
-			Stop-Service "PRTGCoreService"
-		}#>
+        <#Invoke-Command -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword)) -ScriptBlock {
+            Stop-Service "PRTGCoreService"
+        }#>
 
-		$service = gwmi win32_service -ComputerName $server -Credential $credential -filter "name='PRTGCoreService'"
+        $service = gwmi win32_service -ComputerName $server -Credential $credential -filter "name='PRTGCoreService'"
 
-		LogTestDetail "Stopping service"
+        LogTestDetail "Stopping service"
 
-		$service.StopService()
+        $service.StopService()
 
-		LogTestDetail "Waiting 30 seconds while service stops"
+        LogTestDetail "Waiting 30 seconds while service stops"
 
-		Sleep 30
+        Sleep 30
 
-		try
-		{
+        try
+        {
             $output = [string]::Join("`n",(&{try { Get-Sensor 3>&1 | %{$_.Message} } catch [exception] { }}))
 
             $expected = "'Get-Sensor' timed out: Unable to connect to the remote server. Retries remaining: 3`n" +
                 "'Get-Sensor' timed out: Unable to connect to the remote server. Retries remaining: 2`n" +
                 "'Get-Sensor' timed out: Unable to connect to the remote server. Retries remaining: 1"
 
-			$output | Should Be $expected
+            $output | Should Be $expected
 
             { Get-Sensor | Get-Channel } | Should Throw "Server rejected HTTP connection on port 80"
-		}
-		finally
-		{
-			LogTestDetail "Starting service"
-			$service.StartService()
-			LogTestDetail "Pausing for 20 seconds while service starts"
+        }
+        finally
+        {
+            LogTestDetail "Starting service"
+            $service.StartService()
+            LogTestDetail "Pausing for 20 seconds while service starts"
             Sleep 20
-		}
+        }
 
-		#gwmi win32_service -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
-	}
+        #gwmi win32_service -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
+    }
 }

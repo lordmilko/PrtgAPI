@@ -2,97 +2,97 @@
 
 function Clear-Progress {
 
-	$val = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::ProgressSnapshots
+    $val = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::ProgressSnapshots
 
-	if($val -ne $null)
-	{
-		$val.Clear()
-	}	
+    if($val -ne $null)
+    {
+        $val.Clear()
+    }    
 }
 
 function Describe($name, $script)
 {
-	Pester\Describe $name {
+    Pester\Describe $name {
 
-		BeforeAll {	InitializeUnitTestModules }
-		AfterEach {
-			[PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::RecordQueue.Clear()
-			Clear-Progress
-		}
+        BeforeAll {    InitializeUnitTestModules }
+        AfterEach {
+            [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::RecordQueue.Clear()
+            Clear-Progress
+        }
 
-		& $script
-	}
+        & $script
+    }
 }
 
 function Get-Progress {
-	return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
+    return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
 }
 
-function Validate($list)	{
+function Validate($list)    {
 
-	foreach($progress in $list)
-	{
-		Get-Progress | Should Be $progress
-	}
+    foreach($progress in $list)
+    {
+        Get-Progress | Should Be $progress
+    }
 
-	try
-	{
+    try
+    {
         { $result = Get-Progress; throw "`n`nProgress Queue contains more records than expected. Next record is:`n`n$result`n`n" } | Should Throw "Queue empty"
-	}
-	catch [exception]
-	{
-		Clear-Progress
-		throw
-	}
+    }
+    catch [exception]
+    {
+        Clear-Progress
+        throw
+    }
 }
 
 function InitializeClient {
-	[PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Bind()
+    [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Bind()
 
-	SetMultiTypeResponse
+    SetMultiTypeResponse
 
-	Enable-PrtgProgress
+    Enable-PrtgProgress
 }
 
 function RunCustomCount($hashtable, $action)
 {
-	$dictionary = GetCustomCountDictionary $hashtable
+    $dictionary = GetCustomCountDictionary $hashtable
 
-	$oldClient = Get-PrtgClient
+    $oldClient = Get-PrtgClient
 
-	$newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse -ArgumentList $dictionary))
+    $newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse -ArgumentList $dictionary))
 
-	try
-	{
-		SetPrtgClient $newClient
+    try
+    {
+        SetPrtgClient $newClient
 
-		& $action
-	}
-	catch
-	{
-		throw
-	}
-	finally
-	{
-		SetPrtgClient $oldClient
-	}
+        & $action
+    }
+    catch
+    {
+        throw
+    }
+    finally
+    {
+        SetPrtgClient $oldClient
+    }
 }
 
 function GetCustomCountDictionary($hashtable)
 {
-	$dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
+    $dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
 
-	foreach($entry in $hashtable.GetEnumerator())
-	{
-		$newKey = $entry.Key -as "PrtgAPI.Content"
+    foreach($entry in $hashtable.GetEnumerator())
+    {
+        $newKey = $entry.Key -as "PrtgAPI.Content"
 
         if($newKey -eq $null)
         {
             throw "$($entry.Key) is not a valid PrtgAPI.Content value"
         }
 
-		$dictionary.Add($newKey, $entry.Value)
-	}
+        $dictionary.Add($newKey, $entry.Value)
+    }
 
-	return $dictionary
+    return $dictionary
 }

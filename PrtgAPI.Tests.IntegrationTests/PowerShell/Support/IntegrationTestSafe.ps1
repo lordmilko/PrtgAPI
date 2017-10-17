@@ -2,23 +2,23 @@
 
 function Describe($name, $script) {
 
-	$init = $false
+    $init = $false
 
     Pester\Describe $name {
-		BeforeAll { 
-			StartupSafe
+        BeforeAll { 
+            StartupSafe
 
-			$init = $true
+            $init = $true
 
-			LogTest "Running safe test '$name'"
-		}
-		AfterAll {
-			if($init)
-			{
-				LogTest "Completed '$name' tests; no need to clean up"
-			}
-		}
+            LogTest "Running safe test '$name'"
+        }
+        AfterAll {
+            if($init)
+            {
+                LogTest "Completed '$name' tests; no need to clean up"
+            }
+        }
 
-		& $script
-	}
+        & $script
+    }
 }
