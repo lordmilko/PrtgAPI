@@ -10,6 +10,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Edits a notification trigger on a PRTG Server.</para>
+    /// 
+    /// <para type="description">The Edit-NotificationTriggerProperty cmdlet allows a single notification trigger property to be modified.
+    /// Typically when you wish to modify the properties of an existing notification trigger, a TriggerParameters object must be constructed
+    /// and then passed to the Set-NotificationTrigger cmdlet. Edit-NotificationTriggerProperty simplifies the common case of only wanting to
+    /// modify a single property of the trigger.</para>
+    /// 
+    /// <example>
+    ///     <code>Get-Sensor -Id 1044 | Get-Trigger | Edit-TriggerProperty OnNotificationAction $null</code>
+    ///     <para>Remove the OnNotificationAction of all triggers defined on the object with ID 1044</para>
+    /// </example>
+    /// 
+    /// <para type="link">Get-NotificationTrigger</para>
+    /// <para type="link">Set-NotificationTrigger</para>
+    /// <para type="link">New-NotificationTriggerParameter</para> 
     /// </summary>
     [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty", SupportsShouldProcess = true)]
     public class EditNotificationTriggerProperty : PrtgOperationCmdlet

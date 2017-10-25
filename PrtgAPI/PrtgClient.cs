@@ -1601,56 +1601,6 @@ namespace PrtgAPI
         /// <returns>The total number of objects of a given type.</returns>
         public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
 
-        //todo: compare this to our new getsensorhistory
-        private List<ChannelHistoryRecord> GetSensorHistory2(int sensorId)
-        {
-            Logger.DebugEnabled = false;
-
-            //todo: add xml formatting
-            //var awwww = typeof (SensorOrDeviceOrGroupOrProbe).GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
-            //var q = GetSensors(SensorStatus.Paused);
-
-            //var filter = new SearchFilter(Property.Comments, SensorStatus.Paused);
-            //filter.ToString();
-
-            //myenum val = myenum.Val5;
-
-            //var al= Enum.GetValues(typeof (myenum)).Cast<myenum>().Where(m => m != val && val.HasFlag(m)).ToList();
-
-            //var enums = Enum.GetValues(typeof (myenum)).Cast<myenum>().ToList();
-
-
-            //var result = myenum.Val5.GetUnderlyingFlags();
-
-            //var result = outer(myenum.Val5, enums).ToList();
-
-            //foreach (var a in al1)
-
-
-            //loop over each element. if a value contains more than 1 element in it, its not real, so ignore it
-
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Columns] = new[] { Property.DateTime, Property.Value, Property.Coverage },
-                [Parameter.Id] = 2196,
-                [Parameter.Content] = Content.Values
-            };
-
-            var items = GetObjects<SensorHistoryData>(parameters);
-
-            foreach (var history in items)
-            {
-                foreach (var value in history.ChannelRecords)
-                {
-                    value.DateTime = history.DateTime;
-                    value.SensorId = sensorId;
-                }
-            }
-            //todo: need to implement coverage column
-            //todo: right now the count is just the default - 500. need to allow specifying bigger counts
-            return items.SelectMany(i => i.ChannelRecords).OrderByDescending(a => a.DateTime).Where(v => v.Value != null).ToList();
-        }
-
         /// <summary>
         /// Retrieve the setting/state modification history of a PRTG Object.
         /// </summary>

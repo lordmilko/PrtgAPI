@@ -8,6 +8,7 @@ New-Alias Set-Trigger Set-NotificationTrigger
 
 New-Alias Set-ChannelSetting Set-ChannelProperty
 New-Alias Set-ObjectSetting Set-ObjectProperty
+New-Alias Get-ObjectSetting Get-ObjectProperty
 
 New-Alias Acknowledge-Sensor Confirm-Sensor
 New-Alias Pause-Object Suspend-Object

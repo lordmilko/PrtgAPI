@@ -10,6 +10,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Resume-Object cmdlet resumes monitoring an object that has previously been interrupted
     /// due to manually pausing or simulating an error state on the object.</para>
     /// 
+    /// <example>
+    ///     <code>Get-Sensor -Status PausedByUser | Resume-Object</code>
+    ///     <para>Resume all sensors that have been paused by the user. Note: if parent object has been manually paused, child objects will appear PausedByUser but will not be able to be unpaused.</para>
+    /// </example>
+    /// 
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

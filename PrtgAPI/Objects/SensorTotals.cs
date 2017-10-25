@@ -4,7 +4,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Indicates the total number of each type of sensor on a PRTG Server.
+    /// <para type="description">Indicates the total number of each type of sensor on a PRTG Server.</para>
     /// </summary>
     public class SensorTotals
     {

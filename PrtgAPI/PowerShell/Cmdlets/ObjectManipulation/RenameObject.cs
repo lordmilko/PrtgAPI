@@ -5,7 +5,11 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Renames a PRTG object.</para> //todo: talk about whatif and force. but we dont even have those?
+    /// <para type="synopsis">Renames a PRTG object.</para>
+    /// 
+    /// <para type="description">The Rename-Object cmdlet allows you to rename a Sensor, Device, Group or Probe
+    /// within PRTG. When renaming objects, it is recommended to first execute Rename-Object first with the -WhatIf
+    /// parameter. This will show you all the objects that will be renamed when you execute the command normally.</para>
     /// 
     /// <example>
     ///     <code>Get-Sensor Memory | Rename-Object "Memory Free"</code>
@@ -43,10 +47,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            //todo when i piped a single entry to rename-object it didnt show progress
-
-            //when i pipe a variable with a list in it for objectdata cmdlets im not getting progress
-
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 ExecuteOperation(() =>

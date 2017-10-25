@@ -107,9 +107,6 @@
      some xml without checking whether its xml or not; this could result in an exception in the exception handler!
     -we need to be able to handle errors on json requests or otherwise
 
-    ScanningInterval
-    -this type has been made internal but if we're not going to even have individual getobjectproperty/setobjectproperty methods we can delete it
-
     SearchFilter
     -my documentation in my readme.md file says equals is case sensitive, but it actually doesnt appear to be. whats up with that?
 

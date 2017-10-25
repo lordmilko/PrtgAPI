@@ -9,8 +9,6 @@ using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
-    //todo: add some tests
-
     /// <summary>
     /// <para type="synopsis">Simulates an error status on a PRTG Sensor.</para>
     /// 
@@ -26,7 +24,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="link">Resume-Object</para>
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus")]
+    [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus", SupportsShouldProcess = true)]
     public class SimualteErrorStatus : PrtgOperationCmdlet
     {
         /// <summary>
@@ -40,7 +38,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            ExecuteOperation(() => client.SimulateError(Sensor.Id), "Simulating Sensor Errors", $"Processing sensor '{Sensor.Name}'");
+            if (ShouldProcess($"'{Sensor.Name}' (ID: {Sensor.Id})"))
+            {
+                ExecuteOperation(() => client.SimulateError(Sensor.Id), "Simulating Sensor Errors", $"Processing sensor '{Sensor.Name}'");
+            }
         }
     }
 }

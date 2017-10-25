@@ -42,9 +42,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -132,10 +129,10 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneGroup.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorHistory.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\MoveObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\SetObjectPosition.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\MoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectPosition.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SimulateErrorStatus.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\SortPrtgObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SortPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
