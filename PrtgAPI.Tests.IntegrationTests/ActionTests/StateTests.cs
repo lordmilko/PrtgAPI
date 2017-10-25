@@ -8,6 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests
     public class PrtgClientStateTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_State_AcknowledgeAndResume()
         {
             Assert2.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
@@ -31,6 +32,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_State_PauseAndResume()
         {
             Logger.LogTestDetail("Pausing object");
@@ -47,6 +49,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_State_PauseForDuration()
         {
             var initial = GetSensor(Settings.UpSensor);
@@ -76,6 +79,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_State_SimulateErrorAndResume()
         {
             Assert2.AreEqual(Status.Up, GetSensor(Settings.UpSensor).Status, $"Initial sensor state was not {Status.Up}");
@@ -94,6 +98,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_State_GetPausedSensors_HasDifferentTypes()
         {
             //client.Pause(Settings.DownSensor);

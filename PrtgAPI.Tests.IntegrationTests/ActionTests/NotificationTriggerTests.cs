@@ -14,6 +14,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         #region Add Without Customization
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithoutCustomization_State()
         {
             var parameters = new StateTriggerParameters(Settings.Probe);
@@ -22,6 +23,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithoutCustomization_Change()
         {
             var parameters = new ChangeTriggerParameters(Settings.Probe);
@@ -30,6 +32,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithoutCustomization_Volume()
         {
             var parameters = new VolumeTriggerParameters(Settings.Probe);
@@ -38,6 +41,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithoutCustomization_Speed()
         {
             var parameters = new SpeedTriggerParameters(Settings.Probe);
@@ -46,6 +50,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithoutCustomization_Threshold()
         {
             var parameters = new ThresholdTriggerParameters(Settings.Probe);
@@ -57,6 +62,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         #region Add With Customization
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithCustomization_State()
         {
             var actions = client.GetNotificationActions();
@@ -76,6 +82,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithCustomization_Change()
         {
             var action = client.GetNotificationActions().First();
@@ -89,6 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithCustomization_Volume()
         {
             var actions = client.GetNotificationActions();
@@ -105,6 +113,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithCustomization_Speed()
         {
             var actions = client.GetNotificationActions();
@@ -125,6 +134,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_AddWithCustomization_Threshold()
         {
             var actions = client.GetNotificationActions();
@@ -197,18 +207,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Speed()
         {
             AddRemoveTriggerFromExisting(TriggerType.Speed, trigger => new SpeedTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Volume()
         {
             AddRemoveTriggerFromExisting(TriggerType.Volume, trigger => new VolumeTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Change()
         {
             AddRemoveTriggerFromExisting(TriggerType.Change, trigger => new ChangeTriggerParameters(Settings.Device, trigger));

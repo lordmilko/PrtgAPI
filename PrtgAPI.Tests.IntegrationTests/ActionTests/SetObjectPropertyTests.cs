@@ -11,6 +11,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
     public class SetObjectPropertyTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_SetObjectProperty_ResolvesLocation()
         {
             var initial = client.GetDeviceProperties(Settings.Device);
@@ -27,6 +28,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Action_SetObjectProperty_ResolvesLocationAsync()
         {
             var initial = await client.GetDevicePropertiesAsync(Settings.Device);
