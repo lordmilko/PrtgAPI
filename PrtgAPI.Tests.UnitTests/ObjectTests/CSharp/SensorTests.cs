@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Responses;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -17,9 +17,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public async Task Sensor_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
+        [TestCategory("SlowCoverage")]
         public void Sensor_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
+        [TestCategory("SlowCoverage")]
         public void Sensor_GetObjectsOverloads_CanExecute()
         {
             Object_GetObjectsOverloads_CanExecute
@@ -53,76 +55,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
                 return false;
             });
-        }    
-
-        /*class Form1 : Form
-        {
-            public Form1(PrtgClient client)
-            {
-                var context = SynchronizationContext.Current;
-                var response = client.StreamSensors(); //this doesnt deadlock; we're probably not doing it right
-                foreach (var sensor in response)
-                    Debug.WriteLine(sensor.Name);
-            }
-        }*/
-
-        /*public void FormTest()
-        {
-            throw new NotImplementedException();
-            var form = new Form1(Initialize_Client_WithItems(GetItem()));
-
-            form.Show();
-        }*/
-
-        //move to some objecttests class not sure what to call it yet need to reorganize objecttests, baseobjecttests
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Object_SetProperty_Enum_With_Int()
-        {
-            Object_SetProperty(ObjectProperty.IntervalErrorMode, 1);
         }
 
-        [TestMethod]
-        public void Object_SetProperty_Enum_With_Enum()
-        {
-            Object_SetProperty(ObjectProperty.IntervalErrorMode, IntervalErrorMode.DownImmediately, ((int)IntervalErrorMode.DownImmediately).ToString());
-        }
-
-        private void Object_SetProperty(ObjectProperty property, object value, string serializedValue = null)
-        {
-            if (serializedValue == null)
-                serializedValue = value.ToString();
-
-            var client = Initialize_Client(new SetObjectPropertyResponse(property, serializedValue));
-            client.SetObjectProperty(1, property, value);
-        }
-
-        [TestMethod]
-        public void Object_SetProperty_Bool_With_Bool()
-        {
-            Object_SetProperty(ObjectProperty.InheritInterval, false, "0");
-        }
-
-        public void Object_SetProperty_Bool_With_Int()
-        {
-            
-        }
-
-        public void Object_SetProperty_Int_With_Enum()
-        {
-            
-        }
-
-        public void Object_SetProperty_Int_With_Int()
-        {
-            
-        }
-
-        public void Object_SetProperty_Int_With_Bool()
-        {
-            
-        }
+        
 
         protected override List<Sensor> GetObjects(PrtgClient client) => client.GetSensors();
 

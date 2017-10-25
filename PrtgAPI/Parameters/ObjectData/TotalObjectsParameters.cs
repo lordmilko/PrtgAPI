@@ -12,6 +12,9 @@ namespace PrtgAPI.Parameters
         {
             Content = content;
             this[Parameter.Count] = 0;
+
+            if(content == Content.ProbeNode)
+                this[Parameter.FilterXyz] = new SearchFilter(Property.ParentId, "0");
         }
 
         public Content Content

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Set-ObjectProperty" {
+Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
     SetMultiTypeResponse
 
@@ -45,5 +45,18 @@ Describe "Set-ObjectProperty" {
             "'DownImmediately', 'OneWarningThenDown', 'TwoWarningsThenDown', 'ThreeWarningsThenDown', 'FourWarningsThenDown' or 'FiveWarningsThenDown'"
 
         { $sensor | Set-ObjectProperty IntervalErrorMode "test" } | Should Throw $expected
+    }
+
+    $intervalCases = @(
+        @{value = "ThirtySeconds"; name = "static property" }
+        @{value = "00:00:30"; name = "string" }
+        @{value = ([TimeSpan]"00:00:30"); name = "TimeSpan" }
+    )
+
+    It "parses a ScanningInterval from a <name>" -TestCases $intervalCases {
+
+        param($value)
+
+        $sensor | Set-ObjectProperty Interval $value
     }
 }

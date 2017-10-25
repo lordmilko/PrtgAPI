@@ -1074,7 +1074,7 @@ namespace PrtgAPI
         /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
         public async Task SetNotificationTriggerAsync(TriggerParameters parameters)
         {
-            ValidateTriggerParameters(parameters);
+            await ValidateTriggerParametersAsync(parameters).ConfigureAwait(false);
 
             await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
         }

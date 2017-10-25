@@ -288,7 +288,8 @@ namespace PrtgAPI.Request
                 builder.Append(query + "&");
             }
 
-            builder.Length--;
+            if(builder.Length > 0)
+                builder.Length--;
 
             return builder.ToString();
         }

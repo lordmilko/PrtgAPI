@@ -2,12 +2,12 @@
 
 function SetCloneResponse
 {
-    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.CloneResponse))
+    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.CloneResponse))
 
     SetPrtgClient $client
 }
 
-Describe "Clone-Sensor" {
+Describe "Clone-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     SetCloneResponse
 
@@ -18,8 +18,7 @@ Describe "Clone-Sensor" {
 
         $output = [string]::Join("`n",(&{try { $sensor | Clone-Sensor 1234 3>&1 | %{$_.Message} } catch [exception] { }}))
 
-        $expected = "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 5`n" +
-                    "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 4`n" +
+        $expected = "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 4`n" +
                     "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 3`n" +
                     "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 2`n" +
                     "'Copy-Sensor' failed to resolve sensor: object is still being created. Retries remaining: 1"

@@ -79,11 +79,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void SetProperty(TriggerParameters parameters)
         {
             //Get the TriggerParameters PropertyInfo that corresponds to the specified TriggerProperty
-            var property = parameters.GetType().GetProperties().First(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
+            var property = parameters.GetType().GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
+
+            if (property == null)
+                throw new InvalidOperationException($"Property '{Property}' does not exist on triggers of type '{parameters.Type}'");
 
             Value = ParseValueIfRequired(property, Value);
-
-            //how are we going to handle setting the object property when we need to set the scanninginterval?
 
             property.SetValue(parameters, Value);
 

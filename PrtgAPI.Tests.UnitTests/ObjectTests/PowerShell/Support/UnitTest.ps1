@@ -60,7 +60,31 @@ function Run($objectType, $script)
 
 function SetMultiTypeResponse
 {
-    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.Responses.MultiTypeResponse))
+    SetResponseAndClient "MultiTypeResponse"
+}
+
+function SetActionResponse
+{
+    SetResponseAndClientWithArguments "BasicResponse" ""
+}
+
+function SetResponseAndClient($responseName)
+{
+    $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName
+
+    SetResponseAndClientInternal $response
+}
+
+function SetResponseAndClientWithArguments($responseName, $arguments)
+{
+    $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName -ArgumentList $arguments
+
+    SetResponseAndClientInternal $response
+}
+
+function SetResponseAndClientInternal($response)
+{
+    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client($response)
 
     SetPrtgClient $client
 }

@@ -6,35 +6,44 @@ using System.Text;
 using System.Threading.Tasks;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class CloneResponse : MultiTypeResponse
     {
-        protected override IWebResponse GetResponse(ref string address)
-        {
-            var function = GetFunction(address);
+        private string responseAddress;
 
+        public CloneResponse()
+        {
+            responseAddress = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
+        }
+
+        public CloneResponse(string address)
+        {
+            responseAddress = address;
+        }
+
+        protected override IWebResponse GetResponse(ref string address, string function)
+        {
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
                     return GetTableResponse(address);
                 case nameof(CommandFunction.DuplicateObject):
-                    address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
+                    address = responseAddress;
                     return new BasicResponse(string.Empty);
                 default:
-                    throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(CloneResponse)}");
+                    throw GetUnknownFunctionException(function);
             }
         }
 
         private IWebResponse GetTableResponse(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
-
-            Content content = components["content"].ToEnum<Content>();
+            var content = GetContent(address);
 
             if (content == Content.Sensors)
-                return new SensorResponse(new Items.SensorItem[] {});
+                return new SensorResponse();
             else
                 throw new NotSupportedException($"Content type {content} is not supported by {nameof(CloneResponse)}");
         }

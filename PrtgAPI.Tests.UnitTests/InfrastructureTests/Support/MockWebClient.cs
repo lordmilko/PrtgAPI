@@ -16,11 +16,6 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             this.response = response;
         }
 
-        public string DownloadString(string address)
-        {
-            return response.GetResponseText(ref address);
-        }
-
         public Task<HttpResponseMessage> GetSync(string address)
         {
             if (response.StatusCode == 0)
@@ -72,7 +67,11 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
             return new HttpResponseMessage(response.StatusCode)
             {
-                Content = new StringContent(responseStr)
+                Content = new StringContent(responseStr),
+                RequestMessage = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(address)
+                }
             };
         }
     }

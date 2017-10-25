@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             List<T> @object;
 
-            var retriesRemaining = 5;
+            var retriesRemaining = 4;
             var delay = 3;
 
             do

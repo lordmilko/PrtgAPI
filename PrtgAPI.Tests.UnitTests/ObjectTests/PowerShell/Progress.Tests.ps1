@@ -1,22 +1,22 @@
 ﻿. $PSScriptRoot\Support\Progress.ps1
 
-Describe "Test-Progress" {
+Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     
     InitializeClient
     
     $filter = $null
 
-    function FilteredIf($name, $script)
+    function It($name, $script)
     {
         if($filter -eq $null -or $name -like $filter)
         {
-            It $name $script
+            Pester\It $name $script
         }
     }
 
     #region 1: Something -> Action
     
-    FilteredIf "1a: Table -> Action" {
+    It "1a: Table -> Action" {
         Get-Sensor -Count 1 | Pause-Object -Forever
 
         Validate (@(
@@ -43,7 +43,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "1b: Variable -> Action" {
+    It "1b: Variable -> Action" {
         $devices = Get-Device
 
         $devices.Count | Should Be 2
@@ -72,7 +72,7 @@ Describe "Test-Progress" {
     #endregion
     #region 2: Something -> Table
 
-    FilteredIf "2a: Table -> Table" {
+    It "2a: Table -> Table" {
         Get-Probe | Get-Group
 
         Validate(@(
@@ -111,7 +111,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "2b: Variable -> Table" {
+    It "2b: Variable -> Table" {
 
         $probes = Get-Probe
 
@@ -147,7 +147,7 @@ Describe "Test-Progress" {
     #endregion
     #region 3: Something -> Action -> Table
     
-    FilteredIf "3a: Table -> Action -> Table" {
+    It "3a: Table -> Action -> Table" {
 
         Get-Device | Clone-Device 5678 | Get-Sensor
 
@@ -203,7 +203,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "3b: Variable -> Action -> Table" {
+    It "3b: Variable -> Action -> Table" {
 
         $devices = Get-Device
 
@@ -249,7 +249,7 @@ Describe "Test-Progress" {
     #endregion
     #region 4: Something -> Table -> Table
 
-    FilteredIf "4a: Table -> Table -> Table" {
+    It "4a: Table -> Table -> Table" {
 
         Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
@@ -311,7 +311,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "4b: Variable -> Table -> Table" {
+    It "4b: Variable -> Table -> Table" {
         $probes = Get-Probe
 
         #we need to find a way to detect if the entire chain we're piping along
@@ -420,7 +420,7 @@ Describe "Test-Progress" {
     #endregion
     #region 5: Something -> Table -> Action
     
-    FilteredIf "5a: Table -> Table -> Action" {
+    It "5a: Table -> Table -> Action" {
         Get-Device | Get-Sensor | Pause-Object -Forever
 
         Validate(@(
@@ -563,7 +563,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "5b: Variable -> Table -> Action" {
+    It "5b: Variable -> Table -> Action" {
         $devices = Get-Device
 
         $devices | Get-Sensor | Pause-Object -Forever
@@ -654,7 +654,7 @@ Describe "Test-Progress" {
     #endregion
     #region 6: Something -> Table -> Action -> Table
     
-    FilteredIf "6a: Table -> Table -> Action -> Table" {
+    It "6a: Table -> Table -> Action -> Table" {
         Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor
 
         Validate(@(
@@ -845,7 +845,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "6b: Variable -> Table -> Action -> Table" {
+    It "6b: Variable -> Table -> Action -> Table" {
         $probes = Get-Probe
 
         $probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
@@ -944,7 +944,7 @@ Describe "Test-Progress" {
     #endregion
     #region 7: Something -> Object
 
-    FilteredIf "7a: Table -> Object" {
+    It "7a: Table -> Object" {
         Get-Sensor -Count 1 | Get-Channel
 
         Validate(@(
@@ -975,7 +975,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "7b: Variable -> Object" {
+    It "7b: Variable -> Object" {
 
         #1. why is pipes three data cmdlets together being infected by the crash here
         #2. why is injected_showchart failing to deserialize?
@@ -1021,7 +1021,7 @@ Describe "Test-Progress" {
     #endregion
     #region 8: Stream -> Something
     
-    FilteredIf "8a: Stream -> Object" {
+    It "8a: Stream -> Object" {
         # Good enough for a test to Stream -> Table as well
         
         $counts = @{
@@ -1087,7 +1087,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "8b: Stream -> Action" {
+    It "8b: Stream -> Action" {
 
         # Besides the initial "Detecting total number of items", there is nothing special about a streamed, non-streamed and streaming-unsupported (e.g. devices) run
 
@@ -1171,7 +1171,7 @@ Describe "Test-Progress" {
     #endregion
     #region 9: Something -> Table -> Object
 
-    FilteredIf "9a: Table -> Table -> Object" {
+    It "9a: Table -> Table -> Object" {
 
         $counts = @{
             Sensors = 1
@@ -1289,7 +1289,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "9b: Variable -> Table -> Object" {
+    It "9b: Variable -> Table -> Object" {
         $probes = Get-Probe
 
         $counts = @{
@@ -1374,7 +1374,7 @@ Describe "Test-Progress" {
     #endregion
     #region 10: Something -> Action -> Table -> Table
     
-    FilteredIf "10a: Table -> Action -> Table -> Table" {
+    It "10a: Table -> Action -> Table -> Table" {
         Get-Device | Clone-Device 5678 | Get-Sensor | Get-Channel
 
         Validate(@(
@@ -1521,7 +1521,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "10b: Variable -> Action -> Table -> Table" {
+    It "10b: Variable -> Action -> Table -> Table" {
         # an extension of 3b. variable -> action -> table. Confirms that we can transform our setpreviousoperation into a
         # proper progress item when required
 
@@ -1663,7 +1663,7 @@ Describe "Test-Progress" {
     #endregion
     #region 11: Variable -> Table -> Table -> Table
 
-    FilteredIf "11: Variable -> Table -> Table -> Table" {
+    It "11: Variable -> Table -> Table -> Table" {
         # Validates we can get at least two progress bars out of a variable
         $probes = Get-Probe
 
@@ -1804,13 +1804,13 @@ Describe "Test-Progress" {
     #endregion
     #region 12: Table -> Filter -> Something
 
-    FilteredIf "12a: Table -> Filter -> Table" {
+    It "12a: Table -> Filter -> Table" {
         Get-Probe | Select-Object -First 2 | Get-Device
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "12b: Table -> Filter -> Action" {
+    It "12b: Table -> Filter -> Action" {
         Get-Probe | Select-Object -First 2 | Pause-Object -Forever
 
         { Get-Progress } | Should Throw "Queue empty"
@@ -1819,7 +1819,7 @@ Describe "Test-Progress" {
     #endregion
     #region 13: Variable -> Filter -> Something
 
-    FilteredIf "13a: Variable -> Filter -> Table" {
+    It "13a: Variable -> Filter -> Table" {
         $probes = Get-Probe
 
         $probes | Select-Object -First 2 | Get-Device
@@ -1827,7 +1827,7 @@ Describe "Test-Progress" {
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "13b: Variable -> Filter -> Action" {
+    It "13b: Variable -> Filter -> Action" {
         $probes = Get-Probe
 
         $probes | Select-Object -First 2 | Pause-Object -Forever
@@ -1838,13 +1838,13 @@ Describe "Test-Progress" {
     #endregion
     #region 14: Table -> Filter -> Table -> Something
 
-    FilteredIf "14a: Table -> Filter -> Table -> Table" {
+    It "14a: Table -> Filter -> Table -> Table" {
         Get-Probe | Select-Object -First 2 | Get-Device | Get-Sensor
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "14b: Table -> Filter -> Table -> Action" {
+    It "14b: Table -> Filter -> Table -> Action" {
         Get-Probe | Select-Object -First 2 | Get-Device | Pause-Object -Forever
 
         { Get-Progress } | Should Throw "Queue empty"
@@ -1853,7 +1853,7 @@ Describe "Test-Progress" {
     #endregion
     #region 15: Variable -> Filter -> Table -> Something
 
-    FilteredIf "15a: Variable -> Filter -> Table -> Table" {
+    It "15a: Variable -> Filter -> Table -> Table" {
         $probes = Get-Probe
 
         $probes | Select-Object -First 2 | Get-Device | Get-Sensor
@@ -1861,7 +1861,7 @@ Describe "Test-Progress" {
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "15b: Variable -> Filter -> Table -> Action" {
+    It "15b: Variable -> Filter -> Table -> Action" {
         $probes = Get-Probe
 
         $probes | Select-Object -First 2 | Get-Device | Pause-Object -Forever
@@ -1872,7 +1872,7 @@ Describe "Test-Progress" {
     #endregion
     #region 16: Something -> Where -> Something
     
-    FilteredIf "16a: Table -> Where -> Table" {
+    It "16a: Table -> Where -> Table" {
 
         $counts = @{
             ProbeNode = 3
@@ -1926,7 +1926,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "16b: Variable -> Where -> Table" {
+    It "16b: Variable -> Where -> Table" {
         $counts = @{
             ProbeNode = 3
         }
@@ -1964,7 +1964,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "16c: Table -> Where -> Action" {
+    It "16c: Table -> Where -> Action" {
         
         $counts = @{
             ProbeNode = 3
@@ -2019,7 +2019,7 @@ Describe "Test-Progress" {
     #endregion
     #region 17: Something -> Table -> Where -> Table
     
-    FilteredIf "17a: Table -> Table -> Where -> Table" {
+    It "17a: Table -> Table -> Where -> Table" {
 
         Get-Probe | Get-Group | where name -EQ "Windows Infrastructure0" | Get-Sensor
 
@@ -2155,7 +2155,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "17b: Variable -> Table -> Where -> Table" {
+    It "17b: Variable -> Table -> Where -> Table" {
         $probes = Get-Probe
 
         $probes | Get-Group | where name -like * | Get-Sensor
@@ -2258,7 +2258,7 @@ Describe "Test-Progress" {
     #endregion
     #region 18: Something -> Where -> Something -> Something
 
-    FilteredIf "18a: Table -> Where -> Table -> Table" {
+    It "18a: Table -> Where -> Table -> Table" {
         $counts = @{
             ProbeNode = 3
         }
@@ -2405,7 +2405,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "18b: Variable -> Where -> Table -> Table" {
+    It "18b: Variable -> Where -> Table -> Table" {
         $counts = @{
             ProbeNode = 3
         }
@@ -2516,7 +2516,7 @@ Describe "Test-Progress" {
     #endregion
     #region 19: Variable(1) -> Table -> Table
 
-    FilteredIf "19: Variable(1) -> Table -> Table" {
+    It "19: Variable(1) -> Table -> Table" {
 
         $probe = Get-Probe -Count 1
 
@@ -2583,7 +2583,7 @@ Describe "Test-Progress" {
     #endregion
     #region 20: Something -> PSObject
     
-    FilteredIf "20a: Table -> PSObject" {
+    It "20a: Table -> PSObject" {
         Get-Device | Get-Trigger -Types
 
         Validate(@(
@@ -2622,7 +2622,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "20b: Variable -> PSObject" {
+    It "20b: Variable -> PSObject" {
         $devices = Get-Device
 
         $devices | Get-Trigger -Types
@@ -2655,7 +2655,7 @@ Describe "Test-Progress" {
     #endregion
     #region 21: Something -> Table -> PSObject
 
-    FilteredIf "21a: Table -> Table -> PSObject" {
+    It "21a: Table -> Table -> PSObject" {
         Get-Group | Get-Device | Get-Trigger -Types
 
         Validate(@(
@@ -2790,7 +2790,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "21b: Variable -> Table -> PSObject" {
+    It "21b: Variable -> Table -> PSObject" {
         $groups = Get-Group
 
         $groups | Get-Device | Get-Trigger -Types
@@ -2893,13 +2893,13 @@ Describe "Test-Progress" {
     #endregion
     #region 22: Something -> Where { Variable(1) -> Table }
 
-    FilteredIf "22a: Table -> Where { Variable(1) -> Table }" {
+    It "22a: Table -> Where { Variable(1) -> Table }" {
         Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "22b: Variable -> Where { Variable(1) -> Table }" {
+    It "22b: Variable -> Where { Variable(1) -> Table }" {
         $probes = Get-Probe
 
         $probes | where { $_ | Get-Sensor }
@@ -2910,7 +2910,7 @@ Describe "Test-Progress" {
     #endregion
     #region 23: Something -> Table -> Where { Variable(1) -> Table }
 
-    FilteredIf "23a: Table -> Table -> Where { Variable(1) -> Table }" {
+    It "23a: Table -> Table -> Where { Variable(1) -> Table }" {
         Get-Probe | Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
         Validate(@(
@@ -2949,7 +2949,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "23b: Variable -> Table -> Where { Variable(1) -> Table }" {
+    It "23b: Variable -> Table -> Where { Variable(1) -> Table }" {
         $probes = Get-Probe
 
         $probes | Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
@@ -2982,7 +2982,7 @@ Describe "Test-Progress" {
     #endregion
     #region 24: Something -> Where { Table -> Table }
 
-    FilteredIf "24a: Table -> Where { Table -> Table }" {
+    It "24a: Table -> Where { Table -> Table }" {
         Get-Probe | where { Get-Device | Get-Sensor }
 
         Validate (@(
@@ -3056,7 +3056,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "24b: Variable -> Where { Table -> Table }" {
+    It "24b: Variable -> Where { Table -> Table }" {
         $probes = Get-Probe
 
         $probes | where { Get-Device | Get-Sensor }
@@ -3135,7 +3135,7 @@ Describe "Test-Progress" {
     #endregion
     #region 25: Something -> Where { Variable -> Where { Variable(1) -> Table } }
 
-    FilteredIf "25a: Table -> Where { Variable -> Where { Variable(1) -> Table } }" {
+    It "25a: Table -> Where { Variable -> Where { Variable(1) -> Table } }" {
         Get-Probe | where {
             ($_ | Get-Device | where {
                 ($_|Get-Sensor).Name -eq "Volume IO _Total0"
@@ -3145,7 +3145,7 @@ Describe "Test-Progress" {
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "25b: Variable -> Where { Variable -> Where { Variable -> Table } }" {
+    It "25b: Variable -> Where { Variable -> Where { Variable -> Table } }" {
         $probes = Get-Probe
 
         $probes | where {
@@ -3160,7 +3160,7 @@ Describe "Test-Progress" {
     #endregion
     #region 26: Something -> Where { Variable(1) -> Table } -> Table
 
-    FilteredIf "26a: Table -> Where { Variable(1) -> Table } -> Table" {
+    It "26a: Table -> Where { Variable(1) -> Table } -> Table" {
         Get-Probe | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" } | Get-Device
 
         Validate(@(
@@ -3199,7 +3199,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "26b: Variable -> Where { Variable(1) -> Table } -> Table" {
+    It "26b: Variable -> Where { Variable(1) -> Table } -> Table" {
         $probes = Get-Probe
 
         $probes | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" } | Get-Device
@@ -3232,7 +3232,7 @@ Describe "Test-Progress" {
     #endregion
     #region 27: Something -> Table -> Where { Variable(1) -> Table -> Table }
     
-    FilteredIf "27a: Table -> Table -> Where { Variable(1) -> Table -> Table }" {
+    It "27a: Table -> Table -> Where { Variable(1) -> Table -> Table }" {
         Get-Probe | Get-Group | where {
             ($_ | Get-Device | Get-Sensor).Name -eq "Volume IO _Total0"
         }
@@ -3473,7 +3473,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "27b: Variable -> Table -> Where { Variable(1) -> Table -> Table }" {
+    It "27b: Variable -> Table -> Where { Variable(1) -> Table -> Table }" {
         $probes = Get-Probe
         
         $probes | Get-Group | where {
@@ -3708,7 +3708,7 @@ Describe "Test-Progress" {
     #endregion
     #region 28: Something -> Table -> Where { Variable(1) -> Table -> Table -> Where { Variable -> Object } }
     
-    FilteredIf "28a: Table -> Table -> Where { Variable(1) -> Table -> Table -> Where { Variable -> Object } }" {
+    It "28a: Table -> Table -> Where { Variable(1) -> Table -> Table -> Where { Variable -> Object } }" {
         
         $counts = @{
             Sensors = 2
@@ -4360,7 +4360,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "28b: Variable -> Table -> Where { Variable(1) -> Table -> Table -> Where { Variable -> Object } }" {
+    It "28b: Variable -> Table -> Where { Variable(1) -> Table -> Table -> Where { Variable -> Object } }" {
         $counts = @{
             Sensors = 2
         }
@@ -5002,7 +5002,7 @@ Describe "Test-Progress" {
     #endregion
     #region 29: Something -> Table | Where { Variable(1) -> Table -> Table } -> Table
 
-    FilteredIf "29a: Table -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
+    It "29a: Table -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
 
         Get-Probe | Get-Group | Where {
             ($_ | Get-Sensor | Get-Channel).Name -eq "Percent Available Memory"
@@ -5356,7 +5356,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "29b: Variable -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
+    It "29b: Variable -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
 
         #TODO: technically speaking, this functionality does not work properly. Because when showing progress
         #when piping from a variable, the last cmdlet is responsible for updating the second last cmdlet's count.
@@ -5685,7 +5685,7 @@ Describe "Test-Progress" {
     #endregion
     #region 30: Something -> Table -> Where { Variable(1) -> Action }
 
-    FilteredIf "30a: Table -> Table | Where { Variable(1) -> Action }" {
+    It "30a: Table -> Table | Where { Variable(1) -> Action }" {
         Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever }
 
         Validate(@(
@@ -5724,7 +5724,7 @@ Describe "Test-Progress" {
         ))
     }
     
-    FilteredIf "30b: Variable -> Table | Where { Variable(1) -> Action }" {
+    It "30b: Variable -> Table | Where { Variable(1) -> Action }" {
         $probes = Get-Probe
 
         $probes | Get-Device | Where { $_ | Pause-Object -Forever }
@@ -5758,7 +5758,7 @@ Describe "Test-Progress" {
     #endregion
     #region 31: Something -> Table -> Where { Variable(1) -> Table -> Action }
     
-    FilteredIf "31a: Table -> Table -> Where { Variable(1) -> Table -> Action }" {
+    It "31a: Table -> Table -> Where { Variable(1) -> Table -> Action }" {
         Get-Probe | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever }
 
         Validate(@(
@@ -5973,7 +5973,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "31b: Variable -> Table -> Where { Variable(1) -> Table -> Action }" {
+    It "31b: Variable -> Table -> Where { Variable(1) -> Table -> Action }" {
         $probes = Get-Probe
         
         $probes | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever }
@@ -6182,7 +6182,7 @@ Describe "Test-Progress" {
     #endregion
     #region 32: Something -> Table -> Where { Variable(1) -> Action -> Table }
 
-    FilteredIf "32a: Table -> Table -> Where { Variable(1) -> Action -> Table }" {
+    It "32a: Table -> Table -> Where { Variable(1) -> Action -> Table }" {
         Get-Probe | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
 
         Validate(@(
@@ -6309,7 +6309,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "32b: Variable -> Table -> Where { Variable(1) -> Action -> Table }" {
+    It "32b: Variable -> Table -> Where { Variable(1) -> Action -> Table }" {
         $probes = Get-Probe
         
         $probes | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
@@ -6430,7 +6430,7 @@ Describe "Test-Progress" {
     #endregion
     #region Sanity Checks    
     
-    FilteredIf "Streams when the number of returned objects is above the threshold" {
+    It "Streams when the number of returned objects is above the threshold" {
         Run "Sensor" {
 
             $objs = @()
@@ -6495,7 +6495,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "Doesn't stream when the number of returned objects is below the threshold" {
+    It "Doesn't stream when the number of returned objects is below the threshold" {
         Get-Sensor
 
         Validate(@(
@@ -6507,7 +6507,7 @@ Describe "Test-Progress" {
         ))
     }
 
-    FilteredIf "Doesn't show progress when a variable contains only 1 object" {
+    It "Doesn't show progress when a variable contains only 1 object" {
         $probe = Get-Probe -Count 1
 
         $probe.Count | Should Be 1
@@ -6517,13 +6517,13 @@ Describe "Test-Progress" {
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "Doesn't show progress when using Table -> Where" {
+    It "Doesn't show progress when using Table -> Where" {
         Get-Device | where name -EQ "Probe Device0"
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
-    FilteredIf "Doesn't show progress when using Table -> Where -> Other" {
+    It "Doesn't show progress when using Table -> Where -> Other" {
         Get-Device | where name -EQ "Probe Device0" | fl
         
         { Get-Progress } | Should Throw "Queue empty"

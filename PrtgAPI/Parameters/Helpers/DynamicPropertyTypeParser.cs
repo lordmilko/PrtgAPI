@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -72,7 +73,7 @@ namespace PrtgAPI.Parameters.Helpers
         /// <returns></returns>
         public object ParseValue()
         {
-            object val;
+            object val = null;
 
             //Transform the value according to its properties' data type
 
@@ -83,22 +84,47 @@ namespace PrtgAPI.Parameters.Helpers
                     Type = TypeCategory.Other;
                     return ((IFormattable)Value).GetSerializedFormat();
                 }
-                    
                 else
                     throw new NotSupportedException("Serializng TypeAttribute type that does not implement IFormattable is not currently supportd");
             }
 
             //String, Int and Double can be used as is
-            if (PropertyType == typeof (string) || PropertyType == typeof (int) || PropertyType == typeof (double))
+            if (PropertyType == typeof (string))
             {
-                if (PropertyType == typeof (string))
-                    Type = TypeCategory.String;
-                else
-                    Type = TypeCategory.Number;
-
+                Type = TypeCategory.String;
                 val = Value?.ToString();
             }
-                
+            else if (PropertyType == typeof (double) || PropertyType == typeof(int))
+            {
+                //If the value is convertable to a double, it is either an int or a double
+
+                if (!string.IsNullOrEmpty(Value?.ToString()))
+                {
+                    double doubleResult;
+                    if (Value != null && double.TryParse(Value.ToString(), out doubleResult))
+                    {
+                        //If we're actually looking for an int, see if this double is actually an integer
+                        if (PropertyType == typeof(int))
+                        {
+                            if (Convert.ToInt32(doubleResult) == doubleResult)
+                            {
+                                //If so, that's cool. When we ToString, we'll get an integer value anyway
+                                Type = TypeCategory.Number;
+                                val = doubleResult.ToString(CultureInfo.CurrentCulture);
+                            }
+                        }
+                        else
+                        {
+                            Type = TypeCategory.Number;
+                            val = doubleResult.ToString(CultureInfo.CurrentCulture);
+                        }
+                    }
+
+                    //If we still don't have a value, since we already verified our value is not null or empty we must have a value of an invalid type
+                    if (val == null)
+                        throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
+                }
+            }
             else
             {
                 if (Value == null)
@@ -169,7 +195,6 @@ namespace PrtgAPI.Parameters.Helpers
                 Type = TypeCategory.Boolean;
                 val = ((bool)Value) ? "1" : "0";
             }
-                
 
             return val;
         }

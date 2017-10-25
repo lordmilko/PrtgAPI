@@ -90,7 +90,7 @@ namespace PrtgAPI
         //Manually assigned to by GetNotificationTriggers
         internal Channel channelObj;
 
-        internal TriggerChannel channel;
+        private TriggerChannel channel;
 
         /// <summary>
         /// The channel the trigger should apply to.

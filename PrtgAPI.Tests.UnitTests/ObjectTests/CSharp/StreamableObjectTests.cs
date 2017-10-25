@@ -51,7 +51,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var synchronousClient = Initialize_Client_WithItems(GetItem());
             var asynchronousClient = Initialize_Client_WithItems(GetItem());
-            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 2000).Select(i => GetItem()).ToArray()); ;
+            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 2000).Select(i => GetItem()).ToArray());
 
             var propertyValueFunctions = propertyValue(synchronousClient, asynchronousClient, streamClient);
             var propertyOperatorValueFunctions = propertyOperatorValue(synchronousClient, asynchronousClient, streamClient);
@@ -78,11 +78,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             CheckResult<T>(h(testFilters));
         }
 
-        private async void RunFunctionsAsync<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable
+        private void RunFunctionsAsync<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable
         {
-            CheckResult<T>(await (Task<List<TObject>>)f(testProperty, testValue));
-            CheckResult<T>(await (Task<List<TObject>>)g(testProperty, testOperator, testValue));
-            CheckResult<T>(await (Task<List<TObject>>)h(testFilters));
+            CheckResult<T>(((Task<List<TObject>>)f(testProperty, testValue)).Result);
+            CheckResult<T>(((Task<List<TObject>>)g(testProperty, testOperator, testValue)).Result);
+            CheckResult<T>(((Task<List<TObject>>)h(testFilters)).Result);
         }
 
         protected void CheckResult<T>(object result) where T : IEnumerable

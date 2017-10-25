@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using System.Web;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.Items;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class MultiTypeResponse : IWebResponse
     {
@@ -29,13 +29,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
 
         public string GetResponseText(ref string address)
         {
-            return GetResponse(ref address).GetResponseText(ref address);
-        }
-
-        protected virtual IWebResponse GetResponse(ref string address)
-        {
             var function = GetFunction(address);
 
+            return GetResponse(ref address, function).GetResponseText(ref address);
+        }
+
+        protected virtual IWebResponse GetResponse(ref string address, string function)
+        {
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
@@ -53,7 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                 case nameof(JsonFunction.Triggers):
                     return new TriggerOverviewResponse();
                 default:
-                    throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(MultiTypeResponse)}");
+                    throw GetUnknownFunctionException(function);
             }
         }
 
@@ -81,7 +81,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                     count = countOverride[content];
             }
 
-
             switch (content)
             {
                 case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}"), count));
@@ -90,8 +89,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}"), count));
                 case Content.Channels:  return new ChannelResponse(new[] { new ChannelItem() });
                 default:
-                    throw new NotImplementedException($"Unknown content '{content}' requested from MultiTypeResponse");
+                    throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
             }
+        }
+
+        public static Content GetContent(string address)
+        {
+            var components = UrlHelpers.CrackUrl(address);
+
+            Content content = components["content"].ToEnum<Content>();
+
+            return content;
         }
 
         private T[] GetItems<T>(Func<int, T> func, int count)
@@ -99,7 +107,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return Enumerable.Range(0, count).Select(func).ToArray();
         }
 
-        protected string GetFunction(string address)
+        public static string GetFunction(string address)
         {
             var page = GetPage(address);
 
@@ -122,7 +130,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             throw new NotImplementedException($"Don't know what the type of function '{page}' is");
         }
 
-        private string GetPage(string address)
+        private static string GetPage(string address)
         {
             var queries = HttpUtility.ParseQueryString(address);
 
@@ -143,7 +151,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             return page;
         }
 
-        private bool TryParseEnumDescription<TEnum>(string description, out TEnum result)
+        private static bool TryParseEnumDescription<TEnum>(string description, out TEnum result)
         {
             result = default(TEnum);
 
@@ -163,6 +171,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.Responses
             }
 
             return false;
+        }
+
+        protected Exception GetUnknownFunctionException(string function)
+        {
+            return new NotImplementedException($"Unknown function '{function}' passed to {this.GetType().Name}");
         }
 
         public Task<string> GetResponseTextStream(string address)
