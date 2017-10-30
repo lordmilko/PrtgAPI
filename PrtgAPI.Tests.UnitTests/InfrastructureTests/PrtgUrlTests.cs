@@ -151,14 +151,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
         private string CreateUrl(Parameters.Parameters parameters)
         {
-            var url = new PrtgUrl("prtg.example.com", "username", "password", XmlFunction.TableData, parameters);
+            var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);
 
             return url.Url;
         }
 
         private void Server_Prefix(string server, string prefixedServer)
         {
-            var url = new PrtgUrl(server, "username", "password", XmlFunction.TableData, new Parameters.Parameters());
+            var url = new PrtgUrl(new ConnectionDetails(server, "username", "password"), XmlFunction.TableData, new Parameters.Parameters());
 
             Assert.IsTrue(url.Url.StartsWith(prefixedServer));
         }

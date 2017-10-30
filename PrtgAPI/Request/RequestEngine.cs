@@ -297,15 +297,15 @@ namespace PrtgAPI.Request
         }
 
         private PrtgUrl GetPrtgUrl(CommandFunction function, Parameters.Parameters parameters) =>
-            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
         private PrtgUrl GetPrtgUrl(HtmlFunction function, Parameters.Parameters parameters) =>
-            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
         private PrtgUrl GetPrtgUrl(JsonFunction function, Parameters.Parameters parameters) =>
-            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
         private PrtgUrl GetPrtgUrl(XmlFunction function, Parameters.Parameters parameters) =>
-            new PrtgUrl(prtgClient.Server, prtgClient.UserName, prtgClient.PassHash, function, parameters);
+            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
     }
 }

@@ -15,7 +15,7 @@ namespace PrtgAPI
         /// Username to authenticate against PRTG. If PRTG has been configured to use Active Directory, this can be the username of a Domain User.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
-        Username,
+        UserName,
 
         /// <summary>
         /// Password to authenticate against PRTG.
@@ -153,8 +153,6 @@ namespace PrtgAPI
         [Description("ackmsg")]
         AcknowledgeMessage,
 
-
-
         //Reordering
 
         /// <summary>
@@ -163,19 +161,11 @@ namespace PrtgAPI
         [ParameterType(ParameterType.SingleValue)]
         [Description("newpos")]
         NewPos,
+
         /*
         //Report Related
 
         AddId,
-
-        //Deletion
-
-        Approve,
-
-        //Addition
-
-        TargetId,
-        Host,
 
         //Location
 

@@ -25,19 +25,24 @@ namespace PrtgAPI
     public partial class PrtgClient
     {
         /// <summary>
-        /// Gets the PRTG server API requests will be made against.
+        /// Stores server and authentication details required to connect to a PRTG Server.
         /// </summary>
-        public string Server { get; }
+        internal readonly ConnectionDetails connectionDetails;
 
         /// <summary>
-        /// Gets the Username that will be used to authenticate against PRTG.
+        /// The PRTG server API requests will be made against.
         /// </summary>
-        public string UserName { get; }
+        public string Server => connectionDetails.Server;
+
+        /// <summary>
+        /// The Username that will be used to authenticate against PRTG.
+        /// </summary>
+        public string UserName => connectionDetails.UserName;
 
         /// <summary>
         /// The PassHash that will be used to authenticate with, in place of a password.
         /// </summary>
-        public string PassHash { get; }
+        public string PassHash => connectionDetails.PassHash;
 
         /// <summary>
         /// The number of times to retry a request that times out while communicating with PRTG.
@@ -103,11 +108,11 @@ namespace PrtgAPI
                 throw new ArgumentNullException(nameof(pass));
 
             requestEngine = new RequestEngine(this, client);
-            
-            Server = server;
-            UserName = username;
 
-            PassHash = authMode == AuthMode.Password ? GetPassHash(pass) : pass;
+            connectionDetails = new ConnectionDetails(server, username, pass);
+
+            if (authMode == AuthMode.Password)
+                connectionDetails.PassHash = GetPassHash(pass);
         }
 
 #region Requests

@@ -25,31 +25,31 @@ namespace PrtgAPI.Request
             private set { url = value; }
         }
 
-        public PrtgUrl(string server, string username, string passhash, XmlFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, GetResourcePath(function), parameters)
+        public PrtgUrl(ConnectionDetails connectionDetails, XmlFunction function, Parameters.Parameters parameters) :
+            this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(string server, string username, string passhash, JsonFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, GetResourcePath(function), parameters)
+        public PrtgUrl(ConnectionDetails connectionDetails, JsonFunction function, Parameters.Parameters parameters) :
+            this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(string server, string username, string passhash, CommandFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, GetResourcePath(function), parameters)
+        public PrtgUrl(ConnectionDetails connectionDetails, CommandFunction function, Parameters.Parameters parameters) :
+            this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(string server, string username, string passhash, HtmlFunction function, Parameters.Parameters parameters) :
-            this(server, username, passhash, GetResourcePath(function), parameters)
+        public PrtgUrl(ConnectionDetails connectionDetails, HtmlFunction function, Parameters.Parameters parameters) :
+            this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        private PrtgUrl(string server, string username, string passhash, string function, Parameters.Parameters parameters)
+        private PrtgUrl(ConnectionDetails connectionDetails, string function, Parameters.Parameters parameters)
         {
             StringBuilder urlBuilder = new StringBuilder();
 
-            urlBuilder.Append(AddUrlPrefix(server));
+            urlBuilder.Append(AddUrlPrefix(connectionDetails.Server));
 
             urlBuilder.Append(function);
 
@@ -59,14 +59,14 @@ namespace PrtgAPI.Request
             }
 
             if (!usernameFound)
-                AddParameter(urlBuilder, Parameter.Username, username);
+                AddParameter(urlBuilder, Parameter.UserName, connectionDetails.UserName);
 
             if (!passFound)
             {
-                if (passhash == null)
-                    throw new ArgumentNullException(nameof(passhash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(passhash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");
+                if (connectionDetails.PassHash == null)
+                    throw new ArgumentNullException(nameof(connectionDetails.PassHash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(connectionDetails.PassHash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");
 
-                AddParameter(urlBuilder, Parameter.PassHash, passhash);
+                AddParameter(urlBuilder, Parameter.PassHash, connectionDetails.PassHash);
             }
 
             Url = urlBuilder.ToString();
@@ -91,7 +91,7 @@ namespace PrtgAPI.Request
 
         private void AddParameter(StringBuilder urlBuilder, Parameter parameter, object value)
         {
-            if (parameter == Parameter.Username)
+            if (parameter == Parameter.UserName)
                 usernameFound = true;
             else if (parameter == Parameter.PassHash || parameter == Parameter.Password)
                 passFound = true;
