@@ -2,7 +2,7 @@
 New-Alias Edit-TriggerProperty Edit-NotificationTriggerProperty
 New-Alias Get-Trigger Get-NotificationTrigger
 New-Alias Get-TriggerTypes Get-NotificationTriggerTypes
-New-Alias New-TriggerParameter New-NotificationTriggerParameter
+New-Alias New-TriggerParameters New-NotificationTriggerParameters
 New-Alias Remove-Trigger Remove-NotificationTrigger
 New-Alias Set-Trigger Set-NotificationTrigger
 

@@ -8,7 +8,7 @@ Describe "Add-NotificationTrigger_IT" {
             $existing = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
             $existing | Should Be $null
 
-            $param = New-TriggerParameter (Settings Group) $type
+            $param = New-TriggerParameters (Settings Group) $type
             $param | Add-Trigger
 
             $new = Get-Group -Id (Settings Group) | Get-Trigger -Inherited $false
@@ -34,7 +34,7 @@ Describe "Add-NotificationTrigger_IT" {
             $channel.Count | Should Be 1
             $channel.Name | Should Be (Settings ChannelName)
 
-            $param = New-TriggerParameter (Settings ChannelSensor) Threshold
+            $param = New-TriggerParameters (Settings ChannelSensor) Threshold
             $param.Channel = $channel
 
             $param | Add-NotificationTrigger
@@ -50,7 +50,7 @@ Describe "Add-NotificationTrigger_IT" {
 
         It "creates a threshold trigger for a sensor with a Channel ID" {
 
-            $param = New-TriggerParameter (Settings ChannelSensor) Threshold
+            $param = New-TriggerParameters (Settings ChannelSensor) Threshold
             $param.Channel = (Settings Channel)
 
             $param | Add-NotificationTrigger
@@ -66,21 +66,21 @@ Describe "Add-NotificationTrigger_IT" {
 
         It "adds an invalid channel to a sensor" {
 
-            $param = New-TriggerParameter (Settings ChannelSensor) Threshold
+            $param = New-TriggerParameters (Settings ChannelSensor) Threshold
             $param.Channel = 300
 
             { $param | Add-Trigger } | Should Throw "Channel could not be found"
         }
 
         It "adds an enum channel to a sensor" {
-            $param = New-TriggerParameter (Settings ChannelSensor) Threshold
+            $param = New-TriggerParameters (Settings ChannelSensor) Threshold
             $param.Channel = "Total"
 
             { $param | Add-Trigger } | Should Throw "must refer to a specific Channel"
         }
 
         It "adds an invalid channel to a device" {
-            $param = New-TriggerParameter (Settings Device) Threshold
+            $param = New-TriggerParameters (Settings Device) Threshold
             $param.Channel = 300
 
             { $param | Add-Trigger } | Should Throw "must be one of"
@@ -95,7 +95,7 @@ Describe "Add-NotificationTrigger_IT" {
 
             $existing.Count | Should Be 1
 
-            $param = $existing | New-TriggerParameter (Settings Device)
+            $param = $existing | New-TriggerParameters (Settings Device)
             $param | Add-Trigger
 
             $new = Get-Device -Id (Settings Device) | Get-Trigger -Type $type -Inherited $false
@@ -123,7 +123,7 @@ Describe "Add-NotificationTrigger_IT" {
 
             # Add the first trigger
 
-            $param = New-TriggerParameter (Settings ChannelSensor) Threshold
+            $param = New-TriggerParameters (Settings ChannelSensor) Threshold
             $param.Channel = $channel
             $param | Add-Trigger
 
@@ -132,7 +132,7 @@ Describe "Add-NotificationTrigger_IT" {
 
             # Clone the trigger
 
-            $cloneParams = $triggers | New-TriggerParameter (Settings ChannelSensor)
+            $cloneParams = $triggers | New-TriggerParameters (Settings ChannelSensor)
             $cloneParams | Add-Trigger
 
             $bothTriggers = $sensor |Get-Trigger -Inherited $false
@@ -151,7 +151,7 @@ Describe "Add-NotificationTrigger_IT" {
 
             $trigger.Count | Should Be 1
 
-            $param = $trigger | New-TriggerParameter (Settings ChannelSensor)
+            $param = $trigger | New-TriggerParameters (Settings ChannelSensor)
 
             { $param | Add-Trigger } | Should Throw "Channel 'Total' is not a valid value for sensor"
         }

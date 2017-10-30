@@ -23,7 +23,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="link">Get-NotificationTrigger</para>
     /// <para type="link">Set-NotificationTrigger</para>
-    /// <para type="link">New-NotificationTriggerParameter</para> 
+    /// <para type="link">New-NotificationTriggerParameters</para> 
     /// </summary>
     [Cmdlet(VerbsData.Edit, "NotificationTriggerProperty", SupportsShouldProcess = true)]
     public class EditNotificationTriggerProperty : PrtgOperationCmdlet

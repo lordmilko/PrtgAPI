@@ -52,7 +52,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// <para type="link">Add-NotificationTrigger</para>
-    /// <para type="link">New-NotificationTriggerParameter</para>
+    /// <para type="link">New-NotificationTriggerParameters</para>
     /// <para type="link">Set-NotificationTrigger</para>
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// </summary>

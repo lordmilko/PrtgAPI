@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\UnitTest.ps1
 
-Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
+Describe "New-NotificationTriggerParameters" -Tag @("PowerShell", "UnitTest") {
 
     $device = Run Device { Get-Device }
     $triggers = Run NotificationTrigger { $device | Get-NotificationTrigger -Type State }
@@ -8,19 +8,19 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
     It "can create Add parameter set" {
         $triggers.Count | Should Be 1
 
-        $parameters = New-TriggerParameter $device.Id State
+        $parameters = New-TriggerParameters $device.Id State
     }
 
     It "can create Edit parameter set" {
         $triggers.Count | Should Be 1
 
-        $parameters = New-TriggerParameter $device.Id $triggers.SubId State
+        $parameters = New-TriggerParameters $device.Id $triggers.SubId State
     }
 
     It "can create AddFrom parameter set" {
         $triggers.Count | Should Be 1
 
-        $parameters = $triggers | New-TriggerParameter $device.Id
+        $parameters = $triggers | New-TriggerParameters $device.Id
 
         $parameters.Action | Should Be Add
     }
@@ -33,13 +33,13 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
 
         $trigger.Count | Should Be 1
 
-        $parameters = $trigger | New-TriggerParameter
+        $parameters = $trigger | New-TriggerParameters
 
         $parameters.Action | Should Be Edit
     }
 
     It "can convert StandardTriggerChannel to Channel" {
-        $parameters = New-TriggerParameter $device.Id Threshold
+        $parameters = New-TriggerParameters $device.Id Threshold
 
         $parameters.Channel = "Total"
 
@@ -47,7 +47,7 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "can assign integer to Channel" {
-        $parameters = New-TriggerParameter $device.Id Threshold
+        $parameters = New-TriggerParameters $device.Id Threshold
 
         $parameters.Channel = 3
 
@@ -59,7 +59,7 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
         $sensor = Run Sensor { Get-Sensor }
         $channel = Run Channel { $sensor | Get-Channel }
 
-        $parameters = New-TriggerParameter $device.Id Threshold
+        $parameters = New-TriggerParameters $device.Id Threshold
 
         $parameters.Channel = $channel
 
@@ -67,7 +67,7 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "throws assigning a random value to Channel" {
-        $parameters = New-TriggerParameter $device.Id Threshold
+        $parameters = New-TriggerParameters $device.Id Threshold
 
         { $parameters.Channel = "Banana" } | Should Throw "type must be convertable"
     }
@@ -75,6 +75,6 @@ Describe "New-NotificationTriggerParameter" -Tag @("PowerShell", "UnitTest") {
     It "throws creating parameters from an inherited trigger" {
         $triggers.Count | Should Be 1
 
-        { $triggers | New-TriggerParameter } | Should Throw "trigger is inherited"
+        { $triggers | New-TriggerParameters } | Should Throw "trigger is inherited"
     }
 }

@@ -80,7 +80,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
         $sensor = Get-Sensor -Id (Settings DownSensor)
         $channel = $sensor | Get-Channel | select -First 1
 
-        $param = New-TriggerParameter $sensor.Id Threshold
+        $param = New-TriggerParameters $sensor.Id Threshold
         $param.Channel = $channel
 
         $param | Add-Trigger
@@ -103,7 +103,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
         $sensor = Get-Sensor -Id (Settings DownSensor)
         $channel = $sensor | Get-Channel | select -First 1
 
-        $param = New-TriggerParameter $sensor.Id Threshold
+        $param = New-TriggerParameters $sensor.Id Threshold
         $param.Channel = $channel
 
         $param | Add-Trigger

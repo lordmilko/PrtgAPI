@@ -6,7 +6,7 @@ Describe "Add-NotificationTrigger" {
 
     It "throws setting an unsupported trigger type" {
 
-        $params = New-TriggerParameter 1001 State
+        $params = New-TriggerParameters 1001 State
 
         { $params | Add-NotificationTrigger } | Should Throw "is not a valid trigger type"
     }

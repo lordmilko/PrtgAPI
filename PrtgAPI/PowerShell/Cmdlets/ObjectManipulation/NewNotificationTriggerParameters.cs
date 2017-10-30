@@ -8,13 +8,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Creates a new set of notification trigger parameters for adding or editing a notification trigger.</para>
     /// 
-    /// <para type="description">The New-NotificationTriggerParameter cmdlet creates a set of trigger parameters for creating or editing
-    /// a notification trigger. When editing notification triggers, New-NotificationTriggerParameter should only be used when multiple
+    /// <para type="description">The New-NotificationTriggerParameters cmdlet creates a set of trigger parameters for creating or editing
+    /// a notification trigger. When editing notification triggers, New-NotificationTriggerParameters should only be used when multiple
     /// values require updating. For updating a single notification trigger property Edit-NotificationTriggerProperty should be
     /// used instead.</para>
     /// <para type="description">When creating a new notification trigger, the trigger's parameters can either be imported
     /// from an existing notification trigger's properties and then further modified, or defined manually from scratch.</para>
-    /// <para type="description">Based on the type of notification trigger specified, New-NotificationTriggerParameter will
+    /// <para type="description">Based on the type of notification trigger specified, New-NotificationTriggerParameters will
     /// create one of several TriggerParameter type objects, exposing only the parameters relevant to that trigger type.</para>
     /// <para type="description">When working with TriggerParameters objects, all parameter properties support nullable values,
     /// allowing you to clear any properties you wish to remove or undo. The exception to this however is Notification Action
@@ -35,45 +35,45 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// further use in your code.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $param = New-TriggerParameter 1234 State</code>
-    ///     <para>C:\> $param | Add-Trigger</para>
+    ///     <code>C:\> $params = New-TriggerParameters 1234 State</code>
+    ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Add a new state notification trigger with default values to object with ID 1234</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $param = New-TriggerParameter 1234 3 State</code>
-    ///     <para>C:\> $param.Latency = 40</para>
-    ///     <para>C:\> $param | Set-Trigger</para>
+    ///     <code>C:\> $params = New-TriggerParameters 1234 3 State</code>
+    ///     <para>C:\> $params.Latency = 40</para>
+    ///     <para>C:\> $params | Set-Trigger</para>
     ///     <para>Edit the state notification trigger with sub ID 3 on the object with ID 1234, setting the Latency to 40 seconds</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $param = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameter 1234</code>
-    ///     <para>C:\> $param.OffNotificationAction = $null</para>
-    ///     <para>C:\> $param | Add-Trigger</para>
+    ///     <code>C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters 1234</code>
+    ///     <para>C:\> $params.OffNotificationAction = $null</para>
+    ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Create a new notification trigger on the object with ID 1234 from the state trigger on the sensor with ID 1001, setting the OffNotificationAction to "None"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $param = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameter</code>
-    ///     <para>C:\> $param.Latency = 30</para>
-    ///     <para>C:\> $param | Set-Trigger</para>
+    ///     <code>C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters</code>
+    ///     <para>C:\> $params.Latency = 30</para>
+    ///     <para>C:\> $params | Set-Trigger</para>
     ///     <para>Edit the notification trigger on the sensor with ID 1001, setting the latency to 30 seconds</para>
     ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> $sensor = Get-Sensor -Id 1001</code>
     ///     <para>C:\> $channel = $sensor | Get-Channel "Available Memory"</para>
-    ///     <para>C:\> $param = New-TriggerParameter $sensor.Id Threshold</para>
-    ///     <para>C:\> $param.Channel = $channel</para>
-    ///     <para>C:\> $param | Add-Trigger</para>
+    ///     <para>C:\> $params = New-TriggerParameters $sensor.Id Threshold</para>
+    ///     <para>C:\> $params.Channel = $channel</para>
+    ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Create a new notification trigger on the sensor with ID 1001 that alerts based on the value of its "Available Memory" channel.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $param = New-TriggerParameter 1001 Threshold</code>
-    ///     <para>C:\> $param.Channel = 1</para>
-    ///     <para>C:\> $param | Add-Trigger</para>
+    ///     <code>C:\> $params = New-TriggerParameters 1001 Threshold</code>
+    ///     <para>C:\> $params.Channel = 1</para>
+    ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Create a new threshold notification trigger on the sensor with ID 1001 that alerts based on the value of the channel with ID 1.</para>
     /// </example>
     /// 
@@ -82,13 +82,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Set-NotificationTrigger</para>
     /// <para type="link">Get-Channel</para>
     /// 
-    /// //todo: need to talk about how setting null on an action removes it
     /// //todo: i dont think requirevalueattribute is working? when should it work? how do we test creating some corrupt triggers?
     /// //todo: have examples for the various ways of setting the channel for a threshold trigger, plus some examples for setting the various properties of volume/speed/threshold triggers
     /// </summary>
     [OutputType(typeof(TriggerParameters))]
-    [Cmdlet(VerbsCommon.New, "NotificationTriggerParameter")]
-    public class NewNotificationTriggerParameter : PSCmdlet
+    [Cmdlet(VerbsCommon.New, "NotificationTriggerParameters")]
+    public class NewNotificationTriggerParameters : PSCmdlet
     {
         /// <summary>
         /// <para type="description">The ID of the object the notification trigger will be created for.</para>

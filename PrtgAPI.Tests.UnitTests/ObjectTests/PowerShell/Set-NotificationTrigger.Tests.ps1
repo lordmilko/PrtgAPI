@@ -6,7 +6,7 @@ Describe "Set-NotificationTrigger" {
 
     It "allows a channel to be set on a sensor" {
 
-        $params = New-TriggerParameter 1001 1 Threshold
+        $params = New-TriggerParameters 1001 1 Threshold
 
         $params.Channel = Get-Sensor | Get-Channel
 
@@ -14,7 +14,7 @@ Describe "Set-NotificationTrigger" {
     }
 
     It "throws when a channel does not exist on a sensor" {
-        $params = New-TriggerParameter 1001 1 Threshold
+        $params = New-TriggerParameters 1001 1 Threshold
 
         $channel = Get-Sensor | Get-Channel
         $channel.Name = "Banana"
@@ -25,7 +25,7 @@ Describe "Set-NotificationTrigger" {
     }
 
     It "throws when setting an enum on a sensor" {
-        $params = New-TriggerParameter 1001 1 Threshold
+        $params = New-TriggerParameters 1001 1 Threshold
 
         $params.Channel = "Primary"
 
