@@ -124,7 +124,8 @@ namespace PrtgAPI.Objects.Undocumented
         /// The duration (in seconds) this sensor can run for before timing out. Based on the sensor type, the maximum valid value may be different. Corresponds to:<para/>
         ///     Ping Settings                 -> Timeout (Max 300)<para/>
         ///     WMI Remote Ping Configuration -> Timeout (Max 300)<para/>
-        ///     HTTP Specific                 -> Timeout (Max 900)
+        ///     HTTP Specific                 -> Timeout (Max 900)<para/>
+        ///     Sensor Settings (EXE/XML)     -> Timeout (Max 900)
         /// </summary>
         [XmlElement("injected_timeout")]
         public int? Timeout { get; set; }
@@ -338,10 +339,14 @@ namespace PrtgAPI.Objects.Undocumented
         #endregion
         #region Sensor Settings (EXE/XML)
 
-        //Duplicate properties: DebugMode
+        //Duplicate properties: DebugMode, Timeout
 
-        //[XmlElement("injected_exefilelabel")]
-        //public string ExeName { get; set; }
+        /// <summary>
+        /// Name of the EXE or Script File the sensor executes.<para/>
+        /// Corresponds to Sensor Settings -> EXE/Script
+        /// </summary>
+        [XmlElement("injected_exefile")]
+        public string ExeName { get; set; }
 
         /// <summary>
         /// Parameters that will be passed to the specified EXE/Script file.<para/>

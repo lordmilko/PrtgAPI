@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.UnitTests
             foreach (var prop in obj.GetType().GetProperties())
             {
                 if(!customHandler(prop))
-                    Assert.IsFalse(ReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
+                    Assert.IsFalse(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
             }
         }
     }

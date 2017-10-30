@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.Helpers
 {
-    public static class ReflectionHelpers
+    public static class TestReflectionHelpers
     {
-        public static IEnumerable<PropertyInfo> GetProperties2(this Type type)
-        {
-            return type.GetProperties().Where(p => !p.GetIndexParameters().Any() && p.CanWrite);
-        }
-
         public static void NullifyProperties(object obj)
         {
-            foreach (var prop in obj.GetType().GetProperties2())
+            foreach (var prop in obj.GetType().GetNormalProperties())
             {
                 prop.SetValue(obj, null);
             }
@@ -60,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
 
         public static void GetAllProperties(object obj)
         {
-            foreach (var prop in obj.GetType().GetProperties2())
+            foreach (var prop in obj.GetType().GetNormalProperties())
             {
                 prop.GetValue(obj);
             }

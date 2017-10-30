@@ -164,7 +164,7 @@ namespace PrtgAPI.Parameters
 
         void AddParameter(Enum property, PropertyInfo info, object value)
         {
-            CustomParameters.Add(new CustomParameter(GetParameterName((TObjectProperty)(object)property, info), HttpUtility.UrlEncode(value?.ToString())));
+            CustomParameters.Add(new CustomParameter(GetParameterName((TObjectProperty)(object)property, info), value?.ToString()));
         }
 
         protected abstract PropertyInfo GetPropertyInfo(Enum property);

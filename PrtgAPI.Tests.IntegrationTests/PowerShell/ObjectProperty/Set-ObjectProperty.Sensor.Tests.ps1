@@ -105,7 +105,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
     It "Sensor Settings (EXE/XML)" {
         $object = Get-Sensor -Id (Settings ExeXml)
 
-        #GetValue "ExeName" "blah"
+        SetValue "ExeName" "blah.ps1"
         SetValue "ExeParameters" "test parameters `"with test quotes`""
         SetValue "SetExeEnvironmentVariables" $true
         SetValue "UseWindowsAuthentication" $true
@@ -113,5 +113,22 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetValue "EnableChangeTriggers" $true
         #GetValue "ExeValueType" #todo: need to test that setting readonly on exevaluetype still retrieves the value
         SetValue "DebugMode" "WriteToDiskWhenError"
+    }
+    Context "Other" {
+        It "Triggers" {
+            $object = Get-Sensor -Id (Settings UpSensor)
+
+            $initialValue = $object.NotificationTypes.InheritTriggers
+
+            $object | Set-ObjectProperty InheritTriggers $false
+
+            $newObject = Get-Sensor -Id (Settings UpSensor)
+
+            $newValue = $newObject.NotificationTypes.InheritTriggers
+
+            $newValue | Should Not Be $initialValue
+
+            $newValue | Should Be $false
+        }
     }
 }

@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
@@ -15,7 +14,7 @@ using PrtgAPI.Parameters;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
-using PrtgAPI.Exceptions.Internal;
+using PrtgAPI.Parameters.ObjectData;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -430,6 +429,69 @@ namespace PrtgAPI
         public IEnumerable<Sensor> StreamSensors(SensorParameters parameters) => StreamObjects<Sensor>(parameters);
 
             #endregion
+
+
+        /// <summary>
+        /// Add a new sensor to a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
+        public void AddSensor(int deviceId, BaseSensorParameters parameters)
+        {
+            ValidateSensorParameters(parameters);
+
+            var internalParams = GetInternalSensorParameters(deviceId, parameters);
+
+            requestEngine.ExecuteRequest(CommandFunction.AddSensor5, internalParams);
+        }
+
+        /// <summary>
+        /// Asynchronously add a new sensor to a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
+        public async Task AddSensorAsync(int deviceId, BaseSensorParameters parameters)
+        {
+            ValidateSensorParameters(parameters);
+
+            var internalParams = GetInternalSensorParameters(deviceId, parameters);
+
+            await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor5, internalParams).ConfigureAwait(false);
+        }
+
+        private void ValidateSensorParameters(BaseSensorParameters parameters)
+        {
+            var properties = parameters.GetType().GetNormalProperties().ToList();
+
+            foreach (var property in properties)
+            {
+                var attrib = property.GetCustomAttribute<RequireValueAttribute>();
+
+                if (attrib != null && attrib.ValueRequired)
+                {
+                    var val = property.GetValue(parameters);
+
+                    if (string.IsNullOrEmpty(val?.ToString()))
+                    {
+                        throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
+                    }
+                }
+            }
+        }
+
+        private Parameters.Parameters GetInternalSensorParameters(int deviceId, BaseSensorParameters parameters)
+        {
+            var newParams = new Parameters.Parameters();
+
+            foreach (var param in parameters.GetParameters())
+            {
+                newParams[param.Key] = param.Value;
+            }
+
+            newParams[Parameter.Id] = deviceId;
+
+            return newParams;
+        }
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.

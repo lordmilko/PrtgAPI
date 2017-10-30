@@ -85,14 +85,14 @@ namespace PrtgAPI.Objects.Undocumented
 
         internal static List<XElement> GetDropDownListXml(string response, string nameRegex, Func<string, string> nameTransformer)
         {
-            var ddl = Regex.Matches(response, "<select.+?>.+?<\\/select>", RegexOptions.Singleline);
+            var ddl = Regex.Matches(response, "<select.+?>.*?<\\/select>", RegexOptions.Singleline);
             var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();
 
             var listObjs = GetLists(lists, nameRegex, nameTransformer);
 
             if (listObjs.Any(l => l.Options.Any(o => o.Selected)))
             {
-                var xml = listObjs.Select(l => new XElement($"injected_{l.Name}", l.Options.First(o => o.Selected).Value));
+                var xml = listObjs.Select(l => new XElement($"injected_{l.Name}", l.Options.FirstOrDefault(o => o.Selected)?.Value));
                 return xml.ToList();
             }
 

@@ -56,7 +56,7 @@ namespace PrtgAPI.Objects.Shared
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
         /// </summary>
         [PropertyParameter(nameof(Property.NotificationTypes))]
-        public NotificationTypes NotificationTypes => notificationTypes == null ? null : new NotificationTypes(notificationTypes); //todo: add custom handling for this
+        public NotificationTypes NotificationTypes => notificationTypes == null ? new NotificationTypes(string.Empty) : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
         /// <summary>
         /// Raw notification types value of this object. This field is for internal use only.

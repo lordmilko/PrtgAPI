@@ -36,7 +36,7 @@ namespace PrtgAPI
         /// <summary>
         /// Whether notification triggers are inherited from a PRTG Object's parent object.
         /// </summary>
-        public bool TriggerInheritance { get; private set; }
+        public bool InheritTriggers { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationTypes"/> class.
@@ -47,7 +47,7 @@ namespace PrtgAPI
             if (rawNotificationTypes != null)
             {
                 if (rawNotificationTypes.StartsWith("Inherited"))
-                    TriggerInheritance = true;
+                    InheritTriggers = true;
 
                 SetTriggerValue(rawNotificationTypes, "State", v => StateTriggers = v);
                 SetTriggerValue(rawNotificationTypes, "Threshold", v => ThresholdTriggers = v);
@@ -81,7 +81,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Inheritance: {TriggerInheritance}, State: {StateTriggers}, Threshold: {ThresholdTriggers}, Change: {ChangeTriggers}, Speed: {SpeedTriggers}, Volume: {VolumeTriggers}";
+            return $"Inheritance: {InheritTriggers}, State: {StateTriggers}, Threshold: {ThresholdTriggers}, Change: {ChangeTriggers}, Speed: {SpeedTriggers}, Volume: {VolumeTriggers}";
         }
     }
 }

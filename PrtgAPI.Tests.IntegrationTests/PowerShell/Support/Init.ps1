@@ -1,4 +1,4 @@
-﻿. "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\PowerShell\Support\Init.ps1"
+﻿. "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\ObjectTests\PowerShell\Support\Init.ps1"
 
 if(!(Get-Module -ListAvailable Assert))
 {

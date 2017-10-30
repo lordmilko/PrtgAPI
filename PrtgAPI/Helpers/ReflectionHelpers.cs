@@ -75,5 +75,15 @@ namespace PrtgAPI.Helpers
 
             return method;
         }
+
+        /// <summary>
+        /// Retrieve all properties from a type, excluding those that are not writable or are internal properties used by indexers
+        /// </summary>
+        /// <param name="type">The type to retrieve properties for.</param>
+        /// <returns></returns>
+        public static IEnumerable<PropertyInfo> GetNormalProperties(this Type type)
+        {
+            return type.GetProperties().Where(p => !p.GetIndexParameters().Any() && p.CanWrite);
+        }
     }
 }

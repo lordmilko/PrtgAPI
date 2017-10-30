@@ -152,7 +152,7 @@ namespace PrtgAPI.Request
 
                 for (int i = 0; i < list.Count; i++)
                 {
-                    builder.Append(FormatSingleParameterWithoutValEncode(list[i].Name, list[i].Value));
+                    builder.Append(FormatSingleParameterWithValEncode(list[i].Name, list[i].Value));
 
                     if (i < list.Count - 1)
                         builder.Append("&");
@@ -174,7 +174,7 @@ namespace PrtgAPI.Request
             if (parameterType == ParameterType.MultiValue)
             {
                 var str = GetMultiValueStr(value);
-                return FormatSingleParameterWithoutValEncode(description, str);
+                return FormatSingleParameterWithoutValEncode(description, str); //We already URL encoded each value when we constructed the MultiValueStr
             }
 
             if (parameterType == ParameterType.MultiParameter)
@@ -188,13 +188,11 @@ namespace PrtgAPI.Request
         /// </summary>
         /// <param name="name">The name to use for the parameter</param>
         /// <param name="val">The value to assign to the parameter</param>
-        /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/> </param>
+        /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/></param>
         /// <returns></returns>
         private string FormatSingleParameterWithValEncode(string name, object val, bool isEnum = false)
         {
-            var str = val is IFormattable ? ((IFormattable) val).GetSerializedFormat() : Convert.ToString(val);
-
-            return FormatSingleParameterWithoutValEncode(name, HttpUtility.UrlEncode(str), isEnum);
+            return FormatSingleParameterInternal(name, val, true, isEnum);
         }
 
         /// <summary>
@@ -206,20 +204,35 @@ namespace PrtgAPI.Request
         /// <returns></returns>
         private string FormatSingleParameterWithoutValEncode(string name, object val, bool isEnum = false)
         {
-            var str = string.Empty;
+            return FormatSingleParameterInternal(name, val, false, isEnum);
+        }
+
+        private string FormatSingleParameterInternal(string name, object val, bool encodeValue, bool isEnum = false)
+        {
+            string str;
 
             if (val is string)
                 str = val.ToString();
             else
             {
                 if (val is IFormattable)
-                    str = ((IFormattable) val).GetSerializedFormat();
+                    str = ((IFormattable)val).GetSerializedFormat();
                 else
                     str = Convert.ToString(val);
             }
 
-            if(isEnum && name != Parameter.Password.GetDescription())
-                return $"{name}={str}".ToLower();
+            if (isEnum && name != Parameter.Password.GetDescription())
+            {
+                str = str.ToLower();
+
+                if (encodeValue)
+                    str = HttpUtility.UrlEncode(str);
+
+                return $"{name.ToLower()}={str}";
+            }
+
+            if (encodeValue)
+                str = HttpUtility.UrlEncode(str);
 
             return $"{name.ToLower()}={str}";
         }

@@ -55,6 +55,10 @@ namespace PrtgAPI
         MoveObjectNow,
 
         [Description("sortsubobjects.htm")]
-        SortSubObjects
+        SortSubObjects,
+
+        [Undocumented]
+        [Description("addsensor5.htm")]
+        AddSensor5
     }
 }

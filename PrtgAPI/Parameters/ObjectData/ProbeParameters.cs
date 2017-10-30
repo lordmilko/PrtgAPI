@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Parameters
+namespace PrtgAPI.Parameters.ObjectData
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Probe"/> objects.

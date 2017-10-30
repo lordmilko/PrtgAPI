@@ -262,6 +262,13 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
-        ObjectType
+        ObjectType,
+
+        /// <summary>
+        /// The type of sensor to create.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        SensorType
     }
 }

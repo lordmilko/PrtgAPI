@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 {
@@ -274,7 +274,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
         private void ValidateNewTrigger(TriggerParameters parameters, NotificationTrigger trigger, bool empty)
         {
-            foreach (var paramProp in parameters.GetType().GetProperties2())
+            foreach (var paramProp in parameters.GetType().GetNormalProperties())
             {
                 bool found = false;
 

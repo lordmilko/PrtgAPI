@@ -5,11 +5,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class NotificationTriggerParameterTests : NotificationTriggerBaseTests
+    public class NotificationTriggerParametersTests : NotificationTriggerBaseTests
     {
         
 #region Notification Trigger Parameter Tests
@@ -91,7 +92,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_Edit_CanSetUnsetValue(TriggerParameters parameters)
         {
-            var properties = parameters.GetType().GetProperties2();
+            var properties = parameters.GetType().GetNormalProperties();
 
             foreach (var prop in properties)
             {
@@ -103,7 +104,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 else
                     Assert.IsTrue(prop.GetValue(parameters) == null, $"Property '{prop.Name}' was not null.");
 
-                var defaultValue = prop.PropertyType.Name == "TriggerChannel" ? new TriggerChannel(1234) : ReflectionHelpers.GetDefaultUnderlying(prop.PropertyType);
+                var defaultValue = prop.PropertyType.Name == "TriggerChannel" ? new TriggerChannel(1234) : TestReflectionHelpers.GetDefaultUnderlying(prop.PropertyType);
 
                 prop.SetValue(parameters, defaultValue);
                 Assert.IsTrue(prop.GetValue(parameters) != null, $"Property '{prop.Name}' was null.");
@@ -118,7 +119,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_MandatoryFields_CannotBeNull(TriggerParameters parameters)
         {
-            foreach (var prop in parameters.GetType().GetProperties2())
+            foreach (var prop in parameters.GetType().GetNormalProperties())
             {
                 var attr = prop.GetCustomAttribute<RequireValueAttribute>();
                 var valRequired = attr?.ValueRequired ?? false;
@@ -193,12 +194,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_AllProperties_HaveDefault(TriggerParameters parameters, Func<PropertyInfo, bool> additionalChecks = null)
         {
-            ReflectionHelpers.NullifyProperties(parameters);
+            TestReflectionHelpers.NullifyProperties(parameters);
 
             if (additionalChecks == null)
                 additionalChecks = p => false;
 
-            foreach (var prop in parameters.GetType().GetProperties2())
+            foreach (var prop in parameters.GetType().GetNormalProperties())
             {
                 var val = prop.GetValue(parameters);
 
@@ -315,7 +316,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             if (additionalChecks == null)
                 additionalChecks = p => false;
 
-            foreach (var prop in parameters.GetType().GetProperties2())
+            foreach (var prop in parameters.GetType().GetNormalProperties())
             {
                 var val = prop.GetValue(parameters);
 
@@ -410,7 +411,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             //then, we need to make sure we can clone a trigger into some new parameters and add them successfully
             //and THEN, we need to write some tests for that
 
-            foreach (var paramProp in parameters.GetType().GetProperties2())
+            foreach (var paramProp in parameters.GetType().GetNormalProperties())
             {
                 bool found = false;
 

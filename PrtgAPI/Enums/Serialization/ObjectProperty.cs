@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel;
 using PrtgAPI.Attributes;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 
 namespace PrtgAPI
 {
     internal enum ObjectPropertyInternal
     {
-        LonLat,
+        LonLat
     }
 
     /// <summary>
@@ -560,7 +561,8 @@ namespace PrtgAPI
         /// The duration (in seconds) this sensor can run for before timing out. Based on the sensor type, the maximum valid value may be different. Corresponds to:<para/>
         ///     Ping Settings                 -> Timeout (Max 300)<para/>
         ///     WMI Remote Ping Configuration -> Timeout (Max 300)<para/>
-        ///     HTTP Specific                 -> Timeout (Max 900)
+        ///     HTTP Specific                 -> Timeout (Max 900)<para/>
+        ///     Sensor Settings (EXE/XML)     -> Timeout (Max 900)
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         Timeout,
@@ -661,6 +663,13 @@ namespace PrtgAPI
         #region Sensor Settings (EXE/XML)
 
         /// <summary>
+        /// Name of the EXE or Script File the sensor executes.<para/>
+        /// Corresponds to Sensor Settings -> EXE/Script
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        ExeName,
+
+        /// <summary>
         /// Parameters that will be passed to the specified EXE/Script file.<para/>
         /// Corresponds to Sensor Settings -> Parameters.
         /// </summary>
@@ -722,6 +731,14 @@ namespace PrtgAPI
         PingRemotePacketSize,
 
         #endregion
+
+        /// <summary>
+        /// Whether to inherit notification triggers from the parent object.<para/>
+        /// Corresponds to Notifications Tab -> Trigger Inheritance<para/>
+        /// To retrieve the value of this property, use <see cref="SensorOrDeviceOrGroupOrProbe.NotificationTypes"/> 
+        /// </summary>
+        [TypeLookup(typeof(IsolatedPropertySettings))]
+        InheritTriggers
     #endregion
     }
 }
