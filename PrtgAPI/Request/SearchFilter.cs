@@ -42,6 +42,9 @@ namespace PrtgAPI
         /// <param name="value">Value to filter on.</param>
         public SearchFilter(Property property, FilterOperator @operator, object value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             Property = property;
             Operator = @operator;
             Value = value;

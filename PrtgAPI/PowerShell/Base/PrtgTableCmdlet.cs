@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
@@ -100,8 +103,63 @@ namespace PrtgAPI.PowerShell.Base
         private IEnumerable<TObject> GetFilteredObjects(TParam parameters)
         {
             if (Filter != null)
+            {
+                PreProcessFilter();
                 parameters.SearchFilter = Filter;
+            }
+                
             return GetObjects(parameters);
+        }
+
+        private void PreProcessFilter()
+        {
+            Filter = Filter.Select(filter =>
+            {
+                //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
+                var property = typeof (TObject).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == filter.Property.ToString());
+
+                if (property == null)
+                    return filter;
+
+                var cleanValue = Regex.Replace(filter.Value.ToString(), "[^a-zA-Z0-9_]", string.Empty);
+
+                var result = ParseEnumFilter(property, filter, cleanValue);
+
+                if (result != null)
+                    return result;
+
+                //Filter value could in fact be the display value of a raw type. See whether any internal properties starting with
+                //the expected property name exist also ending with "raw". If so, if that property is an enum, strip all
+                //invalid characters from the value and try and lookup an enum member with that name
+                var propertyRaw = typeof (TObject).GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(p => p.Name.ToLower() == (property.Name + "raw").ToLower());
+
+                if (propertyRaw == null)
+                    return filter;
+
+                result = ParseEnumFilter(propertyRaw, filter, cleanValue);
+
+                if (result != null)
+                    return result;
+
+                return filter;
+            }).ToArray();
+        }
+
+        private SearchFilter ParseEnumFilter(PropertyInfo property, SearchFilter filter, string cleanValue)
+        {
+            var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+            if (type.IsEnum)
+            {
+                if (Enum.GetNames(type).Any(e => e.ToLower() == cleanValue.ToLower()))
+                {
+                    var enumValue = Enum.Parse(type, cleanValue, true);
+
+                    return new SearchFilter(filter.Property, filter.Operator, enumValue);
+                }
+            }
+
+            return null;
         }
 
         private IEnumerable<TObject> GetRecordsInternal(TParam parameters)
