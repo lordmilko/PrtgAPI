@@ -1,7 +1,7 @@
 ﻿. $PSScriptRoot\..\Support\ObjectProperty.ps1
 
 Describe "Set-ObjectProperty_Sensors_IT" {
-    
+  
     It "Basic Sensor Settings" {
 
         $object = Get-Sensor -Id (Settings UpSensor)
@@ -114,6 +114,23 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         #GetValue "ExeValueType" #todo: need to test that setting readonly on exevaluetype still retrieves the value
         SetValue "DebugMode" "WriteToDiskWhenError"
     }
+    
+    It "Sensor Factory Specific Settings" {
+        $object = Get-Sensor -Id (Settings SensorFactory)
+
+        SetValue "ChannelDefinition" "#1:First Channel`nchannel(1001,0)"
+        SetValue "ChannelDefinition" @(
+            "#1:First Array Channel"
+            "channel(1002,1)"
+            "#2:Second Array Channel"
+            "channel(1002,1)"
+        )
+
+        SetChild "FactoryErrorFormula" "status(1001) AND status (1002)" "FactoryErrorMode" "CustomFormula"
+        SetValue "FactoryErrorMode" "WarnOnError"
+        SetValue "FactoryMissingDataMode" "CalculateWithZero"
+    }
+
     Context "Other" {
         It "Triggers" {
             $object = Get-Sensor -Id (Settings UpSensor)

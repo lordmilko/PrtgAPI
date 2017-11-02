@@ -96,6 +96,13 @@ LONG DESCRIPTION
     | Timeout                    |    Yes    | Timeout for Ping requests                                       |
     | PingRemotePacketSize       |    Yes    | Packet size of each request. Must be 1-10,000 bytes             |
 
+    | Sensor Factory Specific    | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | ChannelDefinition          |    Yes    | Channels to display in a sensor factory                         |
+    | FactoryErrorMode           |    Yes    | How a sensor factory should react when a source sensor is down  |
+    | FactoryErrorFormula        |    Yes    | Custom formula for determining when a sensor factory goes down  |
+    | FactoryMissingDataMode     |    Yes    | How sensor factory values are calculated when channels are down |
+
     | Other                      | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
     | InheritTriggers            | No  | Yes | Whether to inherit notification triggers. To retrieve the value |

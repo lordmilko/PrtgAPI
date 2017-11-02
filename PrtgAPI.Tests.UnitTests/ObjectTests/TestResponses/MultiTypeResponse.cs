@@ -52,6 +52,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new BasicResponse(string.Empty);
                 case nameof(JsonFunction.Triggers):
                     return new TriggerOverviewResponse();
+                case nameof(HtmlFunction.ObjectData):
+                    return GetObjectDataResponse(address);
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -83,13 +85,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             switch (content)
             {
-                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}"), count));
+                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory"), count));
                 case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}"), count));
                 case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}"), count));
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}"), count));
                 case Content.Channels:  return new ChannelResponse(new[] { new ChannelItem() });
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
+            }
+        }
+
+        private IWebResponse GetObjectDataResponse(string address)
+        {
+            var components = UrlHelpers.CrackUrl(address);
+
+            var objectType = components["objecttype"].ToEnum<ObjectType>();
+
+            switch (objectType)
+            {
+                case ObjectType.Sensor:
+                    return new SensorSettingsResponse();
+                default:
+                    throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }
         }
 

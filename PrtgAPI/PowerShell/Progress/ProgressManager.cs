@@ -326,7 +326,7 @@ namespace PrtgAPI.PowerShell.Progress
             CurrentRecord.RecordType = ProgressRecordType.Processing;
         }
 
-        public void UpdateRecordsProcessed(ProgressRecordEx record)
+        public void UpdateRecordsProcessed(ProgressRecordEx record, bool writeObject = true)
         {
             if (PipeFromVariableWithProgress && !PipelineContainsOperation)
             {
@@ -343,7 +343,8 @@ namespace PrtgAPI.PowerShell.Progress
 
                     record.PercentComplete = (int) ((index)/Convert.ToDouble(Pipeline.List.Count)*100);
 
-                    variableProgressDisplayed = true;
+                    if(writeObject)
+                        variableProgressDisplayed = true;
 
                     if (originalIndex <= Pipeline.List.Count)
                         WriteProgress(record);
@@ -365,6 +366,9 @@ namespace PrtgAPI.PowerShell.Progress
 
                         if (previousManager.recordsProcessed > 0)
                             record.PercentComplete = (int)(previousManager.recordsProcessed / Convert.ToDouble(totalRecords) * 100);
+
+                        if (!writeObject)
+                            previousManager.recordsProcessed--;
 
                         WriteProgress();
                     }

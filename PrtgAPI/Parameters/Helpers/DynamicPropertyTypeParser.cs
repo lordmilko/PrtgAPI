@@ -74,6 +74,8 @@ namespace PrtgAPI.Parameters.Helpers
         public object ParseValue()
         {
             object val = null;
+            bool isArray = false;
+            string splittableStringChar = null;
 
             //Transform the value according to its properties' data type
 
@@ -85,17 +87,58 @@ namespace PrtgAPI.Parameters.Helpers
                     return ((IFormattable)Value).GetSerializedFormat();
                 }
                 else
-                    throw new NotSupportedException("Serializng TypeAttribute type that does not implement IFormattable is not currently supportd");
+                    throw new NotSupportedException("Serializng TypeAttribute type that does not implement IFormattable is not currently supported");
             }
+
+            if (PropertyType.IsArray)
+            {
+                PropertyType = PropertyType.GetElementType();
+
+                if (ValueType.IsArray)
+                {
+                    ValueType = ValueType.GetElementType();
+
+                    if (ValueType == typeof (object) && Value != null)
+                    {
+                        ValueType = ((object[])Value).First().GetType();
+                    }
+
+                    isArray = true;
+
+                    splittableStringChar = Info.GetCustomAttribute<SplittableStringAttribute>()?.Character.ToString();
+
+                    if(splittableStringChar == null)
+                        throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}");
+                    //we should downcast this too
+                }
+                //if our value is not an array, change property type to the underlying type
+
+                //if our value IS an array, set the array flag, and change the property to the underlying type
+                    //we'll then have checks in all our sections later to handle combining the array according to its splittable string
+
+            }
+
+            //todo: if we're an array type, and our value is not an array type, we'll change our property type
+            //to its underlying type, and then set a flag to say we were an array so we know to combine according to our splittable
+            //string attribute
 
             //String, Int and Double can be used as is
             if (PropertyType == typeof (string))
             {
                 Type = TypeCategory.String;
+
+                if (isArray)
+                {
+                    return string.Join(splittableStringChar, (object[])Value);
+                }
+
                 val = Value?.ToString();
             }
             else if (PropertyType == typeof (double) || PropertyType == typeof(int))
             {
+                if (isArray)
+                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
+
                 //If the value is convertable to a double, it is either an int or a double
 
                 if (!string.IsNullOrEmpty(Value?.ToString()))
@@ -129,6 +172,9 @@ namespace PrtgAPI.Parameters.Helpers
             {
                 if (Value == null)
                     throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Info.Name}' of type '{Info.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
+
+                if (isArray)
+                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
 
                 //Convert bool to int
                 if (PropertyType == typeof(bool))

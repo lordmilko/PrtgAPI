@@ -36,10 +36,28 @@ function Describe($name, $script) {
 
             $newSettings = $object | Get-ObjectProperty
 
-            $newSettings.$property | Assert-NotEqual $initialSettings.$property -Message "Expected initial and new value to be different, but they were both '<actual>'"
-            $newSettings.$property | Should Not BeNullOrEmpty
+            $newValue = $newSettings.$property
+            $originalValue = $initialSettings.$property
 
-            $newSettings.$property | Should Be $value
+            if($newValue.GetType().IsArray)
+            {
+                $newValue = [string]::Join("`n", $newValue)
+
+                if($null -ne $originalValue)
+                {
+                    $originalValue = [string]::Join("`n", $originalValue)
+                }
+
+                if($null -ne $value -and $value.GetType().IsArray)
+                {
+                    $value = [string]::Join("`n", $value)
+                }
+            }
+
+            $newValue | Assert-NotEqual $originalValue -Message "Expected initial and new value to be different, but they were both '<actual>'"
+            $newValue | Should Not BeNullOrEmpty
+
+            $newValue | Should Be $value
         }
 
         function SetChild($property, $value, $dependentProperty, $dependentValue)

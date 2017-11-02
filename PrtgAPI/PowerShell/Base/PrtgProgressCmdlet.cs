@@ -18,7 +18,9 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Description of the object type output by this cmdlet.
         /// </summary>
-        protected string TypeDescription;
+        internal string TypeDescription;
+
+        internal string OperationTypeDescription;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgProgressCmdlet"/> class.
@@ -35,8 +37,17 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="obj">The object to write to the pipeline.</param>
         protected void WriteObjectWithProgress(object obj)
         {
+            DisplayProgress();
+
+            WriteObject(obj);
+
+            PostUpdateProgress();
+        }
+
+        internal void DisplayProgress(bool writeObject = true)
+        {
             if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
-                UpdatePreviousAndCurrentVariableProgressOperations();
+                UpdatePreviousAndCurrentVariableProgressOperations(writeObject);
             else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
             {
                 if (ProgressManager.PreviousContainsProgress)
@@ -44,16 +55,12 @@ namespace PrtgAPI.PowerShell.Base
                     ProgressManager.SetPreviousOperation($"Retrieving all {GetTypePlural()}");
                 }
             }
-
-            WriteObject(obj);
-
-            PostUpdateProgress();
         }
 
         /// <summary>
         /// Updates the previous and current progress records for the current input object for scenarios in which a variable was piped into one or more cmdlets.
         /// </summary>
-        protected void UpdatePreviousAndCurrentVariableProgressOperations()
+        protected void UpdatePreviousAndCurrentVariableProgressOperations(bool writeObject = true)
         {
             //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
             //(causing them to SetPreviousOperation, which would fail)
@@ -67,7 +74,7 @@ namespace PrtgAPI.PowerShell.Base
                     ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypePlural()}";
 
                     ProgressManager.RemovePreviousOperation();
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, writeObject);
                 }
             }
             else
@@ -203,6 +210,15 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
+        internal void UpdatePreviousProgressAndSetCount(int count)
+        {
+            ProgressManager.TotalRecords = count;
+
+            if (!ProgressManager.LastInChain)
+            {
+                SetObjectSearchProgress(ProcessingOperation.Processing);
+            }
+        }
         /// <summary>
         /// Set the progress activity, initial description and total number of records (where applicable) for the current cmdlet.
         /// </summary>
@@ -215,6 +231,24 @@ namespace PrtgAPI.PowerShell.Base
                 ProgressManager.InitialDescription = $"Processing {TypeDescription.ToLower()}";
             else
                 ProgressManager.InitialDescription = $"Retrieving all {GetTypePlural()}";
+        }
+
+        /// <summary>
+        /// Writes a list to the output pipeline.
+        /// </summary>
+        /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
+        internal void WriteList<T>(IEnumerable<T> sendToPipeline)
+        {
+            PreUpdateProgress();
+
+            foreach (var item in sendToPipeline)
+            {
+                DuringUpdateProgress();
+
+                WriteObject(item);
+            }
+
+            PostUpdateProgress();
         }
 
         /// <summary>
@@ -234,12 +268,25 @@ namespace PrtgAPI.PowerShell.Base
 
         private string GetTypePlural()
         {
-            var str = TypeDescription.ToLower();
+            var str = OperationTypeDescription?.ToLower() ?? TypeDescription.ToLower();
 
             if (str.EndsWith("ies"))
                 return str;
 
             return $"{str}s";
+        }
+
+        /// <summary>
+        /// Create a sequence of progress tasks for processing a process containing two or more operations.
+        /// </summary>
+        /// <typeparam name="TResult">The type of object returned by the first operation.</typeparam>
+        /// <param name="func">The first operation to execute.</param>
+        /// <param name="typeDescription">The type description use for the progress.</param>
+        /// <param name="operationDescription">The progress description to use for the first operation.</param>
+        /// <returns></returns>
+        public ProgressTask<TResult> First<TResult>(Func<List<TResult>> func, string typeDescription, string operationDescription)
+        {
+            return ProgressTask<TResult>.Create(func, this, typeDescription, operationDescription);
         }
     }
 }

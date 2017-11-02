@@ -731,6 +731,40 @@ namespace PrtgAPI
         PingRemotePacketSize,
 
         #endregion
+        #region Sensor Factory Specific Settings
+
+        /// <summary>
+        /// Channels to display in a sensor factory<para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Channel Definition
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        ChannelDefinition,
+
+        /// <summary>
+        /// How the sensor should respond when one of its source sensors goes <see cref="Status.Down"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Error Handling.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        FactoryErrorMode,
+
+        /// <summary>
+        /// Custom formula for determining when a sensor sensor factory should go <see cref="Status.Down"/> when one
+        /// of its source sensors enters an error state.<para/>Applies when <see cref="FactoryErrorMode"/> is
+        /// <see cref="PrtgAPI.FactoryErrorMode.CustomFormula"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Status Definition.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(FactoryErrorMode), PrtgAPI.FactoryErrorMode.CustomFormula)]
+        FactoryErrorFormula,
+
+        /// <summary>
+        /// How factory channel values should be calculated when one of their source sensors is <see cref="Status.Down"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> If a Sensor has No Data
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        FactoryMissingDataMode,
+
+        #endregion
 
         /// <summary>
         /// Whether to inherit notification triggers from the parent object.<para/>

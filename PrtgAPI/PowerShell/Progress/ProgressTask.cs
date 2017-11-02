@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using PrtgAPI.PowerShell.Base;
+
+namespace PrtgAPI.PowerShell.Progress
+{
+    /// <summary>
+    /// Represents a task of a process containing two or more operations.
+    /// </summary>
+    /// <typeparam name="TResult">The type of objects returned from this task's operation.</typeparam>
+    public class ProgressTask<TResult>
+    {
+        private Lazy<List<TResult>> task;
+        private PrtgProgressCmdlet cmdlet;
+
+        private ProgressTask(Func<List<TResult>> function, PrtgProgressCmdlet cmdlet)
+        {
+            task = new Lazy<List<TResult>>(function);
+            this.cmdlet = cmdlet;
+        }
+
+        private ProgressTask(Lazy<List<TResult>> task, PrtgProgressCmdlet cmdlet)
+        {
+            this.task = task;
+            this.cmdlet = cmdlet;
+        }
+
+        /// <summary>
+        /// Create a sequence of progress tasks for processing a process containing two or more operations.
+        /// </summary>
+        /// <typeparam name="TNewResult">The type of object returned by the first operation.</typeparam>
+        /// <param name="func">The first operation to execute.</param>
+        /// <param name="cmdlet">The cmdlet that should display progress.</param>
+        /// <param name="typeDescription">The type description use for the progress.</param>
+        /// <param name="operationDescription">The progress description to use for the first operation.</param>
+        /// <returns></returns>
+        public static ProgressTask<TNewResult> Create<TNewResult>(Func<List<TNewResult>> func, PrtgProgressCmdlet cmdlet, string typeDescription, string operationDescription)
+        {
+            return new ProgressTask<TNewResult>(() =>
+            {
+                cmdlet.TypeDescription = typeDescription;
+                cmdlet.OperationTypeDescription = operationDescription;
+                cmdlet.DisplayProgress(false);
+                return func();
+            }, cmdlet);
+        }
+
+        /// <summary>
+        /// Execute an intermediate progress task for a process containing three or more operations.
+        /// </summary>
+        /// <typeparam name="TNewResult">The type of object returned by this operation.</typeparam>
+        /// <param name="func">The operation to execute.</param>
+        /// <param name="operationDescription">The progress description to use for this operation.</param>
+        /// <returns></returns>
+        public ProgressTask<TNewResult> Then<TNewResult>(Func<List<TResult>, List<TNewResult>> func, string operationDescription)
+        {
+            if (ValueEmpty())
+                return Empty<TNewResult>();
+
+            return new ProgressTask<TNewResult>(() =>
+            {
+                cmdlet.OperationTypeDescription = operationDescription;
+                cmdlet.DisplayProgress(false);
+                return func(task.Value);
+            }, cmdlet);
+        }
+
+        /// <summary>
+        /// Execute the last progress task of a process containing two or more operations.
+        /// </summary>
+        /// <typeparam name="TNewResult">The type of object returned by this operation.</typeparam>
+        /// <param name="func">The operation to execute.</param>
+        /// <param name="operationDescription">The progress description to use for this operation.</param>
+        /// <returns></returns>
+        public ProgressTask<TNewResult> Finally<TNewResult>(Func<List<TResult>, List<TNewResult>> func, string operationDescription)
+        {
+            if(ValueEmpty())
+                return Empty<TNewResult>();
+
+            var newTask = new Lazy<List<TNewResult>>(() =>
+            {
+                cmdlet.OperationTypeDescription = operationDescription;
+                cmdlet.DisplayProgress();
+
+                return func(task.Value);
+            });
+
+            return new ProgressTask<TNewResult>(newTask, cmdlet);
+        }
+
+        /// <summary>
+        /// Write the result of the task sequence to the pipeline.
+        /// </summary>
+        public void Write()
+        {
+            if (ValueEmpty())
+                return;
+
+            cmdlet.UpdatePreviousProgressAndSetCount(task.Value.Count);
+
+            cmdlet.WriteList(task.Value);
+        }
+
+        private bool ValueEmpty()
+        {
+            if (task.Value == null || task.Value.Count == 0)
+                return true;
+
+            return false;
+        }
+
+        private ProgressTask<TNewResult> Empty<TNewResult>()
+        {
+            return new ProgressTask<TNewResult>(() => new List<TNewResult>(), cmdlet);
+        }
+    }
+}

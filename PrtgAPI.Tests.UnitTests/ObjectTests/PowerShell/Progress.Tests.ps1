@@ -6428,6 +6428,1480 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
     
     #endregion
+    #region 100: Get-SensorFactorySource
+        #region 100a: Something -> Get-SensorFactorySource
+
+    It "100a1: Sensor -> Get-SensorFactorySource" {
+
+        Get-Sensor -Count 2 | Get-SensorFactorySource
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            
+            "    Retrieving all sensor factory sensors"
+        ))
+    }
+
+    It "100a2: Variable -> Get-SensorFactorySource" {
+
+        $sensors = Get-Sensor -Count 2
+
+        $sensors.Count | Should Be 2
+
+        $sensors | Get-SensorFactorySource
+
+        Validate(@(
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+        ))
+    }
+
+        #endregion
+        #region 100b: Something -> Get-SensorFactorySource -> Channel
+
+    It "100b1: Sensor -> Get-SensorFactorySource -> Channel" {
+
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "100b2: Variable -> Get-SensorFactorySource | Channel" {
+
+        $sensors = Get-Sensor -Count 2
+
+        $sensors.Count | Should Be 2
+
+        $sensors | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Channel Search`n" +
+            "        Processing all sensors 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Channel Search (Completed)`n" +
+            "        Processing all sensors 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Channel Search`n" +
+            "        Processing all sensors 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Channel Search (Completed)`n" +
+            "        Processing all sensors 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+        #endregion
+        #region 100c: Something -> Sensor -> Get-SensorFactorySource -> Channel
+
+    It "100c1: Device -> Sensor -> Get-SensorFactorySource -> Channel" {
+
+        Get-Device | Get-Sensor | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Retrieving all devices"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Search (Completed)`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "            Processing sensor factory sensor 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Search (Completed)`n" +
+            "        Processing sensor 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing device 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "100c2: Variable -> Sensor -> Get-SensorFactorySource -> Channel" {
+        $devices = Get-Device
+
+        $devices.Count | Should Be 2
+
+        $devices | Get-Sensor | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensors"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Channel Search (Completed)`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search (Completed)`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensors"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Channel Search (Completed)`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search (Completed)`n" +
+            "            Processing all sensors 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "            Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "        Processing all sensors 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing all devices 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+        #endregion
+        #region 100d: Something -> Get-SensorFactorySource -> Action
+
+    It "100d1: Sensor -> Get-SensorFactorySource -> Action" {
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Pausing PRTG Objects`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Pausing PRTG Objects (Completed)`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Pausing PRTG Objects`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Pausing PRTG Objects (Completed)`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "100d2: Variable -> Get-SensorFactorySource -> Action" {
+
+        $sensors = Get-Sensor -Count 2
+
+        $sensors.Count | Should Be 2
+
+        $sensors | Get-SensorFactorySource | Pause-Object -Forever
+
+        Validate(@(
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Pausing PRTG Objects`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Pausing PRTG Objects (Completed)`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Pausing PRTG Objects`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Pausing PRTG Objects (Completed)`n" +
+            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+        #endregion
+        #region 100e1: Something -> Get-SensorFactorySource -> Action -> Object
+
+    It "100e1: Sensor -> Get-SensorFactorySource -> Action -> Object" {
+
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "100e2: Variable -> Get-SensorFactorySource -> Action -> Object" {
+
+        $sensors = Get-Sensor -Count 2
+        
+        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
+
+        Validate(@(
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+        #endregion
+    #endregion
     #region Sanity Checks    
     
     It "Streams when the number of returned objects is above the threshold" {

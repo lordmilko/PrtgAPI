@@ -72,7 +72,7 @@ namespace PrtgAPI.PowerShell.Base
 
             var records = getResults();
 
-            return UpdatePreviousProgressCount(records, count);
+            return UpdatePreviousProgressAndGetCount(records, count);
         }
 
         private int DisplayInitialProgress()
@@ -96,16 +96,11 @@ namespace PrtgAPI.PowerShell.Base
             return count;
         }
 
-        private IEnumerable<T> UpdatePreviousProgressCount(IEnumerable<T> records, int count)
+        private IEnumerable<T> UpdatePreviousProgressAndGetCount(IEnumerable<T> records, int count)
         {
             records = GetCount(records, ref count);
 
-            ProgressManager.TotalRecords = count;
-
-            if (!ProgressManager.LastInChain)
-            {
-                SetObjectSearchProgress(ProcessingOperation.Processing);
-            }
+            UpdatePreviousProgressAndSetCount(count);
 
             return records;
         }
@@ -140,24 +135,6 @@ namespace PrtgAPI.PowerShell.Base
             count = list.Count;
 
             return list;
-        }
-
-        /// <summary>
-        /// Writes a list to the output pipeline.
-        /// </summary>
-        /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
-        internal void WriteList(IEnumerable<T> sendToPipeline)
-        {
-            PreUpdateProgress();
-
-            foreach (var item in sendToPipeline)
-            {
-                DuringUpdateProgress();
-
-                WriteObject(item);
-            }
-
-            PostUpdateProgress();
         }
 
         /// <summary>

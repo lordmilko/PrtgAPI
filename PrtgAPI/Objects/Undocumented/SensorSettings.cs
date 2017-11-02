@@ -418,5 +418,39 @@ namespace PrtgAPI.Objects.Undocumented
         public int? PingRemotePacketSize { get; set; } //note it can be between 1-10,000 bytes
 
         #endregion
+        #region Sensor Factory Specific Settings
+
+        /// <summary>
+        /// Channels to display in a sensor factory<para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Channel Definition
+        /// </summary>
+        [SplittableString('\n')]
+        [XmlElement("injected_aggregationchannel")]
+        public string[] ChannelDefinition { get; set; }
+
+        /// <summary>
+        /// How the sensor should respond when one of its source sensors goes <see cref="Status.Down"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Error Handling.
+        /// </summary>
+        [XmlElement("injected_warnonerror")]
+        public FactoryErrorMode? FactoryErrorMode { get; set; }
+
+        /// <summary>
+        /// Custom formula for determining when a sensor sensor factory should go <see cref="Status.Down"/> when one
+        /// of its source sensors enters an error state.<para/>Applies when <see cref="FactoryErrorMode"/> is
+        /// <see cref="PrtgAPI.FactoryErrorMode.CustomFormula"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> Status Definition.
+        /// </summary>
+        [XmlElement("injected_aggregationstatus")]
+        public string FactoryErrorFormula { get; set; }
+
+        /// <summary>
+        /// How factory channel values should be calculated when one of their source sensors is <see cref="Status.Down"/><para/>
+        /// Corresponds to Sensor Factory Specific Settings -> If a Sensor has No Data
+        /// </summary>
+        [XmlElement("injected_missingdata")]
+        public FactoryMissingDataMode? FactoryMissingDataMode { get; set; }
+
+        #endregion
     }
 }
