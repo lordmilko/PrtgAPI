@@ -122,6 +122,19 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
+        private bool? pipelineBeforeMeContainsOperation;
+
+        public bool PipelineBeforeMeContainsOperation
+        {
+            get
+            {
+                if (pipelineBeforeMeContainsOperation == null)
+                    pipelineBeforeMeContainsOperation = cmdlet.PipelineBeforeMeHasCmdlet<PrtgOperationCmdlet>();
+
+                return pipelineBeforeMeContainsOperation.Value;
+            }
+        }
+
         public ProgressRecordEx PreviousRecord => progressPipelines.PreviousRecordInPipeline;
 
         private PSCmdlet cmdlet;
@@ -312,7 +325,7 @@ namespace PrtgAPI.PowerShell.Progress
             InitialDescription = null;
             recordsProcessed = -1;
 
-            if (TotalRecords > 0 || PipeFromVariableWithProgress)
+            if (TotalRecords > 0 || (PipeFromVariableWithProgress && !PipelineBeforeMeContainsOperation))
             {
                 CurrentRecord.RecordType = ProgressRecordType.Completed;
 
@@ -328,6 +341,8 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void UpdateRecordsProcessed(ProgressRecordEx record, bool writeObject = true)
         {
+            //When a variable to cmdlet chain contains an operation, responsibility of updating the number of records processed
+            //"resets", and we become responsible for updating our own count again
             if (PipeFromVariableWithProgress && !PipelineContainsOperation)
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
@@ -353,43 +368,34 @@ namespace PrtgAPI.PowerShell.Progress
                 {
                     var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
                     var previousManager = previousCmdlet.ProgressManager;
-                    var totalRecords = previousManager.TotalRecords;
 
-                    if (totalRecords > 0)
-                    {
-                        if (previousManager.recordsProcessed < 0)
-                            previousManager.recordsProcessed++;
-
-                        previousManager.recordsProcessed++;
-
-                        record.StatusDescription = $"{InitialDescription} {previousManager.recordsProcessed}/{totalRecords}";
-
-                        if (previousManager.recordsProcessed > 0)
-                            record.PercentComplete = (int)(previousManager.recordsProcessed / Convert.ToDouble(totalRecords) * 100);
-
-                        if (!writeObject)
-                            previousManager.recordsProcessed--;
-
-                        WriteProgress();
-                    }
+                    IncrementProgress(record, previousManager, writeObject);
                 }
             }
             else
             {
-                if (TotalRecords > 0)
-                {
-                    if (recordsProcessed < 0)
-                        recordsProcessed++;
+                IncrementProgress(record, this, writeObject);
+            }
+        }
 
-                    recordsProcessed++;
+        private void IncrementProgress(ProgressRecordEx record, ProgressManager manager, bool writeObject)
+        {
+            if (manager.TotalRecords > 0)
+            {
+                if (manager.recordsProcessed < 0)
+                    manager.recordsProcessed++;
 
-                    record.StatusDescription = $"{InitialDescription} {recordsProcessed}/{TotalRecords}";
+                manager.recordsProcessed++;
 
-                    if (recordsProcessed > 0)
-                        record.PercentComplete = (int)(recordsProcessed / Convert.ToDouble(TotalRecords) * 100);
+                record.StatusDescription = $"{InitialDescription} {manager.recordsProcessed}/{manager.TotalRecords}";
 
-                    WriteProgress();
-                }
+                if (manager.recordsProcessed > 0)
+                    record.PercentComplete = (int)(manager.recordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
+
+                if (!writeObject)
+                    manager.recordsProcessed--;
+
+                WriteProgress();
             }
         }
 
@@ -415,7 +421,10 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void ProcessOperationProgress(string activity, string progressMessage)
         {
-            if (PipeFromVariableWithProgress)
+            //If we already had an operation cmdlet, the responsibility of updating the previous cmdlet's
+            //records processed has now shifted back on to him, so we don't need to do it for him. As such,
+            //we may assume we're now a "normal" pipeline
+            if (PipeFromVariableWithProgress && !PipelineBeforeMeContainsOperation)
             {
                 //Variable -> Action
                 //Variable -> Action -> Object
@@ -427,6 +436,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 //Object -> Action
                 //Object -> Action -> Object
+                //Object -> Action -> Object -> Action
                 ProcessOperationProgressForCmdlet(activity, progressMessage);
             }
         }
@@ -483,7 +493,7 @@ namespace PrtgAPI.PowerShell.Progress
             var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
             var previousManager = previousCmdlet.ProgressManager;
             TotalRecords = previousManager.TotalRecords;
-
+            
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,
             //but for REASONS UNKNOWN (TODO: WHY) thats not the case, so we have to do it instead
             if (previousManager.recordsProcessed < 0)
@@ -508,7 +518,8 @@ namespace PrtgAPI.PowerShell.Progress
 
                 PreviousRecord.Activity = activity;
 
-                var previousCmdlet = cmdlet.GetPreviousPrtgCmdlet();
+                var previousCmdlet = cmdlet.TryGetPreviousPrtgCmdletOfNotType<PrtgOperationCmdlet>();
+
                 var previousManager = previousCmdlet.ProgressManager;
 
                 PreviousRecord.StatusDescription = $"{progressMessage} ({previousManager.recordsProcessed}/{previousManager.TotalRecords})";

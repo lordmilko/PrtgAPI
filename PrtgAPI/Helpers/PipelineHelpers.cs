@@ -102,6 +102,26 @@ namespace PrtgAPI.Helpers
             return null;
         }
 
+        public static PrtgCmdlet TryGetPreviousPrtgCmdletOfNotType<T>(this PSCmdlet cmdlet)
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex - 1; i >= 0; i--)
+            {
+                if (commands[i] is PrtgCmdlet)
+                {
+                    if (!(commands[i] is T) || i == 0)
+                    {
+                        return (PrtgCmdlet) commands[i];
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public static bool PipelineIsProgressPure(this PSCmdlet cmdlet)
         {
             var commands = GetPipelineCommands(cmdlet);
@@ -148,6 +168,15 @@ namespace PrtgAPI.Helpers
             var myIndex = commands.IndexOf(cmdlet);
 
             return commands.Take(myIndex + 1).Any(c => c is T);
+        }
+
+        public static bool PipelineBeforeMeHasCmdlet<T>(this PSCmdlet cmdlet) where T : Cmdlet
+        {
+            var commands = GetPipelineCommands(cmdlet);
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            return commands.Take(myIndex).Any(c => c is T);
         }
 
         public static bool PipelineRemainingHasCmdlet<T>(this PSCmdlet cmdlet) where T : Cmdlet

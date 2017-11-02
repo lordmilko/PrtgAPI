@@ -6428,6 +6428,1210 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
     
     #endregion
+    #region 33: Something -> Table -> Action -> Table -> Action
+
+    It "33a: Table -> Table -> Action -> Table -> Action" {
+        Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever
+
+        Validate(@(
+            "PRTG Group Search`n" +
+            "    Retrieving all groups"
+
+            #################################################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            #################################################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            #################################################################################################################
+
+            "PRTG Group Search (Completed)`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "33b: Variable -> Table -> Action -> Table -> Action" {
+        $groups = Get-Group
+
+        $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            #################################################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Sensor Search`n" +
+            "            Processing sensor 1/2`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
+            "            [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Processing sensor 2/2`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Pausing PRTG Objects (Completed)`n" +
+            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            #################################################################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    #endregion
+    #region 34: Something -> Table -> Action -> Action
+
+    It "34a: Table -> Table -> Action -> Action" {
+        Get-Group | Get-Device | Clone-Device 5678 | Resume-Object
+
+        Validate(@(
+            "PRTG Group Search`n" +
+            "    Retrieving all groups"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Processing device 2/2`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Group Search`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices (Completed)`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Group Search (Completed)`n" +
+            "    Processing group 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "34b: Variable -> Table -> Action -> Action" {
+        $groups = Get-Group
+
+        $groups | Get-Device | Clone-Device 5678 | Resume-Object
+
+        Validate(@(
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Resuming PRTG Objects (Completed)`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all devices"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (1/2)`n" +
+            "        [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Devices`n" +
+            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Resuming PRTG Objects`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Device Search`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Resuming PRTG Objects (Completed)`n" +
+            "        Processing device 'Probe Device0' (2/2)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Device Search (Completed)`n" +
+            "    Processing all groups 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    #endregion
     #region 100: Get-SensorFactorySource
         #region 100a: Something -> Get-SensorFactorySource
 
@@ -7893,6 +9097,430 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        Retrieving all channels"
 
             ###################################################################
+
+            "PRTG Sensor Factory Sensor Search (Completed)`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+        #endregion
+        #region 100f1: Something -> Get-SensorFactorySource -> Action -> Object -> Anything
+
+    It "100f1: Something -> Get-SensorFactorySource -> Action -> Object -> Anything" {
+        
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100
+
+        Validate(@(
+            "PRTG Sensor Search`n" +
+            "    Retrieving all sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing channel 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings (Completed)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    PRTG Sensor Factory Sensor Search`n" +
+            "        Processing sensor factory sensor 1/1`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing channel 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings (Completed)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Search`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Sensor Search (Completed)`n" +
+            "    Processing sensor 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+        ))
+    }
+
+    It "100f2: Variable -> Get-SensorFactorySource -> Action -> Object -> Anything" {
+        
+        $sensors = Get-Sensor -Count 2
+        
+        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100
+
+        Validate(@(
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing channel 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings (Completed)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 1/2`n" +
+            "    [oooooooooooooooooooo                    ] (50%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory properties"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Retrieving all sensor factory sensors"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Retrieving all channels"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        PRTG Channel Search`n" +
+            "            Processing channel 1/1`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "        Modify PRTG Channel Settings (Completed)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ###################################################################
+
+            "PRTG Sensor Factory Sensor Search`n" +
+            "    Processing all sensors 2/2`n" +
+            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+
+            "    Cloning PRTG Sensors (Completed)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+
+            ##########################################################################################
 
             "PRTG Sensor Factory Sensor Search (Completed)`n" +
             "    Processing all sensors 2/2`n" +

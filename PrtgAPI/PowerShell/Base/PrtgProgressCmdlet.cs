@@ -201,6 +201,8 @@ namespace PrtgAPI.PowerShell.Base
             }
             else if (stage == ProgressStage.BeforeEach)
             {
+                //When a variable to cmdlet chain contains an operation, responsibility of updating the number of records processed
+                //"resets", and we become responsible for updating our own count again
                 if (ProgressManager.PipelineContainsOperation && ProgressManager.ContainsProgress)
                     ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
             }
@@ -219,6 +221,7 @@ namespace PrtgAPI.PowerShell.Base
                 SetObjectSearchProgress(ProcessingOperation.Processing);
             }
         }
+
         /// <summary>
         /// Set the progress activity, initial description and total number of records (where applicable) for the current cmdlet.
         /// </summary>
