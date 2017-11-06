@@ -1403,7 +1403,7 @@ namespace PrtgAPI
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <returns>All settings of the specified sensor.</returns>
         public SensorSettings GetSensorProperties(int sensorId) =>
-            GetObjectProperties<SensorSettings>(sensorId, BaseType.Sensor.ToString());
+            GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor);
 
         /// <summary>
         /// Asynchronously retrieve properties and settings of a PRTG Sensor.
@@ -1411,7 +1411,7 @@ namespace PrtgAPI
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <returns>All settings of the specified sensor.</returns>
         public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId) =>
-            await GetObjectPropertiesAsync<SensorSettings>(sensorId, BaseType.Sensor.ToString()).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Device.
@@ -1419,7 +1419,7 @@ namespace PrtgAPI
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <returns>All settings of the specified device.</returns>
         public DeviceSettings GetDeviceProperties(int deviceId) =>
-            GetObjectProperties<DeviceSettings>(deviceId, BaseType.Device.ToString());
+            GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device);
 
         /// <summary>
         /// Asynchronously retrieve properties and settings of a PRTG Device.
@@ -1427,7 +1427,7 @@ namespace PrtgAPI
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <returns>All settings of the specified device.</returns>
         public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId) =>
-            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, BaseType.Device.ToString()).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Group.
@@ -1435,7 +1435,7 @@ namespace PrtgAPI
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <returns>All settings of the specified group.</returns>
         public GroupSettings GetGroupProperties(int groupId) =>
-            GetObjectProperties<GroupSettings>(groupId, BaseType.Group.ToString());
+            GetObjectProperties<GroupSettings>(groupId, ObjectType.Group);
 
         /// <summary>
         /// Asynchronously retrieve properties and settings of a PRTG Group.
@@ -1443,7 +1443,7 @@ namespace PrtgAPI
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <returns>All settings of the specified group.</returns>
         public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId) =>
-            await GetObjectPropertiesAsync<GroupSettings>(groupId, BaseType.Group.ToString()).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve properties and settings of a PRTG Probe.
@@ -1451,7 +1451,7 @@ namespace PrtgAPI
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
         public ProbeSettings GetProbeProperties(int probeId) =>
-            GetObjectProperties<ProbeSettings>(probeId, Content.ProbeNode.ToString());
+            GetObjectProperties<ProbeSettings>(probeId, ObjectType.ProbeNode);
 
         /// <summary>
         /// Asynchronously retrieve properties and settings of a PRTG Probe.
@@ -1459,7 +1459,7 @@ namespace PrtgAPI
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
-            await GetObjectPropertiesAsync<ProbeSettings>(probeId, Content.ProbeNode.ToString()).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.ProbeNode).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve unsupported properties and settings of a PRTG Object.
@@ -1503,14 +1503,14 @@ namespace PrtgAPI
             return value;
         }
 
-        private T GetObjectProperties<T>(int objectId, string objectType)
+        private T GetObjectProperties<T>(int objectId, ObjectType objectType)
         {
             var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType));
 
             return GetObjectProperties<T>(response);
         }
 
-        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, string objectType)
+        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
         {
             var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
 

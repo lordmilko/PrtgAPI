@@ -8,14 +8,14 @@ namespace PrtgAPI.Parameters
 {
     class GetObjectPropertyParameters : BaseActionParameters
     {
-        public GetObjectPropertyParameters(int objectId, string objectType) : base(objectId)
+        public GetObjectPropertyParameters(int objectId, ObjectType objectType) : base(objectId)
         {
             ObjectType = objectType;
         }
 
-        public string ObjectType
+        public ObjectType ObjectType
         {
-            get { return (string)this[Parameter.ObjectType]; }
+            get { return (ObjectType)this[Parameter.ObjectType]; }
             set { this[Parameter.ObjectType] = value; }
         }
     }
