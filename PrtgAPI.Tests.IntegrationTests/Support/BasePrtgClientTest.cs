@@ -7,6 +7,7 @@ using System.ServiceProcess;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Objects.Shared;
+using System.Management;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -106,6 +107,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     Logger.LogTest($"{service.ServiceName} is not running. Starting service");
                     service.Start();
                     service.WaitForStatus(ServiceControllerStatus.Running);
+
                     Logger.LogTest("Sleeping for 30 seconds while PRTG service starts");
                     Thread.Sleep(30 * 1000);
                 }
@@ -158,7 +160,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             Logger.Log("Stopping service");
 
             controller.Stop();
-            controller.WaitForStatus(ServiceControllerStatus.Stopped);
+            WaitForStop(controller);
 
             Logger.Log("Restoring config");
 
@@ -183,14 +185,78 @@ namespace PrtgAPI.Tests.IntegrationTests
             Logger.Log("Finished");
         }
 
+        private static void WaitForStop(ServiceController service)
+        {
+            try
+            {
+                service.WaitForStatus(ServiceControllerStatus.Stopped);
+            }
+            catch (System.ServiceProcess.TimeoutException)
+            {
+                Logger.LogTest($"{service.ServiceName} is taking too long to stop. Terminating service");
+                KillService(service.ServiceName);
+            }
+        }
+
+        private static void KillService(string service) //todo: make it private
+        {
+            var options = new ConnectionOptions
+            {
+                Username = Settings.WindowsUserName,
+                Password = Settings.WindowsPassword
+            };
+
+            Logger.LogTest("Connecting with WMI");
+            var scope = new ManagementScope($@"\\{Settings.Server}\root\cimv2", options);
+            scope.Connect();
+
+            var serviceQuery = $"SELECT ProcessId FROM Win32_Service WHERE name='{service}'";
+            var processQuery = "SELECT * FROM Win32_Process WHERE ProcessId = ";
+
+            Logger.LogTest("Resolving process ID");
+
+            ExecuteQuery(scope, serviceQuery, obj =>
+            {
+                var pid = Convert.ToInt32(obj["ProcessId"]);
+
+                ExecuteQuery(scope, $"{processQuery}{pid}", process =>
+                {
+                    Logger.LogTest($"Terminating process with PID {pid}");
+                    process.InvokeMethod("Terminate", null);
+                });
+            });
+        }
+
+        private static void ExecuteQuery(ManagementScope scope, string queryStr, Action<ManagementObject> action)
+        {
+            var query = new SelectQuery(queryStr);
+
+            using (var searcher = new ManagementObjectSearcher(scope, query))
+            {
+                foreach (var obj in searcher.Get())
+                {
+                    if (obj is ManagementObject)
+                        action((ManagementObject) obj);
+                }
+            }
+        }
+
         private static void RepairState()
         {
             var client = new BasePrtgClientTest().client;
 
-            if (client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
+            try
             {
-                Logger.Log("Restoring probe name");
-                client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+                if (client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
+                {
+                    Logger.Log("Restoring probe name");
+                    client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex.Message, true);
+                throw;
             }
         }
 

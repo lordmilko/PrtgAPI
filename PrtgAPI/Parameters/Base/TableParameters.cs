@@ -80,10 +80,10 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Set the value of a <see cref="ParameterType.MultiParameter"/> property.
         /// </summary>
-        /// <typeparam name="T">The type of array to store.</typeparam>
+        /// <typeparam name="TArray">The type of array to store.</typeparam>
         /// <param name="property">The property to set the value of.</param>
         /// <param name="value">THe values to filter for. If this value is null the filters will be removed.</param>
-        protected void SetMultiParameterFilterValue<T>(Property property, T[] value)
+        protected void SetMultiParameterFilterValue<TArray>(Property property, TArray[] value)
         {
             var filters = (List<SearchFilter>)this[Parameter.FilterXyz] ?? new List<SearchFilter>();
 
@@ -109,16 +109,16 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Retrieve the value of a <see cref="ParameterType.MultiParameter"/> property.
         /// </summary>
-        /// <typeparam name="T">The type of array that was previously stored.</typeparam>
+        /// <typeparam name="TArray">The type of array that was previously stored.</typeparam>
         /// <param name="property">The property to retrieve the value of.</param>
         /// <returns></returns>
-        protected T[] GetMultiParameterFilterValue<T>(Property property)
+        protected TArray[] GetMultiParameterFilterValue<TArray>(Property property)
         {
             var filters = (List<SearchFilter>)this[Parameter.FilterXyz];
 
             var items = filters?.Where(f => f.Property == property).ToList();
 
-            return items?.Select(v => v.Value).Cast<T>().ToArray();
+            return items?.Select(v => v.Value).Cast<TArray>().ToArray();
         }
     }
 }

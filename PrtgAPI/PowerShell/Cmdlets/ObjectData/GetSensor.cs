@@ -61,7 +61,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> New-SearchFilter type contains deprecated | Get-Sensor</code>
+    ///     <code>C:\> flt type contains deprecated | Get-Sensor</code>
     ///     <para>Get all deprecated sensors.</para>
     /// </example>
     /// 
@@ -69,7 +69,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// <para type="link">Get-Channel</para>
-    /// <para type="link">New-SearchFilter</para> 
+    /// <para type="link">New-SearchFilter</para>
     /// </summary>
     [OutputType(typeof(Sensor))]
     [Cmdlet(VerbsCommon.Get, "Sensor")]

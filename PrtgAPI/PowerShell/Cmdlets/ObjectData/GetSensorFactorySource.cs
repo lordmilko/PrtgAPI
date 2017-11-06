@@ -22,7 +22,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>flt type eq "sensor factory" | Get-Sensor -COunt 1 | Get-SensorFactorySource -Channels</code>
+    ///     <code>flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource -Channels</code>
     ///     <para>Retrieve all source channels of a single sensor factory sensor</para>
     /// </example>
     /// 

@@ -41,7 +41,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> New-SearchFilter totalsens greaterthan 100 | Get-Probe</code>
+    ///     <code>C:\> flt totalsens greaterthan 100 | Get-Probe</code>
     ///     <para>Get all probes that contain more than 100 sensors.</para>
     /// </example>
     /// 

@@ -91,7 +91,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 string message;
 
                 if (ParameterSetName == "Default")
-                    message = $"Setting channel {Channel.Name} (Sensor ID: {Channel.SensorId}) setting {Property} to '{Value}'";
+                    message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
                 else
                     message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests
+namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {
     [TestClass]
     public class GroupTests : BasePrtgClientTest

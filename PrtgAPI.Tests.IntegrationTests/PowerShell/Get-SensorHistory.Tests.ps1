@@ -11,7 +11,7 @@ Describe "Get-SensorHistory_IT" {
 
         $seconds = [int]($last.DateTime - $first.DateTime).TotalSeconds
 
-        $seconds | Should BeGreaterThan (60 * 59)
+        $seconds | Should BeGreaterThan (60 * 58)
         $seconds | Should BeLessThan (60 * 60 + 1)
     }
 

@@ -7,10 +7,6 @@ Describe "Connect-PrtgServer_IT" {
         $server = (Settings Server)
         $credential = (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
 
-        <#Invoke-Command -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword)) -ScriptBlock {
-            Stop-Service "PRTGCoreService"
-        }#>
-
         $service = gwmi win32_service -ComputerName $server -Credential $credential -filter "name='PRTGCoreService'"
 
         LogTestDetail "Stopping service"
@@ -40,7 +36,5 @@ Describe "Connect-PrtgServer_IT" {
             LogTestDetail "Pausing for 20 seconds while service starts"
             Sleep 20
         }
-
-        #gwmi win32_service -ComputerName $server -Credential (New-Credential (Settings WindowsUsername) (Settings WindowsPassword))
     }
 }

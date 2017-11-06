@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Tests.IntegrationTests.ObjectTests
+﻿namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {
     class NotificationActionTests
     {

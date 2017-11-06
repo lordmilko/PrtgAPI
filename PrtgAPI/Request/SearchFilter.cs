@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request;
@@ -67,7 +68,7 @@ namespace PrtgAPI
             if (operatorDescription == null)
                 return val;
             else
-                return $"@{operatorDescription}({val})";
+                return $"@{operatorDescription}({HttpUtility.UrlEncode(val)})";
         }
 
         /// <summary>

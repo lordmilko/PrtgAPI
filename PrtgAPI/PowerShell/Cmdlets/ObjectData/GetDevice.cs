@@ -47,13 +47,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>New-SearchFilter location contains "new york" | Get-Device</code>
+    ///     <code>C:\> flt location contains "new york" | Get-Device</code>
     ///     <para>Get all devices whose location contains "new york"</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
+    /// <para type="link">New-SearchFilter</para>
     /// </summary>
     [OutputType(typeof(Device))]
     [Cmdlet(VerbsCommon.Get, "Device")]

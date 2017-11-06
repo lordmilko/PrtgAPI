@@ -463,7 +463,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
-        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters) => StreamObjects<Sensor>(parameters);
+        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters) => StreamObjects(parameters);
 
             #endregion
 
@@ -1780,14 +1780,14 @@ namespace PrtgAPI
         /// Calcualte the total number of objects of a given type present on a PRTG Server.
         /// </summary>
         /// <param name="content">The type of object to total.</param>
-        /// <returns>The total number of objects of a given type.</returns>
+        /// <returns>The total number of objects of the given type.</returns>
         public int GetTotalObjects(Content content) => Convert.ToInt32(GetObjectsRaw<PrtgObject>(new TotalObjectsParameters(content)).TotalCount);
 
         /// <summary>
         /// Asynchronously calcualte the total number of objects of a given type present on a PRTG Server.
         /// </summary>
         /// <param name="content">The type of object to total.</param>
-        /// <returns>The total number of objects of a given type.</returns>
+        /// <returns>The total number of objects of the given type.</returns>
         public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
 
         /// <summary>

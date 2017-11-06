@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests.ObjectTests
+namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {
     [TestClass]
     public class ChannelTests : BasePrtgClientTest
