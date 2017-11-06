@@ -18,8 +18,16 @@ namespace PrtgAPI.PowerShell.Progress
 
         public ProgressRecordEx CurrentRecord => progressPipelines.CurrentRecordInPipeline;
 
-        public bool ContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
-        
+        /// <summary>
+        /// Indicates that the current cmdlet expects that it will contain progress, either because it already does, or it will when a record is written to the pipeline.
+        /// </summary>
+        public bool ExpectsContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
+
+        /// <summary>
+        /// Indicates that a record has actually been written to the pipeline for this cmdlet, this initializing the status description.
+        /// </summary>
+        public bool ProgressWritten => CurrentRecord.StatusDescription != DefaultDescription;
+
         public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
 
         /// <summary>
@@ -325,8 +333,20 @@ namespace PrtgAPI.PowerShell.Progress
             InitialDescription = null;
             recordsProcessed = -1;
 
-            if (TotalRecords > 0 || (PipeFromVariableWithProgress && !PipelineBeforeMeContainsOperation))
+            /*
+             * If we've been displaying the number of records we need to process, we have a process record and need to complete it
+             * If we're piping from a variable, we need to complete our progress - however if the pipeline before me is an operation,
+             *     responsibility has shifted and we're not responsible for the current progress record
+             */
+            if ((TotalRecords > 0 || (PipeFromVariableWithProgress && !PipelineBeforeMeContainsOperation)))
             {
+                /* However if it turns out we didn't actually write any records (such as because the server glitched out
+                 * and returned nothing) we never really wrote our progress record. If we were streaming however,
+                 * we're still displaying our "detecting total number of items" message, so we need to finally complete it.
+                 */
+                if (!ProgressWritten && Scenario == ProgressScenario.StreamProgress)
+                    CurrentRecord.StatusDescription = "Temp";
+
                 CurrentRecord.RecordType = ProgressRecordType.Completed;
 
                 WriteProgress(CurrentRecord);

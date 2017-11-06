@@ -237,7 +237,7 @@ namespace PrtgAPI.Objects.Deserialization
             Logger.Debug($"XAttribute contained {str}");
 
             value = NullifyMissingValue(value);
-            var finalValue = value == null ? null : GetValue(mapping.Property.PropertyType, value.Value);
+            var finalValue = value == null ? null : GetValue(mapping.Property.PropertyType, value.Value, elm);
 
             mapping.Property.SetValue(obj, finalValue);
         }
@@ -251,7 +251,7 @@ namespace PrtgAPI.Objects.Deserialization
 
             elm = NullifyMissingValue(elm);
 
-            var finalValue = elm == null ? null : GetValue(type, elm.Value);
+            var finalValue = elm == null ? null : GetValue(type, elm.Value, elm);
 
             if (type.IsValueType && Nullable.GetUnderlyingType(type) == null && finalValue == null)
                 throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
@@ -259,14 +259,14 @@ namespace PrtgAPI.Objects.Deserialization
             mapping.Property.SetValue(obj, finalValue);
         }
 
-        private object GetValue(Type type, object value)
+        private object GetValue(Type type, object value, XElement elm)
         {
             if (type.IsPrimitive)
                 return GetPrimitiveValue(type, value);
             else if (Nullable.GetUnderlyingType(type) != null) //if we're nullable, id say call the getvalue method again on the underlying type
             {
                 var t = Nullable.GetUnderlyingType(type);
-                return GetValue(t, value);
+                return GetValue(t, value, elm);
             }
             else if (type == typeof (string))
             {
@@ -274,7 +274,36 @@ namespace PrtgAPI.Objects.Deserialization
             }
             else if (type.IsEnum)
             {
-                return EnumHelpers.XmlToEnum<XmlEnumAttribute>(value.ToString(), type);
+                var e = EnumHelpers.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
+
+                if (e == null)
+                {
+                    var badXml = elm.ToString();
+
+                    var name = elm.Name.ToString();
+
+                    var index = name.LastIndexOf("_raw");
+
+                    if (index != -1)
+                    {
+                        //We are the raw element, so get the normal element and add it
+                        name = name.Substring(0, index);
+
+                        var normalElm = elm.Parent?.Element(name);
+
+                        if (normalElm != null)
+                            badXml = normalElm + badXml;
+                    }
+
+                    var msg = elm.Parent?.Element("message");
+
+                    if (msg != null)
+                        badXml = badXml + msg.ToString().Replace("&lt;", "<").Replace("&gt;", ">");
+
+                    throw new XmlDeserializationException($"Could not deserialize value '{value}' as it is not a valid member of type '{type}'. Could not process XML '{badXml}'");
+                }
+
+                return e;
             }
             else if (type == typeof (DateTime))
             {
@@ -299,7 +328,7 @@ namespace PrtgAPI.Objects.Deserialization
                 case TypeCode.Int32:
                     return XmlConvert.ToInt32(str);
                 case TypeCode.Boolean:
-                    return XmlConvert.ToBoolean(str.ToLower());
+                    return ToBoolean(str.ToLower());
                 case TypeCode.Int16:
                     return XmlConvert.ToInt16(str);
                 case TypeCode.Int64:
@@ -330,10 +359,28 @@ namespace PrtgAPI.Objects.Deserialization
             throw new NotSupportedException(); //TODO - say the type is not deserializable
         }
 
+        public static Boolean ToBoolean(string s)
+        {
+            s = TrimString(s);
+
+            if (s == "-1")
+                return true;
+
+            return XmlConvert.ToBoolean(s);
+        }
+
+        internal static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
+
+        // Trim a string using XML whitespace characters 
+        internal static string TrimString(string value)
+        {
+            return value.Trim(WhitespaceChars);
+        }
+
         //Custom ToDouble with culture specific formatting (for values retrieved from scraping HTML)
         public static double ToDouble(string s)
         {
-            s = s.Trim(' ', '\t', '\n', '\r');
+            s = TrimString(s);
             if (s == "-INF")
                 return double.NegativeInfinity;
             if (s == "INF")

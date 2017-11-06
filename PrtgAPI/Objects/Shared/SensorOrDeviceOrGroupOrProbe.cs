@@ -9,7 +9,7 @@ namespace PrtgAPI.Objects.Shared
     /// <summary>
     /// <para type="description">Properties that apply to Sensors, Devices, Groups and Probes.</para>
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrMessageOrTicket
+    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
     {
         // ################################## Sensors, Devices, Groups, Probes, Reports ##################################
         // There is a copy in both SensorOrDeviceOrGroupOrProbe and Report
@@ -137,5 +137,25 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("position")]
         protected int position { get; set; }
+
+        /// <summary>
+        /// <see cref="PrtgAPI.Status"/> indicating this object's monitoring state.
+        /// </summary>
+        [XmlElement("status_raw")]
+        [PropertyParameter(nameof(Property.Status))]
+        public Status Status { get; set; }
+
+        private string comments;
+
+        /// <summary>
+        /// Comments present on this object.
+        /// </summary>
+        [XmlElement("comments")]
+        [PropertyParameter(nameof(Property.Comments))]
+        public string Comments
+        {
+            get { return comments; }
+            set { comments = value?.Trim(); }
+        }
     }
 }

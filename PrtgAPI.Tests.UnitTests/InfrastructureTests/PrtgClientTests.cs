@@ -123,5 +123,29 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             Assert.AreEqual(0, missingAsync.Count, $"Async counterparts of the following methods are missing: {string.Join(", ", missingAsync.Select(m => m.GetInternalProperty("FullName").ToString().Substring("PrtgAPI.PrtgClient.".Length)))}");
         }
+
+        [TestMethod]
+        public void PrtgClient_StreamsSerial_WhenRequestingOver20000Items()
+        {
+            var count = 20001;
+
+            var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), count).ToArray());
+
+            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response));
+
+            var messageFound = false;
+
+            client.LogVerbose += (e, o) =>
+            {
+                if (o.Message == "Switching to serial stream mode as over 20000 objects were detected")
+                    messageFound = true;
+            };
+
+            var sensors = client.StreamSensors().ToList();
+
+            Assert.IsTrue(messageFound, "Request did not stream serially");
+
+            Assert.AreEqual(count, sensors.Count);
+        }
     }
 }

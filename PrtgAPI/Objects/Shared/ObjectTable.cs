@@ -28,21 +28,8 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
-        [XmlElement("active")]
+        [XmlElement("active_raw")]
         [PropertyParameter(nameof(Property.Active))]
         public bool Active { get; set; }
-
-        private string comments;
-
-        /// <summary>
-        /// Comments present on this object.
-        /// </summary>
-        [XmlElement("comments")]
-        [PropertyParameter(nameof(Property.Comments))]
-        public string Comments
-        {
-            get { return comments; }
-            set { comments = value?.Trim(); }
-        }
     }
 }

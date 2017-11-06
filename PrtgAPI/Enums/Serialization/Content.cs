@@ -57,11 +57,13 @@
         /// </summary>
         History,
 
-        /*Tickets,
-        TicketData,
+        /// <summary>
+        /// Event logs specific to an object and its children.
+        /// </summary>
         Messages,
-        
-        
+
+        /*Tickets,
+        TicketData,        
         Reports,
         TopLists,*/
 

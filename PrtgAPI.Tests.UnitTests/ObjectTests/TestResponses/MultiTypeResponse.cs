@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
-                    return GetTableResponse(address);
+                    return GetTableResponse(ref address);
                 case nameof(CommandFunction.Pause):
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
@@ -59,7 +59,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
         }
 
-        private IWebResponse GetTableResponse(string address)
+        private IWebResponse GetTableResponse(ref string address)
         {
             var components = UrlHelpers.CrackUrl(address);
 
@@ -83,13 +83,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     count = countOverride[content];
             }
 
+            //Hack to make test "forces streaming with a date filter and returns no results" work
+            if (content == Content.Messages && count == 0 && components["columns"] == "objid,name")
+            {
+                count = 501;
+                address = address.Replace("count=1", "count=501");
+            }
+
             switch (content)
             {
                 case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory"), count));
                 case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}"), count));
                 case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}"), count));
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}"), count));
-                case Content.Channels:  return new ChannelResponse(new[] { new ChannelItem() });
+                case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
+                case Content.Channels:  return new ChannelResponse(new ChannelItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
             }

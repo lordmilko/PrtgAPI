@@ -29,12 +29,10 @@
         public string ObjIdRaw { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public string Comments { get; set; }
 
         internal ChannelItem(string lastValue = "26 %", string lastValueRaw = "0000000000000260.0000",
             string objId = "1",
-            string objIdRaw = "0000000001", string name = "Percent Available Memory", string type = null,
-            string comments = null)
+            string objIdRaw = "0000000001", string name = "Percent Available Memory", string type = null)
         {
             LastValue = lastValue;
             LastValueRaw = lastValueRaw;
@@ -42,7 +40,6 @@
             ObjIdRaw = objIdRaw;
             Name = name;
             Type = type;
-            Comments = comments;
         }
     }
 }

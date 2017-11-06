@@ -101,9 +101,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Processes additional parameters specific to the current cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
+        protected override void ProcessAdditionalParameters()
         {
             if (Device != null)
                 AddPipelineFilter(Property.ParentId, Device.Id);
@@ -111,21 +111,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 AddPipelineFilter(Property.Group, Group.Name);
             if (Probe != null)
                 AddPipelineFilter(Property.Probe, Probe.Name);
-            if (Status != null)
-            {
-                foreach (var value in Status)
-                {
-                    AddPipelineFilter(Property.Status, value);
-                }
-            }
 
-            base.ProcessRecordEx();
+            base.ProcessAdditionalParameters();
         }
 
         /// <summary>
         /// Creates a new parameter object to be used for retrieving sensors from a PRTG Server.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The default set of parameters.</returns>
         protected override SensorParameters CreateParameters() => new SensorParameters();
     }
 }

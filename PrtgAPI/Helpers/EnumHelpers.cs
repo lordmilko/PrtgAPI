@@ -15,6 +15,11 @@ namespace PrtgAPI.Helpers
             return (T)Enum.Parse(typeof(T), value, true);
         }
 
+        /// <summary>
+        /// Get the underlying flags of an enum element. Note: using the enum with value 0 is not supported. Start enum values at 1 instead..
+        /// </summary>
+        /// <param name="element">The value to get the underlying flags of.</param>
+        /// <returns>The underlying flags of the enum, or an empty list.</returns>
         public static IEnumerable<Enum> GetUnderlyingFlags(this Enum element)
         {
             var enums = Enum.GetValues(element.GetType()).Cast<Enum>().ToList();
@@ -26,7 +31,7 @@ namespace PrtgAPI.Helpers
         {
             foreach (var enumListMember in enums)
             {
-                if (e.HasFlag(enumListMember) && !e.Equals(enumListMember))
+                if (e.HasFlag(enumListMember) && !e.Equals(enumListMember) && Convert.ToInt32(enumListMember) != 0)
                 {
                     var result = GetUnderlyingFlagsInternal(enumListMember, enums).ToList();
 
@@ -93,11 +98,37 @@ namespace PrtgAPI.Helpers
             return (T) XmlToEnum<XmlEnumAlternateName>(value, typeof (T));
         }
 
-        internal static object XmlToEnum<TXmlEnumAttribute>(string value, Type type, bool requireValue = true) where TXmlEnumAttribute : XmlEnumAttribute
+        internal static object XmlToEnumAnyAttrib(string value, Type type, Type[] attribTypes = null, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
+        {
+            if (attribTypes == null)
+                attribTypes = new[] {typeof (XmlEnumAttribute), typeof (XmlEnumAlternateName)};
+
+            var req = false;
+
+            for (int i = 0; i < attribTypes.Length; i++)
+            {
+                var val = XmlToEnum(value, type, attribTypes[i], req, allowFlags, allowParse);
+
+                if (val != null)
+                    return val;
+
+                if (i < attribTypes.Length - 1 && requireValue)
+                    req = true;
+            }
+
+            return null;
+        }
+
+        internal static object XmlToEnum<TXmlEnumAttribute>(string value, Type type, bool requireValue = true, bool allowFlags = true) where TXmlEnumAttribute : XmlEnumAttribute
+        {
+            return XmlToEnum(value, type, typeof (TXmlEnumAttribute), requireValue, allowFlags);
+        }
+
+        internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
         {
             foreach (var field in type.GetFields())
             {
-                var attribute = Attribute.GetCustomAttributes(field, typeof(TXmlEnumAttribute)).Where(a => a.GetType() == typeof(TXmlEnumAttribute)).Cast<TXmlEnumAttribute>().FirstOrDefault();
+                var attribute = Attribute.GetCustomAttributes(field, attribType).Where(a => a.GetType() == attribType).Cast<XmlEnumAttribute>().FirstOrDefault();
 
                 if (attribute != null)
                 {
@@ -106,9 +137,17 @@ namespace PrtgAPI.Helpers
                 }
             }
 
+            if (!allowParse)
+                return null;
+
             try
             {
-                return Enum.Parse(type, value, true);
+                var e = Enum.Parse(type, value, true);
+
+                if (allowFlags == false && ((Enum)e).GetUnderlyingFlags().Any())
+                    return null;
+
+                return e;
             }
             catch
             {
@@ -166,7 +205,7 @@ namespace PrtgAPI.Helpers
                 return null;
             else
                 throw new MissingAttributeException(element.GetType(), element.ToString(), typeof (TAttribute));
-        } 
+        }
 
         public static ParameterType GetParameterType(this Parameter element)
         {

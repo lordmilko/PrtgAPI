@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
@@ -47,12 +43,12 @@ namespace PrtgAPI.Parameters
 
         private void SetDate(Parameter parameter, DateTime value)
         {
-            this[parameter] = value.ToString("yyyy-MM-dd-HH-mm-ss");
+            this[parameter] = ParameterHelpers.DateToString(value);
         }
 
         private DateTime GetDate(Parameter parameter)
         {
-            return DateTime.ParseExact(this[parameter].ToString(), "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+            return ParameterHelpers.StringToDate(this[parameter].ToString());
         }
     }
 }

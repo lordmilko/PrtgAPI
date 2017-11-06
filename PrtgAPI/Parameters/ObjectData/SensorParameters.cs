@@ -17,10 +17,10 @@ namespace PrtgAPI.Parameters.ObjectData
         /// <summary>
         /// Filter PRTG Results according to one or more sensor statuses.
         /// </summary>
-        public Status[] StatusFilter
+        public Status[] Status
         {
-            get { return (Status[]) this[Parameter.FilterStatus]; }
-            set { this[Parameter.FilterStatus] = value; }
+            get { return GetMultiParameterFilterValue<Status>(Property.Status); }
+            set { SetMultiParameterFilterValue(Property.Status, value); }
         }
 
         //todo: implement filter_tags

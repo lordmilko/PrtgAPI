@@ -63,7 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Creates a new parameter object to be used for retrieving probes from a PRTG Server.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The default set of parameters.</returns>
         protected override ProbeParameters CreateParameters() => new ProbeParameters();
     }
 }

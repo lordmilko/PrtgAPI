@@ -154,7 +154,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage)
         {
-            if (ProgressManager.ContainsProgress)
+            if (ProgressManager.ExpectsContainsProgress)
             {
                 if (stage == ProgressStage.PreLoop)
                 {
@@ -181,7 +181,7 @@ namespace PrtgAPI.PowerShell.Base
             }
             else //PostLoop
             {
-                if (ProgressManager.ContainsProgress)
+                if (ProgressManager.ExpectsContainsProgress)
                     ProgressManager.CompleteProgress();
             }
         }
@@ -195,7 +195,7 @@ namespace PrtgAPI.PowerShell.Base
                     if (!ProgressManager.LastInChain)
                         SetObjectSearchProgress(ProcessingOperation.Processing);
 
-                    if (ProgressManager.ContainsProgress)
+                    if (ProgressManager.ExpectsContainsProgress)
                         ProgressManager.RemovePreviousOperation();
                 }
             }
@@ -203,7 +203,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 //When a variable to cmdlet chain contains an operation, responsibility of updating the number of records processed
                 //"resets", and we become responsible for updating our own count again
-                if (ProgressManager.PipelineContainsOperation && ProgressManager.ContainsProgress)
+                if (ProgressManager.PipelineContainsOperation && ProgressManager.ExpectsContainsProgress)
                     ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
             }
             else //PostLoop

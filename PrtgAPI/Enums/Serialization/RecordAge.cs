@@ -1,44 +1,51 @@
-﻿using System.ComponentModel;
+﻿using System.Xml.Serialization;
 
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies time spans for filtering records by.
+    /// <para type="description">Specifies time spans for filtering records by.</para>
     /// </summary>
     public enum RecordAge
     {
         /// <summary>
         /// Records that were created today.
         /// </summary>
+        [XmlEnum("today")]
         Today,
 
         /// <summary>
         /// Records that were created yesterday.
         /// </summary>
+        [XmlEnum("yesterday")]
         Yesterday,
 
         /// <summary>
         /// Records that were created within the last 7 days.
         /// </summary>
-        [Description("7days")]
+        [XmlEnum("7days")]
         LastWeek,
 
         /// <summary>
         /// Records that were created within the last 30 days.
         /// </summary>
-        [Description("30days")]
+        [XmlEnum("30days")]
         LastMonth,
 
         /// <summary>
         /// Records that were created within the last 6 months.
         /// </summary>
-        [Description("6months")]
+        [XmlEnum("6months")]
         LastSixMonths,
 
         /// <summary>
         /// Records that were created within the last 12 months.
         /// </summary>
-        [Description("12months")]
-        LastYear
+        [XmlEnum("12months")]
+        LastYear,
+
+        /// <summary>
+        /// All records present in the PRTG Server.
+        /// </summary>
+        AllTime
     }
 }

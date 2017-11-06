@@ -4,18 +4,11 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to Sensors, Devices, Groups, Probes, Messages and Tickets.
+    /// Properties that apply to Sensors, Devices, Groups, Probes, Logs and Tickets.
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbeOrMessageOrTicket : SensorOrDeviceOrGroupOrProbeOrMessageOrTicketOrTicketDataOrHistory
+    public class SensorOrDeviceOrGroupOrProbeOrLogOrTicket : SensorOrDeviceOrGroupOrProbeOrLogOrTicketOrTicketDataOrHistory
     {
         // ################################## Sensors, Devices, Groups, Probes, Messages, Tickets ##################################
-
-        /// <summary>
-        /// <see cref="PrtgAPI.Status"/> of this object. If this object is a Message, this value contains the category of log message.
-        /// </summary>
-        [XmlElement("status_raw")]
-        [PropertyParameter(nameof(Property.Status))]
-        public Status Status { get; set; }
 
         /// <summary>
         /// <see cref="Priority"/> of this object.

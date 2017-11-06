@@ -7,8 +7,6 @@ namespace PrtgAPI
     /// </summary>
     public enum Property
     {
-        //todo: give these optional descriptions and make the prtgurl multi item getting code smart enough to detect that if its an enum try and get its get description property maybe
-
         /// <summary>
         /// ID of the current object.
         /// Used in: All Object Tables
@@ -463,6 +461,27 @@ namespace PrtgAPI
         /// <summary>
         /// Position of the object in PRTG Tables. Internally, this value is represented as position = pos * 10
         /// </summary>
-        Position
+        Position,
+
+        /// <summary>
+        /// Start date to retrieve records from. This is the point in time furthest away from now.
+        /// Used in: Messages (Logs)
+        /// </summary>
+        [Description("dstart")]
+        StartDate,
+
+        /// <summary>
+        /// End date to retrieve records from. This is the point in time closest to now.
+        /// Used in: Messages (Logs)
+        /// </summary>
+        [Description("dend")]
+        EndDate,
+
+        /// <summary>
+        /// Age of records to retrieve.
+        /// Used in: Messages (Logs)
+        /// </summary>
+        [Description("drel")]
+        RecordAge,
     }
 }

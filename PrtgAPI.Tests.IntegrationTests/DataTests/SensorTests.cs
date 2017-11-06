@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters.ObjectData;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -28,6 +30,29 @@ namespace PrtgAPI.Tests.IntegrationTests
         public void Data_Sensor_GetSensors_ReturnsJustSensors()
         {
             ReturnsJustObjectsOfType(client.GetSensors, Settings.Device, Settings.SensorsInTestDevice, BaseType.Sensor);
+        }
+
+        [TestMethod]
+        public void Data_GetSensors_WithParameters_FiltersByStatus()
+        {
+            var parameters = new SensorParameters();
+
+            //Test an empty value can be retrieved
+            var status = parameters.Status;
+            Assert2.IsTrue(status == null, "Status was not null");
+
+            //Test a value can be set
+            parameters.Status = new[] {Status.Up};
+            Assert2.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Up, "Status was not up");
+
+            //Test a value can be overwritten
+            parameters.Status = new[] { Status.Down };
+            Assert2.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Down, "Status was not down");
+
+            var sensors = client.GetSensors(parameters);
+
+            Assert2.AreEqual(1, sensors.Count, "Did not contain expected number of down sensors");
+            Assert2.AreEqual(Settings.DownSensor, sensors.First().Id, "ID of down sensor was not correct");
         }
     }
 }

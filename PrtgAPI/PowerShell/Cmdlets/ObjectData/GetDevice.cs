@@ -79,22 +79,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Processes additional parameters specific to the current cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
+        protected override void ProcessAdditionalParameters()
         {
             if (Probe != null)
                 AddPipelineFilter(Property.Probe, Probe.Name);
             else if (Group != null)
                 AddPipelineFilter(Property.ParentId, Group.Id);
 
-            base.ProcessRecordEx();
+            base.ProcessAdditionalParameters();
         }
 
         /// <summary>
         /// Creates a new parameter object to be used for retrieving devices from a PRTG Server.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The default set of parameters.</returns>
         protected override DeviceParameters CreateParameters() => new DeviceParameters();
     }
 }

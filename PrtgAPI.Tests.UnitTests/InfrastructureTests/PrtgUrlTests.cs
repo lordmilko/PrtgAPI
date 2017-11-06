@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 
@@ -109,19 +110,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_ParameterValue_With_EnumFlags()
         {
+            //Specifying FilterXyz doesn't actually make sense here (we should be using a SearchFilter) however
+            //the point of the test is to validate flag parsing
+
             var flagsUrl = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.FilterStatus] = Status.Paused
+                [Parameter.FilterXyz] = new SearchFilter(Property.Status, Status.Paused)
             });
 
             var manualUrl = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.FilterStatus] =
+                [Parameter.FilterXyz] =
                     new[]
                     {
                         Status.PausedByUser, Status.PausedByDependency, Status.PausedBySchedule, Status.PausedByLicense, 
                         Status.PausedUntil
-                    }
+                    }.ToList().Select(s => new SearchFilter(Property.Status, s)).ToArray()
             });
 
             Assert.IsTrue(flagsUrl == manualUrl);

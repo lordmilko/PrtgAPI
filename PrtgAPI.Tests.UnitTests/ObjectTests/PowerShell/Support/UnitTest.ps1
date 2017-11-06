@@ -58,6 +58,25 @@ function Run($objectType, $script)
     return $result
 }
 
+function GetCustomCountDictionary($hashtable)
+{
+    $dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
+
+    foreach($entry in $hashtable.GetEnumerator())
+    {
+        $newKey = $entry.Key -as "PrtgAPI.Content"
+
+        if($newKey -eq $null)
+        {
+            throw "$($entry.Key) is not a valid PrtgAPI.Content value"
+        }
+
+        $dictionary.Add($newKey, $entry.Value)
+    }
+
+    return $dictionary
+}
+
 function SetMultiTypeResponse
 {
     SetResponseAndClient "MultiTypeResponse"

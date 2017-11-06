@@ -442,8 +442,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 new XElement("objid", item.ObjId),
                 new XElement("objid_raw", item.ObjIdRaw),
                 new XElement("name", item.Name),
-                new XElement("type", item.Type),
-                new XElement("comments", item.Comments)
+                new XElement("type", item.Type)
             );
 
             return xml;

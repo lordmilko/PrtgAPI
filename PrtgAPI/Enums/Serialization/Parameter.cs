@@ -62,26 +62,6 @@ namespace PrtgAPI
         Start,
 
         /// <summary>
-        /// A <see cref="RecordAge"/> value limiting records returned to those within this time period.
-        /// </summary>
-        [ParameterType(ParameterType.SingleValue)]
-        [Description("filter_drel")]
-        FilterRecordAge,
-
-        /// <summary>
-        /// One or more <see cref="Status"/> values used to retrieve sensors in specified states.
-        /// </summary>
-        [ParameterType(ParameterType.MultiParameter)]
-        [Description("filter_status")]
-        FilterStatus,
-
-        /// <summary>
-        /// One or more string values limiting objects returned to only those with these tag attributes.
-        /// </summary>
-        [Description("filter_tags")] //todo: this needs a parametertype!
-        FilterTags,
-
-        /// <summary>
         /// Used to filter objects returned based on the value of a specified <see cref="Property"/>.
         /// When submitting a PRTG Request, the name of the Property being filtered on should be added to the value of this parameter (e.g. filter_name).
         /// </summary>

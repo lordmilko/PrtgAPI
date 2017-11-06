@@ -443,6 +443,55 @@
                 </TableRowEntries>
             </TableControl>
         </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.Log</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- DateTime -->
+                        <Width>22</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
+                        <Width>6</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>26</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Device -->
+                        <Width>18</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Status -->
+                        <Width>14</Width>
+                   </TableColumnHeader>
+                    <TableColumnHeader/> <!-- Message -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                            <TableColumnItems><TableColumnItem>
+                                <PropertyName>DateTime</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Device</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Status</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Message</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
         
         <View>
             <Name>Default</Name>
