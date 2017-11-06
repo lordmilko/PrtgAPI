@@ -467,6 +467,21 @@ namespace PrtgAPI
 
             #endregion
 
+        /// <summary>
+        /// Retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
+        /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
+        public List<SensorTypeDescriptor> GetSensorTypes(int objectId) =>
+            GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).Types;
+
+        /// <summary>
+        /// Asynchronously retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
+        /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
+        public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId) =>
+            (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).ConfigureAwait(false)).Types;
 
         /// <summary>
         /// Add a new sensor to a PRTG Device.

@@ -11,6 +11,9 @@ namespace PrtgAPI
         Triggers,
 
         [Description("geolocator.htm")]
-        GeoLocator
+        GeoLocator,
+
+        [Description("sensortypes.json")]
+        SensorTypes,
     }
 }

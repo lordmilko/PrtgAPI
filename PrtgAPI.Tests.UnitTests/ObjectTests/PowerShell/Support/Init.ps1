@@ -51,11 +51,26 @@ function ImportModules($testProject, $scriptRoot)
     # Get Configuration Name
 
     $directory = gci ($testFolder + "bin\") -Recurse "$testProject.dll"|sort lastwritetime -Descending|select -first 1 -expand Directory
+
+    $testModuleDir = $null
+
+    if($directory.Name.StartsWith("PrtgAPI"))
+    {
+        $testModuleDir = $directory
+        $directory = $directory.Parent
+    }
+
     $configuration = $directory|select -expand Name
 
     # Get Module Path
 
     $module = $rootFolder + "PrtgAPI\bin\" + $configuration + "\PrtgAPI"
+    
+    if($testModuleDir -ne $null)
+    {
+        $directory = $testModuleDir
+    }
+    
     $testModule = $directory.FullName + "\" + $testProject + ".dll"
     
     import-module $module

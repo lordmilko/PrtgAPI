@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Shared
 {
@@ -16,6 +17,14 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("type")]
         [PropertyParameter(nameof(Property.Type))]
         public string Type { get; set; }
+
+        /// <summary>
+        /// The raw type this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("type_raw")]
+        protected string typeStr { get; set; }
+
+        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?) EnumHelpers.XmlToEnum<XmlEnumAttribute>(typeStr, typeof (SensorTypeInternal), false);
 
         /// <summary>
         /// Tags contained on this object.
