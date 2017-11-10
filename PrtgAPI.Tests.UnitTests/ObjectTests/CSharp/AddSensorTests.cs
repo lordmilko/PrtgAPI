@@ -45,5 +45,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
 
             client.AddSensor(1001, parameters);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AddSensor_Throws_MissingSensorName()
+        {
+            var client = Initialize_Client(new BasicResponse(string.Empty));
+
+            client.AddSensor(1001, new ExeXmlSensorParameters("test.ps1", null));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AddSensor_Throws_MissingSensorType()
+        {
+            var client = Initialize_Client(new BasicResponse(string.Empty));
+
+            client.AddSensor(1001, new RawSensorParameters("sensorName", null));
+        }
     }
 }

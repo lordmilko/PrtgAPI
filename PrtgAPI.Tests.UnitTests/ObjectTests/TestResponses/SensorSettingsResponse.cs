@@ -252,12 +252,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             builder.Append("<label class=\"control-label has_help \" for=\"schedule_\">Schedule</label>\n");
             builder.Append("<div class=\"controls  \" data-placement=\"right\" title=\"Use schedules to only monitor within specific time spans (days, hours) throughout the week. You can edit schedules in the account settings.\">\n");
             builder.Append("<select name=\"schedule_\" id=\"schedule_\" >\n");
-            builder.Append("<option value=\"-1|None|\" selected=\"selected\" >None</option>\n");
+            builder.Append("<option value=\"-1|None|\">None</option>\n");
             builder.Append("<option value=\"623|Saturdays [GMT+1100]|\">Saturdays [GMT+1100]</option>\n");
             builder.Append("<option value=\"622|Sundays [GMT+1100]|\">Sundays [GMT+1100]</option>\n");
             builder.Append("<option value=\"620|Weekdays [GMT+1100]|\">Weekdays [GMT+1100]</option>\n");
             builder.Append("<option value=\"625|Weekdays Eight-To-Eight (8:00 - 20:00) [GMT+1100]|\">Weekdays Eight-To-Eight (8:00 - 20:00) [GMT+1100]</option>\n");
-            builder.Append("<option value=\"627|Weekdays Nights (17:00 - 9:00) [GMT+1100]|\">Weekdays Nights (17:00 - 9:00) [GMT+1100]</option>\n");
+            builder.Append("<option value=\"627|Weekdays Nights (17:00 - 9:00) [GMT+1100]|\" selected=\"selected\" >Weekdays Nights (17:00 - 9:00) [GMT+1100]</option>\n");
             builder.Append("<option value=\"626|Weekdays Nights (20:00 - 8:00) [GMT+1100]|\">Weekdays Nights (20:00 - 8:00) [GMT+1100]</option>\n");
             builder.Append("<option value=\"624|Weekdays Nine-To-Five (9:00 - 17:00) [GMT+1100]|\">Weekdays Nine-To-Five (9:00 - 17:00) [GMT+1100]</option>\n");
             builder.Append("<option value=\"621|Weekends [GMT+1100]|\">Weekends [GMT+1100]</option></select></div>\n");

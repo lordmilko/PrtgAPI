@@ -7,13 +7,13 @@ using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    class SensorTotalsResponse : IWebResponse
+    public class SensorTotalsResponse : IWebResponse
     {
         public HttpStatusCode StatusCode { get; set; }
 
         protected SensorTotalsItem item;
 
-        internal SensorTotalsResponse(SensorTotalsItem item)
+        public SensorTotalsResponse(SensorTotalsItem item)
         {
             this.item = item;
         }

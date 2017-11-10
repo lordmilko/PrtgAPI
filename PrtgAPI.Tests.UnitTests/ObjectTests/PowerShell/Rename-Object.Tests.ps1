@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Rename-Object.Tests.ps1" -Tag @("PowerShell", "UnitTest") {
+Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
     
     SetActionResponse
 

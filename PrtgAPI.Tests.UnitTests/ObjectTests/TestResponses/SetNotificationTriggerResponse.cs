@@ -11,6 +11,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class SetNotificationTriggerResponse : MultiTypeResponse
     {
+        public SetNotificationTriggerResponse()
+        {
+        }
+
+        public SetNotificationTriggerResponse(Dictionary<Content, int> countOverride)
+        {
+            this.countOverride = countOverride;
+        }
+
         protected override IWebResponse GetResponse(ref string address, string function)
         {
             switch (function)
@@ -40,6 +49,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 case Content.Sensors:
                     if (components["filter_objid"] == "1")
+                        return new SensorResponse();
+                    if (countOverride != null && countOverride[Content.Sensors] == 0)
                         return new SensorResponse();
                     return new SensorResponse(new SensorItem());
                 case Content.Channels:

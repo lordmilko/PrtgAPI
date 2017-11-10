@@ -43,32 +43,51 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected void Object_GetObjectsOverloads_CanExecute(
-            Func<PrtgClient, PrtgClient, PrtgClient, List<Func<Property, object, object>>> propertyValue,
-            Func<PrtgClient, PrtgClient, PrtgClient, List<Func<Property, FilterOperator, string, object>>> propertyOperatorValue,
-            Func<PrtgClient, PrtgClient, PrtgClient, List<Func<SearchFilter[], object>>> searchFilters,
-            Action<PrtgClient, PrtgClient, PrtgClient> other = null
+            Func<PrtgClient, PrtgClient, List<Func<Property, object, object>>> propertyValue,
+            Func<PrtgClient, PrtgClient, List<Func<Property, FilterOperator, string, object>>> propertyOperatorValue,
+            Func<PrtgClient, PrtgClient, List<Func<SearchFilter[], object>>> searchFilters,
+            Action<PrtgClient, PrtgClient> other = null
         )
         {
             var synchronousClient = Initialize_Client_WithItems(GetItem());
             var asynchronousClient = Initialize_Client_WithItems(GetItem());
-            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 2000).Select(i => GetItem()).ToArray());
+            
+            var propertyValueFunctions = propertyValue(synchronousClient, asynchronousClient);
+            var propertyOperatorValueFunctions = propertyOperatorValue(synchronousClient, asynchronousClient);
+            var searchFilterFunctions = searchFilters(synchronousClient, asynchronousClient);
 
-            var propertyValueFunctions = propertyValue(synchronousClient, asynchronousClient, streamClient);
-            var propertyOperatorValueFunctions = propertyOperatorValue(synchronousClient, asynchronousClient, streamClient);
-            var searchFilterFunctions = searchFilters(synchronousClient, asynchronousClient, streamClient);
-
-            if (propertyValueFunctions.Count != 3)
+            if (propertyValueFunctions.Count != 2)
                 throw new NotImplementedException();
-            if (propertyOperatorValueFunctions.Count != 3)
+            if (propertyOperatorValueFunctions.Count != 2)
                 throw new NotImplementedException();
-            if (searchFilterFunctions.Count != 3)
+            if (searchFilterFunctions.Count != 2)
                 throw new NotImplementedException();
 
             RunFunctions<List<TObject>>(propertyValueFunctions[0], propertyOperatorValueFunctions[0], searchFilterFunctions[0]);
             RunFunctionsAsync<List<TObject>>(propertyValueFunctions[1], propertyOperatorValueFunctions[1], searchFilterFunctions[1]);
-            RunFunctions<IEnumerable<TObject>>(propertyValueFunctions[2], propertyOperatorValueFunctions[2], searchFilterFunctions[2]);
 
-            other?.Invoke(synchronousClient, asynchronousClient, streamClient);
+            other?.Invoke(synchronousClient, asynchronousClient);
+        }
+
+        protected void Object_GetObjectsOverloads_Stream_CanExecute(
+            Func<PrtgClient, Func<Property, object, object>> propertyValue,
+            Func<PrtgClient, Func<Property, FilterOperator, string, object>> propertyOperatorValue,
+            Func<PrtgClient, Func<SearchFilter[], object>> searchFilter,
+            Action<PrtgClient> other = null
+        )
+        {
+            //OpenCover doesn't deal with Streaming cmdlets very well. As such, we execute these in a separate method
+            //that can be excluded from code coverage
+
+            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 2000).Select(i => GetItem()).ToArray());
+
+            var propertyValueFunction = propertyValue(streamClient);
+            var propertyOperatorValueFunction = propertyOperatorValue(streamClient);
+            var searchFilterFunction = searchFilter(streamClient);
+
+            RunFunctions<IEnumerable<TObject>>(propertyValueFunction, propertyOperatorValueFunction, searchFilterFunction);
+
+            other?.Invoke(streamClient);
         }
 
         private void RunFunctions<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable

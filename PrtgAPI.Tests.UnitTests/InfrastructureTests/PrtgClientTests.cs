@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
@@ -59,7 +60,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());
 
-            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response));
+            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response, false));
 
             var retriesToMake = 3;
             var retriesMade = 0;
@@ -81,6 +82,35 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             }
 
             Assert.AreEqual(retriesToMake * 2, retriesMade, "An incorrect number of retries were made.");
+        }
+
+        [TestMethod]
+        public void PrtgClient_RetriesNormally()
+        {
+            var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());
+
+            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response, true));
+
+            var retriesToMake = 3;
+            var retriesMade = 0;
+
+            client.RetryCount = retriesToMake;
+
+            client.RetryRequest += (sender, args) =>
+            {
+                retriesMade++;
+            };
+
+            try
+            {
+                var sensors = client.GetSensors().ToList();
+                Assert.Fail("GetSensors did not throw");
+            }
+            catch (WebException)
+            {
+            }
+
+            Assert.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
         }
 
         [TestMethod]
@@ -125,13 +155,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
+        [TestCategory("SlowCoverage")]
         public void PrtgClient_StreamsSerial_WhenRequestingOver20000Items()
         {
             var count = 20001;
 
             var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), count).ToArray());
 
-            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response));
+            var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response, false));
 
             var messageFound = false;
 
@@ -146,6 +177,74 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             Assert.IsTrue(messageFound, "Request did not stream serially");
 
             Assert.AreEqual(count, sensors.Count);
+        }
+
+        [TestMethod]
+        public void PrtgClient_ThrowsWithBadRequest()
+        {
+            var xml = new XElement("prtg",
+                new XElement("version", "1.2.3.4"),
+                new XElement("error", "Some of the selected objects could not be deleted.")
+            );
+
+            ExecuteFailedRequest(HttpStatusCode.BadRequest, xml.ToString(), null, "Some of the selected objects could not be deleted.");
+        }
+
+        [TestMethod]
+        public void PrtgClient_ThrowsWithErrorUrl()
+        {
+            var address = "http://prtg.example.com/error.htm?errormsg=Something+bad+happened";
+
+            ExecuteFailedRequest(HttpStatusCode.OK, string.Empty, address, "Something bad happened");
+        }
+
+        [TestMethod]
+        public void PrtgClient_ThrowsWithHtml()
+        {
+            var html = new XElement("div",
+                new XAttribute("class", "errormsg"),
+                new XElement("p", "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly."),
+                new XElement("h3", "Error message: Sorry, the selected object cannot be used here."),
+                new XElement("small",
+                    new XAttribute("style", "padding:5px;text-align:left"),
+                    "Url: /controls/objectdata.htm<br>Params: id=1&objecttype=probe&username=prtgadmin&passhash=***&")
+            );
+
+            ExecuteFailedRequest(HttpStatusCode.OK, html.ToString(SaveOptions.DisableFormatting), null, "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly. Error message: Sorry, the selected object cannot be used here.");
+        }
+
+        [TestMethod]
+        public void PrtgClient_LogVerbose()
+        {
+            var hit = false;
+
+            var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, new MockWebClient(new SensorResponse(new SensorItem())));
+
+            client.LogVerbose += (e, o) =>
+            {
+                hit = true;
+            };
+
+            var sensors = client.GetSensors();
+
+            Assert.IsTrue(hit, "Verbose was not called");
+        }
+
+        private void ExecuteFailedRequest(HttpStatusCode statusCode, string xml, string address, string expectedError)
+        {
+            var response = new FailedRequestResponse(statusCode, xml, address);
+
+            var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, new MockWebClient(response));
+
+            try
+            {
+                client.GetSensors();
+            }
+            catch (PrtgRequestException ex)
+            {
+                if (ex.Message != $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}")
+                    Assert.Fail($"Exception did not contain expected error message. Expected: '{expectedError}'. Received: '{ex.Message}'");
+            }
         }
     }
 }

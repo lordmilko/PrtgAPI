@@ -94,7 +94,6 @@ namespace PrtgAPI
                         else
                             return new ScanningInterval(StringToTimeSpan(interval.ToString()));
                     }
-                        
                     else
                         interval = val;
                 }

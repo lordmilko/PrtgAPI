@@ -46,79 +46,11 @@ namespace PrtgAPI.Objects.Deserialization
         private static T DeserializeInternal<T, TInner>(XDocument doc)
 #pragma warning restore 693
         {
-            try
-            {
-                var deserializer = new XmlSerializer(typeof(T));
-                var obj = deserializer.Deserialize(doc);
-                //var deserializer = new XmlSerializer(typeof (T), new XmlRootAttribute(doc.Root.Name.ToString()));
-                //var obj = deserializer.Deserialize(doc.ToStream());
-                var data = (T) obj;
+            var deserializer = new XmlSerializer(typeof(T));
+            var obj = deserializer.Deserialize(doc);
+            var data = (T)obj;
 
-                return data;
-            }
-            catch (InvalidOperationException ex)
-            {
-                Exception xmlException = null;
-
-                try
-                {
-                    xmlException = GetInvalidXml(doc, ex, typeof (TInner));
-                }
-                catch
-                {
-                }
-
-                if (xmlException != null)
-                    throw xmlException;
-
-                throw;
-            }
-        }
-
-        private static Exception GetInvalidXml(XDocument response, InvalidOperationException ex, Type type)
-        {
-            var stream = GetStream(response);
-
-            var xmlReader = (XmlReader)new XmlTextReader(stream)
-            {
-                WhitespaceHandling = WhitespaceHandling.Significant,
-                Normalization = true,
-                XmlResolver = null
-            };
-
-            var regex = new Regex("(.+\\()(.+)(, )(.+)(\\).+)");
-            var line = Convert.ToInt32(regex.Replace(ex.Message, "$2"));
-            var position = Convert.ToInt32(regex.Replace(ex.Message, "$4"));
-
-            while (xmlReader.Read())
-            {
-                IXmlLineInfo xmlLineInfo = (IXmlLineInfo)xmlReader;
-
-                if (xmlLineInfo.LineNumber == line - 1)
-                {
-                    var xml = xmlReader.ReadOuterXml();
-
-                    var prevSpace = xml.LastIndexOf(' ', position) + 1;
-                    var nextSpace = xml.IndexOf(' ', position);
-
-                    var length = nextSpace - prevSpace;
-
-                    var str = length > 0 ? xml.Substring(prevSpace, length) : xml;
-
-                    return new XmlDeserializationException(type, str, ex);
-                }
-            }
-
-            return null;
-        }
-
-        private static Stream GetStream(XDocument response)
-        {
-            var stream = new MemoryStream();
-            response.Save(stream);
-            stream.Position = 0;
-
-            return stream;
+            return data;
         }
     }
 }

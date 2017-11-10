@@ -72,22 +72,6 @@ namespace PrtgAPI.Helpers
             return value.ToEnum<TEnum>();
         }
 
-        internal static TEnum XmlEnumAlternateNameToEnum<TEnum>(this string value)
-        {
-            foreach (var field in typeof (TEnum).GetFields())
-            {
-                var attribute = Attribute.GetCustomAttribute(field, typeof (XmlEnumAlternateName)) as XmlEnumAlternateName;
-
-                if (attribute != null)
-                {
-                    if (attribute.Name == value)
-                        return (TEnum) field.GetValue(null);
-                }
-            }
-
-            throw new XmlDeserializationException($"Could not find a member in type {typeof(TEnum)} with an XmlEnumAlternateNameAttribute for value '{value}'");
-        }
-
         internal static T XmlToEnum<T>(this string value)
         {
             return (T) XmlToEnum<XmlEnumAttribute>(value, typeof (T));

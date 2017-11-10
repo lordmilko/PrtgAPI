@@ -17,14 +17,24 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
         private MockWebClient realWebClient;
 
-        public MockRetryWebClient(IWebResponse response)
+        private bool synchronous;
+
+        public MockRetryWebClient(IWebResponse response, bool synchronous)
         {
             realWebClient = new MockWebClient(response);
+            this.synchronous = synchronous;
         }
 
         public Task<HttpResponseMessage> GetSync(string address)
         {
-            return realWebClient.GetSync(address);
+            if (!synchronous)
+                return realWebClient.GetSync(address);
+            else
+            {
+                var exception = new HttpRequestException("Outer Exception", new WebException("Inner Exception"));
+
+                throw exception;
+            }
         }
 
         public Task<HttpResponseMessage> GetAsync(string address)

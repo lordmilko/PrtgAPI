@@ -285,13 +285,11 @@ namespace PrtgAPI.Request
 
                     query = result ?? ((SearchFilter)val).ToString();
                 }
-                else if(val.GetType().IsEnum)
+                else if(val.GetType().IsEnum) //If it's an enum other than FilterXyz
                 {
                     var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
 
                     query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val);
-
-                    //if it has a flag attribute, get its underlying flags, foreach of them formatsingleparameterwithvalencode
                 }
                 else
                 {

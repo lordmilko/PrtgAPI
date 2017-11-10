@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Pause-Object.Tests.ps1" -Tag @("PowerShell", "UnitTest") {
+Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
     
     SetActionResponse
 

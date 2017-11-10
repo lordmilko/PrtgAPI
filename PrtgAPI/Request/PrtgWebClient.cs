@@ -14,14 +14,6 @@ namespace PrtgAPI.Request
             //asyncClient.Timeout = new TimeSpan(0, 0, 10);
         }
 
-        public string DownloadString(string address)
-        {
-            using (var client = new System.Net.WebClient())
-            {
-                return client.DownloadString(address);
-            }
-        }
-
         public Task<HttpResponseMessage> GetSync(string address)
         {
             return GetAsync(address);

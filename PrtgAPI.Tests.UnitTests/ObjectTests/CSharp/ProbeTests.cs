@@ -22,11 +22,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void Probe_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Probe_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
-            (c1, c2, c3) => new List<Func<Property, object, object>> { c1.GetProbes, c2.GetProbesAsync, c3.StreamProbes },
-            (c1, c2, c3) => new List<Func<Property, FilterOperator, string, object>> { c1.GetProbes, c2.GetProbesAsync, c3.StreamProbes },
-            (c1, c2, c3) => new List<Func<SearchFilter[], object>> { c1.GetProbes, c2.GetProbesAsync, c3.StreamProbes }
+            (c1, c2) => new List<Func<Property, object, object>> { c1.GetProbes, c2.GetProbesAsync },
+            (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetProbes, c2.GetProbesAsync },
+            (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetProbes, c2.GetProbesAsync }
+        );
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        public void Probe_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamProbes,
+            client => client.StreamProbes,
+            client => client.StreamProbes
         );
 
         [TestMethod]

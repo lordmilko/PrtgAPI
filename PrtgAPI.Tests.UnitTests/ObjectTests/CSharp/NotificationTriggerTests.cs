@@ -98,6 +98,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             }
         }
 
+        [TestMethod]
+        public async Task NotificationTriggerTypes_CanExecuteAsync()
+        {
+            var client = Initialize_Client(new SetNotificationTriggerResponse());
+
+            await client.GetNotificationTriggerTypesAsync(1001);
+        }
+
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)
         {
             switch (propertyName)

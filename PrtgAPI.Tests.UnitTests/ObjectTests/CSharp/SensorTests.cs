@@ -21,20 +21,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void Sensor_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Sensor_GetObjectsOverloads_CanExecute()
         {
             Object_GetObjectsOverloads_CanExecute
             (
-                (c1, c2, c3) => new List<Func<Property, object, object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
-                (c1, c2, c3) => new List<Func<Property, FilterOperator, string, object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
-                (c1, c2, c3) => new List<Func<SearchFilter[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors},
-                (c1, c2, c3) =>
+                (c1, c2) => new List<Func<Property, object, object>> {c1.GetSensors, c2.GetSensorsAsync},
+                (c1, c2) => new List<Func<Property, FilterOperator, string, object>> {c1.GetSensors, c2.GetSensorsAsync},
+                (c1, c2) => new List<Func<SearchFilter[], object>> {c1.GetSensors, c2.GetSensorsAsync},
+                (c1, c2) =>
                 {
-                    Sensor_GetObjectsOverloads_SensorStatus_CanExecute(new List<Func<Status[], object>> {c1.GetSensors, c2.GetSensorsAsync, c3.StreamSensors});
+                    Sensor_GetObjectsOverloads_SensorStatus_CanExecute(new List<Func<Status[], object>> {c1.GetSensors, c2.GetSensorsAsync});
                 }
             );
         }
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        public void Sensor_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamSensors,
+            client => client.StreamSensors,
+            client => client.StreamSensors,
+            client => CheckResult<IEnumerable<Sensor>>(client.StreamSensors(Status.Down, Status.DownAcknowledged))
+        );
 
         private async void Sensor_GetObjectsOverloads_SensorStatus_CanExecute(List<Func<Status[], object>> sensorStatus)
         {
@@ -42,7 +50,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             CheckResult<List<Sensor>>(sensorStatus[0](status));
             CheckResult<List<Sensor>>(await (Task<List<Sensor>>)sensorStatus[1](status));
-            CheckResult<IEnumerable<Sensor>>(sensorStatus[2](status));
         }
 
         [TestMethod]

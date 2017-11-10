@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
@@ -151,6 +152,24 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             });
 
             Assert.IsTrue(flagsUrl == manualUrl);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_Throws_WhenCustomParameterValueIsWrongType()
+        {
+            try
+            {
+                var url = CreateUrl(new Parameters.Parameters
+                {
+                    [Parameter.Custom] = 3
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                if (!ex.Message.Contains("Expected one or more objects of type CustomParameter, however argument was of type System.Int32"))
+                    throw;
+            }
+            
         }
 
         private string CreateUrl(Parameters.Parameters parameters)

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Add-Sensor.Tests.ps1" -Tag @("PowerShell", "UnitTest") {
+Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     SetActionResponse
 

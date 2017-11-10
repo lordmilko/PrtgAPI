@@ -30,16 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
                 }
             };
 
-            try
-            {
-                message.EnsureSuccessStatusCode();
-                return Task.FromResult(message);
-            }
-            catch (Exception ex)
-            {
-                var task = Task.FromException<HttpResponseMessage>(ex);
-                return task;
-            }
+            return Task.FromResult(message);
         }
 
         public async Task<HttpResponseMessage> GetAsync(string address)

@@ -3,7 +3,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
 {
-    class SensorTotalsItem
+    public class SensorTotalsItem
     {
         public string PrtgVersion { get; set; }
         //public string Summary { get; private set; } //todo: implement. need gettreenodestats to return unique values so we know which fields which

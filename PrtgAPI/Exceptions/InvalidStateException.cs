@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrtgAPI
 {
@@ -11,6 +8,7 @@ namespace PrtgAPI
     /// The exception that is thrown when an object on a PRTG Server is not in a valid state.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class InvalidStateException : Exception
     {
         /// <summary>

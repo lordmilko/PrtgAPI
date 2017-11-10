@@ -21,11 +21,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void Group_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Group_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
-            (c1, c2, c3) => new List<Func<Property, object, object>> { c1.GetGroups, c2.GetGroupsAsync, c3.StreamGroups },
-            (c1, c2, c3) => new List<Func<Property, FilterOperator, string, object>> { c1.GetGroups, c2.GetGroupsAsync, c3.StreamGroups },
-            (c1, c2, c3) => new List<Func<SearchFilter[], object>> { c1.GetGroups, c2.GetGroupsAsync, c3.StreamGroups }
+            (c1, c2) => new List<Func<Property, object, object>> { c1.GetGroups, c2.GetGroupsAsync },
+            (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetGroups, c2.GetGroupsAsync },
+            (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetGroups, c2.GetGroupsAsync }
+        );
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        public void Group_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamGroups,
+            client => client.StreamGroups,
+            client => client.StreamGroups
         );
 
         [TestMethod]

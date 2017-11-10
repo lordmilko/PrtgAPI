@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PrtgAPI
@@ -7,6 +8,7 @@ namespace PrtgAPI
     /// The exception that is thrown when an object cannot be resolved from a PRTG Server.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class ObjectResolutionException : Exception
     {
         /// <summary>

@@ -59,4 +59,13 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         $sensor | Set-ObjectProperty Interval $value
     }
+
+    It "sets a numeric enum" {
+
+        $sensor | Set-ObjectProperty Priority 2
+    }
+
+    It "sets a raw property" {
+        $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName" -Force
+    }
 }

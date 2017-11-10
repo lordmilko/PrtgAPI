@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Remove-Object.Tests.ps1" -Tag @("PowerShell", "UnitTest") {
+Describe "Remove-Object" -Tag @("PowerShell", "UnitTest") {
     
     SetActionResponse
 

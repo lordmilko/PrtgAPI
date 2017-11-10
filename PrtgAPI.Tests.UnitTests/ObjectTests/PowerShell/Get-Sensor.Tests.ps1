@@ -35,6 +35,14 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         { Get-Sensor -Id $null } | Should Throw "The -Id parameter was specified however the parameter value was null"
     }
 
+    It "can process several IDs" {
+        Get-Sensor -Id 1001,1002
+    }
+
+    It "can process multiple statuses" {
+        Get-Sensor -Status Up,Down
+    }
+
     <#It "can pipe from devices" {
 
         $deviceId = 2001

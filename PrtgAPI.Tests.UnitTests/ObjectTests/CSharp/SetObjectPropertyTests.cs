@@ -67,7 +67,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         [TestMethod]
         public void SetObjectProperty_Int_With_Double()
         {
-            SetObjectProperty(ObjectProperty.DBPort, "8080.0", "8080");
+            double val = 8080.0;
+            SetObjectProperty(ObjectProperty.DBPort, val, "8080");
         }
 
         [TestMethod]
@@ -83,6 +84,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
                 if (!ex.Message.Contains("Expected type: 'System.Int32'. Actual type: 'System.Boolean'"))
                     throw;
             }
+        }
+
+        [TestMethod]
+        public void SetObjectProperty_ReverseDependencyProperty()
+        {
+            SetObjectProperty(ChannelProperty.ColorMode, AutoMode.Manual, "1");
         }
 
         [TestMethod]
@@ -111,6 +118,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
             var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, "23 Fleet St, Boston, MA 02113, USA"));
 
             await client.SetObjectPropertyAsync(1, ObjectProperty.Location, "23 Fleet Street");
+        }
+
+        [TestMethod]
+        public void SetObjectProperty_Array()
+        {
+            var channels = new[]
+            {
+                "#1: First Channel",
+                "channel(1001,1)",
+                "#2: Second Channel",
+                "channel(2001,1)"
+            };
+
+            SetObjectProperty(ObjectProperty.ChannelDefinition, channels, string.Join("\n", channels));
         }
 
         private void SetObjectProperty(ObjectProperty property, object value, string expectedSerializedValue = null)

@@ -25,7 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             this.countOverride = countOverride;
         }
 
-        private Dictionary<Content, int> countOverride;
+        protected Dictionary<Content, int> countOverride;
 
         public string GetResponseText(ref string address)
         {
@@ -44,7 +44,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
                 case nameof(HtmlFunction.ChannelEdit):
-                    return new ChannelResponse(new[] {new ChannelItem()});
+                    return new ChannelResponse(new ChannelItem());
                 case nameof(CommandFunction.DuplicateObject):
                     address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
                     return new BasicResponse(string.Empty);
@@ -54,6 +54,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new TriggerOverviewResponse();
                 case nameof(HtmlFunction.ObjectData):
                     return GetObjectDataResponse(address);
+                case nameof(XmlFunction.GetObjectProperty):
+                    return GetRawObjectProperty(address);
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -113,9 +115,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 case ObjectType.Sensor:
                     return new SensorSettingsResponse();
+                case ObjectType.Device:
+                    return new DeviceSettingsResponse();
                 default:
                     throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }
+        }
+
+        private IWebResponse GetRawObjectProperty(string address)
+        {
+            var components = UrlHelpers.CrackUrl(address);
+
+            if (components["name"] != null)
+                return new RawPropertyResponse("testName");
+
+            components.Remove("username");
+            components.Remove("passhash");
+            components.Remove("id");
+
+            throw new NotImplementedException($"Unknown raw object property '{components[0]}' passed to {GetType().Name}");
         }
 
         public static Content GetContent(string address)
@@ -200,7 +218,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         protected Exception GetUnknownFunctionException(string function)
         {
-            return new NotImplementedException($"Unknown function '{function}' passed to {this.GetType().Name}");
+            return new NotImplementedException($"Unknown function '{function}' passed to {GetType().Name}");
         }
 
         public Task<string> GetResponseTextStream(string address)
