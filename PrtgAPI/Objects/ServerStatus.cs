@@ -1,64 +1,400 @@
 ﻿using System;
-using System.Xml.Serialization;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
+using System.Runtime.Serialization;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI
 {
-    internal class ServerStatus
+#pragma warning disable CS0649
+    /// <summary>
+    /// Status details of a PRTG Server.
+    /// </summary>
+    [DataContract]
+    public class ServerStatus
     {
-        [XmlElement("NewMessages")]
-        public int? NewMessages { get; set; }
+        /// <summary>
+        /// The number of new unread log entries since last logon.
+        /// </summary>
+        [DataMember(Name = "NewMessages")]
+        public int NewLogs { get; set; }
 
-        [XmlElement("NewAlarms")]
-        public int? NewAlarms { get; set; }
+        /// <summary>
+        /// The number of new unread red sensor alerts since last logon.
+        /// </summary>
+        [DataMember(Name = "NewAlarms")]
+        public int NewAlarms { get; set; }
 
-        [XmlElement("Alarms")]
-        public string Alarms { get; set; }
+        [DataMember(Name = "Alarms")]
+        private string alarmsStr;
 
-        [XmlElement("AckAlarms")]
-        public string AcknowledgedAlarms { get; set; }
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Down"/> state.
+        /// </summary>
+        public int Alarms => StrToInt(alarmsStr);
 
-        [XmlElement("NewToDos")]
-        public string NewToDos { get; set; }
+        [DataMember(Name = "AckAlarms")]
+        private string acknowledgedAlarmsStr;
 
-        public DateTime Clock => DateTime.Parse(_RawClock);
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.DownAcknowledged"/> state.
+        /// </summary>
+        public int AcknowledgedAlarms => StrToInt(acknowledgedAlarmsStr);
 
-        [XmlElement("Clock")]
-        public string _RawClock { get; set; }
+        [DataMember(Name = "PartialAlarms")]
+        private string partialAlarmsStr;
 
-        [XmlElement("ActivationStatusMessage")]
-        public string ActivationStatusMessage { get; set; }
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.DownPartial"/> state.
+        /// </summary>
+        public int PartialAlarms => StrToInt(partialAlarmsStr);
 
-        [XmlElement("BackgroundTasks")]
+        [DataMember(Name = "UnusualSens")]
+        private string unusualSensorsStr;
+
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Unusual"/> state.
+        /// </summary>
+
+        public int UnusualSensors => StrToInt(unusualSensorsStr);
+
+        [DataMember(Name = "UpSens")]
+        private string upSensorsStr;
+
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Up"/> state.
+        /// </summary>
+
+        public int UpSensors => StrToInt(upSensorsStr);
+
+        [DataMember(Name = "WarnSens")]
+        private string warningSensorsStr;
+
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Warning"/> state.
+        /// </summary>
+        public int WarningSensors => StrToInt(warningSensorsStr);
+
+        [DataMember(Name = "PausedSens")]
+        private string pausedSensorsStr;
+
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Paused"/> state.
+        /// </summary>
+        public int PausedSensors => StrToInt(pausedSensorsStr);
+
+        [DataMember(Name = "UnknownSens")]
+        private string unknownSensorsStr;
+
+        /// <summary>
+        /// The number of sensors currently in a <see cref="Status.Unknown"/> state.
+        /// </summary>
+
+        public int UnknownSensors => StrToInt(unknownSensorsStr);
+
+        [DataMember(Name = "NewTickets")]
+        private string newTicketsStr;
+
+        /// <summary>
+        /// The number of new unread tickets since last logon.
+        /// </summary>
+        public int NewTickets => StrToInt(newTicketsStr);
+
+        /// <summary>
+        /// Object ID of your user within PRTG.
+        /// </summary>
+        [DataMember(Name = "UserId")]
+        public string UserId { get; set; }
+
+        /// <summary>
+        /// UTC offset of your PRTG Server's timezone.
+        /// </summary>
+        [DataMember(Name = "UserTimeZone")]
+        public string UserTimeZone { get; set; }
+
+        //[DataMember(Name = "ToDos")] //todo: what type is this
+        //public string ToDos { get; set; }
+
+        /// <summary>
+        /// Indicates how many sensors have been favorited.
+        /// </summary>
+        [DataMember(Name = "Favs")]
+        public int Favorites { get; set; }
+        
+        [DataMember(Name = "Clock")]
+        private string clockStr;
+
+        private DateTime? clock;
+
+        /// <summary>
+        /// Current system time on the PRTG Core Server.
+        /// </summary>
+        public DateTime DateTime
+        {
+            get
+            {
+                if (clock == null)
+                    clock = DateTime.Parse(clockStr);
+
+                return clock.Value;
+            }
+        }
+
+        [DataMember(Name = "Version")]
+        private string versionStr;
+
+        private Version version;
+
+        /// <summary>
+        /// Version of PRTG Network Monitor used by the server.
+        /// </summary>i
+        public Version Version => version ?? (version = Version.Parse(versionStr.Trim('+')));
+        
+        /// <summary>
+        /// The number of miscellaneous background tasks that are currently running.
+        /// </summary>
+        [DataMember(Name = "BackgroundTasks")]
         public int BackgroundTasks { get; set; }
 
-        [XmlElement("CorrelationTasks")]
+        /// <summary>
+        /// The number of similar sensor analysis tasks that are currently running.
+        /// </summary>
+        [DataMember(Name = "CorrelationTasks")]
         public int CorrelationTasks { get; set; }
 
-        [XmlElement("AutoDiscoTasks")]
+        /// <summary>
+        /// The number of Auto-Discovery tasks that are currently running.
+        /// </summary>
+        [DataMember(Name = "AutoDiscoTasks")]
         public int AutoDiscoveryTasks { get; set; }
 
-        [XmlElement("Version")]
-        public string Version { get; set; }
+        /// <summary>
+        /// The number of scheduled report tasks that are currently running.
+        /// </summary>
+        [DataMember(Name = "ReportTasks")]
+        public int ReportTasks { get; set; }
+
+        [DataMember(Name = "EditionType")]
+        private string licenseTypeStr;
+
+        private LicenseType? licenseType;
+
+        /// <summary>
+        /// Whether PRTG has a Commercial License or is Freeware.
+        /// </summary>
+        public LicenseType LicenseType
+        {
+            get
+            {
+                if (licenseType == null)
+                {
+                    if (string.IsNullOrEmpty(licenseTypeStr))
+                        licenseType = LicenseType.Freeware;
+                    else
+                        licenseType = licenseTypeStr.XmlToEnum<LicenseType>();
+                }
+
+                return licenseType.Value;
+            }
+        }
         
-        public bool UpdateAvailable => DH.YesNoToBool(_RawUpdateAvailable);
+        /// <summary>
+        /// Whether a PRTG Update is available for installation.
+        /// </summary>
+        [DataMember(Name = "PRTGUpdateAvailable")]
+        public bool UpdateAvailable { get; set; }
 
-        [XmlElement("PRTGUpdateAvailable")]
-        public string _RawUpdateAvailable { get; set; } //todo: remove all _raw fields from this file
+        [DataMember(Name = "MaintExpiryDays")]
+        private string maintenanceExpiryDays;
 
-        [XmlElement("IsAdminUser")]
+        /// <summary>
+        /// Number of days until PRTG's licensed maintenance plan expires.
+        /// </summary>
+        public int? MaintenanceExpiryDays
+        {
+            get
+            {
+                if (maintenanceExpiryDays == "??" || maintenanceExpiryDays == "[Only visible for administrators]")
+                    return null;
+
+                return Convert.ToInt32(maintenanceExpiryDays);
+            }
+        }
+
+        [DataMember(Name = "TrialExpiryDays")]
+        private int trialExpiryDays;
+
+        /// <summary>
+        /// Number of days until or since your PRTG Trial expires/has expired. If a commercial license has been applied, this value is null.
+        /// </summary>
+        public int? TrialExpiryDays
+        {
+            get
+            {
+                if (trialExpiryDays == -999999)
+                    return null;
+
+                return trialExpiryDays;
+            }
+        }
+
+        [DataMember(Name = "CommercialExpiryDays")]
+        private string commercialExpiryDays;
+
+        /// <summary>
+        /// Number of days until your commercial license expires. In practice, commercial licenses do not expire.<para/>
+        /// Equal to 1000 years + <see cref="MaintenanceExpiryDays"/> + 5. If you do not have a commercial license, this value is null.
+        /// </summary>
+        public int? CommercialExpiryDays
+        {
+            get
+            {
+                if (commercialExpiryDays == "-999999" || string.IsNullOrEmpty(commercialExpiryDays))
+                    return null;
+
+                return Convert.ToInt32(commercialExpiryDays);
+            }
+        }
+        
+        /// <summary>
+        /// Whether the PRTG server is currently throttling user authentication requests due to excessive failed logons.
+        /// </summary>
+        [DataMember(Name = "Overloadprotection")]
+        public bool OverloadProtection { get; set; }
+        
+        [DataMember(Name = "ClusterType")]
+        private string clusterTypeStr;
+
+        /// <summary>
+        /// Indicates whether this node is the Master or a Failover Node in a PRTG Cluster. If this node is not part of a cluster, this value is null.
+        /// </summary>
+        public ClusterNodeType? ClusterNodeType
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(clusterTypeStr))
+                    return null;
+
+                return clusterTypeStr.XmlToEnum<ClusterNodeType>();
+            }
+        }
+
+        [DataMember(Name = "ClusterNodeName")]
+        private string clusterNodeName;
+
+        /// <summary>
+        /// The name of this node in the PRTG Cluster. If this PRTG Server is not part of a PRTG Cluster, this value is null.
+        /// </summary>
+        public string ClusterNodeName
+        {
+            get
+            {
+                var start = "Cluster Node \"";
+
+                if (clusterNodeName.StartsWith(start))
+                    clusterNodeName = clusterNodeName.Substring(start.Length);
+
+                var endMaster = "\" (Current Master)";
+
+                if (clusterNodeName.EndsWith(endMaster))
+                    clusterNodeName = clusterNodeName.Substring(0, clusterNodeName.Length - endMaster.Length);
+
+                var endFailover = "\" (Failover Node)";
+
+                if (clusterNodeName.EndsWith(endFailover))
+                    clusterNodeName = clusterNodeName.Substring(0, clusterNodeName.Length - endFailover.Length);
+
+                return clusterNodeName;
+            }
+        }
+
+        /// <summary>
+        /// Whether the current user is a member of a group granting administrative rights.
+        /// </summary>
+        [DataMember(Name = "IsAdminUser")]
         public bool IsAdminUser { get; set; }
 
-        [XmlElement("IsCluster")]
-        public bool IsCluster { get; set; }
+        /// <summary>
+        /// Indicates whether this PRTG Server is part of a PRTG Cluster.
+        /// </summary>
+        public bool IsCluster => ClusterNodeType != null;
 
-        [XmlElement("ReadOnlyUser")]
-        public bool ReadOnlyUser { get; set; } //is this bool?
+        [DataMember(Name = "ReadOnlyUser")]
+        private string readOnlyUserStr;
 
-        [XmlElement("ReadOnlyAllowAcknowledge")]
-        public string ReadOnlyAllowAcknowledge { get; set; } //is this bool?
+        /// <summary>
+        /// Indicates whether the current user is restricted to read-only access to PRTG.
+        /// </summary>
+        public bool ReadOnlyUser => readOnlyUserStr.ToLower() == "true";
 
-        [XmlElement("ReadOnlyPwChange")]
-        public string ReadOnlyPwChange { get; set; } //is this bool?
+        [DataMember(Name = "TicketUser")]
+        private string ticketUserStr;
+
+        /// <summary>
+        /// Indicates whether the current user has access to the PRTG Ticketing System.
+        /// </summary>
+        public bool TicketUser => ticketUserStr.ToLower() == "true";
+
+        [DataMember(Name = "ReadOnlyAllowAcknowledge")]
+        private string readOnlyAllowAcknowledgeStr;
+        
+        /// <summary>
+        /// If this user is a <see cref="ReadOnlyUser"/>, indicates whether this user is allowed to acknowledge sensors.<para/>
+        /// If this user is not a read only user, this value is false.
+        /// </summary>
+        public bool ReadOnlyAllowAcknowledge => readOnlyAllowAcknowledgeStr.ToLower() == "true";
+        
+        /// <summary>
+        /// Whether the PRTG Core Server is currently running low on memory.
+        /// </summary>
+        [DataMember(Name = "LowMem")]
+        public bool LowMemory { get; set; }
+
+        //[DataMember(Name = "ActivationAlert")]
+        //public bool ActivationAlert { get; set; } //todo: is this bool
+
+        /// <summary>
+        /// Host ID of the PRTG Core Server.
+        /// </summary>
+        [DataMember(Name = "PRTGHost")]
+        public string HostId { get; set; }
+
+        [DataMember(Name = "MaxSensorCount")]
+        private string maxSensorCountStr;
+
+        /// <summary>
+        /// Maximum number of sensors that can be created. If there is no maximum (as PRTG has an Unlimited license) this value is null.
+        /// </summary>
+        public int? MaxSensorCount
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(maxSensorCountStr) || maxSensorCountStr == "unlimited")
+                    return null;
+
+                return Convert.ToInt32(maxSensorCountStr);
+            }
+        }
+
+        [DataMember(Name = "Activated")]
+        private string activatedStr;
+
+        /// <summary>
+        /// Whether PRTG's license has been activated.
+        /// </summary>
+        public bool? Activated
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(activatedStr))
+                    return null;
+
+                return Convert.ToBoolean(Convert.ToInt32(activatedStr));
+            }
+        }
+
+        private int StrToInt(string str)
+        {
+            return string.IsNullOrEmpty(str) ? 0 : Convert.ToInt32(str);
+        }
     }
+#pragma warning restore CS0649
 }

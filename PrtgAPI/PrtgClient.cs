@@ -1870,11 +1870,17 @@ namespace PrtgAPI
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
-        internal ServerStatus GetStatus()
-        {
-            //todo: complete, and then make =>, and also implement an async version
-            return GetObject<ServerStatus>(XmlFunction.GetStatus, new BaseActionParameters(0));
-        }
+        /// <summary>
+        /// Retrieve configuration, status and version details from a PRTG Server.
+        /// </summary>
+        /// <returns>Status details of a PRTG Server.</returns>
+        public ServerStatus GetStatus() => GetObject<ServerStatus>(JsonFunction.GetStatus, new BaseActionParameters(0));
+
+        /// <summary>
+        /// Asynchronously etrieve configuration, status and version details from a PRTG Server.
+        /// </summary>
+        /// <returns>Status details of a PRTG Server.</returns>
+        public async Task<ServerStatus> GetStatusAsync() => await GetObjectAsync<ServerStatus>(JsonFunction.GetStatus, new BaseActionParameters(0)).ConfigureAwait(false);
 
         /// <summary>
         /// Resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.

@@ -15,5 +15,9 @@ namespace PrtgAPI
 
         [Description("sensortypes.json")]
         SensorTypes,
+
+
+        [Description("getstatus.htm")]
+        GetStatus
     }
 }
