@@ -131,6 +131,20 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetValue "FactoryMissingDataMode" "CalculateWithZero"
     }
 
+    It "sets a sensor factory definition using New-SensorFactoryDefinition" {
+        $sensors = Get-Sensor -Tags wmimem*
+
+        $definition = $sensors | New-SensorFactoryDefinition { $_.Name } 0
+
+        $object = Get-Sensor -Id (Settings SensorFactory)
+
+        $object | Set-ObjectProperty ChannelDefinition $definition
+
+        $source = $object | Get-SensorFactorySource
+
+        $source.Id | Should Be $sensors.Id
+    }
+
     Context "Other" {
         It "Triggers" {
             $object = Get-Sensor -Id (Settings UpSensor)

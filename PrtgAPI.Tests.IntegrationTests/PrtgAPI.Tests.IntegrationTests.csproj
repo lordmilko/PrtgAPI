@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\PrtgAPI.Tests\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,15 +30,18 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\PrtgAPI.Tests\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -53,8 +56,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ActionTests\AddSensorTests.cs" />
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
+    <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
+    <Compile Include="DataTests\Incomplete\LogTests.cs" />
+    <Compile Include="Tools\PowerShell\Cmdlets\GetMissingSensorTypes.cs" />
     <Compile Include="Support\Assert2.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
@@ -73,6 +80,7 @@
     <Compile Include="ActionTests\StateTests.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Local.cs" />
+    <Compile Include="Tools\PowerShell\Cmdlets\WriteSensorTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj">
@@ -87,6 +95,8 @@
   <ItemGroup>
     <None Include="New-TestSettings.ps1" />
     <None Include="PowerShell\Add-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Add-Sensor.Tests.ps1" />
+    <None Include="PowerShell\CodeGeneration.Tests.ps1" />
     <None Include="PowerShell\Edit-NotificationTriggerProperty.Tests.ps1" />
     <None Include="PowerShell\Get-Channel.Tests.ps1" />
     <None Include="PowerShell\Connect-PrtgServer.Tests.ps1" />
@@ -94,9 +104,12 @@
     <None Include="PowerShell\Get-Group.Tests.ps1" />
     <None Include="PowerShell\Get-NotificationAction.Tests.ps1" />
     <None Include="PowerShell\Get-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\Get-ObjectLog.Tests.ps1" />
     <None Include="PowerShell\Get-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Get-Probe.Tests.ps1" />
+    <None Include="PowerShell\Get-PrtgStatus.Tests.ps1" />
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Get-SensorFactorySource.Tests.ps1" />
     <None Include="PowerShell\Get-SensorHistory.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />
@@ -113,6 +126,10 @@
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />
     <None Include="PowerShell\Support\ObjectProperty.ps1" />
+    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.cmd" />
+    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.Format.ps1xml" />
+    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psd1" />
+    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psm1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -134,6 +151,9 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)Tools\PowerShell\Resources\*.*" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

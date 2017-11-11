@@ -70,9 +70,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>A list of channels.</returns>
         protected override IEnumerable<Channel> GetRecords()
         {
-            if (Sensor == null && SensorId == null)
-                throw new ArgumentException("Please specify either a Sensor or a SensorId");
-
             Func<string, bool> filter = null;
 
             if (Name != null)

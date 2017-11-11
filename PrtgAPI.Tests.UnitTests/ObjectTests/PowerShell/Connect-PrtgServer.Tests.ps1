@@ -1,6 +1,12 @@
-﻿. $PSScriptRoot\Support\UnitTest.ps1
+﻿. $PSScriptRoot\Support\Standalone.ps1
 
-<#Describe "Connect-PrtgServer" {
+Describe "Connect-PrtgServer" {
 
-    #after we've connected we need to setup a response object that will cause failures
-}#>
+    InitializeUnitTestModules
+
+    It "requires a connection" {
+        Disconnect-PrtgServer
+
+        { Get-Sensor } | Should Throw "You are not connected to a PRTG Server"
+    }
+}

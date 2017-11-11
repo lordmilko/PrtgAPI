@@ -11,6 +11,35 @@ namespace PrtgAPI
     [DataContract]
     public class ServerStatus
     {
+        [DataMember(Name = "Clock")]
+        private string clockStr;
+
+        private DateTime? clock;
+
+        /// <summary>
+        /// Current system time on the PRTG Core Server.
+        /// </summary>
+        public DateTime DateTime
+        {
+            get
+            {
+                if (clock == null)
+                    clock = DateTime.Parse(clockStr);
+
+                return clock.Value;
+            }
+        }
+
+        [DataMember(Name = "Version")]
+        private string versionStr;
+
+        private Version version;
+
+        /// <summary>
+        /// Version of PRTG Network Monitor used by the server.
+        /// </summary>i
+        public Version Version => version ?? (version = Version.Parse(versionStr.Trim('+')));
+
         /// <summary>
         /// The number of new unread log entries since last logon.
         /// </summary>
@@ -118,35 +147,6 @@ namespace PrtgAPI
         /// </summary>
         [DataMember(Name = "Favs")]
         public int Favorites { get; set; }
-        
-        [DataMember(Name = "Clock")]
-        private string clockStr;
-
-        private DateTime? clock;
-
-        /// <summary>
-        /// Current system time on the PRTG Core Server.
-        /// </summary>
-        public DateTime DateTime
-        {
-            get
-            {
-                if (clock == null)
-                    clock = DateTime.Parse(clockStr);
-
-                return clock.Value;
-            }
-        }
-
-        [DataMember(Name = "Version")]
-        private string versionStr;
-
-        private Version version;
-
-        /// <summary>
-        /// Version of PRTG Network Monitor used by the server.
-        /// </summary>i
-        public Version Version => version ?? (version = Version.Parse(versionStr.Trim('+')));
         
         /// <summary>
         /// The number of miscellaneous background tasks that are currently running.

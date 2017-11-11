@@ -8,6 +8,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Objects.Shared;
 using System.Management;
+using System.Net.Http;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -243,7 +244,22 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private static void RepairState()
         {
-            var client = new BasePrtgClientTest().client;
+            PrtgClient client;
+
+            try
+            {
+                client = new BasePrtgClientTest().client;
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.Message.Contains("503 (Service Unavailable"))
+                {
+                    Logger.Log("Failed to retrieve PrtgClient while attempting to repair state. Sleeping for 20 seconds");
+                    Thread.Sleep(20000);
+                }
+            }
+
+            client = new BasePrtgClientTest().client;
 
             try
             {

@@ -9,6 +9,8 @@ namespace PrtgAPI
     /// </summary>
     public class SensorHistoryData
     {
+        //todo: Downtime property not currently exposed by PRTG API
+
         /// <summary>
         /// The date and time to which this object's historical values apply.
         /// </summary>

@@ -20,11 +20,20 @@ namespace PrtgAPI
         [XmlEnum("2")]
         SystemStop,
 
+        //[XmlEnum("3")]
+        //SystemReset,
+
+        //[XmlEnum("4")]
+        //ProbeIPDenied,
+
         /// <summary>
         /// A remote probe whose GID has been blocked attempted to connect to the PRTG Core.
         /// </summary>
         [XmlEnum("5")]
         ProbeGidDenied,
+
+        //[XmlEnum("6")]
+        //ConfigSaveError,
 
         /// <summary>
         /// Web server status message, potentially indicating issue starting PRTG Core Service.
@@ -74,11 +83,50 @@ namespace PrtgAPI
         [XmlEnum("14")]
         ProbeKeyDenied,
 
+        /*[XmlEnum("101")]
+        DataError,
+
+        [XmlEnum("102")]
+        ResponseError,
+
+        [XmlEnum("103")]
+        InternalError,
+
+        [XmlEnum("104")]
+        SocketError,
+
+        [XmlEnum("105")]
+        ICMPError,
+
+        [XmlEnum("108")]
+        WMIError,
+
+        [XmlEnum("109")]
+        UnsupportedSensor,
+
+        [XmlEnum("201")]
+        CounterValue,
+
+        [XmlEnum("202")]
+        IntegerValue,
+
+        [XmlEnum("203")]
+        FloatValue,
+
+        [XmlEnum("301")]
+        NotifyContent,
+
+        [XmlEnum("302")]
+        NotifySize,*/
+
         /// <summary>
         /// Indicates a "Notify Changed" event occurred on an EXE/XML sensor, or that a WMI sensor encountered an error.
         /// </summary>
         [XmlEnum("303")]
-        Notify,
+        NotifyChanged,
+
+        //[XmlEnum("401")]
+        //Text,
 
         /// <summary>
         /// Miscellaneous informational item, including certain ticket creation events.
@@ -98,17 +146,22 @@ namespace PrtgAPI
         [XmlEnum("405")]
         UsePerfCounters,
 
+        //todo: apparently theres a 406 ftp mode?
+
         /// <summary>
         /// An FTP connection could not be established using the specified mode.
         /// </summary>
         [XmlEnum("407")]
-        FTPMode,
+        FtpMode,
 
         /// <summary>
         /// Object was created.
         /// </summary>
         [XmlEnum("501")]
         Created,
+
+        //[XmlEnum("502")]
+        //Deleted,
 
         /// <summary>
         /// An object was moved to another parent. States where the object was moved from and to. Occurs in conjunction with <see cref="ChildObjectMoved"/>.
@@ -169,6 +222,9 @@ namespace PrtgAPI
         /// </summary>
         [XmlEnum("512")]
         CreatedFromClone,
+
+        //[XmlEnum("513")]
+        //LicenseEdited,
 
         /// <summary>
         /// A license could not be found.
@@ -236,17 +292,20 @@ namespace PrtgAPI
         [XmlEnum("610")]
         Unusual,
 
+        //[XmlEnum("611")]
+        //OK,
+
         /// <summary>
         /// A remote probe connected to the PRTG Core.
         /// </summary>
         [XmlEnum("612")]
-        ProbeConnected,
+        Connected,
 
         /// <summary>
         /// A remote probe disconnected from the PRTG Core.
         /// </summary>
         [XmlEnum("613")]
-        ProbeDisconnected,
+        Disconnected,
 
         /// <summary>
         /// Probe status message (e.g. restart occurred)
@@ -259,6 +318,9 @@ namespace PrtgAPI
         /// </summary>
         [XmlEnum("615")]
         PausedByLicense,
+
+        //[XmlEnum("616")]
+        //NoProbe,
 
         /// <summary>
         /// Previously paused object has completed <see cref="Resuming"/> and is now active.
@@ -284,6 +346,18 @@ namespace PrtgAPI
         [XmlEnum("701")]
         ProbeApproved,
 
+        /*[XmlEnum("702")]
+        NewDevice,
+
+        [XmlEnum("703")]
+        NewSensor,
+
+        [XmlEnum("704")]
+        DiskFull,
+
+        [XmlEnum("705")]
+        EmailFailed,*/
+
         /// <summary>
         /// A software update check was performed.
         /// </summary>
@@ -297,6 +371,15 @@ namespace PrtgAPI
         SystemError,
 
         /// <summary>
+        /// A scheduled report has completed.
+        /// </summary>
+        [XmlEnum("708")]
+        ReportDone,
+
+        //[XmlEnum("709")]
+        //LicenseError,
+
+        /// <summary>
         /// A new probe connected to PRTG requiring user approval.
         /// </summary>
         [XmlEnum("710")]
@@ -308,11 +391,32 @@ namespace PrtgAPI
         [XmlEnum("711")]
         SmtpConfiguration,
 
+        //[XmlEnum("712")]
+        //Dependency,
+
         /// <summary>
         /// Indicates that a new cluster node has attempted to connect to PRTG and is pending approval.
         /// </summary>
         [XmlEnum("713")]
         NewClusterNode,
+
+        /*[XmlEnum("714")]
+        NodeNotActivated,
+
+        [XmlEnum("715")]
+        ClusterSynchronization,
+
+        [XmlEnum("716")]
+        BrowserVersion,
+
+        [XmlEnum("717")]
+        ConfigConflict,
+
+        [XmlEnum("718")]
+        ConfigUpdate,
+
+        [XmlEnum("719")]
+        SoftwareMaintenance,*/
 
         /// <summary>
         /// Indicates that a PRTG update was successfully applied.
@@ -324,13 +428,25 @@ namespace PrtgAPI
         /// Authentication attempts have been throttled due to excessive failed logins.
         /// </summary>
         [XmlEnum("721")]
-        ThrottleAuthentication,
+        OverloadProtection,
+
+        /*[XmlEnum("722")]
+        UpgradeOffer,
+
+        [XmlEnum("723")]
+        TrialReminder,
+
+        [XmlEnum("728")]
+        InvalidPushDevice,*/
 
         /// <summary>
         /// A reminder from PRTG or Paessler about an upcoming event or change.
         /// </summary>
         [XmlEnum("729")]
         Reminder,
+
+        //[XmlEnum("730")]
+        //SmsConfiguration,
 
         /// <summary>
         /// A group auto-discovery operation started.
@@ -355,6 +471,12 @@ namespace PrtgAPI
         /// </summary>
         [XmlEnum("805")]
         DiscoveryTemplateApplied,
+
+        /// <summary>
+        /// An auto-discovery operation failed.
+        /// </summary>
+        [XmlEnum("806")]
+        DiscoveryFailed,
 
         /// <summary>
         /// The clustering engine has started.
@@ -393,16 +515,27 @@ namespace PrtgAPI
         ClusterNodeDisconnected,
 
         /// <summary>
+        /// The master node of a PRTG Cluster changed.
+        /// </summary>
+        [XmlEnum("857")]
+        ClusterMasterChanged,
+
+        /// <summary>
         /// Informational event regarding the status of an active cluster connection, including error messages.
         /// </summary>
         [XmlEnum("858")]
-        ClusterInfo
+        ClusterInfo,
 
-        //todo: KNOWN: 3 - "status message"
-        //todo: KNOWN: 4 - "probe related"
-        //todo: KNOWN: 6 - "status message"
-        //todo: KNOWN: 803 - "auto-discovery related"
-        //todo: KNOWN: 857 - "cluster related"
-        //todo: KNOWN: 859
+        /// <summary>
+        /// Multiple PRTG Cluster master nodes were detected.
+        /// </summary>
+        [XmlEnum("859")]
+        MultipleClusterMasters,
+
+        //[XmlEnum("901")]
+        //UserTicket,
+
+        //[XmlEnum("902")]
+        //NotificationTicket
     }
 }

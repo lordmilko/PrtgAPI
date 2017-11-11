@@ -54,23 +54,11 @@ namespace PrtgAPI.Parameters
 
         void AddDependents(DynamicPropertyTypeParser parser, bool disableDependentsOnNotReqiuiredValue)
         {
-            //var parentOfChild = parser.Property.GetEnumAttribute<DependentPropertyAttribute>();
             var childrenOfParent = parser.Property.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
 
-            //bool isChild = parentOfChild != null;
             bool isParent = childrenOfParent.Any();
 
-            //if (isChild && isParent)
-            //    throw new NotSupportedException($"Property {parser.Property} is the child of property {parentOfChild} and parent of properties {string.Join(", ", childrenOfParent)} however multi-level relationships are not supported.");
-
             AddDependentPropertyRecursiveUp(parser.Property);
-
-            //if (isChild) //No need to worry about disabling things, since children can't also be parents
-            //{
-                //todo: need to recursively add dependent properties for grandchild relationships
-                //AddDependentProperty(parentOfChild);
-                //AddDependentPropertyRecursive(parentOfChild);
-            //}
 
             if (isParent)
             {

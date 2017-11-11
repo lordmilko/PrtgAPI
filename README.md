@@ -2,19 +2,21 @@
 
 [![Build status](https://img.shields.io/appveyor/ci/lordmilko/prtgapi.svg)](https://ci.appveyor.com/project/lordmilko/prtgapi)
 [![NuGet](https://img.shields.io/nuget/v/PrtgAPI.svg)](https://www.nuget.org/packages/PrtgAPI/)
+[![Coverage](https://img.shields.io/codecov/c/github/lordmilko/PrtgAPI.svg)](https://codecov.io/gh/lordmilko/PrtgAPI)
 
 ![PrtgAPI](https://raw.githubusercontent.com/lordmilko/PrtgAPI/master/assets/PrtgAPI.png)
 
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2&username=demo&password=demodemo).
 
-PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that the programmer can further interface with.
+PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that you can further interface with.
 
 PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
 
 Useful things you can do with PrtgAPI:
 * Generate reports based on custom queries
 * Monitor missing sensors (such as Veeam Backups) and missing devices (from your domain)
-* Create and modify new sensors (from existing ones)
+* Create and modify sensors - creating from scratch or cloning from existing ones
+* Generate complex sensor factory definitions
 * Deploy notification triggers to individual sensors for specific clients
 * Maintain standard naming/alerting settings across your environment
 * Pause/resume items from external systems (such as pre/post event scripts and scheduled tasks)
@@ -146,7 +148,7 @@ foreach(var channel in channels)
 
 #### Other Objects
 
-Objects can be [cloned](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
+Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
 ### Overview (PowerShell)
 
@@ -172,6 +174,7 @@ PrtgAPI supports a wide variety of operations, each of which taking pipeline inp
 
 ```powershell
 Add-NotificationTrigger
+Add-Sensor
 Acknowledge-Sensor
 Clone-Device
 Clone-Group
@@ -189,17 +192,21 @@ Get-Group
 Get-ModificationHistory
 Get-NotificationAction
 Get-NotificationTrigger
+Get-ObjectLog
+Get-ObjectProperty
 Get-Probe
 Get-PrtgClient
 Get-Sensor
+Get-SensorFactorySource
 Get-SensorHistory
 Get-SensorTotals
 Install-GoPrtgServer
 Move-Object
 New-Credential
-New-NotificationTriggerParameter
+New-NotificationTriggerParameters
 New-SearchFilter # Alias: flt
 New-SensorFactoryDefinition
+New-SensorParameters
 Open-PrtgObject
 Pause-Object
 Refresh-Object
@@ -285,7 +292,7 @@ Get-Sensor -Id 1001 | Get-ObjectProperty
 ```
 ```powershell
 # Set the scanning interval of the device with ID 2002. Will also set InheritInterval to $false
-Get-Device -Id 2002 | Set-ObjectProperty Interval "00:00:30"
+Get-Device -Id 2002 | Set-ObjectProperty Interval 00:00:30
 ```
 
 [Acknowledge](https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation) all down sensors
@@ -305,11 +312,11 @@ $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 
 #### Other Objects
 
-Objects can be [cloned](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), sensor factories can be [generated](https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories), and much much more. For full usage instructions on PrtgAPI please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
+Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), sensor factories can be [generated](https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories), and much much more. For full usage instructions on PrtgAPI please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
 ## Intersting Things PrtgAPI Does
 
-* [Deserialization](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#deserialization)
+* [Custom Deserialization](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#deserialization)
 * Cmdlet Based Event Handlers
 * Inter-Cmdlet Progress
 * Securely Storing Credentials
