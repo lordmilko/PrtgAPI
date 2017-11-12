@@ -1,8 +1,11 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Base class for all parameters that perform an action against a PRTG server pertaining to a specific object.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     class BaseActionParameters : Parameters
     {
         /// <summary>

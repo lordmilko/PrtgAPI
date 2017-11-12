@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -7,7 +8,8 @@ using System.Text;
 
 namespace PrtgAPI.Objects.Deserialization
 {
-    class JsonDeserializer<T>
+    [ExcludeFromCodeCoverage]
+    internal class JsonDeserializer<T>
     {
         public static T DeserializeType(string json)
         {
@@ -26,21 +28,9 @@ namespace PrtgAPI.Objects.Deserialization
         public static List<T> DeserializeList(List<string> json)
         {
             return DeserializeList(json, s => s);
-
-            /*var deserializer = new DataContractJsonSerializer(typeof (T));
-
-            var data = json.Select(j =>
-            {
-                using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(j)))
-                {
-                    return (T) deserializer.ReadObject(stream);
-                }
-            }).ToList();
-
-            return data;*/
         }
 
-        public static List<T> DeserializeList<L>(List<L> list, Func<L, string> retriever, Action<L, T> postDeserializationAction = null)
+        public static List<T> DeserializeList<TList>(List<TList> list, Func<TList, string> retriever, Action<TList, T> postDeserializationAction = null)
         {
             var deserializer = new DataContractJsonSerializer(typeof(T));
 

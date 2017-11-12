@@ -107,6 +107,58 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         }
 
         [TestMethod]
+        public void Location_ResolvesNothing()
+        {
+            var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
+
+            SetObjectProperty(ObjectProperty.Location, null, "");
+        }
+
+        [TestMethod]
+        public async Task Location_ResolvesNothingAsync()
+        {
+            var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
+
+            var location = await Location.ResolveAsync(client, 1001, null);
+
+            Assert.AreEqual(null, location.ToString());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(PrtgRequestException))]
+        public void Location_FailsToResolve()
+        {
+            var client = Initialize_Client(new LocationUnresolvedResponse());
+
+            Location.Resolve(client, 1001, "something");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(PrtgRequestException))]
+        public async Task Location_FailsToResolveAsync()
+        {
+            var client = Initialize_Client(new LocationUnresolvedResponse());
+
+            await Location.ResolveAsync(client, 1001, "something");
+        }
+
+        [TestMethod]
+        public async Task SetObjectPropertyRaw_CanExecuteAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await client.SetObjectPropertyRawAsync(1001, "name_", "testName");
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_CanExecuteAsync()
+        {
+            var client = Initialize_Client(new SetObjectPropertyResponse<ChannelProperty>(ChannelProperty.LimitsEnabled, "1"));
+
+            await client.SetObjectPropertyAsync(1001, 1, ChannelProperty.LimitsEnabled, true);
+        }
+
+        [TestMethod]
         public void SetObjectProperty_CanNullifyValue()
         {
             SetObjectProperty(ChannelProperty.UpperErrorLimit, null, string.Empty);

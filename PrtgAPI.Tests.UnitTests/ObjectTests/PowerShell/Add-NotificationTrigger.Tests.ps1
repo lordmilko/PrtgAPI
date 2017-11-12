@@ -10,4 +10,10 @@ Describe "Add-NotificationTrigger" {
 
         { $params | Add-NotificationTrigger } | Should Throw "is not a valid trigger type"
     }
+
+    It "executes with -WhatIf" {
+        $params = New-TriggerParameters 1001 State
+
+        $params | Add-NotificationTrigger -WhatIf
+    }
 }

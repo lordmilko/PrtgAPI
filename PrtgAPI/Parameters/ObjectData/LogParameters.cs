@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Parameters.ObjectData
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Log"/> objects.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class LogParameters : TableParameters<Log>
     {
         /// <summary>

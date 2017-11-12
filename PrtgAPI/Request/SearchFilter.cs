@@ -66,7 +66,7 @@ namespace PrtgAPI
             }
 
             if (operatorDescription == null)
-                return val;
+                return HttpUtility.UrlEncode(val);
             else
                 return $"@{operatorDescription}({HttpUtility.UrlEncode(val)})";
         }
@@ -74,7 +74,7 @@ namespace PrtgAPI
         /// <summary>
         /// Returns the formatted string representation of this filter for use in a <see cref="PrtgUrl"/>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return ToString(Value);

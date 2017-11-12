@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.Serialization;
 using PrtgAPI.Helpers;
 
@@ -14,9 +15,11 @@ namespace PrtgAPI.Objects.Deserialization
 
         public TriggerType[] SupportedTypes => supportedTypes.Select(t => t.ToEnum<TriggerType>()).ToArray();
 
+        [ExcludeFromCodeCoverage]
         [DataMember(Name = "data")]
         public NotificationTrigger[] Triggers { get; set; }
 
+        [ExcludeFromCodeCoverage]
         [DataMember(Name = "readonly")]
         public bool ReadOnly { get; set; }
     }

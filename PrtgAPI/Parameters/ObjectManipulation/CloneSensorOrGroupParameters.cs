@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class CloneSensorOrGroupParameters : BaseActionParameters
     {
         public CloneSensorOrGroupParameters(int objectId, string cloneName, int targetId) : base(objectId)
         {
-            if (cloneName == null)
-                throw new ArgumentNullException(nameof(cloneName));
+            if (string.IsNullOrEmpty(cloneName))
+                throw new ArgumentException("cloneName cannot be null or empty", nameof(cloneName));
 
             CloneName = cloneName;
             TargetId = targetId;

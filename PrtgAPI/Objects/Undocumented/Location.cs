@@ -55,7 +55,9 @@ namespace PrtgAPI
                 if (result.Any())
                     break;
 
+#if !DEBUG
                 Thread.Sleep(1000);
+#endif
             }
 
             if (!result.Any())

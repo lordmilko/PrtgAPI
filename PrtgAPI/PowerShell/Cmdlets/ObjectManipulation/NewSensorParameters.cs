@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -17,7 +14,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// types are "natively" supported.</para>
     /// 
     /// <para type="description">Natively supported sensor types allow interfacing with strongly typed properties
-    /// of a well known object deriving from BaseSensorParameters. When a supported type is created, the name to give the
+    /// of a well known object deriving from NewSensorParameters. When a supported type is created, the name to give the
     /// sensor can be optionally specified. If a name is not specified, New-SensorParameters will automatically assign
     /// the sensor the default name PRTG would assign a sensor of the specified type (e.g. EXE/Script Advanced sensors
     /// by default are named "XML Custom EXE/Script Sensor").</para>
@@ -92,7 +89,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Device</para>
     /// </summary>
     [Cmdlet(VerbsCommon.New, "SensorParameters", DefaultParameterSetName = "Default")]
-    public class NewSensorParameters : PSCmdlet
+    public class NewSensorParametersCommand : PSCmdlet
     {
         /// <summary>
         /// <para type="description">The type of sensor to create.</para>
@@ -131,7 +128,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             WriteObject(parameters);
         }
 
-        private BaseSensorParameters CreateRawParameters()
+        private NewSensorParameters CreateRawParameters()
         {
             if (!RawParameters.ContainsKey("name_"))
                 throw new InvalidOperationException("Hashtable record 'name_' is mandatory, however a value was not specified");
@@ -147,9 +144,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return parameters;
         }
 
-        private BaseSensorParameters CreateTypedParameters()
+        private NewSensorParameters CreateTypedParameters()
         {
-            BaseSensorParameters parameters;
+            NewSensorParameters parameters;
 
             switch (Type)
             {
@@ -161,11 +158,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             return parameters;
-        }
-
-        private string GetName(string defaultName)
-        {
-            return Name ?? defaultName;
         }
     }
 }

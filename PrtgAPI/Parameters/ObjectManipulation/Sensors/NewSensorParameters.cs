@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request;
@@ -11,7 +10,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects.</para>
     /// </summary>
-    public abstract class BaseSensorParameters : Parameters
+    public abstract class NewSensorParameters : Parameters
     {
         /// <summary>
         /// The name to use for this sensor.
@@ -33,18 +32,18 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseSensorParameters"/> class.
+        /// Initializes a new instance of the <see cref="NewSensorParameters"/> class.
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>
         /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        public BaseSensorParameters(string sensorName, bool inheritTriggers, object sensorType)
+        public NewSensorParameters(string sensorName, bool inheritTriggers, object sensorType)
         {
-            if (sensorName == null)
-                throw new ArgumentNullException(nameof(sensorName), $"{nameof(sensorName)} must be specified");
+            if (string.IsNullOrEmpty(sensorName))
+                throw new ArgumentException($"{nameof(sensorName)} cannot be null or empty", nameof(sensorName));
 
-            if (sensorType == null)
-                throw new ArgumentNullException(nameof(sensorType), $"{nameof(sensorType)} must be specified");
+            if (string.IsNullOrEmpty(sensorType?.ToString()))
+                throw new ArgumentException($"{nameof(sensorType)} cannot be null or empty", nameof(sensorType));
 
             Name = sensorName;
             InheritTriggers = inheritTriggers;
@@ -61,6 +60,7 @@ namespace PrtgAPI.Parameters
         protected object GetCustomParameter(ObjectProperty property) =>
             GetCustomParameterInternal(GetObjectPropertyName(property));
 
+        [ExcludeFromCodeCoverage]
         internal object GetCustomParameter(ObjectPropertyInternal property) =>
             GetCustomParameterInternal(GetObjectPropertyInternalName(property));
 
@@ -76,6 +76,7 @@ namespace PrtgAPI.Parameters
         protected object GetCustomParameterEnumXml<T>(ObjectProperty property) =>
             GetCustomParameterEnumXml<T>(GetObjectPropertyName(property));
 
+        [ExcludeFromCodeCoverage]
         internal object GetCustomParameterEnumXml<T>(ObjectPropertyInternal property) =>
             GetCustomParameterEnumXml<T>(GetObjectPropertyInternalName(property));
 
@@ -106,6 +107,7 @@ namespace PrtgAPI.Parameters
         protected bool? GetCustomParameterBool(ObjectProperty property) =>
             GetCustomParameterBool(GetObjectPropertyName(property));
 
+        [ExcludeFromCodeCoverage]
         internal bool? GetCustomParameterBool(ObjectPropertyInternal property) =>
             GetCustomParameterBool(GetObjectPropertyInternalName(property));
 
@@ -136,6 +138,7 @@ namespace PrtgAPI.Parameters
         protected string[] GetCustomParameterArray(ObjectProperty property, char delim) =>
             GetCustomParameterArray(GetObjectPropertyName(property), delim);
 
+        [ExcludeFromCodeCoverage]
         internal string[] GetCustomParameterArray(ObjectPropertyInternal property, char delim) =>
             GetCustomParameterArray(GetObjectPropertyInternalName(property), delim);
 
@@ -181,6 +184,7 @@ namespace PrtgAPI.Parameters
         protected void SetCustomParameter(ObjectProperty property, object value) =>
             SetCustomParameterInternal(GetObjectPropertyName(property), value);
 
+        [ExcludeFromCodeCoverage]
         internal void SetCustomParameter(ObjectPropertyInternal property, object value) =>
             SetCustomParameterInternal(GetObjectPropertyInternalName(property), value);
 
@@ -196,6 +200,7 @@ namespace PrtgAPI.Parameters
         protected void SetCustomParameterEnumXml<T>(ObjectProperty property, T @enum) where T : struct =>
             SetCustomParameterEnumXml(GetObjectPropertyName(property), @enum);
 
+        [ExcludeFromCodeCoverage]
         internal void SetCustomParameterEnumXml<T>(ObjectPropertyInternal property, T @enum) where T : struct =>
             SetCustomParameterEnumXml(GetObjectPropertyInternalName(property), @enum);
 
@@ -206,7 +211,7 @@ namespace PrtgAPI.Parameters
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="enum">The enum to serialize.</param>
         protected void SetCustomParameterEnumXml<T>(string name, T @enum) where T : struct =>
-            SetCustomParameterInternal(name, ((Enum)(object)@enum)?.EnumToXml());
+            SetCustomParameterInternal(name, ((Enum)(object)@enum).EnumToXml());
 
         #endregion
         #region SetCustomParameterBool
@@ -219,6 +224,7 @@ namespace PrtgAPI.Parameters
         protected void SetCustomParameterBool(ObjectProperty property, bool? value) =>
             SetCustomParameterBool(GetObjectPropertyName(property), value);
 
+        [ExcludeFromCodeCoverage]
         internal void SetCustomParameterBool(ObjectPropertyInternal property, bool? value) =>
             SetCustomParameterBool(GetObjectPropertyInternalName(property), value);
 
@@ -242,6 +248,7 @@ namespace PrtgAPI.Parameters
         protected void SetCustomParameterArray(ObjectProperty property, string[] value, char delim) =>
             SetCustomParameterArray(GetObjectPropertyName(property), value, delim);
 
+        [ExcludeFromCodeCoverage]
         internal void SetCustomParameterArray(ObjectPropertyInternal property, string[] value, char delim) =>
             SetCustomParameterArray(GetObjectPropertyInternalName(property), value, delim);
 
@@ -287,6 +294,7 @@ namespace PrtgAPI.Parameters
             return name;
         }
 
+        [ExcludeFromCodeCoverage]
         private string GetObjectPropertyInternalName(ObjectPropertyInternal property)
         {
             return $"{property.GetDescription()}_";

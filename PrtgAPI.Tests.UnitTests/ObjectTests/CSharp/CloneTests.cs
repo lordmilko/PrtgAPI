@@ -28,6 +28,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         }
 
         [TestMethod]
+        public async Task Clone_CanCloneDeviceAsync()
+        {
+            var client = Initialize_Client(new CloneResponse());
+
+            await client.CloneObjectAsync(1, "New Name", "host", 3);
+        }
+
+        [TestMethod]
         public void Clone_CanGetId_WhenObjectIsInvalid()
         {
             var client = Initialize_Client(new CloneResponse("https://prtg.example.com/error.htm?errormsg=the object is currently not valid&errorurl=/object.htm?id=9999"));

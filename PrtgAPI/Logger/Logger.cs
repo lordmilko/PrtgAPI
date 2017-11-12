@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI
 {
+    [ExcludeFromCodeCoverage]
     internal class Logger
     {
 #pragma warning disable 649

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     internal class PauseRequestParameters
     {
         internal PauseRequestParameters(int objectId, int? durationMinutes, string pauseMessage)

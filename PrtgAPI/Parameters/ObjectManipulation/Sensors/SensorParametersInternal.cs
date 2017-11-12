@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
@@ -11,7 +7,8 @@ namespace PrtgAPI.Parameters
     /// <summary>
     ///Base class for defining type-safe parameter types used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects.
     /// </summary>
-    public abstract class SensorParametersInternal : BaseSensorParameters
+    [ExcludeFromCodeCoverage]
+    public abstract class SensorParametersInternal : NewSensorParameters
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SensorParametersInternal"/> class.

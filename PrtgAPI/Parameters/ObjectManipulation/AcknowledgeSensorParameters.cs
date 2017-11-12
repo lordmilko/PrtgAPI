@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class AcknowledgeSensorParameters : BaseActionParameters
     {
         public AcknowledgeSensorParameters(int objectId, int? duration, string message) : base(objectId)

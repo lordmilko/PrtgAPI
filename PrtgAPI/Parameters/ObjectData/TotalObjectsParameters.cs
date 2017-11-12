@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class TotalObjectsParameters : Parameters
     {
         public TotalObjectsParameters(Content content)

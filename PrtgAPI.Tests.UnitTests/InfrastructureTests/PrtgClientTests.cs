@@ -84,22 +84,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             Assert.AreEqual(retriesToMake * 2, retriesMade, "An incorrect number of retries were made.");
         }
 
+        private int prtgClientRetriesNormally;
+
         [TestMethod]
         public void PrtgClient_RetriesNormally()
         {
+            prtgClientRetriesNormally = 0;
+
             var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());
 
             var client = new PrtgClient("prtg.example.com", "username", "passhash", AuthMode.PassHash, new MockRetryWebClient(response, true));
 
             var retriesToMake = 3;
-            var retriesMade = 0;
 
             client.RetryCount = retriesToMake;
 
-            client.RetryRequest += (sender, args) =>
-            {
-                retriesMade++;
-            };
+            client.RetryRequest += OnClientOnRetryRequest;
 
             try
             {
@@ -110,7 +110,24 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             {
             }
 
-            Assert.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
+            Assert.AreEqual(retriesToMake, prtgClientRetriesNormally, "An incorrect number of retries were made.");
+
+            client.RetryRequest -= OnClientOnRetryRequest;
+
+            try
+            {
+                var moreSensors = client.GetSensors().ToList();
+            }
+            catch (WebException)
+            {
+            }
+
+            Assert.AreEqual(retriesToMake, prtgClientRetriesNormally, "Retry handler was called after it was removed");
+        }
+
+        private void OnClientOnRetryRequest(object sender, RetryRequestEventArgs args)
+        {
+            prtgClientRetriesNormally++;
         }
 
         [TestMethod]
@@ -213,21 +230,31 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             ExecuteFailedRequest(HttpStatusCode.OK, html.ToString(SaveOptions.DisableFormatting), null, "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly. Error message: Sorry, the selected object cannot be used here.");
         }
 
+        private int prtgClientLogVerboseHit;
+
         [TestMethod]
         public void PrtgClient_LogVerbose()
         {
-            var hit = false;
+            prtgClientLogVerboseHit = 0;
 
             var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, new MockWebClient(new SensorResponse(new SensorItem())));
 
-            client.LogVerbose += (e, o) =>
-            {
-                hit = true;
-            };
+            client.LogVerbose += LogVerboseHandler;
 
             var sensors = client.GetSensors();
 
-            Assert.IsTrue(hit, "Verbose was not called");
+            Assert.AreEqual(prtgClientLogVerboseHit, 1, "Verbose was not called");
+
+            client.LogVerbose -= LogVerboseHandler;
+
+            sensors = client.GetSensors();
+
+            Assert.AreEqual(prtgClientLogVerboseHit, 1, "Verbose was called after it was removed");
+        }
+
+        private void LogVerboseHandler(object sender, LogVerboseEventArgs e)
+        {
+            prtgClientLogVerboseHit++;
         }
 
         private void ExecuteFailedRequest(HttpStatusCode statusCode, string xml, string address, string expectedError)

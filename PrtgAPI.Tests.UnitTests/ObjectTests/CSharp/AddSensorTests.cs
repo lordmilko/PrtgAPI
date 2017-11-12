@@ -47,7 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void AddSensor_Throws_MissingSensorName()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
@@ -56,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void AddSensor_Throws_MissingSensorType()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));

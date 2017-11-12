@@ -1,6 +1,6 @@
 ﻿using PrtgAPI.Request;
 
-namespace PrtgAPI.Parameters.ObjectData
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Sensor"/> objects.
@@ -22,7 +22,5 @@ namespace PrtgAPI.Parameters.ObjectData
             get { return GetMultiParameterFilterValue<Status>(Property.Status); }
             set { SetMultiParameterFilterValue(Property.Status, value); }
         }
-
-        //todo: implement filter_tags
     }
 }

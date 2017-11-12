@@ -53,8 +53,16 @@ Describe "New-SensorParameters" {
         { New-SensorParameters @{"sensortype" = "custom type"} } | Should Throw "'name_' is mandatory"
     }
 
+    It "throws when a raw name is null" {
+        { New-SensorParameters @{"name_" = $null; "sensortype" = "custom type"} } | Should Throw "sensorName cannot be null or empty"
+    }
+
     It "throws when a raw sensortype isn't specified" {
         { New-SensorParameters @{"name_" = "custom name"} } | Should Throw "'sensortype' is mandatory"
+    }
+
+    It "throws when a raw sensortype is null" {
+        { New-SensorParameters @{"name_" = "custom name"; "sensortype" = $null} } | Should Throw "sensorType cannot be null or empty"
     }
 
     Context "ExeXmlSensorParameters" {

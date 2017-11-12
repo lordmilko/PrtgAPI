@@ -1,18 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Objects.Deserialization
 {
+    [ExcludeFromCodeCoverage]
     static class DeserializationHelpers
     {
-        internal static bool YesNoToBool(string str)
-        {
-            if (str.ToLower() == "yes")
-                return true;
-            if (str.ToLower() == "no")
-                return false;
-            throw new Exception("Invalid value specified: " + str);
-        }
-
         internal static int StrToInt(string value)
         {
             return string.IsNullOrEmpty(value) ? 0 : Convert.ToInt32(value);

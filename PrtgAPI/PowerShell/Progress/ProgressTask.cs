@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -56,6 +53,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// <param name="func">The operation to execute.</param>
         /// <param name="operationDescription">The progress description to use for this operation.</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         public ProgressTask<TNewResult> Then<TNewResult>(Func<List<TResult>, List<TNewResult>> func, string operationDescription)
         {
             if (ValueEmpty())

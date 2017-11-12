@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class PauseParameters : PauseParametersBase
     {
         public PauseParameters(int objectId, PauseAction action = PauseAction.Pause) : base(objectId)

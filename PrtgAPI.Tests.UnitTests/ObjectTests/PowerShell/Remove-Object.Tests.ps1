@@ -18,4 +18,22 @@ Describe "Remove-Object" -Tag @("PowerShell", "UnitTest") {
 
         $obj | Remove-Object -Force
     }
+
+    It "executes with -WhatIf" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        $sensor | Remove-Object -WhatIf
+    }
+    
+    It "executes ShouldContinue" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        try
+        {
+            $sensor | Remove-Object
+        }
+        catch
+        {
+        }
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using PrtgAPI.Helpers;
+using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {
@@ -58,7 +59,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Down"/> state.
         /// </summary>
-        public int Alarms => StrToInt(alarmsStr);
+        public int Alarms => DH.StrToInt(alarmsStr);
 
         [DataMember(Name = "AckAlarms")]
         private string acknowledgedAlarmsStr;
@@ -66,7 +67,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.DownAcknowledged"/> state.
         /// </summary>
-        public int AcknowledgedAlarms => StrToInt(acknowledgedAlarmsStr);
+        public int AcknowledgedAlarms => DH.StrToInt(acknowledgedAlarmsStr);
 
         [DataMember(Name = "PartialAlarms")]
         private string partialAlarmsStr;
@@ -74,7 +75,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.DownPartial"/> state.
         /// </summary>
-        public int PartialAlarms => StrToInt(partialAlarmsStr);
+        public int PartialAlarms => DH.StrToInt(partialAlarmsStr);
 
         [DataMember(Name = "UnusualSens")]
         private string unusualSensorsStr;
@@ -83,7 +84,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Unusual"/> state.
         /// </summary>
 
-        public int UnusualSensors => StrToInt(unusualSensorsStr);
+        public int UnusualSensors => DH.StrToInt(unusualSensorsStr);
 
         [DataMember(Name = "UpSens")]
         private string upSensorsStr;
@@ -92,7 +93,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Up"/> state.
         /// </summary>
 
-        public int UpSensors => StrToInt(upSensorsStr);
+        public int UpSensors => DH.StrToInt(upSensorsStr);
 
         [DataMember(Name = "WarnSens")]
         private string warningSensorsStr;
@@ -100,7 +101,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Warning"/> state.
         /// </summary>
-        public int WarningSensors => StrToInt(warningSensorsStr);
+        public int WarningSensors => DH.StrToInt(warningSensorsStr);
 
         [DataMember(Name = "PausedSens")]
         private string pausedSensorsStr;
@@ -108,7 +109,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Paused"/> state.
         /// </summary>
-        public int PausedSensors => StrToInt(pausedSensorsStr);
+        public int PausedSensors => DH.StrToInt(pausedSensorsStr);
 
         [DataMember(Name = "UnknownSens")]
         private string unknownSensorsStr;
@@ -117,7 +118,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Unknown"/> state.
         /// </summary>
 
-        public int UnknownSensors => StrToInt(unknownSensorsStr);
+        public int UnknownSensors => DH.StrToInt(unknownSensorsStr);
 
         [DataMember(Name = "NewTickets")]
         private string newTicketsStr;
@@ -125,7 +126,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of new unread tickets since last logon.
         /// </summary>
-        public int NewTickets => StrToInt(newTicketsStr);
+        public int NewTickets => DH.StrToInt(newTicketsStr);
 
         /// <summary>
         /// Object ID of your user within PRTG.
@@ -389,11 +390,6 @@ namespace PrtgAPI
 
                 return Convert.ToBoolean(Convert.ToInt32(activatedStr));
             }
-        }
-
-        private int StrToInt(string str)
-        {
-            return string.IsNullOrEmpty(str) ? 0 : Convert.ToInt32(str);
         }
     }
 #pragma warning restore CS0649

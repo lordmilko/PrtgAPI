@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class MoveObjectParameters : BaseActionParameters
     {
         public MoveObjectParameters(int objectId, int targetId) : base(objectId)

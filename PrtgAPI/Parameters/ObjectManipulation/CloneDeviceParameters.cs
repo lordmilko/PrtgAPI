@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class CloneDeviceParameters : CloneSensorOrGroupParameters
     {
         public CloneDeviceParameters(int objectId, string cloneName, int targetId, string host) : base(objectId, cloneName, targetId)
         {
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
+            if (string.IsNullOrEmpty(host))
+                throw new ArgumentException("host cannot be null or empty", nameof(host));
 
             Host = host;
         }

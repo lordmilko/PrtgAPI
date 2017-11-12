@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace PrtgAPI
 {
     [DataContract]
+    [ExcludeFromCodeCoverage]
     class SensorTypeDescriptorInternal
     {
         [DataMember(Name = "sensortypes")]

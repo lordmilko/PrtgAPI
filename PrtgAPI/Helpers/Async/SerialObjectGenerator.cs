@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Helpers
@@ -9,6 +10,7 @@ namespace PrtgAPI.Helpers
     /// Transforms an ordered enumeration of tasks into an <see cref="IEnumerable{T}"/> 
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [ExcludeFromCodeCoverage]
     public class SerialObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
     {
         private IEnumerator<Task<T>> enumerator;

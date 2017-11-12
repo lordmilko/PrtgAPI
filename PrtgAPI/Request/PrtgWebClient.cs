@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Request
 {
+    [ExcludeFromCodeCoverage]
     internal class PrtgWebClient : IWebClient
     {
         private WebClient syncClient = new WebClient();

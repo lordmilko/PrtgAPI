@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
@@ -17,6 +18,7 @@ namespace PrtgAPI.Parameters
             Average = average;
         }
 
+        [ExcludeFromCodeCoverage]
         public int SensorId
         {
             get { return (int)this[Parameter.Id]; }

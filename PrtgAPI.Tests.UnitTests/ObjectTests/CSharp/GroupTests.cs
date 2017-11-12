@@ -28,8 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Group_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamGroups,
             client => client.StreamGroups,
             client => client.StreamGroups,
             client => client.StreamGroups

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Xml;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -12,7 +9,8 @@ namespace PrtgAPI.Objects.Deserialization
     /// Deserializes XML returned from a PRTG Request.
     /// </summary>
     /// <typeparam name="T">The type of objects to create from the request.</typeparam>
-    public class Data<T>
+    [ExcludeFromCodeCoverage]
+    internal class Data<T>
     {
         /// <summary>
         /// Total number of objects returned by the request.

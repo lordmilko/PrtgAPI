@@ -2,7 +2,7 @@
 using PrtgAPI.Attributes;
 using PrtgAPI.Objects.Shared;
 
-namespace PrtgAPI.Objects
+namespace PrtgAPI
 {
     class Ticket : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
     {

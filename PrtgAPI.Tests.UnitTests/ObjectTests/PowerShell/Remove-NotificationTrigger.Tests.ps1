@@ -20,4 +20,27 @@ Describe "Remove-NotificationTrigger" {
 
         { $trigger | Remove-Trigger -Force } | Should Throw "as it is inherited"
     }
+
+    It "can execute with -WhatIf" {
+        $trigger = Get-Sensor | Get-Trigger
+        $trigger.Inherited | Should Be $true
+
+        $trigger | Remove-Trigger -Force -WhatIf
+    }
+
+    It "executes ShouldContinue" {
+        $sensor = Get-Sensor
+        $sensor.Id = 0
+
+        $trigger = $sensor | Get-Trigger
+        $trigger.Inherited | Should Be $false
+
+        try
+        {
+            $trigger | Remove-Trigger
+        }
+        catch
+        {
+        }
+    }
 }

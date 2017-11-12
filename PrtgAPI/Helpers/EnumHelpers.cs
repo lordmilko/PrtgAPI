@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
@@ -8,6 +9,7 @@ using PrtgAPI.Exceptions.Internal;
 
 namespace PrtgAPI.Helpers
 {
+    [ExcludeFromCodeCoverage]
     static class EnumHelpers
     {
         public static T ToEnum<T>(this string value)
@@ -33,12 +35,15 @@ namespace PrtgAPI.Helpers
             {
                 if (e.HasFlag(enumListMember) && !e.Equals(enumListMember) && Convert.ToInt32(enumListMember) != 0)
                 {
+                    //Recurse and see whether this enum has children of its own
                     var result = GetUnderlyingFlagsInternal(enumListMember, enums).ToList();
 
+                    //No children, just return me
                     if (result.Count == 0)
                         yield return enumListMember;
                     else
                     {
+                        //Forget me and return all my children
                         foreach (var val in result)
                         {
                             yield return val;

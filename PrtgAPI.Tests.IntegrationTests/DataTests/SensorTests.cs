@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Parameters.ObjectData;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {

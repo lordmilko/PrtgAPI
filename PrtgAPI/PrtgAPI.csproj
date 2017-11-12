@@ -132,7 +132,7 @@
     <Compile Include="Parameters\ObjectManipulation\PauseRequestParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RenameParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\ExeXmlSensorParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\Sensors\BaseSensorParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\Sensors\NewSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\RawSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\SensorParametersInternal.cs" />
     <Compile Include="Parameters\ObjectManipulation\SetObjectPropertyParameters.cs" />

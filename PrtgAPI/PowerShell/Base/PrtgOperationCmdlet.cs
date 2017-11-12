@@ -25,25 +25,6 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// Executes an action that returns a value and displays a progress message (if required).
-        /// </summary>
-        /// <typeparam name="T">The type of value to be returned by the action.</typeparam>
-        /// <param name="action">The action to be performed.</param>
-        /// <param name="activity">The title of the progress message to display.</param>
-        /// <param name="progressMessage">The body of the progress message to display.</param>
-        /// <returns></returns>
-        protected T ExecuteOperation<T>(Func<T> action, string activity, string progressMessage)
-        {
-            ProgressManager.ProcessOperationProgress(activity, progressMessage);
-            var result = action();
-
-            if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
-                ProgressManager.CompleteProgress();
-
-            return result;
-        }
-
-        /// <summary>
         /// Parse a value into its expected type. Requires the target <paramref name="property"/> contain a Parse method.
         /// </summary>
         /// <param name="property">The property the value applies to.</param>

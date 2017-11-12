@@ -36,4 +36,23 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
 
         $obj | Pause-Object -Duration 10 -Message "Pausing object!"
     }
+
+    It "pauses for 1 minute" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        $sensor | Pause-Object -Duration 1
+    }
+
+    It "throws when a duration is less than 1" {
+
+        $sensor = Run Sensor { Get-Sensor }
+
+        { $sensor | Pause-Object -Until (Get-Date) } | Should Throw "Duration evaluated to less than one minute"
+    }
+
+    It "executes with -WhatIf" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        $sensor | Pause-Object -Duration 10 -WhatIf
+    }
 }

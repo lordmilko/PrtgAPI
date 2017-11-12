@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
@@ -36,8 +37,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Sensor_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamSensors,
             client => client.StreamSensors,
             client => client.StreamSensors,
             client => client.StreamSensors,
@@ -53,6 +54,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void Sensor_StreamSerially() => Object_SerialStreamObjects(new SensorParameters());
+
+        [TestMethod]
         public void Sensor_AllFields_HaveValues()
         {
             Object_AllFields_HaveValues(prop =>
@@ -63,8 +67,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 return false;
             });
         }
-
-        
 
         protected override List<Sensor> GetObjects(PrtgClient client) => client.GetSensors();
 

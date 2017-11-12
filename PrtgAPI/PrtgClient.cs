@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +15,6 @@ using PrtgAPI.Parameters;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
-using PrtgAPI.Parameters.ObjectData;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -293,6 +293,7 @@ namespace PrtgAPI
         /// <param name="obj">The object to amend.</param>
         /// <param name="action">A modification function to apply to the object.</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         internal T Amend<T>(T obj, Action<T> action)
         {
             action(obj);
@@ -472,6 +473,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
+        [ExcludeFromCodeCoverage]
         public List<SensorTypeDescriptor> GetSensorTypes(int objectId) =>
             GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).Types;
 
@@ -480,6 +482,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
+        [ExcludeFromCodeCoverage]
         public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId) =>
             (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).ConfigureAwait(false)).Types;
 
@@ -488,7 +491,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public void AddSensor(int deviceId, BaseSensorParameters parameters)
+        public void AddSensor(int deviceId, NewSensorParameters parameters)
         {
             ValidateSensorParameters(parameters);
 
@@ -502,7 +505,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public async Task AddSensorAsync(int deviceId, BaseSensorParameters parameters)
+        public async Task AddSensorAsync(int deviceId, NewSensorParameters parameters)
         {
             ValidateSensorParameters(parameters);
 
@@ -511,7 +514,7 @@ namespace PrtgAPI
             await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor5, internalParams).ConfigureAwait(false);
         }
 
-        private void ValidateSensorParameters(BaseSensorParameters parameters)
+        private void ValidateSensorParameters(NewSensorParameters parameters)
         {
             var properties = parameters.GetType().GetNormalProperties().ToList();
 
@@ -531,7 +534,7 @@ namespace PrtgAPI
             }
         }
 
-        private Parameters.Parameters GetInternalSensorParameters(int deviceId, BaseSensorParameters parameters)
+        private Parameters.Parameters GetInternalSensorParameters(int deviceId, NewSensorParameters parameters)
         {
             var newParams = new Parameters.Parameters();
 
@@ -807,7 +810,7 @@ namespace PrtgAPI
         /// <summary>
         /// Stream groups from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        public IEnumerable<Group> StreamGroups(GroupParameters parameters) => StreamObjects<Group>(parameters);
+        public IEnumerable<Group> StreamGroups(GroupParameters parameters) => StreamObjects(parameters);
 
             #endregion
         #endregion

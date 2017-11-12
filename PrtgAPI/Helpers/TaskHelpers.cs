@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Helpers
 {
+    [ExcludeFromCodeCoverage]
     static class TaskHelpers
     {
         //https://blogs.msdn.microsoft.com/pfxteam/2012/08/02/processing-tasks-as-they-complete/
@@ -35,18 +37,6 @@ namespace PrtgAPI.Helpers
                 inputTask.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
 
             return results;
-        }
-
-        public static async void WhenAnyForAll2<T>(IEnumerable<Task<T>> tasks)
-        {
-            //var generator = new ObjectGenerator2(tasks.WhenAnyForAll());
-
-            foreach (var item in (tasks).WhenAnyForAll())
-            {
-                var t = await item;
-                var result = await t;
-
-            }
         }
     }
 }

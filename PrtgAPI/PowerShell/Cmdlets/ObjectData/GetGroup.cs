@@ -1,5 +1,5 @@
 ﻿using System.Management.Automation;
-using PrtgAPI.Parameters.ObjectData;
+using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets

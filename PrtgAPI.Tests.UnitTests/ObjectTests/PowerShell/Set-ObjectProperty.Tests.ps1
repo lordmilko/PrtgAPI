@@ -68,4 +68,22 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
     It "sets a raw property" {
         $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName" -Force
     }
+
+    It "executes a supported property with -WhatIf" {
+        $sensor | Set-ObjectProperty InheritAccess $true -WhatIf
+    }
+
+    It "executes a raw property with -WhatIf" {
+        $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName" -Force -WhatIf
+    }
+
+    It "executes a raw property with ShouldContinue" {
+        try
+        {
+            $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName"
+        }
+        catch
+        {
+        }
+    }
 }

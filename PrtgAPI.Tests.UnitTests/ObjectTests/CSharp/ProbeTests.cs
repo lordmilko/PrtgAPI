@@ -29,8 +29,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
         public void Probe_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamProbes,
             client => client.StreamProbes,
             client => client.StreamProbes,
             client => client.StreamProbes

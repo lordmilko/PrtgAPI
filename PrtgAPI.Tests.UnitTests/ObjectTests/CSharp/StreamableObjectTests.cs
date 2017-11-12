@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Objects.Shared;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -70,6 +71,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected void Object_GetObjectsOverloads_Stream_CanExecute(
+            Func<PrtgClient, Func<object>> regularValue,
             Func<PrtgClient, Func<Property, object, object>> propertyValue,
             Func<PrtgClient, Func<Property, FilterOperator, string, object>> propertyOperatorValue,
             Func<PrtgClient, Func<SearchFilter[], object>> searchFilter,
@@ -77,17 +79,30 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         )
         {
             //OpenCover doesn't deal with Streaming cmdlets very well. As such, we execute these in a separate method
-            //that can be excluded from code coverage
+            //we can potentially exclude from coverage
 
-            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 2000).Select(i => GetItem()).ToArray());
+            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, 755).Select(i => GetItem()).ToArray());
 
+            var regularFunction = regularValue(streamClient);
             var propertyValueFunction = propertyValue(streamClient);
             var propertyOperatorValueFunction = propertyOperatorValue(streamClient);
             var searchFilterFunction = searchFilter(streamClient);
 
+            CheckResult<IEnumerable<TObject>>(regularFunction());
             RunFunctions<IEnumerable<TObject>>(propertyValueFunction, propertyOperatorValueFunction, searchFilterFunction);
 
             other?.Invoke(streamClient);
+        }
+
+        protected void Object_SerialStreamObjects<T>(ContentParameters<T> parameters)
+        {
+            var count = 755;
+
+            var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
+
+            var items = streamClient.SerialStreamObjects(parameters).ToList();
+
+            Assert.AreEqual(count, items.Count);
         }
 
         private void RunFunctions<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable

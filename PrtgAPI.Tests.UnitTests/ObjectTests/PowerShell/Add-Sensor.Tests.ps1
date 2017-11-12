@@ -19,4 +19,12 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         { $device | Add-Sensor $params } | Should Throw "'ExeName' requires a value"
     }
+
+    It "executes with -WhatIf" {
+        $params = New-SensorParameters ExeXml
+
+        $device = Run Device { Get-Device }
+
+        $device | Add-Sensor $params -WhatIf
+    }
 }

@@ -43,28 +43,13 @@ namespace PrtgAPI.Parameters.Helpers
 
                 return;
             }
-                
-            var valueTypeUnderlying = Nullable.GetUnderlyingType(ValueType);
-
-            //If the property and value types aren't both nullable, if one of them IS nullable set that one to its underlying type (Nullable<T> => T)
-            if (!(propertyTypeUnderlying != null && valueTypeUnderlying != null))
-            {
-                if (propertyTypeUnderlying != null)
-                    PropertyType = propertyTypeUnderlying;
-
-                if (valueTypeUnderlying != null)
-                    ValueType = valueTypeUnderlying;
-            }
-
-            //If the property type is not nullable but the value type is, set the value type to its underlying type (Nullable<T> => T)
-            if (propertyTypeUnderlying == null)
-            {
-                //But the value type is, 
-                if (valueTypeUnderlying != null)
-                {
-                    ValueType = valueTypeUnderlying;
-                }
-            }
+            
+            //If the property type is nullable, set it to its underlying type. Ideally, we would want to check
+            //that both the property type and value type aren't both nullable, and then set whichever one
+            //was nullable to its underlying type, however since ValueType will be boxed to its underlying
+            //type T, it is never nullable and therefore we don't need to perform this check
+            if (propertyTypeUnderlying != null)
+                PropertyType = propertyTypeUnderlying;
         }
 
         /// <summary>
@@ -129,7 +114,10 @@ namespace PrtgAPI.Parameters.Helpers
 
                 if (isArray)
                 {
-                    return string.Join(splittableStringChar, (object[])Value);
+                    if (Value == null)
+                        return null;
+
+                    return string.Join(splittableStringChar, ((Array)Value).Cast<object>().ToArray());
                 }
 
                 val = Value?.ToString();

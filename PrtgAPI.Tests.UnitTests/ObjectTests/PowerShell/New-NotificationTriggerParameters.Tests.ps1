@@ -66,6 +66,23 @@ Describe "New-NotificationTriggerParameters" -Tag @("PowerShell", "UnitTest") {
         $parameters.Channel | Should Be "Percent Available Memory"
     }
 
+    $cases = @(
+        @{ name = "Change" }
+        @{ name = "Speed" }
+        @{ name = "State" }
+        @{ name = "Threshold" }
+        @{ name = "Volume" }
+    )
+
+    It "creates a set of <name> trigger parameters" -TestCases $cases {
+
+        param($name)
+
+        $params = New-TriggerParameters 1001 $name
+
+        $params.GetType().Name | Should Be "$($name)TriggerParameters"
+    }
+
     It "throws assigning a random value to Channel" {
         $parameters = New-TriggerParameters $device.Id Threshold
 

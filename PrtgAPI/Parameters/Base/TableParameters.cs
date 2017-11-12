@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Request;
@@ -14,6 +15,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Filter objects to those with a <see cref="Property"/> of a certain value. Specify multiple filters to limit results further.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public virtual SearchFilter[] SearchFilter
         {
             get { return (SearchFilter[])this[Parameter.FilterXyz]; }
@@ -23,6 +25,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// <see cref="Property"/> to sort response by.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public Property SortBy
         {
             get { return (Property)this[Parameter.SortBy]; }

@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
 namespace PrtgAPI.Objects.Deserialization
 {
+    [ExcludeFromCodeCoverage]
     class XmlMapping
     {
         public Type Type { get; private set; }

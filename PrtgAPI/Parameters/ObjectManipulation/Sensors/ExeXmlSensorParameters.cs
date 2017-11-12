@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
@@ -176,6 +173,7 @@ namespace PrtgAPI.Parameters
         }
     }
 
+    [ExcludeFromCodeCoverage]
     internal class ScriptName : IFormattable
     {
         public string Name { get; set; }

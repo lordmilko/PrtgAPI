@@ -40,14 +40,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 var c = Convert.ToInt32(queries["count"]);
 
-                if (c < list.Count && c > 0)
+                if (c < list.Count && c > 0 || c == 0)
                 {
                     count = c;
 
                     xmlList = list.Take(count).Select(GetItem).ToList();
+
+                    if (c == 0)
+                        count = list.Count;
                 }
                 else
+                {
                     xmlList = list.Select(GetItem).ToList();
+                }
             }
             else
                 xmlList = list.Select(GetItem).ToList();
@@ -62,9 +67,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return xml.ToString();
         }
 
-        //public abstract Task<string> GetResponseTextAsync(string address);
-
-        //public async Task<string> GetResponseTextAsync(string address, Action<T, string> action)
         public virtual async Task<string> GetResponseTextStream(string address)
         {
             var page = GetPageNumber(address);

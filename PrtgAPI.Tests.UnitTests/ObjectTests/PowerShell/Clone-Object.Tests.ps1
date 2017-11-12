@@ -25,4 +25,30 @@ Describe "Clone-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $output | Should Be $expected
     }
+
+    It "doesn't resolve a sensor/group" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        $result = $sensor | Clone-Sensor 1234 "new sensor" -Resolve:$false
+
+        $result.GetType().Name | Should Be "PSCustomObject"
+    }
+
+    It "doesn't resolve a device" {
+        $device = Run Device { Get-Device }
+
+        $result = $device | Clone-Device 1234 "new device" -Resolve:$false
+
+        $result.GetType().Name | Should Be "PSCustomObject"
+    }
+
+    It "executes with -WhatIf" {
+        $sensor = Run Sensor { Get-Sensor }
+        $device = Run Device { Get-Device }
+        $group = Run Group { Get-Group }
+
+        $sensor | Clone-Sensor 1234 -WhatIf
+        $device | Clone-Device 1234 -WhatIf
+        $group | Clone-Group 1234 -WhatIf
+    }
 }

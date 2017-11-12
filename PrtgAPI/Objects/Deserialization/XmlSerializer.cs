@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,7 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Deserialization
 {
+    [ExcludeFromCodeCoverage]
     class XmlSerializer
     {
         private Type outerType;
@@ -49,8 +51,6 @@ namespace PrtgAPI.Objects.Deserialization
                         case XmlAttributeType.Text:
                             ProcessXmlText(obj, mapping, elm);
                             break;
-                           // ProcessXmlEnum(obj, mapping, elm);
-                            //break;
                         default:
                             throw new NotSupportedException(); //todo: add an appropriate failure message
                     }
@@ -161,7 +161,6 @@ namespace PrtgAPI.Objects.Deserialization
             if (attribute != null)
             {
                 var value = mapping.AttributeValue.Select(a => elm.Element(a)).FirstOrDefault(x => x != null);
-                //var value = elm.Element(mapping.AttributeValue);
 
                 var str = value != null ? $"\"{value.Value}\"" : "null";
                 Logger.Debug($"XElement contained {str}");
@@ -192,14 +191,6 @@ namespace PrtgAPI.Objects.Deserialization
             try
             {
                 ProcessXmlText(obj, mapping, value);
-                //value = NullifyMissingValue(value);
-
-                //var finalValue = value == null ? null : GetValue(type, value.Value);
-
-                //if (type.IsValueType && Nullable.GetUnderlyingType(type) == null && finalValue == null)
-                //    throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
-
-                //mapping.Property.SetValue(obj, finalValue);
             }
             catch (Exception ex) when (!(ex is XmlDeserializationException))
             {
@@ -322,9 +313,6 @@ namespace PrtgAPI.Objects.Deserialization
 
             switch (Type.GetTypeCode(type))
             {
-                //case TypeCode.String:
-                //    o = reader.Read_string();
-                //    break;
                 case TypeCode.Int32:
                     return XmlConvert.ToInt32(str);
                 case TypeCode.Boolean:
@@ -339,9 +327,6 @@ namespace PrtgAPI.Objects.Deserialization
                     return ToDouble(str);
                 case TypeCode.Decimal:
                     return XmlConvert.ToDecimal(str);
-                //case TypeCode.DateTime:
-                    //o = reader.Read_dateTime(); //DH.ConvertPrtgDateTime(_RawDataCollectedSince);
-                    //break;
                 case TypeCode.Char:
                     return XmlConvert.ToChar(str);
                 case TypeCode.Byte:

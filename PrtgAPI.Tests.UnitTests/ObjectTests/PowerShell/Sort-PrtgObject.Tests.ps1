@@ -1,17 +1,17 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-Describe "Start-AutoDiscovery" -Tag @("PowerShell", "UnitTest") {
+Describe "Sort-PrtgObject" -Tag @("PowerShell", "UnitTest") {
     SetActionResponse
 
-    It "pipes from a device" {
+    It "can execute" {
         $device = Run Device { Get-Device }
 
-        $device | Start-AutoDiscovery
+        $device | Sort-PrtgObject
     }
 
     It "executes with -WhatIf" {
         $device = Run Device { Get-Device }
 
-        $device | Start-AutoDiscovery -WhatIf
+        $device | Sort-PrtgObject -WhatIf
     }
 }

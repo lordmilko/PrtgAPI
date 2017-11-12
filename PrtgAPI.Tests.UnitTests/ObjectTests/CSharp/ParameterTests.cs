@@ -1,13 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Parameters.ObjectData;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
 {
     [TestClass]
     public class ParameterTests
     {
+        [TestMethod]
+        public void CustomParameter_ToString_FormatsCorrectly()
+        {
+            var parameter = new CustomParameter("name", "val");
+
+            Assert.AreEqual("name=val", parameter.ToString());
+        }
+
         [TestMethod]
         public void SensorParameters_Status_CanBeGetAndSet()
         {
@@ -64,6 +73,49 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
 
             Assert.AreEqual(start.ToString(), parameters.StartDate.ToString(), "Start was not correct");
             Assert.AreEqual(end.ToString(), parameters.EndDate.ToString(), "End was not correct");
+        }
+
+        [TestMethod]
+        public void RawSensorParameters_Parameters_InitializesIfNull()
+        {
+            var parameters = new RawSensorParameters("testName", "sensorType")
+            {
+                [Parameter.Custom] = null
+            };
+
+            Assert.AreEqual(typeof (List<CustomParameter>), parameters.Parameters.GetType());
+        }
+
+        [TestMethod]
+        public void SensorHistoryParameters_GetsProperties()
+        {
+            var start = DateTime.Now.AddHours(-1);
+            var parameters = new SensorHistoryParameters(1001, 600, null, null);
+
+            Assert.AreEqual(parameters.StartDate.ToString(), start.ToString());
+            Assert.AreEqual(parameters.EndDate.ToString(), start.AddHours(1).ToString());
+            Assert.AreEqual(parameters.Average, 600);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SensorHistoryParameters_Throws_WhenAverageIsLessThanZero()
+        {
+            var parameters = new SensorHistoryParameters(1001, -1, null, null);
+        }
+
+        [TestMethod]
+        public void Parameters_ReplacesCounterpart()
+        {
+            var parameters = new Parameters.Parameters
+            {
+                [Parameter.Password] = "password",
+                [Parameter.PassHash] = "passhash"
+            };
+
+            Assert.AreEqual(1, parameters.GetParameters().Keys.Count);
+            Assert.AreEqual(parameters[Parameter.PassHash], "passhash");
+            Assert.AreEqual(null, parameters[Parameter.Password]);
         }
     }
 }

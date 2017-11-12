@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class GetObjectPropertyRawParameters : BaseActionParameters
     {
         public GetObjectPropertyRawParameters(int objectId, string name) : base(objectId)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("Argument must have a value", nameof(name));
+                throw new ArgumentException("name cannot be null or empty", nameof(name));
 
             if (name.EndsWith("_"))
                 name = name.Substring(0, name.Length - 1);

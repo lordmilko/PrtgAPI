@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class RemoveTriggerParameters : BaseActionParameters
     {
         public RemoveTriggerParameters(NotificationTrigger trigger) : base(ValidateTrigger(trigger))

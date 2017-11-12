@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Helpers
@@ -8,7 +9,8 @@ namespace PrtgAPI.Helpers
     /// <summary>
     /// Transforms an unordered parallel task into an <see cref="IEnumerable{T}"/> 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of object returned by this generator.</typeparam>
+    [ExcludeFromCodeCoverage]
     public class ParallelObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
     {
         private IEnumerator enumerator;

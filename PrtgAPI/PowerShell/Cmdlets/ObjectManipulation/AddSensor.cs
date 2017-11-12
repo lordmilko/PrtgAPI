@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -13,7 +8,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Adds a new sensor to a PRTG Device.</para>
     /// 
     /// <para type="description">The Add-Sensor cmdlet adds a new sensor to a PRTG Device. When adding a new
-    /// sensor, you must first create a <see cref="BaseSensorParameters"/> object that defines the type of
+    /// sensor, you must first create a <see cref="NewSensorParameters"/> object that defines the type of
     /// sensor to create and the settings to use in the new object.</para>
     /// 
     /// <para type="description">When adding sensor types that are natively supported by PrtgAPI, Add-Sensor
@@ -67,7 +62,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">A set of parameters whose properties describe the type of sensor to add, to what device, with what settings.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
-        public BaseSensorParameters Parameters { get; set; }
+        public NewSensorParameters Parameters { get; set; }
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.

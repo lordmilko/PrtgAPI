@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
@@ -27,5 +29,29 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         public override MessageItem GetItem() => new MessageItem();
 
         protected override MessageResponse GetResponse(MessageItem[] items) => new MessageResponse(items);
+
+        [TestMethod]
+        public void Log_ExecutesAllOverloads()
+        {
+            var client = Initialize_Client_WithItems(GetItem());
+
+            var logsDate = client.GetLogs(null, DateTime.Now);
+            var logsDateAsync = client.GetLogsAsync(null, DateTime.Now).Result;
+            var logsDateStream = client.StreamLogs(null, DateTime.Now).ToList();
+
+            var logsTimeSpan = client.GetLogs();
+            var logsTimeSpanAsync = client.GetLogsAsync().Result;
+            var logsTimeSpanStream = client.StreamLogs().ToList();
+        }
+
+        [TestMethod]
+        public void Log_SanitizesSystemMessage()
+        {
+            var client = Initialize_Client(new MessageResponse(new MessageItem(messageRaw: "#O18", message: "<div class=\"logmessage\">Timeout (code: PE018)<div class=\"moreicon\"></div></div>")));
+
+            var log = client.GetLogs().First();
+
+            Assert.AreEqual(log.Message, "Timeout (code: PE018)");
+        }
     }
 }

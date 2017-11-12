@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
@@ -24,6 +25,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
+    [ExcludeFromCodeCoverage]
     [Cmdlet(VerbsCommon.Open, "PrtgObject")]
     public class OpenPrtgObject : PrtgOperationCmdlet
     {

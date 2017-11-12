@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class ChannelPropertiesParameters : Parameters
     {
         public ChannelPropertiesParameters(int sensorId, int channelId)

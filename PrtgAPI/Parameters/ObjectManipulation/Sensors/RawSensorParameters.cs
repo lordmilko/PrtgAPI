@@ -11,7 +11,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents raw parameters used to construct a <see cref="PrtgUrl"/> for creating a new sensor.
     /// </summary>
-    public class RawSensorParameters : BaseSensorParameters
+    public class RawSensorParameters : NewSensorParameters
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RawSensorParameters"/> class.

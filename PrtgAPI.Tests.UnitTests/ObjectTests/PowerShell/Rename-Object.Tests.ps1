@@ -18,4 +18,10 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
 
         $obj | Rename-Object newName
     }
+
+    It "executes with -WhatIf" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        $sensor | Rename-Object "newName" -WhatIf
+    }
 }
