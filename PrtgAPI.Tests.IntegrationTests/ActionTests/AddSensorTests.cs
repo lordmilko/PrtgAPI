@@ -91,7 +91,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
             }
             finally
             {
-                client.DeleteObject(newSensor.First().Id);
+                client.RemoveObject(newSensor.First().Id);
             }
         }
 

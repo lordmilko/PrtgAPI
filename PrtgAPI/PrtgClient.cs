@@ -1748,16 +1748,16 @@ namespace PrtgAPI
         public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Permanently delete an object from PRTG. This cannot be undone.
+        /// Permanently remove an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public void DeleteObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
+        public void RemoveObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
 
         /// <summary>
-        /// Asynchronously permanently delete an object from PRTG. This cannot be undone.
+        /// Asynchronously permanently remove an object from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
-        public async Task DeleteObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
+        public async Task RemoveObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Rename a Sensor, Device or Group within PRTG. Renaming probes is not supported. To rename a probe, use <see cref="SetObjectProperty(int, ObjectProperty, object)"/> 

@@ -5,22 +5,22 @@ using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
 {
     [TestClass]
-    public class DeleteTests : BaseTest
+    public class RemoveTests : BaseTest
     {
         [TestMethod]
-        public void Delete_CanExecute()
+        public void Remove_CanExecute()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
 
-            client.DeleteObject(1001);
+            client.RemoveObject(1001);
         }
 
         [TestMethod]
-        public async Task Delete_CanExecuteAsync()
+        public async Task Remove_CanExecuteAsync()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
 
-            await client.DeleteObjectAsync(1001);
+            await client.RemoveObjectAsync(1001);
         }
     }
 }

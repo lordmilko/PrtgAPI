@@ -56,7 +56,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 if(Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
-                    ExecuteOperation(() => client.DeleteObject(Object.Id), "Removing PRTG Objects", $"Removing {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
+                    ExecuteOperation(() => client.RemoveObject(Object.Id), "Removing PRTG Objects", $"Removing {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
             }
         }
     }

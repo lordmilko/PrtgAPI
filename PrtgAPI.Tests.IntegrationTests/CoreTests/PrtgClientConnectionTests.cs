@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public void Logic_Client_InvalidRequest()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            client.DeleteObject(0);
+            client.RemoveObject(0);
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public async Task Logic_Client_InvalidRequestAsync()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            await client.DeleteObjectAsync(0);
+            await client.RemoveObjectAsync(0);
         }
 
         [TestMethod]
