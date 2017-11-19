@@ -54,7 +54,7 @@ for(int i = 0; i < 2; i++)
             }
 
             if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
+                return XmlDeserializer<Channel>.DeserializeList(response).Items;
 
             return new List<Channel>();
         }
@@ -178,7 +178,8 @@ if(i == 0)
             else
                 returnType = $"Task<{returnType}>";
         }
-            return $"async {returnType} {name}Async";
+
+        return $"async {returnType} {name}Async";
     }
 
     public string CallFunction(string name, string parameters, int i)

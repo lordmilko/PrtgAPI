@@ -48,7 +48,7 @@ namespace PrtgAPI
             }
 
             if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
+                return XmlDeserializer<Channel>.DeserializeList(response).Items;
 
             return new List<Channel>();
         }
@@ -77,7 +77,7 @@ namespace PrtgAPI
             }
 
             if (items.Count > 0)
-                return Data<Channel>.DeserializeList(response).Items;
+                return XmlDeserializer<Channel>.DeserializeList(response).Items;
 
             return new List<Channel>();
         }

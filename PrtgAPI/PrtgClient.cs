@@ -137,34 +137,34 @@ namespace PrtgAPI
 
         internal List<T> GetObjects<T>(Parameters.Parameters parameters) => GetObjectsRaw<T>(parameters).Items;
 
-        private Data<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
+        private XmlDeserializer<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
-            return Data<T>.DeserializeList(response);
+            return XmlDeserializer<T>.DeserializeList(response);
         }
 
         private async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters) => (await GetObjectsRawAsync<T>(parameters).ConfigureAwait(false)).Items;
 
-        private async Task<Data<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
+        private async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
-            return Data<T>.DeserializeList(response);
+            return XmlDeserializer<T>.DeserializeList(response);
         }
 
         private T GetObject<T>(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
         {
             var response = requestEngine.ExecuteRequest(function, new Parameters.Parameters(), responseValidator);
 
-            return Data<T>.DeserializeType(response);
+            return XmlDeserializer<T>.DeserializeType(response);
         }
 
         private async Task<T> GetObjectAsync<T>(XmlFunction function, Parameters.Parameters parameters)
         {
             var response = await requestEngine.ExecuteRequestAsync(function, new Parameters.Parameters()).ConfigureAwait(false);
 
-            return Data<T>.DeserializeType(response);
+            return XmlDeserializer<T>.DeserializeType(response);
         }
 
         private T GetObject<T>(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
@@ -1525,7 +1525,7 @@ namespace PrtgAPI
             var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
 
-            var items = Data<T>.DeserializeType(xDoc);
+            var items = XmlDeserializer<T>.DeserializeType(xDoc);
 
             return items;
         }
@@ -1848,7 +1848,7 @@ namespace PrtgAPI
 
         private List<SensorHistoryData> ParseSensorHistoryResponse(XDocument response, int sensorId)
         {
-            var items = Data<SensorHistoryData>.DeserializeList(response).Items;
+            var items = XmlDeserializer<SensorHistoryData>.DeserializeList(response).Items;
 
             var regex = new Regex("^(.+)(\\(.+\\))$");
 

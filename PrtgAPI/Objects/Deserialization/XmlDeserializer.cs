@@ -10,7 +10,7 @@ namespace PrtgAPI.Objects.Deserialization
     /// </summary>
     /// <typeparam name="T">The type of objects to create from the request.</typeparam>
     [ExcludeFromCodeCoverage]
-    internal class Data<T>
+    internal class XmlDeserializer<T>
     {
         /// <summary>
         /// Total number of objects returned by the request.
@@ -30,9 +30,9 @@ namespace PrtgAPI.Objects.Deserialization
         [XmlElement("item")]
         public List<T> Items { get; set; }
 
-        internal static Data<T> DeserializeList(XDocument doc)
+        internal static XmlDeserializer<T> DeserializeList(XDocument doc)
         {
-            return DeserializeInternal<Data<T>, T>(doc);
+            return DeserializeInternal<XmlDeserializer<T>, T>(doc);
         }
 
         internal static T DeserializeType(XDocument doc)
