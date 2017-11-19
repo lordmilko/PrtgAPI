@@ -1,10 +1,5 @@
 ﻿. $PSScriptRoot\Support\Standalone.ps1
 
-function SetAddressValidatorResponse($str)
-{
-    SetResponseAndClientWithArguments "AddressValidatorResponse" $str
-}
-
 Describe "New-SearchFilter" {
     Context "Enum Transformation" {
 

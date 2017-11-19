@@ -1667,6 +1667,117 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region System Administration
+
+        /// <summary>
+        /// Request PRTG generate a backup of the PRTG Configuration Database.<para/>
+        /// When executed, this method will request PRTG store a backup of its configuration database under
+        /// the Configuration Auto-Backups folder after first writing the current running configuration to disk.<para/>
+        /// Depending on the size of your database, this may take several seconds to complete. Note that PRTG always creates
+        /// its backup asynchronously; as such when this method returns the backup may not have fully completed.<para/>
+        /// By default, configuration backups are stored under C:\ProgramData\Paessler\PRTG Network Monitor\Configuration Auto-Backups.
+        /// </summary>
+        public void BackupConfigDatabase() =>
+            requestEngine.ExecuteRequest(CommandFunction.SaveNow, new Parameters.Parameters());
+
+        /// <summary>
+        /// Asynchronously request PRTG generate a backup of the PRTG Configuration Database.<para/>
+        /// When executed, this method will request PRTG store a backup of its configuration database under
+        /// the Configuration Auto-Backups folder after first writing the current running configuration to disk.<para/>
+        /// Depending on the size of your database, this may take several seconds to complete. Note that PRTG always creates
+        /// its backup asynchronously; as such when this method returns the backup may not have fully completed.<para/>
+        /// By default, configuration backups are stored under C:\ProgramData\Paessler\PRTG Network Monitor\Configuration Auto-Backups.
+        /// </summary>
+        public async Task BackupConfigDatabaseAsync() =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.SaveNow, new Parameters.Parameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// See each cache type for further details.
+        /// </summary>
+        /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// See each cache type for further details.</param>
+        public void ClearSystemCache(SystemCacheType cache) =>
+            requestEngine.ExecuteRequest(GetClearSystemCacheFunction(cache), new Parameters.Parameters());
+
+        /// <summary>
+        /// Asynchronously clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// See each cache type for further details.
+        /// </summary>
+        /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// See each cache type for further details.</param>
+        public async Task ClearSystemCacheAsync(SystemCacheType cache) =>
+            await requestEngine.ExecuteRequestAsync(GetClearSystemCacheFunction(cache), new Parameters.Parameters()).ConfigureAwait(false);
+
+        [ExcludeFromCodeCoverage]
+        private CommandFunction GetClearSystemCacheFunction(SystemCacheType cache)
+        {
+            if (cache == SystemCacheType.General)
+                return CommandFunction.ClearCache;
+            if (cache == SystemCacheType.GraphData)
+                return CommandFunction.RecalcCache;
+
+            throw new NotImplementedException($"Don't know how to handle cache type '{cache}'");
+        }
+        
+        /// <summary>
+        /// Reload config files including sensor lookups, device icons and report templates used by PRTG.
+        /// </summary>
+        /// <param name="fileType">The type of files to reload.</param>
+        public void LoadConfigFiles(ConfigFileType fileType) =>
+            requestEngine.ExecuteRequest(GetLoadSystemFilesFunction(fileType), new Parameters.Parameters());
+
+        /// <summary>
+        /// Asymchronously reload config files including sensor lookups, device icons and report templates used by PRTG.
+        /// </summary>
+        /// <param name="fileType">The type of files to reload.</param>
+        public async Task LoadConfigFilesAsync(ConfigFileType fileType) =>
+            await requestEngine.ExecuteRequestAsync(GetLoadSystemFilesFunction(fileType), new Parameters.Parameters()).ConfigureAwait(false);
+
+        [ExcludeFromCodeCoverage]
+        private CommandFunction GetLoadSystemFilesFunction(ConfigFileType fileType)
+        {
+            if (fileType == ConfigFileType.General)
+                return CommandFunction.ReloadFileLists;
+            if (fileType == ConfigFileType.Lookups)
+                return CommandFunction.LoadLookups;
+
+            throw new NotImplementedException($"Don't know how to handle file type '{fileType}'");
+        }
+
+        /// <summary>
+        /// Restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.
+        /// </summary>
+        /// <param name="probeId"></param>
+        public void RestartProbe(int? probeId) =>
+            requestEngine.ExecuteRequest(CommandFunction.RestartProbes, new RestartProbeParameters(probeId));
+
+        /// <summary>
+        /// Asynchronously restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.
+        /// </summary>
+        /// <param name="probeId"></param>
+        public async Task RestartProbeAsync(int? probeId) =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.RestartProbes, new RestartProbeParameters(probeId)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Restarts the PRTG Core Service. This will cause PRTG to disconnect all users and become completely unavailable while the service restarts.<para/>
+        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.
+        /// </summary>
+        public void RestartCore()
+        {
+            requestEngine.ExecuteRequest(CommandFunction.RestartServer, new Parameters.Parameters());
+        }
+
+        /// <summary>
+        /// Asynchronously restarts the PRTG Core Service. This will cause PRTG to disconnect all users and become completely unavailable while the service restarts.<para/>
+        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.
+        /// </summary>
+        public async Task RestartCoreAsync()
+        {
+            await requestEngine.ExecuteRequestAsync(CommandFunction.RestartServer, new Parameters.Parameters()).ConfigureAwait(false);
+        }
+
+        #endregion
         #region Miscellaneous
 
         /// <summary>

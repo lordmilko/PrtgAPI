@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests
     {
         [DllImport("advapi32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool LogonUser(
+        static extern bool LogonUser(
             [MarshalAs(UnmanagedType.LPStr)] string pszUserName,
             [MarshalAs(UnmanagedType.LPStr)] string pszDomain,
             [MarshalAs(UnmanagedType.LPStr)] string pszPassword,
@@ -72,6 +72,14 @@ namespace PrtgAPI.Tests.IntegrationTests
             using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
             {
                 action();
+            }
+        }
+
+        public static T ExecuteAction<T>(Func<T> action)
+        {
+            using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
+            {
+                return action();
             }
         }
     }

@@ -18,6 +18,7 @@ New-Alias Clone-Group Copy-Group
 New-Alias Clone-Device Copy-Device
 New-Alias Sort-PrtgObject Start-SortPrtgObject
 New-Alias Simulate-ErrorStatus Test-ErrorStatus
+New-Alias Load-PrtgConfigFile Sync-PrtgConfigFile
 
 New-Alias Connect-GoPrtg Connect-GoPrtgServer
 New-Alias Install-GoPrtg Install-GoPrtgServer
@@ -26,6 +27,8 @@ New-Alias Uninstall-GoPrtg Uninstall-GoPrtgServer
 New-Alias GoPrtg Connect-GoPrtgServer
 
 New-Alias flt New-SearchFilter
+
+New-Alias Restart-PrtgProbe Restart-Probe
 
 $ErrorActionPreference = "Stop"
 

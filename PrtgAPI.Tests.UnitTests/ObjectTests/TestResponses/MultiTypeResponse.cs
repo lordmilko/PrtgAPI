@@ -56,6 +56,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
+                case nameof(CommandFunction.ClearCache):
+                case nameof(CommandFunction.LoadLookups):
+                case nameof(CommandFunction.RecalcCache):
+                case nameof(CommandFunction.RestartServer):
+                case nameof(CommandFunction.RestartProbes):
+                case nameof(CommandFunction.ReloadFileLists):
+                case nameof(CommandFunction.SaveNow):
+                    return new BasicResponse(string.Empty);
                 default:
                     throw GetUnknownFunctionException(function);
             }

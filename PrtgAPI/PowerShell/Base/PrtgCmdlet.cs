@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Progress;
 
@@ -102,5 +103,15 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         #endregion
+
+#if DEBUG
+#pragma warning disable 1591
+        [ExcludeFromCodeCoverage]
+        protected bool UnitTest()
+#pragma warning restore 1591
+        {
+            return client.Server == "prtg.example.com";
+        }
+#endif
     }
 }

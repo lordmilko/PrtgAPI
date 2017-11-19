@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ActionTests\AddSensorTests.cs" />
+    <Compile Include="ActionTests\AdminToolTests.cs" />
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
@@ -96,6 +97,8 @@
     <None Include="New-TestSettings.ps1" />
     <None Include="PowerShell\Add-NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\Add-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Backup-PrtgConfig.Tests.ps1" />
+    <None Include="PowerShell\Clear-PrtgCache.Tests.ps1" />
     <None Include="PowerShell\CodeGeneration.Tests.ps1" />
     <None Include="PowerShell\Edit-NotificationTriggerProperty.Tests.ps1" />
     <None Include="PowerShell\Get-Channel.Tests.ps1" />
@@ -111,12 +114,15 @@
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
     <None Include="PowerShell\Get-SensorFactorySource.Tests.ps1" />
     <None Include="PowerShell\Get-SensorHistory.Tests.ps1" />
+    <None Include="PowerShell\Load-PrtgConfigFile.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Group.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Probe.Tests.ps1" />
     <None Include="PowerShell\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Restart-Probe.Tests.ps1" />
+    <None Include="PowerShell\Restart-PrtgCore.Tests.ps1" />
     <None Include="PowerShell\Set-ChannelProperty.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Device.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Sensor.Tests.ps1" />

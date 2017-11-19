@@ -59,6 +59,27 @@ namespace PrtgAPI
 
         [Undocumented]
         [Description("addsensor5.htm")]
-        AddSensor5
+        AddSensor5,
+
+        [Description("restartprobes.htm")]
+        RestartProbes,
+
+        [Description("restartserver.htm")]
+        RestartServer,
+
+        [Description("savenow.htm")]
+        SaveNow,
+
+        [Description("clearcache.htm")]
+        ClearCache,
+
+        [Description("recalccache.htm")]
+        RecalcCache,
+
+        [Description("reloadfilelists.htm")]
+        ReloadFileLists,
+
+        [Description("loadlookups.htm")]
+        LoadLookups
     }
 }

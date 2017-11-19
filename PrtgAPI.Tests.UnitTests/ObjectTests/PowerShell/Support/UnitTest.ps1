@@ -87,6 +87,40 @@ function SetActionResponse
     SetResponseAndClientWithArguments "BasicResponse" ""
 }
 
+function SetAddressValidatorResponse($strArr, $exactMatch = $false)
+{
+    $arr = $null
+
+    if($strArr -is [System.Array])
+    {
+        $exactMatch  = $true
+
+        $arr = @($strArr | foreach {
+            BuildStr $_
+        })
+    }
+    else
+    {
+        if($exactMatch)
+        {
+            $arr = BuildStr $strArr
+        }
+        else
+        {
+            $arr = $strArr
+        }
+    }
+    
+    SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $exactMatch)
+}
+
+function BuildStr($str)
+{
+    $str = "https://prtg.example.com/" + $str + "username=username&passhash=12345678"
+
+    return $str
+}
+
 function SetResponseAndClient($responseName)
 {
     $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName
