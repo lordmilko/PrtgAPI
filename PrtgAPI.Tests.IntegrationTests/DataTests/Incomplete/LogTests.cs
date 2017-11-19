@@ -40,5 +40,16 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             Assert2.AreEqual(DateTime.Now.Date, first.DateTime.Date, "Start date was incorrect");
             Assert2.AreEqual(DateTime.Now.AddDays(-1).Date, last.DateTime.Date, "End date was incorrect");
         }
+
+        [TestMethod]
+        public void Data_Log_GetLogs_FiltersByStatus()
+        {
+            var logs = client.GetLogs(status: LogStatus.Up);
+            
+            foreach (var log in logs)
+            {
+                Assert2.AreEqual(log.Status, LogStatus.Up, $"Response included an item that was not {LogStatus.Up}");
+            }
+        }
     }
 }

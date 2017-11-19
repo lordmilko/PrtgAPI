@@ -83,8 +83,8 @@ namespace PrtgAPI.Parameters
         /// </summary>
         public LogStatus[] Status
         {
-            get { return (LogStatus[]) GetFilterValue(Property.Status); }
-            set { SetFilterValue(Property.Status, value); }
+            get { return GetMultiParameterFilterValue<LogStatus>(Property.Status); }
+            set { SetMultiParameterFilterValue(Property.Status, value); }
         }
 
         /// <summary>
