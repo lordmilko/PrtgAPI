@@ -19,6 +19,18 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    It "filters with a wildcard in the middle" {
+        $obj1 = GetItem
+        $obj2 = GetItem
+
+        $obj2.Tags = "testbananatest"
+
+        WithItems ($obj1, $obj2) {
+            $sensors = Get-Sensor -Tags *ba*a*
+            $sensors.Count | Should Be 1
+        }
+    }
+
     It "can ignore invalid wildcards" {
         $obj1 = GetItem
         $obj2 = GetItem

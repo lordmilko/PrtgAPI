@@ -237,8 +237,6 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        
-
         private IEnumerable<TObject> StreamResultsWithProgress(TParam parameters)
         {
             ProgressManager.Scenario = ProgressScenario.StreamProgress;
@@ -334,6 +332,18 @@ namespace PrtgAPI.PowerShell.Base
         protected void AddWildcardFilter(Property property, string value)
         {
             var trimmed = value.Trim('*');
+
+            //If the string contains a * in the middle, split the string into its components,
+            //then ask PRTG to return all objects whose name matches the longest section of the string.
+            //We will further filter this in FilterResponseRecordsByName
+            var parts = value.Split('*').Where(p => p != string.Empty).ToList();
+
+            if (parts.Count > 1)
+            {
+                var longest = parts.OrderByDescending(p => p.Length).First();
+
+                trimmed = longest;
+            }
 
             //If another filter has been specified, an equals filter will become case sensitive. To work around this, we always do "contains", and then filter for
             //what we really wanted once the response is returned
