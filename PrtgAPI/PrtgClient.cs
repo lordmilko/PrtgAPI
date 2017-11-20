@@ -4,7 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
@@ -12,9 +15,6 @@ using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Objects.Undocumented;
 using PrtgAPI.Parameters;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Web;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -68,7 +68,7 @@ namespace PrtgAPI
         internal EventHandler<LogVerboseEventArgs> logVerbose;
 
         /// <summary>
-        /// Occurs when a request times out while communicating with PRTG.
+        /// Occurs when a PrtgAPI logs verbose processing information.
         /// </summary>
         public event EventHandler<LogVerboseEventArgs> LogVerbose
         {
@@ -287,7 +287,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Apply a modification function to the properties of a nobject.
+        /// Apply a modification function to the properties of an object.
         /// </summary>
         /// <typeparam name="T">The type of object returned by the response.</typeparam>
         /// <param name="obj">The object to amend.</param>
@@ -334,7 +334,7 @@ namespace PrtgAPI
         /// <summary>
         /// Stream all sensors from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.<para/>
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects to capable of streaming a response from a PRTG Server.</returns>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<Sensor> StreamSensors() => StreamSensors(new SensorParameters());
 
             #endregion
@@ -1163,7 +1163,7 @@ namespace PrtgAPI
         #endregion
 
         #endregion
-        #region Object Manipulation
+    #region Object Manipulation
         #region Sensor State
 
         /// <summary>
@@ -1887,6 +1887,7 @@ namespace PrtgAPI
         #endregion
     #endregion
 #endregion
+
 
         #region Unsorted
 

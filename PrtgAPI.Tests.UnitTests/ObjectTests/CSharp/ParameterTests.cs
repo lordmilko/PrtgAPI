@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
+namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
     public class ParameterTests

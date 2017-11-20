@@ -2,7 +2,7 @@
 
 Describe "Get-PrtgStatus" {
 
-    $item = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.ServerStatusTests).GetItem()
+    $item = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.ServerStatusTests).GetItem()
 
     SetResponseAndClientWithArguments "ServerStatusResponse" $item
 

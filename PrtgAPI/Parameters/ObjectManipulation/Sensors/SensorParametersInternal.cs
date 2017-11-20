@@ -16,7 +16,7 @@ namespace PrtgAPI.Parameters
         /// <param name="sensorName">The name to use for this sensor.</param>
         /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        protected SensorParametersInternal(string sensorName, bool inheritTriggers, SensorType sensorType) : base(sensorName, inheritTriggers, sensorType)
+        internal SensorParametersInternal(string sensorName, bool inheritTriggers, SensorType sensorType) : base(sensorName, inheritTriggers, sensorType)
         {
         }
 

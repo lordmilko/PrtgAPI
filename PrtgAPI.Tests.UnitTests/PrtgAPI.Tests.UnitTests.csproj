@@ -68,11 +68,12 @@
     <Compile Include="InfrastructureTests\Support\Progress\ProgressHierarchy.cs" />
     <Compile Include="ObjectTests\CSharp\AddNotificationTriggerTests.cs" />
     <Compile Include="ObjectTests\CSharp\AddSensorTests.cs" />
+    <Compile Include="ObjectTests\CSharp\AdminToolTests.cs" />
     <Compile Include="ObjectTests\CSharp\AutoDiscoverTests.cs" />
     <Compile Include="ObjectTests\CSharp\BaseTest.cs" />
     <Compile Include="ObjectTests\CSharp\ChannelTests.cs" />
     <Compile Include="ObjectTests\CSharp\CloneTests.cs" />
-    <Compile Include="ObjectTests\CSharp\DeleteTests.cs" />
+    <Compile Include="ObjectTests\CSharp\RemoveTests.cs" />
     <Compile Include="ObjectTests\CSharp\DeviceSettingsTests.cs" />
     <Compile Include="ObjectTests\CSharp\GetSensorHistoryTests.cs" />
     <Compile Include="ObjectTests\CSharp\GroupTests.cs" />
@@ -84,6 +85,11 @@
     <Compile Include="ObjectTests\CSharp\SensorSettingsTests.cs" />
     <Compile Include="ObjectTests\CSharp\ServerStatusTests.cs" />
     <Compile Include="ObjectTests\CSharp\SetNotificationTriggerTests.cs" />
+    <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\FakeMultipleFormattable.cs" />
+    <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\FakeObjectProperty.cs" />
+    <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\FakeSetObjectPropertyParameters.cs" />
+    <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\FakeSettings.cs" />
+    <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\SetObjectPropertyParametersTests.cs" />
     <Compile Include="ObjectTests\CSharp\SetObjectPropertyTests.cs" />
     <Compile Include="ObjectTests\CSharp\StateTests.cs" />
     <Compile Include="ObjectTests\TestItems\GroupItem.cs" />
@@ -105,6 +111,7 @@
     <Compile Include="ObjectTests\TestResponses\BasicResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\CloneResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\DeviceSettingsResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\ExceptionResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\FailedRequestResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\GroupResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\LocationUnresolvedResponse.cs" />
@@ -114,6 +121,8 @@
     <Compile Include="ObjectTests\TestResponses\MultiTypeResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\ProbeResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\RawPropertyResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\RestartProbeResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\RestartPrtgCoreResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorFactorySourceResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorHistoryResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorSettingsResponse.cs" />
@@ -161,6 +170,8 @@
     <None Include="ObjectTests\PowerShell\Acknowledge-Sensor.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Add-NotificationTrigger.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Add-Sensor.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Backup-PrtgConfig.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Clear-PrtgCache.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Clone-Object.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Edit-NotificationTriggerProperty.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Get-Channel.Tests.ps1" />
@@ -175,6 +186,7 @@
     <None Include="ObjectTests\PowerShell\Get-SensorTotals.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\GoPrtg\Connect-GoPrtgServer.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\GoPrtg\Get-GoPrtgServer.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Load-PrtgConfigFile.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Move-Object.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\New-SearchFilter.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\New-SensorFactoryDefinition.Tests.ps1" />
@@ -184,6 +196,8 @@
     <None Include="ObjectTests\PowerShell\Remove-NotificationTrigger.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Remove-Object.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Rename-Object.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Restart-Probe.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Restart-PrtgCore.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Resume-Object.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Set-ChannelProperty.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Set-NotificationTrigger.Tests.ps1" />

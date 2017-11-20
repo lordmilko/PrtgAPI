@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
+namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
     public class RemoveTests : BaseTest

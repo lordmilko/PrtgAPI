@@ -19,7 +19,7 @@ Operations supported by PrtgAPI include enumerating channels, sensors, devices, 
 
 PrtgAPI includes full XML Documentation and supports synchronous, asynchronous and "streaming" request modes.
 
-This module can be installed in both Visual Studio and PowerShell via the Install-Package cmdlet. For PowerShell users without the nuget.org package source, this module is also available on the PowerShell Gallery.
+This module can be installed in both Visual Studio and PowerShell via the Install-Package cmdlet. For PowerShell users, this module is also available on the PowerShell Gallery.
 
 For more information and usage examples, please see the Project Site.</releaseNotes>
     <copyright>(c) 2015 lordmilko. All rights reserved.</copyright>

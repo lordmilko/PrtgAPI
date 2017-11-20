@@ -11,8 +11,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Get-Channel cmdlet retrieves all channels beloninging to a PRTG Sensor.</para>
     /// <para type="description">Get-Channel uses APIs unsupported by Paessler to retrieve advanced channel settings (limits, thresholds, etc).
-    /// For each channel a separate request must be made in order to retrieve advanced channel details, in addition to a separate single request that retrieves general information for all channels. As such, in order to retrieve information
-    /// on n channels, n+1 requests must be made. Keep this in mind when piping sensors with a large number of channels, or piping a large number of sensors.</para> 
+    /// For each channel a separate request must be made in order to retrieve advanced channel details, in addition to a separate single request
+    /// that retrieves general information for all channels. As such, in order to retrieve information on n channels, n+1 requests must be made.
+    /// Keep this in mind when piping sensors with a large number of channels, or piping a large number of sensors.</para> 
     /// <para type="description">If a name is specified, Get-Channel filters the results to those that match the name expression.
     /// Due to limitations of the PRTG API, Get-Channel filters its results post-request.</para>
     /// <para type="description">Get-Channel does not include the Downtime channel present on all sensors (Channel ID -4) as this sensor does not contain a value in table view.

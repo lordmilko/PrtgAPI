@@ -68,7 +68,6 @@ namespace PrtgAPI.Parameters
 
         private void AddDependentProperty(DependentPropertyAttribute attrib, Enum parent)
         {
-            //var dependentProperty = (Enum)(object)attrib.Name.ToEnum<TObjectProperty>();
             var info = GetPropertyInfo(parent);
 
             var dependencyParser = new DynamicPropertyTypeParser(parent, info, attrib.RequiredValue);
@@ -107,8 +106,8 @@ namespace PrtgAPI.Parameters
 
             foreach (var child in childrenOfParent)
             {
-                var attrib = child.GetEnumAttribute<DependentPropertyAttribute>();
-                var propertyRequiredValue = attrib?.RequiredValue;
+                var attrib = child.GetEnumAttribute<DependentPropertyAttribute>(); //By virtue of the fact we're a child, we can guarantee we have a DependentPropertyAttribute
+                var propertyRequiredValue = attrib.RequiredValue;
 
                 if (propertyRequiredValue != null && propertyRequiredValue.GetType() != parentValueAsTypeRequiredByProperty.GetType())
                     throw new InvalidTypeException($"Dependencies of property '{parser.Property}' should be of type {parser.PropertyType}, however property '{child}' is dependent on type '{propertyRequiredValue.GetType()}'");
@@ -117,7 +116,7 @@ namespace PrtgAPI.Parameters
                 {
                     //If a child has a reverse dependency (e.g. VerticalAxisMin must be included when VerticalAxisScaling = Manual)
                     //Then we should include those children, where they will be set to empty causing PRTG to throw an exception
-                    if (attrib?.ReverseDependency == true)
+                    if (attrib.ReverseDependency)
                     {
                         AddParameter(child, GetPropertyInfo(child), string.Empty);
                         var newChildren = child.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();

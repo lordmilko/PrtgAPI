@@ -19,7 +19,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When looking at notification triggers across multiple objects, it is often useful to filter out notification triggers inherited from a parent object via
     /// the -Inherited parameter.</para>
     /// <para type="description"><see cref="NotificationTrigger"/> objects returned from Get-NotificationTrigger can be passed to Edit-NotificationTriggerProperty
-    /// or  New-NotificationTriggerParameter, to allow cloning or editing the trigger's properties.</para>
+    /// or  New-NotificationTriggerParameters, to allow cloning or editing the trigger's properties.</para>
     /// <para type="description">Notification trigger types that are supported by a specified object can be determined using the -Types parameter.
     /// While there is no restriction on the types of triggers assignable to container-like objects (including devices, groups and probes)
     /// each sensor can only be assigned specific types based on the types of channels it contains. When adding a new trigger,

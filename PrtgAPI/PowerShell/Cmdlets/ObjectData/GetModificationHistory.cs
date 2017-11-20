@@ -9,7 +9,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Retrieves the setting/state modification history of a PRTG Object.</para>
     /// 
-    /// <para type="description">THe Get-ModificationHistory cmdlet retrieves all setting/state modifications of an object.
+    /// <para type="description">The Get-ModificationHistory cmdlet retrieves all setting/state modifications of an object.
     /// The Get-ModificationHistory cmdlet corresponds with the "History" tab of objects in the PRTG UI.</para>
     /// 
     /// <example>

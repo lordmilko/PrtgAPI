@@ -71,8 +71,8 @@ namespace PrtgAPI.Parameters.Helpers
                     Type = TypeCategory.Other;
                     return ((IFormattable)Value).GetSerializedFormat();
                 }
-                else
-                    throw new NotSupportedException("Serializng TypeAttribute type that does not implement IFormattable is not currently supported");
+
+                throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported");
             }
 
             if (PropertyType.IsArray)

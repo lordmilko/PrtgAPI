@@ -4,6 +4,23 @@ Describe "Connect-PrtgServer" {
 
     InitializeUnitTestModules
 
+    It "utilizes a password" {
+        Disconnect-PrtgServer
+
+        try
+        {
+            Connect-PrtgServer http://127.0.0.2 (New-Credential username password)
+            throw "Connection should not have succeeded"
+        }
+        catch
+        {
+            if($_.exception.message -notlike "*Not Found*" -and $_.exception.message -notlike "*Server rejected HTTP connection*")
+            {
+                throw
+            }
+        }
+    }
+
     It "utilizes a passhash" {
         Disconnect-PrtgServer
 

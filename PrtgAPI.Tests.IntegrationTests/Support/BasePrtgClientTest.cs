@@ -265,14 +265,43 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 if (client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
                 {
-                    Logger.Log("Restoring probe name");
-                    client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+                    RestoreProbeName(client);
+                }
+                else
+                {
+                    if (client.GetProbes(Property.Name, Settings.ProbeName).Count == 0)
+                    {
+                        Logger.Log("Probe could not be retrieved by name; previous rename may have failed. Re-attempting rename");
+                        RestoreProbeName(client);
+
+                        Logger.Log("Sleeping for 30 seconds so name change can properly apply");
+                        Thread.Sleep(30000);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Logger.Log(ex.Message, true);
                 throw;
+            }
+        }
+
+        private static void RestoreProbeName(PrtgClient client)
+        {
+            Logger.Log("Restoring probe name");
+            client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+
+            var probe = client.GetProbes(Property.Name, Settings.ProbeName);
+
+            if (probe.Count == 0)
+            {
+                Logger.Log("Probe name didn't stick. Restoring probe name again");
+                client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+
+                probe = client.GetProbes(Property.Name, Settings.ProbeName);
+
+                if (probe.Count == 0)
+                    throw new Exception("Couldn't restore probe name");
             }
         }
 

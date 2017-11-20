@@ -90,6 +90,8 @@
     <Compile Include="Enums\Serialization\ObjectType.cs" />
     <Compile Include="Enums\Serialization\SensorType.cs" />
     <Compile Include="Enums\Serialization\SensorTypeInternal.cs" />
+    <Compile Include="Enums\SystemCacheType.cs" />
+    <Compile Include="Enums\ConfigFileType.cs" />
     <Compile Include="Events\EventStack.cs" />
     <Compile Include="Events\EventState.cs" />
     <Compile Include="Events\LogVerboseEventArgs.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="Parameters\ObjectManipulation\MoveObjectParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\PauseRequestParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RenameParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\RestartProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\ExeXmlSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\NewSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Sensors\RawSensorParameters.cs" />
@@ -143,6 +146,11 @@
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\BackupPrtgConfig.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ClearPrtgCache.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\LoadPrtgConfigFile.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RestartPrtgCore.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RestartProbe.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetObjectLog.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddSensor.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorFactorySource.cs" />
@@ -222,7 +230,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\EditNotificationTriggerProperty.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationAction.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetPrtgStatus.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetPrtgStatus.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetModificationHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameters.cs" />
@@ -337,7 +345,7 @@
     <Compile Include="PowerShell\Base\PrtgCmdlet.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Objects\Deserialization\Data.cs" />
+    <Compile Include="Objects\Deserialization\XmlDeserializer.cs" />
     <Compile Include="Objects\Device.cs" />
     <Compile Include="Objects\Group.cs" />
     <Compile Include="Objects\Sensor.cs" />

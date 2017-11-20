@@ -18,7 +18,7 @@ Useful things you can do with PrtgAPI:
 * Create and modify sensors - creating from scratch or cloning from existing ones
 * Generate complex sensor factory definitions
 * Deploy notification triggers to individual sensors for specific clients
-* Maintain standard naming/alerting settings across your environment
+* Maintain standard naming/alerting/object settings across your environment
 * Pause/resume items from external systems (such as pre/post event scripts and scheduled tasks)
 * Batch do *anything!*
 
@@ -103,7 +103,7 @@ var channels = sensors.Select(s => client.GetChannels(s.Id));
 ```
 ```c#
 //Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
-var filters = new[]
+var filters = new []
 {
     new SearchFilter(Property.Type, "ping"),
     new SearchFilter(Property.Device, FilterOperator.Contains, "dc"),
@@ -121,7 +121,7 @@ PrtgAPI can manipulate objects in a variety of ways, including [pausing, acknowl
 //Acknowledge all down sensors for 10 minutes
 var sensors = client.GetSensors(Status.Down);
 
-foreach(var sensor in sensors)
+foreach (var sensor in sensors)
 {
     client.AcknowledgeSensor(sensor.Id, 10, "Go away!");
 }
@@ -130,7 +130,7 @@ foreach(var sensor in sensors)
 //Standardize all "Ping" sensors to using the name "Ping", without the whole word capitalized
 var sensors = client.GetSensors(Property.Name, "ping");
 
-foreach(var sensor in sensors)
+foreach (var sensor in sensors)
 {
     client.RenameObject(sensor.Id, "Ping");
 }
@@ -140,7 +140,7 @@ foreach(var sensor in sensors)
 var sensors = client.GetSensors(Property.Tags, "wmicpuloadsensor");
 var channels = sensors.SelectMany(s => client.GetChannels(s.Id, "Total"));
 
-foreach(var channel in channels)
+foreach (var channel in channels)
 {
     client.SetObjectProperty(channel.SensorId, channel.Id, ChannelProperty.UpperErrorLimit, 90);
 }
@@ -148,7 +148,7 @@ foreach(var channel in channels)
 
 #### Other Objects
 
-Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
+Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical logs and data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
 ### Overview (PowerShell)
 
@@ -176,6 +176,8 @@ PrtgAPI supports a wide variety of operations, each of which taking pipeline inp
 Add-NotificationTrigger
 Add-Sensor
 Acknowledge-Sensor
+Backup-PrtgConfig
+Clear-PrtgCache
 Clone-Device
 Clone-Group
 Clone-Sensor
@@ -196,11 +198,13 @@ Get-ObjectLog
 Get-ObjectProperty
 Get-Probe
 Get-PrtgClient
+Get-PrtgStatus
 Get-Sensor
 Get-SensorFactorySource
 Get-SensorHistory
 Get-SensorTotals
 Install-GoPrtgServer
+Load-PrtgConfigFile
 Move-Object
 New-Credential
 New-NotificationTriggerParameters
@@ -213,6 +217,8 @@ Refresh-Object
 Remove-NotificationTrigger
 Remove-Object
 Rename-Object
+Restart-Probe
+Restart-PrtgCore
 Resume-Object
 Set-ChannelProperty
 Set-GoPrtgAlias
@@ -314,7 +320,7 @@ $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 
 Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), sensor factories can be [generated](https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories), and much much more. For full usage instructions on PrtgAPI please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
-## Intersting Things PrtgAPI Does
+## Interesting Things PrtgAPI Does
 
 * [Custom Deserialization](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#deserialization)
 * Cmdlet Based Event Handlers
@@ -324,3 +330,4 @@ Objects can be [cloned or created from scratch](https://github.com/lordmilko/Prt
 * Test Server State Restoration
 * Mock WriteProgress
 * [Test Logging](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#logging)
+* Dynamic PowerShell Formats

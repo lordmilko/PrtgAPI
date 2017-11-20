@@ -69,7 +69,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"{Parameters.Name} (Device ID: {Device.Id}, Type: {Parameters[Parameter.SensorType]}"))
+            if (ShouldProcess($"{Parameters.Name} (Device ID: {Device.Id}, Type: {Parameters[Parameter.SensorType]})"))
             {
                 ExecuteOperation(() => client.AddSensor(Device.Id, Parameters), "Adding PRTG Sensors", $"Adding sensor '{Parameters.Name}' to device ID {Device.Id}");
             }

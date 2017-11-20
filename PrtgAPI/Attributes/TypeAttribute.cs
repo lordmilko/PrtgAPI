@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace PrtgAPI.Attributes
 {
-    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+    /// <summary>
+    /// Specifies the type of object that should be used in conjunction with a corresponding field.<para/>
+    /// When used in conjunction with a <see cref="TypeLookupAttribute"/>, this attribute overrides the type
+    /// indicated by the field found via the <see cref="TypeLookupAttribute"/>, indicating the <see cref="TypeLookupAttribute"/>
+    /// is only being used for identifying other pieces of information, such as the value of a <see cref="XmlElementAttribute"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
     sealed class TypeAttribute : Attribute
     {
         public TypeAttribute(Type @class)

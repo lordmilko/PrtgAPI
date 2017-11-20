@@ -85,10 +85,6 @@
     -how to make it return more than 500 results
     -the sensorhistory class needs to be made public again
 
-    GetStatus
-    -internal for now
-    -need to rename fields to be nice names
-
     NewNotificationTriggerParameter
     -maybe change objectid and source ordering? we need to be able to pipe objectid's in. is this currently possible? maybe just add valuefrompipeline/add by property name for objectid?
      may need to rename id to objectid for that one
@@ -114,9 +110,6 @@
     -not complete
     -most properties internal for now
     -the schedule class is also internal
-
-    ServerStatus
-    -Remove _raw values
 
     */
 }

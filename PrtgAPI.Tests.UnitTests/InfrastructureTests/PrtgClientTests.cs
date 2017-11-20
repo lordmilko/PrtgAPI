@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -272,6 +273,40 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 if (ex.Message != $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}")
                     Assert.Fail($"Exception did not contain expected error message. Expected: '{expectedError}'. Received: '{ex.Message}'");
             }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(TimeoutException))]
+        public void PrtgClient_HandlesTimeoutSocketException()
+        {
+            ExecuteSocketException(SocketError.TimedOut);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(WebException))]
+        public void PrtgClient_HandlesConnectionRefusedSocketException()
+        {
+            ExecuteSocketException(SocketError.ConnectionRefused);
+        }
+
+        private void ExecuteSocketException(SocketError error)
+        {
+            var ctor = typeof(SocketException).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
+            {
+                typeof (int), typeof (EndPoint)
+            }, null);
+
+            var ex = (SocketException)ctor.Invoke(new object[]
+            {
+                (int) error, new IPEndPoint(new IPAddress(0x2414188f), 80)
+            });
+
+            var response = new ExceptionResponse(ex);
+            var webClient = new MockWebClient(response);
+
+            var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, webClient);
+
+            client.GetSensors();
         }
     }
 }
