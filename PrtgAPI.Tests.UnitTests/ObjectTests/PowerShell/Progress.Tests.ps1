@@ -7879,7 +7879,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "100b2: Variable -> Get-SensorFactorySource | Channel" {
+    It "100b2: Variable -> Get-SensorFactorySource -> Channel" {
 
         $sensors = Get-Sensor -Count 2
 

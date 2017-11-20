@@ -159,9 +159,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.Condition == ProbeStatus.Disconnected)
                         probe.Disconnected = true;
                 }
-                if (probe.Disconnected && !probe.Reconnected)
+                if (probe.Disconnected && !probe.Reconnected) //If it's already disconnected and hasn't reconnected, check its status
                 {
-                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id))
+                    //If the probe has disconnected and we see it's reconnected, flag it as such. If it was already disconnected though,
+                    //it'll never reconnect, so let it through
+                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.Condition == ProbeStatus.Disconnected)
                         probe.Reconnected = true;
                 }
             }
