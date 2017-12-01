@@ -80,7 +80,17 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_windowsloginusername")]
         public string WindowsUserName { get; set; }
 
-        //todo: we need to be able to set the windows password, but not retrieve it
+        /// <summary>
+        /// The hidden Windows Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_windowsloginpassword")]
+        protected string windowsPassword { get; set; }
+
+        /// <summary>
+        /// Whether a Windows Password is set.<para/>
+        /// Corresponds to Credentials for Windows Systems -> Password.
+        /// </summary>
+        public bool HasWindowsPassword => !string.IsNullOrEmpty(windowsPassword);
 
         #endregion
         #region Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems
@@ -99,14 +109,36 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_linuxloginusername")]
         public string LinuxUserName { get; set; }
 
-        //todo: we need to be able to set the linux password/private key, but not retrieve it
-
         /// <summary>
         /// The login/authentication mode to use for Linux Authentication.<para/>
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Login.
         /// </summary>
         [XmlElement("injected_linuxloginmode")]
         public LinuxLoginMode LinuxLoginMode { get; set; }
+
+        /// <summary>
+        /// The hidden Linux Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_linuxloginpassword")]
+        protected string linuxPassword { get; set; }
+
+        /// <summary>
+        /// Whether a Linux Password is set.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Password.
+        /// </summary>
+        public bool HasLinuxPassword => !string.IsNullOrEmpty(linuxPassword);
+
+        /// <summary>
+        /// The hidden Linux Private Key of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_privatekey")]
+        protected string linuxPrivateKey { get; set; }
+
+        /// <summary>
+        /// Whether a Linux Private Key is set.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Private Key.
+        /// </summary>
+        public bool HasLinuxPrivateKey => !string.IsNullOrEmpty(linuxPrivateKey);
 
         /// <summary>
         /// The protocol that is used to communicate with WBEM.<para/>
@@ -145,14 +177,30 @@ namespace PrtgAPI.Objects.Undocumented
         public SSHElevationMode SSHElevationMode { get; set; }
 
         /// <summary>
-        /// The user to use for SSH Elevation with su or sudo. If no user is specified, root will be used.<para/>
+        /// The user to use for SSH Elevation with su. If no user is specified, root will be used.<para/>
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
         /// </summary>
         [XmlElement("injected_elevationnamesu")]
-        [XmlElement("injected_elevationnamesudo")]
-        public string SSHElevationUser { get; set; } //todo: if you can set these two separately within prtg, we need to have separate properties here
+        public string SSHElevationSuUser { get; set; }
 
-        //todo: need to allow setting the elevation user password
+        /// <summary>
+        /// The user to use for SSH Elevation with sudo. If no user is specified, root will be used.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
+        /// </summary>
+        [XmlElement("injected_elevationnamesudo")]
+        public string SSHElevationSudoUser { get; set; }
+
+        /// <summary>
+        /// The hidden SSH Elevation Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_elevationpass")]
+        protected string sshElevationPassword { get; set; }
+
+        /// <summary>
+        /// Whether a SSH Elevation Password is set.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Rights Elevation -> Password.
+        /// </summary>
+        public bool HasSSHElevationPassword => !string.IsNullOrEmpty(sshElevationPassword);
 
         /// <summary>
         /// The engine to use for SSH Requests.<para/>
@@ -178,7 +226,17 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_esxuser")]
         public string VMwareUserName { get; set; }
 
-        //todo: need to allow setting the vmware user password
+        /// <summary>
+        /// The hidden VMware Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_esxpassword")]
+        protected string vmwarePassword { get; set; }
+
+        /// <summary>
+        /// Whether a VMware Password is set.<para/>
+        /// Corresponds to Credentials for VMware/XenServer -> Password.
+        /// </summary>
+        public bool HasVMwarePassword => !string.IsNullOrEmpty(vmwarePassword);
 
         /// <summary>
         /// The protocol to use when connecting to VMware/XenServer systems.<para/>
@@ -239,7 +297,17 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_snmpuser")]
         public string SNMPv3UserName { get; set; }
 
-        //todo: allow setting the snmpv3 password
+        /// <summary>
+        /// The hidden SNMPv3 Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_snmpauthpass")]
+        protected string snmpv3Password { get; set; }
+
+        /// <summary>
+        /// Whether a SNMPv3 Password is set.<para/>
+        /// Corresponds to Credentials for SNMP Devices -> Password.
+        /// </summary>
+        public bool HasSNMPv3Password => !string.IsNullOrEmpty(snmpv3Password);
 
         /// <summary>
         /// The encryption type to use for SNMPv3.<para/>
@@ -248,13 +316,17 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_snmpencmode")]
         public EncryptionType SNMPv3EncryptionType { get; set; }
 
-        ///// <summary>
-        ///// The encryption key to use for SNMPv3.
-        ///// </summary>
-        //[XmlElement("injected_snmpencpass")]
-        //public string SNMPv3EncryptionKey { get; set; }
+        /// <summary>
+        /// The hidden SNMPv3 Encryption Key of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_snmpencpass")]
+        protected string snmpv3EncryptionKey { get; set; }
 
-        //todo: allow setting the snmpv3 encryption key
+        /// <summary>
+        /// Whether a SNMPv3 Encryption Key is set.<para/>
+        /// Corresponds to Credentials for SNMP Devices -> Data Encryption Key.
+        /// </summary>
+        public bool HasSNMPv3EncryptionKey => !string.IsNullOrEmpty(snmpv3EncryptionKey);
 
         /// <summary>
         /// The context name to use for SNMPv3. A context name is required only if specified by the target device.<para/>
@@ -316,6 +388,18 @@ namespace PrtgAPI.Objects.Undocumented
         public string DBUserName { get; set; }
 
         /// <summary>
+        /// The hidden Database Password of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_dbpassword")]
+        protected string dbPassword { get; set; }
+
+        /// <summary>
+        /// Whether a database password is set.<para/>
+        /// Corresponds to Credentials for Database Management Systems -> Password.
+        /// </summary>
+        public bool HasDBPassword => !string.IsNullOrEmpty(dbPassword);
+
+        /// <summary>
         /// The length of time (in seconds) before a database request times out.<para/>
         /// Corresponds to Credentials for Database Management Systems -> Timeout.
         /// </summary>
@@ -339,7 +423,17 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_awsak")]
         public string AmazonAccessKey { get; set; }
 
-        //todo: allow setting the amazon secret key
+        /// <summary>
+        /// The hidden Amazon Secret Key of this object. This field is for internal use only.
+        /// </summary>
+        [XmlElement("injected_awssk")]
+        protected string amazonSecretKey { get; set; }
+
+        /// <summary>
+        /// Whether an Amazon Secret Key is set.<para/>
+        /// Corresponds to Credentials for Amazon Cloudwatch -> Secret Key.
+        /// </summary>
+        public bool HasAmazonSecretKey => !string.IsNullOrEmpty(amazonSecretKey);
 
         #endregion
         #region Windows Compatibility Options

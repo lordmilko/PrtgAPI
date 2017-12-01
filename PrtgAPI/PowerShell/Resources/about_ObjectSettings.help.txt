@@ -42,29 +42,35 @@ LONG DESCRIPTION
     | InheritWindowsCredentials   |    Yes    |            Yes            | Whether to inherit Windows Credentials   |
     | WindowsDomain               |    Yes    |            Yes            | Windows Domain or Computer HostName      |
     | WindowsUserName             |    Yes    |            Yes            | Windows UserName                         |
-    | WindowsPassword             |    No     |                           | Windows Password                         |
+    | WindowsPassword             | No  | Yes |            Yes            | Windows Password                         |
+    | HasWindowsPassword          | Yes | No  |            Yes            | Whether a Windows Password is set        |
     
     | Credentials for Linux       | Get | Set | Devices | Groups | Probes | Description                              |
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
     | InheritLinuxCredentials     |    Yes    |            Yes            | Whether to inherit Linux Credentials     |
     | LinuxUserName               |    Yes    |            Yes            | Linux UserName for SSH                   |
-    | LinuxPassword               |    No     |                           | Linux Password for SSH                   |
+    | LinuxPassword               | No  | Yes |            Yes            | Linux Password for SSH                   |
+    | HasLinuxPassword            | Yes | No  |            Yes            | Whether a Linux Password is set          |
     | LinuxLoginMode              |    Yes    |            Yes            | Whether to use password or private key   |
-    | LinuxPrivateKey             |    No     |                           | Private Key for SSH                      |
+    | LinuxPrivateKey             | No  | Yes |            Yes            | Private Key for SSH                      |
+    | HasLinuxPrivateKey          | Yes | No  |            Yes            | Whether a Linux Private Key is set       |
     | WbemProtocolMode            |    Yes    |            Yes            | Whether to use HTTP or HTTPS             |
     | WbemPortMode                |    Yes    |            Yes            | Whether to use default port or custom    |
     | WbemPort                    |    Yes    |            Yes            | Custom WBEM Port to use                  |
     | SSHPort                     |    Yes    |            Yes            | Port to use for SSH                      |
     | SSHElevationMode            |    Yes    |            Yes            | How su/sudo should be used               |
-    | SSHElevationUser            | Yes | No  |            Yes            | User to use with su/sudo                 |
-    | SSHElevationPassword        |    No     |                           | Password to use with su/sudo             |
+    | SSHElevationSuUser          | Yes | No  |            Yes            | User to use with su                      |
+    | SSHElevationSudoUser        | Yes | No  |            Yes            | User to use with sudo                    |
+    | SSHElevationPassword        | No  | Yes |            Yes            | Password to use with su/sudo             |
+    | HasSSHElevationPassword     | Yes | No  |            Yes            | Whether a SSH Elevation Password is set  |
     | SSHEngine                   |    Yes    |            Yes            | SSH engine to use                        |
 
     | Credentials for VMware      | Get | Set | Devices | Groups | Probes | Description                              |
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
     | InheritVMwareCredentials    |    Yes    |            Yes            | Whether to inherit VMware Credentials    |
     | VMwareUserName              |    Yes    |            Yes            | VMware ESXi/vCenter UserName             |
-    | VMwarePassword              |    No     |                           | VMware ESXi/vCenter Password             |
+    | VMwarePassword              | No  | Yes |            Yes            | VMware ESXi/vCenter Password             |
+    | HasVMwarePassword           | Yes | No  |            Yes            | Whether a VMware Password is set         |
     | VMwareProtocol              |    Yes    |            Yes            | Whether to use HTTP or HTTPS             |
     | VMwareSessionMode           |    Yes    |            Yes            | Whether to reuse sessions across scans   |
 
@@ -75,9 +81,11 @@ LONG DESCRIPTION
     | SNMPCommunityStringV2       |    Yes    |            Yes            | Community string to use for SNMP v2c     |
     | SNMPv3AuthType              |    Yes    |            Yes            | Whether to use MD5 or SHA                |
     | SNMPv3UserName              |    Yes    |            Yes            | UserName to use for SNMP v3              |
-    | SNMPv3Password              |    No     |                           | Password to use for SNMP v3              |
+    | SNMPv3Password              | No  | Yes |            Yes            | Password to use for SNMP v3              |
+    | HasSNMPv3Password           | Yes | No  |            Yes            | Whether a SNMPv3 Password is set         |
     | SNMPv3EncryptionType        |    Yes    |            Yes            | Whether to use DES or AES                |
-    | SNMPv3EncryptionKey         |    No     |                           | Encryption key to use for data packets   |
+    | SNMPv3EncryptionKey         | No  | Yes |            Yes            | Encryption key to use for data packets   |
+    | HasSNMPv3EncryptionKey      | Yes | No  |            Yes            | Whether a SNMPv3 Encryption Key is set   |
     | SNMPv3Context               |    Yes    |            Yes            | Context name to use for SNMP v3          |
     | SNMPPort                    |    Yes    |            Yes            | Port to use for SNMP                     |
     | SNMPTimeout                 |    Yes    |            Yes            | Timeout for SNMP requests (secs)         |
@@ -89,14 +97,16 @@ LONG DESCRIPTION
     | DBPort                      |    Yes    |            Yes            | Custom DB Port to use                    |
     | DBAuthMode                  |    Yes    |            Yes            | Whether to use Windows or SQL auth       |
     | DBUserName                  |    Yes    |            Yes            | SQL authentication username              |
-    | DBPassword                  |    No     |                           | SQL authentication password              |
+    | DBPassword                  | No  | Yes |            Yes            | SQL authentication password              |
+    | HasDBPassword               | Yes | No  |            Yes            | Whether a DB Password is set             |
     | DBTimeout                   |    Yes    |            Yes            | Timeout for database requests (secs)     |
 
     | Credentials for Amazon      | Get | Set | Devices | Groups | Probes | Description                              |
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
     | InheritAmazonCredentials    |    Yes    |            Yes            | Whether to inherit Amazon Credentials    |
     | AmazonAccessKey             |    Yes    |            Yes            | Amazon Web Services Access Key           |
-    | AmazonSecretKey             |    No     |                           | Amazon Web Services Secret Key           |
+    | AmazonSecretKey             | No  | Yes |            Yes            | Amazon Web Services Secret Key           |
+    | HasAmazonSecretKey          | Yes | No  |            Yes            | Whether an Amazon Secret Key is set      |
 
     | Windows Compatibility       | Get | Set | Devices | Groups | Probes | Description                              |
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |

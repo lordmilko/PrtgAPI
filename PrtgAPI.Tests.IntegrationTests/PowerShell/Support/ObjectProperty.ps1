@@ -126,6 +126,29 @@ function Describe($name, $script) {
             $object | Set-ObjectProperty $topProperty $initialTop
         }
 
+        function SetWriteChild($property, $value, $hasProperty, $dependentProperty, $dependentValue)
+        {
+            LogTestDetail "Processing property $property"
+
+            $object | Assert-True -Message "    Object was not initialized"
+            $dependentProperty | Assert-True -Message "    Dependent property was not specified"
+
+            $initialSettings = $object | Get-ObjectProperty
+            $initialSettings.$hasProperty | Assert-False -Message "Property $hasProperty was already true"
+            $initialDependent = $initialSettings.$dependentProperty
+
+            $object | Set-ObjectProperty $property $value
+
+            $newSettings = $object | Get-ObjectProperty
+            $newDependent = $newSettings.$dependentProperty
+
+            $newDependent | Assert-NotEqual $initialDependent -Message "Expected initial and new dependent to be different, but they were both '<actual>'"
+            $newSettings.$hasProperty | Assert-True -Message "Property $hasProperty was not true"
+            $newDependent | Assert-Equal $dependentValue
+
+            $object | Set-ObjectProperty $dependentProperty $initialDependent
+        }
+
         & $script
     }
 }

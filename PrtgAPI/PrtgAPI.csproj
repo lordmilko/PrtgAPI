@@ -111,7 +111,7 @@
     <Compile Include="Objects\Undocumented\DeviceOrGroupSettings.cs" />
     <Compile Include="Objects\Undocumented\DeviceSettings.cs" />
     <Compile Include="Objects\Undocumented\GroupSettings.cs" />
-    <Compile Include="Objects\Undocumented\IsolatedPropertySettings.cs" />
+    <Compile Include="Objects\Undocumented\SpecialPropertySettings.cs" />
     <Compile Include="Objects\Undocumented\Location.cs" />
     <Compile Include="Objects\Undocumented\ProbeSettings.cs" />
     <Compile Include="Parameters\Base\BaseSetObjectPropertyParameters.cs" />

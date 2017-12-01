@@ -41,7 +41,7 @@ namespace PrtgAPI
         InheritWindowsCredentials,
 
         /// <summary>
-        /// The domain or local hostname used for Windows Authentication.<para/>
+        /// The domain or local hostname to use for Windows Authentication.<para/>
         /// Corresponds to Credentials for Windows Systems -> Domain or Computer Name.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
@@ -49,16 +49,21 @@ namespace PrtgAPI
         WindowsDomain,
 
         /// <summary>
-        /// The username used for Windows Authentication.<para/>
+        /// The username to use for Windows Authentication.<para/>
         /// Corresponds to Credentials for Windows Systems -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
         [DependentProperty(nameof(InheritWindowsCredentials), false)]
         WindowsUserName,
 
-        //[TypeLookup(typeof(ContainerSettings))]
-        //[DependentProperty(nameof(InheritWindowsCredentials), false)]
-        //WindowsPassword,
+        /// <summary>
+        /// The password to use for Windows Authentication.<para/>
+        /// Corresponds to Credentials for Windows Systems -> Password.
+        /// </summary>
+        [Description("windowsloginpassword")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(InheritWindowsCredentials), false)]
+        WindowsPassword,
 
         #endregion
         #region Location
@@ -109,6 +114,24 @@ namespace PrtgAPI
         LinuxLoginMode,
 
         /// <summary>
+        /// The password to use for Linux Authentication.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Password.
+        /// </summary>
+        [Description("linuxloginpassword")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(LinuxLoginMode), PrtgAPI.LinuxLoginMode.Password)]
+        LinuxPassword,
+
+        /// <summary>
+        /// The private key to use for Linux Authentication.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Private Key.
+        /// </summary>
+        [Description("privatekey")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(LinuxLoginMode), PrtgAPI.LinuxLoginMode.Password)]
+        LinuxPrivateKey,
+
+        /// <summary>
         /// The protocol that is used to communicate with WBEM.<para/>
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> For WBEM Use Protocol.
         /// </summary>
@@ -148,7 +171,34 @@ namespace PrtgAPI
         [DependentProperty(nameof(InheritLinuxCredentials), false)]
         SSHElevationMode,
 
-        //SSHElevationUser
+        /// <summary>
+        /// The user to use for SSH Elevation with su. If no user is specified, root will be used.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
+        /// </summary>
+        [TypeLookup(typeof(ContainerSettings))]
+        [DependentProperty(nameof(SSHElevationMode), PrtgAPI.SSHElevationMode.RunAsAnotherViaSu)]
+        SSHElevationSuUser,
+
+        /// <summary>
+        /// The user to use for SSH Elevation with sudo. If no user is specified, root will be used.<para/>
+        /// Note: as this property can be used with multiple <see cref="PrtgAPI.SSHElevationMode"/> values,
+        /// setting this property will not modify the current <see cref="SSHElevationMode"/>.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
+        /// </summary>
+        [TypeLookup(typeof(ContainerSettings))]
+        [DependentProperty(nameof(InheritLinuxCredentials), false)]
+        SSHElevationSudoUser,
+
+        /// <summary>
+        /// The password to use for SSH Elevation.<para/>
+        /// Note: as this property can be used with multiple <see cref="PrtgAPI.SSHElevationMode"/> values,
+        /// setting this property will not modify the current <see cref="SSHElevationMode"/>.<para/>
+        /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Rights Elevation -> Password.
+        /// </summary>
+        [Description("elevationpass")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(InheritLinuxCredentials), false)]
+        SSHElevationPassword,
 
         /// <summary>
         /// The engine to use for SSH Requests.<para/>
@@ -177,7 +227,14 @@ namespace PrtgAPI
         [DependentProperty(nameof(InheritVMwareCredentials), false)]
         VMwareUserName,
 
-        //VMwarePassword
+        /// <summary>
+        /// The password to use for VMware/XenServer authentication.<para/>
+        /// Corresponds to Credentials for VMware/XenServer -> Password.
+        /// </summary>
+        [Description("esxpassword")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(InheritVMwareCredentials), false)]
+        VMwarePassword,
 
         /// <summary>
         /// The protocol to use when connecting to VMware/XenServer systems.<para/>
@@ -235,7 +292,7 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Authentication Type.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
+        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
         SNMPv3AuthType,
 
         /// <summary>
@@ -243,16 +300,34 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
+        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
         SNMPv3UserName,
+
+        /// <summary>
+        /// The password to use for SNMPv3.<para/>
+        /// Corresponds to Credentials for SNMP Devices -> Password.
+        /// </summary>
+        [Description("snmpauthpass")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
+        SNMPv3Password,
 
         /// <summary>
         /// The encryption type to use for SNMPv3.<para/>
         /// Corresponds to Credentials for SNMP Devices -> Encryption Type.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
+        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
         SNMPv3EncryptionType,
+
+        /// <summary>
+        /// The encryption key to use for encrypting SNMPv3 packets.<para/>
+        /// Corresponds to Credentials for SNMP Devices -> Data Encryption Key.
+        /// </summary>
+        [Description("snmpencpass")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
+        SNMPv3EncryptionKey,
 
         /// <summary>
         /// The context name to use for SNMPv3. A context name is required only if specified by the target device.<para/>
@@ -322,6 +397,15 @@ namespace PrtgAPI
         DBUserName,
 
         /// <summary>
+        /// The password to use when <see cref="DBAuthMode"/> is <see cref="PrtgAPI.DBAuthMode.SQL"/>.<para/>
+        /// Corresponds to Credentials for Database Management Systems -> Password.
+        /// </summary>
+        [Description("dbpassword")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(DBAuthMode), PrtgAPI.DBAuthMode.SQL, true)]
+        DBPassword,
+
+        /// <summary>
         /// The length of time (in seconds) before a database request times out.<para/>
         /// Corresponds to Credentials for Database Management Systems -> Timeout.
         /// </summary>
@@ -347,6 +431,15 @@ namespace PrtgAPI
         [TypeLookup(typeof(ContainerSettings))]
         [DependentProperty(nameof(InheritAmazonCredentials), false)]
         AmazonAccessKey,
+
+        /// <summary>
+        /// The secret key to use for Amazon Web Services.<para/>
+        /// Corresponds to Credentials for Amazon Cloudwatch -> Secret Key.
+        /// </summary>
+        [Description("awssk")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(InheritAmazonCredentials), false)]
+        AmazonSecretKey,
 
         #endregion
         #region Windows Compatibility Options
@@ -774,7 +867,8 @@ namespace PrtgAPI
         /// Corresponds to Notifications Tab -> Trigger Inheritance<para/>
         /// To retrieve the value of this property, use <see cref="SensorOrDeviceOrGroupOrProbe.NotificationTypes"/> 
         /// </summary>
-        [TypeLookup(typeof(IsolatedPropertySettings))]
+        [Description("inherittriggers")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
         InheritTriggers,
     #endregion
     #region Devices
