@@ -186,6 +186,7 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Stream Objects
 
         internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
         {
@@ -268,6 +269,8 @@ namespace PrtgAPI
                     parameters.Count = totalObjects - i;
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Apply a modification function to each element of a response.
@@ -485,68 +488,6 @@ namespace PrtgAPI
         [ExcludeFromCodeCoverage]
         public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId) =>
             (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).ConfigureAwait(false)).Types;
-
-        /// <summary>
-        /// Add a new sensor to a PRTG Device.
-        /// </summary>
-        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
-        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public void AddSensor(int deviceId, NewSensorParameters parameters)
-        {
-            ValidateSensorParameters(parameters);
-
-            var internalParams = GetInternalSensorParameters(deviceId, parameters);
-
-            requestEngine.ExecuteRequest(CommandFunction.AddSensor5, internalParams);
-        }
-
-        /// <summary>
-        /// Asynchronously add a new sensor to a PRTG Device.
-        /// </summary>
-        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
-        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public async Task AddSensorAsync(int deviceId, NewSensorParameters parameters)
-        {
-            ValidateSensorParameters(parameters);
-
-            var internalParams = GetInternalSensorParameters(deviceId, parameters);
-
-            await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor5, internalParams).ConfigureAwait(false);
-        }
-
-        private void ValidateSensorParameters(NewSensorParameters parameters)
-        {
-            var properties = parameters.GetType().GetNormalProperties().ToList();
-
-            foreach (var property in properties)
-            {
-                var attrib = property.GetCustomAttribute<RequireValueAttribute>();
-
-                if (attrib != null && attrib.ValueRequired)
-                {
-                    var val = property.GetValue(parameters);
-
-                    if (string.IsNullOrEmpty(val?.ToString()))
-                    {
-                        throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
-                    }
-                }
-            }
-        }
-
-        private Parameters.Parameters GetInternalSensorParameters(int deviceId, NewSensorParameters parameters)
-        {
-            var newParams = new Parameters.Parameters();
-
-            foreach (var param in parameters.GetParameters())
-            {
-                newParams[param.Key] = param.Value;
-            }
-
-            newParams[Parameter.Id] = deviceId;
-
-            return newParams;
-        }
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
@@ -1163,7 +1104,110 @@ namespace PrtgAPI
         #endregion
 
         #endregion
-    #region Object Manipulation
+        #region Object Manipulation
+        #region Add Objects
+
+        /// <summary>
+        /// Add a new sensor to a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
+        public void AddSensor(int deviceId, NewSensorParameters parameters) =>
+            AddObject(deviceId, parameters, CommandFunction.AddSensor5);
+
+        /// <summary>
+        /// Asynchronously add a new sensor to a PRTG Device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
+        public async Task AddSensorAsync(int deviceId, NewSensorParameters parameters) =>
+            await AddObjectAsync(deviceId, parameters, CommandFunction.AddSensor5).ConfigureAwait(false);
+
+        /// <summary>
+        /// Add a new device to a PRTG Group or Probe.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
+        public void AddDevice(int parentId, NewDeviceParameters parameters) =>
+            AddObject(parentId, parameters, CommandFunction.AddDevice2);
+
+        /// <summary>
+        /// Asynchronously add a new device to a PRTG Group or Probe.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or device the device will apply to.</param>
+        /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
+        public async Task AddDeviceAsync(int parentId, NewDeviceParameters parameters) =>
+            await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2).ConfigureAwait(false);
+
+        /// <summary>
+        /// Add a new group to a PRTG Group or Probe.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
+        public void AddGroup(int parentId, NewGroupParameters parameters) =>
+            AddObject(parentId, parameters, CommandFunction.AddDevice2);
+
+        /// <summary>
+        /// Asynchronously add a new group to a PRTG Group or Probe.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
+        public async Task AddGroupAsync(int parentId, NewGroupParameters parameters) =>
+            await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2).ConfigureAwait(false);
+
+        internal void AddObject(int objectId, NewObjectParameters parameters, CommandFunction function)
+        {
+            ValidateObjectParameters(parameters);
+
+            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+
+            requestEngine.ExecuteRequest(function, internalParams);
+        }
+
+        private async Task AddObjectAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
+        {
+            ValidateObjectParameters(parameters);
+
+            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+
+            await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+        }
+
+        private void ValidateObjectParameters(NewObjectParameters parameters)
+        {
+            var properties = parameters.GetType().GetNormalProperties().ToList();
+
+            foreach (var property in properties)
+            {
+                var attrib = property.GetCustomAttribute<RequireValueAttribute>();
+
+                if (attrib != null && attrib.ValueRequired)
+                {
+                    var val = property.GetValue(parameters);
+
+                    if (string.IsNullOrEmpty(val?.ToString()))
+                    {
+                        throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
+                    }
+                }
+            }
+        }
+
+        private Parameters.Parameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
+        {
+            var newParams = new Parameters.Parameters();
+
+            foreach (var param in parameters.GetParameters())
+            {
+                newParams[param.Key] = param.Value;
+            }
+
+            newParams[Parameter.Id] = deviceId;
+
+            return newParams;
+        }
+
+        #endregion
         #region Sensor State
 
         /// <summary>

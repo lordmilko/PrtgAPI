@@ -7,7 +7,7 @@ using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// <para type="description">Properties that apply to Sensors, Devices, Groups and Probes.</para>
+    /// <para type="description">Base class for Sensors, Devices, Groups and Probes, containing properties that apply to all four object types.</para>
     /// </summary>
     public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
     {
@@ -79,7 +79,7 @@ namespace PrtgAPI.Objects.Shared
                 if (interval == null)
                 {
                     if (IntervalInherited == false)
-                        //If IntervalInherited is false, _RawIntervalInherited should just contain a number.
+                        //If IntervalInherited is false, intervalInherited should just contain a number.
                         return DH.ConvertPrtgTimeSpan(Convert.ToDouble(intervalInherited));
                     else //
                     {

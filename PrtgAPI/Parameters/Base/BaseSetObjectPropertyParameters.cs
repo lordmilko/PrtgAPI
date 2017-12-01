@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using System.Web;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
@@ -13,6 +11,14 @@ using PrtgAPI.Parameters.Helpers;
 
 namespace PrtgAPI.Parameters
 {
+    /// <summary>
+    /// Allows specifying an internal enum type when derived from <see cref="BaseSetObjectPropertyParameters{TObjectProperty}"/>.
+    /// </summary>
+    /// <typeparam name="TObjectPropertyInternal">The type of internal property to use.</typeparam>
+    interface IObjectInternalProperty<TObjectPropertyInternal>
+    {
+    }
+
     abstract class BaseSetObjectPropertyParameters<TObjectProperty> : Parameters
     {
         public List<CustomParameter> CustomParameters
@@ -84,7 +90,26 @@ namespace PrtgAPI.Parameters
 
             if (isChild)
             {
-                var parent = (Enum)(object)parentOfChild.Name.ToEnum<TObjectProperty>();
+                Enum parent;
+
+                try
+                {
+                    parent = (Enum)(object)parentOfChild.Name.ToEnum<TObjectProperty>();
+                }
+                catch (ArgumentException)
+                {
+                    var @interface = GetType().GetInterfaces().FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IObjectInternalProperty<>));
+
+                    if (@interface != null)
+                    {
+                        var internalType = @interface.GetGenericArguments().First();
+
+                        parent = (Enum) Enum.Parse(internalType, parentOfChild.Name, true);
+                    }
+                    else
+                        throw;
+                }
+                
                 AddDependentProperty(parentOfChild, parent);
                 AddDependentPropertyRecursiveUp(parent);
             }
@@ -151,7 +176,7 @@ namespace PrtgAPI.Parameters
 
         void AddParameter(Enum property, PropertyInfo info, object value)
         {
-            CustomParameters.Add(new CustomParameter(GetParameterName((TObjectProperty)(object)property, info), value?.ToString()));
+            CustomParameters.Add(new CustomParameter(GetParameterName(property, info), value?.ToString()));
         }
 
         protected abstract PropertyInfo GetPropertyInfo(Enum property);
@@ -177,12 +202,12 @@ namespace PrtgAPI.Parameters
             return prop;
         }
 
-        protected virtual string GetParameterName(TObjectProperty property, PropertyInfo info)
+        protected virtual string GetParameterName(Enum property, PropertyInfo info)
         {
             return GetParameterNameStatic(property, info);
         }
 
-        internal static string GetParameterNameStatic(TObjectProperty property, PropertyInfo info)
+        internal static string GetParameterNameStatic(Enum property, PropertyInfo info)
         {
             var attribute = info.GetCustomAttribute<XmlElementAttribute>();
             string name;

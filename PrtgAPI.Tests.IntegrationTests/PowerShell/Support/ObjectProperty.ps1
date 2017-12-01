@@ -24,13 +24,14 @@ function Describe($name, $script) {
             $initialSettings.$property | Should Be $expected
         }
 
-        function SetValue($property, $value)
+        function SetValue($property, $value, $noRevert)
         {
             LogTestDetail "Processing property $property"
 
             $object | Assert-True -Message "Object was not initialized"
 
             $initialSettings = $object | Get-ObjectProperty
+            $initialValue = $initialSettings.$property
 
             $object | Set-ObjectProperty $property $value
 
@@ -58,6 +59,11 @@ function Describe($name, $script) {
             $newValue | Should Not BeNullOrEmpty
 
             $newValue | Should Be $value
+
+            if(!$noRevert)
+            {
+                $object | Set-ObjectProperty $property $initialValue
+            }
         }
 
         function SetChild($property, $value, $dependentProperty, $dependentValue)

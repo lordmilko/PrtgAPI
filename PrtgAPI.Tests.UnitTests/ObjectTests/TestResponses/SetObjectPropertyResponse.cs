@@ -50,8 +50,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
             else
                 throw new NotImplementedException($"Handler for object property type {nameof(TObjectProperty)} is not implemented");
-            
-            var queryName = BaseSetObjectPropertyParameters<TObjectProperty>.GetParameterNameStatic(property, info);
+
+            var queryName = BaseSetObjectPropertyParameters<TObjectProperty>.GetParameterNameStatic((Enum) (object) property, info);
 
             if (typeof (TObjectProperty) == typeof (ChannelProperty))
                 queryName += "1"; //Channel ID used for tests

@@ -120,6 +120,34 @@ LONG DESCRIPTION
     | SNMPInterfaceStartIndex     |    Yes    |            Yes            | Start index for SNMP Traffic sensors     |
     | SNMPInterfaceEndIndex       |    Yes    |            Yes            | End index for SNMP Traffic sensors       |
 
+    Device, Group Settings
+
+    | Device / Group Type         | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | AutoDiscoverySchedule       |    Yes    | How often auto-discovery operations should periodically be performed |
+
+    Group Settings
+
+    | Group Type                  | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | AutoDiscoveryMode           | Yes | No  | Specifies how detailed auto-discovery operations should be           |
+
+    Device Settings
+
+    | Basic Device Settings       | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | IPVersion                   | Yes | No  | Whether to use IPv4 or IPv6. Set via Hostv4 and Hostv6 respectively  |
+    | Hostv4                      |    Yes    | IPv4 Address/HostName to use. Sets IPVersion to IPv4 when set        |
+    | Hostv6                      |    Yes    | IPv6 Address/HostName to use. Sets IPVersion to IPv6 when set        |
+
+    | Additional Device Info      | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | ServiceUrl                  |    Yes    | URL used to manage this device                                       |
+
+    | Device Type                 | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | AutoDiscoveryMode           |    Yes    | Specifies how detailed auto-discovery operations should be           |
+
 EXAMPLES
     Set the Windows UserName to "Administrator" on all probes named "contoso"
 

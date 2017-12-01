@@ -5,7 +5,7 @@ using PrtgAPI.Helpers;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to objects found in tables.
+    /// Base class for objects that appear in tables.
     /// </summary>
     public class ObjectTable : PrtgObject
     {

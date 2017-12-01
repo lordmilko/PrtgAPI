@@ -54,7 +54,7 @@ Describe "New-SensorParameters" {
     }
 
     It "throws when a raw name is null" {
-        { New-SensorParameters @{"name_" = $null; "sensortype" = "custom type"} } | Should Throw "sensorName cannot be null or empty"
+        { New-SensorParameters @{"name_" = $null; "sensortype" = "custom type"} } | Should Throw "objectName cannot be null or empty"
     }
 
     It "throws when a raw sensortype isn't specified" {

@@ -7,6 +7,8 @@ namespace PrtgAPI.Objects.Undocumented
     /// </summary>
     public class GroupSettings : DeviceOrGroupSettings
     {
+        //todo: maybe rename ipselectionmethod to autodiscoveryaddressmode
+
         /*[XmlElement("injected_ipselectmethod")]
         IPSelectionMethod? DiscoveryIPSelectionMethod { get; set; }
 

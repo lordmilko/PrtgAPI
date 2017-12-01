@@ -7,17 +7,38 @@ namespace PrtgAPI.Objects.Undocumented
     /// </summary>
     public class DeviceSettings : DeviceOrGroupSettings
     {
-        /*[XmlElement("injected_ipversion")]
+        //todo: have some tests for these
+
+        /// <summary>
+        /// The internet protocol version to use to connect to the device.<para/>
+        /// Corresponds to Basic Device Settings -> IP Version.
+        /// </summary>
+        [XmlElement("injected_ipversion")]
         public IPVersion IPVersion { get; set; }
 
+        /// <summary>
+        /// The IPv4 Address or HostName used to connect to the device.<para/>
+        /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
+        /// </summary>
         [XmlElement("injected_host")]
-        public string Host { get; set; }
+        public string Hostv4 { get; set; }
 
-        [XmlElement("injected_deviceicon")]
-        public string Icon { get; set; }
+        /// <summary>
+        /// The IPv6 Address or HostName used to connect to the device.<para/>
+        /// Corresponds to Basic Device Settings -> IPv6 Address/DNS Name.
+        /// </summary>
+        [XmlElement("injected_hostv6")]
+        public string Hostv6 { get; set; }
 
+        /*[XmlElement("injected_deviceicon")]
+        public string Icon { get; set; }*/
+
+        /// <summary>
+        /// The URL used to service this device.<para/>
+        /// Corresponds to Additional Device Information -> Service URL.
+        /// </summary>
         [XmlElement("injected_serviceurl")]
-        public string ServiceUrl { get; set; }*/
+        public string ServiceUrl { get; set; }
 
         //name, status, ip version, ipv4 address, parent tags, tags, priority, device icon, service url, sensor management, discovery schedule
 

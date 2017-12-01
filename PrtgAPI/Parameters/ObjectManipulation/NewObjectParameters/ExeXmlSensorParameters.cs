@@ -55,15 +55,6 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Tags that should be applied to this sensor. By default this value is "xmlexesensor".
-        /// </summary>
-        public string[] Tags
-        {
-            get { return GetCustomParameterArray(ObjectProperty.Tags, ' '); }
-            set { SetCustomParameterArray(ObjectProperty.Tags, value, ' '); }
-        }
-
-        /// <summary>
         /// The priority of the sensor, controlling how the sensor is displayed in table lists.
         /// </summary>
         public Priority Priority

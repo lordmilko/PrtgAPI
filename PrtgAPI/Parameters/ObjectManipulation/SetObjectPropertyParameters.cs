@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace PrtgAPI.Parameters
 {
-    sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>
+    sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>, IObjectInternalProperty<ObjectPropertyInternal>
     {
         public int ObjectId
         {

@@ -61,6 +61,14 @@ namespace PrtgAPI
         [Description("addsensor5.htm")]
         AddSensor5,
 
+        [Undocumented]
+        [Description("adddevice2.htm")]
+        AddDevice2,
+
+        [Undocumented]
+        [Description("addgroup2.htm")]
+        AddGroup2,
+
         [Description("restartprobes.htm")]
         RestartProbes,
 

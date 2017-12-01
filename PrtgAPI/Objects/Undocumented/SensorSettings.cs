@@ -1,9 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Undocumented
 {

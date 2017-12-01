@@ -26,7 +26,7 @@ namespace PrtgAPI.Parameters
             return GetPropertyInfoViaPropertyParameter<Channel>(property);
         }
 
-        protected override string GetParameterName(ChannelProperty property, PropertyInfo info)
+        protected override string GetParameterName(Enum property, PropertyInfo info)
         {
             //Underscore between property name and channelId is inserted by GetParameterNameStatic
             return $"{GetParameterNameStatic(property, info)}{channelId}";

@@ -95,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="New-TestSettings.ps1" />
+    <None Include="PowerShell\Add-Device.Tests.ps1" />
+    <None Include="PowerShell\Add-Group.Tests.ps1" />
     <None Include="PowerShell\Add-NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\Add-Sensor.Tests.ps1" />
     <None Include="PowerShell\Backup-PrtgConfig.Tests.ps1" />
@@ -132,6 +134,7 @@
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />
     <None Include="PowerShell\Support\ObjectProperty.ps1" />
+    <None Include="PowerShell\Support\ObjectPropertyMultiType.ps1" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.cmd" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.Format.ps1xml" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psd1" />

@@ -1,53 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects.</para>
+    /// Base class for all parameters that create new table objects.
     /// </summary>
-    public abstract class NewSensorParameters : Parameters
+    public abstract class NewObjectParameters : Parameters
     {
         /// <summary>
-        /// The name to use for this sensor.
+        /// The name to use for this object.
         /// </summary>
         [RequireValue(true)]
         public string Name
         {
             get { return (string)GetCustomParameter(ObjectProperty.Name); }
-            set { SetCustomParameter(ObjectProperty.Name, value); } 
+            set { SetCustomParameter(ObjectProperty.Name, value); }
         }
 
         /// <summary>
-        /// Whether to inherit notification triggers from the parent object.
+        /// Tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
         /// </summary>
-        public bool? InheritTriggers
+        public string[] Tags
         {
-            get { return GetCustomParameterBool(ObjectProperty.InheritTriggers); }
-            set { SetCustomParameterBool(ObjectProperty.InheritTriggers, value); }
+            get { return GetCustomParameterArray(ObjectProperty.Tags, ' '); }
+            set { SetCustomParameterArray(ObjectProperty.Tags, value, ' '); }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NewSensorParameters"/> class.
-        /// </summary>
-        /// <param name="sensorName">The name to use for this sensor.</param>
-        /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
-        /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        public NewSensorParameters(string sensorName, bool inheritTriggers, object sensorType)
+        internal NewObjectParameters(string objectName)
         {
-            if (string.IsNullOrEmpty(sensorName))
-                throw new ArgumentException($"{nameof(sensorName)} cannot be null or empty", nameof(sensorName));
+            if (string.IsNullOrEmpty(objectName))
+                throw new ArgumentException($"{nameof(objectName)} cannot be null or empty", nameof(objectName));
 
-            if (string.IsNullOrEmpty(sensorType?.ToString()))
-                throw new ArgumentException($"{nameof(sensorType)} cannot be null or empty", nameof(sensorType));
-
-            Name = sensorName;
-            InheritTriggers = inheritTriggers;
-            this[Parameter.SensorType] = sensorType;
+            Name = objectName;
         }
 
         #region GetCustomParameter
@@ -320,5 +311,4 @@ namespace PrtgAPI.Parameters
             }
         }
     }
-
 }

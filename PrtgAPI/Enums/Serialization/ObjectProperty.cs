@@ -7,7 +7,10 @@ namespace PrtgAPI
 {
     internal enum ObjectPropertyInternal
     {
-        LonLat
+        LonLat,
+
+        [TypeLookup(typeof(DeviceSettings))]
+        IPVersion
     }
 
     /// <summary>
@@ -772,7 +775,47 @@ namespace PrtgAPI
         /// To retrieve the value of this property, use <see cref="SensorOrDeviceOrGroupOrProbe.NotificationTypes"/> 
         /// </summary>
         [TypeLookup(typeof(IsolatedPropertySettings))]
-        InheritTriggers
+        InheritTriggers,
+    #endregion
+    #region Devices
+
+        /// <summary>
+        /// The IPv4 Address or HostName to use to connect to a device.<para/>
+        /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
+        /// </summary>
+        [TypeLookup(typeof(DeviceSettings))]
+        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv4, true)]
+        Hostv4,
+
+        /// <summary>
+        /// The IPv6 Address or HostName to use to connect to a device.<para/>
+        /// Corresponds to Basic Device Settings -> IPv6 Address/DNS Name.
+        /// </summary>
+        [TypeLookup(typeof(DeviceSettings))]
+        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv6, true)]
+        Hostv6,
+
+        /// <summary>
+        /// The URL used to service this device.<para/>
+        /// Corresponds to Additional Device Information -> Service URL.
+        /// </summary>
+        [TypeLookup(typeof(DeviceSettings))]
+        ServiceUrl,
+
+        /// <summary>
+        /// Indicates how thoroughly PRTG should scan for compatible sensor types when performing an auto-discovery.<para/>
+        /// Corresponds to Device Type -> Sensor Management.
+        /// </summary>
+        [TypeLookup(typeof(DeviceSettings))]
+        AutoDiscoveryMode,
+
+        /// <summary>
+        /// How often auto-discovery operations on a device should be performed.<para/>
+        /// Corresponds to Device Type -> Discovery Schedule.
+        /// </summary>
+        [TypeLookup(typeof(DeviceSettings))]
+        AutoDiscoverySchedule
+
     #endregion
     }
 }

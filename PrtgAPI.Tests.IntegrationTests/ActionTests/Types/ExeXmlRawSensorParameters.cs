@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 
@@ -27,7 +23,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
             IntervalErrorMode = IntervalErrorMode.OneWarningThenDown;
         }
 
-        public string[] Tags
+        public new string[] Tags
         {
             get { return GetCustomParameterArray("tags_", ' '); }
             set { SetCustomParameterArray("tags_", value, ' '); }

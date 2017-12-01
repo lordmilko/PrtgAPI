@@ -15,10 +15,20 @@ namespace PrtgAPI.Objects.Undocumented
         [SplittableString(' ')]
         public string[] ParentTags { get; set; }
 
-        /*[XmlElement("injected_discoverytype")]
-        DiscoveryType DiscoveryType { get; set; }
+        /// <summary>
+        /// How thoroughly PRTG should scan for compatible sensor types when performing an auto-discovery. Corresponds to:<para/>
+        ///     Group Type -> Sensor Management<para/>
+        ///     Device Type -> Sensor Management
+        /// </summary>
+        [XmlElement("injected_discoverytype")]
+        public AutoDiscoveryMode? AutoDiscoveryMode { get; set; }
 
+        /// <summary>
+        /// How often auto-discovery operations should be performed to create new sensors. Corresponds to:<para/>
+        ///     Group Type -> Discovery Schedule<para/>
+        ///     Device Type -> Discovery Schedule
+        /// </summary>
         [XmlElement("injected_discoveryschedule")]
-        DiscoverySchedule DiscoverySchedule { get; set; }*/
+        public AutoDiscoverySchedule? AutoDiscoverySchedule { get; set; }
     }
 }

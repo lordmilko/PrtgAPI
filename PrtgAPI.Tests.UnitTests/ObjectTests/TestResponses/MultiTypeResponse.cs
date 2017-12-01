@@ -56,6 +56,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
+                case nameof(CommandFunction.AddDevice2):
+                case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
                 case nameof(CommandFunction.LoadLookups):
                 case nameof(CommandFunction.RecalcCache):

@@ -15,7 +15,7 @@ PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which
 Useful things you can do with PrtgAPI:
 * Generate reports based on custom queries
 * Monitor missing sensors (such as Veeam Backups) and missing devices (from your domain)
-* Create and modify sensors - creating from scratch or cloning from existing ones
+* Create and modify sensors, devices and groups - creating from scratch or cloning from existing ones
 * Generate complex sensor factory definitions
 * Deploy notification triggers to individual sensors for specific clients
 * Maintain standard naming/alerting/object settings across your environment
@@ -174,6 +174,8 @@ PrtgAPI supports a wide variety of operations, each of which taking pipeline inp
 
 ```powershell
 Add-NotificationTrigger
+Add-Device
+Add-Group
 Add-Sensor
 Acknowledge-Sensor
 Backup-PrtgConfig
@@ -210,6 +212,8 @@ New-Credential
 New-NotificationTriggerParameters
 New-SearchFilter # Alias: flt
 New-SensorFactoryDefinition
+New-DeviceParameters
+New-GroupParameters
 New-SensorParameters
 Open-PrtgObject
 Pause-Object

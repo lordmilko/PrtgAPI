@@ -9,7 +9,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Creates a new set of sensor parameters for creating a brand new sensor under a device.</para>
     /// 
-    /// <para type="description">The New-SensorParameters cmdlet creates a set of trigger parameters for adding a brand
+    /// <para type="description">The New-SensorParameters cmdlet creates a set of parameters for adding a brand
     /// new sensor to PRTG. All sensor types supported by PRTG can be added with New-SensorParameters, however certain
     /// types are "natively" supported.</para>
     /// 
@@ -24,9 +24,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// New-SensorParameters optionally allows you to specify the value of the primary mandatory field of the specified
     /// type using the -Value parameter. Fields that require values contain a value of $null by default, however not all
     /// fields that are $null are necessarily mandatory. If you attempt to add a natively supported type with missing
-    /// mandatory fields, PrtgAPI will catch this and alert you to do the value that was missing.<para/>
+    /// mandatory fields, PrtgAPI will catch this and alert you that the value that was missing.</para>
     /// 
-    /// <para type="description"></para>Beyond type safety, PrtgAPI does not perform any validation
+    /// <para type="description">Beyond type safety, PrtgAPI does not perform any validation
     /// that the values you specify to fields are "correct" (e.g. for an EXE/Script Advanced sensor, that the specified
     /// file exists). In the event invalid values are specified, PRTG will usually handle the error gracefully, however you
     /// are responsible for confirming that any values that are used to create a new sensor as are as correct as possible.</para>

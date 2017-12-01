@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -13,7 +14,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">When adding sensor types that are natively supported by PrtgAPI, Add-Sensor
     /// will validate that all mandatory parameter fields contain values. If a mandatory field is missing
-    /// a value, Add-Sensor will throw an InvalidOperationException, listing the field whose value was missing.
+    /// a value, Add-Sensor will throw an <see cref="InvalidOperationException"/>, listing the field whose value was missing.
     /// When adding unsupported sensor types defined in <see cref="RawSensorParameters"/>, Add-Sensor does not
     /// perform any parameter validation. As such, it is critical to ensure that all parameter names and values
     /// are valid before passing the parameters to the Add-Sensor cmdlet.</para>
@@ -50,29 +51,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SensorParameters</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true)]
-    public class AddSensor : PrtgOperationCmdlet
+    public class AddSensor : AddObject<NewSensorParameters, Device>
     {
         /// <summary>
-        /// <para type="description">The device the sensor will be created under.</para>
+        /// Initializes a new instance of the <see cref="AddSensor"/> class.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public Device Device { get; set; }
-
-        /// <summary>
-        /// <para type="description">A set of parameters whose properties describe the type of sensor to add, to what device, with what settings.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
-        public NewSensorParameters Parameters { get; set; }
-
-        /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
-        /// </summary>
-        protected override void ProcessRecordEx()
+        public AddSensor() : base(BaseType.Sensor, CommandFunction.AddSensor5)
         {
-            if (ShouldProcess($"{Parameters.Name} (Device ID: {Device.Id}, Type: {Parameters[Parameter.SensorType]})"))
-            {
-                ExecuteOperation(() => client.AddSensor(Device.Id, Parameters), "Adding PRTG Sensors", $"Adding sensor '{Parameters.Name}' to device ID {Device.Id}");
-            }
         }
     }
 }

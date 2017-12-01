@@ -168,6 +168,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectTests\PowerShell\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Add-Device.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Add-Group.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Add-NotificationTrigger.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Add-Sensor.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Backup-PrtgConfig.Tests.ps1" />

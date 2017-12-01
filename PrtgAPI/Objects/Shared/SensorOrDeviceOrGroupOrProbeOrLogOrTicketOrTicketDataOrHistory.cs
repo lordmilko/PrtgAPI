@@ -4,7 +4,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI.Objects.Shared
 {
     /// <summary>
-    /// Properties that apply to Sensors, Devices, Groups, Probes, Logs, Tickets, TicketData and History.
+    /// Base class for Sensors, Devices, Groups, Probes, Logs, Tickets, TicketData and History, containing properties that apply to all eight object types.
     /// </summary>
     public class SensorOrDeviceOrGroupOrProbeOrLogOrTicketOrTicketDataOrHistory : ObjectTable
     {
