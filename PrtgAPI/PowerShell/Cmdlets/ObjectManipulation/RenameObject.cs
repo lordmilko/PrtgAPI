@@ -49,13 +49,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
-                ExecuteOperation(() =>
-                {
-                    if (Object.BaseType == BaseType.Probe)
-                        client.SetObjectProperty(Object.Id, ObjectProperty.Name, Name);
-                    else
-                        client.RenameObject(Object.Id, Name);
-                }, "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
+                ExecuteOperation(() => client.RenameObject(Object.Id, Name), "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
             }
                 
         }

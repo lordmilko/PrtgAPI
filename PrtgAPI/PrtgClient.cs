@@ -1915,14 +1915,14 @@ namespace PrtgAPI
         public async Task RemoveObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Rename a Sensor, Device or Group within PRTG. Renaming probes is not supported. To rename a probe, use <see cref="SetObjectProperty(int, ObjectProperty, object)"/> 
+        /// Rename a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
         public void RenameObject(int objectId, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectId, name));
 
         /// <summary>
-        /// Asynchronously rename a Sensor, Device or Group within PRTG. Renaming probes is not supported. To rename a probe, use <see cref="SetObjectProperty(int, ObjectProperty, object)"/> 
+        /// Asynchronously rename a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>

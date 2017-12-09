@@ -289,14 +289,14 @@ namespace PrtgAPI.Tests.IntegrationTests
         private static void RestoreProbeName(PrtgClient client)
         {
             Logger.Log("Restoring probe name");
-            client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+            client.RenameObject(Settings.Probe, Settings.ProbeName);
 
             var probe = client.GetProbes(Property.Name, Settings.ProbeName);
 
             if (probe.Count == 0)
             {
                 Logger.Log("Probe name didn't stick. Restoring probe name again");
-                client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
+                client.RenameObject(Settings.Probe, Settings.ProbeName);
 
                 probe = client.GetProbes(Property.Name, Settings.ProbeName);
 

@@ -16,8 +16,8 @@ namespace PrtgAPI.Parameters
 
         public string Name
         {
-            get { return (string)this[Parameter.Name]; }
-            set { this[Parameter.Name] = value; }
+            get { return (string)this[Parameter.Value]; }
+            set { this[Parameter.Value] = value; }
         }
     }
 }
