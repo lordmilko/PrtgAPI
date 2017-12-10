@@ -1103,8 +1103,8 @@ namespace PrtgAPI
 
         #endregion
 
-        #endregion
-        #region Object Manipulation
+    #endregion
+    #region Object Manipulation
         #region Add Objects
 
         /// <summary>
@@ -1790,35 +1790,103 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.
+        /// Restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.<para/>
+        /// By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether all probes have successfully restarted.<para/>
+        /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
+        /// the progress callback returns false, PrtgAPI will stop waiting for all probes to restart.
         /// </summary>
-        /// <param name="probeId"></param>
-        public void RestartProbe(int? probeId) =>
+        /// <param name="probeId">The ID of the probe to restart. If this value is null, the PRTG Probe Service of all probes will be restarted.</param>
+        /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
+        /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
+        public void RestartProbe(int? probeId, bool waitForRestart = false, Func<List<RestartProbeProgress>, bool> progressCallback = null)
+        {
+            var restartTime = DateTime.Now;
+
             requestEngine.ExecuteRequest(CommandFunction.RestartProbes, new RestartProbeParameters(probeId));
 
+            if (waitForRestart)
+            {
+                var probe = probeId == null ? GetProbes() : GetProbes(Property.Id, probeId);
+                WaitForProbeRestart(restartTime, probe, progressCallback);
+            }
+        }
+
         /// <summary>
-        /// Asynchronously restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.
+        /// Asynchronously restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.<para/>
+        /// By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether all probes have successfully restarted.<para/>
+        /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
+        /// the progress callback returns false, PrtgAPI will stop waiting for all probes to restart.
         /// </summary>
-        /// <param name="probeId"></param>
-        public async Task RestartProbeAsync(int? probeId) =>
+        /// <param name="probeId">The ID of the probe to restart. If this value is null, the PRTG Probe Service of all probes will be restarted.</param>
+        /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
+        /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
+        public async Task RestartProbeAsync(int? probeId, bool waitForRestart = false, Func<List<RestartProbeProgress>, bool> progressCallback = null)
+        {
+            var restartTime = DateTime.Now;
+
             await requestEngine.ExecuteRequestAsync(CommandFunction.RestartProbes, new RestartProbeParameters(probeId)).ConfigureAwait(false);
+
+            if (waitForRestart)
+            {
+                var probe = probeId == null ? await GetProbesAsync().ConfigureAwait(false) : await GetProbesAsync(Property.Id, probeId).ConfigureAwait(false);
+                await WaitForProbeRestartAsync(restartTime, probe, progressCallback).ConfigureAwait(false);
+            }
+        }
+
+        private void UpdateProbeStatus(List<RestartProbeProgress> probes, List<Log> logs)
+        {
+            foreach (var probe in probes)
+            {
+                if (!probe.Disconnected)
+                {
+                    //If we got a log saying the probe disconnected, or the probe was already disconnected, flag it as having disconnected
+                    if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
+                        probe.Disconnected = true;
+                }
+                if (probe.Disconnected && !probe.Reconnected) //If it's already disconnected and hasn't reconnected, check its status
+                {
+                    //If the probe has disconnected and we see it's reconnected, flag it as such. If it was already disconnected though,
+                    //it'll never reconnect, so let it through
+                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
+                        probe.Reconnected = true;
+                }
+            }
+        }
 
         /// <summary>
         /// Restarts the PRTG Core Service. This will cause PRTG to disconnect all users and become completely unavailable while the service restarts.<para/>
-        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.
+        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.<para/>
+        /// By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether PRTG has successfully restarted.<para/>
+        /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
+        /// the progress callback returns false, PrtgAPI will stop waiting for the core to restart.
         /// </summary>
-        public void RestartCore()
+        /// <param name="waitForRestart">Whether wait for the Core Service to restart before completing this method.</param>
+        /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether PRTG has restarted.</param>
+        public void RestartCore(bool waitForRestart = false, Func<RestartCoreStage, bool> progressCallback = null)
         {
+            DateTime restartTime = DateTime.Now;
+
             requestEngine.ExecuteRequest(CommandFunction.RestartServer, new Parameters.Parameters());
+
+            if (waitForRestart)
+                WaitForCoreRestart(restartTime, progressCallback);
         }
 
         /// <summary>
         /// Asynchronously restarts the PRTG Core Service. This will cause PRTG to disconnect all users and become completely unavailable while the service restarts.<para/>
-        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.
+        /// If PRTG is part of a cluster, only the server specified by the current <see cref="PrtgClient"/> will be restarted.<para/>
+        /// By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether PRTG has successfully restarted.<para/>
+        /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
+        /// the progress callback returns false, PrtgAPI will stop waiting for the core to restart.
         /// </summary>
-        public async Task RestartCoreAsync()
+        public async Task RestartCoreAsync(bool waitForRestart = false, Func<RestartCoreStage, bool> progressCallback = null)
         {
+            DateTime restartTime = DateTime.Now;
+
             await requestEngine.ExecuteRequestAsync(CommandFunction.RestartServer, new Parameters.Parameters()).ConfigureAwait(false);
+
+            if (waitForRestart)
+                await WaitForCoreRestartAsync(restartTime, progressCallback).ConfigureAwait(false);
         }
 
         #endregion
@@ -1932,8 +2000,7 @@ namespace PrtgAPI
     #endregion
 #endregion
 
-
-        #region Unsorted
+#region Unsorted
 
         /// <summary>
         /// Calcualte the total number of objects of a given type present on a PRTG Server.
@@ -2057,6 +2124,6 @@ namespace PrtgAPI
         internal async Task<List<Location>> ResolveAddressAsync(string address) =>
             (await GetObjectAsync<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).ConfigureAwait(false)).Results.ToList();
 
-        #endregion
+#endregion
     }
 }

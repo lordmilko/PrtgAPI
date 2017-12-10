@@ -163,7 +163,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             {
                 var fullName = (string)s.GetInternalProperty("FullName");
 
-                var asyncName = fullName.Replace(s.Name, $"{s.Name}Async");
+                var asyncName = fullName.Replace($"{s.Name}(", $"{s.Name}Async(");
 
                 if (!methodFullNames.Contains(asyncName))
                     missingAsync.Add(s);

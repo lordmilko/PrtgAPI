@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Xml.Linq;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Parameters;
@@ -187,6 +189,7 @@ namespace PrtgAPI
                 }
             }
         }
+
         private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers)
         {
             foreach (var trigger in triggers)
@@ -206,6 +209,7 @@ namespace PrtgAPI
                 }
             }
         }
+
         //######################################
         // ParseNotificationTriggerTypes
         //######################################
@@ -226,6 +230,181 @@ namespace PrtgAPI
             responseText = responseText.Replace("\"data\": \"(no triggers defined)\",", "");
 
             return responseText;
+        }
+
+        //######################################
+        // WaitForCoreRestart
+        //######################################
+
+        private void WaitForCoreRestart(DateTime restartTime, Func<RestartCoreStage, bool> callback)
+        {
+            RestartCoreStage coreStage = RestartCoreStage.Shutdown;
+
+            var originalRetries = RetryCount;
+
+            try
+            {
+                RetryCount = 0;
+
+                while (coreStage != RestartCoreStage.Completed)
+                {
+                    coreStage = ProbeServer(restartTime);
+
+                    if (callback != null && !callback(coreStage))
+                        break;
+
+                    if (coreStage == RestartCoreStage.Completed)
+                        break;
+#if !DEBUG
+                    if (callback == null)
+                        Thread.Sleep(5000);
+#endif
+                }
+            }
+            finally
+            {
+                RetryCount = originalRetries;
+            }
+        }
+
+        private async Task WaitForCoreRestartAsync(DateTime restartTime, Func<RestartCoreStage, bool> callback)
+        {
+            RestartCoreStage coreStage = RestartCoreStage.Shutdown;
+
+            var originalRetries = RetryCount;
+
+            try
+            {
+                RetryCount = 0;
+
+                while (coreStage != RestartCoreStage.Completed)
+                {
+                    coreStage = await ProbeServerAsync(restartTime).ConfigureAwait(false);
+
+                    if (callback != null && !callback(coreStage))
+                        break;
+
+                    if (coreStage == RestartCoreStage.Completed)
+                        break;
+#if !DEBUG
+                    if (callback == null)
+                        await Task.Delay(5000).ConfigureAwait(false);
+#endif
+                }
+            }
+            finally
+            {
+                RetryCount = originalRetries;
+            }
+        }
+
+        //######################################
+        // ProbeServer
+        //######################################
+
+        private RestartCoreStage ProbeServer(DateTime restartTime)
+        {
+            RestartCoreStage coreStage;
+            
+            try
+            {
+                var logs = GetLogs(null, endDate: restartTime, status: LogStatus.SystemStart);
+
+                coreStage = logs.Any() ? RestartCoreStage.Completed : RestartCoreStage.Shutdown;
+            }
+            catch (Exception ex) when (ex is WebException || ex is TimeoutException)
+            {
+                coreStage = RestartCoreStage.Restart;
+            }
+            catch (HttpRequestException)
+            {
+                coreStage = RestartCoreStage.Startup;
+            }
+
+            return coreStage;
+        }
+
+        private async Task<RestartCoreStage> ProbeServerAsync(DateTime restartTime)
+        {
+            RestartCoreStage coreStage;
+            
+            try
+            {
+                var logs = await GetLogsAsync(null, endDate: restartTime, status: LogStatus.SystemStart).ConfigureAwait(false);
+
+                coreStage = logs.Any() ? RestartCoreStage.Completed : RestartCoreStage.Shutdown;
+            }
+            catch (Exception ex) when (ex is WebException || ex is TimeoutException)
+            {
+                coreStage = RestartCoreStage.Restart;
+            }
+            catch (HttpRequestException)
+            {
+                coreStage = RestartCoreStage.Startup;
+            }
+
+            return coreStage;
+        }
+
+        //######################################
+        // WaitForCoreRestart
+        //######################################
+        internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        {
+            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+
+            while (probeStatuses.Any(p => p.Reconnected == false))
+            {
+                //Get all logs relating to probes connecting and disconnecting since we initiated the restarts.
+                //If we've already detected all probes have disconnected, no need to include those logs in the response
+                var statuses = new List<LogStatus> { LogStatus.Connected };
+
+                if (probeStatuses.Any(p => !p.Disconnected))
+                    statuses.Add(LogStatus.Disconnected);
+
+                var logs = GetLogs(null, endDate: restartTime, status: statuses.ToArray());
+
+                UpdateProbeStatus(probeStatuses, logs);
+
+                if (progressCallback == null)
+                    Thread.Sleep(5000);
+                else
+                {
+                    var result = progressCallback(probeStatuses);
+
+                    if (!result)
+                        break;
+                }
+            }
+        }
+
+        internal async Task WaitForProbeRestartAsync(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        {
+            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+
+            while (probeStatuses.Any(p => p.Reconnected == false))
+            {
+                //Get all logs relating to probes connecting and disconnecting since we initiated the restarts.
+                //If we've already detected all probes have disconnected, no need to include those logs in the response
+                var statuses = new List<LogStatus> { LogStatus.Connected };
+
+                if (probeStatuses.Any(p => !p.Disconnected))
+                    statuses.Add(LogStatus.Disconnected);
+
+                var logs = await GetLogsAsync(null, endDate: restartTime, status: statuses.ToArray()).ConfigureAwait(false);
+
+                UpdateProbeStatus(probeStatuses, logs);
+
+                if (progressCallback == null)
+                    await Task.Delay(5000).ConfigureAwait(false);
+                else
+                {
+                    var result = progressCallback(probeStatuses);
+
+                    if (!result)
+                        break;
+                }
+            }
         }
     }
 }

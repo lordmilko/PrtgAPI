@@ -87,6 +87,7 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\WmiTimeoutMethod.cs" />
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
+    <Compile Include="Enums\RestartStage.cs" />
     <Compile Include="Enums\Serialization\ObjectType.cs" />
     <Compile Include="Enums\Serialization\SensorType.cs" />
     <Compile Include="Enums\Serialization\SensorTypeInternal.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Objects\Log.cs" />
+    <Compile Include="Objects\RestartProbeProgress.cs" />
     <Compile Include="Objects\SensorHistoryRecord.cs" />
     <Compile Include="Objects\SensorTypeDescriptor.cs" />
     <Compile Include="Objects\Ticket.cs" />

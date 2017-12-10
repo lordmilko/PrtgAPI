@@ -8,7 +8,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class RestartPrtgCoreResponse : MultiTypeResponse
     {
-        private RestartPrtgCore.RestartStage restartStage = RestartPrtgCore.RestartStage.Shutdown;
+        private RestartCoreStage restartCoreStage = RestartCoreStage.Shutdown;
 
         private int shutdownRequestCount;
 
@@ -25,26 +25,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private IWebResponse GetRestartServerProgressResponse()
         {
-            switch (restartStage)
+            switch (restartCoreStage)
             {
-                case RestartPrtgCore.RestartStage.Shutdown:
+                case RestartCoreStage.Shutdown:
                     if (shutdownRequestCount == 0)
                     {
                         shutdownRequestCount++;
                         return new MessageResponse();
                     }
-                    restartStage = RestartPrtgCore.RestartStage.Restart;
+                    restartCoreStage = RestartCoreStage.Restart;
                     throw new WebException();
 
-                case RestartPrtgCore.RestartStage.Restart:
-                    restartStage = RestartPrtgCore.RestartStage.Startup;
+                case RestartCoreStage.Restart:
+                    restartCoreStage = RestartCoreStage.Startup;
                     throw new HttpRequestException();
 
-                case RestartPrtgCore.RestartStage.Startup:
+                case RestartCoreStage.Startup:
                     return new MessageResponse(new TestItems.MessageItem(statusRaw: "1"));
 
                 default:
-                    throw new NotImplementedException($"Unknown stage '{restartStage}'");
+                    throw new NotImplementedException($"Unknown stage '{restartCoreStage}'");
             }
         }
     }

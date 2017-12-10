@@ -194,7 +194,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             var query = first.LastIndexOf('?');
 
             var end = query > 0 ? query : first.Length - 1;
-            var start = first.LastIndexOf(".com/", StringComparison.InvariantCulture) + 5;
+            var start = first.IndexOf('/', 9) + 1;
 
             var page = first.Substring(start, end - start);
 

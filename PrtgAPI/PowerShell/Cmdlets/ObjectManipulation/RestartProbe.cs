@@ -114,62 +114,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Wait && restartTime != null)
             {
-                if (Probe == null)
-                    GetProgressForAllProbes();
-                else
-                    GetProgressForRestartedProbes(probesRestarted);
+                List<Probe> probes = Probe == null ? client.GetProbes() : probesRestarted;
+
+                client.WaitForProbeRestart(restartTime.Value, probes, WriteProbeProgress);
             }
         }
 
-        private void GetProgressForAllProbes()
-        {
-            var probes = client.GetProbes();
-
-            GetProgressForRestartedProbes(probes);
-        }
-
-        private void GetProgressForRestartedProbes(List<Probe> probes)
-        {
-            List<RestartedProbe> probeStatuses = probes.Select(p => new RestartedProbe(p)).ToList();
-
-            while (probeStatuses.Any(p => p.Reconnected == false))
-            {
-                //Get all logs relating to probes connecting and disconnecting since we initiated the restarts.
-                //If we've already detected all probes have disconnected, no need to include those logs in the response
-                var statuses = new List<LogStatus> { LogStatus.Connected };
-
-                if (probeStatuses.Any(p => !p.Disconnected))
-                    statuses.Add(LogStatus.Disconnected);
-
-                var logs = client.GetLogs(null, endDate: restartTime, status: statuses.ToArray());
-
-                UpdateProbeStatus(probeStatuses, logs);
-
-                WriteProbeProgress(probeStatuses);
-            }
-        }
-
-        private void UpdateProbeStatus(List<RestartedProbe> probes, List<Log> logs)
-        {
-            foreach (var probe in probes)
-            {
-                if (!probe.Disconnected)
-                {
-                    //If we got a log saying the probe disconnected, or the probe was already disconnected, flag it as having disconnected
-                    if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.Condition == ProbeStatus.Disconnected)
-                        probe.Disconnected = true;
-                }
-                if (probe.Disconnected && !probe.Reconnected) //If it's already disconnected and hasn't reconnected, check its status
-                {
-                    //If the probe has disconnected and we see it's reconnected, flag it as such. If it was already disconnected though,
-                    //it'll never reconnect, so let it through
-                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.Condition == ProbeStatus.Disconnected)
-                        probe.Reconnected = true;
-                }
-            }
-        }
-
-        private void WriteProbeProgress(List<RestartedProbe> probeStatuses)
+        private bool WriteProbeProgress(List<RestartProbeProgress> probeStatuses)
         {
             var completed = probeStatuses.Count(p => p.Reconnected) + 1;
 
@@ -206,6 +157,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     throw new TimeoutException($"Timed out waiting for {remaining} {plural} to restart");
                 }
 
+                if (Stopping)
+                    return false;
+
 #if DEBUG
                 if(!UnitTest())
                     Thread.Sleep(1000);
@@ -213,24 +167,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 Thread.Sleep(1000);
 #endif
             }
-        }
 
-        class RestartedProbe
-        {
-            private Probe probe { get; set; }
-
-            public int Id => probe.Id;
-
-            public ProbeStatus Condition => probe.Condition;
-
-            public bool Disconnected { get; set; }
-
-            public bool Reconnected { get; set; }
-
-            public RestartedProbe(Probe probe)
-            {
-                this.probe = probe;
-            }
+            return true;
         }
     }
 }

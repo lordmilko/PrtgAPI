@@ -61,8 +61,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, HelpMessage = "Duration (in seconds) to wait for the PRTG Core Service to restart. Default value is 3600 (1 hour). If -Wait is false, this parameter will have no effect.")]
         public int Timeout { get; set; } = 3600;
 
-        private DateTime restartTime;
-
         private int secondsRemaining = 150;
         private int secondsElapsed;
 
@@ -77,113 +75,65 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 bool no = false;
                 if (Force || ShouldContinue("Are you sure you want to restart the PRTG Core Service? All users will be disconnected while restart is in progress", "WARNING!", true, ref yes, ref no))
                 {
-                    restartTime = DateTime.Now;
-
-                    client.RestartCore();
-
-                    if (Wait)
+                    var record = new ProgressRecord(1, "Restart PRTG Core", "Restarting PRTG Core")
                     {
-                        WaitForRestart();
-                    }
+                        CurrentOperation = "Waiting for PRTG Core Server to shutdown"
+                    };
+
+                    client.RestartCore(Wait, stage =>
+                    {
+                        switch (stage)
+                        {
+                            case RestartCoreStage.Shutdown:
+                                break;
+                            case RestartCoreStage.Restart:
+                                record.CurrentOperation = "Waiting for PRTG Core Service to restart";
+                                break;
+                            case RestartCoreStage.Startup:
+                                record.CurrentOperation = "Waiting for PRTG Core Server to initialize";
+                                break;
+                            case RestartCoreStage.Completed:
+                                return false;
+                        }
+
+                        return WriteProgress(record, stage);
+                    });
                 }
             }
         }
 
-        private void WaitForRestart()
+        private bool WriteProgress(ProgressRecord record, RestartCoreStage coreStage)
         {
-            var record = new ProgressRecord(1, "Restart PRTG Core", "Restarting PRTG Core")
+            record.PercentComplete = (int)((double)coreStage / 3 * 100);
+            record.SecondsRemaining = secondsRemaining;
+
+            for (int i = 0; i < 5; i++)
             {
-                CurrentOperation = "Waiting for PRTG Core Server to shutdown"
-            };
+                WriteProgress(record);
 
-            RestartStage stage = RestartStage.Shutdown;
+                secondsRemaining--;
+                secondsElapsed++;
 
-            var originalRetries = client.RetryCount;
+                if (secondsRemaining < 0)
+                    secondsRemaining = 30;
 
-            try
-            {
-                client.RetryCount = 0;
+                record.SecondsRemaining = secondsRemaining;
 
-                while (stage != RestartStage.Completed)
-                {
-                    stage = ProbeServer();
+                if (secondsElapsed > Timeout)
+                    throw new TimeoutException($"Timed out waiting for PRTG Core Service to restart");
 
-                    switch (stage)
-                    {
-                        case RestartStage.Shutdown:
-                            break;
-                        case RestartStage.Restart:
-                            record.CurrentOperation = "Waiting for PRTG Core Service to restart";
-                            break;
-                        case RestartStage.Startup:
-                            record.CurrentOperation = "Waiting for PRTG Core Server to initialize";
-                            break;
-                    }
-
-                    if (stage == RestartStage.Completed)
-                        break;
-
-                    record.PercentComplete = (int) ((double) stage/3*100);
-                    record.SecondsRemaining = secondsRemaining;
-
-                    for (int i = 0; i < 5; i++)
-                    {
-                        WriteProgress(record);
-
-                        secondsRemaining--;
-                        secondsElapsed++;
-
-                        if (secondsRemaining < 0)
-                            secondsRemaining = 30;
-
-                        record.SecondsRemaining = secondsRemaining;
-
-                        if (secondsElapsed > Timeout)
-                            throw new TimeoutException($"Timed out waiting for PRTG Core Service to restart");
-
-#if !DEBUG
-                        Thread.Sleep(1000);
+                if (Stopping)
+                    return false;
+#if DEBUG
+                if(!UnitTest())
+                    Thread.Sleep(1000);
 #endif
-                    }
-
-                    if (Stopping)
-                        break;
-                }
-            }
-            finally
-            {
-                client.RetryCount = originalRetries;
-            }
-        }
-
-        private RestartStage ProbeServer()
-        {
-            RestartStage stage;
-
-            try
-            {
-                var logs = client.GetLogs(null, endDate: restartTime, status: LogStatus.SystemStart);
-
-                stage = logs.Any() ? RestartStage.Completed : RestartStage.Shutdown;
-            }
-            catch (Exception ex) when (ex is WebException || ex is TimeoutException)
-            {
-                stage = RestartStage.Restart;
-            }
-            catch (HttpRequestException)
-            {
-                stage = RestartStage.Startup;
             }
 
-            return stage;
-        }
+            if (Stopping)
+                return false;
 
-        internal enum RestartStage
-        {
-            Shutdown = 1,
-            Restart = 2,
-            Startup = 3,
-            Completed
+            return true;
         }
     }
 }

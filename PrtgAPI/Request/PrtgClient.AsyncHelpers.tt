@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Xml.Linq;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Parameters;
@@ -139,6 +141,7 @@ for(int i = 0; i < 2; i++)
                 }
             }
         }
+
 <#
 }
 #>
@@ -157,6 +160,120 @@ for(int i = 0; i < 2; i++)
             responseText = responseText.Replace("\"data\": \"(no triggers defined)\",", "");
 
             return responseText;
+        }
+
+<#
+}
+#>
+        //######################################
+        // WaitForCoreRestart
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("WaitForCoreRestart", "void", i) #>(DateTime restartTime, Func<RestartCoreStage, bool> callback)
+        {
+            RestartCoreStage coreStage = RestartCoreStage.Shutdown;
+
+            var originalRetries = RetryCount;
+
+            try
+            {
+                RetryCount = 0;
+
+                while (coreStage != RestartCoreStage.Completed)
+                {
+                    coreStage = <#= CallFunction("ProbeServer", "restartTime", i) #>;
+
+                    if (callback != null && !callback(coreStage))
+                        break;
+
+                    if (coreStage == RestartCoreStage.Completed)
+                        break;
+#if !DEBUG
+                    if (callback == null)
+                        <#= Sleep(5000, i) #>
+#endif
+                }
+            }
+            finally
+            {
+                RetryCount = originalRetries;
+            }
+        }
+
+<#
+}
+#>
+        //######################################
+        // ProbeServer
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("ProbeServer", "RestartCoreStage", i) #>(DateTime restartTime)
+        {
+            RestartCoreStage coreStage;
+            
+            try
+            {
+                var logs = <#= CallFunction("GetLogs", "null, endDate: restartTime, status: LogStatus.SystemStart", i) #>;
+
+                coreStage = logs.Any() ? RestartCoreStage.Completed : RestartCoreStage.Shutdown;
+            }
+            catch (Exception ex) when (ex is WebException || ex is TimeoutException)
+            {
+                coreStage = RestartCoreStage.Restart;
+            }
+            catch (HttpRequestException)
+            {
+                coreStage = RestartCoreStage.Startup;
+            }
+
+            return coreStage;
+        }
+
+<#
+}
+#>
+        //######################################
+        // WaitForCoreRestart
+        //######################################
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("WaitForProbeRestart", "void", i) #>(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        {
+            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+
+            while (probeStatuses.Any(p => p.Reconnected == false))
+            {
+                //Get all logs relating to probes connecting and disconnecting since we initiated the restarts.
+                //If we've already detected all probes have disconnected, no need to include those logs in the response
+                var statuses = new List<LogStatus> { LogStatus.Connected };
+
+                if (probeStatuses.Any(p => !p.Disconnected))
+                    statuses.Add(LogStatus.Disconnected);
+
+                var logs = <#= CallFunction("GetLogs", "null, endDate: restartTime, status: statuses.ToArray()", i) #>;
+
+                UpdateProbeStatus(probeStatuses, logs);
+
+                if (progressCallback == null)
+                    <#= Sleep(5000, i) #>
+                else
+                {
+                    var result = progressCallback(probeStatuses);
+
+                    if (!result)
+                        break;
+                }
+            }
         }
 <#
 if(i == 0)
@@ -196,5 +313,13 @@ if(i == 0)
             return $"{function}.Result;";
         else
             return $"await {function}.ConfigureAwait(false);";
+    }
+
+    public string Sleep(int duration, int i)
+    {
+        if(i == 0)
+            return $"Thread.Sleep({duration});";
+        else
+            return $"await Task.Delay({duration}).ConfigureAwait(false);";
     }
 #>

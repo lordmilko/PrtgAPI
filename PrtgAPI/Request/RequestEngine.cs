@@ -234,7 +234,7 @@ namespace PrtgAPI.Request
                     prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
                 else
                 {
-                    thrower();
+                    thrower?.Invoke();
 
                     return false;
                 }
