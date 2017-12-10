@@ -49,7 +49,7 @@ namespace PrtgAPI.Parameters
 
                     if (!string.IsNullOrEmpty(hostv6?.ToString()))
                     {
-                        SetCustomParameter(ObjectProperty.Hostv4, value);
+                        SetCustomParameter(ObjectProperty.Hostv4, hostv6);
                         SetCustomParameter(ObjectProperty.Hostv6, null);
                     }
                 }

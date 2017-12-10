@@ -45,8 +45,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         #endregion SetObjectPropertyParameters
         #region DynamicPropertyTypeParser
 
-        [XmlElement("injected_intergerproperty")]
+        [XmlElement("injected_arraypropertymissingsplittablestring")]
+        public string[] ArrayPropertyMissingSplittableString { get; set; }
+
+        [XmlElement("injected_typelookupwithoutiformattable")]
+        public string TypeWithoutIFormattable { get; set; }
+
+        [SplittableString(' ')]
+        [XmlElement("injected_arrayproperty")]
         public string[] ArrayProperty { get; set; }
+
+        [XmlElement("injected_integerproperty")]
+        public int IntegerProperty { get; set; }
 
         #endregion
     }

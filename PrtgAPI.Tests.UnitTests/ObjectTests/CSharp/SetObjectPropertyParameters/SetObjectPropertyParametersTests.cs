@@ -100,7 +100,39 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void DynamicPropertyTypeParser_SetArray_WithoutSplittableStringAttribute_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty.ArrayProperty, new[] {"a", "b"}, typeof(NotSupportedException), "missing a SplittableStringAttribute");
+            ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty.ArrayPropertyMissingSplittableString, new[] {"a", "b"}, typeof(NotSupportedException), "missing a SplittableStringAttribute");
+        }
+
+        [TestMethod]
+        public void DynamicPropertyTypeParser_ParseValue_WithTypeAttribute_AndNotIFormattable_ShouldThrow()
+        {
+            ExecuteExceptionWithTypeLookup(FakeObjectProperty.TypeWithoutIFormattable, typeof (NotSupportedException), "does not implement IFormattable is not currently supported");
+        }
+
+        [TestMethod]
+        public void DynamicPropertyTypeParser_SetArray_WithUntypedArray()
+        {
+            var arr = new object[] { "1", "2" };
+
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, arr);
+        }
+
+        [TestMethod]
+        public void DynamicPropertyTypeParser_SetArray_WithNull()
+        {
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, null);
+        }
+
+        [TestMethod]
+        public void DynamicPropertyTypeParser_AssignsDouble_ToInt_WithoutDecimalPlaces_ShouldThrow()
+        {
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.IntegerProperty, 1.0);
+        }
+
+        [TestMethod]
+        public void DynamicPropertyTypeParser_AssignsDouble_ToInt_WithDecimalPlaces_ShouldThrow()
+        {
+            ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty.IntegerProperty, 1.2, typeof(InvalidTypeException), "Expected type: 'System.Int32'. Actual type: 'System.Double'");
         }
 
         #endregion
@@ -130,6 +162,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                     if (!ex.Message.Contains(message))
                         throw;
                 }
+                else
+                    throw;
             }
         }
 
@@ -147,6 +181,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                     if (!ex.Message.Contains(message))
                         throw;
                 }
+                else
+                    throw;
             }
         }
 

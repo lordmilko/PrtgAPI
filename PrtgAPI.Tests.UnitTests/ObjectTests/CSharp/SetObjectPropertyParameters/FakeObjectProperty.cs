@@ -66,8 +66,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         #region DynamicPropertyTypeParser
         
         [TypeLookup(typeof(FakeSettings))]
-        ArrayProperty
-        
+        ArrayPropertyMissingSplittableString,
+
+        [Type(typeof(int))]
+        [TypeLookup(typeof(FakeSettings))]
+        TypeWithoutIFormattable,
+
+        [TypeLookup(typeof(FakeSettings))]
+        ArrayProperty,
+
+        [TypeLookup(typeof(FakeSettings))]
+        IntegerProperty
+
         #endregion
     }
 }

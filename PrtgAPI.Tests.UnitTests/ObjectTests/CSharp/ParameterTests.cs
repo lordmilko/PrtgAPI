@@ -105,6 +105,49 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void NewDeviceParameters_SwapsHostWithIPVersion()
+        {
+            var parameters = new NewDeviceParameters("device", "dc-1");
+            Assert.AreEqual("dc-1", GetCustomParameter(parameters, "host_"));
+            Assert.AreEqual("dc-1", parameters.Host);
+
+            parameters.IPVersion = IPVersion.IPv6;
+            Assert.AreEqual("dc-1", GetCustomParameter(parameters, "hostv6_"));
+            Assert.AreEqual(null, GetCustomParameter(parameters, "host_"));
+            Assert.AreEqual("dc-1", parameters.Host);
+
+            parameters.IPVersion = IPVersion.IPv4;
+            Assert.AreEqual("dc-1", GetCustomParameter(parameters, "host_"));
+            Assert.AreEqual(null, GetCustomParameter(parameters, "hostv6_"));
+            Assert.AreEqual("dc-1", parameters.Host);
+        }
+
+        [TestMethod]
+        public void NewDeviceParameters_AssignsHostToCorrectProperty()
+        {
+            var parameters = new NewDeviceParameters("device", "dc-1");
+            Assert.AreEqual("dc-1", GetCustomParameter(parameters, "host_"));
+
+            parameters.Host = "dc-2";
+            Assert.AreEqual("dc-2", GetCustomParameter(parameters, "host_"));
+
+            parameters.IPVersion = IPVersion.IPv6;
+            Assert.AreEqual("dc-2", GetCustomParameter(parameters, "hostv6_"));
+
+            parameters.Host = "dc-3";
+            Assert.AreEqual("dc-3", GetCustomParameter(parameters, "hostv6_"));
+        }
+
+        private string GetCustomParameter(Parameters.Parameters parameters, string name)
+        {
+            var customParameters = ((List<CustomParameter>) parameters.GetParameters()[Parameter.Custom]);
+
+            var targetParameter = customParameters.FirstOrDefault(p => p.Name == name);
+
+            return targetParameter?.Value?.ToString();
+        }
+
+        [TestMethod]
         public void Parameters_ReplacesCounterpart()
         {
             var parameters = new Parameters.Parameters

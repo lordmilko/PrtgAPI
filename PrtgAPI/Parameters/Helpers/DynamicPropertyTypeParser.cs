@@ -58,7 +58,7 @@ namespace PrtgAPI.Parameters.Helpers
         /// <returns></returns>
         public object ParseValue()
         {
-            object val = null;
+            object val;
             bool isArray = false;
             string splittableStringChar = null;
 
@@ -79,10 +79,11 @@ namespace PrtgAPI.Parameters.Helpers
             {
                 PropertyType = PropertyType.GetElementType();
 
-                if (ValueType.IsArray)
+                if (ValueType?.IsArray == true)
                 {
                     ValueType = ValueType.GetElementType();
 
+                    //When an array is specified by PowerShell, the array will be a generic object[]
                     if (ValueType == typeof (object) && Value != null)
                     {
                         ValueType = ((object[])Value).First().GetType();
@@ -114,8 +115,8 @@ namespace PrtgAPI.Parameters.Helpers
 
                 if (isArray)
                 {
-                    if (Value == null)
-                        return null;
+                    //No need to check whether value was null; if value was null, isArray would
+                    //not have been set
 
                     return string.Join(splittableStringChar, ((Array)Value).Cast<object>().ToArray());
                 }
@@ -124,37 +125,7 @@ namespace PrtgAPI.Parameters.Helpers
             }
             else if (PropertyType == typeof (double) || PropertyType == typeof(int))
             {
-                if (isArray)
-                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
-
-                //If the value is convertable to a double, it is either an int or a double
-
-                if (!string.IsNullOrEmpty(Value?.ToString()))
-                {
-                    double doubleResult;
-                    if (Value != null && double.TryParse(Value.ToString(), out doubleResult))
-                    {
-                        //If we're actually looking for an int, see if this double is actually an integer
-                        if (PropertyType == typeof(int))
-                        {
-                            if (Convert.ToInt32(doubleResult) == doubleResult)
-                            {
-                                //If so, that's cool. When we ToString, we'll get an integer value anyway
-                                Type = TypeCategory.Number;
-                                val = doubleResult.ToString(CultureInfo.CurrentCulture);
-                            }
-                        }
-                        else
-                        {
-                            Type = TypeCategory.Number;
-                            val = doubleResult.ToString(CultureInfo.CurrentCulture);
-                        }
-                    }
-
-                    //If we still don't have a value, since we already verified our value is not null or empty we must have a value of an invalid type
-                    if (val == null)
-                        throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
-                }
+                val = ParseNumericValue(isArray);
             }
             else
             {
@@ -186,6 +157,47 @@ namespace PrtgAPI.Parameters.Helpers
 
                 if (val == null)
                     throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
+            }
+
+            return val;
+        }
+
+        private object ParseNumericValue(bool isArray)
+        {
+            object val = null;
+
+            if (isArray)
+                throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
+
+            //If the value is convertable to a double, it is either an int or a double
+
+            if (!string.IsNullOrEmpty(Value?.ToString()))
+            {
+                double doubleResult;
+
+                //If the value is a double
+                if (Value != null && double.TryParse(Value.ToString(), out doubleResult))
+                {
+                    //If we're actually looking for an int, see if this double is actually an integer
+                    if (PropertyType == typeof(int))
+                    {
+                        if (Convert.ToInt32(doubleResult) == doubleResult)
+                        {
+                            //If so, that's cool. When we ToString, we'll get an integer value anyway
+                            Type = TypeCategory.Number;
+                            val = doubleResult.ToString(CultureInfo.CurrentCulture);
+                        }
+                    }
+                    else
+                    {
+                        Type = TypeCategory.Number;
+                        val = doubleResult.ToString(CultureInfo.CurrentCulture);
+                    }
+                }
+
+                //If we still don't have a value, since we already verified our value is not null or empty we must have a value of an invalid type
+                if (val == null)
+                    throw new InvalidTypeException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
             }
 
             return val;

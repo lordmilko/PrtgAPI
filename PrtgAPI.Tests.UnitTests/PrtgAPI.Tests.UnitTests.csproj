@@ -67,7 +67,7 @@
     <Compile Include="InfrastructureTests\Support\Progress\ProgressGrouper.cs" />
     <Compile Include="InfrastructureTests\Support\Progress\ProgressHierarchy.cs" />
     <Compile Include="ObjectTests\CSharp\AddNotificationTriggerTests.cs" />
-    <Compile Include="ObjectTests\CSharp\AddSensorTests.cs" />
+    <Compile Include="ObjectTests\CSharp\AddObjectTests.cs" />
     <Compile Include="ObjectTests\CSharp\AdminToolTests.cs" />
     <Compile Include="ObjectTests\CSharp\AutoDiscoverTests.cs" />
     <Compile Include="ObjectTests\CSharp\BaseTest.cs" />
