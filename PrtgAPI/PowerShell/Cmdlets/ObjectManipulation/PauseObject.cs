@@ -6,7 +6,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Disables monitoring on an object.</para>
+    /// <para type="synopsis">Disables monitoring on a PRTG object.</para>
     /// 
     /// <para type="description">The Pause-Object cmdlet disables monitoring of an object in PRTG. When an object is paused, all children
     /// of the object are paused as well. Child objects can be independently paused and unpaused while their parent is paused,

@@ -152,7 +152,7 @@
                                 <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Status</PropertyName>
+                                <PropertyName>Condition</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>TotalDevices</PropertyName>

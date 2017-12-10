@@ -38,7 +38,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
         private void ValidateBackupCreated(List<FileInfo> originalFiles)
         {
-            Logger.LogTest("Pausing for 10 seconds while backup is created");
+            Logger.LogTestDetail("Pausing for 10 seconds while backup is created");
             Thread.Sleep(10000);
 
             var newFiles = GetBackupFiles();
