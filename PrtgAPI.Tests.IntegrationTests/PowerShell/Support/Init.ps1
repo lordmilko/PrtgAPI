@@ -7,7 +7,7 @@ if(!(Get-Module -ListAvailable Assert))
 
 function Startup
 {
-    StartupSafe
+    StartupSafe $true
 
     [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::AssemblyInitialize($null)
 
@@ -40,7 +40,7 @@ function LogTestDetail($message, $error = $false)
     LogTestName "    $message" $error
 }
 
-function StartupSafe
+function StartupSafe($unsafeTest)
 {
     Write-Host "Performing startup tasks"
     InitializeModules "PrtgAPI.Tests.IntegrationTests" $PSScriptRoot
@@ -124,12 +124,24 @@ function StartupSafe
         }
         catch [exception]
         {
-            Log "PRTG service may still be starting up; pausing for 60 seconds"
-            Sleep 30
-            Get-Sensor | Refresh-Object
-            Sleep 30
+            if($unsafeTest)
+            {
+                Log "PRTG service may still be starting up; pausing 15 seconds"
+                Sleep 10
+                Get-Sensor | Refresh-Object
+                Sleep 5
+            }
+            else
+            {
+                Log "PRTG service may still be starting up; pausing for 60 seconds"
+                Sleep 30
+                Get-Sensor | Refresh-Object
+                Sleep 30
+            }
         }
     }
+
+    [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::RepairState()
 }
 
 function Shutdown

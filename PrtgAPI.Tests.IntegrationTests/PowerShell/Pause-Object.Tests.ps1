@@ -33,6 +33,16 @@ Describe "Pause-Object_IT" {
         Sleep 10
 
         $finalSensor = Get-Sensor -Id (Settings UpSensor)
+
+        if($finalSensor.Status -eq "PausedByUser" -or $finalSensor.Status -eq "Unknown")
+        {
+            LogTestDetail "Sensor is still paused. Waiting 120 seconds"
+
+            Sleep 120
+
+            $finalSensor = Get-Sensor -Id (Settings UpSensor)
+        }
+
         $finalSensor.Status | Should Be Up
     }
 

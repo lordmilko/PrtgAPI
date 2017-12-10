@@ -43,7 +43,38 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             try
             {
-                new BasePrtgClientTest().client.RefreshObject(Settings.Device);
+                var client = new BasePrtgClientTest().client;
+
+                client.RefreshObject(Settings.Device);
+
+                List<Sensor> sensors;
+
+                var attempts = 10;
+
+                do
+                {
+                    sensors = client.GetSensors(Status.Unknown, Status.None);
+
+                    if (sensors.Count > 1)
+                    {
+                        Logger.Log("Sensors are still initializing. Sleeping for 30 seconds");
+
+                        //sensors.ForEach(s => client.RefreshObject(s.Id));
+
+                        attempts--;
+
+                        if (attempts == 0)
+                        {
+                            //Logger.Log("Sensors were still not initialized after 30 attempts. Restarting Core", true);
+                            //client.RestartCore(true);
+                            //attempts = 100;
+
+                            throw new Exception("Sensors did not initialize");
+                        }
+
+                        Thread.Sleep(30000);
+                    }
+                } while (sensors.Count > 1);
             }
             catch(Exception ex)
             {
@@ -183,6 +214,15 @@ namespace PrtgAPI.Tests.IntegrationTests
             controller.Start();
             controller.WaitForStatus(ServiceControllerStatus.Running);
 
+            if (probeNameNeedsRepairing)
+            {
+                Logger.Log("Previous repair indicated probe name still needs renaming. Waiting 60 seconds for PRTG to start");
+
+                Thread.Sleep(60000);
+
+                RepairState();
+            }
+
             Logger.Log("Finished");
         }
 
@@ -242,7 +282,9 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        private static void RepairState()
+        private static bool probeNameNeedsRepairing;
+
+        public static void RepairState()
         {
             PrtgClient client;
 
@@ -269,6 +311,8 @@ namespace PrtgAPI.Tests.IntegrationTests
                 }
                 else
                 {
+                    probeNameNeedsRepairing = false;
+
                     if (client.GetProbes(Property.Name, Settings.ProbeName).Count == 0)
                     {
                         Logger.Log("Probe could not be retrieved by name; previous rename may have failed. Re-attempting rename");
@@ -301,7 +345,13 @@ namespace PrtgAPI.Tests.IntegrationTests
                 probe = client.GetProbes(Property.Name, Settings.ProbeName);
 
                 if (probe.Count == 0)
-                    throw new Exception("Couldn't restore probe name");
+                {
+                    Logger.Log("Probe name still didn't stick. Will try again after service restarts");
+
+                    //todo: what if we're the retry after the service restarts
+
+                    probeNameNeedsRepairing = true;
+                }
             }
         }
 
@@ -356,7 +406,12 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             client.RefreshObject(objectId);
             Logger.LogTestDetail("Refreshed object; sleeping for 30 seconds");
-            Thread.Sleep(30000);
+            Thread.Sleep(10000);
+            client.RefreshObject(objectId);
+            Thread.Sleep(10000);
+            client.RefreshObject(objectId);
+            Thread.Sleep(10000);
+            client.RefreshObject(objectId);
         }
     }
 }

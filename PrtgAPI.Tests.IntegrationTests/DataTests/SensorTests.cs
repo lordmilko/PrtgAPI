@@ -49,7 +49,8 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             parameters.Status = new[] { Status.Down };
             Assert2.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Down, "Status was not down");
 
-            var sensors = client.GetSensors(parameters);
+            //Ignore Probe Health sensor due to a bug in PRTG 17.4.35
+            var sensors = client.GetSensors(parameters).Where(s => s.Name != "Probe Health").ToList();
 
             Assert2.AreEqual(1, sensors.Count, "Did not contain expected number of down sensors");
             Assert2.AreEqual(Settings.DownSensor, sensors.First().Id, "ID of down sensor was not correct");

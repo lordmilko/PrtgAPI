@@ -13,7 +13,6 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             Assert2.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
 
-            //bug: because we lowercase everything we've lowercased our Unit Testing FTW text. we need to change how we go about lowercasing things i think
             var message = "Unit Testing FTW!";
 
             Logger.LogTestDetail("Acknowledging sensor");
@@ -45,6 +44,21 @@ namespace PrtgAPI.Tests.IntegrationTests
             client.ResumeObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor2 = GetSensor(Settings.UpSensor);
+
+            if (sensor2.Status == Status.PausedByUser)
+            {
+                var log = client.GetLogs(Settings.UpSensor, RecordAge.Today, 1);
+
+                if (log.Any(l => l.Status == LogStatus.Resuming))
+                {
+                    Logger.LogTestDetail($"Status was still {Status.PausedByUser}, however a Resume request was received. Waiting 2 minutes");
+
+                    Thread.Sleep(120000);
+
+                    sensor2 = GetSensor(Settings.UpSensor);
+                }
+            }
+
             Assert2.IsTrue(sensor2.Status != Status.PausedByUser, $"Sensor status was still {Status.PausedByUser}.");
         }
 
@@ -58,9 +72,6 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             Logger.LogTestDetail("Pausing for 1 minute");
             client.PauseObject(Settings.UpSensor, 1);
-
-            //Logger.LogTestDetail("Sleeping for 2 minutes");
-            //Thread.Sleep(120000);
 
             CheckAndSleep(Settings.UpSensor);
 
@@ -88,6 +99,16 @@ namespace PrtgAPI.Tests.IntegrationTests
             client.SimulateError(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor1 = GetSensor(Settings.UpSensor);
+
+            if (sensor1.Status == Status.Up)
+            {
+                Logger.LogTestDetail($"Status was still {Status.Up}. Waiting 90 seconds");
+
+                Thread.Sleep(90000);
+
+                sensor1 = GetSensor(Settings.UpSensor);
+            }
+
             Assert2.IsTrue(sensor1.Status == Status.Down, $"Sensor status was {sensor1.Status} instead of Down.");
 
             Logger.LogTestDetail("Resuming sensor");
@@ -101,21 +122,9 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestCategory("IntegrationTest")]
         public void Action_State_GetPausedSensors_HasDifferentTypes()
         {
-            //client.Pause(Settings.DownSensor);
-            //client.SimulateError(Settings.UpSensor); //todo: we should have an explicit testping sensor
-
-            //CheckAndSleep(Settings.DownSensor);
-            //CheckAndSleep(Settings.UpSensor);
-
             var sensors = client.GetSensors(Status.Paused).Select(s => s.Status).ToList();
 
             Assert2.IsTrue(sensors.Any(s => s == Status.PausedByDependency) && sensors.Any(s => s == Status.PausedByUser), "Could not find paused sensors of different types.");
-
-            //client.Resume(Settings.DownSensor);
-            //client.Resume(Settings.UpSensor);
-
-            //CheckAndSleep(Settings.DownSensor);
-            //CheckAndSleep(Settings.UpSensor);
         }
 
         private Sensor GetSensor(int sensorId)

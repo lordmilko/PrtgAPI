@@ -4,6 +4,8 @@ Describe "Simulate-ErrorStatus_IT" {
     It "simulates an error status" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
+        $sensor.Status | Should Be Up
+
         LogTestDetail "Simulating error status"
         $sensor | Simulate-ErrorStatus
 
@@ -12,6 +14,14 @@ Describe "Simulate-ErrorStatus_IT" {
         Sleep 30
 
         $redSensor = Get-Sensor -Id (Settings UpSensor)
+
+        if($redSensor.Status -eq "Up")
+        {
+            LogTestDetail "Status was still Up. Waiting 120 seconds"
+            Sleep 120
+            $redSensor = Get-Sensor -Id (Settings UpSensor)
+        }
+
         $redSensor.Status | Should Be Down
         $redSensor.Message | Should BeLike "Simulated error*"
 

@@ -11,7 +11,7 @@ Describe "Get-SensorHistory_IT" {
 
         $seconds = [int]($last.DateTime - $first.DateTime).TotalSeconds
 
-        $seconds | Should BeGreaterThan (60 * 58)
+        $seconds | Should BeGreaterThan (60 * 57)
         $seconds | Should BeLessThan (60 * 60 + 1)
     }
 
@@ -22,6 +22,8 @@ Describe "Get-SensorHistory_IT" {
         $end = (get-date).adddays(-1)
 
         $history = $sensor | Get-SensorHistory -StartDate $start -EndDate $end
+
+        $history | Assert-NotNull -Message "Could not retrieve any historical records within the specified time frame"
 
         $first = ($history | select -First 1).DateTime
         $last = ($history | select -Last 1).DateTime
@@ -35,12 +37,30 @@ Describe "Get-SensorHistory_IT" {
         
         $history = $sensor | Get-SensorHistory
 
-        $first = $history[0].DateTime
-        $second = $history[1].DateTime
-        $third = $history[2].DateTime
+        $firstDiff = $null
+        $secondDiff = $null
 
-        [int]($second - $first).TotalSeconds | Should Be 30
-        [int]($third - $second).TotalSeconds | Should Be 30
+        for($i = 0; $i -lt $history.Length - 2; $i++)
+        {
+            $first = $history[$i].DateTime
+            $second = $history[$i+1].DateTime
+            $third = $history[$i+2].DateTime
+
+            $firstDiff = [int]($second - $first).TotalSeconds
+            $secondDiff = [int]($third - $second).TotalSeconds
+
+            if($firstDiff -ne 30 -or $secondDiff -ne 30)
+            {
+                continue
+            }
+            else
+            {
+                return
+            }
+        }
+
+        $firstDiff | Should Be 30
+        $secondDiff | Should Be 30
     }
 
     It "uses a specific average" {

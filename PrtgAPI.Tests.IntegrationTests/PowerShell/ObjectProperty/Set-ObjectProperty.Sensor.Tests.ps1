@@ -39,8 +39,18 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         $object = Get-Sensor -Id (Settings UpSensor)
 
         SetValue "InheritInterval"   $true
-        SetChild "Interval"          "00:01:00"         "InheritInterval" $false
-        SetChild "IntervalErrorMode" OneWarningThenDown "InheritInterval" $false
+
+        try
+        {
+            $object | Set-ObjectProperty InheritInterval $true
+
+            SetChild "Interval"          "00:01:00"         "InheritInterval" $false
+            SetChild "IntervalErrorMode" OneWarningThenDown "InheritInterval" $false
+        }
+        finally
+        {
+            $object | Set-ObjectProperty InheritInterval $false
+        }
     }
 
     It "Schedules, Dependencies and Maintenance Window" {
