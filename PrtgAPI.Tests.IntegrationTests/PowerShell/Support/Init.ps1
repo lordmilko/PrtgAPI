@@ -5,12 +5,16 @@ if(!(Get-Module -ListAvailable Assert))
     Install-Package Assert -ForceBootstrap -Force | Out-Null
 }
 
+function ServerManager
+{
+    return [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::ServerManager
+}
+
 function Startup
 {
-    StartupSafe $true
+    StartupSafe
 
-    [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::AssemblyInitialize($null)
-
+    (ServerManager).Initialize();
 }
 
 function Log($message, $error = $false)
@@ -40,68 +44,14 @@ function LogTestDetail($message, $error = $false)
     LogTestName "    $message" $error
 }
 
-function StartupSafe($unsafeTest)
+function StartupSafe()
 {
     Write-Host "Performing startup tasks"
     InitializeModules "PrtgAPI.Tests.IntegrationTests" $PSScriptRoot
 
-    #do, get the dlltestsrunning value, continue as long as its true keep sleeping for 10 seconds, then sleep for another 30 seconds
-    #after the end of the loop
-
-    #i think we should change this to dlltestsran, and then if they did ever run we wait 30 seconds or something
-
-
-    #bug: we're doing assemblycleanup when we havent initialized; this will cause us to delete a preexisting config
-    #file that hasnt been deleted
-
-    #need to make dll tests wait for the service to start if powershell tests are run before dll tests
-    #todo: need to test we can sort groups in probes/groups, devices in groups with sort-prtgobject
-    #we might want to consider hacking the nuspec file thats generated to fix up the cmdlet names? acknowledge-sensor etc
-    #can be fixed up too
-
     if(!(Get-PrtgClient))
     {
-        Log "Starting PowerShell Tests"
-
-        try
-        {
-            Log "Connecting to PRTG Server"
-            Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin)
-        }
-        catch [exception]
-        {
-            if(!($Global:FirstRun))
-            {
-                $Global:FirstRun = $true
-                Log "Sleeping for 30 seconds as its our first test and we couldn't connect..."
-                Sleep 30
-                Log "Attempting second connection"
-
-                try
-                {
-                    Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin)
-
-                    Log "Connection successful"
-                }
-                catch [exception]
-                {
-                    Log $_.Exception.Message $true
-                    throw
-                }
-
-                Log "Refreshing all sensors"
-
-                Get-Sensor | Refresh-Object
-
-                Log "Sleeping for 30 seconds"
-
-                Sleep 30
-            }
-            else
-            {
-                throw
-            }
-        }        
+        InitializePrtgClient
     }
 
     if($global:PreviousTest -and !$psISE)
@@ -124,30 +74,82 @@ function StartupSafe($unsafeTest)
         }
         catch [exception]
         {
-            if($unsafeTest)
+            (ServerManager).StartServices()
+            (ServerManager).ValidateSettings()
+
+            Log "PRTG service may still be starting up; pausing 15 seconds"
+            Sleep 10
+
+            try
             {
-                Log "PRTG service may still be starting up; pausing 15 seconds"
-                Sleep 10
                 Get-Sensor | Refresh-Object
                 Sleep 5
             }
-            else
+            catch
             {
-                Log "PRTG service may still be starting up; pausing for 60 seconds"
-                Sleep 30
-                Get-Sensor | Refresh-Object
-                Sleep 30
+                LogTest "Failed to refresh objects: $($_.Exception.Message)"
             }
         }
     }
 
-    [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::RepairState()
+    (ServerManager).RepairState()
+    (ServerManager).WaitForObjects()
+}
+
+function InitializePrtgClient
+{
+    Log "Starting PowerShell Tests"
+
+    (ServerManager).StartServices()
+    (ServerManager).ValidateSettings()
+
+    try
+    {
+        Log "Connecting to PRTG Server"
+        Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force
+    }
+    catch [exception]
+    {
+        Log $_.Exception.Message
+
+        if(!($Global:FirstRun))
+        {
+            $Global:FirstRun = $true
+            Log "Sleeping for 30 seconds as its our first test and we couldn't connect..."
+            Sleep 30
+            Log "Attempting second connection"
+
+            try
+            {
+                Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force
+
+                Log "Connection successful"
+            }
+            catch [exception]
+            {
+                Log $_.Exception.Message $true
+                throw
+            }
+
+            Log "Refreshing all sensors"
+
+            Get-Sensor | Refresh-Object
+
+            Log "Sleeping for 30 seconds"
+
+            Sleep 30
+        }
+        else
+        {
+            throw
+        }
+    }
 }
 
 function Shutdown
 {
     Log "Performing cleanup tasks"
-    [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::AssemblyCleanup()
+    (ServerManager).Cleanup()
 
     $global:PreviousTest = $true
 }
@@ -176,6 +178,17 @@ function It($name, $script) {
         catch [exception]
         {
             LogTestDetail ($_.Exception.Message -replace "`n"," ") $true
+
+            if($_.Exception.StackTrace -ne $null)
+            {
+                $stackTrace = $_.Exception.StackTrace -split "`n"
+
+                foreach($line in $stackTrace)
+                {
+                    LogTestDetail " $line" $true
+                }
+            }
+
             throw
         }
     }

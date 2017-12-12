@@ -86,6 +86,24 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             var sensor2 = GetSensor(Settings.UpSensor);
 
+            if (sensor2.Status == Status.Unknown)
+            {
+                Logger.LogTestDetail($"Status was {Status.Unknown}. Waiting up to 5 minutes for sensor to go {Status.Up}");
+
+                int attempts = 10;
+
+                do
+                {
+                    sensor2 = GetSensor(Settings.UpSensor);
+
+                    if (sensor2.Status == Status.Unknown)
+                    {
+                        Thread.Sleep(30000);
+                        attempts--;
+                    }
+                } while (sensor2.Status == Status.Unknown);
+            }
+
             Assert2.AreEqual(Status.Up, sensor2.Status, "Sensor did not unpause properly");
         }
 

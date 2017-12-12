@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             }
             finally
             {
-                RepairConfig();
+                ServerManager.RepairConfig();
             }
         }
 
@@ -64,7 +64,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             }
             finally
             {
-                RepairConfig();
+                ServerManager.RepairConfig();
             }
         }
 

@@ -68,7 +68,7 @@ Describe "Get-Sensor_IT" {
         ($sensors|Where {$_.Status -eq "Unknown" -or $_.Status -eq "None"}).Count | Should BeGreaterThan 0
 
         # Ignore Probe Health sensor due to a bug in PRTG 17.4.35
-        ($sensors|Where {$_.Status -eq "Down" -and $_.Name -ne "Probe Health" }).Count | Should Be 1
+        ($sensors|Where Status -eq "Down").Count | Should Be 1
     }
 
     It "can filter by multiple IDs" {

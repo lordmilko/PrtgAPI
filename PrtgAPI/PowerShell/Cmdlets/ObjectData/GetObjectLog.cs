@@ -97,7 +97,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public DateTime? StartDate { get; set; }
 
         /// <summary>
-        /// <para type="description">End time to retrieve logs until. If no value is specified, defaults to 7 days ago.</para>
+        /// <para type="description">End time to retrieve logs until. If no value is specified, defaults to 7 prior from the <see cref="StartDate"/>.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "DateTime")]
         public DateTime? EndDate { get; set; }

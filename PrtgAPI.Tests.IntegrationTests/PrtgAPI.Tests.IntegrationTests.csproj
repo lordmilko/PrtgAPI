@@ -62,6 +62,7 @@
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
     <Compile Include="DataTests\Incomplete\LogTests.cs" />
+    <Compile Include="Support\ServerManager.cs" />
     <Compile Include="Tools\PowerShell\Cmdlets\GetMissingSensorTypes.cs" />
     <Compile Include="Support\Assert2.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
