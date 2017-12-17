@@ -10,7 +10,7 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $probe = Run Probe { Get-Probe }
 
-        $probe | Add-Device $params
+        $probe | Add-Device $params -Resolve:$false
     }
 
     It "adds a device with a custom hostname" {
@@ -21,7 +21,7 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $probe = Run Probe { Get-Probe }
 
-        $probe | Add-Device $params
+        $probe | Add-Device $params -Resolve:$false
     }
 
     It "adds a device with the basic parameter set" {
@@ -29,7 +29,7 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $group = Run Group { Get-Group }
 
-        $group | Add-Device dc-3
+        $group | Add-Device dc-3 -Resolve:$false
     }
 
     It "adds a device with the basic parameter set specifying a host and to do an auto-discovery" {
@@ -37,6 +37,18 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $group = Run Group { Get-Group }
 
-        $group | Add-Device dc-4 192.168.0.2 -AutoDiscover
+        $group | Add-Device dc-4 192.168.0.2 -AutoDiscover -Resolve:$false
+    }
+
+    It "resolves a created device" {
+        SetResponseAndClient "DiffBasedResolveResponse"
+
+        $params = New-DeviceParameters dc-1
+
+        $probe = Run Probe { Get-Probe }
+
+        $device = $probe | Add-Device $params -Resolve
+
+        $device.Id | Should Be 1002
     }
 }

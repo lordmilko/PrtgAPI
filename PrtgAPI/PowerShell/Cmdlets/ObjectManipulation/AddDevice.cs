@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
@@ -20,6 +21,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When the parameters object is passed to Add-Device, PrtgAPI will validate that all mandatory parameter fields contain values.
     /// If a mandatory field is missing a value, Add-Sensor will throw an <see cref="InvalidOperationException"/>, listing the field whose value was missing.</para>
     /// 
+    /// <para type="description">By default, Add-Device will attempt to resolve the created device to a
+    /// <see cref="Device"/> object. As PRTG does not return the ID of the created object, PrtgAPI
+    /// identifies the newly created device by comparing the devices under the parent object before and after the new device is created.
+    /// While this is generally very reliable, in the event something or someone else creates another new device directly
+    /// under the target object with the same Name, that object will also be returned in the objects
+    /// resolved by Add-Device. If you do not wish to resolve the created device, this behavior can be
+    /// disabled by specifying -Resolve:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Probe contoso | Add-Device dc-1</code>
     ///     <para>Add a new device named "dc-1" to the Contoso probe, using "dc-1" as its hostname, without performing an automatic auto-discovery.</para>
@@ -39,7 +48,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Device", SupportsShouldProcess = true)]
-    public class AddDevice : AddObject<NewDeviceParameters, GroupOrProbe>
+    public class AddDevice : AddObject<NewDeviceParameters, Device, GroupOrProbe>
     {
         /// <summary>
         /// <para type="description">The name to use for the device. If a <see cref="Host"/> is not specified, this value will be used as the hostname as well.</para>
@@ -83,5 +92,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             base.ProcessRecordEx();
         }
+
+        /// <summary>
+        /// Resolves the children of the destination object that match the new object's name.
+        /// </summary>
+        /// <param name="filters">An array of search filters used to retrieve all children of the destination with the specified name.</param>
+        /// <returns>All objects under the parent object that match the new object's name.</returns>
+        protected override List<Device> GetObjects(SearchFilter[] filters) => client.GetDevices(filters);
     }
 }

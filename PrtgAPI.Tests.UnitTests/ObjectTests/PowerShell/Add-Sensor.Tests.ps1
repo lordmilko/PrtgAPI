@@ -9,7 +9,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $device = Run Device { Get-Device }
 
-        $device | Add-Sensor $params
+        $device | Add-Sensor $params -Resolve:$false
     }
 
     It "adds a sensor missing a required value" {
@@ -17,7 +17,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $device = Run Device { Get-Device }
 
-        { $device | Add-Sensor $params } | Should Throw "'ExeName' requires a value"
+        { $device | Add-Sensor $params -Resolve:$false } | Should Throw "'ExeName' requires a value"
     }
 
     It "executes with -WhatIf" {
@@ -25,6 +25,18 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $device = Run Device { Get-Device }
 
-        $device | Add-Sensor $params -WhatIf
+        $device | Add-Sensor $params -Resolve:$false -WhatIf
+    }
+
+    It "resolves a created sensor" {
+        SetResponseAndClient "DiffBasedResolveResponse"
+
+        $params = New-SensorParameters ExeXml -Value "test.ps1"
+
+        $device = Run Device { Get-Device }
+
+        $sensor = $device | Add-Sensor $params -Resolve
+
+        $sensor.Id | Should Be 1002
     }
 }

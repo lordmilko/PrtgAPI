@@ -42,10 +42,10 @@
         /// </summary>
         Triggers,
 
-        /// <summary>
-        /// Notification triggers inherited by an object.
-        /// </summary>
-        Trigger,
+        // <summary>
+        // Notification triggers inherited by an object.
+        // </summary>
+        //Trigger,
 
         /// <summary>
         /// Historical data of a PRTG Sensor.

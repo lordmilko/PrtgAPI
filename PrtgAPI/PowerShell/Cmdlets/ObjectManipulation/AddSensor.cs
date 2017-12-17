@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
@@ -18,6 +19,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When adding unsupported sensor types defined in <see cref="RawSensorParameters"/>, Add-Sensor does not
     /// perform any parameter validation. As such, it is critical to ensure that all parameter names and values
     /// are valid before passing the parameters to the Add-Sensor cmdlet.</para>
+    /// 
+    /// <para type="description">For parameter types that support specifying multiple SensorTarget objects
+    /// (such as <see cref="WmiServiceSensorParameters"/>) PRTG can fail to add all sensors properly if the size
+    /// of a single request is too large (generally 60 items or greater). To prevent this issue from happening,
+    /// PrtgAPI automatically splits your request into a series of smaller requests, however if you find yourself
+    /// experiencing issues, this is something to be aware of.</para>
+    /// 
+    /// <para type="description">By default, Add-Sensor will attempt to resolve the created sensor(s) to one
+    /// or more <see cref="Sensor"/> objects. As PRTG does not return the ID of the created object, PrtgAPI
+    /// identifies the newly created group by comparing the sensors under the parent object before and after the new sensor(s) are created.
+    /// While this is generally very reliable, in the event something or someone else creates another new sensor directly
+    /// under the target object with the same Name, that object will also be returned in the objects
+    /// resolved by Add-Sensor. If you do not wish to resolve the created sensor, this behavior can be
+    /// disabled by specifying -Resolve:$false.</para>
     /// 
     /// <example>
     ///     <code>C:\> $params = New-SensorParameters ExeXml "Monitor Traffic" "TrafficMonitor.ps1"</code>
@@ -51,7 +66,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SensorParameters</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true)]
-    public class AddSensor : AddObject<NewSensorParameters, Device>
+    public class AddSensor : AddObject<NewSensorParameters, Sensor, Device>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddSensor"/> class.
@@ -59,5 +74,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public AddSensor() : base(BaseType.Sensor, CommandFunction.AddSensor5)
         {
         }
+
+        /// <summary>
+        /// Resolves the children of the destination object that match the new object's name.
+        /// </summary>
+        /// <param name="filters">An array of search filters used to retrieve all children of the destination with the specified name.</param>
+        /// <returns>All objects under the parent object that match the new object's name.</returns>
+        protected override List<Sensor> GetObjects(SearchFilter[] filters) => client.GetSensors(filters);
     }
 }

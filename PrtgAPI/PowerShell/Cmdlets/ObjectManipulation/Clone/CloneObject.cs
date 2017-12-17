@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Threading;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -14,7 +14,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// Base class for cmdlets that clone PRTG Objects.
     /// </summary>
     /// <typeparam name="T">The type of object the cmdlet will clone.</typeparam>
-    public abstract class CloneObject<T> : PrtgOperationCmdlet
+    public abstract class CloneObject<T> : NewObjectCmdlet<T>
     {
         /// <summary>
         /// <para type="description">The ID of the device (for sensors), group or probe (for groups and devices) that will hold the cloned object.</para>
@@ -29,12 +29,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Name { get; set; }
 
         /// <summary>
-        /// <para type="description">Indicates whether or not the cloned object should be resolved into a PrtgObject. By default this value is true (perform resolution). If this value is false, a summary of the clone operation will be provided.</para> 
-        /// </summary>
-        [Parameter(Mandatory = false)]
-        public SwitchParameter Resolve { get; set; } = SwitchParameter.Present;
-
-        /// <summary>
         /// Executes this cmdlet's clone action and displays a progress message (if required).
         /// </summary>
         /// <param name="action">The action to be performed.</param>
@@ -46,43 +40,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Resolves the object ID returned from a clone method to its resultant PrtgObject.
+        /// Resolves the object ID returned from a clone method to its resultant <see cref="PrtgObject"/> .
         /// </summary>
         /// <param name="id">The object ID to resolve.</param>
         /// <param name="getObjects">The method to execute to retrieve the resultant object.</param>
         protected void ResolveObject(int id, Func<int, List<T>> getObjects)
         {
-            List<T> @object;
-
-            var retriesRemaining = 4;
-            var delay = 3;
-
-            do
-            {
-                @object = getObjects(id);
-
-                if (@object.Count == 0)
-                {
-                    if (retriesRemaining == 0)
-                    {
-                        throw new ObjectResolutionException($"Could not resolve object with ID '{id}': PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
-                    }
-
-                    WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeof(T).Name.ToLower()}: object is still being created. Retries remaining: {retriesRemaining}");
-                    retriesRemaining--;
-
-#if !DEBUG
-                    Thread.Sleep(delay * 1000);
-#endif
-                    delay *= 2;
-                }
-
-                if (Stopping)
-                    break;
-
-            } while (@object.Count == 0);
-
-            WriteObject(@object, true);
+            WriteObject(ResolveObject(() => getObjects(id), o => o.Count == 0, "Could not resolve object with ID '{id}'"), true);
         }
     }
 }

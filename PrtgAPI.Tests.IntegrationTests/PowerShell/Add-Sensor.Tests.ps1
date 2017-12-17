@@ -120,5 +120,24 @@ Describe "Add-Sensor_IT" {
             $properties.IntervalErrorMode | Should Be "TwoWarningsThenDown"
             $newSensor.NotificationTypes.InheritTriggers | Should Be $false
         }
+
+        It "resolves a new sensor" {
+            $params = New-SensorParameters ExeXml resolveSensor test.ps1
+
+            $device = Get-Device -Id (Settings Device)
+            $originalSensors = Get-Sensor
+
+            $newSensor = $device | Add-Sensor $params
+
+            $newSensors = Get-Sensor
+
+            $newSensors.Count | Should BeGreaterThan $originalSensors.Count
+
+            $diffSensor = $newSensors|where name -EQ $params.Name
+
+            $diffSensor.Id | Should Be $newSensor.Id
+
+            $newSensor | Remove-Object -Force
+        }
     }
 }

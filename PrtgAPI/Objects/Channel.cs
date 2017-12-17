@@ -2,7 +2,6 @@
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Objects.Shared;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {

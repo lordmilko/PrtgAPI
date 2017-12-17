@@ -111,6 +111,7 @@
     <Compile Include="ObjectTests\TestResponses\BasicResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\CloneResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\DeviceSettingsResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\DiffBasedResolveResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\ExceptionResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\FailedRequestResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\GroupResponse.cs" />

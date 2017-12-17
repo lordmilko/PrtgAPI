@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
@@ -18,6 +19,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When the parameters object is passed to Add-Device, PrtgAPI will validate that all mandatory parameter fields contain values.
     /// If a mandatory field is missing a value, Add-Sensor will throw an <see cref="InvalidOperationException"/>, listing the field whose value was missing.</para>
     /// 
+    /// <para type="description">By default, Add-Group will attempt to resolve the created group to a
+    /// <see cref="Group"/> object. As PRTG does not return the ID of the created object, PrtgAPI
+    /// identifies the newly created group by comparing the groups under the parent object before and after the new group is created.
+    /// While this is generally very reliable, in the event something or someone else creates another new group directly
+    /// under the target object with the same Name, that object will also be returned in the objects
+    /// resolved by Add-Group. If you do not wish to resolve the created group, this behavior can be
+    /// disabled by specifying -Resolve:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Probe contoso | Add-Group Servers</code>
     ///     <para>Add a new group called "Servers" to the Contoso probe.</para>
@@ -32,7 +41,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Group", SupportsShouldProcess = true)]
-    public class AddGroup : AddObject<NewGroupParameters, GroupOrProbe>
+    public class AddGroup : AddObject<NewGroupParameters, Group, GroupOrProbe>
     {
         /// <summary>
         /// <para type="description">The name to use for the group.</para>
@@ -59,5 +68,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             base.ProcessRecordEx();
         }
+
+        /// <summary>
+        /// Resolves the children of the destination object that match the new object's name.
+        /// </summary>
+        /// <param name="filters">An array of search filters used to retrieve all children of the destination with the specified name.</param>
+        /// <returns>All objects under the parent object that match the new object's name.</returns>
+        protected override List<Group> GetObjects(SearchFilter[] filters) => client.GetGroups(filters);
     }
 }

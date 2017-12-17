@@ -17,4 +17,24 @@ Describe "Add-Group_IT" {
 
         $group | Remove-Object -Force
     }
+
+    It "resolves a new group" {
+        $name = "resolveGroup"
+
+        $probe = Get-Probe -Id (Settings Probe)
+
+        $originalGroups = Get-Group
+
+        $newGroup = $probe | Add-Group $name
+
+        $newGroups = Get-Group
+
+        $newGroups.Count | Should BeGreaterThan $originalGroups.Count
+
+        $diffGroup = $newGroups|where name -EQ $name
+
+        $diffGroup.Id | Should Be $newGroup.Id
+
+        $newGroup | Remove-Object -Force
+    }
 }

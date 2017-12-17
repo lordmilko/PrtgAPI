@@ -56,6 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
+                case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
@@ -155,7 +156,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return content;
         }
 
-        private T[] GetItems<T>(Func<int, T> func, int count)
+        protected T[] GetItems<T>(Func<int, T> func, int count)
         {
             return Enumerable.Range(0, count).Select(func).ToArray();
         }

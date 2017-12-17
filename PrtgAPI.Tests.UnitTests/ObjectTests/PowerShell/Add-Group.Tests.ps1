@@ -8,7 +8,7 @@ Describe "Add-Group" -Tag @("PowerShell", "UnitTest") {
 
         $probe = Run Probe { Get-Probe }
 
-        $probe | Add-Group $params
+        $probe | Add-Group $params -Resolve:$false
     }
 
     It "adds a group with the basic parameter set" {
@@ -16,6 +16,18 @@ Describe "Add-Group" -Tag @("PowerShell", "UnitTest") {
 
         $group = Run Group { Get-Group }
 
-        $group | Add-Group "New Group"
+        $group | Add-Group "New Group" -Resolve:$false
+    }
+
+    It "resolves a created sensor" {
+        SetResponseAndClient "DiffBasedResolveResponse"
+
+        $params = New-GroupParameters Servers
+
+        $probe = Run Probe { Get-Probe }
+
+        $group = $probe | Add-Group $params -Resolve
+
+        $group.Id | Should Be 1002
     }
 }

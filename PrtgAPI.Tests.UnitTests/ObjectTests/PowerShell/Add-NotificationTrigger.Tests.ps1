@@ -16,4 +16,16 @@ Describe "Add-NotificationTrigger" {
 
         $params | Add-NotificationTrigger -WhatIf
     }
+
+    It "resolves a created trigger" {
+        SetResponseAndClient "DiffBasedResolveResponse"
+
+        $params = New-TriggerParameters 1001 Threshold
+        $params.Channel = 1
+        $params.OnNotificationAction.Id = 301
+
+        $trigger = $params | Add-NotificationTrigger -Resolve
+
+        $trigger.SubId | Should Be 2
+    }
 }

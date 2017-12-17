@@ -64,6 +64,21 @@ Describe "Add-NotificationTrigger_IT" {
             $triggersAfterRemoved.Count | Should Be 0
         }
 
+        It "resolves a new trigger" {
+            $probe = Get-Probe -Id (Settings Probe)
+
+            $originalTriggers = $probe | Get-Trigger
+
+            $param = New-TriggerParameters (Settings Probe) State
+            $newTrigger = $param | Add-Trigger
+
+            $newTriggers = $probe | Get-Trigger
+
+            $diffTrigger = $newTriggers|where {$_.OnNotificationAction.ToString() -EQ "None"}
+
+            $diffTrigger.SubId | Should Be $newTrigger.SubId
+        }
+
         It "adds an invalid channel to a sensor" {
 
             $param = New-TriggerParameters (Settings ChannelSensor) Threshold

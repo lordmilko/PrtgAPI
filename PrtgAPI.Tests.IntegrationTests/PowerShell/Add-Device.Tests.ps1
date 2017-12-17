@@ -19,4 +19,24 @@ Describe "Add-Device_IT" {
 
         $device | Remove-Object -Force
     }
+
+    It "resolves a new device" {
+        $name = "resolveDevice"
+
+        $group = Get-Group -Id (Settings Group)
+
+        $originalDevices = Get-Device
+
+        $newDevice = $group | Add-Device $name
+
+        $newDevices = Get-Device
+
+        $newDevices.Count | Should BeGreaterThan $originalDevices.Count
+
+        $diffDevice = $newDevices|where name -EQ $name
+
+        $diffDevice.Id | Should Be $newDevice.Id
+
+        $newDevice | Remove-Object -Force
+    }
 }
