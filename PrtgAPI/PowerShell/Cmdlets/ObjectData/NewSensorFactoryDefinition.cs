@@ -7,7 +7,7 @@ using System.Reflection;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Creates a channel definition for use in a Sensor Factory.</para>
+    /// <para type="synopsis">Creates a channel definition for use in a PRTG Sensor Factory.</para>
     /// 
     /// <para type="description">The New-SensorFactoryDefinition cmdlet automatically defines a series of channel defitions for use in a Sensor Factory sensor.</para>
     /// 
@@ -44,14 +44,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor | New-SensorFactoryDefinition { $_.Device } -Expr { 100 - $expr } 0</code>
-    ///     <para>Create a channel definition for the "Percent Available Memory" channel (ID: 0) of each WMI Memory Free sensor, modifying each channel to show the percent of memory "free" instead of used</para>
+    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor | New-SensorFactoryDefinition { $_.Device } -Expr { "100 - $expr" } 0</code>
+    ///     <para>Create a channel definition for the "Percent Available Memory" channel (ID: 0) of each WMI Memory Free sensor, modifying each channel to show the percent of memory "used" instead of free</para>
     ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpuloadsensor</code>
     ///     <para>C:\> $sensors | New-SensorFactoryDefinition { "Max CPU Load" } -Aggregator { "max($expr,$acc)" }</para>
-    ///     <para>C:\> $sensors | New-SensorFactoryDefinition { $_.Device } -StartIndex 2</para>
+    ///     <para>C:\> $sensors | New-SensorFactoryDefinition { $_.Device } -StartId 2</para>
     ///     <para>Create a channel definition for showing the highest CPU Load of all sensors as well as channel definitions for each individual sensor</para>
     ///     <para/>
     /// </example>
@@ -95,10 +95,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public ScriptBlock Expression { get; set; }
 
         /// <summary>
-        /// <para type="description">The start index to use for each channel definition. The default value is 1.</para>
+        /// <para type="description">The starting channel ID to use for each channel definition. The default value is 1.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public int StartIndex { get; set; } = 1;
+        public int StartId { get; set; } = 1;
 
         /// <summary>
         /// <para type="description">An aggregator to use for creating a single aggregation channel.</para>
@@ -118,7 +118,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = "Aggregate")]
         public ScriptBlock Finalizer { get; set; }
 
-        private int index;
+        private int id;
         private PSVariable accumulation = new PSVariable("acc");
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void BeginProcessing()
         {
-            index = StartIndex;
+            id = StartId;
         }
 
         /// <summary>
@@ -145,10 +145,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
             {
                 var name = Name.InvokeWithDollarUnderscore(Item).ToString();
-                rows.Add($"#{index}:{name}");
+                rows.Add($"#{id}:{name}");
                 rows.Add(expression);
                 WriteObject(rows, true);
-                index++;
+                id++;
             }
         }
 
@@ -201,7 +201,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
 
                 var name = Name.InvokeWithDollarUnderscore(Item).ToString();
-                WriteObject($"#{index}:{name}");
+                WriteObject($"#{id}:{name}");
                 WriteObject(accumulation.Value);
             }
         }

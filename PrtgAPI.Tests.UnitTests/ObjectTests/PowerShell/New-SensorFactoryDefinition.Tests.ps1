@@ -103,7 +103,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                     "channel(2203,3)"
 
         $aggr = $s | New-SensorFactoryDefinition {"Max Value"} -Aggregator {"max($expr,$acc)"} 3
-        $channels = $s | New-SensorFactoryDefinition {$_.Device} 3 -StartIndex 2
+        $channels = $s | New-SensorFactoryDefinition {$_.Device} 3 -StartId 2
 
         ($aggr + $channels) -join "`n" | Should Be $expected
     }
@@ -142,7 +142,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                     "channel(2203,2)"
 
         (
-            $sensors | New-SensorFactoryDefinition { $_.Device } 2 -StartIndex 2
+            $sensors | New-SensorFactoryDefinition { $_.Device } 2 -StartId 2
 
         ) -join "`n" | Should Be $expected
     }    
