@@ -22,7 +22,12 @@ namespace PrtgAPI.Helpers
         /// <returns>The value of the retrieved property.</returns>
         public static object GetInternalProperty(this object obj, string name)
         {
-            return obj.GetInternalPropertyInfo(name).GetValue(obj);
+            var info = obj.GetInternalPropertyInfo(name);
+
+            if (info == null)
+                throw new MissingMemberException(obj.GetType().Name, name);
+
+            return info.GetValue(obj);
         }
 
         /// <summary>
@@ -46,7 +51,12 @@ namespace PrtgAPI.Helpers
         /// <returns>The value of the retrieved field.</returns>
         public static object GetInternalField(this object obj, string name)
         {
-            return obj.GetInternalFieldInfo(name).GetValue(obj);
+            var info = obj.GetInternalFieldInfo(name);
+
+            if (info == null)
+                throw new MissingMemberException(obj.GetType().Name, name);
+
+            return info.GetValue(obj);
         }
 
         /// <summary>
