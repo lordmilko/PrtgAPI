@@ -18,10 +18,24 @@ namespace PrtgAPI.PowerShell.Base
         protected void ExecuteOperation(Action action, string activity, string progressMessage)
         {
             ProgressManager.ProcessOperationProgress(activity, progressMessage);
+
             action();
-            
-            if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
-                ProgressManager.CompleteProgress();
+
+            if (!ProgressManager.UnsupportedSelectObjectProgress)
+            {
+                if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
+                    ProgressManager.CompleteProgress();
+                else
+                {
+                    if (ProgressManager.upstreamSelectObjectManager != null)
+                        ProgressManager.MaybeCompletePreviousProgress();
+                    else
+                    {
+                        if(ProgressManager.PipelineUpstreamContainsBlockingCmdlet)
+                            ProgressManager.CompleteProgress();
+                    }
+                }
+            }
         }
 
         /// <summary>

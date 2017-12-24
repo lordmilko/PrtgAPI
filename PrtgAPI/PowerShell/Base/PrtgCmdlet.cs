@@ -17,6 +17,8 @@ namespace PrtgAPI.PowerShell.Base
 
         internal ProgressManager ProgressManager;
 
+        internal ProgressManagerEx ProgressManagerEx = new ProgressManagerEx();
+
         private EventManager eventManager = new EventManager();
 
         /// <summary>

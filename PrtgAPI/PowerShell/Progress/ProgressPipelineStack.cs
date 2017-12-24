@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell.Progress
 {
@@ -19,9 +17,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal ProgressRecordEx PreviousRecordInPipeline => currentPipeline.PreviousRecord;
 
-        internal void Push(string defaultActivity, string defaultDescription, PSCmdlet cmdlet, long sourceId)
+        internal void Push(string defaultActivity, string defaultDescription, ProgressManager manager, long sourceId)
         {
-            var firstCmdletInPipeline = cmdlet.GetFirstObjectInPipeline();
+            var firstCmdletInPipeline = manager.CacheManager.GetFirstCmdletInPipeline();
 
             var offset = progressPipelines.Sum(f => f.Count);
 

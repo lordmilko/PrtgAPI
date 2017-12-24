@@ -32,11 +32,11 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            IEnumerable<T> records = null;
+            IEnumerable<T> records;
 
-            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
+            if (ProgressManager.GetRecordsWithVariableProgress)
                 records = GetResultsWithVariableProgress(GetRecords);
-            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+            else if (ProgressManager.GetResultsWithProgress)
                 records = GetResultsWithProgress(GetRecords);
             else
                 records = GetRecords();

@@ -30,6 +30,13 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public object Object { get; set; }
 
+        private ReflectionCacheManager cacheManager;
+
+        public TestReflection1()
+        {
+            cacheManager = new ReflectionCacheManager(this);
+        }
+
         protected override void ProcessRecord()
         {
             switch (ParameterSetName)
@@ -43,14 +50,14 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     WriteObject(new[] {1, 2, 3}, true);
                     break;
                 case "Downstream":
-                    WriteObject(CommandRuntime.GetDownstreamCmdlet().Name);
+                    WriteObject(cacheManager.GetDownstreamCmdletInfo().Name);
                     break;
                 case "CmdletInput":
                     WriteObject(new[] {1,2,3}, true);
                     break;
                 case "VariableInputArray":
                 case "VariableInputObject":
-                    WriteObject(CommandRuntime.GetCmdletPipelineInput(this).List, true);
+                    WriteObject(cacheManager.GetCmdletPipelineInput().List, true);
                     break;
 
                 default:

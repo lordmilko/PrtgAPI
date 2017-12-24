@@ -6,6 +6,9 @@ namespace PrtgAPI.PowerShell.Progress
         StreamProgress,
         MultipleCmdlets,
         VariableToSingleCmdlet,
-        VariableToMultipleCmdlets
+        VariableToMultipleCmdlets,
+        SelectLast,
+        SelectSkipLast,
+        MultipleCmdletsFromBlockingSelect
     }
 }

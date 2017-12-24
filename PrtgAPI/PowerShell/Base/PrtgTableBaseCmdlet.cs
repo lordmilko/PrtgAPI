@@ -161,9 +161,9 @@ namespace PrtgAPI.PowerShell.Base
         {
             IEnumerable<TObject> records;
 
-            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
+            if (ProgressManager.GetRecordsWithVariableProgress)
                 records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
-            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+            else if (ProgressManager.GetResultsWithProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
             else
             {
@@ -398,7 +398,7 @@ namespace PrtgAPI.PowerShell.Base
 
                 //As such, if there are no other PRTG cmdlets after us, stream as normal. Otherwise, only request a couple at a time
                 //so the PRTG will be able to handle the next cmdlet's request
-                if (!streamSerial && ProgressManager.Scenario == ProgressScenario.StreamProgress && !this.PipelineRemainingHasCmdlet<PrtgCmdlet>() && ProgressManager.ProgressPipelinesCount == 1) //There are no other cmdlets after us
+                if (!streamSerial && ProgressManager.Scenario == ProgressScenario.StreamProgress && !ProgressManager.CacheManager.PipelineRemainingHasCmdlet<PrtgCmdlet>() && ProgressManager.ProgressPipelinesCount == 1) //There are no other cmdlets after us
                     return client.StreamObjectsInternal(parameters, streamCount.Value, true);
                 else
                     return client.SerialStreamObjectsInternal(parameters, streamCount.Value, true); //There are other cmdlets after us; do one request at a time

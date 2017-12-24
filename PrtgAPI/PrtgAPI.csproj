@@ -101,7 +101,6 @@
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
-    <Compile Include="Helpers\PipelineHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Objects\Log.cs" />
@@ -181,10 +180,13 @@
     <Compile Include="PowerShell\EventManager.cs" />
     <None Include="PowerShell\Functions\New-Credential.ps1" />
     <None Include="PowerShell\Functions\Update-GoPrtgCredential.ps1" />
+    <Compile Include="PowerShell\Progress\AbortProgressParser.cs" />
     <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
+    <Compile Include="PowerShell\Progress\NotReadyParser.cs" />
     <Compile Include="PowerShell\Progress\ProcessingOption.cs" />
     <Compile Include="PowerShell\Progress\ProgressManager.cs" />
+    <Compile Include="PowerShell\Progress\ProgressManagerEx.cs" />
     <Compile Include="PowerShell\Progress\ProgressPipeline.cs" />
     <Compile Include="PowerShell\Progress\ProgressPipelineStack.cs" />
     <Compile Include="PowerShell\Progress\ProgressRecordEx.cs" />
@@ -192,6 +194,8 @@
     <Compile Include="PowerShell\Progress\ProgressStage.cs" />
     <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
     <Compile Include="PowerShell\Progress\ProgressTask.cs" />
+    <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
+    <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -377,6 +381,7 @@
     <None Include="PowerShell\Functions\Install-GoPrtgServer.ps1" />
     <None Include="PowerShell\Functions\Set-GoPrtgAlias.ps1" />
     <None Include="PowerShell\Functions\Uninstall-GoPrtgServer.ps1" />
+    <Compile Include="PowerShell\Progress\ProgressManager.SelectObject.cs" />
     <None Include="PowerShell\Resources\PrtgAPI.cmd" />
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>

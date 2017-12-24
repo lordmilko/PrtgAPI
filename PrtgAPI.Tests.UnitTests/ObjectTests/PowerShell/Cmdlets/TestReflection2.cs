@@ -21,6 +21,13 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public object Object { get; set; }
 
+        private ReflectionCacheManager cacheManager;
+
+        public TestReflection2()
+        {
+            cacheManager = new ReflectionCacheManager(this);
+        }
+
         protected override void ProcessRecord()
         {
             switch (ParameterSetName)
@@ -39,7 +46,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     WriteObject(Object);
                     break;
                 case "CmdletInput":
-                    WriteObject(CommandRuntime.GetCmdletPipelineInput(this).List, true);
+                    WriteObject(cacheManager.GetCmdletPipelineInput().List, true);
                     break;
 
                 default:

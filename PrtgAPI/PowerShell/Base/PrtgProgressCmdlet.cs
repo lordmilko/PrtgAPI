@@ -46,9 +46,9 @@ namespace PrtgAPI.PowerShell.Base
 
         internal void DisplayProgress(bool writeObject = true)
         {
-            if (ProgressManager.PipeFromVariableWithProgress && PrtgSessionState.EnableProgress)
+            if (ProgressManager.GetRecordsWithVariableProgress)
                 UpdatePreviousAndCurrentVariableProgressOperations(writeObject);
-            else if (ProgressManager.PartOfChain && PrtgSessionState.EnableProgress)
+            else if (ProgressManager.GetResultsWithProgress)
             {
                 if (ProgressManager.PreviousContainsProgress)
                 {
@@ -86,7 +86,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void PreUpdateProgress()
         {
-            switch (ProgressManager.Scenario)
+            switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:
                     break;
@@ -97,6 +97,7 @@ namespace PrtgAPI.PowerShell.Base
                 case ProgressScenario.VariableToSingleCmdlet:
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
+                case ProgressScenario.MultipleCmdletsFromBlockingSelect:
                     UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop);
                     break;
                 default:
@@ -109,7 +110,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void DuringUpdateProgress()
         {
-            switch (ProgressManager.Scenario)
+            switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:
                     break;
@@ -120,7 +121,13 @@ namespace PrtgAPI.PowerShell.Base
                 case ProgressScenario.VariableToSingleCmdlet:
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
+                case ProgressScenario.MultipleCmdletsFromBlockingSelect:
                     UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
+                    break;
+                case ProgressScenario.SelectLast:
+                case ProgressScenario.SelectSkipLast:
+                    if(ProgressManager.PartOfChain)
+                        UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -132,7 +139,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void PostUpdateProgress()
         {
-            switch (ProgressManager.Scenario)
+            switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:
                     break;
@@ -144,12 +151,38 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage.PostLoop);
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
+                case ProgressScenario.MultipleCmdletsFromBlockingSelect:
                     UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop);
                     break;
-
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
             }
+        }
+
+        private ProgressScenario GetSwitchScenario()
+        {
+            var scenario = ProgressManager.Scenario;
+
+            if (scenario == ProgressScenario.SelectLast || scenario == ProgressScenario.SelectSkipLast)
+            {
+                scenario = ProgressManager.CalculateNonBlockingProgressScenario();
+
+                if (scenario == ProgressScenario.NoProgress)
+                    scenario = ProgressScenario.VariableToSingleCmdlet;
+                else if (scenario == ProgressScenario.MultipleCmdlets) //We don't want MultipleCmdlets, because that makes us responsible for updating the records processed on each iteration
+                    scenario = ProgressScenario.VariableToMultipleCmdlets;
+
+                if (ProgressManager.Scenario == ProgressScenario.SelectSkipLast)
+                {
+                    //We can't trust PartOfChain as the cmdlets before us haven't been destroyed yet. So instead,
+                    //the question is are there any cmdlets after us?
+
+                    if (ProgressManager.LastInChain)
+                        scenario = ProgressScenario.VariableToSingleCmdlet;
+                }
+            }
+
+            return scenario;
         }
 
         private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage)
@@ -169,6 +202,9 @@ namespace PrtgAPI.PowerShell.Base
                     ProgressManager.CompleteProgress();
                 }
             }
+
+            if (stage == ProgressStage.PostLoop)
+                ProgressManager.MaybeCompletePreviousProgress();
         }
 
         private void UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage stage)
