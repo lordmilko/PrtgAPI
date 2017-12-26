@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Collections.Generic;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -58,7 +59,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Device))]
     [Cmdlet(VerbsCommon.Get, "Device")]
-    public class GetDevice : PrtgTableCmdlet<Device, DeviceParameters>
+    public class GetDevice : PrtgTableRecurseCmdlet<Device, DeviceParameters>
     {
         /// <summary>
         /// <para type="description">The group to retrieve devices for.</para>
@@ -77,6 +78,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public GetDevice() : base(Content.Devices, null)
         {
+        }
+
+        /// <summary>
+        /// Retrieves additional records not included in the initial request.
+        /// </summary>
+        /// <param name="devices">The list of records that were returned from the initial request.</param>
+        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
+        protected override void GetAdditionalRecords(List<Device> devices, DeviceParameters parameters)
+        {
+            GetAdditionalGroupRecords(Group, g => g.TotalDevices, devices, parameters);
         }
 
         /// <summary>

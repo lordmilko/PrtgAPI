@@ -14,7 +14,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 
     It "Ping Settings" {
         
-        $object = Get-Sensor Ping
+        $object = Get-Device -Id (Settings Device) | Get-Sensor Ping
 
         SetValue "Timeout"     3
         SetValue "PingPacketSize"  33

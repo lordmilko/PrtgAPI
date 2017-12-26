@@ -68,7 +68,7 @@ Describe "Get-Device_IT" {
 
         $group = Get-Group -Id (Settings Group)
 
-        $devices = $group | Get-Device
+        $devices = $group | Get-Device -Recurse:$false
 
         $devices.Count | Should be (Settings DevicesInTestGroup)
     }
@@ -85,5 +85,13 @@ Describe "Get-Device_IT" {
         $devices = New-SearchFilter name contains probe | Get-Device
 
         $devices.Count | Should Be 1
+    }
+
+    It "can recursively retrieve devices from a group" {
+        $count = (Settings DevicesInTestGroup) + 1
+
+        $devices = Get-Group -Id (Settings Group) | Get-Device
+
+        ($devices.Count) | Should Be $count
     }
 }

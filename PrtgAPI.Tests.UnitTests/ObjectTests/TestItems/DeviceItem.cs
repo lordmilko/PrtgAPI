@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
 {
+    [DebuggerDisplay("Name: {Name,nq}, Id: {ObjId,nq}, ParentId: {ParentId,nq}")]
     public class DeviceItem : BaseItem
     {
         public string Group { get; set; }
@@ -76,7 +79,7 @@
             string undefinedsensRaw = "0000000003", string totalsens = "6", string totalsensRaw = "0000000006",
             string location = "<a href=\"/devices.htm?filter_location=@sub(America%2C%20Queens)\">America, Queens</a>",
             string locationRaw = "America, Queens", string schedule = "Sundays [GMT+1000]", string basetype = "device", string baselink = "/device.htm?id=40", string baselinkRaw = "40",
-            string parentid = "1", string notifiesx = "Inherited", string interval = null, string intervalx = "Inherited (60)", string intervalxRaw = "0000000060", string access = "Full",
+            string parentId = "1", string notifiesx = "Inherited", string interval = null, string intervalx = "Inherited (60)", string intervalxRaw = "0000000060", string access = "Full",
             string accessRaw = "0000000400", string dependency = "Parent", string dependencyRaw = "127.0.0.1",
             string favorite = "<span class=\"objectisnotfavorite icon-gray ui-icon ui-icon-flag\" id=\"fav-40\" onclick=\"_Prtg.objectTools.faveObject.call(this,40,'toggle');return false;\"></span>",
             string favoriteRaw = "1", string status = "Up ", string statusRaw = "3", string priority = "5", string message = "<div class=\"status\">OK<div class=\"moreicon\"></div></div>",
@@ -112,7 +115,7 @@
             BaseType = basetype;
             BaseLink = baselink;
             BaseLinkRaw = baselinkRaw;
-            ParentId = parentid;
+            ParentId = parentId;
             NotifiesX = notifiesx;
             Interval = interval;
             IntervalX = intervalx;

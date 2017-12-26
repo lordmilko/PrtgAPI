@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         [TestMethod]
         public void Data_Group_GetGroups_ReturnsJustGroups()
         {
-            ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe - 1, BaseType.Group); //Subtract one for the child group
+            ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe - 2, BaseType.Group); //Subtract two for the child groups
         }
     }
 }

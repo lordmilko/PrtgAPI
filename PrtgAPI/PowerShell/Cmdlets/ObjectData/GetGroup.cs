@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Collections.Generic;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -49,7 +50,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Group))]
     [Cmdlet(VerbsCommon.Get, "Group")]
-    public class GetGroup : PrtgTableCmdlet<Group, GroupParameters>
+    public class GetGroup : PrtgTableRecurseCmdlet<Group, GroupParameters>
     {
         /// <summary>
         /// <para type="description">The parent group to retrieve groups for.</para>
@@ -68,6 +69,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public GetGroup() : base(Content.Groups, null)
         {
+        }
+
+        /// <summary>
+        /// Retrieves additional records not included in the initial request.
+        /// </summary>
+        /// <param name="groups">The list of records that were returned from the initial request.</param>
+        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
+        protected override void GetAdditionalRecords(List<Group> groups, GroupParameters parameters)
+        {
+            GetAdditionalGroupRecords(Group, g => g.TotalGroups, groups, parameters);
         }
 
         /// <summary>

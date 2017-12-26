@@ -149,6 +149,7 @@
     <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgProgressCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />

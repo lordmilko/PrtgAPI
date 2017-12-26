@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
 {
+    [DebuggerDisplay("Name: {Name,nq}, Id: {ObjId,nq}, ParentId: {ParentId,nq}")]
     public class ProbeItem : BaseItem
     {
         public string Fold { get; set; }

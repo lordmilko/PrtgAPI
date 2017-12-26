@@ -1,5 +1,8 @@
+using System.Diagnostics;
+
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
 {
+    [DebuggerDisplay("Name: {Name,nq}, Id: {ObjId,nq}, ParentId: {ParentId,nq}")]
     public class SensorItem : BaseItem
     {
         public string Probe { get; set; }

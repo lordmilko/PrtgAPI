@@ -65,7 +65,7 @@ namespace PrtgAPI.Objects.Shared
         public int UndefinedSensors { get; set; }
 
         /// <summary>
-        /// Total number of sensors in any <see cref="Status"/> state.
+        /// Total number of sensors contained under this object in any <see cref="Status"/> state.
         /// </summary>
         [XmlElement("totalsens")]
         [PropertyParameter(nameof(Property.TotalSensors))]

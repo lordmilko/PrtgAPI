@@ -11,13 +11,13 @@ namespace PrtgAPI.PowerShell.Base
     /// </summary>
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
-    public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgTableBaseCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : ObjectTable
+    public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgTableBaseCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
     {
         /// <summary>
         /// <para type="description">Retrieve an object with a specified ID.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Retrieve an obejct with a specified ID.")]
-        public int?[] Id { get; set; }
+        public int[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with certain tags. Can include wildcards.</para>
@@ -93,6 +93,8 @@ namespace PrtgAPI.PowerShell.Base
         protected override IEnumerable<TObject> PostProcessAdditionalFilters(IEnumerable<TObject> records)
         {
             records = FilterResponseRecordsByTag(records);
+
+            records = records.OrderBy(r => r.Position);
 
             return base.PostProcessAdditionalFilters(records);
         }

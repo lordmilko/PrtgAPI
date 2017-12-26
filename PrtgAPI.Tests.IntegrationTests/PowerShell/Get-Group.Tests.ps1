@@ -61,13 +61,13 @@ Describe "Get-Group_IT" {
     It "can filter by tags" {
         $group = Get-Group -Tags (Settings GroupTag)
 
-        $group.Count | Should Be 2
+        $group.Count | Should Be (Settings GroupsInTestProbe)
     }
 
     It "can pipe from groups" {
         $group = Get-Group -Id (Settings Group)
 
-        $groups = $group | Get-Group
+        $groups = $group | Get-Group -Recurse:$false
 
         $groups.Count | Should be (Settings GroupsInTestGroup)
     }
@@ -84,5 +84,13 @@ Describe "Get-Group_IT" {
         $groups = New-SearchFilter name contains Root | Get-Group
 
         $groups.Count | Should Be 1
+    }
+
+    It "can recursively retrieve groups from a group" {
+        $count = (Settings GroupsInTestGroup) + 1
+
+        $groups = Get-Group -Id (Settings Group) | Get-Group
+
+        ($groups.Count) | Should Be $count
     }
 }

@@ -55,36 +55,46 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Status Up,Down
     }
 
-    <#It "can pipe from devices" {
+    Context "Group Recursion" {
+        It "retrieves sensors from a uniquely named group" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorUniqueGroup"
 
-        $deviceId = 2001
+            $sensors = Get-Group | Get-Sensor *
 
-        $devices = Run Device {
-            $obj = GetItem
-
-            $obj.ObjId = $deviceId
-
-            WithItems ($obj) {
-                Get-Device
-            }
+            $sensors.Count | Should Be 4
         }
 
-        $obj1 = GetItem
-        $obj2 = GetItem
+        It "retrieves sensors from a group with a duplicated name" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDuplicateGroup"
 
-        $obj1.ParentId = $deviceId
-        $obj2.ParentId = $deviceId + 1
-        #isnt this incorrect. we want two sensors, and one device
+            $sensors = Get-Group | Get-Sensor *
 
-        WithItems ($obj1, $obj2) {
-            $sensors = $devices | Get-Sensor
-
-            #the check we need to do needs to be in the mock response - it needs to do some validation for us on the contents of the request
-
-            $sensors.Count | Should Be 1
-
-            $sensors.ParentId | Should Be $deviceId
+            $sensors.Count | Should Be 4
         }
-    }#>
+
+        It "retrieves sensors from a uniquely named group containing child groups" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorUniqueChildGroup"
+
+            $sensors = Get-Group | Get-Sensor *
+
+            $sensors.Count | Should Be 6
+        }
+
+        It "retrieves sensors from a group with a duplicated name containing child groups" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDuplicateChildGroup"
+
+            $sensors = Get-Group | Get-Sensor *
+
+            $sensors.Count | Should Be 6
+        }
+
+        It "retrieves sensors from all groups with a duplicated name with -Recurse:`$false" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorNoRecurse"
+
+            $sensors = Get-Group | Get-Sensor * -Recurse:$false
+
+            $sensors.Count | Should Be 5
+        }
+    }
 }
 

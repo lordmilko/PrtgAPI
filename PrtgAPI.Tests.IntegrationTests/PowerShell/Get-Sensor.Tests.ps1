@@ -106,7 +106,7 @@ Describe "Get-Sensor_IT" {
     It "can pipe from groups" {
         $group = Get-Group -Id (Settings Group)
 
-        $sensors = $group | Get-Sensor
+        $sensors = $group | Get-Sensor -Recurse:$false
 
         $sensors.Count | Should Be (Settings SensorsInTestGroup)
     }
@@ -125,5 +125,13 @@ Describe "Get-Sensor_IT" {
         $sensors.Count | Should BeGreaterThan 0
 
         ($sensors|where Type -NE Ping).Count | Should Be 0
+    }
+
+    It "can recursively retrieve sensors from a group" {
+        $count = (Settings SensorsInTestGroup) + 1
+
+        $sensors = Get-Group -Id (Settings Group) | Get-Sensor
+
+        ($sensors.Count) | Should Be $count
     }
 }

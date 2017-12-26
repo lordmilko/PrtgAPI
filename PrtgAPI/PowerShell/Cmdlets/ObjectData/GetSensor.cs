@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Collections.Generic;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -73,7 +74,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Sensor))]
     [Cmdlet(VerbsCommon.Get, "Sensor")]
-    public class GetSensor : PrtgTableCmdlet<Sensor, SensorParameters>
+    public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>
     {
         /// <summary>
         /// <para type="description">The device to retrieve sensors for.</para>
@@ -98,6 +99,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public GetSensor() : base(Content.Sensors, 500)
         {
+        }
+
+        internal override List<Sensor> GetObjectsInternal(SensorParameters parameters)
+        {
+            if (Group != null)
+            {
+                var groups = client.GetGroups(Property.Name, Group.Name);
+
+                //If more than 1 group with the specified name exists and we intend on recursing, get the sensors
+                //of each device under the group.
+                if (groups.Count > 1 && Recurse)
+                {
+                    return GetObjectsFromGroupNameFilter(Group, null, parameters);
+                }
+            }
+
+            //If we aren't piping from a group, aren't recursing, or only have 1 group with the specified name,
+            //we can use the default implementation.
+            return base.GetObjectsInternal(parameters);
+        }
+
+        /// <summary>
+        /// Retrieves additional records not included in the initial request.
+        /// </summary>
+        /// <param name="sensors">The list of records that were returned from the initial request.</param>
+        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
+        protected override void GetAdditionalRecords(List<Sensor> sensors, SensorParameters parameters)
+        {
+            GetAdditionalGroupRecords(Group, g => g.TotalSensors, sensors, parameters);
         }
 
         /// <summary>

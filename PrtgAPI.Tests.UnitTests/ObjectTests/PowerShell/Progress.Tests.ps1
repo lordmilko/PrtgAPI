@@ -7832,9 +7832,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #endregion
     #region 30: Something -> Table -> Where { Variable(1) -> Table -> Table } -> Table
 
-    It "30a: Table -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
+    It "30a: Table -> Table -> Where { Variable(1) -> Table -> Table } -> Table" {
 
-        Get-Probe | Get-Group | Where {
+        Get-Probe | Get-Device | Where {
             ($_ | Get-Sensor | Get-Channel).Name -eq "Percent Available Memory"
         } | Get-Sensor
 
@@ -7854,7 +7854,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    Retrieving all groups"
+            "    Retrieving all devices"
 
             ###################################################################
 
@@ -7862,16 +7862,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ##########################################################################################
 
-            #region Probe 1, Group 1
+            #region Probe 1, Device 1
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -7879,7 +7879,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -7891,7 +7891,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -7903,7 +7903,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search (Completed)`n" +
@@ -7915,10 +7915,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 1, Group 2
+            #endregion Probe 1, Device 2
 
             ##########################################################################################
 
@@ -7926,8 +7926,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -7938,18 +7938,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 2/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ##########################################################################################
 
-            #region Probe 1, Group 2
+            #region Probe 1, Device 2
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -7957,7 +7957,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -7969,7 +7969,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -7981,7 +7981,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search (Completed)`n" +
@@ -7993,10 +7993,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 1, Group 2
+            #endregion Probe 1, Device 2
 
             ##########################################################################################
 
@@ -8004,8 +8004,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    PRTG Group Search (Completed)`n" +
-            "        Processing group 2/2`n" +
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -8022,7 +8022,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    Retrieving all groups"
+            "    Retrieving all devices"
 
             ###################################################################
 
@@ -8030,16 +8030,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ##########################################################################################
 
-            #region Probe 2, Group 1
+            #region Probe 2, Device 1
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8047,7 +8047,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -8059,7 +8059,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -8071,7 +8071,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search (Completed)`n" +
@@ -8083,10 +8083,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 2, Group 1
+            #endregion Probe 2, Device 1
 
             ##########################################################################################
 
@@ -8094,8 +8094,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -8106,18 +8106,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    PRTG Group Search`n" +
-            "        Processing group 2/2`n" +
+            "    PRTG Device Search`n" +
+            "        Processing device 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ##########################################################################################
             
-            #region Probe 2, Group 2
+            #region Probe 2, Device 2
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8125,7 +8125,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -8137,7 +8137,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search`n" +
@@ -8149,7 +8149,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Channel Search (Completed)`n" +
@@ -8161,10 +8161,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 2, Group 2
+            #endregion Probe 2, Device 2
 
             ##########################################################################################
 
@@ -8172,8 +8172,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing probe 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    PRTG Group Search (Completed)`n" +
-            "        Processing group 2/2`n" +
+            "    PRTG Device Search (Completed)`n" +
+            "        Processing device 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -8186,7 +8186,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
     
-    It "30b: Variable -> Table | Where { Variable(1) -> Table -> Table } -> Table" {
+    It "30b: Variable -> Table -> Where { Variable(1) -> Table -> Table } -> Table" {
 
         #TODO: technically speaking, this functionality does not work properly. Because when showing progress
         #when piping from a variable, the last cmdlet is responsible for updating the second last cmdlet's count.
@@ -8196,23 +8196,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes = Get-Probe
 
-        $probes | Get-Group | Where {
+        $probes | Get-Device | Where {
             ($_ | Get-Sensor | Get-Channel).Name -eq "Percent Available Memory"
         } | Get-Sensor
 
         Validate(@(
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
-            "    Retrieving all groups"
+            "    Retrieving all devices"
 
             ##########################################################################################
 
-            #region Probe 1, Group 1
+            #region Probe 1, Device 1
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8220,7 +8220,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8232,7 +8232,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8244,7 +8244,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search (Completed)`n" +
@@ -8256,29 +8256,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 1, Group 1
+            #endregion Probe 1, Device 1
 
             ##########################################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
-            "        Processing all groups 1/2`n" +
+            "        Processing all devices 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
 
             ##########################################################################################
 
-            #region Probe 1, Group 2
+            #region Probe 1, Device 2
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8286,7 +8286,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8298,7 +8298,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8310,7 +8310,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search (Completed)`n" +
@@ -8322,49 +8322,49 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 1, Group 2
+            #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
-            "        Processing all groups 2/2`n" +
+            "        Processing all devices 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ###################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 1/2`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all groups 2/2`n" +
+            "        Processing all devices 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ###################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
-            "    Retrieving all groups"
+            "    Retrieving all devices"
 
             ##########################################################################################
 
-            #region Probe 2, Group 1
+            #region Probe 2, Device 1
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8372,7 +8372,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8384,7 +8384,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8396,7 +8396,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search (Completed)`n" +
@@ -8408,19 +8408,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
-            #endregion Probe 2, Group 1
+            #endregion Probe 2, Device 1
 
             ##########################################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
-            "        Processing all groups 1/2`n" +
+            "        Processing all devices 1/2`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -8428,10 +8428,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             
             ##########################################################################################
 
-            #region Probe 2, Group 2
+            #region Probe 2, Device 2
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -8439,7 +8439,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8451,7 +8451,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search`n" +
@@ -8463,7 +8463,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    PRTG Channel Search (Completed)`n" +
@@ -8475,38 +8475,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "PRTG Sensor Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
+            "    Processing all devices 1/1`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
-            "        Processing all groups 2/2`n" +
+            "        Processing all devices 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ###################################################################
 
-            "PRTG Group Search`n" +
+            "PRTG Device Search`n" +
             "    Processing all probes 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all groups 2/2`n" +
+            "        Processing all devices 2/2`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
 
             ###################################################################
 
-            "PRTG Group Search (Completed)`n" +
+            "PRTG Device Search (Completed)`n" +
             "    Processing all probes 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
         ))
@@ -8554,7 +8554,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
     
-    It "31b: Variable -> Table | Where { Variable(1) -> Action }" {
+    It "31b: Variable -> Table -> Where { Variable(1) -> Action }" {
         $probes = Get-Probe
 
         $probes | Get-Device | Where { $_ | Pause-Object -Forever }

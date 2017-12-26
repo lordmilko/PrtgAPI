@@ -70,7 +70,6 @@ namespace PrtgAPI.PowerShell.Base
                 streamResults = true;
                 this.streamSerial = streamSerial;
             }
-                
         }
 
         /// <summary>
@@ -404,7 +403,27 @@ namespace PrtgAPI.PowerShell.Base
                     return client.SerialStreamObjectsInternal(parameters, streamCount.Value, true); //There are other cmdlets after us; do one request at a time
             }
             else
-                return client.GetObjects<TObject>(parameters);
+            {
+                var objs = GetObjectsInternal(parameters);
+
+                GetAdditionalRecords(objs, parameters);
+
+                return objs;
+            }
+        }
+
+        internal virtual List<TObject> GetObjectsInternal(TParam parameters)
+        {
+            return client.GetObjects<TObject>(parameters);
+        }
+
+        /// <summary>
+        /// Retrieves additional records not included in the initial request.
+        /// </summary>
+        /// <param name="objs">The list of records that were returned from the initial request.</param>
+        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
+        protected virtual void GetAdditionalRecords(List<TObject> objs, TParam parameters)
+        {
         }
     }
 }

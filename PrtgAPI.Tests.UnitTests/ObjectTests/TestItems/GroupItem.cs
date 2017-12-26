@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestItems
 {
+    [DebuggerDisplay("Name: {Name,nq}, Id: {ObjId,nq}, ParentId: {ParentId,nq}")]
     public class GroupItem : BaseItem
     {
         public string Probe { get; set; }
@@ -73,7 +76,7 @@
             string unusualsens = "<a title=\"Probe Device: 1x Unusual\" class=\"sensorlinkunusual\" href=\"sensors.htm?id=40&filter_status=10\"><div class=\"sensp\">1</div></a>",
             string unusualsensRaw = "0000000001", string undefinedsens = "<a title=\"dc1: 3x Unknown\" class=\"sensorlinkblack\" href=\"sensors.htm?id=2469&filter_status=0&filter_status=6&filter_status=1\"><div class=\"sensx\">3</div></a>",
             string undefinedsensRaw = "0000000001", string totalsens = "17", string totalsensRaw = "0000000017", string schedule = "Saturdays [GMT+1000]",
-            string basetype = "group", string baselink = "/group.htm?id=2211", string baselinkRaw = "2211", string parentid = "1", string notifiesx = "Inherited",
+            string basetype = "group", string baselink = "/group.htm?id=2211", string baselinkRaw = "2211", string parentId = "1", string notifiesx = "Inherited",
             string interval = null, string intervalx = "Inherited (60)", string intervalxRaw = "0000000060", string access = "Full", string accessRaw = "0000000400",
             string dependency = "Parent", string dependencyRaw = "127.0.0.1",
             string status = "Up ", string statusRaw = "3", string priority = "3",
@@ -112,7 +115,7 @@
             BaseType = basetype;
             BaseLink = baselink;
             BaseLinkRaw = baselinkRaw;
-            ParentId = parentid;
+            ParentId = parentId;
             NotifiesX = notifiesx;
             Interval = interval;
             IntervalX = intervalx;
