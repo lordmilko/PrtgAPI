@@ -4,7 +4,7 @@ function Describe($name, $script)
 {
     Pester\Describe $name {
 
-        BeforeAll {    InitializeUnitTestModules }
+        BeforeAll { InitializeUnitTestModules }
 
         & $script
     }

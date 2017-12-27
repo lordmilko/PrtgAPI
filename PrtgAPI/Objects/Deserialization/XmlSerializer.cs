@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Objects.Deserialization.Cache;
 
 namespace PrtgAPI.Objects.Deserialization
 {
@@ -32,11 +31,11 @@ namespace PrtgAPI.Objects.Deserialization
         {
             var obj = Activator.CreateInstance(type);
 
-            var mappings = GetMappings(type);
+            var mappings = ReflectionCacheManager.Map(type);
 
             foreach (var mapping in mappings)
             {
-                Logger.Debug($"\nDeserialize property {mapping.Property.Name}: ");
+                Logger.Debug($"\nDeserialize property {mapping.PropertyCache.Property.Name}: ");
 
                 try
                 {
@@ -68,48 +67,14 @@ namespace PrtgAPI.Objects.Deserialization
             return obj;
         }
 
-        private List<XmlMapping> GetMappings(Type type)
-        {
-            var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            var mappings = new List<XmlMapping>();
+        
 
-            foreach (var prop in properties)
-            {
-                if (FindXmlAttribute<XmlElementAttribute>(prop, mappings, type, a => a.ElementName, XmlAttributeType.Element))
-                    continue;
-                if (FindXmlAttribute<XmlAttributeAttribute>(prop, mappings, type, a => a.AttributeName, XmlAttributeType.Attribute))
-                    continue;
-                if (FindXmlAttribute<XmlTextAttribute>(prop, mappings, type, a => null, XmlAttributeType.Text))
-                    continue;
-            }
 
-            return mappings;
-        }
-
-        private bool FindXmlAttribute<TAttribute>(PropertyInfo property, List<XmlMapping> mappings, Type type, Func<TAttribute, string> name, XmlAttributeType enumType) where TAttribute : Attribute
-        {
-            var attributes = property.GetCustomAttributes(typeof (TAttribute)) as IEnumerable<TAttribute>;
-
-            if (attributes != null)
-            {
-                var list = attributes.ToList();
-
-                if (list.Any())
-                {
-                    mappings.Add(new XmlMapping(type, property, list.Select(name).ToArray(), enumType));
-                }
-                else
-                    return false;
-                return true;
-            }
-
-            return false;
-        }
 
         private void ProcessXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.Property.PropertyType;
+            var type = mapping.PropertyCache.Property.PropertyType;
             
             if (typeof (IEnumerable).IsAssignableFrom(type) && type != typeof (string))
             {
@@ -123,7 +88,7 @@ namespace PrtgAPI.Objects.Deserialization
 
         private void ProcessEnumerableXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.Property.PropertyType;
+            var type = mapping.PropertyCache.Property.PropertyType;
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
             {
@@ -137,7 +102,7 @@ namespace PrtgAPI.Objects.Deserialization
 
         private void ProcessListEnumerableXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.Property.PropertyType;
+            var type = mapping.PropertyCache.Property.PropertyType;
             var underlyingType = type.GetGenericArguments().First();
 
             var list = Activator.CreateInstance(type);
@@ -151,14 +116,14 @@ namespace PrtgAPI.Objects.Deserialization
                 ((IList)list).Add(Deserialize(underlyingType, e));
             }
 
-            mapping.Property.SetValue(obj, list);
+            mapping.PropertyCache.Property.SetValue(obj, list);
         }
 
         private void ProcessNonListEnumerableXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var attribute = mapping.Property.GetCustomAttribute(typeof(SplittableStringAttribute)) as SplittableStringAttribute;
+            var attribute = mapping.PropertyCache.GetAttributes(typeof (SplittableStringAttribute));
 
-            if (attribute != null)
+            if (attribute.Count > 0)
             {
                 var value = mapping.AttributeValue.Select(a => elm.Element(a)).FirstOrDefault(x => x != null);
 
@@ -171,10 +136,10 @@ namespace PrtgAPI.Objects.Deserialization
 
                 if (value != null)
                 {
-                    finalVal = value.Value.Trim().Split(attribute.Character);
+                    finalVal = value.Value.Trim().Split(((SplittableStringAttribute) attribute[0]).Character);
                 }
 
-                mapping.Property.SetValue(obj, finalVal);
+                mapping.PropertyCache.Property.SetValue(obj, finalVal);
             }
             else
                 throw new NotSupportedException(); //todo: add an appropriate failure message
@@ -182,7 +147,7 @@ namespace PrtgAPI.Objects.Deserialization
 
         private void ProcessSingleXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.Property.PropertyType;
+            var type = mapping.PropertyCache.Property.PropertyType;
             var value = mapping.GetSingleXElementAttributeValue(elm);
 
             //priority is priority_raw on the root group, priority everywhere else. we need an alt xmlelement
@@ -194,7 +159,7 @@ namespace PrtgAPI.Objects.Deserialization
             }
             catch (Exception ex) when (!(ex is XmlDeserializationException))
             {
-                throw new XmlDeserializationException(mapping.Property.PropertyType, value?.ToString() ?? "null", ex);
+                throw new XmlDeserializationException(mapping.PropertyCache.Property.PropertyType, value?.ToString() ?? "null", ex);
             }
         }
 
@@ -228,14 +193,14 @@ namespace PrtgAPI.Objects.Deserialization
             Logger.Debug($"XAttribute contained {str}");
 
             value = NullifyMissingValue(value);
-            var finalValue = value == null ? null : GetValue(mapping.Property.PropertyType, value.Value, elm);
+            var finalValue = value == null ? null : GetValue(mapping.PropertyCache.Property.PropertyType, value.Value, elm);
 
-            mapping.Property.SetValue(obj, finalValue);
+            mapping.PropertyCache.Property.SetValue(obj, finalValue);
         }
 
         private void ProcessXmlText(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.Property.PropertyType;
+            var type = mapping.PropertyCache.Property.PropertyType;
 
             var str = elm != null ? $"\"{elm.Value}\"" : "null";
             Logger.Debug($"XElement contained {str}");
@@ -245,9 +210,9 @@ namespace PrtgAPI.Objects.Deserialization
             var finalValue = elm == null ? null : GetValue(type, elm.Value, elm);
 
             if (type.IsValueType && Nullable.GetUnderlyingType(type) == null && finalValue == null)
-                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
+                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.PropertyCache.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
 
-            mapping.Property.SetValue(obj, finalValue);
+            mapping.PropertyCache.Property.SetValue(obj, finalValue);
         }
 
         private object GetValue(Type type, object value, XElement elm)

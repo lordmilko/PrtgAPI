@@ -53,7 +53,7 @@ namespace PrtgAPI.Request
 
             responseValidator?.Invoke(response);
 
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
+            return XDocumentHelpers.SanitizeXml(response);
         }
 
         internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
@@ -64,7 +64,7 @@ namespace PrtgAPI.Request
 
             responseValidator?.Invoke(response);
 
-            return XDocument.Parse(XDocumentHelpers.SanitizeXml(response));
+            return XDocumentHelpers.SanitizeXml(response);
         }
 
         #endregion

@@ -231,6 +231,16 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             ExecuteFailedRequest(HttpStatusCode.OK, html.ToString(SaveOptions.DisableFormatting), null, "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly. Error message: Sorry, the selected object cannot be used here.");
         }
 
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml()
+        {
+            var xml = "<prtg\0>value!</prtg>";
+
+            var xDoc = XDocumentHelpers.SanitizeXml(xml);
+
+            Assert.AreEqual("value!", xDoc.Element("prtg").Value);
+        }
+
         private int prtgClientLogVerboseHit;
 
         [TestMethod]

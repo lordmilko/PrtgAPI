@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
+using PrtgAPI.Objects.Deserialization.Cache;
 
 namespace PrtgAPI.Helpers
 {
@@ -115,16 +116,11 @@ namespace PrtgAPI.Helpers
 
         internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
         {
-            foreach (var field in type.GetFields())
-            {
-                var attribute = Attribute.GetCustomAttributes(field, attribType).Where(a => a.GetType() == attribType).Cast<XmlEnumAttribute>().FirstOrDefault();
+            var val = ReflectionCacheManager.GetEnumXml(type).GetValue(value, attribType);
 
-                if (attribute != null)
-                {
-                    if (attribute.Name == value)
-                        return field.GetValue(null);
-                }
-            }
+            if (val != null)
+                return val;
+
 
             if (!allowParse)
                 return null;

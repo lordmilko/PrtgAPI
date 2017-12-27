@@ -103,6 +103,11 @@
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
+    <Compile Include="Objects\Deserialization\Cache\ReflectionCacheManager.cs" />
+    <Compile Include="Objects\Deserialization\Cache\EnumXmlCache.cs" />
+    <Compile Include="Objects\Deserialization\Cache\FieldCache.cs" />
+    <Compile Include="Objects\Deserialization\Cache\PropertyCache.cs" />
+    <Compile Include="Objects\Deserialization\Cache\TypeCache.cs" />
     <Compile Include="Objects\Log.cs" />
     <Compile Include="Objects\RestartProbeProgress.cs" />
     <Compile Include="Objects\SensorHistoryRecord.cs" />
