@@ -1,14 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    class LocationUnresolvedResponse : MultiTypeResponse
+    class LocationUnresolvedResponse : MultiTypeResponse, IWebContentHeaderResponse
     {
+        private bool mapProviderUnavailable;
+
+        public LocationUnresolvedResponse(bool mapProviderUnavailable = false)
+        {
+            this.mapProviderUnavailable = mapProviderUnavailable;
+        }
+
         protected override IWebResponse GetResponse(ref string address, string function)
         {
             switch (function)
@@ -23,6 +28,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private IWebResponse GetEmptyLocationResponse()
         {
+            if (mapProviderUnavailable)
+            {
+                HeaderAction = headers => headers.ContentType.MediaType = "image/png";
+            }
+
             var builder = new StringBuilder();
 
             builder.Append("{");
@@ -31,5 +41,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             return new BasicResponse(builder.ToString());
         }
+
+        public Action<HttpContentHeaders> HeaderAction { get; set; }
     }
 }

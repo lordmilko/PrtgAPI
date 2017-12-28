@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
@@ -950,7 +947,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             throw new NotImplementedException();
         }
-
-        public HttpStatusCode StatusCode { get; set; }
     }
 }

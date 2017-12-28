@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
@@ -29,7 +28,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             throw new NotImplementedException();
         }
-
-        public HttpStatusCode StatusCode { get; set; }
     }
 }

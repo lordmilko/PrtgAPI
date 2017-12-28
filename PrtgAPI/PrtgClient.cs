@@ -2114,7 +2114,7 @@ namespace PrtgAPI
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
         internal List<Location> ResolveAddress(string address) =>
-            GetObject<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).Results.ToList();
+            GetObject<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address), ResolveParser).Results.ToList();
 
         /// <summary>
         /// Asynchronously resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
@@ -2122,7 +2122,15 @@ namespace PrtgAPI
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
         internal async Task<List<Location>> ResolveAddressAsync(string address) =>
-            (await GetObjectAsync<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address)).ConfigureAwait(false)).Results.ToList();
+            (await GetObjectAsync<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address), m => Task.FromResult(ResolveParser(m))).ConfigureAwait(false)).Results.ToList();
+
+        string ResolveParser(HttpResponseMessage message)
+        {
+            if (message.Content.Headers.ContentType.MediaType == "image/png" || message.StatusCode.ToString() == "530")
+                throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available");
+
+            return null;
+        }
 
 #endregion
     }

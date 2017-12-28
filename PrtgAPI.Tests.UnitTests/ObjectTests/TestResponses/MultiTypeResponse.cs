@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using PrtgAPI.Helpers;
@@ -236,7 +234,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             throw new NotImplementedException();
         }
-
-        public HttpStatusCode StatusCode { get; set; }
     }
 }

@@ -140,6 +140,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void Location_ProviderUnavailable()
+        {
+            var client = Initialize_Client(new LocationUnresolvedResponse(true));
+
+            try
+            {
+                Location.Resolve(client, 1001, "something");
+                Assert.Fail("Expected an exception to be thrown");
+            }
+            catch (Exception ex)
+            {
+                if (!ex.Message.Contains("the PRTG map provider is not currently available"))
+                    throw;
+            }
+        }
+
+        [TestMethod]
         public async Task SetObjectPropertyRaw_CanExecuteAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());

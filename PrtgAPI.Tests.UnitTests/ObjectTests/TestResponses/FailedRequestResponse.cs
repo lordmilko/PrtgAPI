@@ -5,7 +5,7 @@ using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    class FailedRequestResponse : IWebResponse
+    class FailedRequestResponse : IWebStatusResponse
     {
         private string responseText;
         private string addr;

@@ -18,10 +18,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
         public Task<HttpResponseMessage> GetSync(string address)
         {
-            if (response.StatusCode == 0)
-                response.StatusCode = HttpStatusCode.OK;
+            var statusCode = GetStatusCode();
 
-            var message = new HttpResponseMessage(response.StatusCode)
+            var message = new HttpResponseMessage(statusCode)
             {
                 Content = new StringContent(response.GetResponseText(ref address)),
                 RequestMessage = new HttpRequestMessage()
@@ -30,13 +29,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
                 }
             };
 
+            SetContentHeaders(message);
+
             return Task.FromResult(message);
         }
 
         public async Task<HttpResponseMessage> GetAsync(string address)
         {
-            if (response.StatusCode == 0)
-                response.StatusCode = HttpStatusCode.OK;
+            var statusCode = GetStatusCode();
 
             var stack = new System.Diagnostics.StackTrace();
 
@@ -56,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             }
             //we should check whether the method is a streamer or an async, and if its async we should to task.fromresult
 
-            return new HttpResponseMessage(response.StatusCode)
+            var message = new HttpResponseMessage(statusCode)
             {
                 Content = new StringContent(responseStr),
                 RequestMessage = new HttpRequestMessage()
@@ -64,6 +64,32 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
                     RequestUri = new Uri(address)
                 }
             };
+
+            SetContentHeaders(message);
+
+            return message;
+        }
+
+        private HttpStatusCode GetStatusCode()
+        {
+            var statusCode = HttpStatusCode.OK;
+
+            var statusResponse = response as IWebStatusResponse;
+
+            if (statusResponse != null)
+            {
+                if (statusResponse.StatusCode != 0)
+                    statusCode = statusResponse.StatusCode;
+            }
+
+            return statusCode;
+        }
+
+        private void SetContentHeaders(HttpResponseMessage message)
+        {
+            var headerResponse = response as IWebContentHeaderResponse;
+
+            headerResponse?.HeaderAction?.Invoke(message.Content.Headers);
         }
     }
 }

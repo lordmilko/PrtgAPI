@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
@@ -12,8 +11,6 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
         {
             this.response = response;
         }
-
-        public HttpStatusCode StatusCode { get; set; }
 
         public string GetResponseText(ref string address)
         {

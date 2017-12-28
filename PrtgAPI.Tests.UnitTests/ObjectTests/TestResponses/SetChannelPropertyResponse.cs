@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
@@ -10,8 +9,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     class SetChannelPropertyResponse : IWebResponse
     {
-        public HttpStatusCode StatusCode { get; set; }
-
         private ChannelProperty property;
         private int channelId;
         private object value;

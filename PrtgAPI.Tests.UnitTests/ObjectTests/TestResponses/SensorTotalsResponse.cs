@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
@@ -9,8 +8,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class SensorTotalsResponse : IWebResponse
     {
-        public HttpStatusCode StatusCode { get; set; }
-
         protected SensorTotalsItem item;
 
         public SensorTotalsResponse(SensorTotalsItem item)

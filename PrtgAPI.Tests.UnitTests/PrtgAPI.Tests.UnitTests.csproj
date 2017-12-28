@@ -60,6 +60,8 @@
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="InfrastructureTests\AssemblyTests.cs" />
     <Compile Include="InfrastructureTests\SerializationTests.cs" />
+    <Compile Include="InfrastructureTests\Support\IWebContentHeaderResponse.cs" />
+    <Compile Include="InfrastructureTests\Support\IWebStatusResponse.cs" />
     <Compile Include="InfrastructureTests\Support\MockProgressWriter.cs" />
     <Compile Include="InfrastructureTests\Support\MockRetryWebClient.cs" />
     <Compile Include="InfrastructureTests\Support\Progress\ProgressQueue.cs" />

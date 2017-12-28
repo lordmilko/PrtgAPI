@@ -80,7 +80,9 @@ namespace PrtgAPI
                 if (result.Any())
                     break;
 
-                Thread.Sleep(1000);
+#if !DEBUG
+                await Task.Delay(1000);
+#endif
             }
 
             if (!result.Any())

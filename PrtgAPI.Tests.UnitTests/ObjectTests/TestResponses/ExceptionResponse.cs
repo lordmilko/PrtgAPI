@@ -36,7 +36,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             throw new NotImplementedException();
         }
-
-        public HttpStatusCode StatusCode { get; set; }
     }
 }
