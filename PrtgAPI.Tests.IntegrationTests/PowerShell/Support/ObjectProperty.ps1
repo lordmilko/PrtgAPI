@@ -40,7 +40,7 @@ function Describe($name, $script) {
             $newValue = $newSettings.$property
             $originalValue = $initialSettings.$property
 
-            if($newValue.GetType().IsArray)
+            if($newValue -ne $null -and $newValue.GetType().IsArray)
             {
                 $newValue = [string]::Join("`n", $newValue)
 

@@ -17,14 +17,20 @@ namespace PrtgAPI.Objects.Undocumented
         public IPVersion IPVersion { get; set; }
 
         /// <summary>
-        /// The IPv4 Address or HostName used to connect to the device.<para/>
+        /// The IP Address or Hostname used to connect to the device.<para/>
+        /// If the <see cref="IPVersion"/> of this device is <see cref="PrtgAPI.IPVersion.IPv6"/>, this returns the value of <see cref="Hostv6"/>. Otherwise, returns <see cref="Hostv4"/>.
+        /// </summary>
+        public string Host => IPVersion == PrtgAPI.IPVersion.IPv4 ? Hostv4 : Hostv6;
+
+        /// <summary>
+        /// The IPv4 Address or Hostname used to connect to the device.<para/>
         /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
         /// </summary>
         [XmlElement("injected_host")]
         public string Hostv4 { get; set; }
 
         /// <summary>
-        /// The IPv6 Address or HostName used to connect to the device.<para/>
+        /// The IPv6 Address or Hostname used to connect to the device.<para/>
         /// Corresponds to Basic Device Settings -> IPv6 Address/DNS Name.
         /// </summary>
         [XmlElement("injected_hostv6")]

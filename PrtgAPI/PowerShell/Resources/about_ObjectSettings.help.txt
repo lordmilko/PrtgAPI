@@ -147,8 +147,9 @@ LONG DESCRIPTION
     | Basic Device Settings       | Get | Set | Description                                                          |
     | --------------------------- | --------- | -------------------------------------------------------------------- |
     | IPVersion                   | Yes | No  | Whether to use IPv4 or IPv6. Set via Hostv4 and Hostv6 respectively  |
-    | Hostv4                      |    Yes    | IPv4 Address/HostName to use. Sets IPVersion to IPv4 when set        |
-    | Hostv6                      |    Yes    | IPv6 Address/HostName to use. Sets IPVersion to IPv6 when set        |
+    | Hostv4                      |    Yes    | IPv4 Address/Hostname to use. Sets IPVersion to IPv4 when set        |
+    | Hostv6                      |    Yes    | IPv6 Address/Hosthame to use. Sets IPVersion to IPv6 when set        |
+    | Host                        |    Yes    | Sets IPv4 Address/Hostname. Gets Hostv4/Hostv6 based on IPVersion    |
 
     | Additional Device Info      | Get | Set | Description                                                          |
     | --------------------------- | --------- | -------------------------------------------------------------------- |

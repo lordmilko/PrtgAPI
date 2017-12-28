@@ -24,5 +24,7 @@ namespace PrtgAPI.Objects.Undocumented
         public string AmazonSecretKey { get; set; }
 
         public bool? InheritTriggers { get; set; }
+
+        public string Host { get; set; }
     }
 }

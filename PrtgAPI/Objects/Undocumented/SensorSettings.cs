@@ -191,7 +191,7 @@ namespace PrtgAPI.Objects.Undocumented
         {
             get
             {
-                if (interval == null)
+                if (interval == null && intervalStr != null)
                     interval = ScanningInterval.Parse(intervalStr);
 
                 return interval;

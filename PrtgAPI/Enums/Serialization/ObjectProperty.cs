@@ -870,11 +870,21 @@ namespace PrtgAPI
         [Description("inherittriggers")]
         [TypeLookup(typeof(SpecialPropertySettings))]
         InheritTriggers,
-    #endregion
-    #region Devices
+
+        #endregion
+        #region Devices
 
         /// <summary>
-        /// The IPv4 Address or HostName to use to connect to a device.<para/>
+        /// The IPv4 Address or HostName to use to connect to a device. The same as <see cref="Hostv4"/>.<para/>
+        /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
+        /// </summary>
+        [Description("host")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv4, true)]
+        Host,
+
+        /// <summary>
+        /// The IPv4 Address or HostName to use to connect to a device. The same as <see cref="Host"/>.<para/>
         /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
