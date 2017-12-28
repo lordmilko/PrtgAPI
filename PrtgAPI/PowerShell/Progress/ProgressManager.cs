@@ -34,7 +34,7 @@ namespace PrtgAPI.PowerShell.Progress
         public bool ExpectsContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
 
         /// <summary>
-        /// Indicates that a record has actually been written to the pipeline for this cmdlet, this initializing the status description.
+        /// Indicates that a record has actually been written to the pipeline for this cmdlet, thus initializing the status description.
         /// </summary>
         public bool ProgressWritten => CurrentRecord.StatusDescription != DefaultDescription;
 
@@ -692,7 +692,7 @@ namespace PrtgAPI.PowerShell.Progress
              * If we're piping from a variable, we need to complete our progress - however if the pipeline before me is an operation,
              *     responsibility has shifted and we're not responsible for the current progress record
              */
-            if ((TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation)))
+            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten))
             {
                 /* However if it turns out we didn't actually write any records (such as because the server glitched out
                  * and returned nothing) we never really wrote our progress record. If we were streaming however,

@@ -12523,5 +12523,48 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         { Get-Progress } | Should Throw "Queue empty"
     }
 
+    It "Completes all progress records when no results are returned when piping from a cmdlet to a Table" {
+        Get-Probe -Count 0 | Get-Device
+
+        Validate(@(
+            (Gen "PRTG Probe Search"              "Retrieving all probes")
+            (Gen "PRTG Probe Search (Completed)"  "Retrieving all probes")
+        ))
+    }
+
+    It "Completes all progress records when no results are returned when piping from a cmdletto an Action" {
+        Get-Probe -Count 0 | Pause-Object -Forever
+
+        Validate(@(
+            (Gen "PRTG Probe Search"              "Retrieving all probes")
+            (Gen "PRTG Probe Search (Completed)"  "Retrieving all probes")
+        ))
+    }
+
+    It "Completes all progress records when no results are returned when piping from a variable to a Table" {
+        
+        $probes = Get-Probe -Count 2
+
+        $probes | Get-Device -Count 0 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search"              "Processing all probes 1/2" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)"  "Processing all probes 2/2" 100 "Retrieving all devices")
+        ))
+    }
+
+    It "Completes all progress records when no results are returned when piping from a variable  to an Action" {
+        $probes = Get-Probe -Count 2
+
+        $probes | Get-Device -Count 0 | Pause-Object -Forever
+
+        Validate(@(
+            (Gen "PRTG Device Search"              "Processing all probes 1/2" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)"  "Processing all probes 2/2" 100 "Retrieving all devices")
+        ))
+    }
+
     #endregion
 }
