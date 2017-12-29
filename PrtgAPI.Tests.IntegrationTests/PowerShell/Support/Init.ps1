@@ -100,8 +100,8 @@ function InitializePrtgClient
 {
     Log "Starting PowerShell Tests"
 
-    (ServerManager).StartServices()
     (ServerManager).ValidateSettings()
+    (ServerManager).StartServices()
 
     try
     {

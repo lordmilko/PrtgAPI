@@ -38,7 +38,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     {
                         ParentActivityId = 1
                     });
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1);
                     WriteObject(Convert.ToInt32(((PSObject)Object).BaseObject)*2);
                     break;
 

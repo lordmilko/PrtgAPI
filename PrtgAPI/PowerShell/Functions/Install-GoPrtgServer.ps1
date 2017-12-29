@@ -21,7 +21,7 @@ function Install-GoPrtgServer
 
     if(!(Test-Path $Profile))
     {
-        New-Item $Profile -Type File -Force
+        New-Item $Profile -Type File -Force | Out-Null
         $new = $true
     }
 

@@ -160,8 +160,13 @@ namespace PrtgAPI
         [XmlEnum("501")]
         Created,
 
-        //[XmlEnum("502")]
-        //Deleted,
+        /// <summary>
+        /// Object with the same ID was previously deleted.<para/>
+        /// Under normal circumstances object IDs cannot be reused, however this status can occur when the PRTG Configuration
+        /// is reverted to before an object was initially created.
+        /// </summary>
+        [XmlEnum("502")]
+        Deleted,
 
         /// <summary>
         /// An object was moved to another parent. States where the object was moved from and to. Occurs in conjunction with <see cref="ChildObjectMoved"/>.

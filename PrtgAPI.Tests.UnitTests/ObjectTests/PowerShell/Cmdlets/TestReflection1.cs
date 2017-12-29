@@ -46,7 +46,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     break;
                 case "ChainSourceId":
                     WriteProgress(new ProgressRecord(1, "Test-Reflection1 Activity", "Test-Reflection1 Description"));
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1);
                     WriteObject(new[] {1, 2, 3}, true);
                     break;
                 case "Downstream":
