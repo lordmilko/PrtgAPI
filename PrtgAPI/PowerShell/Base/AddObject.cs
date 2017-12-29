@@ -44,7 +44,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"{Parameters.Name} ({Destination.BaseType} ID: {Destination.Id})"))
+            if (ShouldProcess($"{Parameters.Name} ({Destination.BaseType} ID: {Destination.Id}) (Destination: {Destination.Name} (ID: {Destination.Id}))"))
             {
                 ExecuteOperation(() =>
                 {

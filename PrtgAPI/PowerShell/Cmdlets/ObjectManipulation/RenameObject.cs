@@ -47,7 +47,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (New Name: {Name})"))
             {
                 ExecuteOperation(() => client.RenameObject(Object.Id, Name), "Rename PRTG Object", $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
             }

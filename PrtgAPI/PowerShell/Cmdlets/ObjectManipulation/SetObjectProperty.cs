@@ -106,9 +106,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
+                if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on ${Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
                 {
-                    if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
+                    if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {RawProperty} = '{RawValue}'"))
                         ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), "Modify PRTG Object Settings", $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
                 }
             }

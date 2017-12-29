@@ -58,7 +58,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ExecuteOperation(SensorOrDeviceOrGroupOrProbe obj)
         {
-            if (ShouldProcess($"'{obj.Name}' (ID: {obj.Id})"))
+            if (ShouldProcess($"'{obj.Name}' (ID: {obj.Id}) (Destination ID: {DestinationId})"))
             {
                 ExecuteOperation(() => client.MoveObject(obj.Id, DestinationId), "Moving PRTG Objects", $"Moving {obj.BaseType.ToString().ToLower()} {obj.Name} (ID: {obj.Id}) to object ID {DestinationId}");
             }

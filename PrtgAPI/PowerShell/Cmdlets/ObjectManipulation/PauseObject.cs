@@ -56,13 +56,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The duration to pause the object for, in minutes.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Default", HelpMessage = "The duration to pause the object for, in minutes.")]
-        public int? Duration { get; set; }
+        public int Duration { get; set; }
 
         /// <summary>
         /// <para type="description">The datetime at which the object should be unpaused.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Until")]
-        public DateTime? Until { get; set; }
+        public DateTime Until { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates the object should be paused indefinitely.</para>
@@ -84,7 +84,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
 
                 case "Until":
-                    duration = (int)Math.Ceiling((Until.Value - DateTime.Now).TotalMinutes);
+                    duration = (int)Math.Ceiling((Until - DateTime.Now).TotalMinutes);
                     break;
 
                 case "Forever":
@@ -94,9 +94,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (duration < 1)
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
-            if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+            var t = duration == 1 ? "minute" : "minutes";
+            var whatIf = Forever.IsPresent ? "forever" : $"{duration} {t}";
+
+            if (ShouldProcess($"{Object.Name} (ID: {Object.Id}) (Duration: {whatIf})"))
             {
-                var t = duration == 1 ? "minute" : "minutes";
                 var t2 = Forever.IsPresent ? "forever" : $"for {duration} {t}";
                 ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing PRTG Objects", $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {t2}");
             }

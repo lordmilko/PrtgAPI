@@ -158,10 +158,10 @@
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\AddGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewDeviceParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\NewGroupParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewGroupParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\BackupPrtgConfig.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ClearPrtgCache.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\LoadPrtgConfigFile.cs" />
