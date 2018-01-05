@@ -63,7 +63,6 @@
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
     <Compile Include="DataTests\Incomplete\LogTests.cs" />
     <Compile Include="Support\ServerManager.cs" />
-    <Compile Include="Tools\PowerShell\Cmdlets\GetMissingSensorTypes.cs" />
     <Compile Include="Support\Assert2.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="ActionTests\StateTests.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Local.cs" />
-    <Compile Include="Tools\PowerShell\Cmdlets\WriteSensorTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj">
@@ -124,8 +122,10 @@
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Probe.Tests.ps1" />
     <None Include="PowerShell\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="PowerShell\Rename-Object.Tests.ps1" />
     <None Include="PowerShell\Restart-Probe.Tests.ps1" />
     <None Include="PowerShell\Restart-PrtgCore.Tests.ps1" />
+    <None Include="PowerShell\Resume-Object.Tests.ps1" />
     <None Include="PowerShell\Set-ChannelProperty.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Device.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Sensor.Tests.ps1" />
@@ -135,7 +135,9 @@
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />
     <None Include="PowerShell\Support\ObjectProperty.ps1" />
-    <None Include="PowerShell\Support\ObjectPropertyMultiType.ps1" />
+    <None Include="Tools\PowerShell\Cmdlets\Get-MissingSensorTypes.ps1" />
+    <None Include="Tools\PowerShell\Cmdlets\Get-PrtgLog.ps1" />
+    <None Include="Tools\PowerShell\Cmdlets\Write-SensorTypes.ps1" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.cmd" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.Format.ps1xml" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psd1" />
@@ -162,7 +164,8 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)Tools\PowerShell\Resources\*.*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)Tools\PowerShell\Resources\*.*" "$(TargetDir)"
+copy "$(ProjectDir)Tools\PowerShell\Cmdlets\*.ps1" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

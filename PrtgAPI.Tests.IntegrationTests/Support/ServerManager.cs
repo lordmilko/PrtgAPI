@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
+    /// <summary>
+    /// Manages connections to a PRTG Continuous Integration Server, including service, state and configuration mangement.
+    /// </summary>
     public class ServerManager
     {
         private static string PrtgConfig => $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor\\PRTG Configuration.dat";

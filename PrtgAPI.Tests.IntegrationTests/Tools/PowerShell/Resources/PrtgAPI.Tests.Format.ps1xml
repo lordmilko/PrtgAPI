@@ -4,7 +4,7 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
-                <TypeName>PrtgAPI.Tests.IntegrationTests.MissingSensorType</TypeName>
+                <TypeName>MissingSensorType</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
