@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\Support\ObjectPropertyMultiType.ps1
+﻿. $PSScriptRoot\..\Support\ObjectProperty.ps1
 
 Describe "Set-ObjectProperty_Containers_IT" {
 

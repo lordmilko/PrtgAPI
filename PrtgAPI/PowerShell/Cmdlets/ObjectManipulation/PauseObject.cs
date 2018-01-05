@@ -16,6 +16,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para>Objects that have not been paused forever will be automatically unpaused when their pause duration expires. For information
     /// on how to unpause an object manually, see Resume-Object.</para>
     /// 
+    /// <para type="description">By default, Pause-Object will operate in Batch Mode. In Batch Mode, Pause-Object
+    /// will not execute a request for each individual object, but will rather store each item in a queue to pause
+    /// all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Pause-Object will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 2001 | Pause-Object -Duration 60</code>
     ///     <para>Pause the object with ID 2001 for 60 minutes.</para>
@@ -34,7 +44,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Resume-Object</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Suspend, "Object", SupportsShouldProcess = true)]
-    public class PauseObject : PrtgOperationCmdlet
+    public class PauseObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to pause.</para>
@@ -70,12 +80,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ParameterSetName = "Forever")]
         public SwitchParameter Forever { get; set; }
 
+        private int? duration;
+        private string minutesDescription;
+        private string durationDescription;
+        private string whatIfDescription;
+
+        private string progressActivity = "Pausing PRTG Objects";
+
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Provides a one-time, preprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
+        protected override void BeginProcessing()
         {
-            int? duration = null;
+            base.BeginProcessing();
 
             switch (ParameterSetName)
             {
@@ -94,14 +111,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (duration < 1)
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
-            var t = duration == 1 ? "minute" : "minutes";
-            var whatIf = Forever.IsPresent ? "forever" : $"{duration} {t}";
+            minutesDescription = duration == 1 ? "minute" : "minutes";
+            durationDescription = Forever.IsPresent ? "forever" : $"for {duration} {minutesDescription}";
+            whatIfDescription = Forever.IsPresent ? "forever" : $"{duration} {minutesDescription}";
+        }
 
-            if (ShouldProcess($"{Object.Name} (ID: {Object.Id}) (Duration: {whatIf})"))
-            {
-                var t2 = Forever.IsPresent ? "forever" : $"for {duration} {t}";
-                ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing PRTG Objects", $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {t2}");
-            }
+        /// <summary>
+        /// Performs record-by-record processing functionality for the cmdlet.
+        /// </summary>
+        protected override void ProcessRecordEx()
+        {
+            if (ShouldProcess($"{Object.Name} (ID: {Object.Id}) (Duration: {whatIfDescription})"))
+                ExecuteOrQueue(Object, progressActivity);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), progressActivity, $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {durationDescription}");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            ExecuteMultiOperation(() => client.PauseObject(ids, duration, Message), progressActivity, $"Pausing {GetMultiTypeListSummary()} {durationDescription}");
         }
     }
 }

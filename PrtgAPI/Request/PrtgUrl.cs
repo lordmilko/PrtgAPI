@@ -180,6 +180,9 @@ namespace PrtgAPI.Request
             if (parameterType == ParameterType.MultiParameter)
                 return FormatMultiParameter(value, description);
 
+            if (parameterType == ParameterType.SingleValue)
+                throw new ArgumentException($"Parameter '{description}' is of type {ParameterType.SingleValue}, however a list of elements was specified. Please specify a single element");
+
             throw new NotImplementedException($"Implementation missing for handling parameter type '{parameterType}'");
         }
 

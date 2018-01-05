@@ -3,9 +3,9 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class AcknowledgeSensorParameters : BaseActionParameters
+    class AcknowledgeSensorParameters : BaseMultiActionParameters
     {
-        public AcknowledgeSensorParameters(int objectId, int? duration, string message) : base(objectId)
+        public AcknowledgeSensorParameters(int[] objectIds, int? duration, string message) : base(objectIds)
         {
             if (message != null)
                 Message = message;

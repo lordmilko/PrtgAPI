@@ -7,15 +7,21 @@ namespace PrtgAPI.Parameters
     {
         private int channelId;
 
-        public int SensorId
+        public int[] SensorIds
         {
-            get { return (int)this[Parameter.Id]; }
+            get { return (int[])this[Parameter.Id]; }
             set { this[Parameter.Id] = value; }
         }
 
-        public SetChannelPropertyParameters(int sensorId, int channelId, ChannelProperty property, object value)
+        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelProperty property, object value)
         {
-            SensorId = sensorId;
+            if (sensorIds == null)
+                throw new ArgumentNullException(nameof(sensorIds));
+
+            if (sensorIds.Length == 0)
+                throw new ArgumentException("At least one Sensor ID must be specified", nameof(sensorIds));
+
+            SensorIds = sensorIds;
             this.channelId = channelId;
 
             AddTypeSafeValue(property, value, true);

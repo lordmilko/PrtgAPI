@@ -3,9 +3,9 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class PauseParametersBase : BaseActionParameters
+    class PauseParametersBase : BaseMultiActionParameters
     {
-        protected PauseParametersBase(int objectId) : base(objectId)
+        protected PauseParametersBase(int[] objectIds) : base(objectIds)
         {
         }
 

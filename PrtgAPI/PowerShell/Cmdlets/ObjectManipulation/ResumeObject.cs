@@ -10,6 +10,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Resume-Object cmdlet resumes monitoring an object that has previously been stopped
     /// due to manually pausing or simulating an error state on the object.</para>
     /// 
+    /// <para type="description">By default, Resume-Object will operate in Batch Mode. In Batch Mode, Resume-Object
+    /// will not execute a request for each individual object, but will rather store each item in a queue to resume
+    /// all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Resume-Object will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>Get-Sensor -Status PausedByUser | Resume-Object</code>
     ///     <para>Resume all sensors that have been paused by the user. Note: if parent object has been manually paused, child objects will appear PausedByUser but will not be able to be unpaused.</para>
@@ -21,7 +31,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Resume, "Object", SupportsShouldProcess = true)]
-    public class ResumeObject : PrtgOperationCmdlet
+    public class ResumeObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to resume.</para>
@@ -29,15 +39,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
+        private string progressActivity = "Resuming PRTG Objects";
+
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
-            {
-                ExecuteOperation(() => client.ResumeObject(Object.Id), "Resuming PRTG Objects", $"Processing {Object.BaseType.ToString().ToLower()} '{Object}'");
-            }
+                ExecuteOrQueue(Object, progressActivity);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            ExecuteOperation(() => client.ResumeObject(Object.Id), progressActivity, $"Processing {Object.BaseType.ToString().ToLower()} '{Object}'");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            ExecuteMultiOperation(() => client.ResumeObject(ids), progressActivity, $"Resuming {GetMultiTypeListSummary()}");
         }
     }
 }

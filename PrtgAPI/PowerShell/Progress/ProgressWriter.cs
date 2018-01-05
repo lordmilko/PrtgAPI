@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrtgAPI.PowerShell.Progress
 {
@@ -18,6 +14,10 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void WriteProgress(ProgressRecordEx progressRecord)
         {
+#if DEBUG
+            Debug.WriteLine($"Writing progress record {progressRecord}");
+#endif
+
             cmdlet.WriteProgress(progressRecord);
         }
 

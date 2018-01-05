@@ -13,6 +13,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// that object will be refreshed.</para>
     /// <para>Sensor Factory sensors do not support being manually refreshed.</para>
     /// 
+    /// <para type="description">By default, Refresh-Object will operate in Batch Mode. In Batch Mode, Refresh-Object
+    /// will not execute a request for each individual object, but will rather store each item in a queue to refresh
+    /// all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Refresh-Object will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>Get-Sensor -Id 2001 | Refresh-Object</code>
     ///     <para>Refresh the sensor with object ID 2001.</para>
@@ -29,7 +39,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true)]
-    public class RefreshObject : PrtgOperationCmdlet
+    public class RefreshObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to refresh.</para>
@@ -37,13 +47,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to refresh.")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
+        private string progressActivity = "Refreshing PRTG Objects";
+
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                ExecuteOperation(() => client.RefreshObject(Object.Id), "Refreshing PRTG Objects", $"Refreshing object '{Object.Name}'");
+            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+                ExecuteOrQueue(Object, progressActivity);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            ExecuteOperation(() => client.RefreshObject(Object.Id), progressActivity, $"Refreshing object '{Object.Name}'");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            ExecuteMultiOperation(() => client.RefreshObject(ids), progressActivity, $"Refreshing {GetMultiTypeListSummary()}");
         }
     }
 }

@@ -205,4 +205,24 @@ Describe "Set-ChannelProperty_IT" {
         SetChild "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true
         SetValue "LimitsEnabled"        $true
     }
+
+    It "can set the properties of multiple in a single request" {
+        $sensor = Get-Sensor -Id (Settings ChannelSensor)
+
+        $ids = 2,3
+
+        $channels = $sensor | Get-Channel -Id $ids
+
+        $channels.Count | Should Be 2
+
+        $channels[0].LimitsEnabled | Should Be $false
+        $channels[1].LimitsEnabled | Should Be $false
+
+        $channels | Set-ChannelProperty LimitsEnabled $true
+
+        $newChannels = $sensor | Get-Channel -Id $ids
+
+        $newChannels[0].LimitsEnabled | Should Be $true
+        $newChannels[1].LimitsEnabled | Should Be $true
+    }
 }

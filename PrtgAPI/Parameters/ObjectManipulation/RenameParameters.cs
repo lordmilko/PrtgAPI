@@ -4,9 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class RenameParameters : BaseActionParameters
+    class RenameParameters : BaseMultiActionParameters
     {
-        public RenameParameters(int objectId, string name) : base(objectId)
+        public RenameParameters(int[] objectIds, string name) : base(objectIds)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name cannot be null or empty", nameof(name));

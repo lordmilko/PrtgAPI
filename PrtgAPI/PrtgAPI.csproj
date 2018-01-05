@@ -120,6 +120,7 @@
     <Compile Include="Objects\Undocumented\SpecialPropertySettings.cs" />
     <Compile Include="Objects\Undocumented\Location.cs" />
     <Compile Include="Objects\Undocumented\ProbeSettings.cs" />
+    <Compile Include="Parameters\Base\BaseMultiActionParameters.cs" />
     <Compile Include="Parameters\Base\BaseSetObjectPropertyParameters.cs" />
     <Compile Include="Parameters\Helpers\TypeCategory.cs" />
     <Compile Include="Parameters\Helpers\DynamicPropertyTypeParser.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\RemoveTriggerParameters.cs" />
     <Compile Include="PowerShell\Base\NewObjectCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgMultiOperationCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgProgressCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />

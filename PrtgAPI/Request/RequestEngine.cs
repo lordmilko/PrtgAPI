@@ -91,20 +91,20 @@ namespace PrtgAPI.Request
         #endregion
         #region HTML
 
-        internal string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters)
+        internal string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
             var url = GetPrtgUrl(function, parameters);
 
-            var response = ExecuteRequest(url);
+            var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters)
+        internal async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             var url = GetPrtgUrl(function, parameters);
 
-            var response = await ExecuteRequestAsync(url);
+            var response = await ExecuteRequestAsync(url, responseParser);
 
             return response;
         }
@@ -307,5 +307,26 @@ namespace PrtgAPI.Request
 
         private PrtgUrl GetPrtgUrl(XmlFunction function, Parameters.Parameters parameters) =>
             new PrtgUrl(prtgClient.connectionDetails, function, parameters);
+
+        internal static void SetErrorUrlAsRequestUri(HttpResponseMessage response)
+        {
+            var url = response.RequestMessage.RequestUri.ToString();
+
+            var searchText = "errorurl=";
+            var expectedUrl = url.Substring(url.IndexOf(searchText, StringComparison.Ordinal) + searchText.Length);
+
+            if (expectedUrl.EndsWith("%26"))
+                expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("%26"));
+            else if (expectedUrl.EndsWith("&"))
+                expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("&"));
+
+            searchText = "error.htm";
+
+            var server = url.Substring(0, url.IndexOf(searchText));
+
+            url = $"{server}public/login.htm?loginurl={expectedUrl}&errormsg=";
+
+            response.RequestMessage.RequestUri = new Uri(url);
+        }
     }
 }

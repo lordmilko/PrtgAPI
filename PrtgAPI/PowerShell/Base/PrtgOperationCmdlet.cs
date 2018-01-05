@@ -21,21 +21,7 @@ namespace PrtgAPI.PowerShell.Base
 
             action();
 
-            if (!ProgressManager.UnsupportedSelectObjectProgress)
-            {
-                if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
-                    ProgressManager.CompleteProgress();
-                else
-                {
-                    if (ProgressManager.upstreamSelectObjectManager != null)
-                        ProgressManager.MaybeCompletePreviousProgress();
-                    else
-                    {
-                        if(ProgressManager.PipelineUpstreamContainsBlockingCmdlet)
-                            ProgressManager.CompleteProgress();
-                    }
-                }
-            }
+            CompleteOperationProgress();
         }
 
         /// <summary>
@@ -81,6 +67,28 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             return value;
+        }
+
+        private void CompleteOperationProgress()
+        {
+            if (!PrtgSessionState.EnableProgress)
+                return;
+
+            if (!ProgressManager.UnsupportedSelectObjectProgress)
+            {
+                if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
+                    ProgressManager.CompleteProgress();
+                else
+                {
+                    if (ProgressManager.upstreamSelectObjectManager != null)
+                        ProgressManager.MaybeCompletePreviousProgress();
+                    else
+                    {
+                        if (ProgressManager.PipelineUpstreamContainsBlockingCmdlet || ProgressManager.MultiOperationBatchMode())
+                            ProgressManager.CompleteProgress();
+                    }
+                }
+            }
         }
     }
 }

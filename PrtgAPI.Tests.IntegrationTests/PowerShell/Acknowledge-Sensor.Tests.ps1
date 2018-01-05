@@ -80,4 +80,57 @@ Describe "Acknowledge-Sensor_IT" {
         $finalSensor = Get-Sensor -Id (Settings DownSensor)
         $finalSensor.Status | Should Be Down
     }
+    
+    It "can acknowledge multiple in a single request" {
+        $upSensor = Get-Sensor -Id (Settings UpSensor)
+        $upSensor.Status | Should Be Up
+
+        $downSensor = Get-Sensor -Id (Settings DownSensor)
+        $downSensor.Status | Should Be Down
+
+        LogTestDetail "Simulating error status on Up Sensor"
+        $upSensor | Simulate-ErrorStatus
+
+        $upSensor | Refresh-Object
+        LogTestDetail "Sleeping for 30 seconds while object refreshes"
+        Sleep 30
+
+        $newUpSensor = Get-Sensor -Id (Settings UpSensor)
+        $newUpSensor.Status | Should Be Down
+
+        $downIds = ((Settings UpSensor),(Settings DownSensor))
+
+        $downSensors = Get-Sensor -Id $downIds
+        $downSensors.Count | Should Be 2
+
+        LogTestDetail "Acknowledging for 1 minute"
+        $downSensors | Acknowledge-Sensor -Duration 1
+
+        $downSensors | Refresh-Object
+        LogTestDetail "Sleeping for 10 seconds"
+        Sleep 10
+
+        LogTestDetail "Checking sensors are acknowledged"
+        $newDownSensors = Get-Sensor -Id $downIds
+        $newDownSensors[0].Status | Should Be DownAcknowledged
+        $newDownSensors[1].Status | Should Be DownAcknowledged
+
+        LogTestDetail "Sleeping for 60 seconds"
+        Sleep 60
+
+        LogTestDetail "Refreshing object and sleeping for 30 seconds"
+        $sensor | Refresh-Object
+        Sleep 30
+
+        $finalSensors = Get-Sensor -Id $downIds
+        $finalSensors[0].Status | Should Be Down
+        $finalSensors[1].Status | Should Be Down
+
+        $finalSensors[0] | Resume-Object
+        LogTestDetail "Waiting for 30 seconds while Up Sensor resumes"
+        Sleep 30
+
+        $finalUpSensor = Get-Sensor -Id (Settings UpSensor)
+        $finalUpSensor.Status | Should Be Up
+    }
 }

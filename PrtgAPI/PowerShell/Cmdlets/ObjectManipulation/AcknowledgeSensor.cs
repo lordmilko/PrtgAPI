@@ -18,6 +18,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">If a sensor is continually flapping, it may be better to pause the sensor rather than acknowledge it.
     /// For more information on pausing objects, see Pause-Object.</para>
     /// 
+    /// <para type="description">By default, Acknowledge-Sensor will operate in Batch Mode. In Batch Mode, Acknowledge-Sensor
+    /// will not execute a request for each individual object, but will rather store each item in a queue to acknowledge
+    /// all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Acknowledge-Sensor will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Status Down | Acknowledge-Sensor -Duration 60</code>
     ///     <para>Acknowledge all down sensors for the next 60 minutes</para>
@@ -37,7 +47,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Pause-Object</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Confirm, "Sensor", SupportsShouldProcess = true)]
-    public class AcknowledgeSensor : PrtgOperationCmdlet
+    public class AcknowledgeSensor : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The sensor to acknowledge.</para>
@@ -73,12 +83,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ParameterSetName = "Forever")]
         public SwitchParameter Forever { get; set; }
 
+        private int? duration;
+        private string minutesDescription;
+        private string durationDescription;
+        private string whatIfDescription;
+
+        private string progressActivity = "Acknowledge PRTG Sensors";
+
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Provides a one-time, preprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
+        protected override void BeginProcessing()
         {
-            int? duration = null;
+            base.BeginProcessing();
 
             switch (ParameterSetName)
             {
@@ -94,17 +111,38 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
             }
 
-            if (duration < 1)
+            if (duration < 1 && ParameterSetName != "Forever")
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
-            var t = duration == 1 ? "minute" : "minutes";
-            var whatIf = Forever.IsPresent ? "forever" : $"{duration} {t}";
+            minutesDescription = duration == 1 ? "minute" : "minutes";
+            durationDescription = Forever.IsPresent ? "forever" : $"for {duration} {minutesDescription}";
+            whatIfDescription = Forever.IsPresent ? "forever" : $"{duration} {minutesDescription}";
+        }
 
-            if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id}) (Duration: {whatIf})"))
-            {
-                var t2 = Forever.IsPresent ? "forever" : $"for {duration} {t}";
-                ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), "Acknowledge PRTG Sensors", $"Acknowledging sensor '{Sensor.Name}' {t2}");
-            }
+        /// <summary>
+        /// Performs record-by-record processing functionality for the cmdlet.
+        /// </summary>
+        protected override void ProcessRecordEx()
+        {
+            if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id}) (Duration: {whatIfDescription})"))
+                ExecuteOrQueue(Sensor, progressActivity);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), progressActivity, $"Acknowledging sensor '{Sensor.Name}' {durationDescription}");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            ExecuteMultiOperation(() => client.AcknowledgeSensor(ids, duration, Message), progressActivity, $"Acknowledging {GetCommonObjectBaseType()} {GetListSummary()} {durationDescription}");
         }
     }
 }

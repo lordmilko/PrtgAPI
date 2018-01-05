@@ -1,20 +1,21 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
     internal class PauseRequestParameters
     {
-        internal PauseRequestParameters(int objectId, int? durationMinutes, string pauseMessage)
+        internal PauseRequestParameters(int[] objectIds, int? durationMinutes, string pauseMessage)
         {
             if (durationMinutes == null)
             {
-                Parameters = new PauseParameters(objectId);
+                Parameters = new PauseParameters(objectIds);
                 Function = CommandFunction.Pause;
             }
             else
             {
-                Parameters = new PauseForDurationParameters(objectId, (int)durationMinutes);
+                Parameters = new PauseForDurationParameters(objectIds, (int)durationMinutes);
                 Function = CommandFunction.PauseObjectFor;
             }
 

@@ -17,7 +17,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         #region Progress Pipeline State
 
-        private static ProgressPipelineStack progressPipelines = new ProgressPipelineStack();
+        internal static ProgressPipelineStack progressPipelines = new ProgressPipelineStack();
 
         internal int ProgressPipelinesCount => progressPipelines.Count;
 
@@ -172,6 +172,46 @@ namespace PrtgAPI.PowerShell.Progress
 
                 return pipelineBeforeMeContainsOperation.Value;
             }
+        }
+
+        public bool NextCmdletIsMultiOperationBatchMode => MultiOperationBatchMode(true);
+
+        public bool MultiOperationBatchMode(bool downstream = false)
+        {
+            object c = cmdlet;
+
+            if (downstream)
+            {
+                c = null;
+                var commands = CacheManager.GetPipelineCommands();
+
+                var myIndex = commands.IndexOf(cmdlet);
+
+                for (int i = myIndex + 1; i < commands.Count; i++)
+                {
+                    if (commands[i] is PrtgMultiOperationCmdlet)
+                    {
+                        c = commands[i];
+                        break;
+                    }
+
+                    if (commands[i] is PrtgOperationCmdlet)
+                        continue;
+
+                    c = commands[i];
+                    break;
+                }
+            }
+
+            var typedCmdlet = c as PrtgMultiOperationCmdlet;
+
+            if (typedCmdlet == null)
+                return false;
+
+            if (typedCmdlet.Batch)
+                return true;
+
+            return false;
         }
 
             #endregion
@@ -415,6 +455,7 @@ namespace PrtgAPI.PowerShell.Progress
         }
 
         private NotReadyParser notReady;
+        private MultiOperationRecordAnalyzer multiOperationAnalyzer;
 
         private AbortProgressParser abortProgress = new AbortProgressParser();
 
@@ -493,7 +534,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public int? TotalRecords { get; set; }
 
-        private PrtgCmdlet cmdlet;
+        internal PrtgCmdlet cmdlet;
 
         internal int recordsProcessed = -1;
 
@@ -544,6 +585,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
 
             notReady = new NotReadyParser(this);
+            multiOperationAnalyzer = new MultiOperationRecordAnalyzer(this);
 
             CalculateProgressScenario();
         }
@@ -645,19 +687,24 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress();
         }
 
-        private void WriteProgress(ProgressRecordEx progressRecord)
+        private void WriteProgress(ProgressRecordEx progressRecord, bool cache = false)
         {
             if (progressRecord.Activity == DefaultActivity || progressRecord.StatusDescription == DefaultDescription)
                 throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
 
             if (PreviousRecord == null)
             {
-                progressWriter.WriteProgress(progressRecord);
-
-                if (!sourceIdUpdated)
+                if (cache)
+                    progressWriter.WriteProgress(progressRecord.SourceId, progressRecord);
+                else
                 {
-                    progressRecord.SourceId = GetLastSourceId(cmdlet.CommandRuntime);
-                    sourceIdUpdated = true;
+                    progressWriter.WriteProgress(progressRecord);
+
+                    if (!sourceIdUpdated)
+                    {
+                        progressRecord.SourceId = GetLastSourceId(cmdlet.CommandRuntime);
+                        sourceIdUpdated = true;
+                    }
                 }
             }
             else
@@ -681,7 +728,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private void CompleteProgress(ProgressRecordEx record)
         {
-            if (NotReadyToComplete())
+            if (!ReadyToComplete())
                 return;
 
             InitialDescription = null;
@@ -692,7 +739,7 @@ namespace PrtgAPI.PowerShell.Progress
              * If we're piping from a variable, we need to complete our progress - however if the pipeline before me is an operation,
              *     responsibility has shifted and we're not responsible for the current progress record
              */
-            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten))
+            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten) || MultiOperationBatchMode())
             {
                 /* However if it turns out we didn't actually write any records (such as because the server glitched out
                  * and returned nothing) we never really wrote our progress record. If we were streaming however,
@@ -714,27 +761,34 @@ namespace PrtgAPI.PowerShell.Progress
             record.RecordType = ProgressRecordType.Processing;
         }
 
-        private bool NotReadyToComplete()
+        private bool ReadyToComplete()
         {
+            if (multiOperationAnalyzer.PipeToMultiOperation || multiOperationAnalyzer.IsMultiOperation)
+                return ReadyToCompleteMultiOperation();
+
             if (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet)
             {
                 //If we're not part of a chain, the first in the chain, or the pipeline contains an operation
                 if (!PartOfChain || FirstInChain || PipeFromBlockingSelectObjectCmdlet || (PipelineContainsOperation && PreviousRecord == null))
                 {
+                    //We're a multi operation cmdlet piping from a variable in the middle of our EndProcessing block
+                    if (Pipeline.CurrentIndex == -1 && MultiOperationBatchMode())
+                        return true;
+
                     if (Pipeline.CurrentIndex < Pipeline.List.Count - 1)
                     {
                         if (upstreamSelectObjectManager != null)
                         {
                             if (notReady.NotReady())
-                                return true;
+                                return false;
                         }
                         else
-                            return true;
+                            return false;
                     }
                     else
                     {
                         if (notReady.NotReady())
-                            return true;
+                            return false;
                     }
                 }
                 else
@@ -745,19 +799,82 @@ namespace PrtgAPI.PowerShell.Progress
                         var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
                         var previousManager = previousCmdlet.ProgressManager;
 
+                        /*if (previousManager.recordsProcessed == -1 && previousCmdlet is PrtgOperationCmdlet)
+                        {
+                            var previousNonOperation = CacheManager.TryGetPreviousPrtgCmdletOfNotType<PrtgOperationCmdlet>();
+
+                            if (!(previousNonOperation is PrtgOperationCmdlet))
+                            {
+                                if (previousNonOperation.ProgressManager.recordsProcessed < previousNonOperation.ProgressManager.TotalRecords)
+                                    return false;
+                            }
+                        }*/
+
                         if (previousManager.recordsProcessed < previousManager.TotalRecords) //new issue: get-sensor doesnt update records processed
-                            return true;
+                            return false;
                     }
                     else
                     {
                         //We're the second object in Variable -> Object -> Action -> Object. We're responsible for our own record keeping
                         if (recordsProcessed < TotalRecords)
-                            return true;
+                            return false;
                     }
                 }
             }
 
-            return false;
+            return true;
+        }
+
+        private bool ReadyToCompleteMultiOperation()
+        {
+            if (multiOperationAnalyzer.PipeToMultiOperation || multiOperationAnalyzer.IsMultiOperation)
+            {
+                if (multiOperationAnalyzer.PreviousSourceStillWriting)
+                    return false;
+
+                if (multiOperationAnalyzer.PipeToMultiOperation)
+                {
+                    if (PipeFromVariableWithProgress)
+                    {
+                        if (!multiOperationAnalyzer.PipelineStillWriting && PreviousRecord == null)
+                        {
+                            //If we're piping from a variable and we're the first cmdlet in the pipeline, this means the multi operation progress after us has overwritten us
+                            if (cmdlet is PrtgOperationCmdlet)
+                                return false;
+
+                            //This causes variable -> action -> multi to complete the action after processing all variable items
+                            //This causes variable -> table -> action -> multi to complete the table after processing all variable and cmdlet items
+                            return true;
+                        }
+                    }
+
+                    if (PipeFromVariableWithProgress && !multiOperationAnalyzer.PipelineStillWriting && PreviousRecord == null)
+                        return true;
+
+                    return false;
+                }
+
+                if (multiOperationAnalyzer.IsMultiOperation)
+                {
+                    if (!multiOperationAnalyzer.ReceivedLastRecord)
+                        return false;
+
+                    //It's all over; complete the MultiOperationProgress.
+                    if (multiOperationAnalyzer.PipelineFinished)
+                        return true;
+
+                    //we need to inspect all cmdlets up the chain to see whether they still have records to generate
+
+                    //If a cmdlet up the pipeline still has records to output, we complete progress for now; we'll be back
+                    if (multiOperationAnalyzer.PipelineStillWriting)
+                        return true;
+
+                    //We just received the last record, stand by to write the MultiOperationProgress
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void UpdateRecordsProcessed(ProgressRecordEx record, bool writeObject = true)
@@ -877,13 +994,16 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void ProcessOperationProgress(string activity, string progressMessage)
         {
-            if (UnsupportedSelectObjectProgress)
+            if (!PrtgSessionState.EnableProgress || UnsupportedSelectObjectProgress)
                 return;
 
             //If we already had an operation cmdlet, the responsibility of updating the previous cmdlet's
             //records processed has now shifted back on to him, so we don't need to do it for him. As such,
             //we may assume we're now a "normal" pipeline
-            if ((PipeFromVariableWithProgress || (PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable) || PipelineUpstreamContainsBlockingCmdlet) && !PipelineBeforeMeContainsOperation)
+            if ((PipeFromVariableWithProgress ||
+                (PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable) ||
+                PipelineUpstreamContainsBlockingCmdlet)
+                && !PipelineBeforeMeContainsOperation)
             {
                 //Variable -> Action
                 //Variable -> Action -> Object
@@ -897,6 +1017,32 @@ namespace PrtgAPI.PowerShell.Progress
                 //Object -> Action -> Object
                 //Object -> Action -> Object -> Action
                 ProcessOperationProgressForCmdlet(activity, progressMessage);
+            }
+        }
+
+        public void ProcessMultiOperationProgress(string activity, string progressMessage)
+        {
+            if (!PrtgSessionState.EnableProgress)
+                return;
+
+            if (cmdlet.ProgressManagerEx.CachedRecord != null)
+            {
+                CloneRecord(cmdlet.ProgressManagerEx.CachedRecord, CurrentRecord);
+                //var record = cmdlet.ProgressManagerEx.PreviousRecord;
+
+                CurrentRecord.Activity = activity;
+                CurrentRecord.StatusDescription = progressMessage;
+                CurrentRecord.PercentComplete = 100;
+
+                WriteProgress(CurrentRecord, true);
+            }
+            else
+            {
+                CurrentRecord.Activity = activity;
+                CurrentRecord.StatusDescription = progressMessage;
+                CurrentRecord.PercentComplete = 100;
+
+                WriteProgress(CurrentRecord);
             }
         }
 
@@ -988,7 +1134,16 @@ namespace PrtgAPI.PowerShell.Progress
 
                 var previousManager = previousCmdlet.ProgressManager;
 
-                PreviousRecord.StatusDescription = $"{progressMessage} ({previousManager.recordsProcessed}/{previousManager.TotalRecords})";
+                var processed = previousManager.recordsProcessed;
+                var total = previousManager.TotalRecords;
+
+                if (previousCmdlet is PrtgOperationCmdlet && previousManager.recordsProcessed == -1)
+                {
+                    processed = EntirePipeline.CurrentIndex + 1;
+                    total = EntirePipeline.List.Count;
+                }
+
+                PreviousRecord.StatusDescription = $"{progressMessage} ({processed}/{total})";
 
                 WriteProgress(PreviousRecord);
 

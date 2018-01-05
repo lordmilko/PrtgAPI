@@ -27,6 +27,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// typically end in an underscore, with the exception of section inheritance properties (Inherit Windows Credentials, etc)</para>
     /// <para type="description">For a list of settings currently supported by Set-ObjectProperty, see Get-Help about_ObjectSettings and about_SensorSettings.</para>
     /// 
+    /// <para type="description">By default, Set-ObjectProperty will operate in Batch Mode. In Batch Mode, Set-ObjectProperty
+    /// will not execute a request for each individual object, but will rather store each item in a queue to modify object properties
+    /// for all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Set-ObjectProperty will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval "00:00:30"</code>
     ///     <para>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval ([TimeSpan]"00:00:30")</para>
@@ -48,7 +58,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
-    public class SetObjectProperty : PrtgOperationCmdlet
+    public class SetObjectProperty : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to modify the properties of.</para>
@@ -88,11 +98,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = "Unsafe")]
         public SwitchParameter Force { get; set; }
 
+        private string progressActivity = "Modify PRTG Object Settings";
+
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Provides a one-time, preprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
+        protected override void BeginProcessing()
         {
+            base.BeginProcessing();
+
             if (ParameterSetName == "Default")
             {
                 //Value is not required, but is required in that we need to explicitly say null
@@ -100,16 +114,25 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
                 ParseValue();
+            }
+        }
 
+        /// <summary>
+        /// Performs record-by-record processing functionality for the cmdlet.
+        /// </summary>
+        protected override void ProcessRecordEx()
+        {
+            if (ParameterSetName == "Default")
+            {
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
-                    ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), "Modify PRTG Object Settings", $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
+                    ExecuteOrQueue(Object, progressActivity);
             }
             else
             {
                 if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on ${Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
                 {
                     if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {RawProperty} = '{RawValue}'"))
-                        ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), "Modify PRTG Object Settings", $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
+                        ExecuteOrQueue(Object, progressActivity);
                 }
             }
         }
@@ -118,6 +141,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
             Value = ParseValueIfRequired(prop, Value);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            if (ParameterSetName == "Default")
+                ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), progressActivity, $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
+            else
+                ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), progressActivity, $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            if(ParameterSetName == "Default")
+                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), progressActivity, $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
+            else
+                ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), progressActivity, $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
         }
     }
 }

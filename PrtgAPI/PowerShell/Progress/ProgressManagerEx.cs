@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
 {
@@ -12,5 +8,10 @@ namespace PrtgAPI.PowerShell.Progress
     class ProgressManagerEx
     {
         internal Pipeline BlockingSelectPipeline { get; set; }
+
+        /// <summary>
+        /// The last record that was written to before a <see cref="PrtgMultiOperationCmdlet"/> entered its EndProcessing method.
+        /// </summary>
+        internal ProgressRecordEx CachedRecord { get; set; }
     }
 }

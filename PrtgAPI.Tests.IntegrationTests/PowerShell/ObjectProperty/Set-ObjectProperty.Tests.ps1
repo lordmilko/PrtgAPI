@@ -96,4 +96,25 @@ Describe "Set-ObjectProperty_IT" {
         $newAuthMode | Should Be SQL
         $newUserName | Should Be "grandChildTest"
     }
+
+    It "can set the properties of multiple in a single request" {
+        $upSensor = Get-Sensor -Id (Settings UpSensor)
+        $upSensor.Interval | Should Not Be "00:05:00"
+
+        $device = Get-Device -Id (Settings Device)
+        $device.Interval | Should Be "00:01:00"
+
+        $objects = $upSensor,$device
+
+        $objects | Set-ObjectProperty Interval "00:05:00"
+
+        LogTestDetail "Sleeping for 10 seconds while settings apply"
+        Sleep 10
+
+        $newUpSensor = Get-Sensor -Id (Settings UpSensor)
+        $newUpSensor.Interval | Should Be "00:05:00"
+
+        $newDevice = Get-Device -Id (Settings Device)
+        $newDevice.Interval | Should Be "00:05:00"
+    }
 }

@@ -1214,19 +1214,37 @@ namespace PrtgAPI
         /// Mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
-        /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
         public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) =>
-            requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message));
+            AcknowledgeSensor(new[] {objectId}, duration, message);
+
+        /// <summary>
+        /// Mark one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// </summary>
+        /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
+        /// <param name="message">Message to display on the acknowledged sensors.</param>
+        public void AcknowledgeSensor(int[] objectIds, int? duration = null, string message = null) =>
+            requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectIds, duration, message));
 
         /// <summary>
         /// Asynchronously mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
-        /// <param name="duration">Duration (in minutes) to acknowledge the object for. If null, sensor will be paused indefinitely.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be paused indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
         public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null) =>
-            await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectId, duration, message)).ConfigureAwait(false);
+            await AcknowledgeSensorAsync(new[] {objectId}, duration, message).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously mark one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// </summary>
+        /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
+        /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
+        /// <param name="message">Message to display on the acknowledged sensors.</param>
+        public async Task AcknowledgeSensorAsync(int[] objectIds, int? duration = null, string message = null) =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectIds, duration, message)).ConfigureAwait(false);
 
         /// <summary>
         /// Pause a PRTG Object.
@@ -1234,9 +1252,18 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused object.</param>
-        public void PauseObject(int objectId, int? durationMinutes = null, string pauseMessage = null)
+        public void PauseObject(int objectId, int? durationMinutes = null, string pauseMessage = null) =>
+            PauseObject(new[] {objectId}, durationMinutes, pauseMessage);
+
+        /// <summary>
+        /// Pause one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">IDs of the objects to pause.</param>
+        /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
+        /// <param name="pauseMessage">Message to display on the paused objects.</param>
+        public void PauseObject(int[] objectIds, int? durationMinutes = null, string pauseMessage = null)
         {
-            var parameters = new PauseRequestParameters(objectId, durationMinutes, pauseMessage);
+            var parameters = new PauseRequestParameters(objectIds, durationMinutes, pauseMessage);
 
             requestEngine.ExecuteRequest(parameters.Function, parameters.Parameters);
         }
@@ -1247,36 +1274,47 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused object.</param>
-        public async Task PauseObjectAsync(int objectId, int? durationMinutes = null, string pauseMessage = null)
+        public async Task PauseObjectAsync(int objectId, int? durationMinutes = null, string pauseMessage = null) =>
+            await PauseObjectAsync(new[] {objectId}, durationMinutes, pauseMessage).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously pause one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">IDs of the objects to pause.</param>
+        /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
+        /// <param name="pauseMessage">Message to display on the paused objects.</param>
+        public async Task PauseObjectAsync(int[] objectIds, int? durationMinutes = null, string pauseMessage = null)
         {
-            var parameters = new PauseRequestParameters(objectId, durationMinutes, pauseMessage);
+            var parameters = new PauseRequestParameters(objectIds, durationMinutes, pauseMessage);
 
             await requestEngine.ExecuteRequestAsync(parameters.Function, parameters.Parameters).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
+        /// Resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
+        /// </summary>
+        /// <param name="objectId">IDs of the objects to resume.</param>
+        public void ResumeObject(params int[] objectId) =>
+            requestEngine.ExecuteRequest(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume));
+
+        /// <summary>
+        /// Asynchronously resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
-        public void ResumeObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume));
+        public async Task ResumeObjectAsync(params int[] objectId) =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously resume a PRTG Object (e.g. sensor or device) from a Paused or Simulated Error state.
+        /// Simulate a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
-        /// <param name="objectId">ID of the object to resume.</param>
-        public async Task ResumeObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
+        /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
+        public void SimulateError(params int[] sensorIds) => requestEngine.ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorIds));
 
         /// <summary>
-        /// Simulate an error state for a sensor.
+        /// Asynchronously simulate a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
-        public void SimulateError(int sensorId) => requestEngine.ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorId));
-
-        /// <summary>
-        /// Asynchronously simulate an error state for a sensor.
-        /// </summary>
-        /// <param name="sensorId">ID of the sensor to simulate an error for.</param>
-        public async Task SimulateErrorAsync(int sensorId) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorId)).ConfigureAwait(false);
+        /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
+        public async Task SimulateErrorAsync(params int[] sensorIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorIds)).ConfigureAwait(false);
 
         #endregion
         #region Notifications
@@ -1412,22 +1450,7 @@ namespace PrtgAPI
             var message = response.RequestMessage.RequestUri.ToString();
 
             if (message.Contains("the object is currently not valid"))
-            {
-                var searchText = "errorurl=";
-                var expectedUrl = message.Substring(message.IndexOf(searchText, StringComparison.Ordinal) + searchText.Length);
-
-                if (expectedUrl.EndsWith("%26"))
-                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("%26"));
-                else if (expectedUrl.EndsWith("&"))
-                    expectedUrl = expectedUrl.Substring(0, expectedUrl.LastIndexOf("&"));
-
-                searchText = "error.htm";
-
-                var server = message.Substring(0, message.IndexOf(searchText));
-
-                message = $"{server}public/login.htm?loginurl={expectedUrl}&errormsg=";
-                response.RequestMessage.RequestUri = new Uri(message);
-            }
+                RequestEngine.SetErrorUrlAsRequestUri(response);
 
             return message;
         }
@@ -1577,7 +1600,7 @@ namespace PrtgAPI
         #endregion
         #region Set Object Properties
 
-            #region Normal
+        #region Normal
 
         /// <summary>
         /// Modify properties and settings of a PRTG Object.<para/>
@@ -1588,7 +1611,18 @@ namespace PrtgAPI
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         public void SetObjectProperty(int objectId, ObjectProperty property, object value) =>
-            SetObjectProperty(CreateSetObjectPropertyParameters(objectId, property, value));
+            SetObjectProperty(new[] {objectId}, property, value);
+
+        /// <summary>
+        /// Modify properties and settings of one or more PRTG Objects.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="property">The property of each object to modify.</param>
+        /// <param name="value">The value to set each object's property to.</param>
+        public void SetObjectProperty(int[] objectIds, ObjectProperty property, object value) =>
+            SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, property, value), objectIds.Length);
 
         /// <summary>
         /// Asynchronously modify properties and settings of a PRTG Object.<para/>
@@ -1599,7 +1633,18 @@ namespace PrtgAPI
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) =>
-            await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectId, property, value).ConfigureAwait(false)).ConfigureAwait(false);
+            await SetObjectPropertyAsync(new[] {objectId}, property, value).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously odify properties and settings of one or more PRTG Objects.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="property">The property of each object to modify.</param>
+        /// <param name="value">The value to set each object's property to.</param>
+        public async Task SetObjectPropertyAsync(int[] objectIds, ObjectProperty property, object value) =>
+            await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectIds, property, value).ConfigureAwait(false), objectIds.Length).ConfigureAwait(false);
 
             #endregion Normal
             #region Channel
@@ -1612,7 +1657,17 @@ namespace PrtgAPI
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
         public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) =>
-            SetObjectProperty(new SetChannelPropertyParameters(sensorId, channelId, property, value));
+            SetObjectProperty(new[] {sensorId}, channelId, property, value);
+
+        /// <summary>
+        /// Modify channel properties for one or more PRTG Sensors.
+        /// </summary>
+        /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
+        /// <param name="property">The property of each channel to modify</param>
+        /// <param name="value">The value to set each channel's property to.</param>
+        public void SetObjectProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
+            SetObjectProperty(new SetChannelPropertyParameters(sensorIds, channelId, property, value), sensorIds.Length);
 
         /// <summary>
         /// Asynchronously modify channel properties for a PRTG Sensor.
@@ -1622,10 +1677,20 @@ namespace PrtgAPI
         /// <param name="property">The property of the channel to modify</param>
         /// <param name="value">The value to set the channel's property to.</param>
         public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) =>
-            await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorId, channelId, property, value)).ConfigureAwait(false);
+            await SetObjectPropertyAsync(new[] {sensorId}, channelId, property, value).ConfigureAwait(false);
 
-            #endregion Channel
-            #region Custom
+        /// <summary>
+        /// Asynchronously modify channel properties for one or more PRTG Sensors.
+        /// </summary>
+        /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
+        /// <param name="property">The property of each channel to modify</param>
+        /// <param name="value">The value to set each channel's property to.</param>
+        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
+            await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, property, value), sensorIds.Length).ConfigureAwait(false);
+
+        #endregion Channel
+        #region Custom
 
         /// <summary>
         /// Modify unsupported properties and settings of a PRTG Object.
@@ -1635,7 +1700,17 @@ namespace PrtgAPI
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         public void SetObjectPropertyRaw(int objectId, string property, string value) =>
-            SetObjectProperty(new SetObjectPropertyParameters(objectId, property, value));
+            SetObjectPropertyRaw(new[] {objectId}, property, value);
+
+        /// <summary>
+        /// Modify unsupported properties and settings of one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="property">The property of each object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="value">The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
+        public void SetObjectPropertyRaw(int[] objectIds, string property, string value) =>
+            SetObjectProperty(new SetObjectPropertyParameters(objectIds, property, value), objectIds.Length);
 
         /// <summary>
         /// Asynchronously modify unsupported properties and settings of a PRTG Object.
@@ -1645,17 +1720,38 @@ namespace PrtgAPI
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) =>
-            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectId, property, value)).ConfigureAwait(false);
+            await SetObjectPropertyRawAsync(new[] {objectId}, property, value);
 
-            #endregion
+        /// <summary>
+        /// Asynchronously modify unsupported properties and settings of one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="property">The property of each object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="value">The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
+        public async Task SetObjectPropertyRawAsync(int[] objectIds, string property, string value) =>
+            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectIds, property, value), objectIds.Length).ConfigureAwait(false);
 
-        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters) =>
-            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
+        #endregion
 
-        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters) =>
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
+            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ParseSetObjectPropertyUrl(numObjectIds, m));
 
-        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int objectId, ObjectProperty property, object value)
+        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
+
+        private string ParseSetObjectPropertyUrl(int numObjectIds, HttpResponseMessage response)
+        {
+            if (numObjectIds > 1)
+            {
+                if (response.RequestMessage?.RequestUri?.AbsolutePath == "/error.htm")
+                    RequestEngine.SetErrorUrlAsRequestUri(response);
+            }
+
+            return null;
+        }
+
+        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
         {
             var attrib = property.GetEnumAttribute<TypeAttribute>();
 
@@ -1667,7 +1763,7 @@ namespace PrtgAPI
 
                     if (method != null)
                     {
-                        value = method.Invoke(null, new[] { this, objectId, value });
+                        value = method.Invoke(null, new[] { this, value });
                     }
                 }
                 catch (TargetInvocationException ex)
@@ -1675,12 +1771,12 @@ namespace PrtgAPI
                     throw ex.InnerException;
                 }
             }
-            var parameters = new SetObjectPropertyParameters(objectId, property, value);
+            var parameters = new SetObjectPropertyParameters(objectIds, property, value);
 
             return parameters;
         }
 
-        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int objectId, ObjectProperty property, object value)
+        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, ObjectProperty property, object value)
         {
             var attrib = property.GetEnumAttribute<TypeAttribute>();
 
@@ -1692,7 +1788,7 @@ namespace PrtgAPI
 
                     if (method != null)
                     {
-                        var task = ((Task)method.Invoke(null, new[] { this, objectId, value }));
+                        var task = ((Task)method.Invoke(null, new[] { this, value }));
 
                         await task.ConfigureAwait(false);
 
@@ -1705,7 +1801,7 @@ namespace PrtgAPI
                 }
             }
 
-            var parameters = new SetObjectPropertyParameters(objectId, property, value);
+            var parameters = new SetObjectPropertyParameters(objectIds, property, value);
 
             return parameters;
         }
@@ -1893,16 +1989,16 @@ namespace PrtgAPI
         #region Miscellaneous
 
         /// <summary>
-        /// Request an object or any children of an object refresh themselves immediately.
+        /// Request an object or any children of an one or more objects refresh themselves immediately.
         /// </summary>
-        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
-        public void RefreshObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.ScanNow, new BaseActionParameters(objectId));
+        /// <param name="objectIds">The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed.</param>
+        public void RefreshObject(params int[] objectIds) => requestEngine.ExecuteRequest(CommandFunction.ScanNow, new BaseMultiActionParameters(objectIds));
 
         /// <summary>
-        /// Asynchronously request an object or any children of an object refresh themselves immediately.
+        /// Asynchronously request an object or any children of one or more objects refresh themselves immediately.
         /// </summary>
-        /// <param name="objectId">The ID of the sensor, or the ID of a Probe, Group or Device whose child sensors should be refreshed.</param>
-        public async Task RefreshObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        /// <param name="objectIds">The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed.</param>
+        public async Task RefreshObjectAsync(params int[] objectIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseMultiActionParameters(objectIds)).ConfigureAwait(false);
 
         /// <summary>
         /// Automatically create sensors under an object based on the object's (or it's children's) device type.
@@ -1987,14 +2083,28 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public void RenameObject(int objectId, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectId, name));
+        public void RenameObject(int objectId, string name) => RenameObject(new[] {objectId}, name);
+
+        /// <summary>
+        /// Rename one or more Sensors, Devices, Groups or Probe within PRTG.
+        /// </summary>
+        /// <param name="objectIds">IDs of the objects to rename.</param>
+        /// <param name="name">New name to give the objects.</param>
+        public void RenameObject(int[] objectIds, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectIds, name));
 
         /// <summary>
         /// Asynchronously rename a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public async Task RenameObjectAsync(int objectId, string name) => await requestEngine.ExecuteRequestAsync(CommandFunction.Rename, new RenameParameters(objectId, name)).ConfigureAwait(false);
+        public async Task RenameObjectAsync(int objectId, string name) => await RenameObjectAsync(new[] {objectId}, name).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously rename one or more Sensors, Devices, Groups or Probes within PRTG.
+        /// </summary>
+        /// <param name="objectIds">IDs of the objects to rename.</param>
+        /// <param name="name">New name to give the objects.</param>
+        public async Task RenameObjectAsync(int[] objectIds, string name) => await requestEngine.ExecuteRequestAsync(CommandFunction.Rename, new RenameParameters(objectIds, name)).ConfigureAwait(false);
 
         #endregion
     #endregion

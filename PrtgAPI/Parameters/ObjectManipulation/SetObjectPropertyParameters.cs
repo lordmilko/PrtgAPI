@@ -5,21 +5,33 @@ namespace PrtgAPI.Parameters
 {
     sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>, IObjectInternalProperty<ObjectPropertyInternal>
     {
-        public int ObjectId
+        public int[] ObjectIds
         {
-            get { return (int)this[Parameter.Id]; }
+            get { return (int[])this[Parameter.Id]; }
             set { this[Parameter.Id] = value; }
         }
 
-        public SetObjectPropertyParameters(int objectId, ObjectProperty property, object value)
+        public SetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
         {
-            ObjectId = objectId;
+            if (objectIds == null)
+                throw new ArgumentNullException(nameof(objectIds));
+
+            if (objectIds.Length == 0)
+                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
+
+            ObjectIds = objectIds;
             AddTypeSafeValue(property, value, false);
         }
 
-        public SetObjectPropertyParameters(int objectId, string property, string value)
+        public SetObjectPropertyParameters(int[] objectIds, string property, string value)
         {
-            ObjectId = objectId;
+            if (objectIds == null)
+                throw new ArgumentNullException(nameof(objectIds));
+
+            if (objectIds.Length == 0)
+                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
+
+            ObjectIds = objectIds;
             this[Parameter.Custom] = new CustomParameter(property, value);
         }
 

@@ -30,6 +30,7 @@ namespace PrtgAPI.PowerShell.Progress
         #region Method Results
 
         private Lazy<object> upstreamCmdlet;
+        private Lazy<PrtgCmdlet> nextPrtgCmdlet;
         private Lazy<PrtgCmdlet> previousPrtgCmdlet;
 
         #endregion
@@ -53,6 +54,7 @@ namespace PrtgAPI.PowerShell.Progress
             runtimePipelineProcessorCommandProcessorCommands = new Lazy<List<object>>(() => runtimePipelineProcessorCommandProcessors.Value.Select(c => c.GetInternalProperty("Command")).ToList());
 
             upstreamCmdlet = new Lazy<object>(GetUpstreamCmdletInternal);
+            nextPrtgCmdlet = new Lazy<PrtgCmdlet>(GetNextPrtgCmdletInternal);
             previousPrtgCmdlet = new Lazy<PrtgCmdlet>(GetPreviousPrtgCmdletInternal);
 
             upstreamCmdletCommandInfo = new Lazy<CommandInfo>(() => (CommandInfo)GetUpstreamCmdlet()?.GetInternalProperty("CommandInfo"));
@@ -82,6 +84,23 @@ namespace PrtgAPI.PowerShell.Progress
 
         public object GetUpstreamCmdlet() => upstreamCmdlet.Value;
 
+        private PrtgCmdlet GetNextPrtgCmdletInternal()
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex + 1; i < commands.Count; i++)
+            {
+                if (commands[i] is PrtgCmdlet)
+                    return (PrtgCmdlet) commands[i];
+            }
+
+            return null;
+        }
+
+        public PrtgCmdlet GetNextPrtgCmdlet() => nextPrtgCmdlet.Value;
+
         /// <summary>
         /// Returns the previous PrtgCmdlet before this one. If no previous cmdlet was a PrtgCmdlet, this method returns null.
         /// </summary>
@@ -95,7 +114,7 @@ namespace PrtgAPI.PowerShell.Progress
             for (int i = myIndex - 1; i >= 0; i--)
             {
                 if (commands[i] is PrtgCmdlet)
-                    return (PrtgCmdlet)commands[i];
+                    return (PrtgCmdlet) commands[i];
             }
 
             return null;
@@ -156,6 +175,15 @@ namespace PrtgAPI.PowerShell.Progress
             var myIndex = commands.IndexOf(cmdlet);
 
             return commands.Take(myIndex).Any(c => c is T);
+        }
+
+        public bool PipelineAfterMeIsCmdlet<T>() where T : Cmdlet
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet) + 1;
+
+            return commands.Skip(myIndex).FirstOrDefault(c => c is T) != null;
         }
 
         public bool PipelineRemainingHasCmdlet<T>() where T : Cmdlet

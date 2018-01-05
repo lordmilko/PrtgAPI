@@ -49,4 +49,25 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
         { $channel | Set-ChannelProperty ColorMode "banana" } | Should Throw $expected
     }
+
+    It "executes with -Batch:`$true" {
+
+        $channel.Count | Should Be 2
+
+        SetAddressValidatorResponse "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+
+        $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$true
+    }
+
+    It "executes with -Batch:`$false" {
+
+        $channel.Count | Should Be 2
+
+        SetAddressValidatorResponse @(
+            "editsettings?id=4000&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            "editsettings?id=4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+        )
+
+        $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$false
+    }
 }

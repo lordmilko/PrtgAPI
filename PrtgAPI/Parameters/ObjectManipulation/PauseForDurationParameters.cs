@@ -5,7 +5,7 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     class PauseForDurationParameters : PauseParametersBase
     {
-        public PauseForDurationParameters(int objectId, int duration) : base(objectId)
+        public PauseForDurationParameters(int[] objectIds, int duration) : base(objectIds)
         {
             Duration = duration;
         }

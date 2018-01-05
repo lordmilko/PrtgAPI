@@ -35,13 +35,18 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecord()
         {
+            ExecuteWithCoreState(ProcessRecordEx);
+        }
+
+        internal void ExecuteWithCoreState(Action action)
+        {
             RegisterEvents();
 
             try
             {
                 using (ProgressManager = new ProgressManager(this))
                 {
-                    ProcessRecordEx();
+                    action();
                 }
             }
             catch

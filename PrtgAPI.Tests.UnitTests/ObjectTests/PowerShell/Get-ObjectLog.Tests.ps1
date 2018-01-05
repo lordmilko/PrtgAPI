@@ -44,15 +44,15 @@ Describe "Get-ObjectLog" {
     }
 
     It "streams when piped from a probe" {
-        SetAddressValidatorResponse "count=500&id=1&filter_drel=today"
+        SetAddressValidatorResponse "count=500&id=1000&filter_drel=today"
 
-        Get-Probe | Get-ObjectLog
+        Get-Probe -Count 1 | Get-ObjectLog
     }
 
     It "doesn't stream when piped from a normal object" {
-        SetAddressValidatorResponse "count=50000&id=40&filter_drel=7days"
+        SetAddressValidatorResponse "count=50000&id=3000&filter_drel=7days"
 
-        Get-Device | Get-ObjectLog
+        Get-Device -Count 1 | Get-ObjectLog
     }
 
     It "doesn't stream when a count is specified" {
@@ -62,9 +62,9 @@ Describe "Get-ObjectLog" {
     }
 
     It "retrieves from the last week when a timespan isn't specified" {
-        SetAddressValidatorResponse "count=50000&id=40&filter_drel=7days"
+        SetAddressValidatorResponse "count=50000&id=3000&filter_drel=7days"
 
-        Get-Device | Get-ObjectLog
+        Get-Device -Count 1 | Get-ObjectLog
     }
 
     It "retrieves a week from the start date when only a start date is specified" {
@@ -74,9 +74,9 @@ Describe "Get-ObjectLog" {
         $start = $end.AddDays(-7)
         $startStr = $start.ToString("yyyy-MM-dd-HH-mm-ss")
         
-        SetAddressValidatorResponse "count=50000&id=40&filter_dend=$endStr&filter_dstart=$startStr"        
+        SetAddressValidatorResponse "count=50000&id=3000&filter_dend=$endStr&filter_dstart=$startStr"        
 
-        Get-Device | Get-ObjectLog -StartDate $end
+        Get-Device -Count 1 | Get-ObjectLog -StartDate $end
     }
 
     It "does not limit results when only an end date is specified" {
@@ -116,7 +116,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "filters by name" {
-        SetAddressValidatorResponse "count=50000&id=40&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
+        SetAddressValidatorResponse "count=50000&id=3000&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
 
         $logs = Get-Device -Count 1 | Get-ObjectLog "WMI Remote Ping1"
 

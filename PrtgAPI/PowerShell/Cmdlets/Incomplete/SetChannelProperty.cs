@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Linq;
+using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -20,6 +21,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// will be set to $null. If LimitsEnabled is later set to $true, you will need to repopulate the values of all error and warning limit properties.</para>
     /// <para type="description">For a list of all settings currently supported by Set-ChannelProperty, see Get-Help about_ChannelSettings.</para>
     /// 
+    /// <para type="description">By default, Set-ChannelProperty will operate in Batch Mode. In Batch Mode, Set-ChannelProperty
+    /// will not execute a request for each individual object, but will rather store each item in a queue to modify channel properties
+    /// for all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Set-ChannelProperty will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | Get-Channel Total | Set-ChannelProperty UpperErrorLimit 90</code>
     ///     <para>Set the upper error limit of the "Total" channel of all WMI CPU Load sensors to 90. Will also set LimitsEnabled to $true</para>
@@ -30,7 +41,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Sensor</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true)]
-    public class SetChannelProperty : PrtgOperationCmdlet
+    public class SetChannelProperty : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">Channel to set the properties of.</para>
@@ -42,13 +53,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Manual")]
-        public int? SensorId { get; set; }
+        public int SensorId { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Manual")]
-        public int? ChannelId { get; set; }
+        public int ChannelId { get; set; }
 
         /// <summary>
         /// <para type="description">Property of the channel to set.</para>
@@ -64,6 +75,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, Position = 3, ParameterSetName = "Manual")]
         [AllowEmptyString]
         public object Value { get; set; }
+
+        private string progressActivity = "Modify PRTG Channel Settings";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -87,14 +100,68 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
             {
-                string message;
-
-                if (ParameterSetName == "Default")
-                    message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
+                if (Batch)
+                {
+                    if (ParameterSetName == "Default")
+                        ExecuteQueueOperation(Channel, progressActivity, $"Queuing channel '{Channel.Name}'");
+                    else
+                        PerformSingleOperation();
+                }
                 else
-                    message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
+                    PerformSingleOperation();
+            }
+        }
 
-                ExecuteOperation(() => client.SetObjectProperty(SensorId.Value, ChannelId.Value, Property, Value), "Modify PRTG Channel Settings", message);
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            string message;
+
+            if (ParameterSetName == "Default")
+                message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
+            else
+                message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
+
+            ExecuteOperation(() => client.SetObjectProperty(SensorId, ChannelId, Property, Value), progressActivity, message);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            var groups = objects.Cast<Channel>().GroupBy(o => o.Id).ToList();
+
+            for (int i = 0; i < groups.Count; i++)
+            {
+                var complete = groups.Count == i + 1;
+
+                var sensorIds = groups[i].Select(j => j.SensorId).ToArray();
+
+                var nameGroups = groups[i].GroupBy(g => g.Name).ToList();
+
+                var summary = GetListSummary(nameGroups, g =>
+                {
+                    var t = "Sensor ID";
+
+                    if (g.Count() > 1)
+                        t += "s";
+
+                    var strId = g.Select(a => a.SensorId.ToString());
+
+                    return $"'{g.Key}' ({t}: {string.Join(", ", strId)})";
+                });
+
+                var type = "channel";
+
+                if (nameGroups.Count() > 1)
+                    type += "s";
+
+                var message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
+
+                ExecuteMultiOperation(() => client.SetObjectProperty(sensorIds, groups[i].Key, Property, Value), progressActivity, message, complete);
             }
         }
     }

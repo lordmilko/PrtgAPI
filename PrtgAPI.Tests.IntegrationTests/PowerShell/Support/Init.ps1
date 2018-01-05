@@ -166,18 +166,47 @@ function Settings($property)
     return $val
 }
 
-function It($name, $script) {
-    LogTestName "Running test '$name'"
+function It {
+    [CmdletBinding(DefaultParameterSetName = 'Normal')]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$name,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [ScriptBlock] $script,
+
+        [Parameter(Mandatory = $false)]
+        [System.Collections.IDictionary[]] $TestCases
+    )
 
     Pester\It $name {
 
         try
         {
-            & $script
+            if($null -eq $TestCases)
+            {
+                LogTestName "Running test '$name'"
+
+                & $script
+            }
+            else
+            {
+                foreach($test in $TestCases)
+                {
+                    LogTestName "Running test '$($name): $($test["name"])'"
+
+                    & $script @test
+                }
+            }
         }
         catch [exception]
         {
-            LogTestDetail ($_.Exception.Message -replace "`n"," ") $true
+            $messages = @($_.Exception.Message -split "`n")
+
+            foreach($message in $messages)
+            {
+                LogTestDetail $message $true
+            }
 
             if($_.Exception.StackTrace -ne $null)
             {

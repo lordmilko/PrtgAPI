@@ -14,6 +14,11 @@ function Describe($name, $script) {
 
 function GetItem
 {
+    if($global:tester -eq $null)
+    {
+        throw "Cannot get item as `$global:tester is `$null"
+    }
+
     return $global:tester.GetItem()
 }
 

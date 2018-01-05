@@ -1,19 +1,26 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
     class SimulateErrorParameters : Parameters
     {
-        public SimulateErrorParameters(int sensorId)
+        public SimulateErrorParameters(int[] sensorIds)
         {
-            SensorId = sensorId;
+            if (sensorIds == null)
+                throw new ArgumentNullException(nameof(sensorIds));
+
+            if (sensorIds.Length == 0)
+                throw new ArgumentException("At least one Object ID must be specified", nameof(sensorIds));
+
+            SensorIds = sensorIds;
             Action = 1;
         }
 
-        public int SensorId
+        public int[] SensorIds
         {
-            get { return (int)this[Parameter.Id]; }
+            get { return (int[])this[Parameter.Id]; }
             set { this[Parameter.Id] = value; }
         }
 

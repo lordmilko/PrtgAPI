@@ -41,7 +41,7 @@ namespace PrtgAPI
             };
         }
 
-        internal static Location Resolve(PrtgClient client, int objectId, object value)
+        internal static Location Resolve(PrtgClient client, object value)
         {
             if (value == null)
                 return new Location();
@@ -66,7 +66,7 @@ namespace PrtgAPI
             return result.First();
         }
 
-        internal static async Task<Location> ResolveAsync(PrtgClient client, int objectId, object value)
+        internal static async Task<Location> ResolveAsync(PrtgClient client, object value)
         {
             if (value == null)
                 return new Location();

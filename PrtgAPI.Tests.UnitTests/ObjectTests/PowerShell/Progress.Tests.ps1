@@ -10,7 +10,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 1: Something -> Action
     
     It "1a: Table -> Action" {
-        Get-Sensor -Count 1 | Pause-Object -Forever
+        Get-Sensor -Count 1 | Pause-Object -Forever -Batch:$false
 
         Validate (@(
             "PRTG Sensor Search`n" +
@@ -41,7 +41,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $devices.Count | Should Be 2
 
-        $devices | Pause-Object -Forever
+        $devices | Pause-Object -Forever -Batch:$false
 
         Validate (@(
             "Pausing PRTG Objects`n" +
@@ -157,13 +157,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Retrieving all sensors"
@@ -177,13 +177,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -191,7 +191,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
         ))
     }
@@ -204,13 +204,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Retrieving all sensors"
@@ -218,13 +218,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -232,7 +232,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -414,7 +414,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 5: Something -> Table -> Action
     
     It "5a: Table -> Table -> Action" {
-        Get-Device | Get-Sensor | Pause-Object -Forever
+        Get-Device | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Device Search`n" +
@@ -559,7 +559,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "5b: Variable -> Table -> Action" {
         $devices = Get-Device
 
-        $devices | Get-Sensor | Pause-Object -Forever
+        $devices | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Sensor Search`n" +
@@ -685,7 +685,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -695,7 +695,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -717,7 +717,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -727,7 +727,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -739,7 +739,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -773,7 +773,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -783,7 +783,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -805,7 +805,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -815,7 +815,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -827,7 +827,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -857,7 +857,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -867,7 +867,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all devices"
@@ -879,7 +879,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Groups (Completed)`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all devices"
@@ -899,7 +899,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -909,7 +909,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all devices"
@@ -921,7 +921,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Groups (Completed)`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2211) (1/1)`n" +
+            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all devices"
@@ -1068,7 +1068,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         RunCustomCount $counts {
-            Get-Sensor | Pause-Object -Forever
+            Get-Sensor | Pause-Object -Forever -Batch:$false
         }
 
         $records = @()
@@ -1362,13 +1362,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Retrieving all sensors"
@@ -1376,7 +1376,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1386,7 +1386,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1398,7 +1398,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1410,7 +1410,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
@@ -1428,13 +1428,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -1442,7 +1442,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1452,7 +1452,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1464,7 +1464,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1476,7 +1476,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
@@ -1488,7 +1488,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
         ))
     }
@@ -1507,13 +1507,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Retrieving all sensors"
@@ -1521,7 +1521,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1531,7 +1531,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1543,7 +1543,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1555,7 +1555,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
@@ -1567,13 +1567,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -1581,7 +1581,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1591,7 +1591,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1603,7 +1603,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
             
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search`n" +
@@ -1615,7 +1615,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    PRTG Sensor Search (Completed)`n" +
@@ -1627,7 +1627,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
         ))
     }
@@ -1790,7 +1790,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.1b: Table -> Select -First -> Action" {
-        Get-Probe -Count 3 | Select -First 2 | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -First 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -1821,7 +1821,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.1d: Variable -> Select -First -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -First 2 | Pause-Object -Forever
+        $probes | Select -First 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
@@ -1843,7 +1843,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.1f: Table -> Select -First -Wait -> Action" {
-        Get-Probe -Count 3 | Select -First 2 -Wait | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -First 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -1873,7 +1873,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.1h: Variable -> Select -First -Wait -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -First 2 -Wait | Pause-Object -Forever
+        $probes | Select -First 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
@@ -1986,7 +1986,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 12.4: Table -> Select -First -Something -> Action
 
     It "12.4a: Table -> Select -First -Last -> Action" {
-        Get-Probe -Count 10 | Select -First 4 -Last 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2014,7 +2014,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.4b: Table -> Select -First -Skip -> Action" {
-        Get-Probe -Count 10 | Select -First 4 -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2041,7 +2041,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 12.5: Table -> Select -First -> Select -Something -> Action
 
     It "12.5a: Table -> Select -First -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2057,7 +2057,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.5b: Table -> Select -First -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2075,7 +2075,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.5c: Table -> Select -First -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
@@ -2094,7 +2094,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.5d: Table -> Select -First -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2198,7 +2198,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.8a: Variable -> Select -First -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 4 -Last 2 | Pause-Object -Forever
+        $probes | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
@@ -2214,7 +2214,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.8b: Variable -> Select -First -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 4 -Skip 2 | Pause-Object -Forever
+        $probes | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -2231,7 +2231,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.9a: Variable -> Select -First -> Select -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 4 | Select -Last 2 | Pause-Object -Forever
+        $probes | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
@@ -2243,7 +2243,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.9b: Variable -> Select -First -> Select -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 4 | Select -Skip 2 | Pause-Object -Forever
+        $probes | Select -First 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -2255,7 +2255,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.9c: Variable -> Select -First -> Select -SkipLast -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever
+        $probes | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
@@ -2267,7 +2267,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.9d: Variable -> Select -First -> Select -Index -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever
+        $probes | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -2337,7 +2337,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "12.10b: Table -> Select -First -> Table -> Action" {
-        Get-Probe -Count 3 | Select -First 2 | Get-Device | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -First 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
@@ -2436,7 +2436,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.10d: Variable -> Select -First -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -First 2 | Get-Device | Pause-Object -Forever
+        $probes | Select -First 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search"        "Processing all probes 1/3" 33 "Retrieving all devices")
@@ -2483,7 +2483,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.11b<i>: Table -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
         param($name)
 
-        TestCmdletChainWithSingle $name "First" "Pause-Object -Forever"
+        TestCmdletChainWithSingle $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "12.11c<i>: Variable -> Select -First -<name> -> Table -> Table" -TestCases $selectFirstParams {
@@ -2495,7 +2495,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.11d<i>: Variable -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
         param($name)
 
-        TestVariableChainWithSingle $name "First" "Pause-Object -Forever"
+        TestVariableChainWithSingle $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -2510,7 +2510,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.12b<i>: Table -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestCmdletChainWithDouble $name "First" "Pause-Object -Forever"
+        TestCmdletChainWithDouble $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "12.12c<i>: Variable -> Select -First -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
@@ -2522,7 +2522,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.12d<i>: Variable -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestVariableChainWithDouble $name "First" "Pause-Object -Forever"
+        TestVariableChainWithDouble $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -2546,7 +2546,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "13.1b: Table -> Select -Last -> Action" {
-        Get-Probe -Count 4 | Select -Last 2 | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2575,7 +2575,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.1d: Variable -> Select -Last -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Last 2 | Pause-Object -Forever
+        $probes | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
@@ -2600,7 +2600,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "13.1f: Table -> Select -Last -Wait -> Action" {
-        Get-Probe -Count 4 | Select -Last 2 -Wait | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Last 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2629,7 +2629,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.1h: Variable -> Select -Last -Wait -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Last 2 -Wait | Pause-Object -Forever
+        $probes | Select -Last 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
@@ -2711,7 +2711,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 13.4: Table -> Select -Last -Something -> Action
 
     It "13.4a: Table -> Select -Last -First -> Action" {
-        Get-Probe -Count 10 | Select -Last 2 -First 4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -2739,7 +2739,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "13.4b: Table -> Select -Last -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
@@ -2763,25 +2763,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 13.5: Table -> Select -Last -> Select -Something -> Action
 
     It "13.5a: Table -> Select -Last -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -First 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 4 | Select -First 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "13.5b: Table -> Select -Last -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "13.5c: Table -> Select -Last -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "13.5d: Table -> Select -Last -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Index 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Last 4 | Select -Index 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -2858,7 +2858,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.8a: Variable -> Select -Last -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 2 -First 4 | Pause-Object -Forever
+        $probes | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
@@ -2874,7 +2874,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.8b: Variable -> Select -Last -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 2 -Skip 2 | Pause-Object -Forever
+        $probes | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
@@ -2889,7 +2889,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.9a: Variable -> Select -Last -> Select -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 4 | Select -First 2 | Pause-Object -Forever
+        $probes | Select -Last 4 | Select -First 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -2897,7 +2897,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.9b: Variable -> Select -Last -> Select -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever
+        $probes | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -2905,7 +2905,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.9c: Variable -> Select -Last -> Select -SkipLast -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever
+        $probes | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -2913,7 +2913,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.9d: Variable -> Select -Last -> Select -Index -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Last 4 | Select -Index 2 | Pause-Object -Forever
+        $probes | Select -Last 4 | Select -Index 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -2962,7 +2962,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "13.10b: Table -> Select -Last -> Table -> Action" {
-        Get-Probe -Count 3 | Select -Last 2 | Get-Device | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -Last 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
@@ -3038,7 +3038,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.10d: Variable -> Select -Last -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -Last 2 | Get-Device | Pause-Object -Forever
+        $probes | Select -Last 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
@@ -3085,7 +3085,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.11b<i>: Table -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
         param($name)
 
-        TestCmdletChainWithSingle $name "Last" "Pause-Object -Forever"
+        TestCmdletChainWithSingle $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "13.11c<i>: Variable -> Select -Last -<name> -> Table -> Table" -TestCases $selectLastParams {
@@ -3097,7 +3097,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.11d<i>: Variable -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
         param($name)
 
-        TestVariableChainWithSingle $name "Last" "Pause-Object -Forever"
+        TestVariableChainWithSingle $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -3112,7 +3112,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.12b<i>: Table -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestCmdletChainWithDouble $name "Last" "Pause-Object -Forever"
+        TestCmdletChainWithDouble $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "13.12c<i>: Variable -> Select -Last -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
@@ -3124,7 +3124,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.12d<i>: Variable -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestVariableChainWithDouble $name "Last" "Pause-Object -Forever"
+        TestVariableChainWithDouble $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -3147,7 +3147,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.1b: Table -> Select -Skip -> Action" {
-        Get-Probe -Count 4 | Select -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -3179,7 +3179,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.1d: Variable -> Select -Skip -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Skip 2 | Pause-Object -Forever
+        $probes | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
@@ -3203,7 +3203,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.1f: Table -> Select -Skip -Wait -> Action" {
-        Get-Probe -Count 4 | Select -Skip 2 -Wait | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Skip 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -3235,7 +3235,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.1g: Variable -> Select -Skip -Wait -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Skip 2 -Wait | Pause-Object -Forever
+        $probes | Select -Skip 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
@@ -3366,7 +3366,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 14.4: Table -> Select -Skip -Something -> Action
 
     It "14.4a: Table -> Select -Skip -First -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 -First 4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -3390,7 +3390,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.4b: Table -> Select -Skip -Last -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
@@ -3414,7 +3414,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 14.5: Table -> Select -Skip -> Select -Something -> Action
 
     It "14.5a: Table -> Select -Skip -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -First 4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
@@ -3438,7 +3438,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.5b: Table -> Select -Skip -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
@@ -3459,7 +3459,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.5c: Table -> Select -Skip -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
@@ -3485,7 +3485,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.5d: Table -> Select -Skip -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
@@ -3588,7 +3588,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.8a: Variable -> Select -Skip -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 -First 4 | Pause-Object -Forever
+        $probes | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -3602,7 +3602,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.8b: Variable -> Select -Skip -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 -Last 2 | Pause-Object -Forever
+        $probes | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
@@ -3617,7 +3617,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.9a: Variable -> Select -Skip -> Select -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 | Select -First 4 | Pause-Object -Forever
+        $probes | Select -Skip 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -3631,7 +3631,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.9b: Variable -> Select -Skip -> Select -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever
+        $probes | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (1/2)" 50)
@@ -3643,7 +3643,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.9c: Variable -> Select -Skip -> Select -SkipLast -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever
+        $probes | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/5)" 20)
@@ -3658,7 +3658,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.9d: Variable -> Select -Skip -> Select -Index -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever
+        $probes | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
@@ -3715,7 +3715,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "14.10b: Table -> Select -Skip -> Table -> Action" {
-        Get-Probe -Count 3 | Select -Skip 1 | Get-Device | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -Skip 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
@@ -3805,7 +3805,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.10d: Variable -> Select -Skip -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -Skip 1 | Get-Device | Pause-Object -Forever
+        $probes | Select -Skip 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search"                   "Processing all probes 2/3"   66 "Retrieving all devices")
@@ -3852,7 +3852,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.11b<i>: Table -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
         param($name)
 
-        TestCmdletChainWithSingle $name "Skip" "Pause-Object -Forever"
+        TestCmdletChainWithSingle $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "14.11c<i>: Variable -> Select -Skip -<name> -> Table -> Table" -TestCases $selectSkipParams {
@@ -3864,7 +3864,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.11d<i>: Variable -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
         param($name)
 
-        TestVariableChainWithSingle $name "Skip" "Pause-Object -Forever"
+        TestVariableChainWithSingle $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -3879,7 +3879,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.12b<i>: Table -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestCmdletChainWithDouble $name "Skip" "Pause-Object -Forever"
+        TestCmdletChainWithDouble $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "14.12c<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
@@ -3891,7 +3891,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.12d<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestVariableChainWithDouble $name "Skip" "Pause-Object -Forever"
+        TestVariableChainWithDouble $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -3917,7 +3917,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "15.1b: Table -> Select -SkipLast -> Action" {
-        Get-Probe -Count 4 | Select -SkipLast 2 | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
@@ -3948,7 +3948,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.1d: Variable -> Select -SkipLast -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -SkipLast 2 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
@@ -3988,25 +3988,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 15.3: Table -> Select -SkipLast -> Select -Something -> Action
 
     It "15.3a: Table -> Select -SkipLast -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "15.3b: Table -> Select -SkipLast -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "15.3c: Table -> Select -SkipLast -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "15.3d: Table -> Select -SkipLast -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4052,7 +4052,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.5a: Variable -> Select -SkipLast -> Select -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4060,7 +4060,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.5b: Variable -> Select -SkipLast -> Select -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4068,7 +4068,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.5c: Variable -> Select -SkipLast -> Select -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4076,7 +4076,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.5d: Variable -> Select -SkipLast -> Select -Index -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4130,7 +4130,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "15.6b: Table -> Select -SkipLast -> Table -> Action" {
-        Get-Probe -Count 3 | Select -SkipLast 1 | Get-Device | Pause-Object -Forever
+        Get-Probe -Count 3 | Select -SkipLast 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
@@ -4213,7 +4213,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.6d: Variable -> Select -SkipLast -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
-        $probes | Select -SkipLast 1 | Get-Device | Pause-Object -Forever
+        $probes | Select -SkipLast 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search"                   "Processing all probes 1/2" 50 "Retrieving all devices")
@@ -4258,7 +4258,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.7b<i>: Table -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestCmdletChainWithDouble $name "SkipLast" "Pause-Object -Forever"
+        TestCmdletChainWithDouble $name "SkipLast" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "15.7c<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
@@ -4270,7 +4270,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "15.7d<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestVariableChainWithDouble $name "SkipLast" "Pause-Object -Forever"
+        TestVariableChainWithDouble $name "SkipLast" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -4291,7 +4291,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "16.1b: Table -> Select -Index -> Action" {
-        Get-Probe -Count 4 | Select -Index 1,2 | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Index 1,2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -4321,7 +4321,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.1d: Variable -> Select -Index -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Index 1,2 | Pause-Object -Forever
+        $probes | Select -Index 1,2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
@@ -4343,7 +4343,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "16.1f: Table -> Select -Index -Wait -> Action" {
-        Get-Probe -Count 4 | Select -Index 1,2 -Wait | Pause-Object -Forever
+        Get-Probe -Count 4 | Select -Index 1,2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -4373,7 +4373,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.1h: Variable -> Select -Index -Wait -> Action" {
         $probes = Get-Probe -Count 4
 
-        $probes | Select -Index 1,2 -Wait | Pause-Object -Forever
+        $probes | Select -Index 1,2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
@@ -4413,23 +4413,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 16.3: Table -> Select -Index -> Select -Something -> Action
 
     It "16.3a: Table -> Select -Index -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "16.3b: Table -> Select -Index -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "16.3c: Table -> Select -Index -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
     }
 
     It "16.3d: Table -> Select -Index -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever
+        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4475,7 +4475,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.5a: Variable -> Select -Index -> Select -First -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever
+        $probes | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4483,7 +4483,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.5b: Variable -> Select -Index -> Select -Last -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever
+        $probes | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4491,7 +4491,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.5c: Variable -> Select -Index -> Select -Skip -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever
+        $probes | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4499,7 +4499,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.5d: Variable -> Select -Index -> Select -SkipLast -> Action" {
         $probes = Get-Probe -Count 10
 
-        $probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever
+        $probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -4551,7 +4551,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "16.6b: Table -> Select -Index -> Table -> Action" {
-        Get-Probe -Count 5 | Select -Index 1,3 | Get-Device | Pause-Object -Forever
+        Get-Probe -Count 5 | Select -Index 1,3 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
@@ -4638,7 +4638,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.6d: Variable -> Select -Index -> Table -> Action" {
         $probes = Get-Probe -Count 5
 
-        $probes | Select -Index 1,3 | Get-Device | Pause-Object -Forever
+        $probes | Select -Index 1,3 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search"                    "Processing all probes 2/5" 40 "Retrieving all devices")
@@ -4683,7 +4683,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.7b<i>: Table -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestCmdletChainWithDouble $name "Index" "Pause-Object -Forever"
+        TestCmdletChainWithDouble $name "Index" "Pause-Object -Forever -Batch:`$false"
     }
 
     It "16.7c<i>: Variable -> Select -Index -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
@@ -4695,7 +4695,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "16.7d<i>: Variable -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
-        TestVariableChainWithDouble $name "Index" "Pause-Object -Forever"
+        TestVariableChainWithDouble $name "Index" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
@@ -4801,7 +4801,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         RunCustomCount $counts {
-            Get-Probe | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Pause-Object -Forever
+            Get-Probe | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Pause-Object -Forever -Batch:$false
         }
 
         Validate(@(
@@ -8516,7 +8516,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 31: Something -> Table -> Where { Variable(1) -> Action }
 
     It "31a: Table -> Table -> Where { Variable(1) -> Action }" {
-        Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever }
+        Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             "PRTG Probe Search`n" +
@@ -8557,7 +8557,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "31b: Variable -> Table -> Where { Variable(1) -> Action }" {
         $probes = Get-Probe
 
-        $probes | Get-Device | Where { $_ | Pause-Object -Forever }
+        $probes | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             "PRTG Device Search`n" +
@@ -8589,7 +8589,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 32: Something -> Table -> Where { Variable(1) -> Table -> Action }
     
     It "32a: Table -> Table -> Where { Variable(1) -> Table -> Action }" {
-        Get-Probe | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever }
+        Get-Probe | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             "PRTG Probe Search`n" +
@@ -8806,7 +8806,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "32b: Variable -> Table -> Where { Variable(1) -> Table -> Action }" {
         $probes = Get-Probe
         
-        $probes | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever }
+        $probes | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             "PRTG Device Search`n" +
@@ -9036,13 +9036,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9050,7 +9050,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    Retrieving all sensors"
@@ -9058,13 +9058,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9072,7 +9072,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9088,13 +9088,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9102,7 +9102,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    Retrieving all sensors"
@@ -9110,13 +9110,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9124,7 +9124,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9154,13 +9154,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9168,7 +9168,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    Retrieving all sensors"
@@ -9176,13 +9176,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9190,7 +9190,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9206,13 +9206,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9220,7 +9220,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
             
             "    Retrieving all sensors"
@@ -9228,13 +9228,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ##########################################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9242,7 +9242,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 40) (1/1)`n" +
+            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Retrieving all sensors"
@@ -9261,7 +9261,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 34: Something -> Table -> Action -> Table -> Action
 
     It "34a: Table -> Table -> Action -> Table -> Action" {
-        Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever
+        Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Group Search`n" +
@@ -9298,7 +9298,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -9308,7 +9308,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -9320,7 +9320,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9334,7 +9334,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9348,7 +9348,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9362,7 +9362,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9376,7 +9376,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9400,7 +9400,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -9410,7 +9410,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -9422,7 +9422,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9436,7 +9436,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9450,7 +9450,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9464,7 +9464,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9478,7 +9478,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9492,7 +9492,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             #################################################################################################################
@@ -9526,7 +9526,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -9536,7 +9536,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -9548,7 +9548,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9562,7 +9562,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9576,7 +9576,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9590,7 +9590,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9604,7 +9604,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9628,7 +9628,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -9638,7 +9638,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -9650,7 +9650,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9664,7 +9664,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9678,7 +9678,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9692,7 +9692,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9706,7 +9706,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9720,7 +9720,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             #################################################################################################################
@@ -9734,7 +9734,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "34b: Variable -> Table -> Action -> Table -> Action" {
         $groups = Get-Group
 
-        $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever
+        $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Device Search`n" +
@@ -9750,7 +9750,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -9760,7 +9760,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -9772,7 +9772,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9786,7 +9786,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9800,7 +9800,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9814,7 +9814,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9828,7 +9828,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9842,7 +9842,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -9852,7 +9852,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -9864,7 +9864,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9878,7 +9878,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9892,7 +9892,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9906,7 +9906,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -9920,7 +9920,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -9934,7 +9934,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             #################################################################################################################
@@ -9952,7 +9952,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -9962,7 +9962,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
@@ -9974,7 +9974,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -9988,7 +9988,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10002,7 +10002,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10016,7 +10016,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10030,7 +10030,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -10044,7 +10044,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -10054,7 +10054,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all sensors"
@@ -10066,7 +10066,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Sensor Search`n" +
@@ -10080,7 +10080,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10094,7 +10094,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10108,7 +10108,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects`n" +
@@ -10122,7 +10122,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Pausing PRTG Objects (Completed)`n" +
@@ -10136,7 +10136,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             #################################################################################################################
@@ -10151,7 +10151,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 35: Something -> Table -> Action -> Action
 
     It "35a: Table -> Table -> Action -> Action" {
-        Get-Group | Get-Device | Clone-Device 5678 | Resume-Object
+        Get-Group | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
 
         Validate(@(
             "PRTG Group Search`n" +
@@ -10188,7 +10188,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -10218,7 +10218,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -10238,7 +10238,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -10272,7 +10272,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -10302,7 +10302,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -10322,7 +10322,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -10336,7 +10336,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "35b: Variable -> Table -> Action -> Action" {
         $groups = Get-Group
 
-        $groups | Get-Device | Clone-Device 5678 | Resume-Object
+        $groups | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
 
         Validate(@(
             "PRTG Device Search`n" +
@@ -10352,7 +10352,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -10372,7 +10372,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -10410,7 +10410,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 40) (1/2)`n" +
+            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
 
             ###################################################################
@@ -10430,7 +10430,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 40) (2/2)`n" +
+            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11469,7 +11469,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #region 100d: Something -> Get-SensorFactorySource -> Action
 
     It "100d1: Sensor -> Get-SensorFactorySource -> Action" {
-        Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Sensor Search`n" +
@@ -11593,7 +11593,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $sensors.Count | Should Be 2
 
-        $sensors | Get-SensorFactorySource | Pause-Object -Forever
+        $sensors | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             "PRTG Sensor Factory Sensor Search`n" +
@@ -11724,7 +11724,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11734,7 +11734,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11746,7 +11746,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11788,7 +11788,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11798,7 +11798,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11810,7 +11810,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11849,7 +11849,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11859,7 +11859,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11871,7 +11871,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11899,7 +11899,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11909,7 +11909,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11921,7 +11921,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -11939,7 +11939,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
     It "100f1: Something -> Get-SensorFactorySource -> Action -> Object -> Anything" {
         
-        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
             "PRTG Sensor Search`n" +
@@ -11984,7 +11984,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -11994,7 +11994,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -12006,7 +12006,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Channel Search`n" +
@@ -12020,11 +12020,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12034,11 +12034,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12048,7 +12048,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -12090,7 +12090,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12100,7 +12100,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -12112,7 +12112,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Channel Search`n" +
@@ -12126,11 +12126,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12140,11 +12140,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12154,7 +12154,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -12169,7 +12169,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         
         $sensors = Get-Sensor -Count 2
         
-        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100
+        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
             "PRTG Sensor Factory Sensor Search`n" +
@@ -12193,7 +12193,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12203,7 +12203,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -12215,7 +12215,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Channel Search`n" +
@@ -12229,11 +12229,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12243,11 +12243,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12257,7 +12257,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -12283,7 +12283,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12293,7 +12293,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
@@ -12305,7 +12305,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        PRTG Channel Search`n" +
@@ -12319,11 +12319,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12333,11 +12333,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 2203) setting 'UpperErrorLimit' to '100' (1/1)`n" +
+            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
@@ -12347,7 +12347,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 2203) (1/1)`n" +
+            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
@@ -12356,6 +12356,638 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Processing all sensors 2/2`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
         ))
+    }
+
+        #endregion
+    #endregion
+    #region 101: Multi Operation Cmdlets
+        #region 101a: Pipeline Combinations
+
+    It "101a1: Table -> Action -Batch:`$true" {
+        Get-Sensor -Count 3 | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1' and 'Volume IO _Total2' forever (3/3)"
+
+        Validate(@(
+            (Gen "PRTG Sensor Search"         "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
+            (Gen "Pausing PRTG Objects"       "Processing sensor 2/3" 66)
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total1' (2/3)" 66)
+            (Gen "Pausing PRTG Objects"       "Processing sensor 3/3" 100)
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total2' (3/3)" 100)
+            (Gen "Pausing PRTG Objects"       $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101a2: Table -> Action -> Action -Batch:`$true" {
+        Get-Sensor -Count 3 | Clone-Sensor 5678 | Resume-Object
+
+        $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0' and 'Volume IO _Total0' (3/3)"
+
+        Validate(@(
+            (Gen "PRTG Sensor Search"         "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/3)" 33)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
+            (Gen "Cloning PRTG Sensors"       "Processing sensor 2/3" 66)
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/3)" 66)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (2/3)" 66)
+            (Gen "Cloning PRTG Sensors"       "Processing sensor 3/3" 100)
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total2' (ID: 4002) (3/3)" 100)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (3/3)" 100)
+            (Gen "Resuming PRTG Objects"      $final 100)
+            (Gen "Resuming PRTG Objects (Completed)"      $final 100)
+        ))
+    }
+
+    ###################################################################
+
+    It "101a3: Variable -> Action -Batch:`$true" {
+        $sensors = Get-Sensor -Count 3
+
+        $sensors | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1' and 'Volume IO _Total2' forever (3/3)"
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total1' (2/3)" 66)
+            (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total2' (3/3)" 100)
+            (Gen "Pausing PRTG Objects"       $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101a4: Variable -> Action -> Action -Batch:`$true" {
+        $sensors = Get-Sensor -Count 3
+
+        $sensors | Clone-Sensor 1234 | Resume-Object
+
+        $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0' and 'Volume IO _Total0' (3/3)"
+
+        Validate(@(
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/3)" 33)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/3)" 66)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (2/3)" 66)
+            (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total2' (ID: 4002) (3/3)" 100)
+            (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (3/3)" 100)
+            (Gen "Resuming PRTG Objects"      $final 100)
+            (Gen "Resuming PRTG Objects (Completed)"      $final 100)
+        ))
+    }
+
+    ##########################################################################################
+
+    It "101a5: Table -> Table -> Action -Batch:`$true" {
+        Get-Device -Count 3 | Get-Sensor | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0', 'Volume IO _Total1'," +
+                 " 'Volume IO _Total0' and 'Volume IO _Total1' forever (6/6)"
+        
+        Validate(@(
+            (Gen "PRTG Device Search"         "Retrieving all devices")
+            (Gen "PRTG Device Search"         "Processing device 1/3" 33)
+            (Gen "PRTG Device Search"         "Processing device 1/3" 33 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+                (Gen2 "PRTG Sensor Search"    "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects"  "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search"         "Processing device 2/3" 66)
+            (Gen "PRTG Device Search"         "Processing device 2/3" 66 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects"   "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"        "Processing device 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search"         "Processing device 3/3" 100)
+            (Gen "PRTG Device Search"         "Processing device 3/3" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   $final 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)"   $final 100)
+        ))
+    }
+
+    It "101a6: Table -> Table -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 3 | Get-Sensor | Clone-Sensor 5678 | Resume-Object
+
+        $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0'," + 
+                  " 'Volume IO _Total0' and 'Volume IO _Total0' (6/6)"
+
+        Validate(@(
+            (Gen "PRTG Device Search"         "Retrieving all devices")
+            (Gen "PRTG Device Search"         "Processing device 1/3" 33)
+            (Gen "PRTG Device Search"         "Processing device 1/3" 33 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search"         "Processing device 2/3" 66)
+            (Gen "PRTG Device Search"         "Processing device 2/3" 66 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search"         "Processing device 3/3" 100)
+            (Gen "PRTG Device Search"         "Processing device 3/3" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  $final 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)"  $final 100)
+        ))
+    }
+
+    ###################################################################
+
+    It "101a7: Variable -> Table -> Action -Batch:`$true" {
+        $device = Get-Device -Count 3
+
+        $device | Get-Sensor | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0', 'Volume IO _Total1'," +
+                 " 'Volume IO _Total0' and 'Volume IO _Total1' forever (6/6)"
+
+        Validate(@(
+            (Gen "PRTG Sensor Search"          "Processing all devices 1/3" 33 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Pausing PRTG Objects (Completed)"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search"          "Processing all devices 2/3" 66 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Pausing PRTG Objects (Completed)"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search"          "Processing all devices 3/3" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects"   $final 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101a8: Variable -> Table -> Action -> Action -Batch:`$true" {
+        $device = Get-Device -Count 3
+
+        $device | Get-Sensor | Clone-Sensor 5678 | Resume-Object
+
+        $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0'," + 
+        " 'Volume IO _Total0' and 'Volume IO _Total0' (6/6)"
+
+        Validate(@(
+            (Gen "PRTG Sensor Search"          "Processing all devices 1/3" 33 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search"          "Processing all devices 2/3" 66 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search"          "Processing all devices 3/3" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects"  $final 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)"  $final 100)
+        ))
+    }
+
+        #endregion
+        #region 101b: Progress Messages
+
+    It "101b1: displays 9 items 'and others' with 11 objects" {
+
+        $sensors = Get-Sensor -Count 11
+
+        $sensors | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total2', " +
+                 "'Volume IO _Total3', 'Volume IO _Total4', 'Volume IO _Total5', 'Volume IO _Total6', " +
+                 "'Volume IO _Total7', 'Volume IO _Total8' and 2 others forever (11/11)"
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total0' (1/11)" 9)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total1' (2/11)" 18)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total2' (3/11)" 27)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total3' (4/11)" 36)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total4' (5/11)" 45)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total5' (6/11)" 54)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total6' (7/11)" 63)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total7' (8/11)" 72)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total8' (9/11)" 81)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total9' (10/11)" 90)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total10' (11/11)" 100)
+            (Gen "Pausing PRTG Objects"         $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101b2: displays 10 items 'and others' with 12 objects" {
+
+        $sensors = Get-Sensor -Count 12
+
+        $sensors | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total2', " +
+                 "'Volume IO _Total3', 'Volume IO _Total4', 'Volume IO _Total5', 'Volume IO _Total6', " +
+                 "'Volume IO _Total7', 'Volume IO _Total8', 'Volume IO _Total9' and 2 others forever (12/12)"
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total0' (1/12)" 8)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total1' (2/12)" 16)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total2' (3/12)" 25)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total3' (4/12)" 33)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total4' (5/12)" 41)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total5' (6/12)" 50)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total6' (7/12)" 58)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total7' (8/12)" 66)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total8' (9/12)" 75)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total9' (10/12)" 83)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total10' (11/12)" 91)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total11' (12/12)" 100)
+            (Gen "Pausing PRTG Objects"         $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101b3: processes multiple object types" {
+        $sensors = Get-Sensor -Count 2
+        $devices = Get-Device -Count 2
+        $groups = Get-Group -Count 2
+
+        $objects = @()
+        $objects += $sensors
+        $objects += $devices
+        $objects += $groups
+
+        $objects | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', devices 'Probe Device0', 'Probe Device1'" +
+                 " and groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (6/6)"
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total0' (1/6)" 16)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total1' (2/6)" 33)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device0' (3/6)" 50)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device1' (4/6)" 66)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure0' (5/6)" 83)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure1' (6/6)" 100)
+            (Gen "Pausing PRTG Objects"         $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101b4: processes multiple object types 'and others' with more than 10 objects" {
+        $sensors = Get-Sensor -Count 4
+        $devices = Get-Device -Count 7
+        $groups = Get-Group -Count 4
+
+        $objects = @()
+        $objects += $sensors
+        $objects += $devices
+        $objects += $groups
+
+        $objects | Pause-Object -Forever
+
+        $final = "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total2', " +
+                 "'Volume IO _Total3', devices 'Probe Device0', 'Probe Device1', 'Probe Device2', " +
+                 "'Probe Device3', 'Probe Device4', 'Probe Device5' and 5 others forever (15/15)"
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total0' (1/15)" 6)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total1' (2/15)" 13)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total2' (3/15)" 20)
+            (Gen "Pausing PRTG Objects"         "Queuing sensor 'Volume IO _Total3' (4/15)" 26)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device0' (5/15)" 33)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device1' (6/15)" 40)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device2' (7/15)" 46)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device3' (8/15)" 53)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device4' (9/15)" 60)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device5' (10/15)" 66)
+            (Gen "Pausing PRTG Objects"         "Queuing device 'Probe Device6' (11/15)" 73)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure0' (12/15)" 80)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure1' (13/15)" 86)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure2' (14/15)" 93)
+            (Gen "Pausing PRTG Objects"         "Queuing group 'Windows Infrastructure3' (15/15)" 100)
+            (Gen "Pausing PRTG Objects"         $final 100)
+            (Gen "Pausing PRTG Objects (Completed)" $final 100)
+        ))
+    }
+
+    It "101b5: displays unique channel names and groups by channel ID" {
+
+        $sensors = Get-Sensor -Count 3
+
+        $channels = @()
+        $channels += 1..2 | foreach { $sensors[0] | Get-Channel }
+        $channels += 1..2 | foreach { $sensors[1] | Get-Channel }
+        $channels += $sensors[2] | Get-Channel
+
+        $channels.Count | Should Be 5
+
+        $channels[0].Id = 0
+        $channels[0].Name = "FirstChannel"
+        $channels[1].Id = 1
+        $channels[1].Name = "SecondChannel"
+
+        $channels[2].Id = 0
+        $channels[2].Name = "FirstChannel"
+        $channels[3].Id = 1
+        $channels[3].Name = "SecondChannel"
+
+        $channels[4].Id = 0
+        $channels[4].Name = "ThirdChannel"
+
+        $channels | Set-ChannelProperty UpperErrorLimit 70
+
+        $final1 = "Setting channels 'FirstChannel' (Sensor IDs: 4000, 4001) and 'ThirdChannel' (Sensor ID: 4002) setting 'UpperErrorLimit' to '70' (5/5)"
+        $final2 = "Setting channel 'SecondChannel' (Sensor IDs: 4000, 4001) setting 'UpperErrorLimit' to '70' (5/5)"
+
+        Validate(@(
+            (Gen "Modify PRTG Channel Settings"         "Queuing channel 'FirstChannel' (1/5)" 20)
+            (Gen "Modify PRTG Channel Settings"         "Queuing channel 'SecondChannel' (2/5)" 40)
+            (Gen "Modify PRTG Channel Settings"         "Queuing channel 'FirstChannel' (3/5)" 60)
+            (Gen "Modify PRTG Channel Settings"         "Queuing channel 'SecondChannel' (4/5)" 80)
+            (Gen "Modify PRTG Channel Settings"         "Queuing channel 'ThirdChannel' (5/5)" 100)
+            (Gen "Modify PRTG Channel Settings"         $final1 100)
+            (Gen "Modify PRTG Channel Settings"         $final2 100)
+            (Gen "Modify PRTG Channel Settings (Completed)" $final2 100)
+        ))
+    }
+
+        #endregion
+        #region 101c: Cmdlet Validation
+
+    function ValidateMultiTypeCmdlet($baseType, $progressActivity, $names, $realMessage)
+    {
+        $lowerType = $basetype.ToLower()
+
+        Validate(@(
+            (Gen "PRTG $baseType Search"         "Retrieving all $($lowerType)s")
+            (Gen "PRTG $baseType Search"         "Processing $lowerType 1/2" 50)
+            (Gen "$progressActivity"             "Queuing $lowerType '$($names[0])' (1/2)" 50)
+            (Gen "$progressActivity"             "Processing $lowerType 2/2" 100)
+            (Gen "$progressActivity"             "Queuing $lowerType '$($names[1])' (2/2)" 100)
+            (Gen "$progressActivity"             "$realMessage (2/2)" 100)
+            (Gen "$progressActivity (Completed)" "$realMessage (2/2)" 100)
+        ))
+    }
+
+    It "101c1: Acknowledge-Sensor" {
+        Get-Sensor -Count 2 | Acknowledge-Sensor -Duration 10
+
+        $names = @("Volume IO _Total0","Volume IO _Total1")
+
+        ValidateMultiTypeCmdlet "Sensor" "Acknowledge PRTG Sensors" $names "Acknowledging sensors '$($names[0])' and '$($names[1])' for 10 minutes"
+    }
+
+    It "101c2: Pause-Object" {
+        Get-Device -Count 2 | Pause-Object -Forever
+
+        $names = @("Probe Device0", "Probe Device1")
+
+        ValidateMultiTypeCmdlet "Device" "Pausing PRTG Objects" $names "Pausing devices '$($names[0])' and '$($names[1])' forever"
+    }
+
+    It "101c3: Refresh-Object" {
+        Get-Device -Count 2 | Refresh-Object
+
+        $names = @("Probe Device0", "Probe Device1")
+
+        ValidateMultiTypeCmdlet "Device" "Refreshing PRTG Objects" $names "Refreshing devices '$($names[0])' and '$($names[1])'"
+    }
+
+    It "101c4: Rename-Object" {
+        Get-Device -Count 2 | Rename-Object "newName"
+
+        $names = @("Probe Device0", "Probe Device1")
+
+        ValidateMultiTypeCmdlet "Device" "Rename PRTG Objects" $names "Renaming devices '$($names[0])' and '$($names[1])' to 'newName'"
+    }
+
+    It "101c5: Resume-Object" {
+        Get-Device -Count 2 | Resume-Object
+
+        $names = @("Probe Device0", "Probe Device1")
+
+        ValidateMultiTypeCmdlet "Device" "Resuming PRTG Objects" $names "Resuming devices '$($names[0])' and '$($names[1])'"
+    }
+
+    It "101c6: Set-ChannelProperty" {
+        Get-Sensor -Count 1 | Get-Channel | Set-ChannelProperty LimitsEnabled $true
+
+        Validate(@(
+            (Gen "PRTG Sensor Search"         "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"         "Processing sensor 1/1" 100)
+            (Gen "PRTG Sensor Search"         "Processing sensor 1/1" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search"         "Processing sensor 1/1" 100) +
+                (Gen2 "PRTG Channel Search"    "Processing channel 1/1" 100)
+
+            (Gen1 "PRTG Sensor Search"         "Processing sensor 1/1" 100) +
+                (Gen2 "Modify PRTG Channel Settings" "Queuing channel 'Percent Available Memory' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100) +
+                (Gen2 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'LimitsEnabled' to 'True' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100) +
+                (Gen2 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'LimitsEnabled' to 'True' (1/1)" 100)
+        ))
+    }
+
+    It "101c7: Set-ObjectProperty" {
+        Get-Device -Count 2 | Set-ObjectProperty Interval 00:00:30
+
+        $names = @("Probe Device0", "Probe Device1")
+
+        ValidateMultiTypeCmdlet "Device" "Modify PRTG Object Settings" $names "Setting devices '$($names[0])' and '$($names[1])' setting 'Interval' to '00:00:30'"
+    }
+
+    It "101c8: Simulate-ErrorStatus" {
+        Get-Sensor -Count 2 | Simulate-ErrorStatus
+
+        $names = @("Volume IO _Total0","Volume IO _Total1")
+
+        ValidateMultiTypeCmdlet "Sensor" "Simulating Sensor Errors" $names "Simulating errors on sensors '$($names[0])' and '$($names[1])'"
     }
 
         #endregion
@@ -12468,7 +13100,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping to an action" {
-        Get-Probe -Count 13 | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever
+        Get-Probe -Count 13 | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -12484,7 +13116,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping from a variable to an action" {
         $probes = Get-Probe -Count 13
 
-        $probes | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever
+        $probes | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -12496,7 +13128,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping to an action" {
-        Get-Probe -Count 13 | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever
+        Get-Probe -Count 13 | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -12512,7 +13144,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping from a variable to an action" {
         $probes = Get-Probe -Count 13
         
-        $probes | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever
+        $probes | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
         { Get-Progress } | Should Throw "Queue empty"
     }
@@ -12533,7 +13165,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "Completes all progress records when no results are returned when piping from a cmdletto an Action" {
-        Get-Probe -Count 0 | Pause-Object -Forever
+        Get-Probe -Count 0 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"              "Retrieving all probes")
@@ -12557,7 +13189,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "Completes all progress records when no results are returned when piping from a variable  to an Action" {
         $probes = Get-Probe -Count 2
 
-        $probes | Get-Device -Count 0 | Pause-Object -Forever
+        $probes | Get-Device -Count 0 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search"              "Processing all probes 1/2" 50  "Retrieving all devices")

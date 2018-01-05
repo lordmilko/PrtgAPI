@@ -37,4 +37,50 @@ Describe "Simulate-ErrorStatus_IT" {
         $finalSensor = Get-Sensor -Id (Settings UpSensor)
         $finalSensor.Status | Should Be Up
     }
+
+    It "can simulate errors on multiple in a single request" {
+        $ids = ((Settings UpSensor),(Settings ChannelSensor))
+
+        $sensors = Get-Sensor -Id $ids
+        $sensors[0].Status | Should Be Up
+        $sensors[1].Status | Should Be Up
+
+        LogTestDetail "Simulating error status on multiple sensors"
+        $sensors | Simulate-ErrorStatus
+
+        $sensors | Refresh-Object
+        LogTestDetail "Sleeping for 30 seconds while objects refresh"
+        Sleep 30
+
+        $sensors | Refresh-Object
+        LogTestDetail "Sleeping for 30 seconds while objects refresh"
+        Sleep 30
+
+        $redSensors = Get-Sensor -Id $ids
+
+        if($redSensors|where { $_.Status -EQ "Up" -or $_.Status -eq "Warning" })
+        {
+            LogTestDetail "At least one sensor is still up or transitioning. Waiting 120 seconds"
+            Sleep 120
+            $redSensors = Get-Sensor -Id $ids
+        }
+
+        $redSensors[0].Status | Should Be Down
+        $redSensors[0].Message | Should BeLike "Simulated error*"
+        $redSensors[1].Status | Should Be Down
+        $redSensors[1].Message | Should BeLike "Simulated error*"
+
+        LogTestDetail "Resuming object"
+        $redSensors | Resume-Object
+
+        $sensors | Refresh-Object
+        LogTestDetail "Sleeping for 60 seconds while objects refresh"
+        Sleep 30
+        $sensors | Refresh-Object
+        Sleep 30
+
+        $finalSensors = Get-Sensor -Id $ids
+        $finalSensors[0].Status | Should Be Up
+        $finalSensors[1].Status | Should Be Up
+    }
 }

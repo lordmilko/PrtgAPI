@@ -86,4 +86,29 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         {
         }
     }
+
+    It "executes with -Batch:`$true" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7c5+minutes&intervalgroup=0&"
+
+        $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$true
+    }
+
+    It "executes with -Batch:`$false" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse @(
+            "editsettings?id=4000&interval_=300%7c5+minutes&intervalgroup=0&"
+            "editsettings?id=4001&interval_=300%7c5+minutes&intervalgroup=0&"
+        )
+
+        $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$false
+    }
 }

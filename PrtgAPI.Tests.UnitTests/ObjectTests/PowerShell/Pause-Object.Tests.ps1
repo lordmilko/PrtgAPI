@@ -55,4 +55,31 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
 
         $sensor | Pause-Object -Duration 10 -WhatIf
     }
+
+    It "executes with -Batch:`$true" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse @(
+            "api/pauseobjectfor.htm?id=4000,4001&duration=5&"
+        )
+
+        $sensors | Pause-Object -Duration 5 -Batch:$true
+    }
+
+    It "executes with -Batch:`$false" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse @(
+            "api/pauseobjectfor.htm?id=4000&duration=5&"
+            "api/pauseobjectfor.htm?id=4001&duration=5&"
+        )
+
+        $sensors | Pause-Object -Duration 5 -Batch:$false
+    }
 }

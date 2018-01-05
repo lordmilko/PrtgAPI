@@ -85,7 +85,7 @@ namespace PrtgAPI
         /// <summary>
         /// ID of the object to operate upon.
         /// </summary>
-        [ParameterType(ParameterType.SingleValue)]
+        [ParameterType(ParameterType.MultiValue)]
         Id,
 
         /// <summary>

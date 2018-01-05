@@ -107,4 +107,40 @@ Describe "Pause-Object_IT" {
         $finalSensor = Get-Sensor -Id (Settings UpSensor)
         $finalSensor.Status | Should Be Up
     }
+    
+    It "can pause multiple in a single request" {
+        
+        $ids = ((Settings UpSensor),(Settings DownSensor))
+
+        $sensors = Get-Sensor -Id $ids
+        
+        $sensors.Count | Should Be 2
+        $sensors[0].Status | Should Be Up
+        $sensors[1].Status | Should Be Down
+
+        LogTestDetail "Pausing for 1 minute"
+        $sensors | Pause-Object -Duration 1
+
+        $sensors | Refresh-Object
+        LogTestDetail "Sleeping for 30 seconds"
+
+        LogTestDetail "Confirming sensors are paused"
+        $sensors = Get-Sensor -Id $ids
+        $sensors[0].Status | Should Be PausedUntil
+        $sensors[1].Status | Should Be PausedUntil
+        LogTestDetail "Sleeping for 90 seconds"
+        Sleep 90
+
+        LogTestDetail "Object should be unpaused. Refreshing object."
+        $sensors | Refresh-Object
+        Sleep 10
+        $sensors | Refresh-Object
+        Sleep 10
+        $sensors | Refresh-Object
+        Sleep 10
+
+        $finalSensors = Get-Sensor -Id $ids
+        $finalSensors[0].Status | Should Be Up
+        $finalSensors[1].Status | Should Be Down
+    }
 }

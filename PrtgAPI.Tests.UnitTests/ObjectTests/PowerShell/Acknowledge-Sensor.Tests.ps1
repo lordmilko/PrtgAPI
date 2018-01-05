@@ -6,7 +6,6 @@ Describe "Acknowledge-Sensor" {
 
     $sensor = Run Sensor { Get-Sensor }
 
-
     It "acknowledges for a duration" {
 
         $sensor | Acknowledge-Sensor -Duration 10
@@ -34,5 +33,30 @@ Describe "Acknowledge-Sensor" {
 
     It "executes with -WhatIf" {
         $sensor | Acknowledge-Sensor -Duration 10 -WhatIf
+    }
+
+    It "executes with -Batch:`$true" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse "api/acknowledgealarm.htm?id=4000,4001&duration=5&"
+
+        $sensors | Acknowledge-Sensor -Duration 5 -Batch:$true
+    }
+
+    It "executes with -Batch:`$false" {
+
+        SetMultiTypeResponse
+
+        $sensors = Get-Sensor -Count 2
+
+        SetAddressValidatorResponse @(
+            "api/acknowledgealarm.htm?id=4000&duration=5&"
+            "api/acknowledgealarm.htm?id=4001&duration=5&"
+        )
+
+        $sensors | Acknowledge-Sensor -Duration 5 -Batch:$false
     }
 }

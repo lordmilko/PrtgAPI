@@ -54,16 +54,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
+                case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
                 case nameof(CommandFunction.LoadLookups):
                 case nameof(CommandFunction.RecalcCache):
+                case nameof(CommandFunction.Rename):
                 case nameof(CommandFunction.RestartServer):
                 case nameof(CommandFunction.RestartProbes):
                 case nameof(CommandFunction.ReloadFileLists):
                 case nameof(CommandFunction.SaveNow):
+                case nameof(CommandFunction.ScanNow):
+                case nameof(CommandFunction.Simulate):
                     return new BasicResponse(string.Empty);
                 default:
                     throw GetUnknownFunctionException(function);
@@ -103,10 +107,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             switch (content)
             {
-                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory"), count));
-                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}"), count));
-                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2"), count));
-                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}"), count));
+                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count));
+                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count));
+                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", objid: (2000 + i).ToString()), count));
+                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
                 case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
                 case Content.Channels:  return new ChannelResponse(new ChannelItem());
                 default:

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
-using PrtgAPI.Objects.Shared;
+﻿using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -17,6 +11,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// Any object put into a simulated error status will remain in this state until the object is resumed via the Resume-Object cmdlet
     /// or via the PRTG UI. Even if an object is paused, it will return to an error state when the object is unpaused.</para>
     /// 
+    /// <para type="description">By default, Simulate-ErrorStatus will operate in Batch Mode. In Batch Mode, Simulate-ErrorStatus
+    /// will not execute a request for each individual object, but will rather store each item in a queue to simulate errors
+    /// for all objects at once, via a single request. This allows PrtgAPI to be extremely performant in performing operations
+    /// against a large number of objects.</para>
+    /// 
+    /// <para type="description">If the pipeline is cancelled (either due to a cmdlet throwing an exception
+    /// or the user pressing Ctrl-C) before fully completing, Simulate-ErrorStatus will not generate a request against PRTG.
+    /// If you wish to disable Batch Mode and fully process objects individually one at a time, this can be achieved
+    /// by specifying -Batch:$false.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1001 | Simulate-ErrorStatus</code>
     ///     <para>Force the sensor with ID to enter an error state.</para>
@@ -25,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Resume-Object</para>
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus", SupportsShouldProcess = true)]
-    public class SimualteErrorStatus : PrtgOperationCmdlet
+    public class SimualteErrorStatus : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The sensor to simulate an error status on.</para>
@@ -33,15 +37,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public Sensor Sensor { get; set; }
 
+        private string progressActivity = "Simulating Sensor Errors";
+
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Sensor.Name}' (ID: {Sensor.Id})"))
-            {
-                ExecuteOperation(() => client.SimulateError(Sensor.Id), "Simulating Sensor Errors", $"Processing sensor '{Sensor.Name}'");
-            }
+                ExecuteOrQueue(Sensor, progressActivity);
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// </summary>
+        protected override void PerformSingleOperation()
+        {
+            ExecuteOperation(() => client.SimulateError(Sensor.Id), progressActivity, $"Processing sensor '{Sensor.Name}'");
+        }
+
+        /// <summary>
+        /// Invokes this cmdlet's action against all queued items from the pipeline.
+        /// </summary>
+        /// <param name="ids">The Object IDs of all queued items.</param>
+        protected override void PerformMultiOperation(int[] ids)
+        {
+            ExecuteMultiOperation(() => client.SimulateError(ids), progressActivity, $"Simulating errors on {GetCommonObjectBaseType()} {GetListSummary()}");
         }
     }
 }

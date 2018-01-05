@@ -116,7 +116,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
 
-            var location = await Location.ResolveAsync(client, 1001, null);
+            var location = await Location.ResolveAsync(client, null);
 
             Assert.AreEqual(null, location.ToString());
         }
@@ -127,7 +127,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            Location.Resolve(client, 1001, "something");
+            Location.Resolve(client, "something");
         }
 
         [TestMethod]
@@ -136,7 +136,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            await Location.ResolveAsync(client, 1001, "something");
+            await Location.ResolveAsync(client, "something");
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             try
             {
-                Location.Resolve(client, 1001, "something");
+                Location.Resolve(client, "something");
                 Assert.Fail("Expected an exception to be thrown");
             }
             catch (Exception ex)

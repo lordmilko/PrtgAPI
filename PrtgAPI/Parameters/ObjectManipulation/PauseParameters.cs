@@ -5,7 +5,7 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     class PauseParameters : PauseParametersBase
     {
-        public PauseParameters(int objectId, PauseAction action = PauseAction.Pause) : base(objectId)
+        public PauseParameters(int[] objectIds, PauseAction action = PauseAction.Pause) : base(objectIds)
         {
             PauseAction = action;
         }
