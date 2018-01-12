@@ -140,6 +140,17 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetValue "FactoryErrorMode" "WarnOnError"
         SetValue "FactoryMissingDataMode" "CalculateWithZero"
     }
+    
+    It "WMI Service Monitor" {
+        $object = Get-Sensor -Id (Settings WmiService)
+
+        SetValue "StartStopped" $true
+
+        SetChild "NotifyStarted" $false "StartStopped" $true
+
+        SetValue "MonitorPerformance" $true
+        SetValue "DebugMode" "WriteToDisk"
+    }
 
     It "sets a sensor factory definition using New-SensorFactoryDefinition" {
         $sensors = Get-Sensor -Tags wmimem*
@@ -154,7 +165,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 
         $source.Id | Should Be $sensors.Id
     }
-
+    
     Context "Other" {
         It "Triggers" {
             $object = Get-Sensor -Id (Settings UpSensor)

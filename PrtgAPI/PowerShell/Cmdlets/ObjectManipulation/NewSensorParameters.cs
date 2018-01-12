@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Parameters;
@@ -85,6 +87,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Add a new EXE/Script Advanced sensor to the device named dc-1 using its raw parameters</para>
     /// </example>
     /// 
+    /// <para type="link">about_SensorParameters</para>
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// </summary>
@@ -98,22 +101,25 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SensorType Type { get; set; }
 
         /// <summary>
-        /// <para type="description">The name to give the new sensor. If no value is specified, the default name of the specified sensor type will be used.</para>
+        /// <para type="description">The name to give the new sensor. If no value is specified, the default name of the specified sensor type will be used.
+        /// If the specified sensor type does not support specifying a name, this field is used for any mandatory values required by the sensor type.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Default", Position = 1)]
-        public string Name { get; set; }
+        public object First { get; set; }
 
         /// <summary>
         /// <para type="description">A mandatory value required by the specified sensor type.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Default", Position = 2)]
-        public string Value { get; set; }
+        public object Second { get; set; }
 
         /// <summary>
         /// <para type="description">A collection of raw parameters for adding an unsupported sensor type.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Raw", Position = 0)]
         public Hashtable RawParameters { get; set; }
+
+        private bool ignoreName;
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -122,8 +128,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var parameters = ParameterSetName == "Raw" ? CreateRawParameters() : CreateTypedParameters();
 
-            if (Name != null)
-                parameters.Name = Name;
+            if (First != null && !ignoreName)
+                parameters.Name = First.ToString();
 
             WriteObject(parameters);
         }
@@ -151,13 +157,74 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (Type)
             {
                 case SensorType.ExeXml:
-                    parameters = new ExeXmlSensorParameters(string.Empty) { ExeName = Value };
+                    parameters = new ExeXmlSensorParameters(string.Empty) { ExeFile = GetImplicit<ExeFileTarget>(Second) };
+                    break;
+                case SensorType.WmiService:
+                    ignoreName = true;
+                    parameters = new WmiServiceSensorParameters(new List<WmiServiceTarget>()) { Services = GetList<WmiServiceTarget>(First) };
                     break;
                 default:
                     throw new NotImplementedException($"Sensor type '{Type}' is currently not supported");
             }
 
             return parameters;
+        }
+
+        [ExcludeFromCodeCoverage]
+        private T GetImplicit<T>(object val)
+        {
+            if (val == null)
+                return default(T);
+
+            if (val is T)
+                return (T) val;
+
+            var implicitOp = typeof (T).GetMethod("op_Implicit", new[] {typeof (string)});
+
+            if (implicitOp == null)
+                throw new InvalidOperationException($"Object type {typeof (T)} does not contain an implicit operator for objects of type string");
+
+            return (T) implicitOp.Invoke(null, new object[] {val.ToString()});
+        }
+
+        [ExcludeFromCodeCoverage]
+        private List<T> GetList<T>(object val)
+        {
+            if (val == null)
+                return null;
+
+            if (val is PSObject)
+                val = ((PSObject) val).BaseObject;
+
+            if (val is T)
+                return new List<T> {(T)val };
+
+            if (val is List<T>)
+                return (List<T>)val;
+
+            if (val is IEnumerable)
+            {
+                var objList = ((IEnumerable) val).Cast<object>().Where(o => o != null);
+
+                var list = new List<T>();
+
+                foreach (var obj in objList)
+                {
+                    var obj1 = obj;
+
+                    if (obj1 is PSObject)
+                        obj1 = ((PSObject) obj).BaseObject;
+
+                    if (obj1 is T)
+                        list.Add((T)obj1);
+                    else
+                        throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {obj1.GetType()} was specified");
+                }
+
+                return list;
+            }
+
+            throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {val.GetType()} was specified");
         }
     }
 }

@@ -115,6 +115,7 @@
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
     <None Include="PowerShell\Get-SensorFactorySource.Tests.ps1" />
     <None Include="PowerShell\Get-SensorHistory.Tests.ps1" />
+    <None Include="PowerShell\Get-SensorTarget.Tests.ps1" />
     <None Include="PowerShell\Load-PrtgConfigFile.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />

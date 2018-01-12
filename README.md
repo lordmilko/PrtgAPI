@@ -204,6 +204,7 @@ Get-PrtgStatus
 Get-Sensor
 Get-SensorFactorySource
 Get-SensorHistory
+Get-SensorTargets
 Get-SensorTotals
 Install-GoPrtgServer
 Load-PrtgConfigFile

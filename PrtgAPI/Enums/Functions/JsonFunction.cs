@@ -18,6 +18,9 @@ namespace PrtgAPI
 
 
         [Description("getstatus.htm")]
-        GetStatus
+        GetStatus,
+
+        [Description("getaddsensorprogress.htm")]
+        GetAddSensorProgress
     }
 }

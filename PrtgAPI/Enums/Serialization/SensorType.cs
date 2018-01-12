@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PrtgAPI
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Specifies types of sensors that can be created in PRTG.</para>
@@ -14,6 +8,11 @@ namespace PrtgAPI
         /// <summary>
         /// EXE/Script Advanced sensor, returning XML or JSON
         /// </summary>
-        ExeXml
+        ExeXml,
+
+        /// <summary>
+        /// WMI Service sensor, for monitoring a Microsoft Windows system service.
+        /// </summary>
+        WmiService
     }
 }

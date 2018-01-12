@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Html
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Html
 {
+    [DebuggerDisplay("Name = {Name}, Value = {Value}, Type = {Type}, Checked = {Checked}, Hidden = {Hidden}")]
     class Input
     {
         public string Name { get; set; }

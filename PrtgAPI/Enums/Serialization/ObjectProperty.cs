@@ -622,6 +622,7 @@ namespace PrtgAPI
         /// How raw sensor results should be stored for debugging purposes. Corresponds to:<para/>
         ///     Debug Options (WMI) -> Sensor Result<para/>
         ///     Sensor Settings (EXE/XML) -> EXE Result
+        ///     WMI Service Monitor -> Sensor Result
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         DebugMode,
@@ -762,6 +763,7 @@ namespace PrtgAPI
         /// Name of the EXE or Script File the sensor executes.<para/>
         /// Corresponds to Sensor Settings -> EXE/Script
         /// </summary>
+        [Description("exefile")]
         [TypeLookup(typeof(SensorSettings))]
         ExeFile,
 
@@ -855,10 +857,35 @@ namespace PrtgAPI
 
         /// <summary>
         /// How factory channel values should be calculated when one of their source sensors is <see cref="Status.Down"/><para/>
-        /// Corresponds to Sensor Factory Specific Settings -> If a Sensor has No Data
+        /// Corresponds to Sensor Factory Specific Settings -> If a Sensor has No Data.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
         FactoryMissingDataMode,
+
+        #endregion
+        #region WMI Service Monitor
+
+        /// <summary>
+        /// Whether PRTG should automatically start this item if it detects it has stopped<para/>
+        /// Corresponds to WMI Service Monitor -> If Service is Not Running.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        StartStopped,
+
+        /// <summary>
+        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object.<para/>
+        /// Corresponds to WMI Service Monitor -> If Service is Restarted.
+        /// </summary>
+        [DependentProperty(nameof(StartStopped), true)]
+        [TypeLookup(typeof(SensorSettings))]
+        NotifyStarted,
+
+        /// <summary>
+        /// Whether PRTG should monitor just basic information for the target of the sensor, or should also collect additional performance metrics.<para/>
+        /// Corresponds to WMI Service Monitor -> Monitoring.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        MonitorPerformance,
 
         #endregion
 

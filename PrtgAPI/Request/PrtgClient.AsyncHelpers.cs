@@ -3,6 +3,7 @@
  * Please do not modify this file directly - modify PrtgClient.AsyncHelpers.tt instead *
  ***************************************************************************************/
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Linq;
+using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Parameters;
 
@@ -349,6 +352,7 @@ namespace PrtgAPI
         //######################################
         // WaitForCoreRestart
         //######################################
+
         internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
         {
             List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
@@ -406,6 +410,179 @@ namespace PrtgAPI
                 }
             }
         }
+
+        //######################################
+        // AddObjectWithExcessiveValue
+        //######################################
+
+        private void AddObjectWithExcessiveValue(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        {
+            var limitParam = lengthLimit.First();
+
+            var limit = limitParam.Key.GetEnumAttribute<LengthLimitAttribute>().Length;
+
+            if (limitParam.Value is IEnumerable)
+            {
+                var list = ((IEnumerable)limitParam.Value).Cast<object>().ToList();
+
+                var count = list.Count();
+
+                if (count > limit)
+                {
+                    for (int i = 0; i < count; i += limit)
+                    {
+                        var thisRequest = list.Skip(i).Take(limit);
+
+                        internalParams[limitParam.Key] = thisRequest;
+
+                        requestEngine.ExecuteRequest(function, internalParams);
+                    }
+                }
+                else
+                    requestEngine.ExecuteRequest(function, internalParams);
+            }
+            else
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+        }
+
+        private async Task AddObjectWithExcessiveValueAsync(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        {
+            var limitParam = lengthLimit.First();
+
+            var limit = limitParam.Key.GetEnumAttribute<LengthLimitAttribute>().Length;
+
+            if (limitParam.Value is IEnumerable)
+            {
+                var list = ((IEnumerable)limitParam.Value).Cast<object>().ToList();
+
+                var count = list.Count();
+
+                if (count > limit)
+                {
+                    for (int i = 0; i < count; i += limit)
+                    {
+                        var thisRequest = list.Skip(i).Take(limit);
+
+                        internalParams[limitParam.Key] = thisRequest;
+
+                        await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+                    }
+                }
+                else
+                    await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+            }
+            else
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+        }
+
+        //######################################
+        // ResolveSensorTargets
+        //######################################
+
+        private List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            Func<HttpResponseMessage, string> getSensorTargetTmpId = GetSensorTargetTmpId;
+
+            var tmpId = Convert.ToInt32(requestEngine.ExecuteRequest(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId));
+
+            var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback);
+
+            if (response == null)
+                return null;
+
+            return parser(response);
+        }
+
+        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            Func<HttpResponseMessage, Task<string>> getSensorTargetTmpId = o => Task.FromResult(GetSensorTargetTmpId(o));
+
+            var tmpId = Convert.ToInt32(await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId).ConfigureAwait(false));
+
+            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback).ConfigureAwait(false);
+
+            if (response == null)
+                return null;
+
+            return parser(response);
+        }
+
+        //######################################
+        // WaitForSensorTargetResolution
+        //######################################
+
+        private string WaitForSensorTargetResolution(int deviceId, int tmpId, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
+
+            SensorTargetProgress p;
+            bool continueQuery = true;
+
+            do
+            {
+                p = GetObject<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters);
+
+                if(progressCallback != null)
+                    continueQuery = progressCallback(p.Percent);
+
+                if (p.Percent < 100)
+                {
+                    if (!continueQuery)
+                        break;
+
+#if !DEBUG
+                    Thread.Sleep(1000);
+#endif
+                }
+            } while (p.Percent < 100);
+
+            if (!continueQuery)
+                return null;
+
+            ValidateSensorTargetProgressResult(p);
+
+            var page = requestEngine.ExecuteRequest(HtmlFunction.AddSensor4, parameters);
+
+            return page;
+        }
+
+        private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
+
+            SensorTargetProgress p;
+            bool continueQuery = true;
+
+            do
+            {
+                p = await GetObjectAsync<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters).ConfigureAwait(false);
+
+                if(progressCallback != null)
+                    continueQuery = progressCallback(p.Percent);
+
+                if (p.Percent < 100)
+                {
+                    if (!continueQuery)
+                        break;
+
+#if !DEBUG
+                    await Task.Delay(1000).ConfigureAwait(false);
+#endif
+                }
+            } while (p.Percent < 100);
+
+            if (!continueQuery)
+                return null;
+
+            ValidateSensorTargetProgressResult(p);
+
+            var page = await requestEngine.ExecuteRequestAsync(HtmlFunction.AddSensor4, parameters).ConfigureAwait(false);
+
+            return page;
+        }
     }
 }
-

@@ -57,6 +57,19 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
+        internal void DisplayProcessProgress(int percentage)
+        {
+            if (ProgressManager.PreviousRecord != null)
+                ProgressManager.RemovePreviousOperation();
+
+            ProgressManager.CurrentRecord.PercentComplete = percentage;
+
+            ProgressManager.WriteProgress(TypeDescription, $"Quering target device ({percentage}%)");
+
+            if (percentage == 100)
+                ProgressManager.CompleteProgress();
+        }
+
         /// <summary>
         /// Updates the previous and current progress records for the current input object for scenarios in which a variable was piped into one or more cmdlets.
         /// </summary>

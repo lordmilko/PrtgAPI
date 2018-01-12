@@ -19,6 +19,13 @@ namespace PrtgAPI
 
         [Undocumented]
         [Description("deletesub.htm")]
-        RemoveSubObject
+        RemoveSubObject,
+
+        /// <summary>
+        /// Contains the content returned by a request for additional device information from <see cref="CommandFunction.AddSensor2"/>.
+        /// </summary>
+        [Undocumented]
+        [Description("addsensor4.htm")]
+        AddSensor4
     }
 }

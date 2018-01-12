@@ -58,10 +58,10 @@ namespace PrtgAPI.Request
                 AddParameter(urlBuilder, p.Key, p.Value);
             }
 
-            if (!usernameFound)
+            if (!usernameFound && !parameters.Cookie)
                 AddParameter(urlBuilder, Parameter.UserName, connectionDetails.UserName);
 
-            if (!passFound)
+            if (!passFound && !parameters.Cookie)
             {
                 if (connectionDetails.PassHash == null)
                     throw new ArgumentNullException(nameof(connectionDetails.PassHash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(connectionDetails.PassHash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");

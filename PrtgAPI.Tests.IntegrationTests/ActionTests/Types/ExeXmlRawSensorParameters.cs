@@ -6,12 +6,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
 {
     public class ExeXmlRawSensorParameters : RawSensorParameters
     {
-        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile) : base(sensorName, sensorType)
+        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile, Priority priority = Priority.Three) : base(sensorName, sensorType, priority)
         {
             ExeFile = exeFile;
 
             Tags = new[] {"xmlexesensor"};
-            Priority = Priority.Three;
             ExeParameters = null;
             SetExeEnvironmentVariables = false;
             UseWindowsAuthentication = false;
@@ -27,12 +26,6 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
         {
             get { return GetCustomParameterArray("tags_", ' '); }
             set { SetCustomParameterArray("tags_", value, ' '); }
-        }
-
-        public Priority Priority
-        {
-            get { return (Priority)GetCustomParameterEnumXml<Priority>("priority_"); }
-            set { SetCustomParameterEnumXml("priority_", value); }
         }
 
         [RequireValue(true)]

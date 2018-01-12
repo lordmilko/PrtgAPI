@@ -47,9 +47,12 @@ namespace PrtgAPI.PowerShell.Base
                     WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeof(T).Name.ToLower()}: object is still being created. Retries remaining: {retriesRemaining}");
                     retriesRemaining--;
 
-#if !DEBUG
-                    Thread.Sleep(delay * 1000);
+
+#if DEBUG
+                    if(!UnitTest())
 #endif
+                    Thread.Sleep(delay * 1000);
+
                     delay *= 2;
                 }
 

@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Html
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Html
 {
+    [DebuggerDisplay("Value = {Value}, Selected = {Selected}")]
     class Option
     {
         public string Value { get; set; }

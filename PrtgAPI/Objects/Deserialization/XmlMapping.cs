@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
@@ -9,6 +10,7 @@ using PrtgAPI.Objects.Deserialization.Cache;
 namespace PrtgAPI.Objects.Deserialization
 {
     [ExcludeFromCodeCoverage]
+    [DebuggerDisplay("{AttributeValue[0],nq}")]
     class XmlMapping
     {
         public Type Type { get; private set; }

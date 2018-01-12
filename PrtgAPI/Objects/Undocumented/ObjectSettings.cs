@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 using PrtgAPI.Html;
-using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Objects.Undocumented
 {
@@ -15,15 +13,14 @@ namespace PrtgAPI.Objects.Undocumented
     /// </summary>
     public class ObjectSettings
     {
+        internal static string basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
+        internal static string standardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
+
         internal static XElement GetXml(string response)
         {
-            var basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>"; //<input name="" value="">
-            var nameRegex = "(.+?name=\")(.+?)(_*\".+)"; //we might want to leave the underscores afterall
-
-            //return GetXmlInternal(response, sensorId, basicMatchRegex, nameRegex, null);
-            var inputXml = GetInputXml(response, basicMatchRegex, nameRegex);
-            var ddlXml = GetDropDownListXml(response, nameRegex, null);
-            var textXml = GetTextAreaXml(response, nameRegex);
+            var inputXml = GetInputXml(response);
+            var ddlXml = GetDropDownListXml(response);
+            var textXml = GetTextAreaXml(response, standardNameRegex);
             var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
 
             var elm = new XElement("properties", inputXml, ddlXml, textXml, dependencyXml);
@@ -47,17 +44,36 @@ namespace PrtgAPI.Objects.Undocumented
             return null;
         }
 
-        internal static List<XElement> GetInputXml(string response, string basicMatchRegex, string nameRegex, Func<string, string> nameTransformer = null)
+        internal static List<Input> GetInput(string response, string matchRegex = null, string nameRegex = null, Func<string, string> nameTransformer = null)
         {
             if (nameTransformer == null)
                 nameTransformer = v => v;
 
-            var matches = Regex.Matches(response, basicMatchRegex);
+            if (matchRegex == null)
+                matchRegex = basicMatchRegex;
+
+            if (nameRegex == null)
+                nameRegex = standardNameRegex;
+
+            var matches = Regex.Matches(response, matchRegex);
             var inputs = (matches.Cast<Match>().Select(match => match.Value)).ToList();
 
             var properties = GetProperties(inputs, nameRegex, nameTransformer);
 
-            var props = FilterInputTags(properties); //.Select(v => new XElement($"injected_{v.Value.Name}", v.Value.Value));
+            return properties;
+        }
+
+        internal static List<XElement> GetInputXml(string response, string matchRegex = null, string nameRegex = null, Func<string, string> nameTransformer = null)
+        {
+            if (matchRegex == null)
+                matchRegex = basicMatchRegex;
+
+            if (nameRegex == null)
+                nameRegex = standardNameRegex;
+
+            var properties = GetInput(response, matchRegex, nameRegex, nameTransformer);
+
+            var props = FilterInputTags(properties);
 
             var list = new List<XElement>();
 
@@ -83,12 +99,31 @@ namespace PrtgAPI.Objects.Undocumented
             return list;
         }
 
-        internal static List<XElement> GetDropDownListXml(string response, string nameRegex, Func<string, string> nameTransformer)
+        internal static List<DropDownList> GetDropDownList(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
         {
+            if (nameTransformer == null)
+                nameTransformer = v => v;
+
+            if (nameRegex == null)
+                nameRegex = standardNameRegex;
+
             var ddl = Regex.Matches(response, "<select.+?>.*?<\\/select>", RegexOptions.Singleline);
             var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();
 
             var listObjs = GetLists(lists, nameRegex, nameTransformer);
+
+            return listObjs;
+        }
+
+        internal static List<XElement> GetDropDownListXml(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
+        {
+            if (nameTransformer == null)
+                nameTransformer = v => v;
+
+            if (nameRegex == null)
+                nameRegex = standardNameRegex;
+
+            var listObjs = GetDropDownList(response, nameRegex, nameTransformer);
 
             if (listObjs.Any(l => l.Options.Any(o => o.Selected)))
             {

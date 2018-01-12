@@ -10,6 +10,8 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class Parameters
     {
+        internal bool Cookie { get; set; }
+
         private readonly Dictionary<Parameter, object> parameters = new Dictionary<Parameter, object>();
 
         /// <summary>

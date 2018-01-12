@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -77,7 +78,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
             var requestEngine = client.GetType().GetField("requestEngine", bindingFlags).GetValue(client);
 
-            var args = new[] { htmlFunction, typeof(Parameters.Parameters) };
+            var args = new[] { htmlFunction, typeof(Parameters.Parameters), typeof(Func<HttpResponseMessage, string>) };
 
             var method = requestEngine.GetType().GetMethod("ExecuteRequest", bindingFlags, null, args, null);
 
@@ -88,7 +89,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 Channel = channel
             };
 
-            method.Invoke(requestEngine, new[] { editSettings, param });
+            method.Invoke(requestEngine, new[] { editSettings, param, null });
         }
 
         private void AssertEquals(string fieldName, object field1, object field2)

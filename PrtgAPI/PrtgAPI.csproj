@@ -40,14 +40,17 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\LengthLimitAttribute.cs" />
     <Compile Include="Attributes\LiteralValueAttribute.cs" />
     <Compile Include="Attributes\MutuallyExclusiveAttribute.cs" />
+    <Compile Include="Attributes\NamePrefixAttribute.cs" />
     <Compile Include="Attributes\NumericEnumAttribute.cs" />
     <Compile Include="Attributes\SecondaryPropertyAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\WmiTimeoutMethod.cs" />
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
+    <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\RestartStage.cs" />
     <Compile Include="Enums\Serialization\ObjectType.cs" />
     <Compile Include="Enums\Serialization\SensorType.cs" />
@@ -113,6 +117,10 @@
     <Compile Include="Objects\SensorHistoryRecord.cs" />
     <Compile Include="Objects\SensorTypeDescriptor.cs" />
     <Compile Include="Objects\Ticket.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\SensorTargetProgress.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\ExeFileTarget.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\SensorTarget.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\WmiServiceTarget.cs" />
     <Compile Include="Objects\Undocumented\ContainerSettings.cs" />
     <Compile Include="Objects\Undocumented\DeviceOrGroupSettings.cs" />
     <Compile Include="Objects\Undocumented\DeviceSettings.cs" />
@@ -135,12 +143,15 @@
     <Compile Include="Parameters\ObjectData\TotalObjectsParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
     <Compile Include="Parameters\Base\BaseActionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetProgressParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\CloneDeviceParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\CloneSensorOrGroupParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\MoveObjectParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewDeviceParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewGroupParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewObjectParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\WmiServiceSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\PauseRequestParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RenameParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RestartProbeParameters.cs" />
@@ -159,6 +170,7 @@
     <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTarget.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
@@ -202,6 +214,7 @@
     <Compile Include="PowerShell\Progress\ProgressStage.cs" />
     <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
     <Compile Include="PowerShell\Progress\ProgressTask.cs" />
+    <Compile Include="PowerShell\Progress\RecordAnalyzer.cs" />
     <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
     <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
@@ -407,6 +420,7 @@
     <Content Include="PowerShell\Resources\about_ChannelSettings.help.txt" />
     <Content Include="PowerShell\Resources\about_ObjectSettings.help.txt" />
     <Content Include="PowerShell\Resources\about_PrtgAPI.help.txt" />
+    <Content Include="PowerShell\Resources\about_SensorParameters.help.txt" />
     <Content Include="PowerShell\Resources\about_SensorSettings.help.txt" />
     <Content Include="PowerShell\Resources\PrtgAPI.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

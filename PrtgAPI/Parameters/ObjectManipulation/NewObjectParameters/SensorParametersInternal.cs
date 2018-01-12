@@ -14,9 +14,11 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="SensorParametersInternal"/> class.
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>
+        /// <param name="priority">The priority of the sensor, controlling how the sensor is displayed in table lists.</param>
         /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        internal SensorParametersInternal(string sensorName, bool inheritTriggers, SensorType sensorType) : base(sensorName, inheritTriggers, sensorType)
+        internal SensorParametersInternal(string sensorName, Priority priority, bool inheritTriggers, SensorType sensorType) :
+            base(sensorName, priority, inheritTriggers, sensorType)
         {
         }
 

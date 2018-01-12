@@ -1,0 +1,41 @@
+﻿TOPIC
+    about_SensorParameters
+
+SHORT DESCRIPTION
+    Describes values that can be used with New-SensorParameters for creating sensor creation parameters for different
+    sensor types.
+
+LONG DESCRIPTION
+    PrtgAPI provides a variety of built-in sensor parameter types for creating brand new sensors within PRTG,
+    instantiable via the New-SensorParameters cmdlet. While each set of parameters provide a number of different
+    properties, the New-SensorParameters cmdlet provides the capability of setting the most critical (usually
+    mandatory) properties of each type. Usually, this consists of the proposed sensor name, plus an additional
+    value that specifies the target of the sensor (such as the EXE/Script name of an EXE/Script Advanced sensor).
+
+    The following table outlines the values that can be specified to New-SensorParameters for all supported sensor
+    types. When invoking New-SensorParameters, all values are both optional as well as positional. If mandatory fields
+    are not filled in by the time the parameters are passed to the Add-Sensor cmdlet, Add-Sensor will throw an
+    exception specifying the fields that were missing values
+
+    | Sensor Type | First    | Second   | Description                                                                |
+    | ----- ----- | -------- | -------- | -------------------------------------------------------------------------- |
+    | ExeXml      | Name     | EXE Name | EXE/Script Advanced sensor. EXE Name is mandatory.                         |
+    | WmiService  | Services |          | WMI Service sensor. Name dynamic. See also: Get-SensorTarget -WmiService   |
+
+EXAMPLES
+    Create an EXE/Script Advanced sensor named "test" against script "testScript.ps1"
+
+    C:\> $params = New-SensorParameters ExeXml "test" "testScript.ps1"
+
+    Create a WMI Service sensor for all services whose name contains "Exchange"
+
+    C:\> $device = Get-Device -Id 1001
+    C:\> $services = $device | Get-SensorTarget WmiService *exchange*
+    C:\> $params = New-SensorParameters WmiService $services
+    C:\> $device | Add-Sensor $params
+
+SEE ALSO
+    PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki
+    New-SensorParameters
+    Get-SensorTarget
+    Add-Sensor

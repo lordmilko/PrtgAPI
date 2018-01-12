@@ -11,9 +11,13 @@ namespace PrtgAPI.Request
         private WebClient syncClient = new WebClient();
         private HttpClient asyncClient = new HttpClient();
 
+        private HttpClientHandler handler = new HttpClientHandler();
+        private CookieContainer cookies = new CookieContainer();
+
         public PrtgWebClient()
         {
-            //asyncClient.Timeout = new TimeSpan(0, 0, 10);
+            handler.CookieContainer = cookies;
+            asyncClient = new HttpClient(handler);
         }
 
         public Task<HttpResponseMessage> GetSync(string address)

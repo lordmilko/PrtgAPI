@@ -239,6 +239,15 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
-        SensorType
+        SensorType,
+
+        /// <summary>
+        /// The details of a WMI Service to create.
+        /// </summary>
+        [Undocumented]
+        [LengthLimit(30)]
+        [ParameterType(ParameterType.MultiParameter)]
+        [Description("service__check")]
+        Service
     }
 }

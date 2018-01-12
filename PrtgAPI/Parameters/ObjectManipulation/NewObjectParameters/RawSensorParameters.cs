@@ -14,8 +14,9 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
+        /// <param name="priority">The priority of the sensor, controlling how the sensor is displayed in table lists.</param>
         /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
-        public RawSensorParameters(string sensorName, string sensorType, bool inheritTriggers = true) : base(sensorName, inheritTriggers, sensorType)
+        public RawSensorParameters(string sensorName, string sensorType, Priority priority = Priority.Three, bool inheritTriggers = true) : base(sensorName, priority, inheritTriggers, sensorType)
         {
         }
 

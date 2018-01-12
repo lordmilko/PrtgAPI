@@ -13,12 +13,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void AddSensor_AddsWithRawParameters()
         {
-            var parameters = new RawSensorParameters("raw c# sensor", "exexml", false);
+            var parameters = new RawSensorParameters("raw c# sensor", "exexml", Priority.Four, false);
             parameters.Parameters.AddRange(
                 new List<CustomParameter>
                 {
                     new CustomParameter("tags_", "xmlexesensor"),
-                    new CustomParameter("priority_", "4"),
                     new CustomParameter("exefile_", "test.ps1|test.ps1||"),
                     new CustomParameter("exeparams_", "arg1 arg2 arg3"),
                     new CustomParameter("environment_", 1),

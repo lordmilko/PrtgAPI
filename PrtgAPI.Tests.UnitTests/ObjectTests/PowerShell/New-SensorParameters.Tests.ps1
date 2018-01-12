@@ -71,7 +71,7 @@ Describe "New-SensorParameters" {
             $params = New-SensorParameters ExeXml
 
             SetValue $params "Name" "New Sensor"
-            setValue $params "Tags" "newTag"
+            SetValue $params "Tags" "newTag"
             SetValue $params "Tags" @("tag1", "tag2")
             SetValue $params "Priority" "Four"
             SetValue $params "ExeFile" "stuff.ps1"
@@ -85,6 +85,38 @@ Describe "New-SensorParameters" {
             SetValue $params "Interval" "00:00:30"
             SetValue $params "IntervalErrorMode" "ThreeWarningsThenDown"
             SetValue $params "InheritTriggers" $false
+        }
+    }
+
+    Context "WmiServiceParameters" {
+
+        It "can set a value on each property" {
+            SetResponseAndClient "WmiServiceTargetResponse"
+            $device = Run Device { Get-Device }
+            $services = $device | Get-SensorTarget WmiService
+            $services.Count | Should BeGreaterThan 1
+
+            $params = New-SensorParameters WmiService
+
+            SetValue $params "Tags" "newTag"
+            SetValue $params "Tags" @("tag1", "tag2")
+            SetValue $params "Priority" "Four"
+            SetValue $params "Services" $services
+            SetValue $params "StartStopped" $true
+            SetValue $params "NotifyStarted" $false
+            SetValue $params "MonitorPerformance" $true
+            SetValue $params "InheritTriggers" $false
+        }
+
+        It "sets services with a single service" {
+            SetResponseAndClient "WmiServiceTargetResponse"
+            $device = Run Device { Get-Device }
+            $services = $device | Get-SensorTarget WmiService *prtgcore*
+            $services.Count | Should Be 1
+
+            $params = New-SensorParameters WmiService $services
+
+            $params.Services.Count | Should Be 1
         }
     }
 }

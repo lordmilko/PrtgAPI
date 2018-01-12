@@ -26,5 +26,23 @@ namespace PrtgAPI.Tests.UnitTests
                     Assert.IsFalse(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
             }
         }
+
+        public static void Throws<T>(Action action, string message) where T : Exception
+        {
+            try
+            {
+                action();
+
+                Assert.Fail($"Expected an assertion of type {typeof (T)} to be thrown, however no exception occurred");
+            }
+            catch (T ex)
+            {
+                Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual(typeof (T), ex.GetType(), "Incorrect exception type thrown");
+            }
+        }
     }
 }

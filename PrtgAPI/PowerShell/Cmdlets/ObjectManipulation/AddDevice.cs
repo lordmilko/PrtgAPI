@@ -82,7 +82,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ParameterSetName == "Basic")
             {
-                Parameters = new NewDeviceParameters(Name, string.IsNullOrEmpty(Host) ? Name : Host);
+                Parameters = new NewDeviceParameters(Name, GetHost());
 
                 if (AutoDiscover)
                 {
@@ -91,6 +91,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             base.ProcessRecordEx();
+        }
+
+        private string GetHost()
+        {
+            return string.IsNullOrEmpty(Host) ? Name : Host;
+        }
+
+        internal override string WhatIfDescription()
+        {
+            return $"(Host: {GetHost()}) ";
         }
 
         /// <summary>

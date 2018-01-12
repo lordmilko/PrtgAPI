@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -1157,23 +1158,29 @@ namespace PrtgAPI
 
         internal void AddObject(int objectId, NewObjectParameters parameters, CommandFunction function)
         {
-            ValidateObjectParameters(parameters);
+            var lengthLimit = ValidateObjectParameters(parameters);
 
             var internalParams = GetInternalNewObjectParameters(objectId, parameters);
 
-            requestEngine.ExecuteRequest(function, internalParams);
+            if (lengthLimit.Count > 0)
+                AddObjectWithExcessiveValue(lengthLimit, internalParams, function);
+            else
+                requestEngine.ExecuteRequest(function, internalParams);
         }
 
         private async Task AddObjectAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
         {
-            ValidateObjectParameters(parameters);
+            var lengthLimit = ValidateObjectParameters(parameters);
 
             var internalParams = GetInternalNewObjectParameters(objectId, parameters);
 
-            await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+            if (lengthLimit.Count > 0)
+                await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, function).ConfigureAwait(false);
+            else
+                await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
         }
 
-        private void ValidateObjectParameters(NewObjectParameters parameters)
+        private List<KeyValuePair<Parameter, object>> ValidateObjectParameters(NewObjectParameters parameters)
         {
             var properties = parameters.GetType().GetNormalProperties().ToList();
 
@@ -1189,8 +1196,22 @@ namespace PrtgAPI
                     {
                         throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
                     }
+
+                    var list = val as IEnumerable;
+
+                    if (list != null)
+                    {
+                        var casted = list.Cast<object>();
+
+                        if (!casted.Any())
+                            throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty list was specified");
+                    }
                 }
             }
+
+            var lengthLimit = parameters.GetParameters().Where(p => p.Key.GetEnumAttribute<LengthLimitAttribute>() != null).ToList();
+
+            return lengthLimit;
         }
 
         private Parameters.Parameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
@@ -1207,6 +1228,68 @@ namespace PrtgAPI
             return newParams;
         }
 
+            #region Sensor Targets
+
+        /// <summary>
+        /// Retrieves all EXE/Script files that can be used for creating an EXE/Script Advanced sensor on a specified device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve EXE/Script files for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public List<ExeFileTarget> GetExeXmlFiles(int deviceId, Func<int, bool> progressCallback = null) =>
+            ResolveSensorTargets(deviceId, SensorType.ExeXml, progressCallback, ExeFileTarget.GetFiles);
+
+        /// <summary>
+        /// Asynchronously retrieves all EXE/Script files that can be used for creating an EXE/Script Advanced sensor on a specified device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve EXE/Script files for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public async Task<List<ExeFileTarget>> GetExeXmlFilesAsync(int deviceId, Func<int, bool> progressCallback = null) =>
+            await ResolveSensorTargetsAsync(deviceId, SensorType.ExeXml, progressCallback, ExeFileTarget.GetFiles).ConfigureAwait(false);
+
+        /// <summary>
+        /// Retrieves all WMI Services that can be used for creating a WMI Service sensor on a specified device.<para/>
+        /// If the device does not have any Windows Credentials defined on it (either explicitly or through inheritance) this method will throw a <see cref="PrtgRequestException"/>.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve WMI Services for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public List<WmiServiceTarget> GetWmiServices(int deviceId, Func<int, bool> progressCallback = null) =>
+            ResolveSensorTargets(deviceId, SensorType.WmiService, progressCallback, WmiServiceTarget.GetServices);
+
+        /// <summary>
+        /// Asynchronously retrieves all WMI Services that can be used for creating a WMI Service sensor on a specified device.<para/>
+        /// If the device does not have any Windows Credentials defined on it (either explicitly or through inheritance) this method will throw a <see cref="PrtgRequestException"/>.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve WMI Services for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public async Task<List<WmiServiceTarget>> GetWmiServicesAsync(int deviceId, Func<int, bool> progressCallback = null) =>
+            await ResolveSensorTargetsAsync(deviceId, SensorType.WmiService, progressCallback, WmiServiceTarget.GetServices).ConfigureAwait(false);
+
+        private string GetSensorTargetTmpId(HttpResponseMessage message)
+        {
+            var id = Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+)(tmpid=)(.+)", "$3");
+
+            return id;
+        }
+
+        private void ValidateSensorTargetProgressResult(SensorTargetProgress p)
+        {
+            if (p.TargetUrl.StartsWith("addsensorfailed"))
+            {
+                var parts = UrlHelpers.CrackUrl(p.TargetUrl);
+                var message = parts["errormsg"];
+
+                if (message.StartsWith("Incomplete connection settings"))
+                    throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
+
+                throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message}");
+            }
+        }
+
+            #endregion
         #endregion
         #region Sensor State
 
@@ -1599,8 +1682,7 @@ namespace PrtgAPI
 
         #endregion
         #region Set Object Properties
-
-        #region Normal
+            #region Normal
 
         /// <summary>
         /// Modify properties and settings of a PRTG Object.<para/>
@@ -1690,7 +1772,7 @@ namespace PrtgAPI
             await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, property, value), sensorIds.Length).ConfigureAwait(false);
 
         #endregion Channel
-        #region Custom
+            #region Custom
 
         /// <summary>
         /// Modify unsupported properties and settings of a PRTG Object.
@@ -1732,7 +1814,7 @@ namespace PrtgAPI
         public async Task SetObjectPropertyRawAsync(int[] objectIds, string property, string value) =>
             await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectIds, property, value), objectIds.Length).ConfigureAwait(false);
 
-        #endregion
+            #endregion
 
         private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
             requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ParseSetObjectPropertyUrl(numObjectIds, m));

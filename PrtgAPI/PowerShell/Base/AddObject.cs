@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Attributes;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
@@ -44,25 +46,30 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"{Parameters.Name} ({Destination.BaseType} ID: {Destination.Id}) (Destination: {Destination.Name} (ID: {Destination.Id}))"))
+            if (ShouldProcess($"{Parameters.Name} {WhatIfDescription()}(Destination: {Destination.Name} (ID: {Destination.Id}))"))
             {
                 ExecuteOperation(() =>
                 {
                     if (Resolve)
                     {
+                        var nameOperator = FilterOperator.Equals;
+
+                        if (Attribute.GetCustomAttribute(typeof (Parameter), typeof (NamePrefixAttribute)) == null)
+                            nameOperator = FilterOperator.Contains;
+
                         var filters = new[]
                         {
                             new SearchFilter(Property.ParentId, Destination.Id),
-                            new SearchFilter(Property.Name, Parameters.Name)
+                            new SearchFilter(Property.Name, nameOperator, Parameters.Name)
                         };
 
                         var obj = ResolveWithDiff(
                             () => client.AddObject(Destination.Id, Parameters, function),
                             () => GetObjects(filters),
                             Except
-                        ).OrderBy(o => o.Id).First();
+                        ).OrderBy(o => o.Id);
 
-                        WriteObject(obj);
+                        WriteObject(obj, true);
                     }
                     else
                         client.AddObject(Destination.Id, Parameters, function);
@@ -75,6 +82,11 @@ namespace PrtgAPI.PowerShell.Base
             var beforeIds = before.Select(b => b.Id).ToList();
 
             return after.Where(a => !beforeIds.Contains(a.Id)).ToList();
+        }
+
+        internal virtual string WhatIfDescription()
+        {
+            return string.Empty;
         }
 
         /// <summary>

@@ -5,6 +5,7 @@
  * Please do not modify this file directly - modify PrtgClient.AsyncHelpers.tt instead *
  ***************************************************************************************/
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Linq;
+using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Parameters;
 
@@ -243,6 +246,7 @@ for(int i = 0; i < 2; i++)
         //######################################
         // WaitForCoreRestart
         //######################################
+
 <#
 for(int i = 0; i < 2; i++)
 {
@@ -275,6 +279,120 @@ for(int i = 0; i < 2; i++)
                 }
             }
         }
+
+<#
+}
+#>
+        //######################################
+        // AddObjectWithExcessiveValue
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("AddObjectWithExcessiveValue", "void", i) #>(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        {
+            var limitParam = lengthLimit.First();
+
+            var limit = limitParam.Key.GetEnumAttribute<LengthLimitAttribute>().Length;
+
+            if (limitParam.Value is IEnumerable)
+            {
+                var list = ((IEnumerable)limitParam.Value).Cast<object>().ToList();
+
+                var count = list.Count();
+
+                if (count > limit)
+                {
+                    for (int i = 0; i < count; i += limit)
+                    {
+                        var thisRequest = list.Skip(i).Take(limit);
+
+                        internalParams[limitParam.Key] = thisRequest;
+
+                        <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+                    }
+                }
+                else
+                    <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+            }
+            else
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+        }
+
+<#
+}
+#>
+        //######################################
+        // ResolveSensorTargets
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            <#= DeclareFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "GetSensorTargetTmpId", i) #>;
+
+            var tmpId = Convert.ToInt32(<#= CallFunction("requestEngine.ExecuteRequest", "CommandFunction.AddSensor2, parameters, getSensorTargetTmpId", i) #>);
+
+            var response = <#= CallFunction("WaitForSensorTargetResolution", "deviceId, tmpId, progressCallback", i) #>;
+
+            if (response == null)
+                return null;
+
+            return parser(response);
+        }
+
+<#
+}
+#>
+        //######################################
+        // WaitForSensorTargetResolution
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("WaitForSensorTargetResolution", "string", i) #>(int deviceId, int tmpId, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
+
+            SensorTargetProgress p;
+            bool continueQuery = true;
+
+            do
+            {
+                p = <#= CallGenericFunction("GetObject", "SensorTargetProgress", "JsonFunction.GetAddSensorProgress, parameters", i) #>;
+
+                if(progressCallback != null)
+                    continueQuery = progressCallback(p.Percent);
+
+                if (p.Percent < 100)
+                {
+                    if (!continueQuery)
+                        break;
+
+#if !DEBUG
+                    <#= Sleep(1000, i) #>
+#endif
+                }
+            } while (p.Percent < 100);
+
+            if (!continueQuery)
+                return null;
+
+            ValidateSensorTargetProgressResult(p);
+
+            var page = <#= CallFunction("requestEngine.ExecuteRequest", "HtmlFunction.AddSensor4, parameters", i) #>;
+
+            return page;
+        }
 <#
 if(i == 0)
     WriteLine("");
@@ -282,7 +400,6 @@ if(i == 0)
 #>
     }
 }
-
 <#+
     public string GetSignature(string name, string returnType, int i)
     {
@@ -307,6 +424,14 @@ if(i == 0)
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
     }
 
+    public string CallGenericFunction(string name, string type, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}<{type}>({parameters})";
+        else
+            return $"await {name}Async<{type}>({parameters}).ConfigureAwait(false)";
+    }
+
     public string AwaitOrForceResult(string function, int i)
     {
         if(i == 0)
@@ -321,5 +446,14 @@ if(i == 0)
             return $"Thread.Sleep({duration});";
         else
             return $"await Task.Delay({duration}).ConfigureAwait(false);";
+    }
+
+    public string DeclareFunc1(string funcName, string args, string returnType, string function, int i)
+    {
+        if(i == 0)
+            return $"Func<{args}, {returnType}> {funcName} = {function}";
+        else
+            return $"Func<{args}, Task<{returnType}>> {funcName} = o => Task.FromResult({function}(o))";
+
     }
 #>

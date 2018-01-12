@@ -57,14 +57,30 @@ namespace PrtgAPI
         [Description("sortsubobjects.htm")]
         SortSubObjects,
 
+        /// <summary>
+        /// Initiates a query for device specific information required to create a sensor.
+        /// </summary>
+        [Undocumented]
+        [Description("controls/addsensor2.htm")]
+        AddSensor2,
+
+        /// <summary>
+        /// Creates a new sensor.
+        /// </summary>
         [Undocumented]
         [Description("addsensor5.htm")]
         AddSensor5,
 
+        /// <summary>
+        /// Creates a new device.
+        /// </summary>
         [Undocumented]
         [Description("adddevice2.htm")]
         AddDevice2,
 
+        /// <summary>
+        /// Creates a new group.
+        /// </summary>
         [Undocumented]
         [Description("addgroup2.htm")]
         AddGroup2,

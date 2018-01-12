@@ -76,7 +76,8 @@ namespace PrtgAPI.Objects.Undocumented
         /// <summary>
         /// How raw sensor results should be stored for debugging purposes. Corresponds to:<para/>
         ///     Debug Options (WMI) -> Sensor Result<para/>
-        ///     Sensor Settings (EXE/XML) -> EXE Result
+        ///     Sensor Settings (EXE/XML) -> EXE Result<para/>
+        ///     WMI Service Monitor -> Sensor Result
         /// </summary>
         [XmlElement("injected_writeresult")]
         public DebugMode? DebugMode { get; set; }
@@ -172,16 +173,10 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_intervalgroup")]
         public bool? InheritInterval { get; set; }
 
-        /// <summary>
-        /// The raw interval of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("injected_interval")]
-        protected string intervalStr { get; set; }
+        internal string intervalStr { get; set; }
 
-        /// <summary>
-        /// The backing field of this object's <see cref="Interval"/>. This field is for internal use only.
-        /// </summary>
-        protected ScanningInterval interval;
+        private ScanningInterval interval;
 
         /// <summary>
         /// The scanning interval of this object.<para/>
@@ -220,11 +215,8 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_scheduledependency")]
         public bool? InheritDependency { get; set; }
 
-        /// <summary>
-        /// The raw schedule of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("injected_schedule")]
-        protected string scheduleStr { get; set; }
+        internal string scheduleStr { get; set; }
 
         private Lazy<Schedule> schedule;
 
@@ -250,11 +242,8 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_maintenable")]
         public bool? MaintenanceEnabled { get; set; }
 
-        /// <summary>
-        /// The raw maintenance start of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("injected_maintstart")]
-        protected string maintenanceStartStr { get; set; }
+        internal string maintenanceStartStr { get; set; }
 
         private Lazy<DateTime> maintenanceStart;
 
@@ -273,11 +262,8 @@ namespace PrtgAPI.Objects.Undocumented
             }
         }
 
-        /// <summary>
-        /// The raw maintenance end of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("injected_maintend")]
-        protected string maintenanceEndStr { get; set; }
+        internal string maintenanceEndStr { get; set; }
 
         private Lazy<DateTime> maintenanceEnd;
 
@@ -338,12 +324,14 @@ namespace PrtgAPI.Objects.Undocumented
 
         //Duplicate properties: DebugMode, Timeout
 
+        [XmlElement("injected_exefile")]
+        internal string exeFileStr { get; set; }
+
         /// <summary>
         /// Name of the EXE or Script File the sensor executes.<para/>
         /// Corresponds to Sensor Settings -> EXE/Script
         /// </summary>
-        [XmlElement("injected_exefile")]
-        public string ExeName { get; set; }
+        public ExeFileTarget ExeFile => exeFileStr;
 
         /// <summary>
         /// Parameters that will be passed to the specified EXE/Script file.<para/>
@@ -447,6 +435,38 @@ namespace PrtgAPI.Objects.Undocumented
         /// </summary>
         [XmlElement("injected_missingdata")]
         public FactoryMissingDataMode? FactoryMissingDataMode { get; set; }
+
+        #endregion
+        #region WMI Service Monitor
+
+        //Duplicate properties: DebugMode
+
+        /// <summary>
+        /// Whether PRTG should automatically start this item if it detects it has stopped<para/>
+        /// Corresponds to WMI Service Monitor -> If Service is Not Running.
+        /// </summary>
+        [XmlElement("injected_restart")]
+        public bool? StartStopped { get; set; }
+
+        /// <summary>
+        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object.<para/>
+        /// Corresponds to WMI Service Monitor -> If Service is Restarted.
+        /// </summary>
+        [XmlElement("injected_monitorchange")]
+        public bool? NotifyStarted { get; set; }
+
+        /// <summary>
+        /// Whether PRTG should monitor just basic information for the target of the sensor, or should also collect additional performance metrics.<para/>
+        /// Corresponds to WMI Service Monitor -> Monitoring.
+        /// </summary>
+        [XmlElement("injected_monitorextended")]
+        public bool? MonitorPerformance { get; set; }
+
+        /// <summary>
+        /// The name of the service. Is not shown in the PRTG UI; only the Service Display Name is shown.
+        /// </summary>
+        [XmlElement("injected_service")]
+        public string ServiceName { get; set; }
 
         #endregion
     }
