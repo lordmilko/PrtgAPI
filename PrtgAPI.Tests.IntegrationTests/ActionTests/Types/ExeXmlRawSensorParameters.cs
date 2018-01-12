@@ -6,9 +6,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
 {
     public class ExeXmlRawSensorParameters : RawSensorParameters
     {
-        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeName) : base(sensorName, sensorType)
+        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile) : base(sensorName, sensorType)
         {
-            ExeName = exeName;
+            ExeFile = exeFile;
 
             Tags = new[] {"xmlexesensor"};
             Priority = Priority.Three;
@@ -36,7 +36,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
         }
 
         [RequireValue(true)]
-        public string ExeName
+        public string ExeFile
         {
             get { return ((ScriptName)GetCustomParameterInternal("exefile_")).Name; }
             set { SetCustomParameterInternal("exefile_", new ScriptName(value)); }

@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="ExeXmlSensorParameters"/> class.
         /// </summary>
-        /// <param name="exeName">The name of the EXE or Script this sensor will execute. Must be located in the Custom Sensors\EXEXML folder on the target device's probe server.</param>
+        /// <param name="exeFile">The EXE or Script this sensor will execute. Must be located in the Custom Sensors\EXEXML folder on the target device's probe server.</param>
         /// <param name="sensorName">The name to use for this sensor.</param>
         /// <param name="exeParameters">Parameters to pass to the <paramref name="exeName"/> on each scan.</param>
         /// <param name="priority">The priority of the sensor, controlling how the sensor is displayed in table lists.</param>
@@ -33,10 +33,10 @@ namespace PrtgAPI.Parameters
             StandardScanningInterval interval = StandardScanningInterval.SixtySeconds, IntervalErrorMode intervalErrorMode = IntervalErrorMode.OneWarningThenDown,
             bool inheritTriggers = true, params string[] tags) : base(sensorName, inheritTriggers, SensorType.ExeXml)
         {
-            if (exeName == null)
-                throw new ArgumentNullException(nameof(exeName));
+            if (exeFile == null)
+                throw new ArgumentNullException(nameof(exeFile));
 
-            ExeName = exeName;
+            ExeFile = exeFile;
 
             if (tags == null || tags.Length == 0)
                 Tags = new[] { "xmlexesensor" };
@@ -63,8 +63,7 @@ namespace PrtgAPI.Parameters
             set { SetCustomParameterEnumXml(ObjectProperty.Priority, value); }
         }
 
-        /// <summary>
-        /// The name of the EXE or Script to execute on each scan.
+        /// The EXE or Script file to execute on each scan.
         /// </summary>
         [RequireValue(true)]
         public string ExeName

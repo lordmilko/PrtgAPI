@@ -20,7 +20,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// by default are named "XML Custom EXE/Script Sensor").</para>
     /// 
     /// <para type="description">In addition to the sensor name, certain sensor types contain additional mandatory fields
-    /// that must be populated before attempting to add the sensor (such as the ExeName of an EXE/Script Advanced sensor).
+    /// that must be populated before attempting to add the sensor (such as the ExeFile of an EXE/Script Advanced sensor).
     /// New-SensorParameters optionally allows you to specify the value of the primary mandatory field of the specified
     /// type using the -Value parameter. Fields that require values contain a value of $null by default, however not all
     /// fields that are $null are necessarily mandatory. If you attempt to add a natively supported type with missing
@@ -51,14 +51,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </example>
     /// <example>
     ///     <code>C:\> $params = New-SensorParameters ExeXml "Custom Script"</code>
-    ///     <para>C:\> $params.ExeName = "CustomScript.ps1"</para>
+    ///     <para>C:\> $params.ExeFile = "CustomScript.ps1"</para>
     ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
     ///     <para>Create a new EXE/Script Advanced sensor on the device dc-1 using the name "Custom Script", that executes the file "CustomScript.ps1", specifying the script name after the object has been created</para>
     ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> $params = New-SensorParameters ExeXml</code>
-    ///     <para>C:\> $params.ExeName = "CheckStatus.ps1"</para>
+    ///     <para>C:\> $params.ExeFile = "CheckStatus.ps1"</para>
     ///     <para>C:\> Get-Device -Id 1001 | Add-Sensor $params</para>
     ///     <para>Create a new EXE/Script Advanced sensor on the device with ID 1001 using the name "XML Custom EXE/Script Sensor" that executes the file "CheckStatus.ps1"</para>
     ///     <para/>

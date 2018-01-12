@@ -115,7 +115,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
     It "Sensor Settings (EXE/XML)" {
         $object = Get-Sensor -Id (Settings ExeXml)
 
-        SetValue "ExeName" "blah.ps1"
+        SetValue "ExeFile" "blah.ps1"
         SetValue "ExeParameters" "test parameters `"with test quotes`""
         SetValue "SetExeEnvironmentVariables" $true
         SetValue "UseWindowsAuthentication" $true

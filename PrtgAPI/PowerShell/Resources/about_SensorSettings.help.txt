@@ -76,7 +76,7 @@ LONG DESCRIPTION
 
     | Sensor Settings (EXE/XML)  | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
-    | ExeName                    |    Yes    | EXE/Script file to execute                                      |
+    | ExeFile                    |    Yes    | EXE/Script file to execute                                      |
     | ExeParameters              |    Yes    | Parameters to pass to EXE/Script file                           |
     | SetExeEnvironmentVariables |    Yes    | Whether to set PRTG variables as environment variables          |
     | UseWindowsAuthentication   |    Yes    | Whether run with credentials of Device or of Probe Service      |

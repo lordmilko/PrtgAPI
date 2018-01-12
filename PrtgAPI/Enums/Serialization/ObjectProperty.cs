@@ -763,7 +763,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Settings -> EXE/Script
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        ExeName,
+        ExeFile,
 
         /// <summary>
         /// Parameters that will be passed to the specified EXE/Script file.<para/>

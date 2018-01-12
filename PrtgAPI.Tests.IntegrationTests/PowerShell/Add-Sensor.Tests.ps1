@@ -9,7 +9,7 @@ Describe "Add-Sensor_IT" {
                 Name = "New Sensor"
                 Tags = @("new sensor")
                 Priority = "Four"
-                ExeName = "blah.ps1"
+                ExeFile = "blah.ps1"
                 ExeParameters = "arg1 arg2 arg 3"
                 SetExeEnvironmentVariables = $true
                 UseWindowsAuthentication = $true
@@ -56,7 +56,7 @@ Describe "Add-Sensor_IT" {
             CheckValue "Name"
             $properties.Tags -join " " | Should Be  $values.Tags
             CheckValue "Priority"
-            CheckValue "ExeName"
+            CheckValue "ExeFile"
             CheckValue "ExeParameters"
             CheckValue "SetExeEnvironmentVariables"
             CheckValue "UseWindowsAuthentication"
@@ -108,7 +108,7 @@ Describe "Add-Sensor_IT" {
             $properties.Name | Should Be "my raw sensor"
             $properties.Tags | Should Be "xmlexesensor"
             $properties.Priority | Should Be "Four"
-            $properties.ExeName | Should Be "test.ps1"
+            $properties.ExeFile | Should Be "test.ps1"
             $properties.ExeParameters | Should Be "arg1 arg2 arg3"
             $properties.SetExeEnvironmentVariables | Should Be $true
             $properties.UseWindowsAuthentication | Should Be $true

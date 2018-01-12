@@ -33,7 +33,7 @@ Describe "New-SensorParameters" {
 
         $params.GetType().Name | Should Be "ExeXmlSensorParameters"
         $params.Name | Should Be "custom name"
-        $params.ExeName | Should Be "blah.ps1"
+        $params.ExeFile | Should Be "blah.ps1"
     }
 
     It "can use raw parameters" {        
@@ -74,7 +74,7 @@ Describe "New-SensorParameters" {
             setValue $params "Tags" "newTag"
             SetValue $params "Tags" @("tag1", "tag2")
             SetValue $params "Priority" "Four"
-            SetValue $params "ExeName" "stuff.ps1"
+            SetValue $params "ExeFile" "stuff.ps1"
             SetValue $params "ExeParameters" "arg1 arg2 arg3"
             SetValue $params "SetExeEnvironmentVariables" $true
             SetValue $params "UseWindowsAuthentication" $true

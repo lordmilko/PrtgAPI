@@ -77,7 +77,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                 Assert2.AreEqual(properties.Name, "raw c# sensor", "Name was not correct");
                 Assert2.AreEqual(properties.Tags.First(), new[] {"xmlexesensor"}.First(), "Tags was not correct");
                 Assert2.AreEqual(properties.Priority, Priority.Four, "Priority was not correct");
-                Assert2.AreEqual(properties.ExeName, "test.ps1", "ExeName was not correct");
+                Assert2.AreEqual(properties.ExeFile, "test.ps1", "ExeFile was not correct");
                 Assert2.AreEqual(properties.ExeParameters, "arg1 arg2 arg3", "ExeParameters was not correct");
                 Assert2.AreEqual(properties.SetExeEnvironmentVariables, true, "SetExeEnvironmentVariables was not correct");
                 Assert2.AreEqual(properties.UseWindowsAuthentication, true, "UseWindowsAuthentication was not correct");
