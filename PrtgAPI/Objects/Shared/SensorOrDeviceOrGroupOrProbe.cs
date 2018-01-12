@@ -58,11 +58,8 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.NotificationTypes))]
         public NotificationTypes NotificationTypes => notificationTypes == null ? new NotificationTypes(string.Empty) : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
-        /// <summary>
-        /// Raw notification types value of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("notifiesx")]
-        protected string notificationTypes { get; set; }
+        internal string notificationTypes { get; set; }
 
         /// <summary>
         /// Scanning interval for this sensor or default scanning interval for sensors under this object.
@@ -93,11 +90,8 @@ namespace PrtgAPI.Objects.Shared
             }
         }
 
-        /// <summary>
-        /// Raw interval value of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("interval_raw")]
-        protected double? interval { get; set; }
+        internal double? interval { get; set; }
 
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
@@ -105,11 +99,8 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.IntervalInherited))]
         public bool IntervalInherited => intervalInherited?.Contains("Inherited") ?? false; //todo: add custom handling for this
 
-        /// <summary>
-        /// Raw inherited interval value of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("intervalx")]
-        protected string intervalInherited { get; set; }
+        internal string intervalInherited { get; set; }
 
         /// <summary>
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.
@@ -132,11 +123,8 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Position))]
         public int Position => position / 10;
 
-        /// <summary>
-        /// Raw position value of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("position")]
-        protected int position { get; set; }
+        internal int position { get; set; }
 
         /// <summary>
         /// <see cref="PrtgAPI.Status"/> indicating this object's monitoring state.

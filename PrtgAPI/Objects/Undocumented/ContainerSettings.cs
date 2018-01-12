@@ -81,10 +81,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string WindowsUserName { get; set; }
 
         /// <summary>
-        /// The hidden Windows Password of this object. This field is for internal use only.
+        /// The hidden Windows Password of this object.
         /// </summary>
         [XmlElement("injected_windowsloginpassword")]
-        protected string windowsPassword { get; set; }
+        internal string windowsPassword { get; set; }
 
         /// <summary>
         /// Whether a Windows Password is set.<para/>
@@ -117,10 +117,10 @@ namespace PrtgAPI.Objects.Undocumented
         public LinuxLoginMode LinuxLoginMode { get; set; }
 
         /// <summary>
-        /// The hidden Linux Password of this object. This field is for internal use only.
+        /// The hidden Linux Password of this object.
         /// </summary>
         [XmlElement("injected_linuxloginpassword")]
-        protected string linuxPassword { get; set; }
+        internal string linuxPassword { get; set; }
 
         /// <summary>
         /// Whether a Linux Password is set.<para/>
@@ -129,10 +129,10 @@ namespace PrtgAPI.Objects.Undocumented
         public bool HasLinuxPassword => !string.IsNullOrEmpty(linuxPassword);
 
         /// <summary>
-        /// The hidden Linux Private Key of this object. This field is for internal use only.
+        /// The hidden Linux Private Key of this object.
         /// </summary>
         [XmlElement("injected_privatekey")]
-        protected string linuxPrivateKey { get; set; }
+        internal string linuxPrivateKey { get; set; }
 
         /// <summary>
         /// Whether a Linux Private Key is set.<para/>
@@ -191,10 +191,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string SSHElevationSudoUser { get; set; }
 
         /// <summary>
-        /// The hidden SSH Elevation Password of this object. This field is for internal use only.
+        /// The hidden SSH Elevation Password of this object.
         /// </summary>
         [XmlElement("injected_elevationpass")]
-        protected string sshElevationPassword { get; set; }
+        internal string sshElevationPassword { get; set; }
 
         /// <summary>
         /// Whether a SSH Elevation Password is set.<para/>
@@ -227,10 +227,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string VMwareUserName { get; set; }
 
         /// <summary>
-        /// The hidden VMware Password of this object. This field is for internal use only.
+        /// The hidden VMware Password of this object.
         /// </summary>
         [XmlElement("injected_esxpassword")]
-        protected string vmwarePassword { get; set; }
+        internal string vmwarePassword { get; set; }
 
         /// <summary>
         /// Whether a VMware Password is set.<para/>
@@ -298,10 +298,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string SNMPv3UserName { get; set; }
 
         /// <summary>
-        /// The hidden SNMPv3 Password of this object. This field is for internal use only.
+        /// The hidden SNMPv3 Password of this object.
         /// </summary>
         [XmlElement("injected_snmpauthpass")]
-        protected string snmpv3Password { get; set; }
+        internal string snmpv3Password { get; set; }
 
         /// <summary>
         /// Whether a SNMPv3 Password is set.<para/>
@@ -317,10 +317,10 @@ namespace PrtgAPI.Objects.Undocumented
         public EncryptionType SNMPv3EncryptionType { get; set; }
 
         /// <summary>
-        /// The hidden SNMPv3 Encryption Key of this object. This field is for internal use only.
+        /// The hidden SNMPv3 Encryption Key of this object.
         /// </summary>
         [XmlElement("injected_snmpencpass")]
-        protected string snmpv3EncryptionKey { get; set; }
+        internal string snmpv3EncryptionKey { get; set; }
 
         /// <summary>
         /// Whether a SNMPv3 Encryption Key is set.<para/>
@@ -388,10 +388,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string DBUserName { get; set; }
 
         /// <summary>
-        /// The hidden Database Password of this object. This field is for internal use only.
+        /// The hidden Database Password of this object.
         /// </summary>
         [XmlElement("injected_dbpassword")]
-        protected string dbPassword { get; set; }
+        internal string dbPassword { get; set; }
 
         /// <summary>
         /// Whether a database password is set.<para/>
@@ -424,10 +424,10 @@ namespace PrtgAPI.Objects.Undocumented
         public string AmazonAccessKey { get; set; }
 
         /// <summary>
-        /// The hidden Amazon Secret Key of this object. This field is for internal use only.
+        /// The hidden Amazon Secret Key of this object.
         /// </summary>
         [XmlElement("injected_awssk")]
-        protected string amazonSecretKey { get; set; }
+        internal string amazonSecretKey { get; set; }
 
         /// <summary>
         /// Whether an Amazon Secret Key is set.<para/>

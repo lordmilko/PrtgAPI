@@ -31,11 +31,8 @@ namespace PrtgAPI
         /// </summary>
         public double LastValueNumeric => Convert.ToDouble((Convert.ToDecimal(lastValueNumeric) /10).ToString("F"));
 
-        /// <summary>
-        /// The raw numeric last value of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("lastvalue_raw")]
-        protected string lastValueNumeric { get; set; }
+        internal string lastValueNumeric { get; set; }
 
         /// <summary>
         /// A value that multiplies the raw value of this channel.
@@ -142,11 +139,8 @@ namespace PrtgAPI
             }
         }
 
-        /// <summary>
-        /// The raw value lookup of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("injected_valuelookup")]
-        protected string valueLookup { get; set; }
+        internal string valueLookup { get; set; }
 
         /// <summary>
         /// A standard or custom value lookup that allows this sensor's value to be displayed as text in a gauge or a switch.

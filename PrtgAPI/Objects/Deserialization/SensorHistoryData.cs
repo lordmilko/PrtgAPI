@@ -28,11 +28,8 @@ namespace PrtgAPI
         [XmlElement("value")]
         public List<ChannelHistoryRecord> ChannelRecords { get; set; }
 
-        /// <summary>
-        /// The raw coverage of this object. This field is for internal use only.
-        /// </summary>
         [XmlElement("coverage_raw")]
-        protected int coverage { get; set; }
+        internal int coverage { get; set; }
 
         /// <summary>
         /// Indicates the percentage of time over the history averaging interval during which PRTG was successfully monitoring the sensor.
