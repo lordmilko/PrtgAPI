@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -10,6 +11,7 @@ using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
 {
+    [ExcludeFromCodeCoverage]
     class ReflectionCacheManager
     {
         private PSCmdlet cmdlet;

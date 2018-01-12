@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
-using System.Reflection;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
@@ -17,7 +15,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgObjectCmdlet{T}"/> class.
         /// </summary>
-        public PrtgObjectCmdlet() : base(GetTypeDescription(typeof(T)))
+        protected PrtgObjectCmdlet() : base(GetTypeDescription(typeof(T)))
         {
         }
 

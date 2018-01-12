@@ -239,7 +239,17 @@ namespace PrtgAPI.Parameters.Helpers
             if (ValueType == typeof (bool))
             {
                 Type = TypeCategory.Boolean;
-                val = ((bool)Value) ? "1" : "0";
+                val = Convert.ToInt32((bool) Value);
+            }
+            else
+            {
+                bool boolVal;
+
+                if (Value != null && bool.TryParse(Value.ToString(), out boolVal))
+                {
+                    Type = TypeCategory.Boolean;
+                    val = Convert.ToInt32(boolVal);
+                }
             }
 
             return val;

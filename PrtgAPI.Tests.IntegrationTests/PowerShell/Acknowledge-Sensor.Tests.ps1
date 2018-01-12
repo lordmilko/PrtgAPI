@@ -118,8 +118,8 @@ Describe "Acknowledge-Sensor_IT" {
         LogTestDetail "Sleeping for 60 seconds"
         Sleep 60
 
-        LogTestDetail "Refreshing object and sleeping for 30 seconds"
-        $sensor | Refresh-Object
+        LogTestDetail "Refreshing objects and sleeping for 30 seconds"
+        $newDownSensors | Refresh-Object
         Sleep 30
 
         $finalSensors = Get-Sensor -Id $downIds

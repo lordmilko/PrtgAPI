@@ -11,8 +11,8 @@ namespace PrtgAPI.PowerShell.Progress
     /// <typeparam name="TResult">The type of objects returned from this task's operation.</typeparam>
     public class ProgressTask<TResult>
     {
-        private Lazy<List<TResult>> task;
-        private PrtgProgressCmdlet cmdlet;
+        private readonly Lazy<List<TResult>> task;
+        private readonly PrtgProgressCmdlet cmdlet;
 
         private ProgressTask(Func<List<TResult>> function, PrtgProgressCmdlet cmdlet)
         {

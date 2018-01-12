@@ -39,8 +39,11 @@ namespace PrtgAPI
         /// <returns>A TriggerChannel that encapsulates the passed value.</returns>
         public static TriggerChannel Parse(object channel)
         {
+            if (channel == null)
+                throw new ArgumentNullException(nameof(channel));
+
             if (channel is TriggerChannel)
-                return (TriggerChannel)channel;
+                return (TriggerChannel) channel;
 
             if (channel is string)
             {
@@ -69,7 +72,7 @@ namespace PrtgAPI
                     return new TriggerChannel(value);
                 else
                 {
-                    throw new InvalidCastException($"Cannot convert '{channel}' of type '{channel.GetType()}' to type '{nameof(TriggerChannel)}'. Value type must be convertable to one of PrtgAPI.StandardTriggerChannel, PrtgAPI.Channel or System.Int32.");
+                    throw new InvalidCastException($"Cannot convert '{channel}' of type '{channel.GetType()}' to type '{nameof(TriggerChannel)}'. Value type must be convertable to one of {typeof(StandardTriggerChannel).FullName}, {typeof(Channel).FullName} or {typeof(int).FullName}.");
                 }
             }
         }

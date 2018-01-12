@@ -362,9 +362,11 @@ namespace PrtgAPI.Tests.IntegrationTests
                 RestorePrtgConfig(true);
             }
 
-            if (service.Status == ServiceControllerStatus.StopPending)
+            if (service.Status == ServiceControllerStatus.StopPending || service.Status == ServiceControllerStatus.StartPending)
             {
-                Logger.LogTest($"{friendlyName} is stuck stopping. Killing service");
+                var op = service.Status == ServiceControllerStatus.StopPending ? "stopping" : "starting";
+
+                Logger.LogTest($"{friendlyName} is stuck {op}. Killing service");
                 KillService(service.ServiceName);
 
                 service.Refresh();

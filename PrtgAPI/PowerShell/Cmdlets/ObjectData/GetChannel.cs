@@ -63,7 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Filter the channels retrieved to only those that match a specific ID.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public int? Id { get; set; }
+        public int[] Id { get; set; }
 
         /// <summary>
         /// Retrieves a list of channels from a PRTG Server.
@@ -83,7 +83,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (Id != null)
             {
-                results = results.Where(r => r.Id == Id.Value).ToList();
+                results = results.Where(r => Id.Contains(r.Id)).ToList();
             }
 
             return results;

@@ -70,9 +70,15 @@ namespace PrtgAPI
         /// Converts an object of one of several types to a <see cref="ScanningInterval"/>. If the specified value is not convertable to <see cref="ScanningInterval"/>, an <see cref="InvalidCastException"/> is thrown.
         /// </summary>
         /// <param name="interval">The value to parse.</param>
-        /// <returns>A ScanningInterval that encapsulates the passed value.</returns>
+        /// <returns>A <see cref="ScanningInterval"/> that encapsulates the passed value.</returns>
         public static ScanningInterval Parse(object interval)
         {
+            if (interval is ScanningInterval)
+                return (ScanningInterval) interval;
+
+            if (interval == null)
+                throw new ArgumentNullException(nameof(interval));
+
             if (interval is string)
             {
                 StandardScanningInterval value;
@@ -118,7 +124,7 @@ namespace PrtgAPI
                     return new ScanningInterval(timeSpan);
                 }
                 else
-                    throw new InvalidCastException($"Cannot convert '{interval}' of type '{interval.GetType()}' to type '{nameof(ScanningInterval)}'. Value type must be convertable to one of PrtgAPI.StandardScanningInterval or System.TimeSpan.");
+                    throw new InvalidCastException($"Cannot convert '{interval}' of type '{interval.GetType()}' to type '{nameof(ScanningInterval)}'. Value type must be convertable to one of {typeof(StandardScanningInterval).FullName} or {typeof(TimeSpan).FullName}.");
             }
         }
 

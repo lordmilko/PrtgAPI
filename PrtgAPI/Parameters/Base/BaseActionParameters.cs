@@ -22,7 +22,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         public int ObjectId
         {
-            get { return (int)this[Parameter.Id]; }
+            get { return (int) this[Parameter.Id]; }
             set { this[Parameter.Id] = value; }
         }
     }

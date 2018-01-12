@@ -207,7 +207,7 @@ function It {
         }
         catch [exception]
         {
-            $messages = @($_.Exception.Message -split "`n")
+            $messages = @($_.Exception.Message -split "`n") -replace "`r",""
 
             foreach($message in $messages)
             {
@@ -216,7 +216,7 @@ function It {
 
             if($_.Exception.StackTrace -ne $null)
             {
-                $stackTrace = $_.Exception.StackTrace -split "`n"
+                $stackTrace = ($_.Exception.StackTrace -split "`n") -replace "`r",""
 
                 foreach($line in $stackTrace)
                 {

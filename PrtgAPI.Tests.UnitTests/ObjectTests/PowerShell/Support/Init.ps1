@@ -37,12 +37,12 @@ function ImportModules($testProject, $scriptRoot)
         throw "Could not identity root folder"
     }
 
-    $rootFolder = $scriptRoot.Substring(0, $rootIndex)
+    $rootFolder = $scriptRoot.Substring(0, $rootIndex)      # e.g. C:\PrtgAPI
 
     # Get Test Folder
 
     $testIndex = $scriptRoot.IndexOf("\", $rootIndex) + 1
-    $testFolder = $scriptRoot.Substring(0, $testIndex)
+    $testFolder = $scriptRoot.Substring(0, $testIndex)      # e.g. C:\PrtgAPI\PrtgAPI.Tests.UnitTests
 
     # Test Project Name
 

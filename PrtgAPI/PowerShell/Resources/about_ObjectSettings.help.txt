@@ -164,15 +164,15 @@ EXAMPLES
 
     C:\> Get-Probe contoso | Set-ObjectProperty WindowsUserName Administrator
 
-    Retrieve the Windows UserName on all probes named contoso
+    Retrieve the Windows UserName on all probes named "contoso""
 
     C:\> Get-Probe contoso | Get-ObjectProperty | select WindowsUserName
 
-    Raw the raw Windows UserName on all probes named contoso
+    Retrieve the raw Windows UserName on all probes named "contoso""
 
     C:\> Get-Probe contoso | Get-ObjectProperty -RawProperty windowsloginusername_
 
-    Set the raw Windows UserName on all probes named contoso
+    Set the raw Windows UserName on all probes named "contoso"
 
     C:\> Get-Probe contoso | Set-ObjectProperty -RawProperty windowsloginusername_ -RawValue Administrator
 
