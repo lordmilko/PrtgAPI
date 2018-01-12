@@ -136,6 +136,7 @@
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />
     <None Include="PowerShell\Support\ObjectProperty.ps1" />
     <None Include="Tools\PowerShell\Cmdlets\Get-MissingSensorTypes.ps1" />
+    <None Include="Tools\PowerShell\Cmdlets\Get-PrtgCoverage.ps1" />
     <None Include="Tools\PowerShell\Cmdlets\Get-PrtgLog.ps1" />
     <None Include="Tools\PowerShell\Cmdlets\Write-SensorTypes.ps1" />
     <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.cmd" />

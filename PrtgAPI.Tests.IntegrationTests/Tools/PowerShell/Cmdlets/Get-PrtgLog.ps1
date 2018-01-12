@@ -1,16 +1,31 @@
 ﻿function Get-PrtgLog
 {
-    [CmdletBinding()]
-    param ()
+    [CmdletBinding(
+        DefaultParameterSetName="Default"
+    )]
+    param (
+        [Parameter(Mandatory=$false, ParameterSetName = "Full")]
+        [Switch]$Full = $false,
+
+        [Parameter(Mandatory=$false, ParameterSetName = "Default")]
+        [int]$Lines = 10
+    )
     
     $log = "$env:temp\PrtgAPI.IntegrationTests.log"
 
     if(Test-Path $log)
     {
-        cls
-        $Host.UI.RawUI.WindowTitle = $log
+        if($Full)
+        {
+            notepad $log
+        }
+        else
+        {
+            cls
+            $Host.UI.RawUI.WindowTitle = $log
 
-        gc $log -Tail 10 -Wait
+            gc $log -Tail $Lines -Wait
+        }
     }
     else
     {
