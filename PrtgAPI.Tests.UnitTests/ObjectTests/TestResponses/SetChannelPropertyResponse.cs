@@ -57,11 +57,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return "OK";
         }
 
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotImplementedException();
-        }
-
         private void AssertCollectionLength(string address, NameValueCollection collection, int count)
         {
             Assert.IsTrue(collection.Count == count, $"The URL '{address}' had {collection.Count} queries, however it is only supposed to have {count}.");

@@ -16,10 +16,5 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
         {
             return response;
         }
-
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

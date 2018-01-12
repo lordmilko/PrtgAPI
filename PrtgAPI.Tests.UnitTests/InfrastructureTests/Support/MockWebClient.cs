@@ -46,7 +46,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 
             if (method.Name.StartsWith("Stream"))
             {
-                responseStr = await response.GetResponseTextStream(address).ConfigureAwait(false);
+                var streamer = response as IWebStreamResponse;
+
+                if (streamer != null)
+                {
+                    responseStr = await streamer.GetResponseTextStream(address).ConfigureAwait(false);
+                }
+                else
+                    throw new NotImplementedException($"Could not stream as response does not implement {nameof(IWebStreamResponse)}");
             }
             else
             {

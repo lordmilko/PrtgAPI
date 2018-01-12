@@ -31,10 +31,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             return new AggregateException(new HttpRequestException("There was an issue completing the request", new WebException("There was an issue completing the request", exception)));
         }
-
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

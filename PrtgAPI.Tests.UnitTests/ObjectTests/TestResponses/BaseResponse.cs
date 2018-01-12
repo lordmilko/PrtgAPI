@@ -10,7 +10,7 @@ using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    public abstract class BaseResponse<T> : IWebResponse
+    public abstract class BaseResponse<T> : IWebStreamResponse
     {
         protected List<T> items;
         private string rootName;

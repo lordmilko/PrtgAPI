@@ -52,10 +52,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             return builder.ToString();
         }
-
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

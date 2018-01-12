@@ -356,10 +356,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 throw new NotImplementedException("Couldn't find match for specified tag. This should not be possible");
             }
         }
-
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

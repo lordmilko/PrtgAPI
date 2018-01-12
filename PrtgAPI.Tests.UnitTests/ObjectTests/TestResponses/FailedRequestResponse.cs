@@ -24,11 +24,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return responseText;
         }
 
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotImplementedException();
-        }
-
         public HttpStatusCode StatusCode { get; set; }
     }
 }

@@ -233,10 +233,5 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             return new NotImplementedException($"Unknown function '{function}' passed to {GetType().Name}");
         }
-
-        public Task<string> GetResponseTextStream(string address)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
