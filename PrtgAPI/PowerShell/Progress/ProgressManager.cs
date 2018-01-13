@@ -174,6 +174,8 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
+        public bool NextCmdletIsOperation => CacheManager.GetNextPrtgCmdlet() is PrtgOperationCmdlet;
+
         public bool NextCmdletIsMultiOperationBatchMode => MultiOperationBatchMode(true);
 
         public bool MultiOperationBatchMode(bool downstream = false)
@@ -945,7 +947,9 @@ namespace PrtgAPI.PowerShell.Progress
                 if (!writeObject)
                     manager.recordsProcessed--;
 
-                WriteProgress();
+                //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
+                if((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
+                    WriteProgress();
             }
         }
 

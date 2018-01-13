@@ -171,12 +171,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             "Cloning PRTG Devices`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
             "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -461,16 +455,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Pausing PRTG Objects`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects`n" +
             "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -517,16 +501,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Pausing PRTG Objects`n" +
             "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -707,16 +681,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
             "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -787,16 +751,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -1101,13 +1055,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 }
 
                 $percentBar = "[$percentBar] ($percent%)"
-            }
-
-            if($i -gt 1)
-            {
-                $records += "Pausing PRTG Objects`n" +
-                            "    Processing sensor $i/$total`n" +
-                            "    $percentBar"
             }
 
             $nameSuffix = $i - 1
@@ -1418,12 +1365,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
 
             "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -1797,10 +1738,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen "PRTG Probe Search"                "Processing probe 1/3"                     33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 2/3"                     66)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
         ))
     }
@@ -1850,10 +1788,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen "PRTG Probe Search"                "Processing probe 1/3"                     33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 2/3"                     66)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
         ))
     }
@@ -1994,15 +1929,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
 
-            (Gen "Pausing PRTG Objects"             "Processing probe 2/10"                     20)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/10"                     40)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
 
             ###################################################################
@@ -2019,18 +1948,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
-            (Gen "PRTG Probe Search"                "Processing probe 2/10"                     20)
 
-            (Gen "PRTG Probe Search"                "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/10"                     40)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 5/10"                     50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 6/10"                     60)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
 
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
@@ -2046,9 +1967,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search"                "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search"                "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search"                "Processing probe 4/10" 40)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -2062,12 +1980,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
-            (Gen "PRTG Probe Search"                "Processing probe 2/10"                     20)
 
-            (Gen "PRTG Probe Search"                "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/10"                     40)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
 
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
@@ -2080,7 +1994,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
             (Gen "PRTG Probe Search"                     "Processing probe 1/10"     10)
-            (Gen "PRTG Probe Search"                     "Processing probe 2/10"     20)
 
             (Gen1 "PRTG Probe Search (Completed)"        "Processing probe 2/10"     20) + 
                 (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/8)" 12)
@@ -2098,12 +2011,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 5/10"                     50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.14' forever (5/10)" 50)
         ))
     }
@@ -2355,9 +2264,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
-                (Gen2 "Pausing PRTG Objects"             "Processing device 2/2"                        100)
-
-            (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
@@ -2379,9 +2285,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             ###################################################################
-
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
-                (Gen2 "Pausing PRTG Objects"             "Processing device 2/2"                        100)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
@@ -2551,7 +2454,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/4"                     25)
-            (Gen "PRTG Probe Search"                "Processing probe 2/4"                     50)
             (Gen "PRTG Probe Search (Completed)"    "Processing probe 2/4"                     50)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
@@ -2605,7 +2507,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/4"                     25)
-            (Gen "PRTG Probe Search"                "Processing probe 2/4"                     50)
             (Gen "PRTG Probe Search (Completed)"    "Processing probe 2/4"                     50)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
@@ -2718,16 +2619,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 2/10"                     20)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/10"                     40)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
 
             ###################################################################
@@ -2744,13 +2638,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search" "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search" "Processing probe 8/10" 80)
             (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
 
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
@@ -3152,14 +3039,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/4" 25)
-            (Gen "PRTG Probe Search"                "Processing probe 2/4" 50)
-
-            (Gen "PRTG Probe Search"                "Processing probe 3/4" 75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/4" 100)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
         ))
     }
@@ -3208,14 +3089,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/4" 25)
-            (Gen "PRTG Probe Search"                "Processing probe 2/4" 50)
-
-            (Gen "PRTG Probe Search"                "Processing probe 3/4" 75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/4" 100)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
         ))
     }
@@ -3371,20 +3246,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
-            (Gen "PRTG Probe Search"                "Processing probe 2/10"                     20)
 
-            (Gen "PRTG Probe Search"                "Processing probe 3/10"                     30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 4/10"                     40)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 5/10"                     50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 6/10"                     60)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
         ))
     }
@@ -3395,13 +3261,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search" "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search" "Processing probe 8/10" 80)
             (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
 
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
@@ -3419,20 +3278,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
             (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/10" 20)
-
-            (Gen "PRTG Probe Search"                   "Processing probe 3/10" 30)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.12' forever (3/10)" 30)
-
-            (Gen "Pausing PRTG Objects"                "Processing probe 4/10" 40)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            (Gen "Pausing PRTG Objects"                "Processing probe 5/10" 50)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.14' forever (5/10)" 50)
-
-            (Gen "Pausing PRTG Objects"                "Processing probe 6/10" 60)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.15' forever (6/10)" 60)
-
             (Gen "Pausing PRTG Objects (Completed)"    "Pausing probe '127.0.0.15' forever (6/10)" 60)
         ))
     }
@@ -3443,13 +3292,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
             (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search"                   "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search"                   "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search"                   "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search"                   "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search"                   "Processing probe 8/10" 80)
             (Gen "PRTG Probe Search (Completed)"       "Processing probe 8/10" 80)
 
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.18' forever (1/2)" 50)
@@ -3489,9 +3331,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"                "Processing probe 6/10" 60)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.15' forever (6/10)" 60)
             (Gen "Pausing PRTG Objects (Completed)"    "Pausing probe '127.0.0.15' forever (6/10)" 60)
         ))
@@ -3730,9 +3570,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
-                (Gen2 "Pausing PRTG Objects"             "Processing device 2/2"            100)
-
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
@@ -3750,9 +3587,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
-
-            (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
-                (Gen2 "Pausing PRTG Objects"             "Processing device 2/2"            100)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
@@ -4295,13 +4129,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-
-            (Gen "PRTG Probe Search"                "Processing probe 2/4"                     50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 3/4"                     75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
         ))
     }
@@ -4347,13 +4176,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-
-            (Gen "PRTG Probe Search"                "Processing probe 2/4"                     50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-
-            (Gen "Pausing PRTG Objects"             "Processing probe 3/4"                     75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
         ))
     }
@@ -4565,9 +4389,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "Pausing PRTG Objects"         "Processing device 2/2" 100)
-
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
@@ -4583,9 +4404,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
-
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "Pausing PRTG Objects"         "Processing device 2/2" 100)
 
             (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
@@ -4819,18 +4637,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "Pausing PRTG Objects`n" +
             "    Pausing probe '127.0.0.10' forever (1/3)`n" +
             "    [ooooooooooooo                           ] (33%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Processing probe 2/3`n" +
-            "    [oooooooooooooooooooooooooo              ] (66%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -9352,20 +9158,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -9384,16 +9176,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
 
             "PRTG Group Search`n" +
             "    Processing group 1/2`n" +
@@ -9442,20 +9224,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
             "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -9580,20 +9348,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -9612,16 +9366,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
 
             "PRTG Group Search`n" +
             "    Processing group 2/2`n" +
@@ -9670,20 +9414,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
             "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -9804,20 +9534,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -9884,20 +9600,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
             "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -10006,20 +9708,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        [oooooooooooooooooooo                    ] (50%)`n" +
 
             "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
             "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -10086,20 +9774,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "        Pausing PRTG Objects`n" +
             "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
             "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Processing sensor 2/2`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -10208,16 +9882,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    [oooooooooooooooooooo                    ] (50%)`n" +
 
             "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
             "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
             "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
@@ -10284,16 +9948,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "    Resuming PRTG Objects`n" +
             "        Processing device 'Probe Device0' (1/2)`n" +
             "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
 
             ###################################################################
 
@@ -12372,9 +12026,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search"         "Retrieving all sensors")
             (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
-            (Gen "Pausing PRTG Objects"       "Processing sensor 2/3" 66)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total1' (2/3)" 66)
-            (Gen "Pausing PRTG Objects"       "Processing sensor 3/3" 100)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total2' (3/3)" 100)
             (Gen "Pausing PRTG Objects"       $final 100)
             (Gen "Pausing PRTG Objects (Completed)" $final 100)
@@ -12391,10 +12043,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
             (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/3)" 33)
             (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
-            (Gen "Cloning PRTG Sensors"       "Processing sensor 2/3" 66)
             (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/3)" 66)
             (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (2/3)" 66)
-            (Gen "Cloning PRTG Sensors"       "Processing sensor 3/3" 100)
             (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total2' (ID: 4002) (3/3)" 100)
             (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (3/3)" 100)
             (Gen "Resuming PRTG Objects"      $final 100)
@@ -12459,9 +12109,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
-                (Gen2 "Pausing PRTG Objects"  "Processing sensor 2/2" 100)
-
-            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
                 (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
@@ -12479,9 +12126,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
-                (Gen2 "Pausing PRTG Objects"   "Processing sensor 2/2" 100)
-
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             (Gen1 "PRTG Device Search"        "Processing device 2/3" 66) +
@@ -12497,9 +12141,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
-
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
-                (Gen2 "Pausing PRTG Objects"   "Processing sensor 2/2" 100)
 
             (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
@@ -12535,9 +12176,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
-                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
-
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
             (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
@@ -12561,9 +12199,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
-                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
-
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
             (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
@@ -12585,9 +12220,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
-
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
-                (Gen2 "Cloning PRTG Sensors"   "Processing sensor 2/2" 100)
 
             (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
@@ -12905,7 +12537,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG $baseType Search"         "Retrieving all $($lowerType)s")
             (Gen "PRTG $baseType Search"         "Processing $lowerType 1/2" 50)
             (Gen "$progressActivity"             "Queuing $lowerType '$($names[0])' (1/2)" 50)
-            (Gen "$progressActivity"             "Processing $lowerType 2/2" 100)
             (Gen "$progressActivity"             "Queuing $lowerType '$($names[1])' (2/2)" 100)
             (Gen "$progressActivity"             "$realMessage (2/2)" 100)
             (Gen "$progressActivity (Completed)" "$realMessage (2/2)" 100)
