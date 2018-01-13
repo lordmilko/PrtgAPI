@@ -19,7 +19,7 @@ namespace PrtgAPI.Helpers
         }
 
         /// <summary>
-        /// Get the underlying flags of an enum element. Note: using the enum with value 0 is not supported. Start enum values at 1 instead..
+        /// Get the underlying flags of an enum element. If the enum has no underlying elements, an empty list is returned. Note: using the enum with value 0 is not supported. Start enum values at 1 instead..
         /// </summary>
         /// <param name="element">The value to get the underlying flags of.</param>
         /// <returns>The underlying flags of the enum, or an empty list.</returns>

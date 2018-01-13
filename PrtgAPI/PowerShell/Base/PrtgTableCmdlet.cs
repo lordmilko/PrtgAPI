@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
@@ -13,6 +14,8 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
     public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgTableBaseCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
     {
+        private bool statusProcessed;
+
         /// <summary>
         /// <para type="description">Retrieve an object with a specified ID.</para>
         /// </summary>
@@ -47,7 +50,6 @@ namespace PrtgAPI.PowerShell.Base
         {
             ProcessIdFilter();
             ProcessTagsFilter();
-            ProcessStatusFilter();
 
             base.ProcessAdditionalParameters();
         }
@@ -74,10 +76,12 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private void ProcessStatusFilter()
+        internal void ProcessStatusFilter()
         {
             if (Status != null)
             {
+                statusProcessed = true;
+
                 foreach (var value in Status)
                 {
                     AddPipelineFilter(Property.Status, value);
@@ -93,6 +97,7 @@ namespace PrtgAPI.PowerShell.Base
         protected override IEnumerable<TObject> PostProcessAdditionalFilters(IEnumerable<TObject> records)
         {
             records = FilterResponseRecordsByTag(records);
+            records = FilterResponseRecordsByStatus(records);
 
             records = records.OrderBy(r => r.Position);
 
@@ -110,6 +115,35 @@ namespace PrtgAPI.PowerShell.Base
                           from t in record.Tags
                           where filter.IsMatch(t)
                           select record;
+            }
+
+            return records;
+        }
+
+        private IEnumerable<TObject> FilterResponseRecordsByStatus(IEnumerable<TObject> records)
+        {
+            //Devices, Groups and Probes do not always filter by Status properly (if at all). To correct
+            //for this, we abstain from filtering server side and instead filter the PRTG Response
+            if (!statusProcessed && Status != null)
+            {
+                List<Status> flags = new List<Status>();
+
+                foreach (var e in Status)
+                {
+                    if (e == 0)
+                        flags.Add(e);
+                    else
+                    {
+                        var underlying = e.GetUnderlyingFlags().Cast<Status>().ToList();
+
+                        if (underlying.Count > 0)
+                            flags.AddRange(underlying);
+                        else
+                            flags.Add(e);
+                    }
+                }
+
+                records = records.Where(r => flags.Any(f => f == r.Status));
             }
 
             return records;

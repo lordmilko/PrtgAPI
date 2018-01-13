@@ -7,6 +7,22 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         $devices.Count | Should Be 1
     }
 
+    It "can filter by status" {
+        $items = (GetItem),(GetItem),(GetItem),(GetItem)
+        $items.Count | Should Be 4
+
+        $items[0].StatusRaw = "5" # Down
+        $items[1].StatusRaw = "3" # Up
+        $items[2].StatusRaw = "3" # Up
+        $items[3].StatusRaw = "8" # PausedByDependency
+
+        WithItems $items {
+            $devices = Get-Device -Status Up,Paused
+
+            $devices.Count | Should Be 3
+        }
+    }
+
     Context "Group Recursion" {
         It "retrieves devices from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceUniqueGroup"

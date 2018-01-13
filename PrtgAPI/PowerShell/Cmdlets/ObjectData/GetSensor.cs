@@ -142,6 +142,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Probe != null)
                 AddPipelineFilter(Property.Probe, Probe.Name);
 
+            ProcessStatusFilter();
+
             base.ProcessAdditionalParameters();
         }
 
