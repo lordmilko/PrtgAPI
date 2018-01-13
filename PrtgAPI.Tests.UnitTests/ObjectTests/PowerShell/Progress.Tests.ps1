@@ -13,26 +13,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 1 | Pause-Object -Forever -Batch:$false
 
         Validate (@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects (Completed)`n" +
-            "    Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search"               "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"               "Processing sensor 1/1" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
         ))
     }
     
@@ -44,21 +28,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -Batch:$false
 
         Validate (@(
-            "Pausing PRTG Objects`n" +
-            "    Pausing device 'Probe Device0' forever (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Pausing device 'Probe Device1' forever (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects (Completed)`n" +
-            "    Pausing device 'Probe Device1' forever (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
         ))
     }
 
@@ -69,38 +41,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Group
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all groups"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
         ))
     }
 
@@ -113,27 +58,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Sensor
 
         Validate (@(
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search" "Processing all probes 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing all probes 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all sensors")
         ))
     }
 
@@ -145,48 +72,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Device | Clone-Device 5678 | Get-Sensor
 
         Validate (@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
 
@@ -197,39 +89,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Clone-Device 5678 | Get-Sensor
 
         Validate(@(
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
         ))
     }
 
@@ -241,60 +105,20 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
         Validate (@(
-            "PRTG Group Search`n" +
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 1/1" 100)
+            (Gen "PRTG Group Search" "Processing group 1/1" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/1" 100)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/1" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 1/1" 100 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing group 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing group 1/1" 100)
         ))
     }
     
@@ -310,97 +134,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Get-Sensor
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
 
@@ -411,122 +167,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Device | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Retrieving all sensors"
+            (Gen "PRTG Device Search" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
         ))
     }
 
@@ -536,85 +208,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100)
         ))
     }
 
@@ -625,170 +241,50 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Group Search" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
         ))
     }
 
@@ -798,93 +294,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
 
-            "    Retrieving all groups"
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "Cloning PRTG Groups (Completed)" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100)
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "Cloning PRTG Groups (Completed)" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Groups (Completed)`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Groups`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Groups (Completed)`n" +
-            "        Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
 
@@ -895,30 +327,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 1 | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"             "Processing sensor 1/1" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
         ))
     }
 
@@ -941,27 +353,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $result | Get-Channel
 
         Validate(@(
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
         ))
     }
 
@@ -997,19 +391,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Detecting total number of items"
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/501`n" +
-            "    [                                        ] (0%)"
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/501" 0)
 
             $records
 
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 501/501`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            "    Retrieving all channels"
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 501/501" 100 "Retrieving all channels")
         ))
     }
     
@@ -1075,15 +462,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "PRTG Sensor Search`n" +
             "    Detecting total number of items"
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/501`n" +
-            "    [                                        ] (0%)"
+            (Gen "PRTG Sensor Search" "Processing sensor 1/501" 0)
 
             $records
 
-            "Pausing PRTG Objects (Completed)`n" +
-            "    Pausing sensor 'Volume IO _Total0' forever (501/501)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (501/501)" 100)
         ))
     }
 
@@ -1101,110 +484,32 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
         ))
     }
 
@@ -1220,73 +525,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate (@(
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all probes 1/2" 50 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all probes 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
 
@@ -1297,140 +552,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Device | Clone-Device 5678 | Get-Sensor | Get-Channel
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
-            "    Retrieving all sensors"
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
 
@@ -1447,129 +601,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #}
 
         Validate(@(
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
             
             ###################################################################
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
             
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")            
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
             
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
 
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
 
-            ###################################################################
-            
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-            
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-            
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-            
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
     
@@ -1583,134 +647,51 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing all devices 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
 
-            "        PRTG Sensor Search (Completed)`n" +
-            "            Processing all devices 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "            Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
             ###################################################################
 
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all groups"
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing all devices 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search (Completed)`n" +
-            "            Processing all devices 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing all groups 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
 
@@ -4531,46 +3512,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/3`n" +
-            "    [oooooooooooooooooooooooooo              ] (66%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
+            (Gen "PRTG Probe Search" "Processing probe 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/3" 100 "Retrieving all devices")
         ))
     }
     
@@ -4588,27 +3535,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Processing all probes 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing all probes 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/3" 100 "Retrieving all devices")
         ))
     }
 
@@ -4623,32 +3552,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Pausing probe '127.0.0.10' forever (1/3)`n" +
-            "    [ooooooooooooo                           ] (33%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects`n" +
-            "    Pausing probe '127.0.0.12' forever (3/3)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Pausing PRTG Objects (Completed)`n" +
-            "    Pausing probe '127.0.0.12' forever (3/3)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.12' forever (3/3)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/3)" 100)
         ))
     }
 
@@ -4660,134 +3568,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Group | where name -EQ "Windows Infrastructure0" | Get-Sensor
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 1/2" 50)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing group 2/2" 100 "Retrieving all sensors")
 
-            "    Retrieving all groups"
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100)
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 1/2" 50)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all sensors")
 
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing group 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Group Search`n" +
-            "        Processing group 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Group Search (Completed)`n" +
-            "        Processing group 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Group Search`n" +
-            "        Processing group 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Group Search`n" +
-            "        Processing group 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Group Search (Completed)`n" +
-            "        Processing group 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100)
         ))
     }
 
@@ -4797,97 +3609,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group | where name -like * | Get-Sensor
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
 
-            "    Retrieving all groups"
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all groups 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all groups 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all groups 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all groups 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all groups 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all groups 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
     
@@ -4904,140 +3648,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
+            (Gen "PRTG Probe Search" "Processing probe 1/3" 33 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)"
+            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Processing probe 2/3" 66)
+            (Gen "PRTG Probe Search" "Processing probe 3/3" 100)
+            (Gen "PRTG Probe Search" "Processing probe 3/3" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/3`n" +
-            "    [oooooooooooooooooooooooooo              ] (66%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/3" 100)
         ))
     }
 
@@ -5055,97 +3698,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device | Get-Sensor
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
+            (Gen "PRTG Device Search" "Processing all probes 1/3" 33 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all probes 3/3" 100 "Retrieving all devices")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/3`n" +
-            "    [ooooooooooooo                           ] (33%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 3/3`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/3" 100)
         ))
     }
     
@@ -5161,58 +3736,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probe | Get-Group | Get-Device
 
         Validate(@(
+            (Gen "PRTG Group Search" "Processing all probes 1/1" 100 "Retrieving all groups")
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
+                (Gen2 "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
 
-            "    Retrieving all groups"
+            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
+                (Gen2 "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all devices")
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing all groups 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing all groups 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            #the next record should be a prtg device search
-
-            #i think that if we have 1 variable and we're piping to multiple that deserves progress. maybe have PipeFromVariable detect we're also pipetocmdlet
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 1/1" 100)
         ))
     }
 
@@ -5223,38 +3758,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Device | Get-Trigger -Types
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all notification trigger types"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
         ))
     }
 
@@ -5264,27 +3772,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Trigger -Types
 
         Validate(@(
-            "PRTG Notification Trigger Type Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Notification Trigger Type Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Notification Trigger Type Search (Completed)`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all notification trigger types"
+            (Gen "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
+            (Gen "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
         ))
     }
 
@@ -5295,134 +3785,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Group | Get-Device | Get-Trigger -Types
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
 
-            "    Retrieving all devices"
+            (Gen "PRTG Group Search" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
         ))
     }
 
@@ -5432,97 +3826,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Get-Trigger -Types
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
 
-            "    PRTG Notification Trigger Type Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
 
-            "        Retrieving all notification trigger types"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
 
-            "    PRTG Notification Trigger Type Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Notification Trigger Type Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Notification Trigger Type Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Notification Trigger Type Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Notification Trigger Type Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all notification trigger types"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
         ))
     }
     
@@ -5550,38 +3876,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
         ))
     }
 
@@ -5591,27 +3890,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
         ))
     }
     
@@ -5622,73 +3903,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | where { Get-Device | Get-Sensor }
 
         Validate (@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
         ))
     }
 
@@ -5698,73 +3922,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { Get-Device | Get-Sensor }
 
         Validate (@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
         ))
     }
     
@@ -5800,38 +3967,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" } | Get-Device
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
         ))
     }
 
@@ -5841,27 +3981,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" } | Get-Device
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
         ))
     }
     
@@ -5874,238 +3996,59 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all groups"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ##########################################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
         ))
     }
     
@@ -6117,227 +4060,59 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
 
-            ##########################################################################################
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all groups"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all groups"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all groups")
         ))
     }
     
@@ -6359,170 +4134,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate (@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    Retrieving all groups"
-
-            ##########################################################################################
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
 
             #region Probe 1, Group 1
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 1, Group 1
 
@@ -6530,307 +4173,67 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 1, Group 2
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 1, Group 2
 
             ##########################################################################################
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all groups"
-
-            ##########################################################################################
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
 
             #region Probe 2, Group 1
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 1
 
@@ -6838,161 +4241,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all groups"
-
-            ##########################################################################################
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
         ))
     }
 
@@ -7011,159 +4291,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all groups"
-
-            ##########################################################################################
-
+            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
             #region Probe 2, Group 1
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 1
 
@@ -7171,307 +4327,66 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
-
-            ##########################################################################################
-
+            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
             #region Probe 2, Group 1
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 1
 
@@ -7479,159 +4394,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Channel Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all channels"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            "PRTG Group Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all groups")
         ))
     }
 
@@ -7645,350 +4439,114 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         } | Get-Sensor
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
 
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ##########################################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
             #region Probe 1, Device 1
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ##########################################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
             #region Probe 1, Device 2
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100)
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ##########################################################################################
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
             #region Probe 2, Device 1
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 2, Device 1
 
             ##########################################################################################
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ##########################################################################################
-            
             #region Probe 2, Device 2
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 2, Device 2
 
             ##########################################################################################
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Device Search (Completed)`n" +
-            "        Processing device 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100)
         ))
     }
     
@@ -8007,314 +4565,103 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         } | Get-Sensor
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
             #region Probe 1, Device 1
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 1, Device 1
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            ##########################################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
             #region Probe 1, Device 2
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
             #region Probe 2, Device 1
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 2, Device 1
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
-
-            
-            ##########################################################################################
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
             #region Probe 2, Device 2
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
 
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing all devices 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
         ))
     }
     
@@ -8325,38 +4672,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
         ))
     }
     
@@ -8366,27 +4686,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
         ))
 
     }
@@ -8398,214 +4700,59 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            ##########################################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
         ))
     }
 
@@ -8615,203 +4762,57 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            ##########################################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
 
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 1/1`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
         ))
     }
 
@@ -8822,126 +4823,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Probe | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
 
         Validate(@(
-            "PRTG Probe Search`n" +
-            "    Retrieving all probes"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
+            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
 
             ##########################################################################################
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensors"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
 
             ##########################################################################################
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "PRTG Probe Search`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "PRTG Probe Search (Completed)`n" +
-            "    Processing probe 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
         ))
     }
 
@@ -8951,115 +4855,27 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all probes 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensors"
+            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
 
             ##########################################################################################
 
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device0' (ID: 3000) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "Cloning PRTG Devices`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "Cloning PRTG Devices (Completed)`n" +
-            "    Cloning device 'Probe Device1' (ID: 3001) (1/1)`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all probes 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
         ))
     }
     
@@ -9070,394 +4886,146 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
 
-            #################################################################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Group Search" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
 
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            #################################################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            #################################################################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
         ))
     }
 
@@ -9467,357 +5035,137 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ##########################################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
 
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            #################################################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Search`n" +
-            "            Processing sensor 1/2`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total0' forever (1/2)`n" +
-            "            [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Pausing PRTG Objects (Completed)`n" +
-            "            Pausing sensor 'Volume IO _Total1' forever (2/2)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            #################################################################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
         ))
     }
 
@@ -9828,162 +5176,50 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Group | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
 
         Validate(@(
-            "PRTG Group Search`n" +
-            "    Retrieving all groups"
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Group Search" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
 
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Device Search`n" +
-            "        Processing device 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Group Search`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices (Completed)`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Group Search (Completed)`n" +
-            "    Processing group 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
         ))
     }
 
@@ -9993,125 +5229,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
 
-            "    Retrieving all devices"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
 
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
 
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Resuming PRTG Objects (Completed)`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all devices"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device0' (ID: 3000) (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (1/2)`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Devices`n" +
-            "        Cloning device 'Probe Device1' (ID: 3001) (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Resuming PRTG Objects`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Resuming PRTG Objects (Completed)`n" +
-            "        Processing device 'Probe Device0' (2/2)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing all groups 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
         ))
     }
 
@@ -10124,62 +5276,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 2 | Get-SensorFactorySource
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-            
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-            
-            "    Retrieving all sensor factory sensors"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
         ))
     }
 
@@ -10192,43 +5296,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource
 
         Validate(@(
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
         ))
     }
 
@@ -10240,126 +5312,34 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 2 | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
         ))
     }
 
@@ -10372,89 +5352,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Channel Search (Completed)`n" +
-            "        Processing all sensors 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
         ))
     }
 
@@ -10466,382 +5382,128 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Device | Get-Sensor | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            "PRTG Device Search`n" +
-            "    Retrieving all devices"
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
 
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "        Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100)
 
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
 
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "            Processing sensor factory sensor 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ##########################################################################################
-
-            "PRTG Device Search`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Search (Completed)`n" +
-            "        Processing sensor 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Device Search (Completed)`n" +
-            "    Processing device 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
         ))
     }
 
@@ -10853,269 +5515,89 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Sensor | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
 
-            "    Retrieving all sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
 
-            ##########################################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
 
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "        PRTG Channel Search`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Channel Search (Completed)`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
 
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
 
-            "        Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
 
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "        PRTG Channel Search (Completed)`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensors"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
 
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 1/2`n" +
-            "        [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "        PRTG Channel Search (Completed)`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search (Completed)`n" +
-            "            Processing all sensors 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "            Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "        Processing all sensors 2/2`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing all devices 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100)
         ))
     }
 
@@ -11126,118 +5608,34 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
         ))
     }
 
@@ -11250,81 +5648,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Pausing PRTG Objects (Completed)`n" +
-            "        Pausing sensor 'Volume IO _Total0' forever (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
         ))
     }
 
@@ -11336,142 +5678,40 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Retrieving all sensor factory properties"
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
         ))
     }
 
@@ -11482,109 +5722,31 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
 
         Validate(@(
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "    Retrieving all sensor factory sensors"
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
         ))
     }
 
@@ -11596,226 +5758,76 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Retrieving all sensors"
+            (Gen "PRTG Sensor Search"             "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Retrieving all sensor factory sensors"
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing channel 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    PRTG Sensor Factory Sensor Search`n" +
-            "        Processing sensor factory sensor 1/1`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing channel 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Search`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Search (Completed)`n" +
-            "    Processing sensor 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
         ))
     }
 
@@ -11826,189 +5838,67 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
 
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Retrieving all sensor factory sensors"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing channel 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
 
-            "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            ###################################################################
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 1/2`n" +
-            "    [oooooooooooooooooooo                    ] (50%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory properties"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Retrieving all sensor factory sensors"
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Retrieving all channels"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        PRTG Channel Search`n" +
-            "            Processing channel 1/1`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "        Modify PRTG Channel Settings (Completed)`n" +
-            "            Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)`n" +
-            "            [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ###################################################################
-
-            "PRTG Sensor Factory Sensor Search`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)`n" +
-
-            "    Cloning PRTG Sensors (Completed)`n" +
-            "        Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)`n" +
-            "        [oooooooooooooooooooooooooooooooooooooooo] (100%)"
-
-            ##########################################################################################
-
-            "PRTG Sensor Factory Sensor Search (Completed)`n" +
-            "    Processing all sensors 2/2`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
         ))
     }
 
@@ -12684,9 +6574,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $records
 
-            "PRTG Sensor Search (Completed)`n" +
-            "    Retrieving all sensors 501/501`n" +
-            "    [oooooooooooooooooooooooooooooooooooooooo] (100%)"
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
         ))
     }
 
