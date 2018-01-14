@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
-using PrtgAPI.Helpers;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -145,8 +143,8 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-            #endregion
-            #region Pipeline Contains Operation
+        #endregion
+        #region Pipeline Contains Operation
 
         private bool? pipelineContainsOperation;
 
@@ -216,8 +214,8 @@ namespace PrtgAPI.PowerShell.Progress
             return false;
         }
 
-            #endregion
-            #region Pipeline Is Pure
+        #endregion
+        #region Pipeline Is Pure
 
         private bool? pipelineIsPure;
 
@@ -235,8 +233,8 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-            #endregion
-            #region Pipe To/From Select Object Cmdlet
+        #endregion
+        #region Pipe To/From Select Object Cmdlet
 
         internal readonly SelectObjectManager upstreamSelectObjectManager;
         internal readonly SelectObjectManager downstreamSelectObjectManager;
@@ -271,7 +269,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                 return false;
             }
-        } 
+        }
 
         private bool PipeToBlockingSelectObjectCmdlet => downstreamSelectObjectManager != null && CacheManager.PipelineContainsBlockingCmdletToNextPrtgCmdletOrEnd(); //todo: should we make the up and downstream
         //caches include deets from all intermediate select-object's somehow?
@@ -461,7 +459,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private AbortProgressParser abortProgress = new AbortProgressParser();
 
-            #endregion
+        #endregion
         #endregion
         #region Pipeline State
 
@@ -755,7 +753,7 @@ namespace PrtgAPI.PowerShell.Progress
                 WriteProgress(record);
             }
 
-            if(!PipeToBlockingSelectObjectCmdlet)
+            if (!PipeToBlockingSelectObjectCmdlet)
                 TotalRecords = null;
 
             record.Activity = DefaultActivity;
@@ -879,7 +877,7 @@ namespace PrtgAPI.PowerShell.Progress
             return true;
         }
 
-        public void UpdateRecordsProcessed(ProgressRecordEx record, bool writeObject = true)
+        public void UpdateRecordsProcessed(ProgressRecordEx record, PrtgObject obj, bool writeObject = true)
         {
             //When a variable to cmdlet chain contains an operation, responsibility for updating the number of records processed
             //"resets", and we become responsible for updating our own count again
@@ -889,7 +887,7 @@ namespace PrtgAPI.PowerShell.Progress
                 //we're responsible for updating our own progress, which we must do via analyzing the pipeline.
                 if (!PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable)
                 {
-                    IncrementProgressFromPipeline(record, writeObject);
+                    IncrementProgressFromPipeline(record, obj, writeObject);
                 }
                 else
                 {
@@ -898,12 +896,12 @@ namespace PrtgAPI.PowerShell.Progress
                     var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
                     var previousManager = previousCmdlet.ProgressManager;
 
-                    IncrementProgressFromTotalRecords(record, previousManager, writeObject);
+                    IncrementProgressFromTotalRecords(record, previousManager, obj, writeObject);
                 }
             }
             else
             {
-                IncrementProgressFromTotalRecords(record, this, writeObject);
+                IncrementProgressFromTotalRecords(record, this, obj, writeObject);
             }
         }
 
@@ -927,7 +925,7 @@ namespace PrtgAPI.PowerShell.Progress
         //TODO: need to modify the progress scenario handling for when you use both parameters at once
         //also need to implement handling of -index and -wait
 
-        private void IncrementProgressFromTotalRecords(ProgressRecordEx record, ProgressManager manager, bool writeObject)
+        private void IncrementProgressFromTotalRecords(ProgressRecordEx record, ProgressManager manager, PrtgObject obj, bool writeObject)
         {
             if (manager.TotalRecords > 0)
             {
@@ -939,7 +937,10 @@ namespace PrtgAPI.PowerShell.Progress
                 if (abortProgress.AbortProgress(manager))
                     return;
 
-                record.StatusDescription = $"{InitialDescription} {manager.recordsProcessed}/{manager.TotalRecords}";
+                if (obj != null && Scenario != ProgressScenario.StreamProgress)
+                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({manager.recordsProcessed}/{manager.TotalRecords})";
+                else
+                    record.StatusDescription = $"{InitialDescription} {manager.recordsProcessed}/{manager.TotalRecords}";
 
                 if (manager.recordsProcessed > 0)
                     record.PercentComplete = (int)(manager.recordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
@@ -948,12 +949,12 @@ namespace PrtgAPI.PowerShell.Progress
                     manager.recordsProcessed--;
 
                 //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
-                if((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
+                if ((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
             }
         }
 
-        private void IncrementProgressFromPipeline(ProgressRecordEx record, bool writeObject = true)
+        private void IncrementProgressFromPipeline(ProgressRecordEx record, PrtgObject obj, bool writeObject = true)
         {
             var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 
@@ -966,7 +967,11 @@ namespace PrtgAPI.PowerShell.Progress
             if (index > maxCount)
                 index = maxCount;
 
-            record.StatusDescription = $"{InitialDescription} {index}/{maxCount}";
+            if(obj != null)
+                record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({index}/{maxCount})";
+            else
+                record.StatusDescription = $"{InitialDescription} {index}/{maxCount}";
+
             record.PercentComplete = (int)((index) / Convert.ToDouble(maxCount) * 100);
 
             if (writeObject)
@@ -1109,7 +1114,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (upstreamSelectObjectManager != null)
                 TotalRecords = GetSelectObjectOperationFromCmdletFromVariableTotalRecords();
-            
+
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,
             //but for REASONS UNKNOWN (TODO: WHY) thats not the case, so we have to do it instead
             if (previousManager.recordsProcessed < 0)

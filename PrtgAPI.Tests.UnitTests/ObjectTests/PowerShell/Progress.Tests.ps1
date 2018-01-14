@@ -4,7 +4,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     
     InitializeClient
     
-    $filter = $null
+    $filter = "*"
     $ignoreNotImplemented = $false
 
     #region 1: Something -> Action
@@ -14,7 +14,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Sensor Search"               "Retrieving all sensors")
-            (Gen "PRTG Sensor Search"               "Processing sensor 1/1" 100)
+            (Gen "PRTG Sensor Search"               "Processing sensor 'Volume IO _Total0' (1/1)" 100)
             (Gen "Pausing PRTG Objects"             "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
         ))
@@ -42,10 +42,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
         ))
     }
 
@@ -58,9 +58,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Sensor
 
         Validate (@(
-            (Gen "PRTG Sensor Search" "Processing all probes 1/2" 50 "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing all probes 2/2" 100 "Retrieving all sensors")
-            (Gen "PRTG Sensor Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all sensors")
         ))
     }
 
@@ -73,7 +73,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
@@ -106,19 +106,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Group Search" "Retrieving all groups")
-            (Gen "PRTG Group Search" "Processing group 1/1" 100)
-            (Gen "PRTG Group Search" "Processing group 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/1)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/1" 100)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/1)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/1" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/1" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 1/1" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Group Search (Completed)" "Processing group 1/1" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
         ))
     }
     
@@ -134,29 +134,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -168,37 +168,37 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Device Search" "Processing device 2/2" 100)
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
     }
 
@@ -208,29 +208,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
     }
 
@@ -242,49 +242,49 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
-            (Gen "PRTG Group Search" "Processing group 1/2" 50)
-            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search" "Processing group 2/2" 100)
-            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -294,29 +294,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Groups (Completed)" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Groups" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Groups (Completed)" "Cloning group 'Windows Infrastructure0' (ID: 2000) (1/1)" 100 "Retrieving all devices")
 
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -328,9 +328,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search"             "Processing sensor 1/1" 100)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search"             "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
         ))
     }
 
@@ -339,23 +339,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #1. why is pipes three data cmdlets together being infected by the crash here
         #2. why is injected_showchart failing to deserialize?
 
-        $result = Run "Sensor" {
+        $sensors = Get-Sensor -Count 2
 
-            $obj1 = GetItem
-            $obj2 = GetItem
-
-            WithItems ($obj1, $obj2) {
-                Get-Sensor -Count 2
-            }
-        }
-
-        $result.Count | Should Be 2
-        $result | Get-Channel
+        $sensors.Count | Should Be 2
+        $sensors | Get-Channel
 
         Validate(@(
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
         ))
     }
 
@@ -384,19 +376,26 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $percentBar = CreateProgressBar $percent
 
+            $c = $i
+
+            while($c -gt 500)
+            {
+                $c -= 500
+            }
+
             $records += "PRTG Sensor Search`n" +
-                        "    Processing sensor $i/$total`n" +
+                        "    Processing sensor 'Volume IO _Total$($c - 1)' ($i/$total)`n" +
                         "    $percentBar`n" +
                         "    Retrieving all channels"
         }
 
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/501" 0)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/501)" 0)
 
             $records
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 501/501" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (501/501)" 100 "Retrieving all channels")
         ))
     }
     
@@ -462,7 +461,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             "PRTG Sensor Search`n" +
             "    Detecting total number of items"
 
-            (Gen "PRTG Sensor Search" "Processing sensor 1/501" 0)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/501)" 0)
 
             $records
 
@@ -485,31 +484,31 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Device Search" "Processing device 2/2" 100)
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
     }
 
@@ -525,23 +524,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate (@(
-            (Gen "PRTG Sensor Search" "Processing all probes 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search" "Processing all probes 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -553,36 +552,36 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
@@ -607,31 +606,31 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
             
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")            
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
             
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
@@ -647,51 +646,51 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group -Count 1 | Get-Device -Count 1 | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
-
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
-
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -704,10 +703,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 1/3" 33)
-            (Gen "PRTG Probe Search"             "Processing probe 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe 2/3" 66 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
         ))
     }
 
@@ -717,7 +716,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
-            (Gen "PRTG Probe Search"                "Processing probe 1/3"                     33)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/3)"                     33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
@@ -731,9 +730,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/3" 66 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
         ))
     }
 
@@ -754,10 +753,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 1/3" 33)
-            (Gen "PRTG Probe Search"             "Processing probe 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe 2/3" 66 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
         ))
     }
 
@@ -767,7 +766,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
-            (Gen "PRTG Probe Search"                "Processing probe 1/3"                     33)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/3)"                     33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
@@ -780,9 +779,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 -Wait | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/3" 66 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
         ))
     }
 
@@ -806,16 +805,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 4/10" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
 
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -824,14 +823,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -843,13 +842,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40)
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
+
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -858,12 +858,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 4/10" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
         ))
     }
 
@@ -872,17 +872,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/10"     10)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/10"     20)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)"     10)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)"     20)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe 2/10"     20) + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/8" 12 "Retrieving all devices")
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/8)" 12 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe 2/10"     20) + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/8" 25 "Retrieving all devices")
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe 2/10"     20) + 
-                (Gen2 "PRTG Device Search (Completed)" "Processing all probes 2/8" 25 "Retrieving all devices")
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
+                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
         ))
     }
 
@@ -891,10 +891,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search"             "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 5/10" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
         ))
     }
 
@@ -907,7 +907,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
-            (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
@@ -928,7 +928,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
@@ -947,7 +947,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -960,7 +960,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
@@ -974,15 +974,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
-            (Gen "PRTG Probe Search"                     "Processing probe 1/10"     10)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/10)"     10)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe 2/10"     20) + 
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
                 (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/8)" 12)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe 2/10"     20) + 
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
                 (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/8)" 25)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe 2/10"     20) + 
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/8)" 25)
         ))
     }
@@ -1007,13 +1007,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 4 -Last 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/10" 10 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/10" 20 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 9/10" 90 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 10/10" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 10/10" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (9/10)" 90 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1023,11 +1023,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 4 -Skip 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -1040,9 +1040,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 4 | Select -Last 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1052,9 +1052,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 4 | Select -Skip 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 4/10" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
         ))
     }
 
@@ -1064,9 +1064,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 4 | Select -SkipLast 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/8" 12 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/8" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/8" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.10' (1/8)" 12 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
         ))
     }
 
@@ -1076,9 +1076,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 5 | Select -Index 2,4 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 5/10" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
         ))
     }
 
@@ -1174,55 +1174,55 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 1/3"        33)
-            (Gen "PRTG Probe Search"             "Processing probe 1/3"        33 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"        33)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"        33 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 1/3"       33) +
-                (Gen2 "PRTG Device Search"        "Processing device 1/2"      50)
-
-            ###################################################################
-
-            (Gen1 "PRTG Probe Search"             "Processing probe 1/3"       33) +
-                (Gen2 "PRTG Device Search"        "Processing device 1/2"      50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"       33) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device0' (1/2)"      50)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 1/3"       33) +
-                (Gen2 "PRTG Device Search"        "Processing device 2/2"      100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"       33) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device0' (1/2)"      50 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 1/3"       33) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"       33) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device1' (2/2)"      100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"             "Processing probe 2/3"        66)
-            (Gen "PRTG Probe Search"             "Processing probe 2/3"        66 "Retrieving all devices")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.10' (1/3)"       33) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 2/3"       66) +
-                (Gen2 "PRTG Device Search"        "Processing device 1/2"      50)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"        66)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"        66 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 2/3"       66) +
-                (Gen2 "PRTG Device Search"        "Processing device 1/2"      50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"       66) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device0' (1/2)"      50)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 2/3"       66) +
-                (Gen2 "PRTG Device Search"        "Processing device 2/2"      100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"       66) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device0' (1/2)"      50 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"             "Processing probe 2/3"       66) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"       66) +
+                (Gen2 "PRTG Device Search"        "Processing device 'Probe Device1' (2/2)"      100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe 2/3"        66)
+            (Gen1 "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/3)"       66) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.11' (2/3)"        66)
         ))
     }
 
@@ -1231,53 +1231,53 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
-            (Gen "PRTG Probe Search"                     "Processing probe 1/3"                         33)
-            (Gen "PRTG Probe Search"                     "Processing probe 1/3"                         33 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/3)"                         33)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/3)"                         33 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
-                (Gen2 "PRTG Device Search"               "Processing device 1/2"                        50)
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
+                (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"                        50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 1/3"                         33) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"                     "Processing probe 2/3"                         66)
-            (Gen "PRTG Probe Search"                     "Processing probe 2/3"                         66 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.11' (2/3)"                         66)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.11' (2/3)"                         66 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
-                (Gen2 "PRTG Device Search"               "Processing device 1/2"                        50)
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
+                (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"                        50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
             
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"                         66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Probe Search (Completed)"         "Processing probe 2/3"                         66)
+            (Gen "PRTG Probe Search (Completed)"         "Processing probe '127.0.0.11' (2/3)"                         66)
         ))
     }
 
@@ -1287,33 +1287,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search"        "Processing all probes 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search"        "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2"  50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)"  50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2"  100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)"  100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2"  100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen "PRTG Device Search"        "Processing all probes 2/3" 66 "Retrieving all devices")
-
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2"  50 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2"  100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2"  100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)"  100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/3" 66)
+            (Gen "PRTG Device Search"        "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)"  50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)"  100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)"  100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66)
         ))
     }
 
@@ -1323,35 +1323,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search"        "Processing all probes 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search"        "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)"  50)
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)"  100)
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 1/3" 33) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"  100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"        "Processing all probes 2/3" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search"        "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)"  50)
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)"  100)
 
-            (Gen1 "PRTG Device Search"       "Processing all probes 2/3" 66) +
+            (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"  100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/3" 66)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66)
         ))
     }
 
@@ -1419,13 +1419,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"              "Retrieving all probes")
-            (Gen "PRTG Probe Search"              "Processing probe 1/4"       25)
-            (Gen "PRTG Probe Search"              "Processing probe 2/4"       50)
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe 2/4"       50)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)"       25)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)"       50)
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.11' (2/4)"       50)
 
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1434,8 +1434,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/4"                     25)
-            (Gen "PRTG Probe Search (Completed)"    "Processing probe 2/4"                     50)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)"                     25)
+            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.11' (2/4)"                     50)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -1449,9 +1449,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1472,13 +1472,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"              "Retrieving all probes")
-            (Gen "PRTG Probe Search"              "Processing probe 1/4"       25)
-            (Gen "PRTG Probe Search"              "Processing probe 2/4"       50)
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe 2/4"       50)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)"       25)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)"       50)
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.11' (2/4)"       50)
 
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1487,8 +1487,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/4"                     25)
-            (Gen "PRTG Probe Search (Completed)"    "Processing probe 2/4"                     50)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)"                     25)
+            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.11' (2/4)"                     50)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -1502,9 +1502,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 -Wait | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1528,16 +1528,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 4/10" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
 
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1546,19 +1546,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search" "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search" "Processing probe 8/10" 80)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.16' (7/10)" 70)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.17' (8/10)" 80)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
 
-            (Gen "PRTG Device Search" "Processing all probes 1/4" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/4" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
         ))
     }
 
@@ -1598,7 +1598,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
-            (Gen "PRTG Probe Search"                "Processing probe 1/10" 10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
@@ -1618,8 +1618,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
 
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
@@ -1663,13 +1663,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 -First 4 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/10" 10 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/10" 20 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 9/10" 90 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 10/10" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 10/10" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (9/10)" 90 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
         ))
     }
 
@@ -1679,9 +1679,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 -Skip 2 | Get-Device
         
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/4" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/4" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
         ))
     }
 
@@ -1794,38 +1794,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/3"             33)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 1/3" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)"             33)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/3)" 33)
 
-            (Gen "PRTG Device Search" "Processing all probes 1/2"       50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"       50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen "PRTG Device Search" "Processing all probes 2/2"       100 "Retrieving all devices")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"       100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (2/2)" 100)
         ))
     }
 
@@ -1834,38 +1834,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/3"             33)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 1/3" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)"             33)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/3)" 33)
 
-            (Gen "PRTG Device Search" "Processing all probes 1/2"       50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"       50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2"      50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search" "Processing all probes 2/2"       100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"       100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2"      100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2"       100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (2/2)"       100)
         ))
     }
 
@@ -1875,31 +1875,31 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (2/2)" 100)
         ))
     }
 
@@ -1909,35 +1909,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (2/2)" 100)
         ))
     }
 
@@ -2005,12 +2005,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"              "Retrieving all probes")
-            (Gen "PRTG Probe Search"              "Processing probe 1/4" 25)
-            (Gen "PRTG Probe Search"              "Processing probe 2/4" 50)
-            (Gen "PRTG Probe Search"              "Processing probe 3/4" 75)
-            (Gen "PRTG Probe Search"              "Processing probe 3/4" 75 "Retrieving all devices")
-            (Gen "PRTG Probe Search"              "Processing probe 4/4" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe 4/4" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)" 25)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)" 50)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.12' (3/4)" 75)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2019,7 +2019,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/4" 25)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
@@ -2032,9 +2032,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/4" 75  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/4" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 4/4" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2055,12 +2055,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"              "Retrieving all probes")
-            (Gen "PRTG Probe Search"              "Processing probe 1/4" 25)
-            (Gen "PRTG Probe Search"              "Processing probe 2/4" 50)
-            (Gen "PRTG Probe Search"              "Processing probe 3/4" 75)
-            (Gen "PRTG Probe Search"              "Processing probe 3/4" 75 "Retrieving all devices")
-            (Gen "PRTG Probe Search"              "Processing probe 4/4" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe 4/4" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)" 25)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)" 50)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.12' (3/4)" 75)
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search"              "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2069,7 +2069,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/4" 25)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
@@ -2082,9 +2082,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 -Wait | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/4" 75  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/4" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 4/4" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (4/4)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2108,14 +2108,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -2124,19 +2124,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search" "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search" "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search" "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search" "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search" "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search" "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search" "Processing probe 8/10" 80)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.16' (7/10)" 70)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.17' (8/10)" 80)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
 
-            (Gen "PRTG Device Search" "Processing all probes 1/4" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/4" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
         ))
     }
 
@@ -2148,14 +2148,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search"                   "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search"                   "Processing probe 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -2164,19 +2164,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/10" 20)
-            (Gen "PRTG Probe Search"                   "Processing probe 3/10" 30)
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search"                   "Processing probe 5/10" 50)
-            (Gen "PRTG Probe Search"                   "Processing probe 6/10" 60)
-            (Gen "PRTG Probe Search"                   "Processing probe 7/10" 70)
-            (Gen "PRTG Probe Search"                   "Processing probe 8/10" 80)
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)" 20)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.14' (5/10)" 50)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.16' (7/10)" 70)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.17' (8/10)" 80)
+            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.17' (8/10)" 80)
 
-            (Gen "PRTG Device Search"                  "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"                  "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)"      "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)"      "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2187,22 +2187,22 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/5" 20 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.12' (1/5)" 20 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/5" 40 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.13' (2/5)" 40 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 3/5" 60 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.14' (3/5)" 60 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 4/5" 80 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.15' (4/5)" 80 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing all probes 5/5" 100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search (Completed)" "Processing all probes 5/5" 100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2211,10 +2211,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40)
-            (Gen "PRTG Probe Search"                   "Processing probe 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -2226,7 +2226,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 1/10"                     10)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
@@ -2241,8 +2241,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
 
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
@@ -2258,7 +2258,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.12' forever (3/10)" 30)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.13' forever (4/10)" 40)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.14' forever (5/10)" 50)
@@ -2272,8 +2272,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/10" 10)
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe 8/10" 80)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
+            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.17' (8/10)" 80)
 
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.18' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.19' forever (2/2)" 100)
@@ -2327,11 +2327,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 -First 4 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -2341,9 +2341,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 -Last 2 | Get-Device
         
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/4" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/4" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
         ))
     }
 
@@ -2356,11 +2356,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Select -First 4 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 3/10" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 4/10" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 5/10" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 6/10" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 6/10" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
         ))
     }
 
@@ -2370,9 +2370,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Select -Last 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2382,12 +2382,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Select -SkipLast 3 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/5" 20  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/5" 40  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 3/5" 60  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 4/5" 80  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 5/5" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 5/5" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/5)" 20  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/5)" 40  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (3/5)" 60  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (4/5)" 80  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2397,9 +2397,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Select -Index 1,3 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 4/10" 40  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 6/10" 60  "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 6/10" 60  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60  "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60  "Retrieving all devices")
         ))
     }
 
@@ -2496,42 +2496,42 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe 1/3"             33)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/3"             66)
-            (Gen "PRTG Probe Search"                   "Processing probe 2/3"             66 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/3)"             33)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/3)"             66)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/3)"             66 "Retrieving all devices")
             
-            (Gen1 "PRTG Probe Search"                  "Processing probe 2/3"             66) +
-                (Gen2 "PRTG Device Search"             "Processing device 1/2"            50)
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.11' (2/3)"             66) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device0' (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 2/3"             66) +
-                (Gen2 "PRTG Device Search"             "Processing device 1/2"            50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.11' (2/3)"             66) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device0' (1/2)"            50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 2/3"             66) +
-                (Gen2 "PRTG Device Search"             "Processing device 2/2"            100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.11' (2/3)"             66) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device1' (2/2)"            100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 2/3"             66) +
-                (Gen2 "PRTG Device Search (Completed)"             "Processing device 2/2"            100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.11' (2/3)"             66) +
+                (Gen2 "PRTG Device Search (Completed)"             "Processing device 'Probe Device1' (2/2)"            100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"                   "Processing probe 3/3"             100)
-            (Gen "PRTG Probe Search"                   "Processing probe 3/3"             100 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/3)"             100)
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/3)"             100 "Retrieving all devices")
 
             ###################################################################
             
-            (Gen1 "PRTG Probe Search"                  "Processing probe 3/3"             100) +
-                (Gen2 "PRTG Device Search"             "Processing device 1/2"            50)
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.12' (3/3)"             100) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device0' (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 3/3"             100) +
-                (Gen2 "PRTG Device Search"             "Processing device 1/2"            50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.12' (3/3)"             100) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device0' (1/2)"            50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 3/3"             100) +
-                (Gen2 "PRTG Device Search"             "Processing device 2/2"            100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.12' (3/3)"             100) +
+                (Gen2 "PRTG Device Search"             "Processing device 'Probe Device1' (2/2)"            100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                  "Processing probe 3/3"             100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2"            100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                  "Processing probe '127.0.0.12' (3/3)"             100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)"            100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe 3/3"             100)
+            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.12' (3/3)"             100)
         ))
     }
 
@@ -2540,42 +2540,42 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
-            (Gen "PRTG Probe Search"                     "Processing probe 1/3"             33)
-            (Gen "PRTG Probe Search"                     "Processing probe 2/3"             66)
-            (Gen "PRTG Probe Search"                     "Processing probe 2/3"             66 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/3)"             33)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.11' (2/3)"             66)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.11' (2/3)"             66 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
-                (Gen2 "PRTG Device Search"               "Processing device 1/2"            50)
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
+                (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 2/3"             66) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"            100)
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"                     "Processing probe 3/3"             100)
-            (Gen "PRTG Probe Search"                     "Processing probe 3/3"             100 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.12' (3/3)"             100)
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.12' (3/3)"             100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
-                (Gen2 "PRTG Device Search"               "Processing device 1/2"            50)
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
+                (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
 
-            (Gen1 "PRTG Probe Search"                    "Processing probe 3/3"             100) +
+            (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"            100)
 
-            (Gen "PRTG Probe Search (Completed)"         "Processing probe 3/3"             100)
+            (Gen "PRTG Probe Search (Completed)"         "Processing probe '127.0.0.12' (3/3)"             100)
         ))
     }
 
@@ -2585,35 +2585,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 1 | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search"                   "Processing all probes 2/3"   66 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"   66 "Retrieving all devices")
             
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
-                (Gen2 "PRTG Sensor Search (Completed)"   "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen "PRTG Device Search"                    "Processing all probes 3/3"  100 "Retrieving all devices")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
+                (Gen2 "PRTG Sensor Search (Completed)"   "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 1/2" 50 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
-                (Gen2 "PRTG Sensor Search (Completed)"   "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search"                    "Processing probe '127.0.0.12' (3/3)"  100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"        "Processing all probes 3/3"  100)
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
+                (Gen2 "PRTG Sensor Search (Completed)"   "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)"        "Processing probe '127.0.0.12' (3/3)"  100)
         ))
     }
 
@@ -2623,35 +2623,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search"                   "Processing all probes 2/3"   66 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"   66 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/3"  66) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"                   "Processing all probes 3/3"   100 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"   100 "Retrieving all devices")
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 3/3"  100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"         "Processing all probes 3/3"   100)
+            (Gen "PRTG Device Search (Completed)"         "Processing probe '127.0.0.12' (3/3)"   100)
         ))
     }
 
@@ -2721,13 +2721,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2" 50  "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)" 50  "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all probes 2/2"  100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
         ))
     }
 
@@ -2754,9 +2754,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -SkipLast 2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 1/2" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -2906,41 +2906,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
-                    (Gen3 "PRTG Sensor Search"         "Processing all devices 1/2" 50 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
+                    (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
-                    (Gen3 "PRTG Sensor Search"         "Processing all devices 2/2" 100 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
+                    (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
-                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
-                    (Gen3 "PRTG Sensor Search"         "Processing all devices 1/2" 50 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
+                    (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
-                    (Gen3 "PRTG Sensor Search"         "Processing all devices 2/2" 100 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
+                    (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
-                    (Gen3 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all probes 2/2"  100)
+                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100)
         ))
     }
 
@@ -2951,41 +2951,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 1/2"  50) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100 "Retrieving all devices")
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search"             "Processing all probes 2/2"  100) +
+                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
             
             ###################################################################
 
             (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all probes 2/2"  100)
+                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100)
         ))
     }
 
@@ -2995,33 +2995,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -SkipLast 1 | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search"                   "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)"   "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen "PRTG Device Search"                   "Processing all probes 2/2" 100 "Retrieving all devices")
-
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 1/2" 50 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search"               "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)"   "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)"   "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"        "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search"               "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)"   "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)"        "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -3031,33 +3031,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -SkipLast 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search"                   "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 1/2" 50) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"                   "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/2" 100) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"        "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search (Completed)"        "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -3098,10 +3098,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 2/4" 50)
-            (Gen "PRTG Probe Search"             "Processing probe 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe 3/4" 75 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/4" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/4)" 50)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
         ))
     }
 
@@ -3122,9 +3122,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,2 | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 2/4" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 3/4" 75  "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/4" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/4)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
         ))
     }
 
@@ -3145,10 +3145,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe 2/4" 50)
-            (Gen "PRTG Probe Search"             "Processing probe 2/4" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe 3/4" 75 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/4" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/4)" 50)
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.11' (2/4)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/4)" 75 "Retrieving all devices")
         ))
     }
 
@@ -3169,9 +3169,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,2 -Wait | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search"             "Processing all probes 2/4" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing all probes 3/4" 75  "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/4" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/4)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/4)" 75  "Retrieving all devices")
         ))
     }
 
@@ -3317,41 +3317,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 2/5" 40)
-            (Gen "PRTG Probe Search"                "Processing probe 2/5" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "PRTG Device Search"                "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "PRTG Device Search"                "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "PRTG Device Search"                "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"                "Processing probe 4/5" 80)
-            (Gen "PRTG Probe Search"                "Processing probe 4/5" 80 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "PRTG Device Search"                "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "PRTG Device Search"                "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "PRTG Device Search"                "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
             
             ###################################################################
 
-            (Gen "PRTG Probe Search (Completed)"     "Processing probe 4/5" 80)
+            (Gen "PRTG Probe Search (Completed)"     "Processing probe '127.0.0.13' (4/5)" 80)
         ))
     }
 
@@ -3360,41 +3360,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe 2/5" 40)
-            (Gen "PRTG Probe Search"                "Processing probe 2/5" 40 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
-                (Gen2 "PRTG Device Search"                "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 2/5" 40) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Probe Search"                 "Processing probe 4/5" 80)
-            (Gen "PRTG Probe Search"                 "Processing probe 4/5" 80 "Retrieving all devices")
+            (Gen "PRTG Probe Search"                 "Processing probe '127.0.0.13' (4/5)" 80)
+            (Gen "PRTG Probe Search"                 "Processing probe '127.0.0.13' (4/5)" 80 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
-                (Gen2 "PRTG Device Search"           "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Device Search"           "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Probe Search"                "Processing probe 4/5" 80) +
+            (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Probe Search (Completed)"     "Processing probe 4/5" 80)
+            (Gen "PRTG Probe Search (Completed)"     "Processing probe '127.0.0.13' (4/5)" 80)
         ))
     }
 
@@ -3404,33 +3404,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,3 | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search"                  "Processing all probes 2/5" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.11' (2/5)" 40 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                 "Processing all probes 2/5" 40) +
-                (Gen2 "PRTG Sensor Search"             "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Sensor Search"             "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                 "Processing all probes 2/5" 40) +
-                (Gen2 "PRTG Sensor Search"             "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Sensor Search"             "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"                 "Processing all probes 2/5" 40) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            ###################################################################
-
-            (Gen "PRTG Device Search"                  "Processing all probes 4/5" 80 "Retrieving all devices")
-
-            (Gen1 "PRTG Device Search"                 "Processing all probes 4/5" 80) +
-                (Gen2 "PRTG Sensor Search"             "Processing all devices 1/2" 50 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                 "Processing all probes 4/5" 80) +
-                (Gen2 "PRTG Sensor Search"             "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Device Search"                 "Processing all probes 4/5" 80) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.11' (2/5)" 40) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"      "Processing all probes 4/5" 80)
+            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.13' (4/5)" 80 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Sensor Search"             "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Sensor Search"             "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search"                 "Processing probe '127.0.0.13' (4/5)" 80) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)"      "Processing probe '127.0.0.13' (4/5)" 80)
         ))
     }
 
@@ -3440,33 +3440,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,3 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search"                    "Processing all probes 2/5" 40 "Retrieving all devices")
+            (Gen "PRTG Device Search"                    "Processing probe '127.0.0.11' (2/5)" 40 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/5" 40) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/5" 40) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 2/5" 40) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"                    "Processing all probes 4/5" 80 "Retrieving all devices")
+            (Gen "PRTG Device Search"                    "Processing probe '127.0.0.13' (4/5)" 80 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 4/5" 80) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 4/5" 80) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"                   "Processing all probes 4/5" 80) +
+            (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search (Completed)"        "Processing all probes 4/5" 80)
+            (Gen "PRTG Device Search (Completed)"        "Processing probe '127.0.0.13' (4/5)" 80)
         ))
     }
 
@@ -3513,11 +3513,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
-            (Gen "PRTG Probe Search" "Processing probe 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/3" 66 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 3/3" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
         ))
     }
     
@@ -3535,9 +3535,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/3" 33 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 3/3" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
         ))
     }
 
@@ -3553,7 +3553,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33)
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/3)" 33)
             (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.12' forever (3/3)" 100)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/3)" 100)
@@ -3569,37 +3569,37 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Group Search (Completed)" "Processing group 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100)
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Group Search" "Processing group 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Group Search (Completed)" "Processing group 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
 
@@ -3609,29 +3609,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Group | where name -like * | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all groups 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all groups 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all groups 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all groups 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
     
@@ -3649,38 +3649,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/3" 33)
-            (Gen "PRTG Probe Search" "Processing probe 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/3" 33) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search" "Processing probe 2/3" 66)
-            (Gen "PRTG Probe Search" "Processing probe 3/3" 100)
-            (Gen "PRTG Probe Search" "Processing probe 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/3)" 66)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 3/3" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 3/3" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100)
         ))
     }
 
@@ -3698,29 +3698,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { $_.name -EQ "127.0.0.10" -or $_.name -eq "127.0.0.12" } | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/3" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/3" 33) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search" "Processing all probes 3/3" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 3/3" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 3/3" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100)
         ))
     }
     
@@ -3736,18 +3736,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probe | Get-Group | Get-Device
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/1" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all groups")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
-                (Gen2 "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
-                (Gen2 "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing all probes 1/1" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing all groups 2/2" 100 "Retrieving all devices")
+            (Gen1 "PRTG Group Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 1/1" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.10' (1/1)" 100)
         ))
     }
 
@@ -3759,10 +3759,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
         ))
     }
 
@@ -3772,9 +3772,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Trigger -Types
 
         Validate(@(
-            (Gen "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
-            (Gen "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
-            (Gen "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Notification Trigger Type Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
+            (Gen "PRTG Notification Trigger Type Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
+            (Gen "PRTG Notification Trigger Type Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
         ))
     }
 
@@ -3786,37 +3786,37 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
-            (Gen "PRTG Group Search" "Processing group 1/2" 50)
-            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen "PRTG Group Search" "Processing group 2/2" 100)
-            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -3826,29 +3826,29 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Get-Trigger -Types
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
-                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
-                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
-                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
-                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 1/2" 50 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
-                (Gen2 "PRTG Notification Trigger Type Search" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
-                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all notification trigger types")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Notification Trigger Type Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all notification trigger types")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
     
@@ -3877,10 +3877,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -3890,9 +3890,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
     
@@ -3904,15 +3904,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
         ))
     }
 
@@ -3923,15 +3923,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
         ))
     }
     
@@ -3968,10 +3968,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -3981,9 +3981,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" } | Get-Device
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
     
@@ -3997,58 +3997,67 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
+
+            ##########################################################################################
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
         ))
     }
     
@@ -4060,59 +4069,68 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
+
+            ##########################################################################################
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
         ))
     }
     
@@ -4135,37 +4153,45 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate (@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
 
             #region Probe 1, Group 1
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
             #endregion Probe 1, Group 1
 
@@ -4173,67 +4199,83 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 1, Group 2
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
             #endregion Probe 1, Group 2
 
             ##########################################################################################
 
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
 
             #region Probe 2, Group 1
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
             #endregion Probe 2, Group 1
 
@@ -4241,38 +4283,46 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            ##########################################################################################
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
         ))
     }
 
@@ -4291,35 +4341,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         }
 
         Validate(@(
-            (Gen "PRTG Group Search" "Processing all probes 1/2" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
             #region Probe 2, Group 1
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
             #endregion Probe 2, Group 1
 
@@ -4327,66 +4377,66 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            (Gen "PRTG Group Search" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
             #region Probe 2, Group 1
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure0' (1/1)" 100)
 
             #endregion Probe 2, Group 1
 
@@ -4394,38 +4444,38 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             #region Probe 2, Group 2
 
-            (Gen "PRTG Device Search" "Processing all groups 1/1" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
-            (Gen "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
-            (Gen "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/1" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (1/1)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 1/1" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (1/1)" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            (Gen "PRTG Group Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
         ))
     }
 
@@ -4440,113 +4490,113 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
             #region Probe 1, Device 1
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             #region Probe 1, Device 2
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            (Gen1 "PRTG Probe Search" "Processing probe 1/2" 50) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100)
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
             #region Probe 2, Device 1
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
             #endregion Probe 2, Device 1
 
             ##########################################################################################
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             #region Probe 2, Device 2
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
             #endregion Probe 2, Device 2
 
             ##########################################################################################
 
-            (Gen1 "PRTG Probe Search" "Processing probe 2/2" 100) +
-                (Gen2 "PRTG Device Search (Completed)" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
     
@@ -4565,103 +4615,103 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         } | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
             #region Probe 1, Device 1
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
             #endregion Probe 1, Device 1
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
             #region Probe 1, Device 2
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
             #endregion Probe 1, Device 2
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
             #region Probe 2, Device 1
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
             #endregion Probe 2, Device 1
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
             #region Probe 2, Device 2
 
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/2" 50 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
             #endregion Probe 2, Group 2
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all probes 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100 "Retrieving all sensors")
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
         ))
     }
     
@@ -4673,10 +4723,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
     
@@ -4686,9 +4736,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
 
     }
@@ -4701,58 +4751,67 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -4762,57 +4821,68 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Get-Sensor | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Sensor Search" "Processing all devices 1/1" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/1" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 1/1" 100)
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -4824,8 +4894,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50)
-            (Gen "PRTG Probe Search" "Processing probe 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
@@ -4835,7 +4905,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
-            (Gen "PRTG Probe Search" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
@@ -4845,7 +4915,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -4855,7 +4925,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all probes 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
@@ -4865,7 +4935,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device0' (ID: 3000) (1/1)" 100 "Retrieving all sensors")
@@ -4875,7 +4945,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100)
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
             (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (1/1)" 100 "Retrieving all sensors")
-            (Gen "PRTG Device Search (Completed)" "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
     
@@ -4887,145 +4957,145 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
-            (Gen "PRTG Group Search" "Processing group 1/2" 50)
-            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search" "Processing group 2/2" 100)
-            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -5035,137 +5105,137 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+                    (Gen3 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -5177,49 +5247,49 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
-            (Gen "PRTG Group Search" "Processing group 1/2" 50)
-            (Gen "PRTG Group Search" "Processing group 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 1/2" 50) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search" "Processing group 2/2" 100)
-            (Gen "PRTG Group Search" "Processing group 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
-                (Gen2 "PRTG Device Search" "Processing device 1/2" 50)
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen1 "PRTG Group Search" "Processing group 2/2" 100) +
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen "PRTG Group Search (Completed)" "Processing group 2/2" 100)
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -5229,41 +5299,41 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search" "Processing all groups 1/2" 50 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 1/2" 50) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen "PRTG Device Search" "Processing all groups 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing all groups 2/2" 100) +
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
 
-            (Gen "PRTG Device Search (Completed)" "Processing all groups 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
     }
 
@@ -5277,13 +5347,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
         ))
     }
 
@@ -5296,11 +5366,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource
 
         Validate(@(
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
-            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
         ))
     }
 
@@ -5313,33 +5383,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5352,25 +5422,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                (Gen2 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5383,127 +5453,127 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing device 1/2" 50)
-            (Gen "PRTG Device Search" "Processing device 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
-
-            ###################################################################
-
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
-
-            ###################################################################
-
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 1/2" 50) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen "PRTG Device Search" "Processing device 2/2" 100)
-            (Gen "PRTG Device Search" "Processing device 2/2" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
-
-            ###################################################################
-
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
-
-            ###################################################################
-
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
-            (Gen1 "PRTG Device Search" "Processing device 2/2" 100) +
-                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen "PRTG Device Search (Completed)" "Processing device 2/2" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
     }
 
@@ -5515,89 +5585,89 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Get-Sensor | Get-SensorFactorySource | Get-Channel
 
         Validate(@(
-            (Gen "PRTG Sensor Search" "Processing all devices 1/2" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
-
-            ###################################################################
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
-
-            (Gen "PRTG Sensor Search" "Processing all devices 2/2" 100 "Retrieving all sensors")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
-
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing all sensors 1/1" 100 "Retrieving all channels")
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing all devices 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing all devices 2/2" 100)
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
     }
 
@@ -5609,33 +5679,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5648,25 +5718,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
 
-            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5679,39 +5749,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5722,31 +5792,31 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
 
         Validate(@(
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5759,75 +5829,75 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50)
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 1/2" 50) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100)
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Search" "Processing sensor 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 1/1" 100)
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 2/2" 100) +
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 2/2" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5838,67 +5908,67 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 1/2" 50) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory properties")
-            (Gen "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing channel 1/1" 100)
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing all sensors 2/2" 100) +
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
 
-            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing all sensors 2/2" 100)
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
@@ -5914,7 +5984,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"         "Retrieving all sensors")
-            (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
+            (Gen "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/3)" 33)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total1' (2/3)" 66)
             (Gen "Pausing PRTG Objects"       "Queuing sensor 'Volume IO _Total2' (3/3)" 100)
@@ -5930,7 +6000,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"         "Retrieving all sensors")
-            (Gen "PRTG Sensor Search"         "Processing sensor 1/3" 33)
+            (Gen "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/3)" 33)
             (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/3)" 33)
             (Gen "Resuming PRTG Objects"      "Queuing sensor 'Volume IO _Total0' (1/3)" 33)
             (Gen "Cloning PRTG Sensors"       "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/3)" 66)
@@ -5989,58 +6059,58 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         
         Validate(@(
             (Gen "PRTG Device Search"         "Retrieving all devices")
-            (Gen "PRTG Device Search"         "Processing device 1/3" 33)
-            (Gen "PRTG Device Search"         "Processing device 1/3" 33 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
-                (Gen2 "PRTG Sensor Search"    "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"        "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search"    "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"        "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"        "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects"  "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"        "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"        "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"         "Processing device 2/3" 66)
-            (Gen "PRTG Device Search"         "Processing device 2/3" 66 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
-                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"        "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"        "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"         "Processing device 3/3" 100)
-            (Gen "PRTG Device Search"         "Processing device 3/3" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
-                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   $final 100)
 
-            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)"   $final 100)
         ))
     }
@@ -6053,76 +6123,76 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search"         "Retrieving all devices")
-            (Gen "PRTG Device Search"         "Processing device 1/3" 33)
-            (Gen "PRTG Device Search"         "Processing device 1/3" 33 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
-                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"         "Processing device 1/3" 33) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"         "Processing device 2/3" 66)
-            (Gen "PRTG Device Search"         "Processing device 2/3" 66 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
-                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"         "Processing device 2/3" 66) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Device Search"         "Processing device 3/3" 100)
-            (Gen "PRTG Device Search"         "Processing device 3/3" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100)
+            (Gen "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
-                (Gen2 "PRTG Sensor Search"     "Processing sensor 1/2" 50)
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "PRTG Sensor Search"     "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Device Search"         "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  $final 100)
 
-            (Gen1 "PRTG Device Search (Completed)" "Processing device 3/3" 100) +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects (Completed)"  $final 100)
         ))
     }
@@ -6138,46 +6208,46 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                  " 'Volume IO _Total0' and 'Volume IO _Total1' forever (6/6)"
 
         Validate(@(
-            (Gen "PRTG Sensor Search"          "Processing all devices 1/3" 33 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device0' (1/3)" 33 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Pausing PRTG Objects (Completed)"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Sensor Search"          "Processing all devices 2/3" 66 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device1' (2/3)" 66 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Pausing PRTG Objects (Completed)"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Sensor Search"          "Processing all devices 3/3" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects"   $final 100)
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Pausing PRTG Objects (Completed)" $final 100)
         ))
     }
@@ -6191,64 +6261,64 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         " 'Volume IO _Total0' and 'Volume IO _Total0' (6/6)"
 
         Validate(@(
-            (Gen "PRTG Sensor Search"          "Processing all devices 1/3" 33 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device0' (1/3)" 33 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 1/3" 33) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/3)" 33) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Sensor Search"          "Processing all devices 2/3" 66 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device1' (2/3)" 66 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 2/3" 66) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/3)" 66) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen "PRTG Sensor Search"          "Processing all devices 3/3" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search"          "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Cloning PRTG Sensors"   "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  "Queuing sensor 'Volume IO _Total0' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects"  $final 100)
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing all devices 3/3" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100) +
                 (Gen2 "Resuming PRTG Objects (Completed)"  $final 100)
         ))
     }
@@ -6425,7 +6495,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG $baseType Search"         "Retrieving all $($lowerType)s")
-            (Gen "PRTG $baseType Search"         "Processing $lowerType 1/2" 50)
+            (Gen "PRTG $baseType Search"         "Processing $lowerType '$($names[0])' (1/2)" 50)
             (Gen "$progressActivity"             "Queuing $lowerType '$($names[0])' (1/2)" 50)
             (Gen "$progressActivity"             "Queuing $lowerType '$($names[1])' (2/2)" 100)
             (Gen "$progressActivity"             "$realMessage (2/2)" 100)
@@ -6478,19 +6548,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search"         "Retrieving all sensors")
-            (Gen "PRTG Sensor Search"         "Processing sensor 1/1" 100)
-            (Gen "PRTG Sensor Search"         "Processing sensor 1/1" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+            (Gen "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
 
-            (Gen1 "PRTG Sensor Search"         "Processing sensor 1/1" 100) +
-                (Gen2 "PRTG Channel Search"    "Processing channel 1/1" 100)
+            (Gen1 "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/1)" 100) +
+                (Gen2 "PRTG Channel Search"    "Processing channel 'Percent Available Memory' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search"         "Processing sensor 1/1" 100) +
+            (Gen1 "PRTG Sensor Search"         "Processing sensor 'Volume IO _Total0' (1/1)" 100) +
                 (Gen2 "Modify PRTG Channel Settings" "Queuing channel 'Percent Available Memory' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100) +
                 (Gen2 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'LimitsEnabled' to 'True' (1/1)" 100)
 
-            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 1/1" 100) +
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100) +
                 (Gen2 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'LimitsEnabled' to 'True' (1/1)" 100)
         ))
     }
@@ -6699,9 +6769,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device -Count 0 | Get-Sensor
 
         Validate(@(
-            (Gen "PRTG Device Search"              "Processing all probes 1/2" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"              "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)"  "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing probe '127.0.0.10' (1/2)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)"  "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 
@@ -6711,9 +6781,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Get-Device -Count 0 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "PRTG Device Search"              "Processing all probes 1/2" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"              "Processing all probes 2/2" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)"  "Processing all probes 2/2" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing probe '127.0.0.10' (1/2)" 50  "Retrieving all devices")
+            (Gen "PRTG Device Search"              "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)"  "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
 

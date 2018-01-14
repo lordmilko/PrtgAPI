@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Management.Automation;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
@@ -83,11 +81,17 @@ namespace PrtgAPI.PowerShell.Base
                 {
                     ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} Search";
 
-                    ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(ProgressManager.CmdletPipeline.List.First().GetType()).ToLower()}s";
+                    var obj = ProgressManager.CmdletPipeline.Current;
+                    var prtgObj = obj as PrtgObject;
+
+                    if (prtgObj != null)
+                        ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj.GetType()).ToLower()}";
+                    else
+                        ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(obj.GetType()).ToLower()}s";
                     ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypePlural()}";
 
                     ProgressManager.RemovePreviousOperation();
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, writeObject);
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, prtgObj, writeObject);
                 }
             }
             else
@@ -105,13 +109,13 @@ namespace PrtgAPI.PowerShell.Base
                     break;
                 case ProgressScenario.StreamProgress:
                 case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PreLoop);
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PreLoop, null);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
                 case ProgressScenario.MultipleCmdletsFromBlockingSelect:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop);
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop, null);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -121,7 +125,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Updates progress as each object in the current cmdlet is written to the pipeline.
         /// </summary>
-        protected void DuringUpdateProgress()
+        protected void DuringUpdateProgress(PrtgObject obj)
         {
             switch (GetSwitchScenario())
             {
@@ -129,18 +133,18 @@ namespace PrtgAPI.PowerShell.Base
                     break;
                 case ProgressScenario.StreamProgress:
                 case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach);
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach, obj);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
                 case ProgressScenario.MultipleCmdletsFromBlockingSelect:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, obj);
                     break;
                 case ProgressScenario.SelectLast:
                 case ProgressScenario.SelectSkipLast:
-                    if(ProgressManager.PartOfChain)
-                        UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach);
+                    if (ProgressManager.PartOfChain)
+                        UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, obj);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -158,14 +162,14 @@ namespace PrtgAPI.PowerShell.Base
                     break;
                 case ProgressScenario.StreamProgress:
                 case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PostLoop);
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.PostLoop, null);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
                     UpdateScenarioProgress_VariableToSingleCmdlet(ProgressStage.PostLoop);
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
                 case ProgressScenario.MultipleCmdletsFromBlockingSelect:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop);
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop, null);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -198,7 +202,7 @@ namespace PrtgAPI.PowerShell.Base
             return scenario;
         }
 
-        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage)
+        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage, PrtgObject obj)
         {
             if (ProgressManager.ExpectsContainsProgress)
             {
@@ -208,7 +212,7 @@ namespace PrtgAPI.PowerShell.Base
                 }
                 else if (stage == ProgressStage.BeforeEach)
                 {
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
                 }
                 else //PostLoop
                 {
@@ -235,7 +239,7 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage)
+        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage, PrtgObject obj)
         {
             if (stage == ProgressStage.PreLoop)
             {
@@ -253,7 +257,7 @@ namespace PrtgAPI.PowerShell.Base
                 //When a variable to cmdlet chain contains an operation, responsibility of updating the number of records processed
                 //"resets", and we become responsible for updating our own count again
                 if (ProgressManager.PipelineContainsOperation && ProgressManager.ExpectsContainsProgress)
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord);
+                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
             }
             else //PostLoop
             {
@@ -295,7 +299,7 @@ namespace PrtgAPI.PowerShell.Base
 
             foreach (var item in sendToPipeline)
             {
-                DuringUpdateProgress();
+                DuringUpdateProgress(item as PrtgObject);
 
                 WriteObject(item);
             }
@@ -336,7 +340,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="typeDescription">The type description use for the progress.</param>
         /// <param name="operationDescription">The progress description to use for the first operation.</param>
         /// <returns></returns>
-        public ProgressTask<TResult> First<TResult>(Func<List<TResult>> func, string typeDescription, string operationDescription)
+        protected ProgressTask<TResult> First<TResult>(Func<List<TResult>> func, string typeDescription, string operationDescription)
         {
             return ProgressTask<TResult>.Create(func, this, typeDescription, operationDescription);
         }
