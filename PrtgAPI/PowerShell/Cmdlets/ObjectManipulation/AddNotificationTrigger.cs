@@ -39,7 +39,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "NotificationTrigger", SupportsShouldProcess = true)]
-    public class AddNotificationTrigger : NewObjectCmdlet<NotificationTrigger>
+    public class AddNotificationTrigger : NewObjectCmdlet
     {
         /// <summary>
         /// <para type="description">The parameters to use to add a <see cref="NotificationTrigger"/>.</para>
@@ -57,13 +57,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void Resolver(Action addTrigger)
         {
-            var obj = ResolveWithDiff(
+            var objs = GetResolvedTriggers(addTrigger);
+
+            foreach (var o in objs.OrderBy(i => i.SubId))
+                WriteObject(o);
+        }
+
+        internal List<NotificationTrigger> GetResolvedTriggers(Action addTrigger)
+        {
+            var objs = ResolveWithDiff(
                 addTrigger,
                 () => client.GetNotificationTriggers(Parameters.ObjectId).Where(t => !t.Inherited).ToList(),
                 Except
             );
 
-            WriteObject(obj.OrderBy(i => i.SubId).First());
+            return objs;
         }
 
         private List<NotificationTrigger> Except(List<NotificationTrigger> before, List<NotificationTrigger> after)

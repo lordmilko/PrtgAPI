@@ -14,7 +14,7 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="TParams">The type of parameters to use to create this object.</typeparam>
     /// <typeparam name="TObject">The type of object to create.</typeparam>
     /// <typeparam name="TDestination">The type of object this object will be added under.</typeparam>
-    public abstract class AddObject<TParams, TObject, TDestination> : NewObjectCmdlet<TObject>
+    public abstract class AddObject<TParams, TObject, TDestination> : NewObjectCmdlet
         where TParams : NewObjectParameters
         where TObject : SensorOrDeviceOrGroupOrProbe, new()
         where TDestination : DeviceOrGroupOrProbe

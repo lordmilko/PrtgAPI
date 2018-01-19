@@ -69,7 +69,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     
     It "3a: Table -> Action -> Table" {
 
-        Get-Device | Clone-Device 5678 | Get-Sensor
+        Get-Device | Clone-Object 5678 | Get-Sensor
 
         Validate (@(
             (Gen "PRTG Device Search" "Retrieving all devices")
@@ -86,7 +86,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $devices = Get-Device
 
-        $devices | Clone-Device 5678 | Get-Sensor
+        $devices | Clone-Object 5678 | Get-Sensor
 
         Validate(@(
             (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
@@ -238,7 +238,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 6: Something -> Table -> Action -> Table
     
     It "6a: Table -> Table -> Action -> Table" {
-        Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor
+        Get-Group | Get-Device | Clone-Object 5678 | Get-Sensor
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
@@ -291,7 +291,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "6b: Variable -> Table -> Action -> Table" {
         $probes = Get-Probe
 
-        $probes | Get-Group -Count 1 | Clone-Group 5678 | Get-Device
+        $probes | Get-Group -Count 1 | Clone-Object 5678 | Get-Device
 
         Validate(@(
             (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
@@ -548,7 +548,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 10: Something -> Action -> Table -> Table
     
     It "10a: Table -> Action -> Table -> Table" {
-        Get-Device | Clone-Device 5678 | Get-Sensor | Get-Channel
+        Get-Device | Clone-Object 5678 | Get-Sensor | Get-Channel
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
@@ -596,7 +596,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #RunCustomCount $counts {
             $devices = Get-Device
 
-            $devices | Clone-Device 5678 | Get-Sensor | Get-Channel        
+            $devices | Clone-Object 5678 | Get-Sensor | Get-Channel        
         #}
 
         Validate(@(
@@ -4890,7 +4890,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 33: Something -> Table -> Where { Variable(1) -> Action -> Table }
 
     It "33a: Table -> Table -> Where { Variable(1) -> Action -> Table }" {
-        Get-Probe | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
+        Get-Probe | Get-Device | Where { $_ | Clone-Object 5678 | Get-Sensor }
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
@@ -4922,7 +4922,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "33b: Variable -> Table -> Where { Variable(1) -> Action -> Table }" {
         $probes = Get-Probe
         
-        $probes | Get-Device | Where { $_ | Clone-Device 5678 | Get-Sensor }
+        $probes | Get-Device | Where { $_ | Clone-Object 5678 | Get-Sensor }
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
@@ -4953,7 +4953,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 34: Something -> Table -> Action -> Table -> Action
 
     It "34a: Table -> Table -> Action -> Table -> Action" {
-        Get-Group | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
+        Get-Group | Get-Device | Clone-Object 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
@@ -5102,7 +5102,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "34b: Variable -> Table -> Action -> Table -> Action" {
         $groups = Get-Group
 
-        $groups | Get-Device | Clone-Device 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
+        $groups | Get-Device | Clone-Object 5678 | Get-Sensor | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
@@ -5243,7 +5243,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #region 35: Something -> Table -> Action -> Action
 
     It "35a: Table -> Table -> Action -> Action" {
-        Get-Group | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
+        Get-Group | Get-Device | Clone-Object 5678 | Resume-Object -Batch:$false
 
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
@@ -5296,7 +5296,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "35b: Variable -> Table -> Action -> Action" {
         $groups = Get-Group
 
-        $groups | Get-Device | Clone-Device 5678 | Resume-Object -Batch:$false
+        $groups | Get-Device | Clone-Object 5678 | Resume-Object -Batch:$false
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
@@ -5745,7 +5745,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
     It "100e1: Sensor -> Get-SensorFactorySource -> Action -> Object" {
 
-        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Object 5678 | Get-Channel
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
@@ -5789,7 +5789,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $sensors = Get-Sensor -Count 2
         
-        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel
+        $sensors | Get-SensorFactorySource | Clone-Object 5678 | Get-Channel
 
         Validate(@(
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
@@ -5825,7 +5825,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
     It "100f1: Something -> Get-SensorFactorySource -> Action -> Object -> Anything" {
         
-        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Clone-Object 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
             (Gen "PRTG Sensor Search"             "Retrieving all sensors")
@@ -5905,7 +5905,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         
         $sensors = Get-Sensor -Count 2
         
-        $sensors | Get-SensorFactorySource | Clone-Sensor 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
+        $sensors | Get-SensorFactorySource | Clone-Object 5678 | Get-Channel | Set-ChannelProperty UpperErrorLimit 100 -Batch:$false
 
         Validate(@(
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
@@ -5994,7 +5994,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "101a2: Table -> Action -> Action -Batch:`$true" {
-        Get-Sensor -Count 3 | Clone-Sensor 5678 | Resume-Object
+        Get-Sensor -Count 3 | Clone-Object 5678 | Resume-Object
 
         $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0' and 'Volume IO _Total0' (3/3)"
 
@@ -6033,7 +6033,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "101a4: Variable -> Action -> Action -Batch:`$true" {
         $sensors = Get-Sensor -Count 3
 
-        $sensors | Clone-Sensor 1234 | Resume-Object
+        $sensors | Clone-Object 1234 | Resume-Object
 
         $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0' and 'Volume IO _Total0' (3/3)"
 
@@ -6116,7 +6116,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "101a6: Table -> Table -> Action -> Action -Batch:`$true" {
-        Get-Device -Count 3 | Get-Sensor | Clone-Sensor 5678 | Resume-Object
+        Get-Device -Count 3 | Get-Sensor | Clone-Object 5678 | Resume-Object
 
         $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0'," + 
                   " 'Volume IO _Total0' and 'Volume IO _Total0' (6/6)"
@@ -6255,7 +6255,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "101a8: Variable -> Table -> Action -> Action -Batch:`$true" {
         $device = Get-Device -Count 3
 
-        $device | Get-Sensor | Clone-Sensor 5678 | Resume-Object
+        $device | Get-Sensor | Clone-Object 5678 | Resume-Object
 
         $final = "Resuming sensors 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0', 'Volume IO _Total0'," + 
         " 'Volume IO _Total0' and 'Volume IO _Total0' (6/6)"

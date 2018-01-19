@@ -180,9 +180,7 @@ Add-Sensor
 Acknowledge-Sensor
 Backup-PrtgConfig
 Clear-PrtgCache
-Clone-Device
-Clone-Group
-Clone-Sensor
+Clone-Object
 Connect-GoPrtgServer
 Connect-PrtgServer
 Disable-PrtgProgress
@@ -204,7 +202,7 @@ Get-PrtgStatus
 Get-Sensor
 Get-SensorFactorySource
 Get-SensorHistory
-Get-SensorTargets
+Get-SensorTarget
 Get-SensorTotals
 Install-GoPrtgServer
 Load-PrtgConfigFile

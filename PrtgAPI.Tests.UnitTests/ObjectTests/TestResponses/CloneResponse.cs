@@ -33,6 +33,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(CommandFunction.DuplicateObject):
                     address = responseAddress;
                     return new BasicResponse(string.Empty);
+                case nameof(JsonFunction.Triggers):
+                    return new TriggerOverviewResponse();
+                case nameof(HtmlFunction.EditSettings):
+                    return new BasicResponse(string.Empty);
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -44,6 +48,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             if (content == Content.Sensors)
                 return new SensorResponse();
+            if (content == Content.Triggers)
+                return new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(parentId: "5678"));
             else
                 throw new NotSupportedException($"Content type {content} is not supported by {nameof(CloneResponse)}");
         }

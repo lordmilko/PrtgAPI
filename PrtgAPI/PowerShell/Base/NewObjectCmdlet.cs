@@ -10,8 +10,7 @@ namespace PrtgAPI.PowerShell.Base
     /// <summary>
     /// Base class for all cmdlets that create new objects.
     /// </summary>
-    /// <typeparam name="T">The type of object the cmdlet will create.</typeparam>
-    public abstract class NewObjectCmdlet<T> : PrtgOperationCmdlet
+    public abstract class NewObjectCmdlet : PrtgOperationCmdlet
     {
         /// <summary>
         /// <para type="description">Indicates whether or not the new object should be resolved to a <see cref="PrtgObject"/>. By default this value is <see cref="SwitchParameter.Present"/>.</para>
@@ -25,8 +24,9 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="getObjects">A function used to retrieve the newly created object.</param>
         /// <param name="condition">A function used to validate whether the results returned from <paramref name="getObjects"/> contain the newly created object.</param>
         /// <param name="resolutionError">The error message to display if the object cannot be resolved.</param>
+        /// <param name="trueType">The type of the most derived type of T. If T is the most derived type, this value is null.</param>
         /// <returns></returns>
-        public List<T> ResolveObject(Func<List<T>> getObjects, Func<List<T>, bool> condition, string resolutionError = "Could not resolve object")
+        public List<T> ResolveObject<T>(Func<List<T>> getObjects, Func<List<T>, bool> condition, string resolutionError = "Could not resolve object", Type trueType = null)
         {
             List<T> @object;
 
@@ -44,7 +44,9 @@ namespace PrtgAPI.PowerShell.Base
                         throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
                     }
 
-                    WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeof(T).Name.ToLower()}: object is still being created. Retries remaining: {retriesRemaining}");
+                    var typeName = trueType?.Name.ToLower() ?? typeof (T).Name.ToLower();
+
+                    WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeName}: object is still being created. Retries remaining: {retriesRemaining}");
                     retriesRemaining--;
 
 
@@ -71,7 +73,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="getObjects">The function to use to retrieve the objects of the parent before and after the new object is created.</param>
         /// <param name="exceptFunc">The function to use to compare the sets of objects before and after the new object is created.</param>
         /// <returns></returns>
-        public List<T> ResolveWithDiff(Action createObject, Func<List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc)
+        public List<T> ResolveWithDiff<T>(Action createObject, Func<List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc)
         {
             var before = getObjects();
 

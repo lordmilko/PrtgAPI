@@ -13,9 +13,7 @@ New-Alias Get-ObjectSetting Get-ObjectProperty
 New-Alias Acknowledge-Sensor Confirm-Sensor
 New-Alias Pause-Object Suspend-Object
 New-Alias Refresh-Object Update-Object
-New-Alias Clone-Sensor Copy-Sensor
-New-Alias Clone-Group Copy-Group
-New-Alias Clone-Device Copy-Device
+New-Alias Clone-Object Copy-Object
 New-Alias Sort-PrtgObject Start-SortPrtgObject
 New-Alias Simulate-ErrorStatus Test-ErrorStatus
 New-Alias Load-PrtgConfigFile Sync-PrtgConfigFile

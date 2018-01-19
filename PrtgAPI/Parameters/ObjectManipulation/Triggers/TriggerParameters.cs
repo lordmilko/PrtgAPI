@@ -83,7 +83,7 @@ namespace PrtgAPI.Parameters
             if (action == ModifyAction.Add)
             {
                 Parameters.Add(new CustomParameter("class", type.ToString().ToLower())); //todo: does this tolower itself during prtgurl construction? check debug output!
-                Parameters.Add(new CustomParameter("objecttype", "nodetrigger"));
+                this[Parameter.ObjectType] = "nodetrigger";
             }
         }
 
