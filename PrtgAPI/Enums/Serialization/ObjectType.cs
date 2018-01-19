@@ -1,16 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace PrtgAPI
 {
-    enum ObjectType
+    /// <summary>
+    /// Specifies types of objects that can be targeted by API requests for retrieving and modifying object properties.
+    /// </summary>
+    public enum ObjectType
     {
+        /// <summary>
+        /// PRTG Device Sensors.
+        /// </summary>
         Sensor,
+
+        /// <summary>
+        /// PRTG Devices.
+        /// </summary>
         Device,
+
+        /// <summary>
+        /// PRTG Groups.
+        /// </summary>
         Group,
-        ProbeNode
+
+        /// <summary>
+        /// PRTG Probes.
+        /// </summary>
+        [Description("ProbeNode")]
+        Probe
     }
 }

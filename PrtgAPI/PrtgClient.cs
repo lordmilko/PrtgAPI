@@ -1604,7 +1604,25 @@ namespace PrtgAPI
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
         public ProbeSettings GetProbeProperties(int probeId) =>
-            GetObjectProperties<ProbeSettings>(probeId, ObjectType.ProbeNode);
+            GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe);
+
+        /// <summary>
+        /// Retrieve all raw properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
+        /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
+        public Dictionary<string, string> GetObjectPropertiesRaw(int objectId, ObjectType objectType) =>
+            ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectId, objectType));
+
+        /// <summary>
+        /// Asynchronously retrieve all raw properties and settings of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
+        /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
+        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, ObjectType objectType) =>
+            ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false));
 
         /// <summary>
         /// Asynchronously retrieve properties and settings of a PRTG Probe.
@@ -1612,7 +1630,7 @@ namespace PrtgAPI
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
-            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.ProbeNode).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieve unsupported properties and settings of a PRTG Object.
@@ -1658,17 +1676,23 @@ namespace PrtgAPI
 
         private T GetObjectProperties<T>(int objectId, ObjectType objectType)
         {
-            var response = requestEngine.ExecuteRequest(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType));
+            var response = GetObjectPropertiesRawInternal(objectId, objectType);
 
             return GetObjectProperties<T>(response);
         }
 
         private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
         {
-            var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
+            var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
 
             return GetObjectProperties<T>(response);
         }
+
+        private string GetObjectPropertiesRawInternal(int objectId, ObjectType objectType) =>
+            requestEngine.ExecuteRequest(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType));
+
+        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, ObjectType objectType) =>
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
 
         private T GetObjectProperties<T>(string response)
         {

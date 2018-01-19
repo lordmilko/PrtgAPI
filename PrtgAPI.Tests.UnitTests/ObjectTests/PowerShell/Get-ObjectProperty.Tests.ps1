@@ -5,7 +5,7 @@ Describe "Get-ObjectProperty" {
     SetMultiTypeResponse
 
     It "can deserialize sensor settings" {
-        $sensor = Run Sensor { Get-Sensor }
+        $sensor = Get-Sensor -Count 1
 
         $properties = $sensor | Get-ObjectProperty
 
@@ -13,7 +13,7 @@ Describe "Get-ObjectProperty" {
     }
 
     It "can deserialize device settings" {
-        $sensor = Run Device { Get-Device }
+        $sensor = Get-Device -Count 1
 
         $properties = $sensor | Get-ObjectProperty
 
@@ -21,10 +21,20 @@ Describe "Get-ObjectProperty" {
     }
 
     It "retrieves a raw property" {
-        $sensor = Run Sensor { Get-Sensor }
+        $sensor = Get-Sensor -Count 1
 
         $property = $sensor | Get-ObjectProperty -RawProperty name_
 
         $property | Should Be "testName"
+    }
+
+    It "retrieves all raw properties" {
+        $sensor = Get-Sensor -Count 1
+
+        $properties = $sensor | Get-ObjectProperty -Raw
+
+        $properties.name | Should Be "Server CPU Usage"
+        $properties.interval | Should Be "60|60 seconds"
+        $properties.schedule | Should Be "627|Weekdays Nights (17:00 - 9:00) [GMT+1100]|"
     }
 }

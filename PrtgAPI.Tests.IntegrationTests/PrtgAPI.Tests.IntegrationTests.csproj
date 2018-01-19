@@ -61,6 +61,7 @@
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
+    <Compile Include="DataTests\Incomplete\GetObjectProperties.cs" />
     <Compile Include="DataTests\Incomplete\LogTests.cs" />
     <Compile Include="Support\ServerManager.cs" />
     <Compile Include="Support\Assert2.cs" />

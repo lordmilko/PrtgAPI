@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
@@ -36,21 +37,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ObjectProperty")]
+    [Cmdlet(VerbsCommon.Get, "ObjectProperty", DefaultParameterSetName = "Default")]
     public class GetObjectProperty : PrtgProgressCmdlet
     {
         /// <summary>
         /// <para type="description">The object to retrieve properties of.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "RawProperty")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Raw")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
         /// <para type="description">The raw name of the property to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// Note: PRTG does not support retrieving raw section inheritance settings.</para>
         /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = "RawProperty")]
+        public string[] RawProperty { get; set; }
+
         [Parameter(Mandatory = false, ParameterSetName = "Raw")]
-        public string RawProperty { get; set; }
+        public SwitchParameter Raw { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetObjectProperty"/> class.
@@ -66,7 +72,41 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ParameterSetName == "Raw")
             {
-                WriteObject(client.GetObjectPropertyRaw(Object.Id, RawProperty));
+                var dictionary = client.GetObjectPropertiesRaw(Object.Id, TypeFromBase());
+
+                var obj = new PSObject();
+
+                foreach (var val in dictionary)
+                {
+                    obj.Properties.Add(new PSNoteProperty(val.Key, val.Value));
+                }
+
+                WriteObject(obj);
+            }
+            else if (ParameterSetName == "RawProperty")
+            {
+                if (RawProperty.Length == 1)
+                    WriteObject(client.GetObjectPropertyRaw(Object.Id, RawProperty[0]));
+                else
+                {
+                    var obj = new PSObject();
+
+                    foreach (var prop in RawProperty)
+                    {
+                        var val = client.GetObjectPropertyRaw(Object.Id, prop);
+
+                        obj.Properties.Add(new PSNoteProperty(prop.ToLower().Replace("_", ""), val));
+                    }
+
+                    WriteObject(obj);
+                }
+
+                //todo: unit/integration test this
+
+                //todo: let people specify an array of raw properties. if theres more than 1 property,
+                //return a psobject containing all the properties in lowercase with underscores removed
+
+
             }
             else
             {
@@ -86,7 +126,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     case BaseType.Probe:
                         WriteObjectWithProgress(client.GetProbeProperties(Object.Id));
                         break;
+                    default:
+                        throw new NotImplementedException($"Property handler not specified for base type {Object.BaseType}");
                 }
+            }
+        }
+
+        private ObjectType TypeFromBase()
+        {
+            switch (Object.BaseType)
+            {
+                case BaseType.Sensor:
+                    return ObjectType.Sensor;
+                case BaseType.Device:
+                    return ObjectType.Device;
+                case BaseType.Group:
+                    return ObjectType.Group;
+                case BaseType.Probe:
+                    return ObjectType.Probe;
+                default:
+                    throw new NotImplementedException($"Unable to resolve {nameof(ObjectType)} from base type {Object.BaseType}");
             }
         }
     }

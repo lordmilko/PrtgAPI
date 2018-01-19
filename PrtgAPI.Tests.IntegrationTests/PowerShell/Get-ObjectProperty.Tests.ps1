@@ -40,6 +40,18 @@ Describe "Get-ObjectProperty_IT" {
         $property | Should Be (Settings DeviceName)
     }
 
+    It "retrieves multiple raw properties" {
+        $device = Get-Device -Id (Settings Device)
+
+        $result = $device | Get-ObjectProperty -RawProperty "name_","host_","serviceurl_"
+
+        $name = (Settings DeviceName)
+
+        $result.name | Should Be $name
+        $result.host | Should Be $name
+        $result.serviceurl | Should Be "http://$name"
+    }
+
     It "throws retrieving a raw inheritance flag" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
