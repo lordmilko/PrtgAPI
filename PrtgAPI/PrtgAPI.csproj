@@ -272,6 +272,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
+    <Compile Include="Request\PrtgTargetHelper.cs" />
     <Compile Include="Request\PrtgClient.AsyncHelpers.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

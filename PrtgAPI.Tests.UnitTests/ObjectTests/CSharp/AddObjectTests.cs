@@ -36,7 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void AddSensor_AddsExcessiveItems()
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
-            var services = servicesClient.GetWmiServices(1001);
+            var services = servicesClient.Targets.GetWmiServices(1001);
 
             Assert.IsTrue(services.Count > 30);
 
@@ -51,7 +51,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public async Task AddSensor_AddsExcessiveItemsAsync()
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
-            var services = await servicesClient.GetWmiServicesAsync(1001);
+            var services = await servicesClient.Targets.GetWmiServicesAsync(1001);
 
             Assert.IsTrue(services.Count > 30);
 

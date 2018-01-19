@@ -104,11 +104,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void GetExeFile() =>
             GetTargets(
-                "EXE/Script File Search",
-                client.GetExeXmlFiles,
+                "EXE/Script File",
+                client.Targets.GetExeXmlFiles,
                 e => new ExeXmlSensorParameters(EnsureSingle(e)),
                 e => e.Name
             );
+
+        private void GetWmiService() =>
+            GetTargets(
+                "WMI Service",
+                client.Targets.GetWmiServices,
+                s => new WmiServiceSensorParameters(s),
+                s => s.Name, s => s.DisplayName
+            );
+
+        private NewSensorParameters ParametersNotSupported<T>(List<T> items)
+        {
+            throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported");
+        }
 
         private T EnsureSingle<T>(List<T> items)
         {
@@ -120,14 +133,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             return default(T);
         }
-
-        private void GetWmiService() =>
-            GetTargets(
-                "WMI Service Search",
-                client.GetWmiServices,
-                s => new WmiServiceSensorParameters(s),
-                s => s.Name, s => s.DisplayName
-            );
 
         private void GetTargets<T>(
             string typeDescription,

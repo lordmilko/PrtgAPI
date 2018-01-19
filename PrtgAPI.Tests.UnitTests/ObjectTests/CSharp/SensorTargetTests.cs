@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SensorTarget_CanExecute()
         {
-            var files = client.GetExeXmlFiles(1001, null);
+            var files = client.Targets.GetExeXmlFiles(1001, null);
 
             Assert.AreEqual(2, files.Count);
         }
@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task SensorTarget_CanExecuteAsync()
         {
-            var files = await client.GetExeXmlFilesAsync(1001, null);
+            var files = await client.Targets.GetExeXmlFilesAsync(1001, null);
 
             Assert.AreEqual(2, files.Count);
         }
@@ -26,15 +26,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SensorTarget_CanAbort()
         {
-            var result = client.GetExeXmlFiles(1001, f => false);
+            var result = client.Targets.GetExeXmlFiles(1001, f => false);
 
             Assert.AreEqual(null, result);
         }
 
         [TestMethod]
-        public async Task SensorTarget_CamAbortAsync()
+        public async Task SensorTarget_CanAbortAsync()
         {
-            var result = await client.GetExeXmlFilesAsync(1001, f => false);
+            var result = await client.Targets.GetExeXmlFilesAsync(1001, f => false);
 
             Assert.AreEqual(null, result);
         }
