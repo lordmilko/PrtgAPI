@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
@@ -12,8 +11,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class MultiTypeResponse : IWebResponse
     {
-        //what if we had an optional constructor that took a dictionary of content to int that said how many items each content should return
-
         public MultiTypeResponse()
         {
         }
@@ -24,10 +21,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         }
 
         protected Dictionary<Content, int> countOverride;
+        private Dictionary<string, int> hitCount = new Dictionary<string, int>();
 
         public string GetResponseText(ref string address)
         {
             var function = GetFunction(address);
+
+            if (hitCount.ContainsKey(function))
+                hitCount[function]++;
+            else
+                hitCount.Add(function, 1);
 
             return GetResponse(ref address, function).GetResponseText(ref address);
         }
@@ -48,12 +51,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditSettings):
                     return new BasicResponse(string.Empty);
+                case nameof(XmlFunction.HistoricData):
+                    return new SensorHistoryResponse();
                 case nameof(JsonFunction.Triggers):
                     return new TriggerOverviewResponse();
                 case nameof(HtmlFunction.ObjectData):
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
+                case nameof(CommandFunction.AddSensor2):
+                    address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
+                    return new BasicResponse(string.Empty);
+                case nameof(JsonFunction.GetAddSensorProgress):
+                    var progress = hitCount[function] % 2 == 0 ? 100 : 50;
+
+                    return new BasicResponse($"{{\"progress\":\"{progress}\",\"targeturl\":\" /addsensor4.htm?id=4251&tmpid=119\"}}");
+                case nameof(HtmlFunction.AddSensor4):
+                    return new ExeFileTargetResponse();
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):
@@ -90,7 +104,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     count = Convert.ToInt32(countStr);
 
                 if (components["filter_objid"] != null)
+                {
                     count = 1;
+
+                    var values = components.GetValues("filter_objid");
+
+                    if (values.Length > 1)
+                        count = 2;
+                }
+                    
             }
             else
             {
@@ -139,8 +161,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            if (components["name"] != null)
+            if (components["name"] == "name")
                 return new RawPropertyResponse("testName");
+
+            if (components["name"] == "tags")
+                return new RawPropertyResponse("tag1 tag2");
+
+            if (components["name"] == "accessgroup")
+                return new RawPropertyResponse("1");
+
+            if (components["name"] == "intervalgroup")
+                return new RawPropertyResponse(null);
 
             components.Remove("username");
             components.Remove("passhash");

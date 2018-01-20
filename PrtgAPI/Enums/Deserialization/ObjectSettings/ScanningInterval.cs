@@ -82,8 +82,13 @@ namespace PrtgAPI
             if (interval is string)
             {
                 StandardScanningInterval value;
+                double doubleVal;
 
-                if (Enum.TryParse(interval.ToString(), true, out value))
+                if (double.TryParse(interval.ToString(), out doubleVal) && doubleVal == (int)doubleVal)
+                {
+                    interval = (int) doubleVal;
+                }
+                else if (Enum.TryParse(interval.ToString(), true, out value))
                 {
                     interval = value;
                 }
@@ -277,6 +282,49 @@ namespace PrtgAPI
             var secsInt = Convert.ToInt32(secs);
 
             return new TimeSpan(0, 0, secsInt);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in object obj is
+        /// Equal to this. The specified object is equal to this if both
+        /// objects are of the same type and have the same <see cref="TimeSpan"/>.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object..</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is ScanningInterval)
+                return Equals((ScanningInterval) obj);
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a hash code for this object. If two objects are both scanning intervals and
+        /// have the same <see cref="TimeSpan"/>, they will have the same hash code.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var result = 0;
+                result = (result * 397) ^ TimeSpan.GetHashCode();
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in <see cref="ScanningInterval"/> is
+        /// Equal to this. The specified object is equal to this if both values have
+        /// the same <see cref="TimeSpan"/>.
+        /// </summary>
+        /// <param name="other">The object to compare with the current object..</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        public bool Equals(ScanningInterval other)
+        {
+            return TimeSpan.Equals(other.TimeSpan);
         }
     }
 

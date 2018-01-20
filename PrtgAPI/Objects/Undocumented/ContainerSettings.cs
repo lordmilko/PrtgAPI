@@ -6,8 +6,12 @@ namespace PrtgAPI.Objects.Undocumented
     /// <summary>
     /// Settings that are found within container objects in PRTG, including Devices, Groups and Probes.
     /// </summary>
-    public abstract class ContainerSettings : ObjectSettings
+    public class ContainerSettings : ObjectSettings
     {
+        internal ContainerSettings()
+        {
+        }
+
         #region Basic Settings
 
         /// <summary>

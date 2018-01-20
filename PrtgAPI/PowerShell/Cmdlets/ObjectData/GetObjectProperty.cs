@@ -43,18 +43,30 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The object to retrieve properties of.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "RawProperty")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Raw")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Single")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "RawProperty")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Raw")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
-        /// <para type="description">The raw name of the property to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
+        /// <para type="description">The name of a single property to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Single")]
+        public ObjectProperty Property { get; set; }
+
+        /// <summary>
+        /// <para type="description">The raw name of one or more properties to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// Note: PRTG does not support retrieving raw section inheritance settings.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "RawProperty")]
+        [Parameter(Mandatory = true, ParameterSetName = "RawProperty")]
         public string[] RawProperty { get; set; }
 
+        /// <summary>
+        /// <para type="description">Retrieve all raw properties from the target object.</para>
+        /// <para type="description">Note: objects may have additional properties that cannot be retrieved via this method.
+        /// For more information, see Get-Help about_ObjectProperty</para>
+        /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Raw")]
         public SwitchParameter Raw { get; set; }
 
@@ -70,7 +82,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Raw")
+            if (ParameterSetName == "Single")
+            {
+                var value = client.GetObjectProperty(Object.Id, Property);
+
+                WriteObject(value, true);
+            }
+            else if (ParameterSetName == "Raw")
             {
                 var dictionary = client.GetObjectPropertiesRaw(Object.Id, TypeFromBase());
 

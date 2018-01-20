@@ -17,6 +17,7 @@ namespace PrtgAPI
     /// Describes a sensor type that can be applied under an object.
     /// </summary>
     [DataContract]
+    [ExcludeFromCodeCoverage]
     [DebuggerDisplay("Id = {Id}, Name = {Name}, Description = {Description}")]
     public class SensorTypeDescriptor
     {

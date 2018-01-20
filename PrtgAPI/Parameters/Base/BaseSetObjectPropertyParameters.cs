@@ -183,7 +183,7 @@ namespace PrtgAPI.Parameters
 
         internal static PropertyInfo GetPropertyInfoViaTypeLookup(Enum property)
         {
-            var attr = (property).GetEnumAttribute<TypeLookupAttribute>(true);
+            var attr = property.GetEnumAttribute<TypeLookupAttribute>(true);
             var prop = attr.Class.GetProperties().FirstOrDefault(p => p.Name == property.ToString());
 
             if (prop == null)
@@ -207,6 +207,13 @@ namespace PrtgAPI.Parameters
             return GetParameterNameStatic(property, info);
         }
 
+        internal static string GetParameterName(ObjectProperty property)
+        {
+            var info = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+
+            return GetParameterNameStatic(property, info);
+        }
+
         internal static string GetParameterNameStatic(Enum property, PropertyInfo info)
         {
             var attribute = info.GetCustomAttribute<XmlElementAttribute>();
@@ -214,7 +221,7 @@ namespace PrtgAPI.Parameters
 
             if (attribute == null)
             {
-                var description = ((Enum)(object)property).GetDescription(false);
+                var description = property.GetDescription(false);
 
                 if (description == null)
                     throw new MissingAttributeException(typeof(TObjectProperty), property.ToString(), typeof(DescriptionAttribute));
@@ -226,7 +233,7 @@ namespace PrtgAPI.Parameters
                 name = attribute.ElementName.Substring("injected_".Length);
             }
 
-            if (((Enum)(object)property).GetEnumAttribute<LiteralValueAttribute>() == null)
+            if (property.GetEnumAttribute<LiteralValueAttribute>() == null)
                 name += "_";
 
             return name;

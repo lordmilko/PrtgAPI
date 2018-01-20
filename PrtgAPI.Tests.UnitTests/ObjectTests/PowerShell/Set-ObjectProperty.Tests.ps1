@@ -98,6 +98,17 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$true
     }
 
+    It "sets raw properties on multiple objects with -Batch:`$true" {
+
+        SetMultiTypeResponse
+
+        $sensors= Get-Sensor -Count 2
+
+        SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7c5+minutes&"
+
+        $sensors | Set-ObjectProperty -RawProperty "interval_" -RawValue "300|5 minutes"
+    }
+
     It "executes with -Batch:`$false" {
 
         SetMultiTypeResponse

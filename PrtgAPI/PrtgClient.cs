@@ -1575,7 +1575,16 @@ namespace PrtgAPI
             GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe);
 
         /// <summary>
-        /// Retrieve all raw properties and settings of a PRTG Object.
+        /// Asynchronously retrieve properties and settings of a PRTG Probe.
+        /// </summary>
+        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
+        /// <returns>All settings of the specified probe.</returns>
+        public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
+            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe).ConfigureAwait(false);
+
+        /// <summary>
+        /// Retrieve all raw properties and settings of a PRTG Object. Note: objects may have additional properties
+        /// that cannot be retrieved via this method.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
@@ -1584,7 +1593,8 @@ namespace PrtgAPI
             ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectId, objectType));
 
         /// <summary>
-        /// Asynchronously retrieve all raw properties and settings of a PRTG Object.
+        /// Asynchronously retrieve all raw properties and settings of a PRTG Object. Note: objects may have additional properties
+        /// that cannot be retrieved via this method.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
@@ -1593,12 +1603,101 @@ namespace PrtgAPI
             ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false));
 
         /// <summary>
-        /// Asynchronously retrieve properties and settings of a PRTG Probe.
+        /// Retrieve a type safe property from a PRTG Server.
         /// </summary>
-        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <returns>All settings of the specified probe.</returns>
-        public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
-            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe).ConfigureAwait(false);
+        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="property">The well known property to retrieve.</param>
+        /// <returns>A type safe representation of the specified object.</returns>
+        public object GetObjectProperty(int objectId, ObjectProperty property)
+        {
+            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterName(property);
+
+            var rawValue = GetObjectPropertyRaw(objectId, rawName);
+
+            return DeserializeRawPropertyValue(property, rawName, rawValue);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieve a type safe property from a PRTG Server.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="property">The well known property to retrieve.</param>
+        /// <returns>A type safe representation of the specified property.</returns>
+        public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property)
+        {
+            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterName(property);
+
+            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName).ConfigureAwait(false);
+
+            return DeserializeRawPropertyValue(property, rawName, rawValue);
+        }
+
+        private object DeserializeRawPropertyValue(ObjectProperty property, string rawName, string rawValue)
+        {
+            var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
+            var deserializer = new XmlSerializer(typeLookup);
+
+            var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
+
+            var xml = new XDocument(
+                new XElement("properties",
+                    new XElement(elementName, rawValue)
+                )
+            );
+
+            var settings = deserializer.Deserialize(xml, elementName);
+
+            var value = settings.GetType().GetProperties().First(p => p.Name == property.ToString()).GetValue(settings);
+
+            if (value == null && rawValue != string.Empty)
+                return rawValue;
+
+            return value;
+        }
+
+        /// <summary>
+        /// Retrieve a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// an <see cref="InvalidCastException"/> will be thrown.
+        /// </summary>
+        /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
+        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="property">The well known property to retrieve.</param>
+        /// <exception cref="InvalidCastException"/>
+        /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
+        public T GetObjectProperty<T>(int objectId, ObjectProperty property) =>
+            GetTypedProperty<T>(GetObjectProperty(objectId, property));
+
+        /// <summary>
+        /// Asynchronously retrieve a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// an <see cref="InvalidCastException"/> will be thrown.
+        /// </summary>
+        /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
+        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="property">The well known property to retrieve.</param>
+        /// <exception cref="InvalidCastException"/>
+        /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
+        public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property) =>
+            GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property).ConfigureAwait(false));
+
+        private T GetTypedProperty<T>(object val)
+        {
+            if (val is T)
+                return (T) val;
+
+            var underlying = Nullable.GetUnderlyingType(typeof (T));
+
+            if (underlying != null)
+            {
+                if (val == null)
+                    return default(T);
+
+                return (T) val;
+            }
+
+            var typeName = val?.GetType().Name ?? "null";
+
+            throw new InvalidCastException($"Cannot convert a value of type {typeName} to type {typeof(T)}");
+        }
 
         /// <summary>
         /// Retrieve unsupported properties and settings of a PRTG Object.
@@ -2141,13 +2240,13 @@ namespace PrtgAPI
         public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Permanently remove an object from PRTG. This cannot be undone.
+        /// Permanently remove an object such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
         public void RemoveObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
 
         /// <summary>
-        /// Asynchronously permanently remove an object from PRTG. This cannot be undone.
+        /// Asynchronously permanently remove an object such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectId">ID of the object to delete.</param>
         public async Task RemoveObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);

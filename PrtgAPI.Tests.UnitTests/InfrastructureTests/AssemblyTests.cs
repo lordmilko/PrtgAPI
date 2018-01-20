@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 {
@@ -19,6 +22,16 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             if (result.Count > 0)
             {
                 Assert.Fail($"Types that derive from {nameof(PrtgCmdlet)} are not allowed to override method ProcessRecord. The following types contain ProcessRecord: {string.Join(", ", result.Select(t => t.Name))}");
+            }
+        }
+
+        public void ObjectPropertyFields_Have_ObjectPropertyCategories()
+        {
+            var values = Enum.GetValues(typeof (ObjectProperty)).Cast<ObjectProperty>().ToList();
+
+            foreach (var val in values)
+            {
+                var category = val.GetEnumAttribute<CategoryAttribute>(true);
             }
         }
     }

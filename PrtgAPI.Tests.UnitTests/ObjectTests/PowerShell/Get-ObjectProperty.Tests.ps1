@@ -20,12 +20,30 @@ Describe "Get-ObjectProperty" {
         $properties.GetType().Name | Should Be DeviceSettings
     }
 
+    It "retrieves a single property" {
+        $device = Get-Device -Count 1
+
+        $property = $device | Get-ObjectProperty -Property Tags
+
+        $property[0] | Should Be "tag1"
+        $property[1] | Should Be "tag2"
+    }
+
     It "retrieves a raw property" {
         $sensor = Get-Sensor -Count 1
 
         $property = $sensor | Get-ObjectProperty -RawProperty name_
 
         $property | Should Be "testName"
+    }
+
+    It "retrieves multiple raw properties" {
+        $sensor = Get-Sensor -Count 1
+
+        $properties = $sensor | Get-ObjectProperty -RawProperty name_,tags_
+
+        $properties.name | Should Be "testName"
+        $properties.tags | Should Be "tag1 tag2"
     }
 
     It "retrieves all raw properties" {

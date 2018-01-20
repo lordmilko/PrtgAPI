@@ -5,7 +5,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Modifies the value of a channel property.</para>
+    /// <para type="synopsis">Modifies the value of a PRTG channel property.</para>
     /// 
     /// <para type="description">The Set-ChannelProperty cmdlet modifies properties and settings of PRTG Channels.
     /// All supported properties that can be modified are typesafe, using the type of the property on the Channel object

@@ -22,21 +22,26 @@ namespace PrtgAPI.Objects.Deserialization
             outerType = type;
         }
 
-        public object Deserialize(XDocument doc)
+        public object Deserialize(XDocument doc, params string[] properties)
         {
-            return Deserialize(outerType, doc.Elements().First());
+            return Deserialize(outerType, doc.Elements().First(), properties);
         }
 
-        private object Deserialize(Type type, XElement elm)
+        private object Deserialize(Type type, XElement elm, params string[] properties)
         {
-            var obj = Activator.CreateInstance(type);
+            var obj = Activator.CreateInstance(type, true);
 
             var mappings = ReflectionCacheManager.Map(type);
+
+            if (properties != null && properties.Length > 0)
+            {
+                mappings = mappings.Where(m => properties.Any(p => p == m.AttributeValue[0])).ToList();
+            }
 
             foreach (var mapping in mappings)
             {
                 Logger.Debug($"\nDeserialize property {mapping.PropertyCache.Property.Name}: ");
-
+                
                 try
                 {
                     switch (mapping.AttributeType)
@@ -66,11 +71,6 @@ namespace PrtgAPI.Objects.Deserialization
 
             return obj;
         }
-
-
-        
-
-
 
         private void ProcessXmlElement(object obj, XmlMapping mapping, XElement elm)
         {

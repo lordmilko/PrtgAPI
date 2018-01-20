@@ -13,6 +13,8 @@ namespace PrtgAPI.Objects.Undocumented
     /// </summary>
     public class ObjectSettings
     {
+        internal static string prefix = "injected_";
+
         internal static string basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
         internal static string standardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
 
@@ -27,6 +29,15 @@ namespace PrtgAPI.Objects.Undocumented
             return elm;
         }
 
+        internal static Dictionary<string, string> GetDictionary(string response)
+        {
+            var xml = GetXml(response);
+
+            var dictionary = xml.Descendants().ToDictionary(x => x.Name.ToString().Substring(prefix.Length), e => e.Value);
+
+            return dictionary;
+        }
+
         internal static XElement GetDependency(string response)
         {
             var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
@@ -38,7 +49,7 @@ namespace PrtgAPI.Objects.Undocumented
                 var idStr = Regex.Replace(match.Value, "(.+data-selid=\")(.+?)(\".+)", "$2");
                 var id = idStr == "null" ? null : (int?)Convert.ToInt32(idStr);
 
-                return new XElement("injected_dependencyvalue", id);
+                return new XElement($"{prefix}dependencyvalue", id);
             }
 
             return null;
@@ -83,11 +94,11 @@ namespace PrtgAPI.Objects.Undocumented
                 {
                     if (prop.Value.Type == InputType.Checkbox)
                     {
-                        list.Add(new XElement($"injected_{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
+                        list.Add(new XElement($"{prefix}{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
                     }
                     else
                     {
-                        list.Add(new XElement($"injected_{prop.Value.Name}", prop.Value.Value));
+                        list.Add(new XElement($"{prefix}{prop.Value.Name}", prop.Value.Value));
                     }
                 }
                 catch(Exception ex)
@@ -127,7 +138,7 @@ namespace PrtgAPI.Objects.Undocumented
 
             if (listObjs.Any(l => l.Options.Any(o => o.Selected)))
             {
-                var xml = listObjs.Select(l => new XElement($"injected_{l.Name}", l.Options.FirstOrDefault(o => o.Selected)?.Value));
+                var xml = listObjs.Select(l => new XElement($"{prefix}{l.Name}", l.Options.FirstOrDefault(o => o.Selected)?.Value));
                 return xml.ToList();
             }
 
@@ -149,7 +160,7 @@ namespace PrtgAPI.Objects.Undocumented
                 Value = Regex.Replace(m, pattern, "$2", RegexOptions.Singleline)
             }).ToList();
 
-            var xml = namesAndValues.Select(n => new XElement($"injected_{n.Name}", n.Value)).ToList();
+            var xml = namesAndValues.Select(n => new XElement($"{prefix}{n.Name}", n.Value)).ToList();
 
             return xml;
         }
