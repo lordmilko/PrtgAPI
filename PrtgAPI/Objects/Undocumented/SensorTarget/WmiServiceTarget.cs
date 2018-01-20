@@ -28,7 +28,6 @@ namespace PrtgAPI
 
         private WmiServiceTarget(string raw) : base(raw)
         {
-            Name = components[0];
             DisplayName = components[1];
             Description = components[2];
             Status = components[3].ToEnum<ServiceControllerStatus>();
@@ -45,12 +44,7 @@ namespace PrtgAPI
 
         internal static List<WmiServiceTarget> GetServices(string response)
         {
-            var services = ObjectSettings.GetInput(response)
-                .Where(i => i.Type == Html.InputType.Checkbox && i.Name == "service__check")
-                .Select(i => i.Value).Select(v => new WmiServiceTarget(v))
-                .ToList();
-
-            return services;
+            return CreateFromCheckbox(response, "service__check", v => new WmiServiceTarget(v));
         }
     }
 }

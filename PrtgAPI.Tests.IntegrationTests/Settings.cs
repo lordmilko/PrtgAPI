@@ -97,6 +97,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static int SSLSecurityCheck = -1;
         public static int SensorFactory = -1;
         public static int WmiService = -1;
+        public static int SqlServerDB = -1;
 
 #pragma warning restore CS0649 //Restore 'field' is never assigned to.
     }

@@ -9,7 +9,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
-    /// <para type="synopsis">Modifies the value of an object property.</para>
+    /// <para type="synopsis">Modifies the value of a PRTG object property.</para>
     /// <para type="description">The Set-ObjectProperty cmdlet modifies properties and settings of PRTG Sensors, Devices, Groups and Probes.
     /// All supported properties that can be modified are typesafe, using the type of the property on the Settings object returned from
     /// Get-ObjectProperty.</para>
@@ -129,7 +129,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on ${Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
+                if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on {Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
                 {
                     if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {RawProperty} = '{RawValue}'"))
                         ExecuteOrQueue(Object, progressActivity);

@@ -24,6 +24,18 @@ function Describe($name, $script) {
             $initialSettings.$property | Should Be $expected
         }
 
+        function GetDirect($property, $expected)
+        {
+            LogTestDetail "Processing property $property"
+
+            $object | Assert-True -Message "Object was not initialized"
+            $expected | Should Not BeNullOrEmpty
+
+            $initialValue = $object | Get-ObjectProperty $property
+
+            $initialValue | Should Be $expected
+        }
+
         function SetValue($property, $value, $noRevert)
         {
             LogTestDetail "Processing property $property"
@@ -64,6 +76,26 @@ function Describe($name, $script) {
             {
                 $object | Set-ObjectProperty $property $initialValue
             }
+        }
+
+        function SetDirect($property, $value)
+        {
+            LogTestDetail "Processing property $property"
+
+            $object | Assert-True -Message "Object was not initialized"
+
+            $initialValue = $object | Get-ObjectProperty $property
+
+            $object | Set-ObjectProperty $property $value
+
+            $newValue = $object | Get-ObjectProperty $property
+
+            $newValue | Assert-NotEqual $originalValue -Message "Expected initial and new value to be different, but they were both '<actual>'"
+            $newValue | Should Not BeNullOrEmpty
+
+            $newValue | Should Be $value
+
+            $object | Set-ObjectProperty $property $initialValue
         }
 
         function SetChild($property, $value, $dependentProperty, $dependentValue)

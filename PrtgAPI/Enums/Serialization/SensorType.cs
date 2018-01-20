@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI
+﻿using System.Xml.Serialization;
+
+namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Specifies types of sensors that can be created in PRTG.</para>
@@ -13,6 +15,12 @@
         /// <summary>
         /// WMI Service sensor, for monitoring a Microsoft Windows system service.
         /// </summary>
-        WmiService
+        WmiService,
+
+        /// <summary>
+        /// Microsoft SQL v2 sensor, for monitoring a database on Microsoft SQL Server.
+        /// </summary>
+        [XmlEnum("mssqlv2")]
+        SqlServerDB
     }
 }

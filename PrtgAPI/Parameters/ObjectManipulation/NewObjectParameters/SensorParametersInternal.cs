@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -18,14 +19,19 @@ namespace PrtgAPI.Parameters
         /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
         internal SensorParametersInternal(string sensorName, Priority priority, bool inheritTriggers, SensorType sensorType) :
-            base(sensorName, priority, inheritTriggers, sensorType)
+            base(sensorName, priority, inheritTriggers, "fake_type")
         {
+            SensorType = sensorType;
         }
 
         /// <summary>
         /// The type of sensor these parameters will create.
         /// </summary>
         [RequireValue(true)]
-        public SensorType SensorType => (SensorType)this[Parameter.SensorType];
+        public SensorType SensorType
+        {
+            get { return this[Parameter.SensorType].ToString().XmlToEnum<SensorType>(); }
+            set { this[Parameter.SensorType] = value.EnumToXml().ToLower(); }
+        }
     }
 }

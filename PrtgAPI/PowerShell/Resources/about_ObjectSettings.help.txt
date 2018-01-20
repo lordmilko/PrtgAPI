@@ -2,8 +2,8 @@
     about_ObjectSettings
 
 SHORT DESCRIPTION
-    Describes PRTG Device, Group and Probe properties that can be used in conjunction with Set-ObjectProperty and
-    Get-ObjectProperty.
+    Describes PRTG Device, Group and Probe properties that can be used in conjunction with the Set-ObjectProperty
+    and Get-ObjectProperty cmdlets.
 
 LONG DESCRIPTION
     PrtgAPI supports the retrieval and modification of dozens of Object Setting values in a reliable, typesafe manner.

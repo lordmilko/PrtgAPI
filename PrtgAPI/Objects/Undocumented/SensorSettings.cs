@@ -486,5 +486,60 @@ namespace PrtgAPI.Objects.Undocumented
         public string ServiceName { get; set; }
 
         #endregion
+        #region Database Specific
+
+        /// <summary>
+        /// The name of the database this sensor targets.<para/>
+        /// Corresponds to Database Specific -> Database.
+        /// </summary>
+        [XmlElement("injected_database")]
+        public string Database { get; set; }
+
+        /// <summary>
+        /// Whether to use a custom instance of the SQL Server, or use the server's default instance.<para/>
+        /// Corresponds to Data Specific -> SQL Server Instance.
+        /// </summary>
+        [XmlElement("injected_useinstancename")]
+        public bool? UseCustomInstance { get; set; }
+
+        /// <summary>
+        /// The name of the custom instance of SQL Server to connect to.<para/>
+        /// Corresponds to Database Specific -> Instance Name.
+        /// </summary>
+        [XmlElement("injected_instancename")]
+        public string InstanceName { get; set; }
+
+        /// <summary>
+        /// How to encrypt the connection between PRTG and the target database server.<para/>
+        /// Corresponds to Database Specific -> Encryption.
+        /// </summary>
+        [XmlElement("injected_enforceencryption")]
+        public SqlEncryptionMode? SqlEncryptionMode { get; set; }
+
+        #endregion
+        #region Data
+
+        /// <summary>
+        /// Whether to pass any parameters to the specified <see cref="ObjectProperty.SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Use Input Parameter.
+        /// </summary>
+        [XmlElement("injected_useparam")]
+        public bool? UseSqlInputParameter { get; set; }
+
+        /// <summary>
+        /// Parameters to pass to the specified <see cref="ObjectProperty.SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Input Parameter.
+        /// </summary>
+        [XmlElement("injected_param")]
+        public string SqlInputParameter { get; set; }
+
+        /// <summary>
+        /// Whether PRTG should use transactional processing for executing the specified <see cref="ObjectProperty.SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Use Transaction.
+        /// </summary>
+        [XmlElement("injected_transaction")]
+        public SqlTransactionMode? SqlTransactionMode { get; set; }
+
+        #endregion
     }
 }

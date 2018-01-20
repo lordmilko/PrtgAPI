@@ -2,7 +2,8 @@
     about_SensorSettings
 
 SHORT DESCRIPTION
-    Describes PRTG Sensor properties that can be used in conjunction with Set-ObjectProperty and Get-ObjectProperty
+    Describes PRTG Sensor properties that can be used in conjunction with the Set-ObjectProperty and Get-ObjectProperty
+    cmdlets.
 
 LONG DESCRIPTION
     PrtgAPI supports the retrieval and modification of dozens of Sensor Setting values in a reliable, typesafe manner.
@@ -17,6 +18,8 @@ LONG DESCRIPTION
     Yes       : Supported
     Read-Only : Supports Get, and will never support Set
     No        : Not currently supported
+    Direct    : Supports Get and Set, however can only be Get via direct requests
+    GetDirect : Supports Get via direct requests, will never support Set
 
     | Access Rights              | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
@@ -103,6 +106,29 @@ LONG DESCRIPTION
     | FactoryErrorFormula        |    Yes    | Custom formula for determining when a sensor factory goes down  |
     | FactoryMissingDataMode     |    Yes    | How sensor factory values are calculated when channels are down |
 
+    | WMI Service Monitor        | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | DebugMode                  |    Yes    | How debug data should be stored                                 |
+    | StartStopped               |    Yes    | Whether PRTG should start the target service if stopped/crashed |
+    | NotifyStarted              |    Yes    | Whether to activate Change Triggers when starting services      |
+    | MonitorPerformance         |    Yes    | Whether to monitor additional performance metrics               |
+    | ServiceName                | Read-Only | The name of the service being monitored                         |
+
+    | Database Specific          | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | Database                   |    Yes    | The name of the database to monitor                             |
+    | UseCustomInstance          |    Yes    | Whether to connect to a custom or default SQL Server Instance   |
+    | InstanceName               |    Yes    | The name of the SQL Server instance to connect to               |
+    | SqlEncryptionMode          |    Yes    | How PRTG should encrypt its connection to the target SQL Server |
+
+    | Data                       | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | SqlServerQuery             |   Direct  | The SQL query file to execute against the database              |
+    | UseSqlInputParameter       |    Yes    | Whether the SQL query file requires any input parameters        |
+    | SqlInputParameter          |    Yes    | Input parameters to the SQL query file                          |
+    | SqlTransactionMode         |    Yes    | The SQL transaction mode PRTG should use for the SQL query file |
+    | SqlProcessingMode          | GetDirect | How to handle the data returned from the SQL query file         |
+
     | Other                      | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
     | InheritTriggers            | No  | Yes | Whether to inherit notification triggers. To retrieve the value |
@@ -125,6 +151,10 @@ EXAMPLES
     Set raw property "name" of sensor with ID 1001
 
     C:\> Get-Sensor -Id 1001 | Set-ObjectProperty -RawProperty name_ -RawValue test
+
+    Retrieve a direct property from a Microsoft SQL v2 sensor
+
+    C:\> Get-Sensor -Tags sqlserver | Get-Objectproperty SqlServerQuery
 
 SEE ALSO
     PrtgAPI Wiki: https://github.com/lordmilko/PrtgAPI/wiki

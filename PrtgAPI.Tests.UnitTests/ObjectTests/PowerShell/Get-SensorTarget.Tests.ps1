@@ -86,4 +86,26 @@ Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
             CreateParameters "WmiService" $service "WmiServiceSensorParameters" "Services"
         }
     }
+
+    Context "SqlServerDB" {
+
+        SetResponseAndClient "SqlServerQueryFileTargetResponse"
+
+        $query = "test.sql"
+
+        It "resolves a SQL Server Query File" {
+            ResolvesAllItems "SqlServerDB" "SqlServerQueryTarget"
+        }
+
+        It "filters returned SQL Server Query Files" {
+            FilterReturnedItems "SqlServerDB" $query
+        }
+
+        It "throws attempting to create a set of parameters from a SQL Server Query File" {
+
+            $err = "Creating sensor parameters for sensor type 'SqlServerDB' is not supported"
+
+            { CreateParameters "SqlServerDB" $query "SqlServerDBSensorParameters" "QueryFile" } | Should Throw $err
+        }
+    }
 }

@@ -20,7 +20,6 @@ namespace PrtgAPI
     public enum ObjectProperty
     {
     #region Containers
-
         #region Basic Settings
 
         /// <summary>
@@ -985,6 +984,90 @@ namespace PrtgAPI
         [TypeLookup(typeof(SensorSettings))]
         [Category(nameof(ObjectPropertyCategory.WmiServiceMonitor))]
         MonitorPerformance,
+
+        #endregion
+        #region Database Specific
+
+        /// <summary>
+        /// The name of the database this sensor targets.<para/>
+        /// Corresponds to Database Specific -> Database.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        Database,
+
+        /// <summary>
+        /// Whether to use a custom instance of the SQL Server, or use the server's default instance. If using a custom
+        /// instance and a value has not previously been specified, the <see cref="InstanceName"/> defaults to "SQLEXPRESS"<para/>
+        /// Corresponds to Data Specific -> SQL Server Instance.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        UseCustomInstance,
+
+        /// <summary>
+        /// The name of the custom instance of SQL Server to connect to.<para/>
+        /// Corresponds to Database Specific -> Instance Name.
+        /// </summary>
+        [DependentProperty(nameof(UseCustomInstance), true)]
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        InstanceName,
+
+        /// <summary>
+        /// How to encrypt the connection between PRTG and the target database server.<para/>
+        /// Corresponds to Database Specific -> Encryption.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        SqlEncryptionMode,
+
+        #endregion
+        #region Data
+
+        /// <summary>
+        /// A <see cref="SqlServerQueryTarget"/> describing the SQL query file used to query a database. This value can only be retrieved via direct calls to PRTG.<para/>
+        /// Corresponds to Data -> SQL Query File.
+        /// </summary>
+        [Description("sqlquery")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [Category(nameof(ObjectPropertyCategory.Data))]
+        SqlServerQuery,
+
+        /// <summary>
+        /// Whether to pass any parameters to the specified <see cref="SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Use Input Parameter.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.Data))]
+        UseSqlInputParameter,
+
+        /// <summary>
+        /// Parameters to pass to the specified <see cref="SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Input Parameter.
+        /// </summary>
+        [DependentProperty(nameof(UseSqlInputParameter), true, true)]
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.Data))]
+        SqlInputParameter,
+
+        /// <summary>
+        /// Whether PRTG should use transactional processing for executing the specified <see cref="SqlServerQuery"/>.<para/>
+        /// Corresponds to Data -> Use Transaction.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.Data))]
+        SqlTransactionMode,
+
+        /// <summary>
+        /// A <see cref="PrtgAPI.SqlProcessingMode"/> specifying how PRTG should handle the data returned from the executed SQL query. This value
+        /// can only be retrieved via direct calls to PRTG.<para/>
+        /// Corresponds to Data -> Data Processing.
+        /// </summary>
+        [Description("executionmode")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [Category(nameof(ObjectPropertyCategory.Data))]
+        SqlProcessingMode,
 
         #endregion
 

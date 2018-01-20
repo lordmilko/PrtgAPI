@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using PrtgAPI.Objects.Undocumented;
 
 namespace PrtgAPI
 {
@@ -11,7 +14,7 @@ namespace PrtgAPI
         /// <summary>
         /// The name of the target.
         /// </summary>
-        public string Name { get; internal set; }
+        public string Name { get; }
 
         private readonly string raw;
 
@@ -28,11 +31,70 @@ namespace PrtgAPI
         {
             this.raw = raw;
             components = raw.Split('|');
+            Name = components[0];
+        }
+
+        /// <summary>
+        /// Converts a string to the raw value used by a dropdown list option in PRTG.
+        /// </summary>
+        /// <param name="name">The string to encode.</param>
+        /// <returns>The encoded format used by PRTG dropdown options.</returns>
+        protected static string ToDropDownOption(string name)
+        {
+            return $"{name}|{name}||";
         }
 
         string IFormattable.GetSerializedFormat()
         {
             return raw;
+        }
+
+        internal static T ParseStringCompatible(object obj)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            if (obj is T)
+                return (T) obj;
+
+            if (obj is string)
+                return (T) Activator.CreateInstance(typeof (T), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] {obj}, null);
+
+            throw new InvalidCastException($"Cannot convert '{obj}' of type '{obj.GetType()}' to type '{nameof(T)}'. Value type must be convertable to type {typeof(T).FullName}.");
+        }
+
+        /// <summary>
+        /// Retrieves a list of sensor targets from a list of options on a specified dropdown list.
+        /// </summary>
+        /// <param name="response">The raw HTML response to parse.</param>
+        /// <param name="name">The name of the dropdown list to parse.</param>
+        /// <param name="createObj">A function used to construct a sensor target from the target's raw value.</param>
+        /// <returns>A list of sensor targets of type T</returns>
+        protected static List<T> CreateFromDropDownOptions(string response, string name, Func<string, T> createObj)
+        {
+            var files = ObjectSettings.GetDropDownList(response)
+                .First(d => d.Name == name).Options
+                .Select(o => createObj(o.Value))
+                .ToList();
+
+            return files;
+        }
+
+        /// <summary>
+        /// Retrieves a list of sensor targets from a list of checkboxes in a specified checkbox group.
+        /// </summary>
+        /// <param name="response">The raw HTML response to parse.</param>
+        /// <param name="name">The name of the checkbox group to parse.</param>
+        /// <param name="createObj">A function used to construct a sensor target from the target's raw value.</param>
+        /// <returns>A list of sensor targets of type T</returns>
+        protected static List<T> CreateFromCheckbox(string response, string name, Func<string, T> createObj)
+        {
+            var files = ObjectSettings.GetInput(response)
+                .Where(i => i.Type == Html.InputType.Checkbox && i.Name == name)
+                .Select(i => createObj(i.Value))
+                .ToList();
+
+            return files;
         }
 
         /// <summary>

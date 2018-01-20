@@ -97,6 +97,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 case SensorType.WmiService:
                     GetWmiService();
                     break;
+                case SensorType.SqlServerDB:
+                    GetSqlServerQuery();
+                    break;
                 default:
                     throw new NotImplementedException($"Sensor type '{Type}' is currently not supported");
             }
@@ -116,6 +119,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 client.Targets.GetWmiServices,
                 s => new WmiServiceSensorParameters(s),
                 s => s.Name, s => s.DisplayName
+            );
+
+        private void GetSqlServerQuery() =>
+            GetTargets(
+                "SQL Server Query",
+                client.Targets.GetSqlServerQueries,
+                ParametersNotSupported,
+                s => s.Name
             );
 
         private NewSensorParameters ParametersNotSupported<T>(List<T> items)

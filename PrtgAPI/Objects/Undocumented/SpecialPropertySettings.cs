@@ -26,5 +26,9 @@ namespace PrtgAPI.Objects.Undocumented
         public bool? InheritTriggers { get; set; }
 
         public string Host { get; set; }
+
+        public SqlServerQueryTarget SqlServerQuery { get; set; }
+
+        public SqlProcessingMode SqlProcessingMode { get; set; }
     }
 }

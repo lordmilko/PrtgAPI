@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI.Parameters
+﻿using PrtgAPI.Helpers;
+
+namespace PrtgAPI.Parameters
 {
     class SensorTargetParameters : BaseActionParameters
     {
@@ -9,8 +11,8 @@
 
         public SensorType SensorType
         {
-            get { return (SensorType) this[Parameter.SensorType]; }
-            set { this[Parameter.SensorType] = value; }
+            get { return this[Parameter.SensorType].ToString().XmlToEnum<SensorType>(); }
+            set { this[Parameter.SensorType] = value.EnumToXml().ToLower(); }
         }
     }
 }

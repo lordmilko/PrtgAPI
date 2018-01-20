@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CategoryAttribute.cs" />
     <Compile Include="Attributes\LengthLimitAttribute.cs" />
     <Compile Include="Attributes\LiteralValueAttribute.cs" />
     <Compile Include="Attributes\MutuallyExclusiveAttribute.cs" />
@@ -83,6 +84,9 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\SNMPRequestMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\SNMPVersion.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\SNMPZeroValueMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SqlEncryptionMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SqlProcessingMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\SqlTransactionMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\SSHElevationMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\SSHEngine.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\VMwareSessionMode.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
     <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\RestartStage.cs" />
+    <Compile Include="Enums\Serialization\ObjectPropertyCategory.cs" />
     <Compile Include="Enums\Serialization\ObjectType.cs" />
     <Compile Include="Enums\Serialization\SensorType.cs" />
     <Compile Include="Enums\Serialization\SensorTypeInternal.cs" />
@@ -120,6 +125,7 @@
     <Compile Include="Objects\Undocumented\SensorTarget\SensorTargetProgress.cs" />
     <Compile Include="Objects\Undocumented\SensorTarget\ExeFileTarget.cs" />
     <Compile Include="Objects\Undocumented\SensorTarget\SensorTarget.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\SqlServerQueryTarget.cs" />
     <Compile Include="Objects\Undocumented\SensorTarget\WmiServiceTarget.cs" />
     <Compile Include="Objects\Undocumented\ContainerSettings.cs" />
     <Compile Include="Objects\Undocumented\DeviceOrGroupSettings.cs" />
@@ -174,6 +180,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
+    <Compile Include="PowerShell\CloneCmdletConfig.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewDeviceParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewGroupParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\BackupPrtgConfig.cs" />
@@ -186,10 +193,6 @@
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorFactorySource.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewSensorParameters.cs" />
     <Compile Include="PowerShell\FormatGenerator.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneSensor.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneSensorOrGroup.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneGroup.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\MoveObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectPosition.cs" />
@@ -260,7 +263,7 @@
     <Compile Include="Parameters\ObjectManipulation\Triggers\TriggerParameters.cs" />
     <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
-    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\Clone\CloneObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\CloneObject.cs" />
     <Compile Include="PowerShell\Cmdlets\Incomplete\GetSchedule.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\NewSensorFactoryDefinition.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />

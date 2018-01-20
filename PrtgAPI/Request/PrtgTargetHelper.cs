@@ -40,7 +40,7 @@ namespace PrtgAPI.Request
         /// </summary>
         /// <param name="deviceId">The ID of the device to retrieve WMI Services for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
-        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        /// <returns>If the request is allowed to run to completion, a list of WMI Services. If the request is aborted from the progress callback, this method returns null.</returns>
         public List<WmiServiceTarget> GetWmiServices(int deviceId, Func<int, bool> progressCallback = null) =>
             client.ResolveSensorTargets(deviceId, SensorType.WmiService, progressCallback, WmiServiceTarget.GetServices);
 
@@ -50,8 +50,26 @@ namespace PrtgAPI.Request
         /// </summary>
         /// <param name="deviceId">The ID of the device to retrieve WMI Services for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
-        /// <returns>If the request is allowed to run to completion, a list of EXE/Script files. If the request is aborted from the progress callback, this method returns null.</returns>
+        /// <returns>If the request is allowed to run to completion, a list of WMI Services. If the request is aborted from the progress callback, this method returns null.</returns>
         public async Task<List<WmiServiceTarget>> GetWmiServicesAsync(int deviceId, Func<int, bool> progressCallback = null) =>
             await client.ResolveSensorTargetsAsync(deviceId, SensorType.WmiService, progressCallback, WmiServiceTarget.GetServices).ConfigureAwait(false);
+
+        /// <summary>
+        /// Retrieves all SQL Query files that can be used for querying a Microsoft SQL Server on a specified device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve SQL Query files for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of SQL Query files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public List<SqlServerQueryTarget> GetSqlServerQueries(int deviceId, Func<int, bool> progressCallback = null) =>
+            client.ResolveSensorTargets(deviceId, SensorType.SqlServerDB, progressCallback, SqlServerQueryTarget.GetQueries);
+
+        /// <summary>
+        /// Asynchronously retrieves all SQL Query files that can be used for querying a Microsoft SQL Server on a specified device.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve SQL Query files for.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>If the request is allowed to run to completion, a list of SQL Query files. If the request is aborted from the progress callback, this method returns null.</returns>
+        public async Task<List<SqlServerQueryTarget>> GetSqlServerQueriesAsync(int deviceId, Func<int, bool> progressCallback = null) =>
+            await client.ResolveSensorTargetsAsync(deviceId, SensorType.SqlServerDB, progressCallback, SqlServerQueryTarget.GetQueries).ConfigureAwait(false);
     }
 }

@@ -17,16 +17,7 @@ namespace PrtgAPI
         /// <returns>An <see cref="ExeFileTarget"/> that encapsulates the passed value.</returns>
         public static ExeFileTarget Parse(object exeFile)
         {
-            if (exeFile == null)
-                throw new ArgumentNullException(nameof(exeFile));
-
-            if (exeFile is ExeFileTarget)
-                return (ExeFileTarget) exeFile;
-
-            if (exeFile is string)
-                return exeFile.ToString();
-
-            throw new InvalidCastException($"Cannot convert '{exeFile}' of type '{exeFile.GetType()}' to type '{nameof(ExeFileTarget)}'. Value type must be convertable to type {typeof(ExeFileTarget).FullName}.");
+            return ParseStringCompatible(exeFile);
         }
 
         /// <summary>
@@ -36,8 +27,6 @@ namespace PrtgAPI
 
         private ExeFileTarget(string raw) : base(raw)
         {
-            Name = components[0];
-
             if (Name.ToLower().EndsWith("exe"))
                 Type = ExeType.Application;
             else
@@ -52,14 +41,12 @@ namespace PrtgAPI
         /// <param name="exeFile">The name of the script or executable to use.</param>
         public static implicit operator ExeFileTarget(string exeFile)
         {
-            return new ExeFileTarget($"{exeFile}|{exeFile}||");
+            return new ExeFileTarget(ToDropDownOption(exeFile));
         }
 
         internal static List<ExeFileTarget> GetFiles(string response)
         {
-            var files = ObjectSettings.GetDropDownList(response).First(d => d.Name == "exefile").Options.Select(o => new ExeFileTarget(o.Value)).ToList();
-
-            return files;
+            return CreateFromDropDownOptions(response, "exefile", o => new ExeFileTarget(o));
         }
     }
 }

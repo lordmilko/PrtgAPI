@@ -152,6 +152,27 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetValue "DebugMode" "WriteToDisk"
     }
 
+    It "Database Specific" {
+        $object = Get-Sensor -Id (Settings SqlServerDB)
+
+        SetValue "Database"          "newDatabase"
+        SetValue "UseCustomInstance" $true
+        SetChild "InstanceName"      "customInstance" "UseCustomInstance" $true
+        SetValue "SqlEncryptionMode" "Encrypt"
+    }
+
+    It "Data" {
+        $object = Get-Sensor -Id (Settings SqlServerDB)
+
+        SetDirect "SqlServerQuery"       "test.ps1"
+        SetChild  "SqlInputParameter"    "customParameter" "UseSqlInputParameter" $true
+        SetValue  "SqlTransactionMode"   "Rollback"
+        GetDirect "SqlProcessingMode"    "Execute"
+
+        $object | Set-ObjectProperty SqlInputParameter "test"
+        SetValue  "UseSqlInputParameter" $false $true
+    }
+
     It "sets a sensor factory definition using New-SensorFactoryDefinition" {
         $sensors = Get-Sensor -Tags wmimem*
 
