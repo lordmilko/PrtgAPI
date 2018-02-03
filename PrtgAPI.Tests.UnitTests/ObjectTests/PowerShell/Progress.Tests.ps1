@@ -1107,6 +1107,46 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
+        #region 12.7: Something -> Select
+
+    It "12.7a: Stream -> Select -First" {
+
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor | Select -First 1
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (Gen "PRTG Sensor Search" "Retrieving all sensors 1/501" 0)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 1/501" 0)
+        ))
+    }
+
+    It "12.7b: Variable -> Table -> Select -First" {
+        $probes = Get-Probe
+
+        $probes | Get-Group | Select -First 1
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+        ))
+    }
+
+    It "12.7c: Variable -> Action -> Select -First" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Clone-Object 5678 | Select -First 2
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/5)" 20)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+        ))
+    }
+
+        #endregion
     #endregion
     #region 13: Something -> Select -Last -> Something
         #region 13.1: Something -> Select -Last -> Something
@@ -1490,6 +1530,50 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         param($name)
 
         TestVariableChainWithDouble $name "Last" "Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 13.7: Something -> Select -Last
+
+    It "13.7a: Stream -> Select -Last" {
+
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor | Select -Last 1
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            ((GenerateStreamRecords 501) | Select -SkipLast 1)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
+        ))
+    }
+
+    It "13.7b: Variable -> Select -Last" {
+        $probes = Get-Probe
+
+        $probes | Get-Group | Select -Last 1
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+        ))
+    }
+
+    It "13.7c: Variable -> Action -> Select -Last" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Clone-Object 5678 | Select -Last 2
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/5)" 20)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/5)" 60)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/5)" 80)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+        ))
     }
 
         #endregion
@@ -1885,6 +1969,50 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
+        #region 14.7: Something -> Select -Skip
+
+    It "14.7a: Stream -> Select -Skip" {
+
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor | Select -Skip 1
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (GenerateStreamRecords 501)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
+        ))
+    }
+
+    It "14.7b: Variable -> Table -> Select -Skip" {
+        $probes = Get-Probe
+
+        $probes | Get-Group | Select -Skip 1
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+        ))
+    }
+
+    It "14.7c: Variable -> Action -> Select -Skip" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Clone-Object 5678 | Select -Skip 2
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/5)" 20)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/5)" 60)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/5)" 80)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+        ))
+    }
+
+        #endregion
     #endregion
     #region 15: Something -> Select -SkipLast -> Something
         #region 15.1: Something -> Select -SkipLast -> Something
@@ -2187,6 +2315,49 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         param($name)
 
         TestVariableChainWithDouble $name "SkipLast" "Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 15.6: Something -> Select -SkipLast
+
+    It "15.6a: Stream -> Select -SkipLast" {
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor | Select -SkipLast 1
+        }
+        
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            ((GenerateStreamRecords 501) | Select -SkipLast 2)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 500/501" 99)
+        ))
+    }
+
+    It "15.6b: Variable -> Table -> Select -SkipLast" {
+        $probes = Get-Probe
+
+        $probes | Get-Group | Select -SkipLast 1
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+        ))
+    }
+
+    It "15.6c: Variable -> Action -> Select -SkipLast" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Clone-Object 5678 | Select -SkipLast 2
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/5)" 20)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/5)" 60)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/5)" 80)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device4' (ID: 3004) (5/5)" 100)
+        ))
     }
 
         #endregion
@@ -2520,6 +2691,48 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         param($name)
 
         TestVariableChainWithDouble $name "Index" "Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 16.6: Something -> Select -SkipLast
+
+    It "16.6a: Stream -> Select -Index" {
+
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor | Select -Index 0
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (Gen "PRTG Sensor Search" "Retrieving all sensors 1/501" 0)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 1/501" 0)
+        ))
+    }
+
+    It "16.6b: Variable -> Table -> Select -Index" {
+        $probes = Get-Probe
+
+        $probes | Get-Group | Select -Index 0
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            (Gen "PRTG Group Search (Completed)" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+        ))
+    }
+
+    It "16.6c: Variable -> Action -> Select -Index" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Clone-Object 5678 | Select -Index 1,3
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/5)" 20)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/5)" 60)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/5)" 80)
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device3' (ID: 3003) (4/5)" 80)
+        ))
     }
 
         #endregion
