@@ -803,19 +803,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.2a: Table -> Select -First -Last -> Table" {
         Get-Probe -Count 10 | Select -First 4 -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "12.2b: Table -> Select -First -Skip -> Table" {
@@ -840,17 +828,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.3a: Table -> Select -First -> Select -Last -> Table" {
         Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
-
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "12.3b: Table -> Select -First -> Select -Skip -> Table" {
@@ -870,20 +848,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.3c: Table -> Select -First -> Select -SkipLast -> Table" {
         Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)"     10)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)"     20)
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/8)" 12 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "12.3d: Table -> Select -First -> Select -Index -> Table" {
@@ -904,23 +869,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.4a: Table -> Select -First -Last -> Action" {
         Get-Probe -Count 10 | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            ###################################################################
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.19' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.19' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "12.4b: Table -> Select -First -Skip -> Action" {
@@ -945,14 +894,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.5a: Table -> Select -First -> Select -Last -> Action" {
         Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "12.5b: Table -> Select -First -> Select -Skip -> Action" {
@@ -972,19 +914,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "12.5c: Table -> Select -First -> Select -SkipLast -> Action" {
         Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                     "Retrieving all probes")
-            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/10)"     10)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/8)" 12)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/8)" 25)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/10)"     20) + 
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/8)" 25)
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "12.5d: Table -> Select -First -> Select -Index -> Action" {
@@ -1006,15 +936,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (9/10)" 90 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "12.6b: Variable -> Select -First -Skip -> Table" {
@@ -1039,11 +961,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 | Select -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "12.7b: Variable -> Select -First -> Select -Skip -> Table" {
@@ -1063,11 +981,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 | Select -SkipLast 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.10' (1/8)" 12 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/8)" 25 "Retrieving all devices")
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "12.7d: Variable -> Select -First -> Select -Index -> Table" {
@@ -1090,15 +1004,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (9/10)" 90)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.19' forever (10/10)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.19' forever (10/10)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "12.8b: Variable -> Select -First -Skip -> Action" {
@@ -1123,11 +1029,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "12.9b: Variable -> Select -First -> Select -Skip -> Action" {
@@ -1147,11 +1049,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "12.9d: Variable -> Select -First -> Select -Index -> Action" {
@@ -1526,40 +1424,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.2a: Table -> Select -Last -First -> Table" {
         Get-Probe -Count 10 | Select -Last 2 -First 4 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "13.2b: Table -> Select -Last -Skip -> Table" {
         Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.16' (7/10)" 70)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.17' (8/10)" 80)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -1595,36 +1466,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "13.4a: Table -> Select -Last -First -> Action" {
         Get-Probe -Count 10 | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            ###################################################################
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.19' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.19' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "13.4b: Table -> Select -Last -Skip -> Action" {
         Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -1662,15 +1510,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Last 2 -First 4 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/10)" 10 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/10)" 20 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (9/10)" 90 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (10/10)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "13.6b: Variable -> Select -Last -Skip -> Table" {
@@ -1678,11 +1518,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Last 2 -Skip 2 | Get-Device
         
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -1728,15 +1564,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (9/10)" 90)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.19' forever (10/10)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.19' forever (10/10)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "13.8b: Variable -> Select -Last -Skip -> Action" {
@@ -1744,11 +1572,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -2122,22 +1946,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.2b: Table -> Select -Skip -Last -> Table" {
         Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.16' (7/10)" 70)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.17' (8/10)" 80)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -2162,48 +1971,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.3b: Table -> Select -Skip -> Select -Last -> Table" {
         Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.14' (5/10)" 50)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.16' (7/10)" 70)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.17' (8/10)" 80)
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"                  "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)"      "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "14.3c: Table -> Select -Skip -> Select -SkipLast -> Table" {
         Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.12' (1/5)" 20 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.13' (2/5)" 40 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.14' (3/5)" 60 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.15' (4/5)" 80 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
-
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") + 
-                (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "14.3d: Table -> Select -Skip -> Select -Index -> Table" {
@@ -2239,15 +2013,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.4b: Table -> Select -Skip -Last -> Action" {
         Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -2270,41 +2036,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "14.5b: Table -> Select -Skip -> Select -Last -> Action" {
         Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.17' (8/10)" 80)
-
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.18' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.19' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)"    "Pausing probe '127.0.0.19' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "14.5c: Table -> Select -Skip -> Select -SkipLast -> Action" {
         Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "PRTG Probe Search"                     "Retrieving all probes")
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/5)" 20)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/5)" 40)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (3/5)" 60)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (4/5)" 80)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.16' forever (5/5)" 100)
-
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") + 
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.16' forever (5/5)" 100)
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "14.5d: Table -> Select -Skip -> Select -Index -> Action" {
@@ -2340,11 +2078,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 -Last 2 | Get-Device
         
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.16' (1/4)" 25 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.17' (2/4)" 50 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -2369,11 +2103,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 | Select -Last 2 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.18' (1/2)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.19' (2/2)" 100 "Retrieving all devices")
-        ))
+        Assert-NoProgress
     }
 
     It "14.7c: Variable -> Select -Skip -> Select -SkipLast -> Table" {
@@ -2381,14 +2111,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 | Select -SkipLast 3 | Get-Device
 
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/5)" 20  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/5)" 40  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (3/5)" 60  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (4/5)" 80  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.16' (5/5)" 100 "Retrieving all devices")
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "14.7d: Variable -> Select -Skip -> Select -Index -> Table" {
@@ -2425,11 +2148,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.16' forever (1/4)" 25)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.17' forever (2/4)" 50)
-        ))
+        Assert-NoProgress
     }
 
         #endregion
@@ -2454,11 +2173,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.18' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.19' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.19' forever (2/2)" 100)
-        ))
+        Assert-NoProgress
     }
 
     It "14.9c: Variable -> Select -Skip -> Select -SkipLast -> Action" {
@@ -2466,14 +2181,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
 
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.16' forever (5/5)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.16' forever (5/5)" 100)
-        ))
+        { Get-Progress } | Should Throw "Queue empty"
     }
 
     It "14.9d: Variable -> Select -Skip -> Select -Index -> Action" {

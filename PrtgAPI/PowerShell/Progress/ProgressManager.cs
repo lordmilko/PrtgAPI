@@ -345,6 +345,10 @@ namespace PrtgAPI.PowerShell.Progress
             if (PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasLast == true || c?.HasSkipLast == true || c?.HasIndex == true))
                 return true;
 
+            //Something -> Select -Last -Something -> Something
+            //Something -> Select -SkipLast -> Select -Something -> Something
+            if (IsParameterUsedWithAnythingElse(c => c?.HasLast == true || c?.HasSkipLast == true))
+                return true;
 
             //More than two instances any combination of -First, -Last, -Skip, -SkipLast or -Index have been specified
             if (PipeToOrFromExcessiveSelectObjectParameters)
