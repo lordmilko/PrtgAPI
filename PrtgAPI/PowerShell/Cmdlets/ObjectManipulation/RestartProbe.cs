@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
@@ -40,7 +39,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Restart-PrtgCore</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Probe", SupportsShouldProcess = true)]
-    public class RestartProbe : PrtgCmdlet
+    public class RestartProbe : PrtgPostProcessCmdlet
     {
         /// <summary>
         /// <para type="description">The probe to restart. If no probe is specified, all probes will be restarted.</para>
@@ -74,7 +73,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private int secondsRemaining = 150;
         private int secondsElapsed;
 
-        private List<Probe> probesRestarted = new List<Probe>();
+        private readonly List<Probe> probesRestarted = new List<Probe>();
+
+        private string progressActivity = "Restart PRTG Probes";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -83,34 +84,42 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Probe == null)
             {
-                if (ShouldProcess("All PRTG Probes"))
-                {
-                    var count = client.GetTotalObjects(Content.ProbeNode);
-                    if (Force || yesToAll || ShouldContinue($"Are you want to restart the PRTG Probe Service on all {count} PRTG Probes?", "WARNING", true, ref yesToAll, ref noToAll))
-                    {
-                        restartTime = DateTime.Now;
-                        client.RestartProbe(null);
-                    }
-                }
+                var processMessage = "All PRTG Probes";
+                var count = client.GetTotalObjects(Content.ProbeNode);
+                var continueMessage = $"Are you want to restart the PRTG Probe Service on all {count} PRTG Probes?";
+
+                Restart(processMessage, continueMessage, null, null);
             }
             else
             {
-                if (ShouldProcess($"'{Probe.Name}' (ID: {Probe.Id})"))
+                var processMessage = $"'{Probe.Name}' (ID: {Probe.Id})";
+                var continueMessage = $"Are you sure you want to restart the PRTG Probe Service on probe '{Probe.Name}' (ID: {Probe.Id})?";
+                var progressMessage = $"Restarting probe '{Probe.Name}'";
+
+                Restart(processMessage, continueMessage, progressMessage, Probe);
+            }
+        }
+
+        private void Restart(string processMessage, string continueMessage, string progressMessage, Probe probe)
+        {
+            if (ShouldProcess(processMessage))
+            {
+                if (Force || yesToAll || ShouldContinue(continueMessage, "WARNING", true, ref yesToAll, ref noToAll))
                 {
-                    if (Force || yesToAll || ShouldContinue($"Are you sure you want to restart the PRTG Probe Service on probe '{Probe.Name}' (ID: {Probe.Id})?", "WARNING", true, ref yesToAll, ref noToAll))
-                    {
-                        restartTime = DateTime.Now;
-                        probesRestarted.Add(Probe);
-                        client.RestartProbe(Probe.Id);
-                    }
+                    restartTime = DateTime.Now;
+
+                    if (probe != null)
+                        probesRestarted.Add(probe);
+
+                    ExecuteOperation(() => client.RestartProbe(probe?.Id), progressActivity, progressMessage, !Wait);
                 }
             }
         }
 
         /// <summary>
-        /// Provides a one-time, postprocessing functionality for the cmdlet.
+        /// Provides an enhanced one-time, postprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void EndProcessingEx()
         {
             if (Wait && restartTime != null)
             {
@@ -124,29 +133,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var completed = probeStatuses.Count(p => p.Reconnected) + 1;
 
+            var complete = false;
+
             if (completed > probeStatuses.Count)
-                completed--;
-
-            var completedPercent = completed / probeStatuses.Count * 100;
-
-            var record = new ProgressRecord(1, "Restart PRTG Probes", $"Restarting all probes {completed}/{probeStatuses.Count}")
             {
-                PercentComplete = completedPercent,
-                SecondsRemaining = secondsRemaining,
-                CurrentOperation = "Waiting for all probes to restart"
-            };
+                completed--;
+                complete = true;
+            }
+
+            var statusDescription = $"Restarting all probes {completed}/{probeStatuses.Count}";
+            var completedPercent = (int) (completed/(double) probeStatuses.Count*100);
+            var currentOperation = "Waiting for all probes to restart";
+
+            DisplayPostProcessProgress(progressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation, complete);
+
+            if (complete)
+                return false;
 
             for (int i = 0; i < 5; i++)
             {
-                WriteProgress(record);
-
                 secondsRemaining--;
                 secondsElapsed++;
 
                 if (secondsRemaining < 0)
                     secondsRemaining = 30;
 
-                record.SecondsRemaining = secondsRemaining;
+                ProgressManager.CurrentRecord.SecondsRemaining = secondsRemaining;
 
                 if (secondsElapsed > Timeout)
                 {
@@ -166,9 +178,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
 #else
                 Thread.Sleep(1000);
 #endif
+
+                ProgressManager.WriteProgress(true);
             }
 
             return true;
         }
+
+        /// <summary>
+        /// Whether this cmdlet will execute its post processing operation.
+        /// </summary>
+        protected override bool ShouldPostProcess() => Wait;
     }
 }

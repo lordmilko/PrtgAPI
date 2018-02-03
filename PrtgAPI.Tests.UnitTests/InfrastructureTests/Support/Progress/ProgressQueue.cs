@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
@@ -21,9 +22,18 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             }
         }
 
+        private static bool AnyRecords
+        {
+            get
+            {
+                lock (queueLock)
+                    return RecordQueue.Any();
+            }
+        }
+
         public static string Dequeue()
         {
-            if (!ProgressSnapshots.Any())
+            if (!ProgressSnapshots.Any() && AnyRecords)
             {
                 List<ProgressRecord> list;
 
@@ -84,6 +94,15 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                         percentBuilder.Append($"] ({snapshot[i].PercentComplete}%)");
 
                         builder.Append($"{recordIndent}{percentBuilder}\n");
+
+                        if (snapshot[i].SecondsRemaining != -1)
+                        {
+                            var timeSpan = TimeSpan.FromSeconds(snapshot[i].SecondsRemaining);
+
+                            var str = timeSpan.ToString(@"hh\:mm\:ss");
+
+                            builder.Append($"{recordIndent}{str} remaining\n");
+                        }
                     }
 
                     if (snapshot[i].CurrentOperation != null)

@@ -239,7 +239,7 @@ namespace PrtgAPI
         // WaitForCoreRestart
         //######################################
 
-        private void WaitForCoreRestart(DateTime restartTime, Func<RestartCoreStage, bool> callback)
+        internal void WaitForCoreRestart(DateTime restartTime, Func<RestartCoreStage, bool> callback)
         {
             RestartCoreStage coreStage = RestartCoreStage.Shutdown;
 
@@ -270,7 +270,7 @@ namespace PrtgAPI
             }
         }
 
-        private async Task WaitForCoreRestartAsync(DateTime restartTime, Func<RestartCoreStage, bool> callback)
+        internal async Task WaitForCoreRestartAsync(DateTime restartTime, Func<RestartCoreStage, bool> callback)
         {
             RestartCoreStage coreStage = RestartCoreStage.Shutdown;
 
@@ -479,7 +479,7 @@ namespace PrtgAPI
         // ResolveSensorTargets
         //######################################
 
-        private List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        internal List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
@@ -495,7 +495,7 @@ namespace PrtgAPI
             return parser(response);
         }
 
-        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 

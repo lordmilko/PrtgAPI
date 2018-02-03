@@ -7340,6 +7340,344 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     #endregion
+    #region 106: Restart-Probe
+    
+    function RestartProbeCommand($script)
+    {
+        WithResponse "RestartProbeResponse" $script
+    }
+
+    function GenProbeRestarting {@(
+        (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"      "00:02:30") # Initial
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:29")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:28")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:27")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:26")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:25")
+        (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"      "00:02:25") # First disconnected
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:24")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:23")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:22")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:21")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:20")
+        (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"      "00:02:20") # Second disconnected
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:19")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:18")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:17")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:16")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/2" 50 "Waiting for all probes to restart"  "00:02:15")
+            
+        (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart"     "00:02:15") # First reconnected
+            (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:14")
+            (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:13")
+            (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:12")
+            (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:11")
+            (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:10")
+        (Gen "Restart PRTG Probes" "Restarting all probes 2/2" 100 "Waiting for all probes to restart"     "00:02:10") # Second reconnected
+        (Gen "Restart PRTG Probes (Completed)" "Restarting all probes 2/2" 100 "Waiting for all probes to restart" "00:02:10")
+    )}
+
+        #region 106.1: Restart-Probe
+
+    It "106.1a: Restart-Probe -Wait" {
+
+        RestartProbeCommand {
+            Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            GenProbeRestarting
+        ))
+    }
+
+    It "106.1b: Restart-Probe -Wait:`$false" {
+        RestartProbeCommand {
+            Restart-Probe -Force -Wait:$false
+        }
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 106.2: Something -> Restart-Probe
+
+    It "106.2a: Table -> Restart-Probe -Wait" {
+
+        RestartProbeCommand {
+            Get-Probe | Restart-Probe -Force -Wait
+        }
+
+        Validate (@(
+            (Gen "PRTG Probe Search"   "Retrieving all probes")
+            (Gen "PRTG Probe Search"   "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (2/2)" 100)
+
+            GenProbeRestarting
+        ))
+    }
+
+    It "106.2b: Table -> Restart-Probe -Wait:`$false" {
+        RestartProbeCommand {
+            Get-Probe | Restart-Probe -Force -Wait:$false
+        }
+
+        Validate (@(
+            (Gen "PRTG Probe Search"   "Retrieving all probes")
+            (Gen "PRTG Probe Search"   "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (2/2)" 100)
+            (Gen "Restart PRTG Probes (Completed)" "Restarting probe '127.0.0.11' (2/2)" 100)
+        ))
+    }
+
+    It "106.2c: Variable -> Restart-Probe -Wait" {
+
+        RestartProbeCommand {
+            $probes = Get-Probe
+
+            $probes | Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (2/2)" 100)
+
+            GenProbeRestarting
+        ))
+    }
+
+    It "106.2d: Variable -> Restart-Probe -Wait:`$false" {
+        RestartProbeCommand {
+            $probes = Get-Probe
+
+            $probes | Restart-Probe -Force -Wait:$false
+        }
+
+        Validate(@(
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (2/2)" 100)
+            (Gen "Restart PRTG Probes (Completed)" "Restarting probe '127.0.0.11' (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 106.3: Something -> Select -Something -> Restart-Probe
+
+    It "106.3a: Table -> Select -First -> Restart-Probe -Wait" {
+        RestartProbeCommand {
+            Get-Probe | Select -First 1 | Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search"   "Retrieving all probes")
+            (Gen "PRTG Probe Search"   "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:30") # Initial
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:29")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:28")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:27")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:26")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:25")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:25") # First disconnected
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:24")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:23")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:22")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:21")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:20")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:20") # Second disconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:19") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:18") # only one probe was specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:17")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:16")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:15")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15") # First reconnect
+            (Gen "Restart PRTG Probes (Completed)" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15")
+        ))
+    }
+
+    It "106.3b: Variable -> Select -First -> Restart-Probe" {
+        RestartProbeCommand {
+            $probes = Get-Probe
+
+            $probes | Select -First 1 | Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:30") # Initial
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:29")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:28")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:27")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:26")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:25")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:25") # First disconnected
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:24")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:23")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:22")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:21")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:20")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:20") # Second disconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:19") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:18") # only one probe was specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:17")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:16")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:15")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15") # First reconnect
+            (Gen "Restart PRTG Probes (Completed)" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15")
+        ))
+    }
+
+    It "106.3c: Table -> Select -First -> Restart-Probe -Wait:`$false" {
+        RestartProbeCommand {
+            Get-Probe | Select -First 1 | Restart-Probe -Force -Wait:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search"   "Retrieving all probes")
+            (Gen "PRTG Probe Search"   "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.10' (1/2)" 50)
+            (Gen "Restart PRTG Probes (Completed)" "Restarting probe '127.0.0.10' (1/2)" 50)
+        ))
+    }
+
+    It "106.3d: Table -> Select -Last -> Restart-Probe -Wait" {
+        RestartProbeCommand {
+            Get-Probe | Select -Last 1 | Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
+
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (1/1)" 100)
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:30") # Initial
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:29")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:28")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:27")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:26")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:25")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:25") # First disconnected
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:24") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:23") # only the second probe was
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:22") # specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:21")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:20")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:20") # Second disconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:19")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:18")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:17")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:16")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:15")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15") # First reconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:14") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:13") # only the second probe was
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:12") # specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:11")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:10")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:10") # Second reconnect
+            (Gen "Restart PRTG Probes (Completed)" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:10")
+        ))
+    }
+
+    It "106.3e: Variable -> Select -Last -> Restart-Probe -Wait" {
+        RestartProbeCommand {
+            $probes = Get-Probe
+
+            $probes | Select -Last 1 | Restart-Probe -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (1/1)" 100)
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:30") # Initial
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:29")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:28")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:27")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:26")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:25")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:25") # First disconnected
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:24") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:23") # only the second probe was
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:22") # specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:21")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:20")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:20") # Second disconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:19")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:18")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:17")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:16")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:15")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:15") # First reconnect
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:14") # (response doesn't know
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:13") # only the second probe was
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:12") # specified)
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:11")
+                (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"  "00:02:10")
+            (Gen "Restart PRTG Probes" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:10") # Second reconnect
+            (Gen "Restart PRTG Probes (Completed)" "Restarting all probes 1/1" 100 "Waiting for all probes to restart"      "00:02:10")
+        ))
+    }
+
+    It "106.3f: Table -> Select -Last -> Restart-Probe -Wait:`$false" {
+        RestartProbeCommand {
+            Get-Probe | Select -Last 1 | Restart-Probe -Force -Wait:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
+
+            (Gen "Restart PRTG Probes" "Restarting probe '127.0.0.11' (1/1)" 100)
+            (Gen "Restart PRTG Probes (Completed)" "Restarting probe '127.0.0.11' (1/1)" 100)
+        ))
+    }
+
+        #endregion
+    #endregion
+    #region 107: Restart-PrtgCore
+
+    It "107.1a: Restart-PrtgCore -Wait" {
+
+        WithResponse "RestartPrtgCoreResponse" {
+            Restart-PrtgCore -Force -Wait
+        }
+
+        Validate(@(
+            (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:30")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:29")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:28")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:27")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:26")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 33 "Waiting for PRTG Core Service to shutdown" "00:02:25")
+            (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:25")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:24")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:23")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:22")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:21")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 66 "Waiting for PRTG Core Service to restart" "00:02:20")
+            (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:20")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:19")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:18")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:17")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:16")
+                (Gen "Restart PRTG Core" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:15")
+            (Gen "Restart PRTG Core (Completed)" "Restarting PRTG Core" 100 "Waiting for PRTG Core Server to initialize" "00:02:15")
+        ))
+    }
+
+    It "107.1b: Restart-PrtgCore -Wait:`$false" {
+        WithResponse "RestartPrtgCoreResponse" {
+            Restart-PrtgCore -Force -Wait:$false
+        }
+
+        Assert-NoProgress
+    }
+
+    #endregion
     #region Sanity Checks
 
     It "Streams when the number of returned objects is above the threshold" {

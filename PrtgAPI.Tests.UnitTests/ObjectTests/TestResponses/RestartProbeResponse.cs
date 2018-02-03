@@ -44,7 +44,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private IWebResponse GetProbeResponse()
         {
-            probes = Enumerable.Range(0, 2).Select(i => new ProbeItem(objid: i.ToString())).ToArray();
+            probes = Enumerable.Range(0, 2).Select(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString())).ToArray();
 
             return new ProbeResponse(probes);
         }

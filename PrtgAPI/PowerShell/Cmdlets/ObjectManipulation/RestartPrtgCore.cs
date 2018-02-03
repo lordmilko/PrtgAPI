@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Management.Automation;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using PrtgAPI.PowerShell.Base;
 
@@ -41,7 +38,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Restart-Probe</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "PrtgCore", SupportsShouldProcess = true)]
-    public class RestartPrtgCore : PrtgCmdlet
+    public class RestartPrtgCore : PrtgPostProcessCmdlet
     {
         /// <summary>
         /// <para type="description">Forces the PRTG Core Service to be restarted without displaying a confirmation prompt.</para>
@@ -61,11 +58,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, HelpMessage = "Duration (in seconds) to wait for the PRTG Core Service to restart. Default value is 3600 (1 hour). If -Wait is false, this parameter will have no effect.")]
         public int Timeout { get; set; } = 3600;
 
+        private DateTime? restartTime;
+
         private int secondsRemaining = 150;
         private int secondsElapsed;
 
+        private string progressActivity = "Restart PRTG Core";
+        private string statusDescription = "Restarting PRTG Core";
+
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
@@ -75,49 +77,70 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 bool no = false;
                 if (Force || ShouldContinue("Are you sure you want to restart the PRTG Core Service? All users will be disconnected while restart is in progress", "WARNING!", true, ref yes, ref no))
                 {
-                    var record = new ProgressRecord(1, "Restart PRTG Core", "Restarting PRTG Core")
-                    {
-                        CurrentOperation = "Waiting for PRTG Core Server to shutdown"
-                    };
+                    restartTime = DateTime.Now;
 
-                    client.RestartCore(Wait, stage =>
-                    {
-                        switch (stage)
-                        {
-                            case RestartCoreStage.Shutdown:
-                                break;
-                            case RestartCoreStage.Restart:
-                                record.CurrentOperation = "Waiting for PRTG Core Service to restart";
-                                break;
-                            case RestartCoreStage.Startup:
-                                record.CurrentOperation = "Waiting for PRTG Core Server to initialize";
-                                break;
-                            case RestartCoreStage.Completed:
-                                return false;
-                        }
-
-                        return WriteProgress(record, stage);
-                    });
+                    ExecuteOperation(() => client.RestartCore(), progressActivity, statusDescription);
                 }
             }
         }
 
-        private bool WriteProgress(ProgressRecord record, RestartCoreStage coreStage)
+        /// <summary>
+        /// Provides an enhanced one-time, postprocessing functionality for the cmdlet.
+        /// </summary>
+        protected override void EndProcessingEx()
         {
-            record.PercentComplete = (int)((double)coreStage / 3 * 100);
-            record.SecondsRemaining = secondsRemaining;
+            if (Wait && restartTime != null)
+            {
+                client.WaitForCoreRestart(restartTime.Value, WriteCoreProgress);
+            }
+        }
+
+        private bool WriteCoreProgress(RestartCoreStage stage)
+        {
+            string operation = null;
+
+            switch (stage)
+            {
+                case RestartCoreStage.Shutdown:
+                    operation = "Waiting for PRTG Core Service to shutdown";
+                    break;
+                case RestartCoreStage.Restart:
+                    operation = "Waiting for PRTG Core Service to restart";
+                    break;
+                case RestartCoreStage.Startup:
+                    operation = "Waiting for PRTG Core Server to initialize";
+                    break;
+            }
+
+            return WriteProgress(stage, operation);
+        }
+
+        private bool WriteProgress(RestartCoreStage coreStage, string currentOperation = null)
+        {
+            currentOperation = currentOperation ?? ProgressManager.CurrentRecord.CurrentOperation;
+            var completedPercent = (int)((double)coreStage / 3 * 100);
+
+            var completed = coreStage == RestartCoreStage.Completed;
+
+            if (completed)
+            {
+                if(ProgressManager.ProgressWritten)
+                    CompletePostProcessProgress();
+
+                return false;
+            }
+
+            DisplayPostProcessProgress(progressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation);
 
             for (int i = 0; i < 5; i++)
             {
-                WriteProgress(record);
-
                 secondsRemaining--;
                 secondsElapsed++;
 
                 if (secondsRemaining < 0)
                     secondsRemaining = 30;
 
-                record.SecondsRemaining = secondsRemaining;
+                ProgressManager.CurrentRecord.SecondsRemaining = secondsRemaining;
 
                 if (secondsElapsed > Timeout)
                     throw new TimeoutException($"Timed out waiting for PRTG Core Service to restart");
@@ -128,6 +151,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if(!UnitTest())
                     Thread.Sleep(1000);
 #endif
+
+                ProgressManager.WriteProgress(true);
             }
 
             if (Stopping)
@@ -135,5 +160,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             return true;
         }
+
+        /// <summary>
+        /// Whether this cmdlet will execute its post processing operation.
+        /// </summary>
+        protected override bool ShouldPostProcess() => Wait;
     }
 }

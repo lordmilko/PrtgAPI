@@ -16,7 +16,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 
         public override string ToString()
         {
-            return $"{ProgressRecord.Activity}: {ProgressRecord.CurrentOperation ?? ProgressRecord.StatusDescription} ({ProgressRecord.RecordType})";
+            var op = ProgressRecord.CurrentOperation != null ? $"{ProgressRecord.StatusDescription}: {ProgressRecord.CurrentOperation}" : ProgressRecord.StatusDescription;
+
+            return $"{ProgressRecord.Activity}: {op} ({ProgressRecord.RecordType})";
         }
     }
 }

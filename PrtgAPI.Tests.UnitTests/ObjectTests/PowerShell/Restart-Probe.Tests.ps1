@@ -55,6 +55,6 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
     It "times out waiting for some probes to restart" {
         SetResponseAndClient "RestartProbeResponse"
 
-        { Restart-Probe -Timeout 20 -Force } | Should Throw "Timed out waiting for 1 probe to restart"
+        { Restart-Probe -Timeout 19 -Force } | Should Throw "Timed out waiting for 1 probe to restart"
     }
 }

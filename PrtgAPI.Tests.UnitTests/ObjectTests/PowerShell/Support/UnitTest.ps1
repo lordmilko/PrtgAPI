@@ -82,6 +82,40 @@ function GetCustomCountDictionary($hashtable)
     return $dictionary
 }
 
+#region Custom Responses
+
+function WithResponse($responseName, $scriptBlock) {
+
+    $client = Get-PrtgClient
+
+    try
+    {
+        SetResponseAndClient $responseName
+
+        & $scriptBlock
+    }
+    finally
+    {
+        SetPrtgClient $client
+    }
+}
+
+function WithResponseArgs($responseName, $arguments, $scriptBlock) {
+
+    $client = Get-PrtgClient
+
+    try
+    {
+        SetResponseAndClientWithArguments $responseName $arguments
+
+        & $scriptBlock
+    }
+    finally
+    {
+        SetPrtgClient $client
+    }
+}
+
 function SetMultiTypeResponse
 {
     SetResponseAndClient "MultiTypeResponse"
@@ -119,13 +153,6 @@ function SetAddressValidatorResponse($strArr, $exactMatch = $false)
     SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $exactMatch)
 }
 
-function BuildStr($str)
-{
-    $str = "https://prtg.example.com/" + $str + "username=username&passhash=12345678"
-
-    return $str
-}
-
 function SetResponseAndClient($responseName)
 {
     $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName
@@ -146,6 +173,17 @@ function SetResponseAndClientInternal($response)
 
     SetPrtgClient $client
 }
+
+#endregion
+
+function BuildStr($str)
+{
+    $str = "https://prtg.example.com/" + $str + "username=username&passhash=12345678"
+
+    return $str
+}
+
+
 
 function SetPrtgClient($client)
 {
