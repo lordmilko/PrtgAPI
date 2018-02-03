@@ -6705,70 +6705,611 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         #endregion
     #endregion
-    #region Sanity Checks    
-    
-    It "Streams when the number of returned objects is above the threshold" {
-        Run "Sensor" {
+    #region 104: Get-SensorTarget
+        #region 104.1: Normal Tests
 
-            $objs = @()
-
-            for($i = 0; $i -lt 501; $i++)
-            {
-                $objs += GetItem
-            }
-
-            WithItems ($objs) {
-                $result = Get-Sensor
-                $result.Count | Should Be 501
-            }
-        }
-
-        $records = @()
-        $total = 501
-
-        # Create progress records for processing each object
-
-        for($i = 1; $i -le $total; $i++)
-        {
-            $maxChars = 40
-
-            $percent = [Math]::Floor($i/$total*100)
-
-            if($percent -ge 0)
-            {
-                $percentChars = [Math]::Floor($percent/100*$maxChars)
-
-                $spaceChars = $maxChars - $percentChars
-
-                $percentBar = ""
-
-                for($j = 0; $j -lt $percentChars; $j++)
-                {
-                    $percentBar += "o"
-                }
-
-                for($j = 0; $j -lt $spaceChars; $j++)
-                {
-                    $percentBar += " "
-                }
-
-                $percentBar = "[$percentBar] ($percent%)"
-            }
-
-            $records += "PRTG Sensor Search`n" +
-                        "    Retrieving all sensors $i/$total`n" +
-                        "    $percentBar"
-        }
+    It "104.1a: Table -> Get-SensorTarget" {
+        Get-Device -Count 2 | Get-SensorTarget WmiService
 
         Validate(@(
-            "PRTG Sensor Search`n" +
-            "    Detecting total number of items"
+            (Gen "PRTG Device Search" "Retrieving all devices")
 
-            $records
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
 
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "104.1b: Variable -> Get-SensorTarget" {
+        $devices = Get-Device -Count 2
+        
+        $devices | Get-SensorTarget WmiService
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.1c: Table -> Table -> Get-SensorTarget" {
+        Get-Group -Count 2 | Get-Device -Count 2 | Get-SensorTarget WmiService
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+        ))
+    }
+
+    It "104.1d: Variable -> Table -> Get-SensorTarget" {
+        $groups = Get-Group -Count 2
+        
+        $groups | Get-Device -Count 2 | Get-SensorTarget WmiService
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            ##########################################################################################
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+        ))
+    }
+
+    It "104.1e: Table -> Action -> Get-SensorTarget" {
+
+        Get-Device -Count 2 | Clone-Object 5678 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+        ))
+    }
+
+    It "104.1f: Variable -> Action -> Get-SensorTarget" {
+        $devices = Get-Device -Count 2
+        
+        $devices | Clone-Object 5678 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Probing target device (50%)")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50 "Probing target device (100%)")
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Probing target device (50%)")
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Probing target device (100%)")
+
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.1g: Table-> Table -> Action -> Get-SensorTarget" {
+        Get-Group -Count 2 | Get-Device -Count 2 | Clone-Object 5678 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+
+            ##########################################################################################
+
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                    (Gen3 "PRTG Exe/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                    (Gen3 "PRTG Exe/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+
+            (Gen "PRTG Group Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+        ))
+    }
+
+    It "104.1h: Variable -> Table -> Action -> Get-SensorTarget" {
+        $groups = Get-Group -Count 2
+        
+        $groups = Get-Device -Count 2 | Clone-Object 5678 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 104.2: Select-Object
+
+    It "104.2a: Table -> Select -First -> Get-SensorTarget" {
+        Get-Device -Count 5 | Select -First 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+            
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/5)" 40)
+        ))
+    }
+
+    It "104.2b: Variable -> Select -First -> Get-SensorTarget" {
+        $devices = Get-Device -Count 5
+        
+        $devices | Select -First 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/5)" 20 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/5)" 20 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/5)" 40 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/5)" 40 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device1' (2/5)" 40 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2c: Table -> Select -Last -> Get-SensorTarget" {
+        Get-Device -Count 5 | Select -Last 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/5)" 60)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/5)" 100)
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (1/2)" 50 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2d: Variable -> Select -Last -> Get-SensorTarget" {
+        $devices = Get-Device -Count 5
+
+        $devices | Select -Last 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (1/2)" 50 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device4' (2/2)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2e: Table -> Select -Skip -> Get-SensorTarget" {
+        Get-Device -Count 5 | Select -Skip 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device4' (5/5)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device4' (5/5)" 100) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device4' (5/5)" 100) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/5)" 100)
+        ))
+    }
+
+    It "104.2f: Variable -> Select -Skip -> Get-SensorTarget" {
+        $devices = Get-Device -Count 5
+
+        $devices | Select -Skip 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/5)" 60 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/5)" 60 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (5/5)" 100 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device4' (5/5)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device4' (5/5)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2g: Table -> Select -SkipLast -> Get-SensorTarget" {
+        Get-Device -Count 5 | Select -SkipLast 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/5)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2h: Variable -> Select -SkipLast -> Get-SensorTarget" {
+        $devices = Get-Device -Count 5
+
+        $devices | Select -SkipLast 2 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+        ))
+    }
+
+    It "104.2i: Table -> Select -Index -> Get-SensorTarget" {
+        Get-Device -Count 5 | Select -Index 1,3 | Get-SensorTarget ExeXml
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/5)" 80) +
+                (Gen2 "PRTG EXE/Script File Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/5)" 80)
+        ))
+    }
+
+    It "104.2j: Variable -> Select -Index -> Get-SensorTarget" {
+        $devices = Get-Device -Count 5
+
+        $devices | Select -Index 1,3 | Get-SensorTarget ExeXml
+        
+        Validate(@(
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/5)" 40 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device1' (2/5)" 40 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (50%)")
+            (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (100%)")
+
+            (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (100%)")
+        ))
+    }
+
+        #endregion
+    #endregion
+    #region Sanity Checks
+
+    It "Streams when the number of returned objects is above the threshold" {
+        RunCustomCount @{ Sensors = 501 } {
+            Get-Sensor
+        }        
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (GenerateStreamRecords 501)
             (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
         ))
     }
+
+        #region No Progress
 
     It "Doesn't stream when the number of returned objects is below the threshold" {
         Get-Sensor
@@ -6789,25 +7330,25 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $sensors = $probe | Get-Sensor
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress when using Table -> Where" {
         Get-Device | where name -EQ "Probe Device0"
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress when using Table -> Where -> Other" {
         Get-Device | where name -EQ "Probe Device0" | fl
         
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
     
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping to a table" {
         Get-Probe -Count 13 | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Get-Device
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping to an action" {
@@ -6909,5 +7450,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+        #endregion
     #endregion
 }

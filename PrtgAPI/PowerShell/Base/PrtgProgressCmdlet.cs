@@ -60,18 +60,36 @@ namespace PrtgAPI.PowerShell.Base
             if (ProgressManager.PreviousRecord != null)
                 ProgressManager.RemovePreviousOperation();
 
-            ProgressManager.CurrentRecord.PercentComplete = percentage;
+            if (ProgressManager.PipeFromVariableWithProgress)
+            {
+                UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"Probing target device ({percentage}%)");
+            }
+            else
+            {
+                ProgressManager.CurrentRecord.PercentComplete = percentage;
 
-            ProgressManager.WriteProgress(TypeDescription, $"Quering target device ({percentage}%)");
+                ProgressManager.WriteProgress($"PRTG {TypeDescription} Search", $"Probing target device ({percentage}%)");
+            }
 
             if (percentage == 100)
-                ProgressManager.CompleteProgress();
+            {
+                //If we're Variable -> Action -> Me, we wrote all our progress to the previous cmdlet's CurrentOperation,
+                //so we don't need to complete anything
+                if (!(ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineContainsOperation))
+                    ProgressManager.CompleteProgress(true);
+            }
+            else
+            {
+                //Null out the previous record's operation so it doesn't get removed on the next request
+                if (ProgressManager.PreviousRecord != null && ProgressManager.PreviousRecord.CurrentOperation != null)
+                    ProgressManager.PreviousRecord.CurrentOperation = null;
+            }
         }
 
         /// <summary>
         /// Updates the previous and current progress records for the current input object for scenarios in which a variable was piped into one or more cmdlets.
         /// </summary>
-        protected void UpdatePreviousAndCurrentVariableProgressOperations(bool writeObject = true)
+        protected void UpdatePreviousAndCurrentVariableProgressOperations(bool writeObject = true, string currentOperation = null)
         {
             //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
             //(causing them to SetPreviousOperation, which would fail)
@@ -88,14 +106,14 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj.GetType()).ToLower()}";
                     else
                         ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(obj.GetType()).ToLower()}s";
-                    ProgressManager.CurrentRecord.CurrentOperation = $"Retrieving all {GetTypePlural()}";
+                    ProgressManager.CurrentRecord.CurrentOperation = currentOperation ?? $"Retrieving all {GetTypePlural()}";
 
                     ProgressManager.RemovePreviousOperation();
                     ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, prtgObj, writeObject);
                 }
             }
             else
-                ProgressManager.SetPreviousOperation($"Retrieving all {GetTypePlural()}");
+                ProgressManager.SetPreviousOperation(currentOperation ?? $"Retrieving all {GetTypePlural()}");
         }
 
         /// <summary>
