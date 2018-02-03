@@ -86,7 +86,9 @@ namespace PrtgAPI.PowerShell.Progress
             if (PipeFromVariableWithProgress)
             {
                 //12.1c: Variable -> Select -First -> Table
-                if (Pipeline.CurrentIndex + 1 < selectObject.First)
+                //todo: should all of these be changed from Pipeline -> EntirePipeline?
+                //need to note here cant use pipeline cos might not have a pipeline in endprocessing for multioperation
+                if (EntirePipeline.CurrentIndex + 1 < selectObject.First)
                     return true;
             }
             else
@@ -154,6 +156,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool NotReadyLast()
         {
+            if (Pipeline == null)
+                return false;
+
             if (selectObject.HasFirst)
             {
                 if (Pipeline.CurrentIndex + 1 <= previousManager.TotalRecords - selectObject.Last)
@@ -252,7 +257,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
             }
 
-            if (PipeFromVariableWithProgress)
+            if (PipeFromVariableWithProgress) //todo: why isnt this causing a null reference exception in 102.3c?
             {
                 //14.1c: Variable -> Select -Skip -> Table
                 if (Pipeline.CurrentIndex >= Pipeline.List.Count - 1)
@@ -265,6 +270,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool NotReadySkipLast()
         {
+            if (Pipeline == null)
+                return false;
+
             if (selectObject.HasFirst)
             {
             }

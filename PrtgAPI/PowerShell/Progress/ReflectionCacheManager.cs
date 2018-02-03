@@ -144,6 +144,26 @@ namespace PrtgAPI.PowerShell.Progress
             return null;
         }
 
+        public PrtgOperationCmdlet TryGetFirstOperationCmdletAfterSelectObject()
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex; i >= 1; i--)
+            {
+                if (commands[i - 1] is SelectObjectCommand)
+                {
+                    if (commands[i] is PrtgOperationCmdlet)
+                        return commands[i] as PrtgOperationCmdlet;
+
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
         #endregion
         #region Pipeline Has Cmdlet
 
@@ -323,6 +343,9 @@ namespace PrtgAPI.PowerShell.Progress
             var queue = (Queue<PSObject>) command.GetInternalField("selectObjectQueue");
 
             var cmdletPipeline = GetCmdletPipelineInput();
+
+            if (cmdletPipeline == null)
+                return null;
 
             cmdletPipeline.List.AddRange(queue.Cast<object>().ToList());
 

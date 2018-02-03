@@ -239,7 +239,36 @@ namespace PrtgAPI.PowerShell.Progress
         internal readonly SelectObjectManager upstreamSelectObjectManager;
         internal readonly SelectObjectManager downstreamSelectObjectManager;
 
-        public bool PipeFromBlockingSelectObjectCmdlet => IsBlockingSelectObjectCmdlet(upstreamSelectObjectManager);
+        internal SelectObjectManager operationUpstreamSelectObjectManager
+        {
+            get
+            {
+                if (upstreamSelectObjectManager == null && cmdlet is PrtgOperationCmdlet)
+                {
+                    var firstOperation = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
+
+                    return firstOperation?.ProgressManager.upstreamSelectObjectManager;
+                }
+
+                return upstreamSelectObjectManager;
+            }
+        }
+
+        public bool PipeFromBlockingSelectObjectCmdlet
+        {
+            get
+            {
+                if(upstreamSelectObjectManager != null)
+                    return IsBlockingSelectObjectCmdlet(upstreamSelectObjectManager);
+
+                var firstOperation = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
+
+                if (firstOperation != null)
+                    return IsBlockingSelectObjectCmdlet(firstOperation.ProgressManager?.upstreamSelectObjectManager);
+
+                return false;
+            }
+        }
 
         public bool CanUseSelectObjectProgress => PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable;
 
@@ -293,19 +322,47 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 if (unsupportedSelectObjectProgress == null)
                 {
-                    if (PipeToOrFromExcessiveSelectObject() || PipeToOrFromExcessiveSkipSelectObject() ||
-                    PipeToOrFromMultipleSelectObjectStartingWithLast || PipeToOrFromMultipleSelectObjectStartingWithIndex ||
-                    PipeToOrFromMultipleSelectObjectStartingWithSkipLast ||
-                    PipeToOrFromExcessiveSelectObjectParameters || PreviousCmdletDetectedUnsupportedProgress())
-                        unsupportedSelectObjectProgress = true;
-                    else
-                        unsupportedSelectObjectProgress = false;
+                    unsupportedSelectObjectProgress = CalculateIsUnsupportedSelectObjectProgress();
                 }
 
                 return unsupportedSelectObjectProgress.Value;
             }
         }
 
+        private bool CalculateIsUnsupportedSelectObjectProgress()
+        {
+            //Something -> Select -> Select -> Select
+            if (PipeToOrFromExcessiveSelectObject())
+                return true;
+
+            //Something -> Select -Skip -> Select -Skip -> Something
+            if (HasExcessiveSelectItems(c => c.HasSkip))
+                return true;
+
+            //Something -> Select -Last     -> Select -Something -> Something
+            //Something -> Select -SkipLast -> Select -Something -> Something
+            //Something -> Select -Index    -> Select -Something -> Something
+            if (PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasLast == true || c?.HasSkipLast == true || c?.HasIndex == true))
+                return true;
+
+
+            //More than two instances any combination of -First, -Last, -Skip, -SkipLast or -Index have been specified
+            if (PipeToOrFromExcessiveSelectObjectParameters)
+                return true;
+
+            //The result of the previous cmdlet's calculation
+            if (PreviousCmdletDetectedUnsupportedProgress())
+                return true;
+
+            //Something -> Select -> Action -> Action
+            if (PipeToOrFromIllegalMultipleOperationFromSelectObject)
+            {
+                //If only -First is specified, its OK
+                return true;
+            }
+                
+            return false;
+        }
         private bool PreviousCmdletDetectedUnsupportedProgress()
         {
             var commands = CacheManager.GetPipelineCommands();
@@ -324,6 +381,29 @@ namespace PrtgAPI.PowerShell.Progress
             }
 
             return false;
+        }
+
+        private bool PipeToOrFromIllegalMultipleOperationFromSelectObject
+        {
+            get
+            {
+                var commands = CacheManager.GetPipelineCommands();
+
+                for (int i = 0; i < commands.Count - 2; i++)
+                {
+                    if (commands[i] is SelectObjectCommand && commands[i + 1] is PrtgOperationCmdlet && commands[i + 2] is PrtgOperationCmdlet)
+                    {
+                        var descriptor = new SelectObjectDescriptor((SelectObjectCommand) commands[i]);
+
+                        if (descriptor.HasIndex || descriptor.HasLast || descriptor.HasSkip || descriptor.HasSkipLast)
+                            return true;
+
+                        return false;
+                    }
+                }
+
+                return false;
+            }
         }
 
         private bool PipeToOrFromExcessiveSelectObject()
@@ -361,19 +441,16 @@ namespace PrtgAPI.PowerShell.Progress
             return false;
         }
 
-        private bool PipeToOrFromExcessiveSkipSelectObject()
+        private bool IsParameterUsedWithAnythingElse(Func<SelectObjectDescriptor, bool> predicate)
         {
-            if (HasExcessiveSelectItems(c => c.HasSkip) || HasExcessiveSelectItems(c => c.HasSkipLast))
-                return true;
+            if (HasExcessiveSelectItems(predicate, 1))
+            {
+                if (HasExcessiveParameters(upstreamSelectObjectManager, 1) || HasExcessiveParameters(downstreamSelectObjectManager, 1))
+                    return true;
+            }
 
             return false;
         }
-
-        private bool PipeToOrFromMultipleSelectObjectStartingWithLast => PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasLast == true);
-
-        private bool PipeToOrFromMultipleSelectObjectStartingWithIndex => PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasIndex == true);
-
-        private bool PipeToOrFromMultipleSelectObjectStartingWithSkipLast => PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasSkipLast == true);
 
         private bool PipeToOrFromMultipleSelectObjectStartingWithSomething(Func<SelectObjectDescriptor, bool> property)
         {
@@ -397,15 +474,15 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        private bool HasExcessiveSelectItems(Func<SelectObjectDescriptor, bool> predicate)
+        private bool HasExcessiveSelectItems(Func<SelectObjectDescriptor, bool> predicate, int count = 2)
         {
-            if (upstreamSelectObjectManager?.Commands.Count(predicate) >= 2 || downstreamSelectObjectManager?.Commands.Count(predicate) >= 2)
+            if (upstreamSelectObjectManager?.Commands.Count(predicate) >= count || downstreamSelectObjectManager?.Commands.Count(predicate) >= count)
                 return true;
 
             return false;
         }
 
-        private bool HasExcessiveParameters(SelectObjectManager manager)
+        private bool HasExcessiveParameters(SelectObjectManager manager, int count = 2)
         {
             if (manager == null)
                 return false;
@@ -414,7 +491,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             var parameters = manager.Commands.SelectMany(c => c.Command.MyInvocation.BoundParameters).Count(p => keys.Contains(p.Key));
 
-            return parameters > 2;
+            return parameters > count;
         }
 
         private bool? pipelineUpstreamContainsBlockingCmdlet;
@@ -454,7 +531,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        private NotReadyParser notReady;
+        internal NotReadyParser notReady;
         private MultiOperationRecordAnalyzer multiOperationAnalyzer;
 
         private AbortProgressParser abortProgress = new AbortProgressParser();
@@ -542,7 +619,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private IProgressWriter progressWriter;
 
-        internal static IProgressWriter CustomWriter { get; set; }
+        internal static Func<PrtgCmdlet, IProgressWriter> CustomWriter { get; set; }
 
         internal ProgressScenario Scenario { get; set; }
 
@@ -594,9 +671,9 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (PipeFromBlockingSelectObjectCmdlet)
             {
-                if (upstreamSelectObjectManager.HasLast)
+                if (operationUpstreamSelectObjectManager.HasLast)
                     Scenario = ProgressScenario.SelectLast;
-                else if (upstreamSelectObjectManager.HasSkipLast)
+                else if (operationUpstreamSelectObjectManager.HasSkipLast)
                     Scenario = ProgressScenario.SelectSkipLast;
                 else
                     throw new NotImplementedException("Don't know what parameter Select-Object is blocking with");
@@ -629,7 +706,7 @@ namespace PrtgAPI.PowerShell.Progress
         private IProgressWriter GetWriter()
         {
             if (CustomWriter != null)
-                return CustomWriter;
+                return CustomWriter(cmdlet);
             else
                 return new ProgressWriter(cmdlet);
         }
@@ -721,14 +798,14 @@ namespace PrtgAPI.PowerShell.Progress
             return Convert.ToInt64(commandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
         }
 
-        public void CompleteProgress()
+        public void CompleteProgress(bool force = false, bool forceReadyOrNot = false)
         {
-            CompleteProgress(CurrentRecord);
+            CompleteProgress(CurrentRecord, force, forceReadyOrNot);
         }
 
-        private void CompleteProgress(ProgressRecordEx record)
+        private void CompleteProgress(ProgressRecordEx record, bool force = false, bool forceReadyOrNot = false)
         {
-            if (!ReadyToComplete())
+            if (!forceReadyOrNot && !ReadyToComplete())
                 return;
 
             InitialDescription = null;
@@ -739,7 +816,7 @@ namespace PrtgAPI.PowerShell.Progress
              * If we're piping from a variable, we need to complete our progress - however if the pipeline before me is an operation,
              *     responsibility has shifted and we're not responsible for the current progress record
              */
-            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten) || MultiOperationBatchMode())
+            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten) || MultiOperationBatchMode() || force)
             {
                 /* However if it turns out we didn't actually write any records (such as because the server glitched out
                  * and returned nothing) we never really wrote our progress record. If we were streaming however,
@@ -851,6 +928,9 @@ namespace PrtgAPI.PowerShell.Progress
                     if (PipeFromVariableWithProgress && !multiOperationAnalyzer.PipelineStillWriting && PreviousRecord == null)
                         return true;
 
+                    if (downstreamSelectObjectManager?.HasSkipLast == true || downstreamSelectObjectManager?.HasLast == true)
+                        return true;
+
                     return false;
                 }
 
@@ -951,6 +1031,9 @@ namespace PrtgAPI.PowerShell.Progress
                 //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
                 if ((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
+
+                if (abortProgress.NeedsCompleting(manager))
+                    CompleteProgress();
             }
         }
 
@@ -1141,12 +1224,37 @@ namespace PrtgAPI.PowerShell.Progress
 
                 var previousCmdlet = CacheManager.TryGetPreviousPrtgCmdletOfNotType<PrtgOperationCmdlet>();
 
-                var previousManager = previousCmdlet.ProgressManager;
+                var processed = -1;
+                int? total = -1;
 
-                var processed = previousManager.recordsProcessed;
-                var total = previousManager.TotalRecords;
+                if (previousCmdlet != null)
+                {
+                    if (PipelineUpstreamContainsBlockingCmdlet)
+                    {
+                        var p = Pipeline;
+                    }
+                    else
+                    {
+                        var previousManager = previousCmdlet.ProgressManager;
 
-                if (previousCmdlet is PrtgOperationCmdlet && previousManager.recordsProcessed == -1)
+                        processed = previousManager.recordsProcessed;
+                        total = previousManager.TotalRecords;
+                    }
+                }
+                else
+                {
+                    //We might be Action2 in Variable -> Select -> Action -> Action
+                    var firstOp = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
+
+                    if (firstOp != null)
+                    {
+                        //todo: what if we're Variable -> Table -> Select -> Action -> Action. we dont have any tests for that!
+                        processed = EntirePipeline.CurrentIndex + 1;
+                        total = EntirePipeline.List.Count;
+                    }
+                }
+
+                if (previousCmdlet is PrtgOperationCmdlet && processed == -1)
                 {
                     processed = EntirePipeline.CurrentIndex + 1;
                     total = EntirePipeline.List.Count;

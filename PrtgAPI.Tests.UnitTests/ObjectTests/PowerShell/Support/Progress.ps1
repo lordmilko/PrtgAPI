@@ -28,6 +28,10 @@ function Get-Progress {
     return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
 }
 
+function Assert-NoProgress {
+    { Get-Progress } | Should Throw "Queue empty"
+}
+
 function Validate($list)    {
 
     foreach($progress in $list)
@@ -43,6 +47,28 @@ function Validate($list)    {
     {
         Clear-Progress
         throw
+    }
+
+    <#
+    $uncompletedRecords = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::GetUncompletedRecords()|where Activity -NotLike "Running test*"
+
+    if($uncompletedRecords)
+    {
+        Sleep 10
+
+        $uncompletedRecords = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::GetUncompletedRecords()|where Activity -NotLike "Running test*"
+
+        if($uncompletedRecords)
+        {
+            throw "There are uncompleted records"
+        }
+    }#>
+
+    $last = $list|Select -Last 1
+
+    if(!($last.Contains("Completed")))
+    {
+        throw "Processed all records, however last record did not contain `"Completed`". PrtgAPI is not completing the specified chain properly"
     }
 }
 
@@ -105,11 +131,17 @@ function It
 
         if($TestCases -ne $null)
         {
-            Pester\It $name $script -TestCases $TestCases
+            for($i = 0; $i -lt 1; $i++)
+            {
+                Pester\It $name $script -TestCases $TestCases
+            }
         }
         else
         {
-            Pester\It $name $script
+            for($i = 0; $i -lt 1; $i++)
+            {
+                Pester\It $name $script
+            }
         }
     }
 }
@@ -193,11 +225,117 @@ function CreateProgressBar($percent)
     return $percentBar
 }
 
+function ValidateLastRecord($expr, $param, $primary)
+{
+    if($primary -eq "Last" -or $param -eq "Last")
+    {
+        Assert-NoProgress
+    }
+    elseif($primary -eq "SkipLast" -or $param -eq "SkipLast")
+    {
+        Assert-NoProgress
+    }
+    elseif($primary -eq "Index")
+    {
+        Assert-NoProgress
+    }
+    elseif($primary -eq "Skip" -and $param -eq "Skip")
+    {
+        Assert-NoProgress
+    }
+    else
+    {
+        $last = ""
+
+        while($true)
+        {
+            try
+            {
+                $last = Get-Progress
+            }
+            catch
+            {
+                break
+            }
+        }
+
+        if(!($last.Contains("Completed")))
+        {
+            throw "Last progress record of expression '$expr' did not contain 'Completed'"
+        }
+    }
+}
+
+function TryInvokeExpression($expr)
+{
+    try
+    {
+        Invoke-Expression $expr
+
+        return $true
+    }
+    catch
+    {
+        if(!($_.Exception.Message.Contains("Parameter set cannot be resolved")))
+        {
+            throw
+        }
+
+        return $false
+    }
+}
+
+#region Batch
+
+function TestBatchWithSingle($param, $primary, $mode)
+{
+    TestBatchCore $param $primary $mode "Select -$primary 3 -$param 2"
+}
+
+function TestBatchWithDouble($param, $primary, $mode)
+{
+    TestBatchCore $param $primary $mode "Select -$primary 3 | Select -$param 2"
+}
+
+function TestBatchCore($param, $primary, $mode, $selectExpr)
+{
+    $expr = ""
+
+    if($mode -eq "Cmdlet") {
+        $expr = "Get-Probe -Count 10 | $selectExpr | Get-Device | Pause-Object -Forever"
+    }
+    elseif($mode -eq "Variable") {
+        $probes = Get-Probe -Count 10
+
+        $expr = "$('$probes') | $selectExpr | Get-Device | Pause-Object -Forever"
+    }
+    elseif($mode -eq "CmdletChain") {
+        $expr = "Get-Probe | Get-Group -Count 10 | $selectExpr | Get-Device | Pause-Object -Forever"
+    }
+    elseif($mode -eq "VariableChain") {
+        $probes = Get-Probe
+
+        $expr = "$('$probes') | Get-Group -Count 10 | $selectExpr | Get-Device | Pause-Object -Forever"
+    }
+    else {
+        throw "Unknown mode '$mode'"
+    }
+
+    if(TryInvokeExpression $expr)
+    {
+        ValidateLastRecord $expr $param $primary
+    }
+}
+
+#endregion
+
 function TestCmdletChainWithSingle($param, $primary, $finalCmdlet)
 {
     $expr = "Get-Probe -Count 10 | Select -$primary 3 -$param 2 | Get-Device | $finalCmdlet"
 
     Invoke-Expression $expr
+
+    ValidateLastRecord $expr $param $primary
 }
 
 function TestCmdletChainWithDouble($param, $primary, $finalCmdlet)
@@ -205,24 +343,30 @@ function TestCmdletChainWithDouble($param, $primary, $finalCmdlet)
     $expr = "Get-Probe -Count 10 | Select -$primary 3 | Select -$param 2 | Get-Device | $finalCmdlet"
 
     Invoke-Expression $expr
+
+    ValidateLastRecord $expr $param $primary
 }
 
 function TestVariableChainWithSingle($param, $primary, $finalCmdlet)
 {
     $probes = Get-Probe -Count 10
 
-    $expr = "$('$probes') | Select -$primary 3 -$param 3 | Get-Device | $finalCmdlet"
+    $expr = "$('$probes') | Select -$primary 3 -$param 2 | Get-Device | $finalCmdlet"
 
     Invoke-Expression $expr
+
+    ValidateLastRecord $expr $param $primary
 }
 
 function TestVariableChainWithDouble($param, $primary, $finalCmdlet)
 {
     $probes = Get-Probe -Count 10
 
-    $expr = "$('$probes') | Select -$primary 3 | Select -$param 3 | Get-Device | $finalCmdlet"
+    $expr = "$('$probes') | Select -$primary 3 | Select -$param 2 | Get-Device | $finalCmdlet"
 
     Invoke-Expression $expr
+
+    ValidateLastRecord $expr $param $primary
 }
 
 $selectFirstParams = @(

@@ -29,6 +29,25 @@ namespace PrtgAPI.PowerShell.Progress
             return false;
         }
 
+        public bool NeedsCompleting(ProgressManager manager)
+        {
+            if (manager.downstreamSelectObjectManager == null)
+                return false;
+
+            var firstCmdlet = manager.downstreamSelectObjectManager.Commands.First();
+
+            if (firstCmdlet.HasFirst)
+            {
+                if (manager.downstreamSelectObjectManager.HasLast && manager.downstreamSelectObjectManager.Commands.Count > 1)
+                {
+                    if (manager.recordsProcessed == firstCmdlet.First)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         private bool AbortProgressFirst(ProgressManager manager, SelectObjectManager selectObject)
         {
             if (selectObject.HasLast)
