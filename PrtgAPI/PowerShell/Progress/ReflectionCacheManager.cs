@@ -101,6 +101,10 @@ namespace PrtgAPI.PowerShell.Progress
             return null;
         }
 
+        /// <summary>
+        /// Retrieves the next <see cref="PrtgCmdlet"/> in the pipeline. If there are no more PrtgAPI cmdlets in the pipeline, this method returns null. 
+        /// </summary>
+        /// <returns></returns>
         public PrtgCmdlet GetNextPrtgCmdlet() => nextPrtgCmdlet.Value;
 
         /// <summary>
@@ -272,7 +276,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             for (var i = myIndex + 1; i < commands.Count; i++)
             {
-                if (commands[i] is PrtgCmdlet)
+                if (commands[i] is PrtgProgressCmdlet || commands[i] is PrtgOperationCmdlet)
                     return true;
 
                 if (!ProgressManager.IsPureThirdPartyCmdlet(commands[i].GetType()))

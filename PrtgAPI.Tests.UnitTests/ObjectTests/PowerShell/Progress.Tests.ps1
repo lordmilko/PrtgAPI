@@ -6817,6 +6817,22 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         #endregion
     #endregion
+    #region 105: Select -Something -> No Progress
+
+    It "105a: Table -> Select -First -> Get-SensorHistory" {
+
+        Get-Sensor -Count 10 | Select -First 5 | Get-SensorHistory
+
+        Assert-NoProgress
+    }
+
+    It "105b: Table -> Select -Last -> Get-SensorHistory" {
+        Get-Sensor -Count 10 | Select -Last 5 | Get-SensorHistory
+
+        Assert-NoProgress
+    }
+
+    #endregion
     #region Sanity Checks
 
     It "Streams when the number of returned objects is above the threshold" {
