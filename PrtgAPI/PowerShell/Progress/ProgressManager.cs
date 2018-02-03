@@ -337,31 +337,13 @@ namespace PrtgAPI.PowerShell.Progress
         private bool CalculateIsUnsupportedSelectObjectProgress()
         {
             //Something -> Select -> Select -> Select
-            if (PipeToOrFromExcessiveSelectObject())
+            if (PipelineContainsExcessiveSelectObjectCmdlets())
                 return true;
 
-            //Something -> Select -Skip -> Select -Skip -> Something
-            if (HasExcessiveSelectItems(c => c.HasSkip))
+            //More than one parameter used at once
+            if (PipelineContainsExcessiveSelectObjectParameters)
                 return true;
 
-            //Something -> Select -Last     -> Select -Something -> Something
-            //Something -> Select -SkipLast -> Select -Something -> Something
-            //Something -> Select -Index    -> Select -Something -> Something
-            if (PipeToOrFromMultipleSelectObjectStartingWithSomething(c => c?.HasLast == true || c?.HasSkipLast == true || c?.HasIndex == true))
-                return true;
-
-            //Something -> Select -Last -Something -> Something
-            //Something -> Select -SkipLast -> Select -Something -> Something
-            if (IsParameterUsedWithAnythingElse(c => c?.HasLast == true || c?.HasSkipLast == true))
-                return true;
-
-            //More than two instances any combination of -First, -Last, -Skip, -SkipLast or -Index have been specified
-            if (PipeToOrFromExcessiveSelectObjectParameters)
-                return true;
-
-            //The result of the previous cmdlet's calculation
-            if (PreviousCmdletDetectedUnsupportedProgress())
-                return true;
 
             //Something -> Select -> Action -> Action
             if (PipeToOrFromIllegalMultipleOperationFromSelectObject)
@@ -369,28 +351,29 @@ namespace PrtgAPI.PowerShell.Progress
                 //If only -First is specified, its OK
                 return true;
             }
-                
-            return false;
+
+            if (PipelineContainsMultipleCmdletsBeforeSelectObject)
+                return true;
+
+            return false;                
         }
 
-        private bool PreviousCmdletDetectedUnsupportedProgress()
+        private bool PipelineContainsMultipleCmdletsBeforeSelectObject
         {
-            var commands = CacheManager.GetPipelineCommands();
-
-            var myIndex = commands.IndexOf(cmdlet);
-
-            for (int i = myIndex - 1; i >= 0; i--)
+            get
             {
-                if (commands[i] is PrtgCmdlet)
+                var commands = CacheManager.GetPipelineCommands().Skip(2);
+
+                if (commands.OfType<SelectObjectCommand>().Where(c =>
                 {
-                    var prtgCmdlet = commands[i] as PrtgCmdlet;
+                    var d = new SelectObjectDescriptor(c);
 
-                    if (prtgCmdlet.ProgressManager?.UnsupportedSelectObjectProgress == true)
-                        return true;
-                }
+                    return d.HasFirst || d.HasLast || d.HasSkip || d.HasSkipLast || d.HasIndex;
+                }).Any())
+                    return true;
+
+                return false;
             }
-
-            return false;
         }
 
         private bool PipeToOrFromIllegalMultipleOperationFromSelectObject
@@ -416,30 +399,15 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        private bool PipeToOrFromExcessiveSelectObject()
+        private bool PipelineContainsExcessiveSelectObjectCmdlets()
         {
             var commands = CacheManager.GetPipelineCommands();
 
-            var myIndex = commands.IndexOf(cmdlet);
-
             var selectInARow = 0;
 
-            for (int i = myIndex + 1; i < commands.Count && i <= myIndex + 3; i++)
+            foreach (object t in commands)
             {
-                if (commands[i] is SelectObjectCommand)
-                    selectInARow++;
-                else
-                    selectInARow = 0;
-
-                if (selectInARow == 3)
-                    return true;
-            }
-
-            selectInARow = 0;
-
-            for (int i = myIndex - 1; i >= 0 && i >= myIndex - 3; i--)
-            {
-                if (commands[i] is SelectObjectCommand)
+                if (t is SelectObjectCommand)
                     selectInARow++;
                 else
                     selectInARow = 0;
@@ -451,57 +419,36 @@ namespace PrtgAPI.PowerShell.Progress
             return false;
         }
 
-        private bool IsParameterUsedWithAnythingElse(Func<SelectObjectDescriptor, bool> predicate)
-        {
-            if (HasExcessiveSelectItems(predicate, 1))
-            {
-                if (HasExcessiveParameters(upstreamSelectObjectManager, 1) || HasExcessiveParameters(downstreamSelectObjectManager, 1))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool PipeToOrFromMultipleSelectObjectStartingWithSomething(Func<SelectObjectDescriptor, bool> property)
-        {
-            if (upstreamSelectObjectManager?.Commands.Count >= 2 && property(upstreamSelectObjectManager?.Commands.Last()))
-                return true;
-
-            if (downstreamSelectObjectManager?.Commands.Count >= 2 && property(downstreamSelectObjectManager?.Commands.First()))
-                return true;
-
-            return false;
-        }
-
-        private bool PipeToOrFromExcessiveSelectObjectParameters
+        private bool PipelineContainsExcessiveSelectObjectParameters
         {
             get
             {
-                if (HasExcessiveParameters(upstreamSelectObjectManager) || HasExcessiveParameters(downstreamSelectObjectManager))
-                    return true;
+                List<List<SelectObjectCommand>> selectObjectSets = new List<List<SelectObjectCommand>>();
 
-                return false;
+                var currentSet = new List<SelectObjectCommand>();
+
+                foreach (var obj in CacheManager.GetPipelineCommands())
+                {
+                    if (obj is SelectObjectCommand)
+                    {
+                        currentSet.Add((SelectObjectCommand) obj);
+                    }
+                    else
+                    {
+                        if (currentSet.Count > 0)
+                        {
+                            selectObjectSets.Add(currentSet);
+                            currentSet = new List<SelectObjectCommand>();
+                        }
+                    }
+                }
+
+                var keys = new[] { "First", "Last", "Skip", "SkipLast", "Index" };
+
+                return selectObjectSets.Select(set => set.SelectMany(c => c.MyInvocation.BoundParameters)
+                                       .Count(p => keys.Contains(p.Key)))
+                                       .Any(totalParameters => totalParameters > 1);
             }
-        }
-
-        private bool HasExcessiveSelectItems(Func<SelectObjectDescriptor, bool> predicate, int count = 2)
-        {
-            if (upstreamSelectObjectManager?.Commands.Count(predicate) >= count || downstreamSelectObjectManager?.Commands.Count(predicate) >= count)
-                return true;
-
-            return false;
-        }
-
-        private bool HasExcessiveParameters(SelectObjectManager manager, int count = 2)
-        {
-            if (manager == null)
-                return false;
-
-            var keys = new[] {"First", "Last", "Skip", "SkipLast", "Index"};
-
-            var parameters = manager.Commands.SelectMany(c => c.Command.MyInvocation.BoundParameters).Count(p => keys.Contains(p.Key));
-
-            return parameters > count;
         }
 
         private bool? pipelineUpstreamContainsBlockingCmdlet;

@@ -798,276 +798,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 12.2: Table -> Select -First -Something -> Table
-
-    It "12.2a: Table -> Select -First -Last -> Table" {
-        Get-Probe -Count 10 | Select -First 4 -Last 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "12.2b: Table -> Select -First -Skip -> Table" {
-        Get-Probe -Count 10 | Select -First 4 -Skip 2 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 12.3: Table -> Select -First -> Select -Something -> Table
-
-    It "12.3a: Table -> Select -First -> Select -Last -> Table" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "12.3b: Table -> Select -First -> Select -Skip -> Table" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Skip 2 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-        ))
-    }
-
-    It "12.3c: Table -> Select -First -> Select -SkipLast -> Table" {
-        Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "12.3d: Table -> Select -First -> Select -Index -> Table" {
-        Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search"             "Retrieving all probes")
-            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 12.4: Table -> Select -First -Something -> Action
-
-    It "12.4a: Table -> Select -First -Last -> Action" {
-        Get-Probe -Count 10 | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "12.4b: Table -> Select -First -Skip -> Action" {
-        Get-Probe -Count 10 | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-        #endregion
-        #region 12.5: Table -> Select -First -> Select -Something -> Action
-
-    It "12.5a: Table -> Select -First -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "12.5b: Table -> Select -First -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
-        ))
-    }
-
-    It "12.5c: Table -> Select -First -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "12.5d: Table -> Select -First -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.14' forever (5/10)" 50)
-        ))
-    }
-
-        #endregion
-        #region 12.6: Variable -> Select -First -Something -> Table
-
-    It "12.6a: Variable -> Select -First -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "12.6b: Variable -> Select -First -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 -Skip 2 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 12.7: Variable -> Select -First -> Select -Something -> Table
-
-    It "12.7a: Variable -> Select -First -> Select -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "12.7b: Variable -> Select -First -> Select -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -Skip 2 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-        ))
-    }
-
-    It "12.7c: Variable -> Select -First -> Select -SkipLast -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "12.7d: Variable -> Select -First -> Select -Index -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 5 | Select -Index 2,4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 12.8: Variable -> Select -First -Something -> Action
-
-    It "12.8a: Variable -> Select -First -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "12.8b: Variable -> Select -First -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-        #endregion
-        #region 12.9: Variable -> Select -First -> Select -Something -> Action
-
-    It "12.9a: Variable -> Select -First -> Select -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "12.9b: Variable -> Select -First -> Select -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/10)" 40)
-        ))
-    }
-
-    It "12.9c: Variable -> Select -First -> Select -SkipLast -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "12.9d: Variable -> Select -First -> Select -Index -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -First 5 | Select -Index 2,4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.14' forever (5/10)" 50)
-        ))
-    }
-
-        #endregion
-        #region 12.10: Something -> Select -First -> Table -> Something
+        #region 12.2: Something -> Select -First -> Table -> Something
     
-    It "12.10a: Table -> Select -First -> Table -> Table" {
+    It "12.2a: Table -> Select -First -> Table -> Table" {
         Get-Probe -Count 3 | Select -First 2 | Get-Device | Get-Sensor
 
         Validate(@(
@@ -1124,7 +857,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "12.10b: Table -> Select -First -> Table -> Action" {
+    It "12.2b: Table -> Select -First -> Table -> Action" {
         Get-Probe -Count 3 | Select -First 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
@@ -1179,7 +912,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "12.10c: Variable -> Select -First -> Table -> Table" {
+    It "12.2c: Variable -> Select -First -> Table -> Table" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -First 2 | Get-Device | Get-Sensor
@@ -1215,7 +948,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "12.10d: Variable -> Select -First -> Table -> Action" {
+    It "12.2d: Variable -> Select -First -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -First 2 | Get-Device | Pause-Object -Forever -Batch:$false
@@ -1254,54 +987,120 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 12.11: Something -> Select -First -Something -> Table -> Something
+        #region 12.3: Table -> Table -> Select -First -> Table -> Something
 
-    It "12.11a<i>: Table -> Select -First -<name> -> Table -> Table" -TestCases $selectFirstParams {
+    It "12.3a: Table -> Table -> Select -First -> Table" {
+        Get-Probe | Get-Group | Select -First 3 | Get-Device
+
+        Assert-NoProgress
+    }
+
+    It "12.3b: Table -> Table -> Table -> Select -First -> Table" {
+        Get-Probe | Get-Group | Get-Device | Select -First 3 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 12.4: Table -> Select -First -Something -> Something
+
+    It "12.4a: Table -> Select -First -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 -Last 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 -Skip 2 | Get-Device"
+    }
+    
+    It "12.4b: Table -> Select -First -> Select -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -Last 2     | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -Skip 2     | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4  | Get-Device"
+    }
+
+    It "12.4c: 12.4: Table -> Select -First -Something -> Action -Batch`$false" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "12.4d: 12.5: Table -> Select -First -> Select -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -Last 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -First 5 | Select -Index 2,4  | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "12.4e: Variable -> Select -First -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 -Last 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 -Skip 2 | Get-Device"
+    }
+
+    It "12.4f: Variable -> Select -First -> Select -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -Last 2     | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -Skip 2     | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -SkipLast 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 5 | Select -Index 2,4  | Get-Device"
+    }
+
+    It "12.4g: Variable -> Select -First -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 -Last 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 -Skip 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "12.4h: Variable -> Select -First -> Select -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -Last 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -First 5 | Select -Index 2,4  | Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 12.5: Something -> Select -First -Something -> Table -> Something
+
+    It "12.5a<i>: Table -> Select -First -<name> -> Table -> Table" -TestCases $selectFirstParams {
         param($name)
 
         TestCmdletChainWithSingle $name "First" "Get-Sensor"
     }
 
-    It "12.11b<i>: Table -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
+    It "12.5b<i>: Table -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
         param($name)
 
         TestCmdletChainWithSingle $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "12.11c<i>: Variable -> Select -First -<name> -> Table -> Table" -TestCases $selectFirstParams {
+    It "12.5c<i>: Variable -> Select -First -<name> -> Table -> Table" -TestCases $selectFirstParams {
         param($name)
 
         TestVariableChainWithSingle $name "First" "Get-Sensor"
     }
 
-    It "12.11d<i>: Variable -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
+    It "12.5d<i>: Variable -> Select -First -<name> -> Table -> Action" -TestCases $selectFirstParams {
         param($name)
 
         TestVariableChainWithSingle $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
-        #region 12.12: Something -> Select -First -> Select -Something -> Table -> Something
+        #region 12.6: Something -> Select -First -> Select -Something -> Table -> Something
 
-    It "12.12a<i>: Table -> Select -First -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "12.6a<i>: Table -> Select -First -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "First" "Get-Sensor"
     }
 
-    It "12.12b<i>: Table -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "12.6b<i>: Table -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "First" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "12.12c<i>: Variable -> Select -First -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "12.6c<i>: Variable -> Select -First -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "First" "Get-Sensor"
     }
 
-    It "12.12d<i>: Variable -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "12.6d<i>: Variable -> Select -First -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "First" "Pause-Object -Forever -Batch:`$false"
@@ -1319,7 +1118,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"              "Retrieving all probes")
             (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)"       25)
             (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)"       50)
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.11' (2/4)"       50)
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.13' (4/4)"       100)
 
             (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
             (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
@@ -1332,8 +1131,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)"                     25)
-            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.11' (2/4)"                     50)
+            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
+            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.13' (4/4)" 100)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -1372,7 +1171,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"              "Retrieving all probes")
             (Gen "PRTG Probe Search"              "Processing probe '127.0.0.10' (1/4)"       25)
             (Gen "PRTG Probe Search"              "Processing probe '127.0.0.11' (2/4)"       50)
-            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.11' (2/4)"       50)
+            (Gen "PRTG Probe Search (Completed)"  "Processing probe '127.0.0.13' (4/4)"       100)
 
             (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (1/2)" 50 "Retrieving all devices")
             (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (2/2)" 100 "Retrieving all devices")
@@ -1386,7 +1185,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)"                     25)
-            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.11' (2/4)"                     50)
+            (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.13' (4/4)"                     100)
 
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
             (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
@@ -1419,207 +1218,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 13.2: Table -> Select -Last -Something -> Table
+        #region 13.2: Something -> Select -Last -> Table -> Something
 
-    It "13.2a: Table -> Select -Last -First -> Table" {
-        Get-Probe -Count 10 | Select -Last 2 -First 4 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "13.2b: Table -> Select -Last -Skip -> Table" {
-        Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 13.3: Table -> Select -Last -> Select -Something -> Table
-
-    It "13.3a: Table -> Select -Last -> Select -First -> Table" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -First 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.3b: Table -> Select -Last -> Select -Skip -> Table" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.3c: Table -> Select -Last -> Select -SkipLast -> Table" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.3d: Table -> Select -Last -> Select -Index -> Table" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Index 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 13.4: Table -> Select -Last -Something -> Action
-
-    It "13.4a: Table -> Select -Last -First -> Action" {
-        Get-Probe -Count 10 | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "13.4b: Table -> Select -Last -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 13.5: Table -> Select -Last -> Select -Something -> Action
-
-    It "13.5a: Table -> Select -Last -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -First 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.5b: Table -> Select -Last -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.5c: Table -> Select -Last -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.5d: Table -> Select -Last -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -Last 4 | Select -Index 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 13.6: Variable -> Select -Last -Something -> Table
-
-    It "13.6a: Variable -> Select -Last -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 2 -First 4 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "13.6b: Variable -> Select -Last -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 2 -Skip 2 | Get-Device
-        
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 13.7: Variable -> Select -Last -> Select -Something -> Table
-
-    It "13.7a: Variable -> Select -Last -> Select -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -First 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.7b: Variable -> Select -Last -> Select -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.7c: Variable -> Select -Last -> Select -SkipLast -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.7d: Variable -> Select -Last -> Select -Index -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -Index 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 13.8: Variable -> Select -Last -Something -> Action
-
-    It "13.8a: Variable -> Select -Last -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "13.8b: Variable -> Select -Last -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 13.9: Variable -> Select -Last -> Select -Something -> Action
-
-    It "13.9a: Variable -> Select -Last -> Select -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -First 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.9b: Variable -> Select -Last -> Select -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.9c: Variable -> Select -Last -> Select -SkipLast -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "13.9d: Variable -> Select -Last -> Select -Index -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Last 4 | Select -Index 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 13.10: Something -> Select -Last -> Table -> Something
-
-    It "13.10a: Table -> Select -Last -> Table -> Table" {
+    It "13.2a: Table -> Select -Last -> Table -> Table" {
         Get-Probe -Count 3 | Select -Last 2 | Get-Device | Get-Sensor
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)"             33)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100)
 
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"       50 "Retrieving all devices")
 
@@ -1653,13 +1260,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "13.10b: Table -> Select -Last -> Table -> Action" {
+    It "13.2b: Table -> Select -Last -> Table -> Action" {
         Get-Probe -Count 3 | Select -Last 2 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)"             33)
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100)
 
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"       50 "Retrieving all devices")
 
@@ -1693,7 +1300,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "13.10c: Variable -> Select -Last -> Table -> Table" {
+    It "13.2c: Variable -> Select -Last -> Table -> Table" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -Last 2 | Get-Device | Get-Sensor
@@ -1727,7 +1334,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "13.10d: Variable -> Select -Last -> Table -> Action" {
+    It "13.2d: Variable -> Select -Last -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -Last 2 | Get-Device | Pause-Object -Forever -Batch:$false
@@ -1766,54 +1373,120 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 13.11: Something -> Select -Last -Something -> Table -> Something
+        #region 13.3: Table -> Table -> Select -Last -> Table
 
-    It "13.11a<i>: Table -> Select -Last -<name> -> Table -> Table" -TestCases $selectLastParams {
+    It "13.3a: Table -> Table -> Select -Last -> Table" {
+        Get-Probe | Get-Group | Select -Last 4 | Get-Device
+
+        Assert-NoProgress
+    }
+
+    It "13.3b: Table -> Table -> Table -> Select -Last -> Table" {
+        Get-Probe | Get-Group | Get-Device | Select -Last 4 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 13.4: Something -> Select -First -Something -> Something
+
+    It "13.4a: Table -> Select -Last -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 2 -First 4 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Get-Device"
+    }
+
+    It "13.4b: Table -> Select -Last -> Select -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -First 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -Index 2 | Get-Device"
+    }
+
+    It "13.4c: Table -> Select -Last -First -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 2 -Skip 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "13.4d: Table -> Select -Last -> Select -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -First 2    | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Last 4 | Select -Index 2    | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "13.4e: Variable -> Select -Last -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 2 -First 4 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 2 -Skip 2 | Get-Device"
+    }
+
+    It "13.4f: Variable -> Select -Last -> Select -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -First 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -Skip 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -SkipLast 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -Index 2 | Get-Device"
+    }
+
+    It "13.4g: Variable -> Select -Last -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 2 -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 2 -Skip 2  | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "13.4h: Variable -> Select -Last -> Select -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -First 2    | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Last 4 | Select -Index 2    | Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 13.5: Something -> Select -Last -Something -> Table -> Something
+
+    It "13.5a<i>: Table -> Select -Last -<name> -> Table -> Table" -TestCases $selectLastParams {
         param($name)
 
         TestCmdletChainWithSingle $name "Last" "Get-Sensor"
     }
 
-    It "13.11b<i>: Table -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
+    It "13.5b<i>: Table -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
         param($name)
 
         TestCmdletChainWithSingle $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "13.11c<i>: Variable -> Select -Last -<name> -> Table -> Table" -TestCases $selectLastParams {
+    It "13.5c<i>: Variable -> Select -Last -<name> -> Table -> Table" -TestCases $selectLastParams {
         param($name)
 
         TestVariableChainWithSingle $name "Last" "Get-Sensor"
     }
 
-    It "13.11d<i>: Variable -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
+    It "13.5d<i>: Variable -> Select -Last -<name> -> Table -> Action" -TestCases $selectLastParams {
         param($name)
 
         TestVariableChainWithSingle $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
-        #region 13.12: Something -> Select -Last -> Select -Something -> Table -> Something
+        #region 13.6: Something -> Select -Last -> Select -Something -> Table -> Something
 
-    It "13.12a<i>: Table -> Select -Last -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "13.6a<i>: Table -> Select -Last -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Last" "Get-Sensor"
     }
 
-    It "13.12b<i>: Table -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "13.6b<i>: Table -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Last" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "13.12c<i>: Variable -> Select -Last -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "13.6c<i>: Variable -> Select -Last -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Last" "Get-Sensor"
     }
 
-    It "13.12d<i>: Variable -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "13.6d<i>: Variable -> Select -Last -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Last" "Pause-Object -Forever -Batch:`$false"
@@ -1925,281 +1598,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 14.2: Table -> Select -Skip -Something -> Table
-
-    It "14.2a: Table -> Select -Skip -First -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 -First 4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search" "Retrieving all probes")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-    It "14.2b: Table -> Select -Skip -Last -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 14.3: Table -> Select -Skip -> Select -Something -> Table
-
-    It "14.3a: Table -> Select -Skip -> Select -First -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -First 4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.11' (2/10)" 20)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-    It "14.3b: Table -> Select -Skip -> Select -Last -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "14.3c: Table -> Select -Skip -> Select -SkipLast -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "14.3d: Table -> Select -Skip -> Select -Index -> Table" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40)
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Probe Search (Completed)"       "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 14.4: Table -> Select -Skip -Something -> Action
-
-    It "14.4a: Table -> Select -Skip -First -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/10)"                     10)
-
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-    It "14.4b: Table -> Select -Skip -Last -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 14.5: Table -> Select -Skip -> Select -Something -> Action
-
-    It "14.5a: Table -> Select -Skip -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/10)" 10)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)"    "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-    It "14.5b: Table -> Select -Skip -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "14.5c: Table -> Select -Skip -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "14.5d: Table -> Select -Skip -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "PRTG Probe Search"                   "Retrieving all probes")
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"                "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)"    "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-        #endregion
-        #region 14.6: Variable -> Select -Skip -Something -> Table
-
-    It "14.6a: Variable -> Select -Skip -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 -First 4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-    It "14.6b: Variable -> Select -Skip -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 -Last 2 | Get-Device
-        
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 14.7: Variable -> Select -Skip -> Select -Something -> Table
-
-    It "14.7a: Variable -> Select -Skip -> Select -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -First 4 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/10)" 30 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.13' (4/10)" 40 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.14' (5/10)" 50 "Retrieving all devices")
-            (Gen "PRTG Device Search" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60 "Retrieving all devices")
-        ))
-    }
-
-    It "14.7b: Variable -> Select -Skip -> Select -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -Last 2 | Get-Device
-
-        Assert-NoProgress
-    }
-
-    It "14.7c: Variable -> Select -Skip -> Select -SkipLast -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -SkipLast 3 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "14.7d: Variable -> Select -Skip -> Select -Index -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -Index 1,3 | Get-Device
-
-        Validate(@(
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.13' (4/10)" 40  "Retrieving all devices")
-            (Gen "PRTG Device Search"             "Processing probe '127.0.0.15' (6/10)" 60  "Retrieving all devices")
-            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.15' (6/10)" 60  "Retrieving all devices")
-        ))
-    }
-
-        #endregion
-        #region 14.8: Variable -> Select -Skip -Something -> Action
-
-    It "14.8a: Variable -> Select -Skip -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-    It "14.8b: Variable -> Select -Skip -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-        #endregion
-        #region 14.9: Variable -> Select -Skip -> Select -Something -> Action
-
-    It "14.9a: Variable -> Select -Skip -> Select -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.14' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-    It "14.9b: Variable -> Select -Skip -> Select -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -Last 2 | Pause-Object -Forever -Batch:$false
-
-        Assert-NoProgress
-    }
-
-    It "14.9c: Variable -> Select -Skip -> Select -SkipLast -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "14.9d: Variable -> Select -Skip -> Select -Index -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Skip 2 | Select -Index 1,3 | Pause-Object -Forever -Batch:$false
-
-        Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.15' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.15' forever (6/10)" 60)
-        ))
-    }
-
-        #endregion
-        #region 14.10: Something -> Select -Skip -> Table -> Something
+        #region 14.2: Something -> Select -Skip -> Table -> Something
    
-    It "14.10a: Table -> Select -Skip -> Table -> Table" {
+    It "14.2a: Table -> Select -Skip -> Table -> Table" {
         Get-Probe -Count 3 | Select -Skip 1 | Get-Device | Get-Sensor
 
         Validate(@(
@@ -2243,7 +1644,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "14.10b: Table -> Select -Skip -> Table -> Action" {
+    It "14.2b: Table -> Select -Skip -> Table -> Action" {
         Get-Probe -Count 3 | Select -Skip 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
@@ -2287,7 +1688,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "14.10c: Variable -> Select -Skip -> Table -> Table" {
+    It "14.2c: Variable -> Select -Skip -> Table -> Table" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -Skip 1 | Get-Device | Get-Sensor
@@ -2325,7 +1726,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "14.10d: Variable -> Select -Skip -> Table -> Action" {
+    It "14.2d: Variable -> Select -Skip -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -Skip 1 | Get-Device | Pause-Object -Forever -Batch:$false
@@ -2364,54 +1765,120 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 14.11: Something -> Select -Last -Something -> Table -> Something
+        #region 14.3: Table -> Table -> Select -Skip -> Table
 
-    It "14.11a<i>: Table -> Select -Skip -<name> -> Table -> Table" -TestCases $selectSkipParams {
+    It "14.3a: Table -> Table -> Select -Skip -> Table" {
+        Get-Probe | Get-Group -Count 3 | Select -Skip 4 | Get-Device
+
+        Assert-NoProgress
+    }
+
+    It "14.3b: Table -> Table -> Table -> Select -Skip -> Table" {
+        Get-Probe | Get-Group | Get-Device | Select -Skip 6 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 14.4: Table -> Select -Skip -Something -> Something
+
+    It "14.4a: Table -> Select -Skip -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 -First 4 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Get-Device"
+    }
+
+    It "14.4b: Table -> Select -Skip -> Select -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -First 4 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3 | Get-Device"
+    }
+
+    It "14.4c: Table -> Select -Skip -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "14.4d: Table -> Select -Skip -> Select -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -First 4    | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -Last 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Skip 2 | Select -Index 1,3  | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "14.4e: Variable -> Select -Skip -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 -First 4 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 -Last 2 | Get-Device"
+    }
+
+    It "14.4f: Variable -> Select -Skip -> Select -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -First 4 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -Last 2 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -SkipLast 3 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -Index 1,3 | Get-Device"
+    }
+
+    It "14.4g: Variable -> Select -Skip -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 -Last 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "14.4h: Variable -> Select -Skip -> Select -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -First 4     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -Last 2      | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10;` `$probes | Select -Skip 2 | Select -SkipLast 3 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Skip 2 | Select -Index 1,3   | Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 14.5: Something -> Select -Skip -Something -> Table -> Something
+
+    It "14.5a<i>: Table -> Select -Skip -<name> -> Table -> Table" -TestCases $selectSkipParams {
         param($name)
 
         TestCmdletChainWithSingle $name "Skip" "Get-Sensor"
     }
 
-    It "14.11b<i>: Table -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
+    It "14.5b<i>: Table -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
         param($name)
 
         TestCmdletChainWithSingle $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "14.11c<i>: Variable -> Select -Skip -<name> -> Table -> Table" -TestCases $selectSkipParams {
+    It "14.5c<i>: Variable -> Select -Skip -<name> -> Table -> Table" -TestCases $selectSkipParams {
         param($name)
 
         TestVariableChainWithSingle $name "Skip" "Get-Sensor"
     }
 
-    It "14.11d<i>: Variable -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
+    It "14.5d<i>: Variable -> Select -Skip -<name> -> Table -> Action" -TestCases $selectSkipParams {
         param($name)
 
         TestVariableChainWithSingle $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
         #endregion
-        #region 14.12: Something -> Select -Last -> Select -Something -> Table -> Something
+        #region 14.6: Something -> Select -Skip -> Select -Something -> Table -> Something
 
-    It "14.12a<i>: Table -> Select -Skip -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "14.6a<i>: Table -> Select -Skip -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Skip" "Get-Sensor"
     }
 
-    It "14.12b<i>: Table -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "14.6b<i>: Table -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Skip" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "14.12c<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "14.6c<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Skip" "Get-Sensor"
     }
 
-    It "14.12d<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "14.6d<i>: Variable -> Select -Skip -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Skip" "Pause-Object -Forever -Batch:`$false"
@@ -2427,14 +1894,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/4)" 25)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)" 50  "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
         ))
     }
@@ -2444,14 +1912,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                     "Retrieving all probes")
+            (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/4)" 25)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/2)" 100)
 
-            (Gen1 "PRTG Probe Search (Completed)"        "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
         ))
     }
@@ -2481,223 +1950,101 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 15.2: Table -> Select -SkipLast -> Select -Something -> Table
+        #region 15.2: Something -> Select -SkipLast -> Table -> Something
 
-    It "15.2a: Table -> Select -SkipLast -> Select -First -> Table" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.2b: Table -> Select -SkipLast -> Select -Last -> Table" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.2c: Table -> Select -SkipLast -> Select -Skip -> Table" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.2d: Table -> Select -SkipLast -> Select -Index -> Table" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 15.3: Table -> Select -SkipLast -> Select -Something -> Action
-
-    It "15.3a: Table -> Select -SkipLast -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.3b: Table -> Select -SkipLast -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.3c: Table -> Select -SkipLast -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.3d: Table -> Select -SkipLast -> Select -Index -> Action" {
-        Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 15.4: Variable -> Select -SkipLast -> Select -Something -> Table
-
-    It "15.4a: Variable -> Select -SkipLast -> Select -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -First 4 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.4b: Variable -> Select -SkipLast -> Select -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Last 4 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.4c: Variable -> Select -SkipLast -> Select -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.4d: Variable -> Select -SkipLast -> Select -Index -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Index 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 15.5: Variable -> Select -SkipLast -> Select -Something -> Action
-
-    It "15.5a: Variable -> Select -SkipLast -> Select -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.5b: Variable -> Select -SkipLast -> Select -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Last 4 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.5c: Variable -> Select -SkipLast -> Select -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "15.5d: Variable -> Select -SkipLast -> Select -Index -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 15.6: Something -> Select -SkipLast -> Table -> Something
-
-    It "15.6a: Table -> Select -SkipLast -> Table -> Table" {
+    It "15.2a: Table -> Select -SkipLast -> Table -> Table" {
         Get-Probe -Count 3 | Select -SkipLast 1 | Get-Device | Get-Sensor
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/3)" 33)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "PRTG Sensor Search"         "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100)
         ))
     }
 
-    It "15.6b: Table -> Select -SkipLast -> Table -> Action" {
+    It "15.2b: Table -> Select -SkipLast -> Table -> Action" {
         Get-Probe -Count 3 | Select -SkipLast 1 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
             (Gen "PRTG Probe Search"                   "Retrieving all probes")
+            (Gen "PRTG Probe Search"                   "Processing probe '127.0.0.10' (1/3)" 33)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100 "Retrieving all devices")
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
                     (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
             
             ###################################################################
 
-            (Gen1 "PRTG Probe Search (Completed)"      "Retrieving all probes") +
+            (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)"  100)
         ))
     }
 
-    It "15.6c: Variable -> Select -SkipLast -> Table -> Table" {
+    It "15.2c: Variable -> Select -SkipLast -> Table -> Table" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -SkipLast 1 | Get-Device | Get-Sensor
@@ -2733,7 +2080,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "15.6d: Variable -> Select -SkipLast -> Table -> Action" {
+    It "15.2d: Variable -> Select -SkipLast -> Table -> Action" {
         $probes = Get-Probe -Count 3
 
         $probes | Select -SkipLast 1 | Get-Device | Pause-Object -Forever -Batch:$false
@@ -2770,27 +2117,73 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 15.7: Something -> Select -SkipLast -> Select -Something -> Table -> Something
+        #region 15.3: Table -> Table -> Select -SkipLast -> Table
 
-    It "15.7a<i>: Table -> Select -SkipLast -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "15.3a: Table -> Table -> Select -SkipLast -> Table" {
+        Get-Probe | Get-Group | Select -SkipLast 4 | Get-Device
+
+        Assert-NoProgress
+    }
+
+    It "15.3b: Table -> Table -> Table -> Select -SkipLast -> Table" {
+        Get-Probe | Get-Group | Get-Device | Select -SkipLast 4 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 15.4: Table -> Select -SkipLast -> Select -Something -> Something
+
+    It "15.4a: Table -> Select -SkipLast -> Select -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Get-Device"
+    }
+
+    It "15.4b: Table -> Select -SkipLast -> Select -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Last 4  | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Skip 2  | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "15.4c: Variable -> Select -SkipLast -> Select -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -First 4 | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Last 4  | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Skip 2  | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Index 2 | Get-Device"
+    }
+
+    It "15.4d: Variable -> Select -SkipLast -> Select -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -First 4 | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Last 4  | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Skip 2  | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -SkipLast 2 | Select -Index 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 15.5: Something -> Select -SkipLast -> Select -Something -> Table -> Something
+
+    It "15.5a<i>: Table -> Select -SkipLast -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "SkipLast" "Get-Sensor"
     }
 
-    It "15.7b<i>: Table -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "15.5b<i>: Table -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "SkipLast" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "15.7c<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "15.5c<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "SkipLast" "Get-Sensor"
     }
 
-    It "15.7d<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "15.5d<i>: Variable -> Select -SkipLast -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "SkipLast" "Pause-Object -Forever -Batch:`$false"
@@ -2896,131 +2289,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 16.2: Table -> Select -Index -> Select -Something -> Table
+        #region 16.2: Something -> Select -Index -> Table -> Something
 
-    It "16.2a: Table -> Select -Index -> Select -First -> Table" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.2b: Table -> Select -Index -> Select -Last -> Table" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.2c: Table -> Select -Index -> Select -Skip -> Table" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.2d: Table -> Select -Index -> Select -SkipLast -> Table" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 16.3: Table -> Select -Index -> Select -Something -> Action
-
-    It "16.3a: Table -> Select -Index -> Select -First -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.3b: Table -> Select -Index -> Select -Last -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.3c: Table -> Select -Index -> Select -Skip -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-    }
-
-    It "16.3d: Table -> Select -Index -> Select -SkipLast -> Action" {
-        Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 16.4: Variable -> Select -Index -> Select -Something -> Table
-
-    It "16.4a: Variable -> Select -Index -> Select -First -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -First 3 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.4b: Variable -> Select -Index -> Select -Last -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -Last 3 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.4c: Variable -> Select -Index -> Select -Skip -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -Skip 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.4d: Variable -> Select -Index -> Select -SkipLast -> Table" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Get-Device
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 16.5: Variable -> Select -Index -> Select -Something -> Action
-
-    It "16.5a: Variable -> Select -Index -> Select -First -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -First 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.5b: Variable -> Select -Index -> Select -Last -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -Last 3 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.5c: Variable -> Select -Index -> Select -Skip -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -Skip 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "16.5d: Variable -> Select -Index -> Select -SkipLast -> Action" {
-        $probes = Get-Probe -Count 10
-
-        $probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
-
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-        #endregion
-        #region 16.6: Something -> Select -Index -> Table -> Something
-
-    It "16.6a: Table -> Select -Index -> Table -> Table" {
+    It "16.2a: Table -> Select -Index -> Table -> Table" {
         Get-Probe -Count 5 | Select -Index 1,3 | Get-Device | Get-Sensor
 
         Validate(@(
@@ -3063,7 +2334,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "16.6b: Table -> Select -Index -> Table -> Action" {
+    It "16.2b: Table -> Select -Index -> Table -> Action" {
         Get-Probe -Count 5 | Select -Index 1,3 | Get-Device | Pause-Object -Forever -Batch:$false
 
         Validate(@(
@@ -3106,7 +2377,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "16.6c: Variable -> Select -Index -> Table -> Table" {
+    It "16.2c: Variable -> Select -Index -> Table -> Table" {
         $probes = Get-Probe -Count 5
 
         $probes | Select -Index 1,3 | Get-Device | Get-Sensor
@@ -3142,7 +2413,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "16.6d: Variable -> Select -Index -> Table -> Action" {
+    It "16.2d: Variable -> Select -Index -> Table -> Action" {
         $probes = Get-Probe -Count 5
 
         $probes | Select -Index 1,3 | Get-Device | Pause-Object -Forever -Batch:$false
@@ -3179,27 +2450,73 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
-        #region 16.7: Something -> Select -Index -> Select -Something -> Table -> Something
+        #region 16.3: Table -> Table -> Select -Index -> Table
 
-    It "16.7a<i>: Table -> Select -Index -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "16.3a: Table -> Table -> Select -Index -> Table" {
+        Get-Probe | Get-Group -Count 10 | Select -Index 2 | Get-Device
+
+        Assert-NoProgress
+    }
+
+    It "16.3b: Table -> Table -> Table -> Select -Index -> Table" {
+        Get-Probe | Get-Group | Get-Device -Count 3 | Select -Index 4 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 16.4: Table -> Select -Index -> Select -Something -> Something
+
+    It "16.4a: Table -> Select -Index -> Select -Something -> Table" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2 | Get-Device"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Get-Device"
+    }
+
+    It "16.4b: Table -> Select -Index -> Select -Something -> Action" {
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -First 3    | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Last 3     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "Get-Probe -Count 10 | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+    It "16.4c: Variable -> Select -Index -> Select -Something -> Table" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -First 3    | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -Last 3     | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -Skip 2     | Get-Device"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Get-Device"
+    }
+
+    It "16.4d: Variable -> Select -Index -> Select -Something -> Action" {
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -First 3    | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -Last 3     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -Skip 2     | Pause-Object -Forever -Batch:`$false"
+        Assert-NoProgress "`$probes = Get-Probe -Count 10; `$probes | Select -Index 1,2,5,7,9 | Select -SkipLast 2 | Pause-Object -Forever -Batch:`$false"
+    }
+
+        #endregion
+        #region 16.5: Something -> Select -Index -> Select -Something -> Table -> Something
+
+    It "16.5a<i>: Table -> Select -Index -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Index" "Get-Sensor"
     }
 
-    It "16.7b<i>: Table -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "16.5b<i>: Table -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestCmdletChainWithDouble $name "Index" "Pause-Object -Forever -Batch:`$false"
     }
 
-    It "16.7c<i>: Variable -> Select -Index -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
+    It "16.5c<i>: Variable -> Select -Index -> Select -<name> -> Table -> Table" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Index" "Get-Sensor"
     }
 
-    It "16.7d<i>: Variable -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
+    It "16.5d<i>: Variable -> Select -Index -> Select -<name> -> Table -> Action" -TestCases $allSelectParams {
         param($name)
 
         TestVariableChainWithDouble $name "Index" "Pause-Object -Forever -Batch:`$false"
