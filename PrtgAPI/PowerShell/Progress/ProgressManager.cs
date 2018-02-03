@@ -593,12 +593,16 @@ namespace PrtgAPI.PowerShell.Progress
 
         #endregion
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgressManager"/> class. You MUST dispose the created object, else <see cref="ProgressManager"/>  will leak <see cref="progressPip"/> .
+        /// </summary>
+        /// <param name="cmdlet">The cmdlet to manage.</param>
         public ProgressManager(PrtgCmdlet cmdlet)
         {
             this.cmdlet = cmdlet;
             CacheManager = new ReflectionCacheManager(cmdlet);
 
-            var sourceId = GetLastSourceId(cmdlet.CommandRuntime);
+            var sourceId = GetLastSourceId();
             progressPipelines.Push(DefaultActivity, DefaultDescription, this, sourceId);
 
             if (PreviousRecord != null)
@@ -746,7 +750,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                     if (!sourceIdUpdated)
                     {
-                        progressRecord.SourceId = GetLastSourceId(cmdlet.CommandRuntime);
+                        progressRecord.SourceId = GetLastSourceId();
                         sourceIdUpdated = true;
                     }
                 }
@@ -760,9 +764,19 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        internal static long GetLastSourceId(ICommandRuntime commandRuntime)
+        internal long GetLastSourceId()
         {
-            return Convert.ToInt64(commandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
+            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
+
+            if (PipeFromVariableWithProgress && FirstInChain)
+            {
+                if (cmdlet.ProgressManagerEx.lastSourceId == null)
+                    cmdlet.ProgressManagerEx.lastSourceId = val;
+
+                return cmdlet.ProgressManagerEx.lastSourceId.Value;
+            }
+
+            return val;
         }
 
         public void CompleteProgress(bool force = false, bool forceReadyOrNot = false)

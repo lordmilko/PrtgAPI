@@ -13,5 +13,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// The last record that was written to before a <see cref="PrtgMultiOperationCmdlet"/> entered its EndProcessing method.
         /// </summary>
         internal ProgressRecordEx CachedRecord { get; set; }
+
+        internal long? lastSourceId { get; set; }
     }
 }

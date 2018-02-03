@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Management.Automation;
 using System.Threading;
-using PrtgAPI.Helpers;
+using PrtgAPI.PowerShell.Base;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 {
     [Cmdlet(VerbsDiagnostic.Test, "Reflection2")]
-    public class TestReflection2 : PSCmdlet
+    public class TestReflection2 : PrtgCmdlet
     {
         [Parameter(Mandatory = true, ParameterSetName = "ChainSourceId")]
         public SwitchParameter ChainSourceId { get; set; }
@@ -30,28 +30,36 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 
         protected override void ProcessRecord()
         {
-            switch (ParameterSetName)
+            using (ProgressManager = new ProgressManager(this))
             {
-                case "ChainSourceId":
-                    var sourceId = ProgressManager.GetLastSourceId(CommandRuntime);
-                    CommandRuntime.WriteProgress(sourceId, new ProgressRecord(2, $"Test-Reflection2 Activity for object '{Object}' with source ID '{sourceId}'", "Test-Reflection2 Description")
-                    {
-                        ParentActivityId = 1
-                    });
-                    Thread.Sleep(1);
-                    WriteObject(Convert.ToInt32(((PSObject)Object).BaseObject)*2);
-                    break;
+                switch (ParameterSetName)
+                {
+                    case "ChainSourceId":
+                        var sourceId = ProgressManager.GetLastSourceId();
+                        CommandRuntime.WriteProgress(sourceId, new ProgressRecord(2, $"Test-Reflection2 Activity for object '{Object}' with source ID '{sourceId}'", "Test-Reflection2 Description")
+                        {
+                            ParentActivityId = 1
+                        });
+                        Thread.Sleep(1);
+                        WriteObject(Convert.ToInt32(((PSObject)Object).BaseObject) * 2);
+                        break;
 
-                case "Downstream":
-                    WriteObject(Object);
-                    break;
-                case "CmdletInput":
-                    WriteObject(cacheManager.GetCmdletPipelineInput().List, true);
-                    break;
+                    case "Downstream":
+                        WriteObject(Object);
+                        break;
+                    case "CmdletInput":
+                        WriteObject(cacheManager.GetCmdletPipelineInput().List, true);
+                        break;
 
-                default:
-                    throw new NotImplementedException(ParameterSetName);
-            }
+                    default:
+                        throw new NotImplementedException(ParameterSetName);
+                }
+            } 
+        }
+
+        protected override void ProcessRecordEx()
+        {
+            throw new NotImplementedException();
         }
     }
 }

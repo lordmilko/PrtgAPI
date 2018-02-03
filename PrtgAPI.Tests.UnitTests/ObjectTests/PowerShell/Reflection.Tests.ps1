@@ -2,6 +2,8 @@
 
 Describe "Test-Reflection" -Tag @("PowerShell", "UnitTest") {
 
+    SetActionResponse
+
     It "can detect next cmdlet on pipeline" {
         Test-Reflection1 -Downstream | Test-Reflection2 -Downstream | Should Be "Test-Reflection2"
     }
