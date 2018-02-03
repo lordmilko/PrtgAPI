@@ -198,8 +198,13 @@ namespace PrtgAPI.PowerShell.Progress
                     if (commands[i] is PrtgOperationCmdlet)
                         continue;
 
-                    c = commands[i];
-                    break;
+                    //when this is commented out, previousRecords.recordsProcessed = 0. when its in, its not 0
+                    //its 0 because we were ready to complete, and did
+                    if (commands[i] is PrtgCmdlet) //todo: this is the key to why 102.4a works (except this is actually needed)
+                    {
+                        c = commands[i];
+                        break;
+                    }
                 }
             }
 
@@ -367,6 +372,7 @@ namespace PrtgAPI.PowerShell.Progress
                 
             return false;
         }
+
         private bool PreviousCmdletDetectedUnsupportedProgress()
         {
             var commands = CacheManager.GetPipelineCommands();
@@ -583,7 +589,12 @@ namespace PrtgAPI.PowerShell.Progress
                         if (upstreamSelectObjectManager != null && upstreamSelectObjectManager.HasFirst)
                         {
                             if (SelectPipeline == null)
+                            {
+                                if (CmdletPipeline == null)
+                                    return null;
+
                                 SelectPipeline = new Pipeline(CmdletPipeline.Current, EntirePipeline.List);
+                            }
 
                             return SelectPipeline;
                         }

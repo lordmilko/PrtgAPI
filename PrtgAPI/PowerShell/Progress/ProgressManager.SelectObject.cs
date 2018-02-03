@@ -13,6 +13,11 @@ namespace PrtgAPI.PowerShell.Progress
             if (cmdlet.ProgressManagerEx.BlockingSelectPipeline != null)
             {
                 var newPipeline = CacheManager.GetSelectPipelineOutput();
+
+                //No point in doing anything; we're in the EndProcessing block anyway
+                if (newPipeline == null)
+                    return;
+
                 var previousPipeline = new Pipeline(CmdletPipeline.Current, cmdlet.ProgressManagerEx.BlockingSelectPipeline.List);
 
                 if (previousPipeline.List.Contains(newPipeline.Current))
@@ -32,6 +37,26 @@ namespace PrtgAPI.PowerShell.Progress
             cmdlet.ProgressManagerEx.BlockingSelectPipeline = SelectPipeline;
         }
 
+        /*private int? GetSelectObjectOperationStraightFromVariableTotalRecords()
+        {
+            if (Scenario == ProgressScenario.SelectSkipLast)
+            {
+                if (PreviousRecord != null)
+                    TotalRecords -= upstreamSelectObjectManager.TotalSkipLast;
+                else
+                    TotalRecords = EntirePipeline.List.Count - upstreamSelectObjectManager.TotalSkipLast;
+
+                return TotalRecords;
+            }
+
+            if (upstreamSelectObjectManager?.HasSkipLast == true && upstreamSelectObjectManager?.HasSkip == true)
+            {
+                TotalRecords = EntirePipeline.List.Count - (upstreamSelectObjectManager.TotalAnySkip);
+            }
+
+            return TotalRecords;
+        }*/
+
         private int? GetSelectObjectOperationStraightFromVariableTotalRecords()
         {
             if (Scenario == ProgressScenario.SelectSkipLast && PreviousRecord != null)
@@ -40,7 +65,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
             else
             {
-                if (upstreamSelectObjectManager?.HasSkipLast == true && upstreamSelectObjectManager?.HasSkip == true)
+                if ((upstreamSelectObjectManager?.HasSkipLast == true && upstreamSelectObjectManager?.HasSkip == true) || upstreamSelectObjectManager?.HasSkipLast == true && PreviousRecord == null)
                 {
                     TotalRecords = EntirePipeline.List.Count - (upstreamSelectObjectManager.TotalAnySkip);
                 }
@@ -101,9 +126,8 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (PreviousContainsProgress)
                         {
-                            var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
-                            var previousManager = previousCmdlet.ProgressManager;
-                            previousManager.CompleteProgress(PreviousRecord);
+                            //The previous cmdlet can't be writing progress if it's not active
+                            CompleteProgress(PreviousRecord, true);
                         }
                         else
                             CompleteProgress();

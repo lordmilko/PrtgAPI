@@ -75,12 +75,13 @@ namespace PrtgAPI.PowerShell.Base
         {
             progressMessage += $" ({objects.Count}/{objects.Count})";
 
-            ProgressManager.ProcessMultiOperationProgress(activity, progressMessage);
+            if(!ProgressManager.UnsupportedSelectObjectProgress)
+                ProgressManager.ProcessMultiOperationProgress(activity, progressMessage);
 
             action();
             
-            if(PrtgSessionState.EnableProgress && complete)
-                ProgressManager.CompleteProgress();
+            if(PrtgSessionState.EnableProgress && !ProgressManager.UnsupportedSelectObjectProgress && complete)
+                ProgressManager.CompleteProgress(true, true);
         }
 
         internal string GetMultiTypeListSummary()

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.PowerShell.Commands;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -15,10 +16,72 @@ namespace PrtgAPI.PowerShell.Progress
         /// </summary>
         public bool IsMultiOperation => manager.MultiOperationBatchMode();
 
+        public bool IsPipeFromSelectObject => IsPipeDirectFromSelectObject || IsPipeFromActionFromSelectObject;
+
+        private bool IsPipeDirectFromSelectObject => manager.upstreamSelectObjectManager != null;
+
+        private bool IsPipeFromActionFromSelectObject
+        {
+            get
+            {
+                var commands = manager.CacheManager.GetPipelineCommands();
+
+                var myIndex = commands.IndexOf(manager.cmdlet) - 1;
+
+                //Check whether every cmdlet from this cmdlet to the previous Select-Object cmdlet is a PrtgOperationCmdlet
+                for (int i = myIndex; i >= 0; i--)
+                {
+                    //If we found a Select-Object cmdlet, return true
+                    if (commands[i] is SelectObjectCommand)
+                        return true;
+
+                    //If we're not a PrtgOperation cmdlet, return false. Otherwise, we're still in a chain of PrtgOperationCmdlets, so we'll next check the previous cmdlet
+                    if (!(commands[i] is PrtgOperationCmdlet))
+                        return false;
+                }
+
+                return false;
+
+                //get all previous cmdlets
+                //if every cmdlet is an operation cmdlet until a select object cmdlet is found, its true
+                //otherwise, return false
+            }
+        }
+
+        public bool PipelineStillWriting
+        {
+            get
+            {
+                if (IsPipeDirectFromSelectObject)
+                    return SelectObjectPipelineStillWriting;
+
+                if (IsPipeFromActionFromSelectObject)
+                    return ActionFromSelectObjectPipelineStillWriting;
+
+                return NormalPipelineStillWriting;
+            }
+        }
+
+        private bool SelectObjectPipelineStillWriting
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        private bool ActionFromSelectObjectPipelineStillWriting
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Indicates whether any cmdlet up the pipeline is still generating records;
         /// </summary>
-        public bool PipelineStillWriting
+        private bool NormalPipelineStillWriting
         {
             get
             {
@@ -46,12 +109,36 @@ namespace PrtgAPI.PowerShell.Progress
         /// <summary>
         /// Indicates whether a variable or a cmdlet is still directly piping records into this cmdlet.
         /// </summary>
-        public bool PreviousSourceStillWriting => PreviousCmdletStillWriting || (PreviousVariableStillWriting && previousCmdlet == null);
+        public bool PreviousSourceStillWriting
+        {
+            get
+            {
+                if (IsPipeDirectFromSelectObject)
+                    return PreviousSelectObjectStillWriting;
+
+                if (IsPipeFromActionFromSelectObject)
+                    return PreviousActionFromSelectObjectStillWaiting;
+
+                //If we're the second action in table -> select -first -> action -> action, when we're completing for real, select-object is gone, so how do we know
+                //there was ever any select-object to begin with
+
+                //the real question is, does the previous non operation cmdlet's upstream object manager equal null
+                //and if not, previousselectobjectstilwaiting needs to look at the previous non operation cmdlet's progress manager
+                //if(manager.upstreamSelectObjectManager != null)
+                //    return PreviousSelectObjectStillWriting;
+
+                return PreviousCmdletStillWriting || (PreviousVariableStillWriting && previousCmdlet == null);
+            }
+        }
+
+        public bool ReceivedLastRecord => ReceivedLastSelectObjectRecord || ReceivedLastNormalCmdletRecord;
+
+        public bool ReceivedLastSelectObjectRecord => !manager.notReady.NotReady() && IsPipeFromSelectObject;
 
         /// <summary>
         /// Indicates whether the current <see cref="PrtgMultiOperationCmdlet"/> has received the last record from the previous record-generating cmdlet, or from the variable pumping records directly into it.
         /// </summary>
-        public bool ReceivedLastRecord
+        public bool ReceivedLastNormalCmdletRecord
         {
             get
             {
@@ -83,7 +170,29 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        public bool PipelineFinished => (manager.Pipeline == null || (manager.PipeFromVariableWithProgress && manager.Pipeline.CurrentIndex == -1)) && ProgressManager.progressPipelines.RecordsInCurrentPipeline == 1;
+        public bool PipelineFinished => (InputPipelineDestroyed || VariableInPipelineOutOfBounds || PreviousActionFromSelectDestroyed) && IsOnlyPrtgCmdletInPipeline;
+
+        private bool InputPipelineDestroyed => manager.Pipeline == null;
+
+        private bool VariableInPipelineOutOfBounds => manager.PipeFromVariableWithProgress && manager.Pipeline.CurrentIndex == -1; //i think this indicates we're pipe from variable, and in endprocessing
+
+        private bool PreviousActionFromSelectDestroyed
+        {
+            get
+            {
+                var firstCmdlet = manager.CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
+
+                if (firstCmdlet == null)
+                    return false;
+
+                if (firstCmdlet != manager.cmdlet && IsOnlyPrtgCmdletInPipeline)
+                    return true;
+
+                return false;
+            }
+        }
+
+        private bool IsOnlyPrtgCmdletInPipeline => ProgressManager.progressPipelines.RecordsInCurrentPipeline == 1;
 
         /// <summary>
         /// Indicates whether the variable that was piped directly into this cmdlet (if applicable) is still piping records to this cmdlet.
@@ -125,6 +234,9 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (previousCmdlet is PrtgOperationCmdlet)
                         {
+                            if (previousNonOperationCmdlet == null)
+                                return false;
+
                             if (previousNonOperationCmdlet is PrtgOperationCmdlet)
                                 return false;
 
@@ -143,11 +255,63 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
+        private bool PreviousSelectObjectStillWriting => CalculatePreviousSelectObjectStillWriting(previousManger) || CalculatePreviousSelectObjectFromVariableStillWriting(); //todo: wont this cause issues when piping from a variable, since there is no previous cmdlet
+
+        private bool PreviousActionFromSelectObjectStillWaiting => CalculatePreviousSelectObjectStillWriting(manager.CacheManager.TryGetFirstOperationCmdletAfterSelectObject()?.ProgressManager, previousNonOperationCmdlet?.ProgressManager) || CalculatePreviousSelectObjectFromVariableStillWriting();
+
+        private bool CalculatePreviousSelectObjectStillWriting(ProgressManager previousManager, ProgressManager recordManager = null)
+        {
+            if (previousManger == null) //We're piping from a variable
+                return false;
+
+            if (recordManager == null)
+                recordManager = previousManager;
+
+            var selectObject = previousManager.upstreamSelectObjectManager;
+
+            if (selectObject != null)
+            {
+                if (PreviousCmdletStillWriting)
+                {
+                    if (selectObject.HasFirst)
+                    {
+                        if (recordManager.recordsProcessed < selectObject.First)
+                            return true;
+                    }
+                }
+                else
+                {
+
+                }
+            }
+
+            return false;
+        }
+
+        private bool CalculatePreviousSelectObjectFromVariableStillWriting()
+        {
+            var selectObject = manager.upstreamSelectObjectManager;
+
+            if (selectObject != null)
+            {
+                if (PreviousVariableStillWriting)
+                {
+                    if (selectObject.HasFirst)
+                    {
+                        if (manager.EntirePipeline.CurrentIndex + 1 < selectObject.First)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private PrtgCmdlet previousCmdlet => manager.CacheManager.GetPreviousPrtgCmdlet();
-        private ProgressManager previousManger => previousCmdlet.ProgressManager;
+        private ProgressManager previousManger => previousCmdlet?.ProgressManager;
 
         private PrtgCmdlet previousNonOperationCmdlet => manager.CacheManager.TryGetPreviousPrtgCmdletOfNotType<PrtgOperationCmdlet>();
-
+        
         private RecordAnalyzer analyzer;
         private ProgressManager manager;
 

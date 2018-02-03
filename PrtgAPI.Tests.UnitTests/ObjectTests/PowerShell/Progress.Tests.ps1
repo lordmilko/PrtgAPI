@@ -5682,7 +5682,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         #endregion
     #endregion
-    #region 101: Multi Operation Cmdlets
+    #region 101: Something -> Action -Batch:$true
         #region 101a: Pipeline Combinations
 
     It "101a1: Table -> Action -Batch:`$true" {
@@ -6287,6 +6287,420 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $names = @("Volume IO _Total0","Volume IO _Total1")
 
         ValidateMultiTypeCmdlet "Sensor" "Simulating Sensor Errors" $names "Simulating errors on sensors '$($names[0])' and '$($names[1])'"
+    }
+
+        #endregion
+    #endregion
+    #region 102: Something -> Select -Something -> Action -Batch:$true
+        #region 102.1: Something -> Select -First -> Action -Batch:$true
+
+    It "102.1a: Table -> Select -First -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -First 4 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/10)" 40)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.1b: Table -> Select -First -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -First 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (2/10)" 20)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (3/10)" 30)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (4/10)" 40)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device0', 'Probe Device0' and 'Probe Device0' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device0', 'Probe Device0' and 'Probe Device0' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.1c: Variable -> Select -First -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -First 4 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.1d: Variable -> Select -First -> Action -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+        
+        $devices | Select -First 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (2/10)" 20)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device2' (ID: 3002) (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (3/10)" 30)
+
+            (Gen "Cloning PRTG Devices" "Cloning device 'Probe Device3' (ID: 3003) (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (4/10)" 40)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device0', 'Probe Device0' and 'Probe Device0' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device0', 'Probe Device0' and 'Probe Device0' forever (4/4)" 100)
+        ))
+    }
+
+        #endregion
+        #region 102.2: Something -> Select -Last -> Action -Batch:$true
+
+    It "102.2a: Table -> Select -Last -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -Last 4 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device5' (6/10)" 60)
+
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device6' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device8' (3/4)" 75)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device9' (4/4)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.2b: Table -> Select -Last -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -Last 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+    It "102.2c: Variable -> Select -Last -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Last 4 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device6' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device8' (3/4)" 75)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device9' (4/4)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.2d: Variable -> Select -Last -> Action -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Last 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+        #endregion
+        #region 102.3: Something -> Select -Skip -> Action -Batch:$true
+
+    It "102.3a: Table -> Select -Skip -> Action -Batch:`$true" {        
+        Get-Device -Count 10 | Select -Skip 6 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device6' (7/10)" 70)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (8/10)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device8' (9/10)" 90)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device9' (10/10)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.3b: Table -> Select -Skip -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -Skip 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+    It "102.3c: Variable -> Select -Skip -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+        
+        $devices | Select -Skip 6 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device6' (7/10)" 70)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (8/10)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device8' (9/10)" 90)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device9' (10/10)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device6', 'Probe Device7', 'Probe Device8' and 'Probe Device9' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.3d: Variable -> Select -Skip -> Action -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+        
+        $devices | Select -Skip 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+        #endregion
+        #region 102.4: Something -> Select -SkipLast -> Action -Batch:$true
+
+    It "102.4a: Table -> Select -SkipLast -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -SkipLast 6 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/4)" 25)
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/4)" 50)
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/4)" 75)
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/4)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.4b: Table -> Select -SkipLast -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -SkipLast 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+    
+    It "102.4c: Variable -> Select -SkipLast -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -SkipLast 6 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/4)" 75)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/4)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.4d: Variable -> Select -SkipLast -> Action -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -SkipLast 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+        #endregion
+        #region 102.5: Something -> Select -Index -> Action -Batch:$true
+
+    It "102.5a: Table -> Select -Index -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -Index 2,3,5,7 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device5' (6/10)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (8/10)" 80)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device2', 'Probe Device3', 'Probe Device5' and 'Probe Device7' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device2', 'Probe Device3', 'Probe Device5' and 'Probe Device7' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.5b: Table -> Select -Index -> Action -> Action -Batch:`$true" {
+        Get-Device -Count 10 | Select -Index 2,3,5,7 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+    It "102.5c: Variable -> Select -Index -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Index 2,3,5,7 | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device5' (6/10)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (8/10)" 80)
+
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device2', 'Probe Device3', 'Probe Device5' and 'Probe Device7' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device2', 'Probe Device3', 'Probe Device5' and 'Probe Device7' forever (4/4)" 100)
+        ))
+    }
+
+    It "102.5d: Variable -> Select -Index -> Action -> Action -Batch:`$true" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Index 2,3,5,7 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
+
+        { Get-Progress } | Should Throw "Queue empty"
+    }
+
+    It "blah" {
+        throw "we can maybe do this automatically, and just verify the last cmdlet ends in 'completed'"
+        throw "in fact, we should probably modify the existing testcmdlet function to do that little check too"
+        throw "why is 3a failing in ise"
+        throw "need to make prtgcmdlet.processrecord have a null progress manager or something when progress is disabled (cant be null though cos we'll immediately get a null reference exception)'"
+        throw "need some tests with restartprobe"
+        throw "have the existing testbatchcmdlet methods also do a second test with a where-object in the middle and see how it goes"
+    }
+
+        #endregion
+    #endregion
+    #region 103: Select -> Action -Batch:$true Stress Tests
+        #region 103.1: Something -> Select -Something -SomethingElse -> Action -Batch:$true
+
+    It "103.1a<i>: Table -> Select -Something -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithSingle $name $primary["name"] "Cmdlet"
+            }
+        }
+    }
+    
+    It "103.1b<i>: Variable -> Select -Something -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithSingle $name $primary["name"] "Variable"
+            }
+        }
+    }
+
+        #endregion
+        #region 103.2: Something -> Table -> Select -Something -SomethingElse -> Batch:$true
+
+    It "103.2a<i>: Table -> Table -> Select -Something -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithSingle $name $primary["name"] "CmdletChain"
+            }
+        }
+    }
+
+    
+    It "103.2b<i>: Variable -> Table -> Select -Something -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithSingle $name $primary["name"] "VariableChain"
+            }
+        }
+    }
+
+        #endregion
+        #region 103.3: Something -> Select -> Select -> Action -Batch:$true
+
+    It "103.3a<i>: Table -> Select -Something -> Select -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithDouble $name $primary["name"] "Cmdlet"
+            }
+        }
+    }
+
+    
+    It "103.3b<i>: Variable -> Select -Something -> Select -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithDouble $name $primary["name"] "Variable"
+            }
+        }
+    }
+
+        #endregion
+        #region 103.4: Something -> Table -> Select -> Select -> Batch:$true
+
+    It "103.4a<i>: Table -> Table -> Select -Something -> Select -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithDouble $name $primary["name"] "CmdletChain"
+            }
+        }
+    }
+
+    
+    It "103.4b<i>: Variable -> Table -> Select -Something -> Select -<name> -> Action -Batch:`$true" -TestCases $allSelectParams {
+        param($name)
+
+        foreach($primary in $allSelectParams)
+        {
+            if($primary["name"] -ne $name)
+            {
+                TestBatchWithDouble $name $primary["name"] "VariableChain"
+            }
+        }
     }
 
         #endregion
