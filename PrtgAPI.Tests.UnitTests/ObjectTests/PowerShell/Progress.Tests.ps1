@@ -3096,7 +3096,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "23a: Table -> Where { Variable(1) -> Table }" {
         Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "23b: Variable -> Where { Variable(1) -> Table }" {
@@ -3104,7 +3104,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | where { $_ | Get-Sensor }
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
     
     #endregion
@@ -3183,7 +3183,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             }).Name -eq "Probe Device0"
         }
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "26b: Variable -> Where { Variable -> Where { Variable -> Table } }" {
@@ -3195,7 +3195,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             }).Name -eq "Probe Device0"
         }
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     #endregion
@@ -5912,7 +5912,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
-            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device5' (6/10)" 60)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
 
             (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device6' (1/4)" 25)
             (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device7' (2/4)" 50)
@@ -5927,7 +5927,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "102.2b: Table -> Select -Last -> Action -> Action -Batch:`$true" {
         Get-Device -Count 10 | Select -Last 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "102.2c: Variable -> Select -Last -> Action -Batch:`$true" {
@@ -5951,7 +5951,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $devices | Select -Last 4 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
         #endregion
@@ -5977,7 +5977,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "102.3b: Table -> Select -Skip -> Action -> Action -Batch:`$true" {
         Get-Device -Count 10 | Select -Skip 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "102.3c: Variable -> Select -Skip -> Action -Batch:`$true" {
@@ -6001,7 +6001,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         
         $devices | Select -Skip 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
         #endregion
@@ -6012,23 +6012,24 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/4)" 25)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/4)" 50)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/4)" 75)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/4)" 100)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
 
-            (Gen1 "PRTG Device Search (Completed)" "Retrieving all devices") +
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40) +
                 (Gen2 "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2' and 'Probe Device3' forever (4/4)" 100)
         ))
     }
@@ -6036,7 +6037,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "102.4b: Table -> Select -SkipLast -> Action -> Action -Batch:`$true" {
         Get-Device -Count 10 | Select -SkipLast 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
     
     It "102.4c: Variable -> Select -SkipLast -> Action -Batch:`$true" {
@@ -6060,7 +6061,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $devices | Select -SkipLast 6 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
         #endregion
@@ -6084,7 +6085,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "102.5b: Table -> Select -Index -> Action -> Action -Batch:`$true" {
         Get-Device -Count 10 | Select -Index 2,3,5,7 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "102.5c: Variable -> Select -Index -> Action -Batch:`$true" {
@@ -6108,16 +6109,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $devices | Select -Index 2,3,5,7 | Clone-Object 5678 | Pause-Object -Forever -Batch:$true
 
-        { Get-Progress } | Should Throw "Queue empty"
-    }
-
-    It "blah" {
-        throw "we can maybe do this automatically, and just verify the last cmdlet ends in 'completed'"
-        throw "in fact, we should probably modify the existing testcmdlet function to do that little check too"
-        throw "why is 3a failing in ise"
-        throw "need to make prtgcmdlet.processrecord have a null progress manager or something when progress is disabled (cant be null though cos we'll immediately get a null reference exception)'"
-        throw "need some tests with restartprobe"
-        throw "have the existing testbatchcmdlet methods also do a second test with a where-object in the middle and see how it goes"
+        Assert-NoProgress
     }
 
         #endregion
@@ -6884,7 +6876,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping to an action" {
         Get-Probe -Count 13 | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever -Batch:$false
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping from a variable to a table" {
@@ -6892,7 +6884,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Get-Device
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress when containing three Select-Object skip cmdlets piping from a variable to an action" {
@@ -6900,19 +6892,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -SkipLast 2 | Select -Skip 3 | Select -SkipLast 4 | Pause-Object -Forever -Batch:$false
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping to a table" {
         Get-Probe -Count 13 | Select -Last 10 | Select -First 7 | Select -Last 4 | Get-Device
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping to an action" {
         Get-Probe -Count 13 | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping from a variable to a table" {
@@ -6920,7 +6912,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $probes | Select -Last 10 | Select -First 7 | Select -Last 4 | Get-Device
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress containing three Select-Object cmdlets starting and ending with last piping from a variable to an action" {
@@ -6928,13 +6920,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         
         $probes | Select -Last 10 | Select -First 7 | Select -Last 4 | Pause-Object -Forever -Batch:$false
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Doesn't show progress containing three parameters over two Select-Object cmdlets" {
         Get-Probe -Count 13 | Select -First 4 -Skip 1 | Select -First 2 | Get-Device
 
-        { Get-Progress } | Should Throw "Queue empty"
+        Assert-NoProgress
     }
 
     It "Completes all progress records when no results are returned when piping from a cmdlet to a Table" {

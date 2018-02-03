@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Progress;
@@ -57,10 +56,13 @@ namespace PrtgAPI.PowerShell.Base
 
         internal void DisplayProcessProgress(int percentage)
         {
+            if (!ProgressManager.ProgressEnabled)
+                return;
+
             if (ProgressManager.PreviousRecord != null)
                 ProgressManager.RemovePreviousOperation();
 
-            if (ProgressManager.PipeFromVariableWithProgress)
+            if (ProgressManager.GetRecordsWithVariableProgress)
             {
                 UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"Probing target device ({percentage}%)");
             }
@@ -76,7 +78,12 @@ namespace PrtgAPI.PowerShell.Base
                 //If we're Variable -> Action -> Me, we wrote all our progress to the previous cmdlet's CurrentOperation,
                 //so we don't need to complete anything
                 if (!(ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineContainsOperation))
+                {
                     ProgressManager.CompleteProgress(true);
+
+                    if(!ProgressManager.GetRecordsWithVariableProgress)
+                        ProgressManager.MaybeCompletePreviousProgress();
+                }
             }
             else
             {
@@ -154,6 +161,7 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach, obj);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
+                    ProgressManager.CompletePrematurely(ProgressManager);
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
                 case ProgressScenario.MultipleCmdletsFromBlockingSelect:
@@ -351,7 +359,7 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// Create a sequence of progress tasks for processing a process containing two or more operations.
+        /// Create a sequence of progress tasks for executing a process containing two or more operations.
         /// </summary>
         /// <typeparam name="TResult">The type of object returned by the first operation.</typeparam>
         /// <param name="func">The first operation to execute.</param>

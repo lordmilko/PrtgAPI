@@ -28,7 +28,13 @@ function Get-Progress {
     return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
 }
 
-function Assert-NoProgress {
+function Assert-NoProgress($expr) {
+
+    if($expr)
+    {
+        Invoke-Expression $expr
+    }
+
     { Get-Progress } | Should Throw "Queue empty"
 }
 
@@ -48,21 +54,6 @@ function Validate($list)    {
         Clear-Progress
         throw
     }
-
-    <#
-    $uncompletedRecords = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::GetUncompletedRecords()|where Activity -NotLike "Running test*"
-
-    if($uncompletedRecords)
-    {
-        Sleep 10
-
-        $uncompletedRecords = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::GetUncompletedRecords()|where Activity -NotLike "Running test*"
-
-        if($uncompletedRecords)
-        {
-            throw "There are uncompleted records"
-        }
-    }#>
 
     $last = $list|Select -Last 1
 
@@ -131,22 +122,16 @@ function It
 
         if($TestCases -ne $null)
         {
-            for($i = 0; $i -lt 1; $i++)
-            {
-                Pester\It $name $script -TestCases $TestCases
-            }
+            Pester\It $name $script -TestCases $TestCases
         }
         else
         {
-            for($i = 0; $i -lt 1; $i++)
-            {
-                Pester\It $name $script
-            }
+            Pester\It $name $script
         }
     }
 }
 
-function Gen($activity, $description, $percentage, $operation)
+function Gen($activity, $description, $percentage, $operation, $timeRemaining)
 {
     $builder = New-Object "System.Text.StringBuilder"
 
@@ -156,6 +141,11 @@ function Gen($activity, $description, $percentage, $operation)
     if($percentage -ne $null)
     {
         [void]$builder.Append("`n    $(CreateProgressbar $percentage)")
+    }
+
+    if($timeRemaining -ne $null)
+    {
+        [void]$builder.Append("`n    $timeRemaining remaining")
     }
 
     if($operation -ne $null)
@@ -194,6 +184,45 @@ function IndentGen($str, $levels)
     $joined = $indented -join "`n"
 
     return $joined
+}
+
+function GenerateStreamRecords($total)
+{
+    $records = @()
+
+    for($i = 1; $i -le $total; $i++)
+    {
+        $maxChars = 40
+
+        $percent = [Math]::Floor($i/$total*100)
+
+        if($percent -ge 0)
+        {
+            $percentChars = [Math]::Floor($percent/100*$maxChars)
+
+            $spaceChars = $maxChars - $percentChars
+
+            $percentBar = ""
+
+            for($j = 0; $j -lt $percentChars; $j++)
+            {
+                $percentBar += "o"
+            }
+
+            for($j = 0; $j -lt $spaceChars; $j++)
+            {
+                $percentBar += " "
+            }
+
+            $percentBar = "[$percentBar] ($percent%)"
+        }
+
+        $records += "PRTG Sensor Search`n" +
+                    "    Retrieving all sensors $i/$total`n" +
+                    "    $percentBar"
+    }
+
+    $records
 }
 
 function CreateProgressBar($percent)
@@ -323,7 +352,7 @@ function TestBatchCore($param, $primary, $mode, $selectExpr)
 
     if(TryInvokeExpression $expr)
     {
-        ValidateLastRecord $expr $param $primary
+        Assert-NoProgress
     }
 }
 
@@ -335,7 +364,7 @@ function TestCmdletChainWithSingle($param, $primary, $finalCmdlet)
 
     Invoke-Expression $expr
 
-    ValidateLastRecord $expr $param $primary
+    Assert-NoProgress
 }
 
 function TestCmdletChainWithDouble($param, $primary, $finalCmdlet)
@@ -344,7 +373,7 @@ function TestCmdletChainWithDouble($param, $primary, $finalCmdlet)
 
     Invoke-Expression $expr
 
-    ValidateLastRecord $expr $param $primary
+    Assert-NoProgress
 }
 
 function TestVariableChainWithSingle($param, $primary, $finalCmdlet)
@@ -355,7 +384,7 @@ function TestVariableChainWithSingle($param, $primary, $finalCmdlet)
 
     Invoke-Expression $expr
 
-    ValidateLastRecord $expr $param $primary
+    Assert-NoProgress
 }
 
 function TestVariableChainWithDouble($param, $primary, $finalCmdlet)
@@ -366,7 +395,7 @@ function TestVariableChainWithDouble($param, $primary, $finalCmdlet)
 
     Invoke-Expression $expr
 
-    ValidateLastRecord $expr $param $primary
+    Assert-NoProgress
 }
 
 $selectFirstParams = @(

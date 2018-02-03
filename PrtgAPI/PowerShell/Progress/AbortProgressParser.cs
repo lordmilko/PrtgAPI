@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace PrtgAPI.PowerShell.Progress
 {
@@ -12,6 +8,9 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (manager.downstreamSelectObjectManager == null)
                 return false;
+
+            if (manager.UnsupportedSelectObjectProgress)
+                return true;
 
             var firstCmdlet = manager.downstreamSelectObjectManager.Commands.First();
 
@@ -37,10 +36,45 @@ namespace PrtgAPI.PowerShell.Progress
             var firstCmdlet = manager.downstreamSelectObjectManager.Commands.First();
 
             if (firstCmdlet.HasFirst)
+                return FirstNeedsCompleting(firstCmdlet, manager);
+            if (firstCmdlet.HasIndex)
+                return IndexNeedsCompleting(firstCmdlet, manager);
+
+            return false;
+        }
+
+        private bool FirstNeedsCompleting(SelectObjectDescriptor firstCmdlet, ProgressManager manager)
+        {
+            if (manager.LastPrtgCmdletInPipeline)
             {
-                if (manager.downstreamSelectObjectManager.HasLast && manager.downstreamSelectObjectManager.Commands.Count > 1)
+                if (manager.PipeFromVariableWithProgress)
+                {
+                    if (manager.EntirePipeline.CurrentIndex + 1 == firstCmdlet.First)
+                        return true;
+                }
+                else
                 {
                     if (manager.recordsProcessed == firstCmdlet.First)
+                        return true;
+                }
+
+            }
+
+            return false;
+        }
+
+        private bool IndexNeedsCompleting(SelectObjectDescriptor firstCmdlet, ProgressManager manager)
+        {
+            if (manager.LastPrtgCmdletInPipeline)
+            {
+                if (manager.PipeFromVariableWithProgress)
+                {
+                    if (manager.EntirePipeline.CurrentIndex + 1 == firstCmdlet.Index.Last() + 1)
+                        return true;
+                }
+                else
+                {
+                    if (manager.recordsProcessed == firstCmdlet.Index.Last() + 1)
                         return true;
                 }
             }
@@ -50,43 +84,6 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressFirst(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.HasLast)
-            {
-                if (manager.recordsProcessed > manager.TotalRecords - selectObject.Last)
-                    return true;
-            }
-
-            if (selectObject.HasSkip)
-            {
-                return false;
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-                if (manager.PipeFromVariableWithProgress)
-                {
-                }
-                else
-                {
-                    //12.3c: Table -> Select -First -> Select -SkipLast -> Table
-                    if (manager.recordsProcessed > selectObject.First - selectObject.SkipLast && selectObject.SplitLastOverTwo)
-                    {
-                        manager.CompleteProgress();
-                        return true;
-                    }
-
-                    return false;
-                }
-            }
-
-            if (selectObject.HasIndex)
-            {
-                if (selectObject.Index.Any(i => i == manager.recordsProcessed - 1))
-                    return false;
-
-                return true;
-            }
-
             if (selectObject.First < manager.recordsProcessed)
                 return true;
 
@@ -95,21 +92,6 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressLast(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.HasSkip)
-            {
-
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-
-            }
-
-            if (selectObject.HasIndex)
-            {
-
-            }
-
             if (manager.recordsProcessed > manager.TotalRecords - selectObject.Last)
                 return true;
 
@@ -118,98 +100,22 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressSkip(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.HasFirst)
+            return false;
+        }
+
+        private bool AbortProgressSkipLast(ProgressManager manager, SelectObjectManager selectObject)
+        {
+            if (manager.recordsProcessed == manager.TotalRecords - selectObject.TotalSkipLast)
             {
-            }
-
-            if (selectObject.HasLast)
-            {
-                if (manager.recordsProcessed > manager.TotalRecords - selectObject.TotalSkip)
-                    return true;
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-                if (selectObject.HasSkip)
-                    manager.CompleteProgress();
-
-                if (manager.recordsProcessed == manager.TotalRecords - selectObject.TotalSkipLast)
-                    manager.CompleteProgress();
-
-                return true;
-            }
-
-            if (selectObject.HasIndex)
-            {
-                if (selectObject.Index.Any(i => i + selectObject.TotalSkip == manager.recordsProcessed - 1))
-                    return false;
-
+                manager.CompleteProgress();
                 return true;
             }
 
             return false;
         }
 
-        private bool AbortProgressSkipLast(ProgressManager manager, SelectObjectManager selectObject)
-        {
-            if (selectObject.HasFirst)
-            {
-            }
-
-            if (selectObject.HasLast)
-            {
-            }
-
-            if (selectObject.HasSkip)
-            {
-                manager.CompleteProgress();
-
-                return true;
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-            }
-
-            if (selectObject.HasIndex)
-            {
-
-            }
-
-            if (manager.recordsProcessed == manager.TotalRecords - selectObject.TotalSkipLast)
-                manager.CompleteProgress();
-
-            return true;
-        }
-
         private bool AbortProgressIndex(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.HasFirst)
-            {
-            }
-
-            if (selectObject.HasLast)
-            {
-                var last = selectObject.Index.OrderBy(i => i).Skip(selectObject.Index.Length - selectObject.Last).ToList();
-
-                if (last.Any(i => i == manager.recordsProcessed - 1))
-                    return false;
-
-                return true;
-            }
-
-            if (selectObject.HasSkip)
-            {
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-            }
-
-            if (selectObject.HasIndex)
-            {
-            }
-
             if (selectObject.Index.Any(i => i == manager.recordsProcessed - 1))
                 return false;
 

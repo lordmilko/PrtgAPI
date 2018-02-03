@@ -28,6 +28,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool NotReady()
         {
+            if (manager.UnsupportedSelectObjectProgress)
+                return false;
+
             if (manager.upstreamSelectObjectManager == null)
                 return false;
 
@@ -49,45 +52,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool NotReadyFirst()
         {
-            if (selectObject.HasLast)
-            {
-                return NotReadyFirst_Last();
-            }
-
-            if (selectObject.HasSkip)
-            {
-                return NotReadyFirst_Skip();
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-                if (PipeFromVariableWithProgress)
-                {
-                    //12.7c: Variable -> Select -First -> Select -SkipLast -> Table
-                    if (Pipeline.CurrentIndex + 1 >= Pipeline.List.Count && selectObject.SplitLastOverTwo)
-                        return false;
-
-                    return true;
-                }
-                else
-                {
-                    //12.3c: Table -> Select -First -> Select -SkipLast -> Table
-                    if (Pipeline.CurrentIndex + 1 >= Pipeline.List.Count && selectObject.SplitLastOverTwo)
-                        return false;
-
-                    return true;
-                }
-            }
-
-            if (selectObject.HasIndex)
-            {
-            }
-
             if (PipeFromVariableWithProgress)
             {
                 //12.1c: Variable -> Select -First -> Table
-                //todo: should all of these be changed from Pipeline -> EntirePipeline?
-                //need to note here cant use pipeline cos might not have a pipeline in endprocessing for multioperation
                 if (EntirePipeline.CurrentIndex + 1 < selectObject.First)
                     return true;
             }
@@ -98,30 +65,6 @@ namespace PrtgAPI.PowerShell.Progress
 
                 //12.1a: Get-Probe -Count 3 | Select -First 2 | Get-Device
                 if (previousManager.recordsProcessed < selectObject.First)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool NotReadyFirst_Last()
-        {
-            if (PipeFromVariableWithProgress)
-            {
-                //12.6a: Variable -> Select -First -Last -> Table
-                if (Pipeline.CurrentIndex >= Pipeline.List.Count - 1)
-                    return false;
-
-                return true;
-            }
-            else
-            {
-                //12.4a: Table -> Select -First -Last -> Action
-                if (Pipeline.CurrentIndex + 1 == TotalRecords)
-                    return false;
-
-                //12.2a: Table -> Select -First -Last -> Table
-                if (selectObject.First > Pipeline.CurrentIndex + 1)
                     return true;
             }
 
@@ -159,30 +102,6 @@ namespace PrtgAPI.PowerShell.Progress
             if (Pipeline == null)
                 return false;
 
-            if (selectObject.HasFirst)
-            {
-                if (Pipeline.CurrentIndex + 1 <= previousManager.TotalRecords - selectObject.Last)
-                    return true;
-
-                return false;
-            }
-
-            if (selectObject.HasSkip)
-            {
-                if (Pipeline.CurrentIndex + 1 < Pipeline.List.Count - selectObject.Skip)
-                    return true;
-
-                return false;
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-            }
-
-            if (selectObject.HasIndex)
-            {
-            }
-
             //13.1a: Table -> Select -Last -> Table
             if (Pipeline.CurrentIndex + 1 < Pipeline.List.Count)
                 return true;
@@ -192,71 +111,6 @@ namespace PrtgAPI.PowerShell.Progress
         
         private bool NotReadySkip()
         {
-            if (selectObject.HasFirst)
-            {
-                if (PipeFromVariableWithProgress)
-                {
-                    //14.7a: Variable -> Select -Skip -> Select -First -> Table
-                    if (Pipeline.CurrentIndex + 1 >= selectObject.First + selectObject.Skip && selectObject.SplitOverTwo)
-                        return false;
-                }
-                else
-                {
-                    //14.3a: Table -> Select -Skip -> Select -First -> Table
-                    if (previousManager.recordsProcessed >= selectObject.First + selectObject.Skip && selectObject.SplitOverTwo)
-                        return false;
-                }
-            }
-
-            if (selectObject.HasLast)
-            {
-                //14.3b: Table -> Select -Skip -> Select -Last -> Table
-                if (Pipeline.CurrentIndex + 1 >= Pipeline.List.Count)
-                    return false;
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-                if (PipeFromVariableWithProgress)
-                {
-                    //14.7c: Variable -> Select -Skip -> Select -SkipLast -> Table
-                    var maxCount = EntirePipeline.List.Count - selectObject.TotalAnySkip;
-
-                    if (Pipeline.CurrentIndex + 1 == maxCount)
-                        return false;
-
-                    return true;
-                }
-                else
-                {
-                    if (previousManager != null)
-                    {
-                        //14.3c: Table -> Select -Skip -> Select -SkipLast -> Table
-                        var total = previousManager.TotalRecords.Value;
-
-                        var maxCount = total - selectObject.TotalAnySkip;
-
-                        if (Pipeline.CurrentIndex + 1 == maxCount)
-                            return false;
-                    }
-                }
-            }
-
-            if (selectObject.HasIndex)
-            {
-                if (PipeFromVariableWithProgress)
-                {
-                    //14.7d: Variable -> Select -Skip -> Select -Index -> Table
-                    if (Pipeline.CurrentIndex + 1 == selectObject.TotalSkip + selectObject.Index.Last() + 1)
-                        return false;
-                }
-                else
-                {
-                    if (previousManager.recordsProcessed == selectObject.TotalSkip + selectObject.Index.Last() + 1)
-                        return false;
-                }
-            }
-
             if (PipeFromVariableWithProgress) //todo: why isnt this causing a null reference exception in 102.3c?
             {
                 //14.1c: Variable -> Select -Skip -> Table
@@ -272,22 +126,6 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (Pipeline == null)
                 return false;
-
-            if (selectObject.HasFirst)
-            {
-            }
-
-            if (selectObject.HasLast)
-            {
-            }
-
-            if (selectObject.HasSkip)
-            {
-            }
-
-            if (selectObject.HasIndex)
-            {
-            }
 
             if (PipeFromVariableWithProgress)
             {
@@ -318,31 +156,6 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool NotReadyIndex()
         {
-            if (selectObject.HasFirst)
-            {
-                if (PipeFromVariableWithProgress)
-                {
-                }
-                else
-                {
-                    //16.2a: Table -> Select -Index -> Select -First -> Table
-                    if (previousManager.recordsProcessed == selectObject.Index.Take(selectObject.First).Last() + 1)
-                        return false;
-                }
-            }
-
-            if (selectObject.HasLast)
-            {
-            }
-
-            if (selectObject.HasSkip)
-            {
-            }
-
-            if (selectObject.HasSkipLast)
-            {
-            }
-
             if (PipeFromVariableWithProgress)
             {
                 //16.1c: Variable -> Select -Index -> Table

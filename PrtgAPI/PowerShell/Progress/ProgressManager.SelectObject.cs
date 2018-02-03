@@ -37,26 +37,6 @@ namespace PrtgAPI.PowerShell.Progress
             cmdlet.ProgressManagerEx.BlockingSelectPipeline = SelectPipeline;
         }
 
-        /*private int? GetSelectObjectOperationStraightFromVariableTotalRecords()
-        {
-            if (Scenario == ProgressScenario.SelectSkipLast)
-            {
-                if (PreviousRecord != null)
-                    TotalRecords -= upstreamSelectObjectManager.TotalSkipLast;
-                else
-                    TotalRecords = EntirePipeline.List.Count - upstreamSelectObjectManager.TotalSkipLast;
-
-                return TotalRecords;
-            }
-
-            if (upstreamSelectObjectManager?.HasSkipLast == true && upstreamSelectObjectManager?.HasSkip == true)
-            {
-                TotalRecords = EntirePipeline.List.Count - (upstreamSelectObjectManager.TotalAnySkip);
-            }
-
-            return TotalRecords;
-        }*/
-
         private int? GetSelectObjectOperationStraightFromVariableTotalRecords()
         {
             if (Scenario == ProgressScenario.SelectSkipLast && PreviousRecord != null)
@@ -65,7 +45,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
             else
             {
-                if ((upstreamSelectObjectManager?.HasSkipLast == true && upstreamSelectObjectManager?.HasSkip == true) || upstreamSelectObjectManager?.HasSkipLast == true && PreviousRecord == null)
+                if (upstreamSelectObjectManager?.HasSkipLast == true && PreviousRecord == null)
                 {
                     TotalRecords = EntirePipeline.List.Count - (upstreamSelectObjectManager.TotalAnySkip);
                 }
@@ -77,12 +57,7 @@ namespace PrtgAPI.PowerShell.Progress
         private int? GetSelectObjectOperationFromCmdletFromVariableTotalRecords()
         {
             if (Scenario == ProgressScenario.SelectSkipLast)
-            {
                 TotalRecords -= upstreamSelectObjectManager.TotalSkipLast;
-
-                if (upstreamSelectObjectManager.HasSkip)
-                    TotalRecords -= upstreamSelectObjectManager.TotalSkip;
-            }
 
             return TotalRecords;
         }
@@ -118,6 +93,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void MaybeCompletePreviousProgress()
         {
+            if (!ProgressEnabled)
+                return;
+
             if (upstreamSelectObjectManager != null)
             {
                 if (!notReady.NotReady())

@@ -164,6 +164,8 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             var theChain = new List<ProgressRecord> { list[i] };
             var startIndex = i;
 
+            var chainLength = theChain.Count;
+
             //Loop backwards through the list of progress records, trying to find the last parent we would've belonged to,
             //then their last parent, and so on until we reach the record with no parent
             while (theChain.Last().ParentActivityId != -1)
@@ -177,6 +179,13 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
                         break;
                     }
                 }
+
+                var newLength = theChain.Count;
+
+                if (newLength != chainLength)
+                    chainLength = newLength;
+                else
+                    throw new Exception($"Cannot find parent with activity ID {theChain.Last().ParentActivityId}");
             }
 
             //Now apply the records against the root record, constructing a parent > child relationship between them

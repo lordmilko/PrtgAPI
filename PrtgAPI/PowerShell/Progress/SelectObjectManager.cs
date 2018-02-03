@@ -57,21 +57,17 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool HasFirst => HasParam(c => c.HasFirst);
         public int First => Convert.ToInt32(GetParam(c => c.HasFirst, c => c.First));
-        public int CountFirst => CountParam(c => c.HasFirst);
 
         public bool HasLast => HasParam(c => c.HasLast);
         public int Last => Convert.ToInt32(GetParam(c => c.HasLast, c => c.Last));
-        public int CountLast => CountParam(c => c.HasFirst);
 
         public bool HasSkip => HasParam(c => c.HasSkip);
         public int Skip => Convert.ToInt32(GetParam(c => c.HasSkip, c => c.Skip));
         public int TotalSkip => GetTotal(c => c.HasSkip, c => c.Skip);
-        public bool SplitOverTwo => Commands.Count == 2 && Commands.Count(c => c.HasSkip) == 1;
 
         public bool HasSkipLast => HasParam(c => c.HasSkipLast);
         public int SkipLast => Convert.ToInt32(GetParam(c => c.HasSkipLast, c => c.SkipLast));
         public int TotalSkipLast => GetTotal(c => c.HasSkipLast, c => c.SkipLast);
-        public bool SplitLastOverTwo => Commands.Count == 2 && Commands.Count(c => c.HasSkipLast) == 1;
 
         public int TotalAnySkip => TotalSkip + TotalSkipLast;
 
@@ -121,11 +117,6 @@ namespace PrtgAPI.PowerShell.Progress
         private int GetTotal(Func<SelectObjectDescriptor, bool> predicate, Func<SelectObjectDescriptor, object> selector)
         {
             return Commands.Where(predicate).Sum(c => Convert.ToInt32(selector(c)));
-        }
-
-        private int CountParam(Func<SelectObjectDescriptor, bool> predicate)
-        {
-            return Commands.Count(predicate);
         }
     }
 }

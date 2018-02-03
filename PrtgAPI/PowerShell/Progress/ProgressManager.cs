@@ -69,12 +69,16 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool LastInChain => !pipeToProgressCompatibleCmdlet;
 
+        public bool LastPrtgCmdletInPipeline => CacheManager.GetNextPrtgCmdlet() == null;
+
         //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
         public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain);
 
-        public bool GetRecordsWithVariableProgress => (PipeFromVariableWithProgress || CanUseSelectObjectProgress || PipelineUpstreamContainsBlockingCmdlet) && !UnsupportedSelectObjectProgress && PrtgSessionState.EnableProgress;
+        public bool ProgressEnabled => PrtgSessionState.EnableProgress && !UnsupportedSelectObjectProgress;
 
-        public bool GetResultsWithProgress => PartOfChain && !UnsupportedSelectObjectProgress && PrtgSessionState.EnableProgress;
+        public bool GetRecordsWithVariableProgress => (PipeFromVariableWithProgress || CanUseSelectObjectProgress || PipelineUpstreamContainsBlockingCmdlet) && ProgressEnabled;
+
+        public bool GetResultsWithProgress => PartOfChain && ProgressEnabled;
 
         #endregion
         #region Extended Pipeline Chain Analysis
@@ -198,9 +202,7 @@ namespace PrtgAPI.PowerShell.Progress
                     if (commands[i] is PrtgOperationCmdlet)
                         continue;
 
-                    //when this is commented out, previousRecords.recordsProcessed = 0. when its in, its not 0
-                    //its 0 because we were ready to complete, and did
-                    if (commands[i] is PrtgCmdlet) //todo: this is the key to why 102.4a works (except this is actually needed)
+                    if (commands[i] is PrtgCmdlet)
                     {
                         c = commands[i];
                         break;
@@ -715,6 +717,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         private void WriteProgress()
         {
+            if (!ProgressEnabled)
+                return;
+
             WriteProgress(CurrentRecord);
         }
 
@@ -976,9 +981,6 @@ namespace PrtgAPI.PowerShell.Progress
 
                 manager.recordsProcessed++;
 
-                if (abortProgress.AbortProgress(manager))
-                    return;
-
                 if (obj != null && Scenario != ProgressScenario.StreamProgress)
                     record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({manager.recordsProcessed}/{manager.TotalRecords})";
                 else
@@ -987,6 +989,9 @@ namespace PrtgAPI.PowerShell.Progress
                 if (manager.recordsProcessed > 0)
                     record.PercentComplete = (int)(manager.recordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
 
+                if (abortProgress.AbortProgress(manager))
+                    return;
+
                 if (!writeObject)
                     manager.recordsProcessed--;
 
@@ -994,9 +999,19 @@ namespace PrtgAPI.PowerShell.Progress
                 if ((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
 
-                if (abortProgress.NeedsCompleting(manager))
-                    CompleteProgress();
+                CompletePrematurely(manager);
             }
+        }
+
+        internal bool CompletePrematurely(ProgressManager manager)
+        {
+            if (abortProgress.NeedsCompleting(manager))
+            {
+                CompleteProgress(true, true);
+                return true;
+            }
+
+            return false;
         }
 
         private void IncrementProgressFromPipeline(ProgressRecordEx record, PrtgObject obj, bool writeObject = true)
@@ -1191,11 +1206,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                 if (previousCmdlet != null)
                 {
-                    if (PipelineUpstreamContainsBlockingCmdlet)
-                    {
-                        var p = Pipeline;
-                    }
-                    else
+                    if (!PipelineUpstreamContainsBlockingCmdlet)
                     {
                         var previousManager = previousCmdlet.ProgressManager;
 
