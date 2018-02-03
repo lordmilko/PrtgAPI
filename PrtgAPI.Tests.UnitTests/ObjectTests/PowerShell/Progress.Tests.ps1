@@ -4588,9 +4588,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
         ))
     }
@@ -4626,26 +4628,34 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -4664,19 +4674,27 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -4705,19 +4723,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
@@ -4732,19 +4754,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
@@ -4765,19 +4791,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
@@ -4792,19 +4822,23 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ##########################################################################################
 
@@ -4833,13 +4867,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
@@ -4851,13 +4889,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
@@ -4874,13 +4916,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
@@ -4892,13 +4938,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
 
             ###################################################################
 
@@ -4912,7 +4962,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #endregion
         #region 100d: Something -> Get-SensorFactorySource -> Action
 
-    It "100d1: Sensor -> Get-SensorFactorySource -> Action" {
+    It "100d1: Sensor -> Get-SensorFactorySource -> Action -Batch:`$false" {
         Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever -Batch:$false
 
         Validate(@(
@@ -4922,32 +4972,40 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            ###################################################################
 
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
     }
 
-    It "100d2: Variable -> Get-SensorFactorySource -> Action" {
+    It "100d2: Variable -> Get-SensorFactorySource -> Action -Batch:`$false" {
 
         $sensors = Get-Sensor -Count 2
 
@@ -4960,21 +5018,110 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            ###################################################################
 
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
 
             (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+        ))
+    }
+
+    It "100d3: Sensor -> Get-SensorFactorySource -> Action -Batch:`$true" {
+        Get-Sensor -Count 2 | Get-SensorFactorySource | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+
+            (Gen1 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+        ))
+    }
+
+    It "100d4: Variable -> Get-SensorFactorySource -> Action -Batch:`$true" {
+        $sensors = Get-Sensor -Count 2
+
+        $sensors | Get-SensorFactorySource | Pause-Object -Forever -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
         ))
     }
 
@@ -4992,32 +5139,50 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            ##########################################################################################
 
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -5034,25 +5199,43 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
 
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
 
             (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -5071,69 +5254,105 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+            ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            ##########################################################################################
 
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/1)" 100)
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -5149,65 +5368,353 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            ##########################################################################################
 
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory properties")
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
-            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100 "Retrieving all channels")
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
-            ###################################################################
-
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "PRTG Channel Search" "Processing channel 'Percent Available Memory' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100) +
+                    (Gen3 "Modify PRTG Channel Settings (Completed)" "Setting channel 'Percent Available Memory' (Sensor ID: 4000) setting 'UpperErrorLimit' to '100' (1/1)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
+                (Gen2 "Cloning PRTG Sensors (Completed)" "Cloning sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
 
             (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
+    }
+
+        #endregion
+        #region 100g: Select -First -> Get-SensorFactorySource
+
+    It "100g1: Table -> Select -First -> Get-SensorFactorySource" {
+        Get-Sensor -Count 10 | Select -First 2 | Get-SensorFactorySource
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+        ))
+    }
+
+    It "100g2: Variable -> Select -First -> Get-SensorFactorySource" {
+        $sensors = Get-Sensor -Count 10
+
+        $sensors | Select -First 2 | Get-SensorFactorySource
+
+        Validate(@(
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+        ))
+    }
+
+    It "100g3: Table -> Select -First -> Get-SensorFactorySource -> Channel" {
+        Get-Sensor -Count 10 | Select -First 2 | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ##########################################################################################
+
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor factory sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/10)" 20)
+        ))
+    }
+
+    It "100g4: Variable -> Select -First -> Get-SensorFactorySource -> Channel" {
+        $sensors = Get-Sensor -Count 10
+
+        $sensors | Select -First 2 | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/10)" 10) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+            
+            ###################################################################
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/10)" 20)
+        ))
+    }
+
+        #endregion
+        #region 100h: Select -Last -> Get-SensorFactorySource
+
+    It "100h1: Table -> Select -Last -> Get-SensorFactorySource" {
+        Get-Sensor -Count 6 | Select -Last 2 | Get-SensorFactorySource
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/6)" 16)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/6)" 33)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total2' (3/6)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total3' (4/6)" 66)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (6/6)" 100)
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+        ))
+    }
+
+    It "100h2: Variable -> Select -Last -> Get-SensorFactorySource" {
+        $sensors = Get-Sensor -Count 6
+
+        $sensors | Select -Last 2 | Get-SensorFactorySource
+
+        Validate(@(
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+        ))
+    }
+
+    It "100h3: Table -> Select -Last -> Get-SensorFactorySource -> Channel" {
+        Get-Sensor -Count 6 | Select -Last 2 | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/6)" 16)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/6)" 33)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total2' (3/6)" 50)
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total3' (4/6)" 66)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (6/6)" 100)
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (2/2)" 100)
+        ))
+    }
+
+    It "100h4: Variable -> Select -Last -> Get-SensorFactorySource -> Channel" {
+        $sensors = Get-Sensor -Count 6
+
+        $sensors | Select -Last 2 | Get-SensorFactorySource | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total4' (1/2)" 50) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory properties")
+            (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100 "Retrieving all sensor factory sensors")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total5' (2/2)" 100) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total5' (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 100i: Table -> Get-SensorFactorySource -> Select -First -> Something
+
+    It "100i1: Table -> Get-SensorFactorySource -> Select -First -> Table" {
+        Get-Sensor -Count 10 | Get-SensorFactorySource | Select -First 1 | Get-Channel
+
+        Assert-NoProgress
+    }
+
+    It "100i2: Table -> Get-SensorFactorySource -> Select -First -> Action" {
+        Get-Sensor -Count 10 | Get-SensorFactorySource | Select -First 1 | Pause-Object -Forever -Batch:$false
+        Get-Sensor -Count 10 | Get-SensorFactorySource | Select -First 1 | Pause-Object -Forever -Batch:$true
+
+        Assert-NoProgress
     }
 
         #endregion

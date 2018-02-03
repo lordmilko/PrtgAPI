@@ -6,7 +6,7 @@ using PrtgAPI.PowerShell.Base;
 namespace PrtgAPI.PowerShell.Progress
 {
     /// <summary>
-    /// Represents a task of a process containing two or more operations.
+    /// Represents a sequence of tasks in a process containing two or more operations that yields objects of a specified type.
     /// </summary>
     /// <typeparam name="TResult">The type of objects returned from this task's operation.</typeparam>
     public class ProgressTask<TResult>
