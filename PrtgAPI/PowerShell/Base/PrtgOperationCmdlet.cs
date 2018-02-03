@@ -16,13 +16,30 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="action">The action to be performed.</param>
         /// <param name="activity">The title of the progress message to display.</param>
         /// <param name="progressMessage">The body of the progress message to display.</param>
-        protected void ExecuteOperation(Action action, string activity, string progressMessage)
+        /// <param name="complete">Whether to allow <see cref="PrtgOperationCmdlet"/> to dynamically determine whether progress should be completed</param>
+        protected virtual void ExecuteOperation(Action action, string activity, string progressMessage, bool complete = true)
         {
             ProgressManager.ProcessOperationProgress(activity, progressMessage);
 
-            action();
+            try
+            {
+                action();
+            }
+            catch (PipelineStoppedException)
+            {
+                try
+                {
+                    ProgressManager.CompletePrematurely(ProgressManager);
+                }
+                catch
+                {
+                }
 
-            CompleteOperationProgress();
+                throw;
+            }
+
+            if(complete)
+                CompleteOperationProgress();
         }
 
         /// <summary>
@@ -75,10 +92,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void CompleteOperationProgress()
         {
-            if (!PrtgSessionState.EnableProgress)
-                return;
-
-            if (!ProgressManager.UnsupportedSelectObjectProgress)
+            if (ProgressManager.ProgressEnabled)
             {
                 if (ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineIsProgressPure)
                     ProgressManager.CompleteProgress();
@@ -88,7 +102,7 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.MaybeCompletePreviousProgress();
                     else
                     {
-                        if (ProgressManager.PipelineUpstreamContainsBlockingCmdlet || ProgressManager.MultiOperationBatchMode())
+                        if (ProgressManager.PipelineUpstreamContainsBlockingCmdlet || ProgressManager.PostProcessMode())
                             ProgressManager.CompleteProgress();
                     }
                 }

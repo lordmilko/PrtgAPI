@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
@@ -178,9 +179,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool NextCmdletIsOperation => CacheManager.GetNextPrtgCmdlet() is PrtgOperationCmdlet;
 
-        public bool NextCmdletIsMultiOperationBatchMode => MultiOperationBatchMode(true);
+        public bool NextCmdletIsPostProcessMode => PostProcessMode(true);
 
-        public bool MultiOperationBatchMode(bool downstream = false)
+        public bool PostProcessMode(bool downstream = false)
         {
             object c = cmdlet;
 
@@ -193,7 +194,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                 for (int i = myIndex + 1; i < commands.Count; i++)
                 {
-                    if (commands[i] is PrtgMultiOperationCmdlet)
+                    if (commands[i] is PrtgPostProcessCmdlet)
                     {
                         c = commands[i];
                         break;
@@ -210,12 +211,12 @@ namespace PrtgAPI.PowerShell.Progress
                 }
             }
 
-            var typedCmdlet = c as PrtgMultiOperationCmdlet;
+            var typedCmdlet = c as PrtgPostProcessCmdlet;
 
             if (typedCmdlet == null)
                 return false;
 
-            if (typedCmdlet.Batch)
+            if (typedCmdlet.PostProcess)
                 return true;
 
             return false;
@@ -719,12 +720,12 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        private void WriteProgress()
+        internal void WriteProgress(bool cache = false)
         {
             if (!ProgressEnabled)
                 return;
 
-            WriteProgress(CurrentRecord);
+            WriteProgress(CurrentRecord, cache);
         }
 
         public void WriteProgress(string activity, string statusDescription)
@@ -779,12 +780,12 @@ namespace PrtgAPI.PowerShell.Progress
             return val;
         }
 
-        public void CompleteProgress(bool force = false, bool forceReadyOrNot = false)
+        public void CompleteProgress(bool force = false, bool forceReadyOrNot = false, bool cache = false)
         {
-            CompleteProgress(CurrentRecord, force, forceReadyOrNot);
+            CompleteProgress(CurrentRecord, force, forceReadyOrNot, cache);
         }
 
-        private void CompleteProgress(ProgressRecordEx record, bool force = false, bool forceReadyOrNot = false)
+        private void CompleteProgress(ProgressRecordEx record, bool force = false, bool forceReadyOrNot = false, bool cache = false)
         {
             if (!forceReadyOrNot && !ReadyToComplete())
                 return;
@@ -797,7 +798,7 @@ namespace PrtgAPI.PowerShell.Progress
              * If we're piping from a variable, we need to complete our progress - however if the pipeline before me is an operation,
              *     responsibility has shifted and we're not responsible for the current progress record
              */
-            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten) || MultiOperationBatchMode() || force)
+            if (TotalRecords > 0 || ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet) && !PipelineBeforeMeContainsOperation) || (TotalRecords == 0 && ProgressWritten) || PostProcessMode() || force)
             {
                 /* However if it turns out we didn't actually write any records (such as because the server glitched out
                  * and returned nothing) we never really wrote our progress record. If we were streaming however,
@@ -808,7 +809,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                 record.RecordType = ProgressRecordType.Completed;
 
-                WriteProgress(record);
+                WriteProgress(record, cache);
             }
 
             if (!PipeToBlockingSelectObjectCmdlet)
@@ -830,7 +831,7 @@ namespace PrtgAPI.PowerShell.Progress
                 if (!PartOfChain || FirstInChain || PipeFromBlockingSelectObjectCmdlet || (PipelineContainsOperation && PreviousRecord == null))
                 {
                     //We're a multi operation cmdlet piping from a variable in the middle of our EndProcessing block
-                    if (Pipeline.CurrentIndex == -1 && MultiOperationBatchMode())
+                    if (Pipeline.CurrentIndex == -1 && PostProcessMode())
                         return true;
 
                     if (Pipeline.CurrentIndex < Pipeline.List.Count - 1)
@@ -1077,7 +1078,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void ProcessOperationProgress(string activity, string progressMessage)
         {
-            if (!PrtgSessionState.EnableProgress || UnsupportedSelectObjectProgress)
+            if (!ProgressEnabled)
                 return;
 
             //If we already had an operation cmdlet, the responsibility of updating the previous cmdlet's
@@ -1103,30 +1104,33 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        public void ProcessMultiOperationProgress(string activity, string progressMessage)
+        public void ProcessPostProcessProgress(string activity, string progressMessage, int percentComplete = 100,
+            int? secondsRemaining = null, string currentOperation = null)
         {
-            if (!PrtgSessionState.EnableProgress)
+            if (!ProgressEnabled)
                 return;
+
+            var cache = false;
 
             if (cmdlet.ProgressManagerEx.CachedRecord != null)
             {
                 CloneRecord(cmdlet.ProgressManagerEx.CachedRecord, CurrentRecord);
-                //var record = cmdlet.ProgressManagerEx.PreviousRecord;
 
-                CurrentRecord.Activity = activity;
-                CurrentRecord.StatusDescription = progressMessage;
-                CurrentRecord.PercentComplete = 100;
-
-                WriteProgress(CurrentRecord, true);
+                cache = true;
             }
-            else
-            {
-                CurrentRecord.Activity = activity;
-                CurrentRecord.StatusDescription = progressMessage;
-                CurrentRecord.PercentComplete = 100;
 
-                WriteProgress(CurrentRecord);
-            }
+            CurrentRecord.Activity = activity;
+            CurrentRecord.StatusDescription = progressMessage;
+            CurrentRecord.PercentComplete = percentComplete;
+            CurrentRecord.RecordType = ProgressRecordType.Processing;
+
+            if (secondsRemaining != null)
+                CurrentRecord.SecondsRemaining = secondsRemaining.Value;
+
+            if (currentOperation != null)
+                CurrentRecord.CurrentOperation = currentOperation;
+
+            WriteProgress(CurrentRecord, cache);
         }
 
         private void ProcessOperationProgressForVariable(string activity, string progressMessage)

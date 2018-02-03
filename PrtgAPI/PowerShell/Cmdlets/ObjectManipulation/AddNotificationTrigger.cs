@@ -52,7 +52,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            InternalNotificationTriggerCommand.ProcessRecordEx(this, ExecuteOperation, Parameters, Resolve ? Resolver : (Action<Action>)null);
+            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b, c) => ExecuteOperation(a, b, c), Parameters, Resolve ? Resolver : (Action<Action>)null);
         }
 
         private void Resolver(Action addTrigger)
@@ -116,7 +116,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            InternalNotificationTriggerCommand.ProcessRecordEx(this, ExecuteOperation, Parameters);
+            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b, c) => ExecuteOperation(a, b, c), Parameters);
         }
     }
 

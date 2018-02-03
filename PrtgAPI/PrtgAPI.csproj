@@ -171,6 +171,7 @@
     <Compile Include="PowerShell\Base\NewObjectCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgMultiOperationCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgPostProcessCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgProgressCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />

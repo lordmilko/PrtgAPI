@@ -9,12 +9,12 @@ namespace PrtgAPI.PowerShell.Progress
         /// <summary>
         /// Indicates that the next cmdlet in the pipeline is both a <see cref="PrtgMultiOperationCmdlet"/> and is executing with -Batch:$true
         /// </summary>
-        public bool PipeToMultiOperation => manager.NextCmdletIsMultiOperationBatchMode;
+        public bool PipeToMultiOperation => manager.NextCmdletIsPostProcessMode;
 
         /// <summary>
         /// Indicates that the current cmdlet is both a <see cref="PrtgMultiOperationCmdlet"/> and is executing with -Batch:$true
         /// </summary>
-        public bool IsMultiOperation => manager.MultiOperationBatchMode();
+        public bool IsMultiOperation => manager.PostProcessMode();
 
         public bool IsPipeFromSelectObject => IsPipeDirectFromSelectObject || IsPipeFromActionFromSelectObject;
 
@@ -41,10 +41,6 @@ namespace PrtgAPI.PowerShell.Progress
                 }
 
                 return false;
-
-                //get all previous cmdlets
-                //if every cmdlet is an operation cmdlet until a select object cmdlet is found, its true
-                //otherwise, return false
             }
         }
 
@@ -118,14 +114,6 @@ namespace PrtgAPI.PowerShell.Progress
 
                 if (IsPipeFromActionFromSelectObject)
                     return PreviousActionFromSelectObjectStillWaiting;
-
-                //If we're the second action in table -> select -first -> action -> action, when we're completing for real, select-object is gone, so how do we know
-                //there was ever any select-object to begin with
-
-                //the real question is, does the previous non operation cmdlet's upstream object manager equal null
-                //and if not, previousselectobjectstilwaiting needs to look at the previous non operation cmdlet's progress manager
-                //if(manager.upstreamSelectObjectManager != null)
-                //    return PreviousSelectObjectStillWriting;
 
                 return PreviousCmdletStillWriting || (PreviousVariableStillWriting && previousCmdlet == null);
             }

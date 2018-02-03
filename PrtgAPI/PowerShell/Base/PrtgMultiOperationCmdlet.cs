@@ -10,28 +10,20 @@ namespace PrtgAPI.PowerShell.Base
     /// <summary>
     /// Base class for all cmdlets that perform actions or manipulate multiple objects in a single request against PRTG.
     /// </summary>
-    public abstract class PrtgMultiOperationCmdlet : PrtgOperationCmdlet
+    public abstract class PrtgMultiOperationCmdlet : PrtgPostProcessCmdlet
     {
         /// <summary>
         /// <para type="description">Specifies whether this cmdlet should queue all objects piped to this cmdlet to execute a single
         /// request against PRTG for processing all objects. By default this value is true.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SwitchParameter Batch { get; set; } = SwitchParameter.Present;
+        public SwitchParameter? Batch { get; set; } = SwitchParameter.Present;
 
         internal List<PrtgObject> objects = new List<PrtgObject>();
 
         private void QueueObject(PrtgObject obj)
         {
             objects.Add(obj);
-
-            if (ProgressManagerEx.CachedRecord == null)
-            {
-                if (ProgressManager.ProgressWritten)
-                    ProgressManagerEx.CachedRecord = ProgressManager.CurrentRecord;
-                else if (ProgressManager.PreviousRecord != null)
-                    ProgressManagerEx.CachedRecord = ProgressManager.PreviousRecord;
-            }
         }
 
         /// <summary>
@@ -41,7 +33,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="activity">The progress activity title to display when queuing the object.</param>
         protected void ExecuteOrQueue(SensorOrDeviceOrGroupOrProbe obj, string activity)
         {
-            if (Batch)
+            if (Batch?.IsPresent == true)
                 ExecuteQueueOperation(obj, activity);
             else
                 PerformSingleOperation();
@@ -75,13 +67,17 @@ namespace PrtgAPI.PowerShell.Base
         {
             progressMessage += $" ({objects.Count}/{objects.Count})";
 
-            if(!ProgressManager.UnsupportedSelectObjectProgress)
-                ProgressManager.ProcessMultiOperationProgress(activity, progressMessage);
+            DisplayMultiOperationProgress(activity, progressMessage);
 
             action();
-            
-            if(PrtgSessionState.EnableProgress && !ProgressManager.UnsupportedSelectObjectProgress && complete)
-                ProgressManager.CompleteProgress(true, true);
+
+            CompletePostProcessProgress(complete);
+        }
+
+        private void DisplayMultiOperationProgress(string activity, string progressMessage)
+        {
+            if (ProgressManager.ProgressEnabled)
+                ProgressManager.ProcessPostProcessProgress(activity, progressMessage);
         }
 
         internal string GetMultiTypeListSummary()
@@ -148,7 +144,7 @@ namespace PrtgAPI.PowerShell.Base
 
             return builder.ToString();
         }
-
+        
         internal string GetListSummary(List<PrtgObject> list = null, Func<PrtgObject, string> descriptor = null)
         {
             if (list == null)
@@ -209,13 +205,13 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Provides a one-time, postprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void EndProcessingEx()
         {
-            if (objects.Count > 0 && Batch)
+            if (objects.Count > 0 && Batch?.IsPresent == true)
             {
                 var ids = objects.Select(o => o.Id).ToArray();
 
-                ExecuteWithCoreState(() => PerformMultiOperation(ids));
+                PerformMultiOperation(ids);
             }
         }
 
@@ -229,5 +225,10 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected abstract void PerformMultiOperation(int[] ids);
+
+        /// <summary>
+        /// Whether this cmdlet will execute its post processing operation.
+        /// </summary>
+        protected override bool ShouldPostProcess() => Batch?.IsPresent == true;
     }
 }
