@@ -54,7 +54,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        public void Sensor_StreamSerially() => Object_SerialStreamObjects(new SensorParameters());
+        public void Sensor_StreamSerially() => Object_SerialStreamObjects(
+            c => c.StreamSensors,
+            c => c.StreamSensors,
+            new SensorParameters()
+        );
 
         [TestMethod]
         public void Sensor_AllFields_HaveValues()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Objects.Shared;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
@@ -34,6 +35,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             client => client.StreamProbes,
             client => client.StreamProbes,
             client => client.StreamProbes
+        );
+
+        [TestMethod]
+        public void Probe_StreamSerially() => Object_SerialStreamObjects(
+            c => c.StreamProbes,
+            c => c.StreamProbes,
+            new ProbeParameters()
         );
 
         [TestMethod]

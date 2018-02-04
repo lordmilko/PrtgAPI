@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
@@ -33,6 +34,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             client => client.StreamDevices,
             client => client.StreamDevices,
             client => client.StreamDevices
+        );
+
+        [TestMethod]
+        public void Device_StreamSerially() => Object_SerialStreamObjects(
+            c => c.StreamDevices,
+            c => c.StreamDevices,
+            new DeviceParameters()
         );
 
         [TestMethod]

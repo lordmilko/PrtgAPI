@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     [TestClass]
     public abstract class StreamableObjectTests<TObject, TItem, TResponse> : ObjectTests<TObject, TItem, TResponse>
         where TResponse : IWebResponse
-        where TObject : PrtgObject
+        where TObject : ObjectTable
     {
         private Property testProperty = Property.Name;
         private FilterOperator testOperator = FilterOperator.Contains;
@@ -71,7 +71,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected void Object_GetObjectsOverloads_Stream_CanExecute(
-            Func<PrtgClient, Func<object>> regularValue,
+            Func<PrtgClient, Func<bool, object>> regularValue,
             Func<PrtgClient, Func<Property, object, object>> propertyValue,
             Func<PrtgClient, Func<Property, FilterOperator, string, object>> propertyOperatorValue,
             Func<PrtgClient, Func<SearchFilter[], object>> searchFilter,
@@ -88,21 +88,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var propertyOperatorValueFunction = propertyOperatorValue(streamClient);
             var searchFilterFunction = searchFilter(streamClient);
 
-            CheckResult<IEnumerable<TObject>>(regularFunction());
+            CheckResult<IEnumerable<TObject>>(regularFunction(false));
             RunFunctions<IEnumerable<TObject>>(propertyValueFunction, propertyOperatorValueFunction, searchFilterFunction);
 
             other?.Invoke(streamClient);
         }
 
-        protected void Object_SerialStreamObjects<T>(ContentParameters<T> parameters)
+        protected void Object_SerialStreamObjects<TParam>(Func<PrtgClient, Func<bool, IEnumerable<TObject>>> getObjects1, Func<PrtgClient, Func<TParam, bool, IEnumerable<TObject>>> getObjects2, TParam parameters) where TParam : TableParameters<TObject>
         {
             var count = 755;
 
             var streamClient = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
 
-            var items = streamClient.SerialStreamObjects(parameters).ToList();
+            var items1 = getObjects1(streamClient)(true).ToList();
+            Assert.AreEqual(count, items1.Count);
 
-            Assert.AreEqual(count, items.Count);
+            var items2 = getObjects2(streamClient)(parameters, true).ToList();
+            Assert.AreEqual(count, items2.Count);
         }
 
         private void RunFunctions<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable

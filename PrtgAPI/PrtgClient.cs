@@ -195,7 +195,7 @@ namespace PrtgAPI
         #endregion
         #region Stream Objects
 
-        internal IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters)
+        private IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters, bool serial)
         {
             Log("Preparing to stream objects");
             Log("Requesting total number of objects");
@@ -204,9 +204,11 @@ namespace PrtgAPI
 
             var limit = 20000;
 
-            if (totalObjects > limit)
+            if (totalObjects > limit || serial)
             {
-                Log($"Switching to serial stream mode as over {limit} objects were detected");
+                if(totalObjects > limit)
+                    Log($"Switching to serial stream mode as over {limit} objects were detected");
+
                 return SerialStreamObjectsInternal(parameters, totalObjects, false);
             }
 
@@ -238,16 +240,6 @@ namespace PrtgAPI
             var result = new ParallelObjectGenerator<List<T>>(tasks.WhenAnyForAll()).SelectMany(m => m);
 
             return result;
-        }
-
-        internal IEnumerable<T> SerialStreamObjects<T>(ContentParameters<T> parameters)
-        {
-            Log("Preparing to serially stream objects");
-            Log("Requesting total number of objects");
-
-            var totalObjects = GetTotalObjects(parameters.Content);
-
-            return SerialStreamObjectsInternal(parameters, totalObjects, false);
         }
 
         internal IEnumerable<T> SerialStreamObjectsInternal<T>(ContentParameters<T> parameters, int totalObjects, bool directCall)
@@ -345,7 +337,7 @@ namespace PrtgAPI
         /// Stream all sensors from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.<para/>
         /// </summary>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Sensor> StreamSensors() => StreamSensors(new SensorParameters());
+        public IEnumerable<Sensor> StreamSensors(bool serial = false) => StreamSensors(new SensorParameters(), serial);
 
             #endregion
             #region Sensor Status
@@ -473,8 +465,9 @@ namespace PrtgAPI
         /// Stream sensors from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
-        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters) => StreamObjects(parameters);
+        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
 
             #endregion
 
@@ -530,7 +523,7 @@ namespace PrtgAPI
         /// Stream all devices from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Device> StreamDevices() => StreamDevices(new DeviceParameters());
+        public IEnumerable<Device> StreamDevices(bool serial = false) => StreamDevices(new DeviceParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
@@ -620,22 +613,23 @@ namespace PrtgAPI
         /// Retrieve devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
-        /// <returns></returns>
+        /// <returns>A list of devices that match the specified parameters.</returns>
         public List<Device> GetDevices(DeviceParameters parameters) => GetObjects<Device>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
-        /// <returns></returns>
+        /// <returns>A list of devices that match the specified parameters.</returns>
         public async Task<List<Device>> GetDevicesAsync(DeviceParameters parameters) => await GetObjectsAsync<Device>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream devices from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
-        /// <returns></returns>
-        public IEnumerable<Device> StreamDevices(DeviceParameters parameters) => StreamObjects<Device>(parameters);
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>A list of devices that match the specified parameters.</returns>
+        public IEnumerable<Device> StreamDevices(DeviceParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
 
             #endregion
         #endregion
@@ -658,7 +652,7 @@ namespace PrtgAPI
         /// Stream all groups from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Group> StreamGroups() => StreamGroups(new GroupParameters());
+        public IEnumerable<Group> StreamGroups(bool serial = false) => StreamGroups(new GroupParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
@@ -758,7 +752,7 @@ namespace PrtgAPI
         /// <summary>
         /// Stream groups from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        public IEnumerable<Group> StreamGroups(GroupParameters parameters) => StreamObjects(parameters);
+        public IEnumerable<Group> StreamGroups(GroupParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
 
             #endregion
         #endregion
@@ -781,7 +775,7 @@ namespace PrtgAPI
         /// Stream all probes from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Probe> StreamProbes() => StreamProbes(new ProbeParameters());
+        public IEnumerable<Probe> StreamProbes(bool serial = false) => StreamProbes(new ProbeParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
@@ -871,19 +865,23 @@ namespace PrtgAPI
         /// Retrieve probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
+        /// <returns>A list of probes that match the specified parameters.</returns>
         public List<Probe> GetProbes(ProbeParameters parameters) => GetObjects<Probe>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
+        /// <returns>A list of probes that match the specified parameters.</returns>
         public async Task<List<Probe>> GetProbesAsync(ProbeParameters parameters) => await GetObjectsAsync<Probe>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream probes from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
-        public IEnumerable<Probe> StreamProbes(ProbeParameters parameters) => StreamObjects<Probe>(parameters);
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>A list of probes that match the specified parameters.</returns>
+        public IEnumerable<Probe> StreamProbes(ProbeParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
 
             #endregion
         #endregion
@@ -971,10 +969,11 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
         /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time..</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public IEnumerable<Log> StreamLogs(int? objectId, DateTime? startDate = null, DateTime? endDate = null, params LogStatus[] status) =>
-            StreamObjects(new LogParameters(objectId, startDate, endDate, status: status));
+        public IEnumerable<Log> StreamLogs(int? objectId, DateTime? startDate = null, DateTime? endDate = null, bool serial = false, params LogStatus[] status) =>
+            StreamObjects(new LogParameters(objectId, startDate, endDate, status: status), serial);
 
             #endregion
             #region RecordAge
@@ -1006,10 +1005,11 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
         /// <param name="timeSpan">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public IEnumerable<Log> StreamLogs(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, params LogStatus[] status) =>
-            StreamObjects(new LogParameters(objectId, timeSpan, status: status));
+        public IEnumerable<Log> StreamLogs(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, bool serial = false, params LogStatus[] status) =>
+            StreamObjects(new LogParameters(objectId, timeSpan, status: status), serial);
 
             #endregion
         #endregion
