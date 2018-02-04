@@ -127,7 +127,7 @@ namespace PrtgAPI.Request
                 return FormatSingleParameterWithValEncode(description, (string)value);
 
             if (value is Enum)
-                return FormatSingleParameterWithValEncode(description, ((Enum)value).ToString(), true);
+                return FormatSingleParameterWithValEncode(description, ((Enum)value).GetDescription(), true);
 
             if (value is IEnumerable)
                 return ProcessIEnumerableParameter(parameterType, (IEnumerable)value, description);
@@ -251,6 +251,7 @@ namespace PrtgAPI.Request
 
             foreach (var obj in enumerable)
             {
+                //todo: change this to be toxml()
                 builder.Append(HttpUtility.UrlEncode(obj.GetType().IsEnum ? ((Enum)obj).GetDescription() : Convert.ToString(obj)) + ",");
             }
 

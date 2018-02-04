@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
@@ -13,8 +12,8 @@ namespace PrtgAPI.Parameters
 
         public ObjectType ObjectType
         {
-            get { return this[Parameter.ObjectType].ToString().DescriptionToEnum<ObjectType>(); }
-            set { this[Parameter.ObjectType] = value.GetDescription(); }
+            get { return (ObjectType) this[Parameter.ObjectType]; }
+            set { this[Parameter.ObjectType] = value; }
         }
     }
 }
