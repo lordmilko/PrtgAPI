@@ -71,7 +71,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The sensor to create a channel definition for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public Sensor Item { get; set; }
+        public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">An expression that resolves the name to use for a channel definition.</para>
@@ -119,7 +119,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public ScriptBlock Finalizer { get; set; }
 
         private int id;
-        private PSVariable accumulation = new PSVariable("acc");
+        private readonly PSVariable accumulation = new PSVariable("acc");
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -144,7 +144,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                var name = Name.InvokeWithDollarUnderscore(Item).ToString();
+                var name = Name.InvokeWithDollarUnderscore(Sensor).ToString();
                 rows.Add($"#{id}:{name}");
                 rows.Add(expression);
                 WriteObject(rows, true);
@@ -154,14 +154,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private string GetExpression()
         {
-            string expression = $"channel({Item.Id},{ChannelId})";
+            string expression = $"channel({Sensor.Id},{ChannelId})";
 
             if (Expression != null)
             {
                 expression = Expression.InvokeWithContext(null, new List<PSVariable>
                 {
                     new PSVariable("expr", expression),
-                    new PSVariable("_", Item)
+                    new PSVariable("_", Sensor)
                 }).First().ToString();
             }
 
@@ -179,7 +179,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 accumulation.Value = Aggregator.InvokeWithContext(null, new List<PSVariable>
                 {
                     accumulation,
-                    new PSVariable("_", Item),
+                    new PSVariable("_", Sensor),
                     new PSVariable("expr", expression)
                 }).First();
             }
@@ -200,7 +200,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     }).First();
                 }
 
-                var name = Name.InvokeWithDollarUnderscore(Item).ToString();
+                var name = Name.InvokeWithDollarUnderscore(Sensor).ToString();
                 WriteObject($"#{id}:{name}");
                 WriteObject(accumulation.Value);
             }
