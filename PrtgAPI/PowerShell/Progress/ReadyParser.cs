@@ -31,7 +31,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (manager.UnsupportedSelectObjectProgress)
                 return true;
 
-            if (manager.upstreamSelectObjectManager == null)
+            if (!manager.PreviousCmdletIsSelectObject)
                 return true;
 
             var firstCmdlet = manager.upstreamSelectObjectManager.Commands.Last();

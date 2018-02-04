@@ -93,7 +93,7 @@ namespace PrtgAPI.PowerShell.Base
                     ProgressManager.CompleteProgress();
                 else
                 {
-                    if (ProgressManager.upstreamSelectObjectManager != null)
+                    if (ProgressManager.PreviousCmdletIsSelectObject)
                         ProgressManager.MaybeCompletePreviousProgress();
                     else
                     {

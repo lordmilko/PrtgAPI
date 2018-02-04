@@ -244,6 +244,11 @@ namespace PrtgAPI.PowerShell.Progress
         #endregion
         #region Pipe To/From Select Object Cmdlet
 
+        /// <summary>
+        /// If true, indicates that the previous cmdlet before this one is a <see cref="SelectObjectCommand"/>.
+        /// </summary>
+        public bool PreviousCmdletIsSelectObject => upstreamSelectObjectManager != null;
+
         internal readonly SelectObjectManager upstreamSelectObjectManager;
         internal readonly SelectObjectManager downstreamSelectObjectManager;
 
@@ -251,7 +256,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if (upstreamSelectObjectManager == null && cmdlet is PrtgOperationCmdlet)
+                if (!PreviousCmdletIsSelectObject && cmdlet is PrtgOperationCmdlet)
                 {
                     var firstOperation = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
 
@@ -266,7 +271,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if(upstreamSelectObjectManager != null)
+                if(PreviousCmdletIsSelectObject)
                     return IsBlockingSelectObjectCmdlet(upstreamSelectObjectManager);
 
                 var firstOperation = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
@@ -284,21 +289,13 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if (upstreamSelectObjectManager != null)
+                if (PreviousCmdletIsSelectObject)
                 {
                     if (Scenario == ProgressScenario.SelectLast)
                     {
-                        if (PipeFromVariableWithProgress)
-                        {
-                            //If the previous Select-Object is the first in the pipeline
-                            if (CacheManager.GetFirstCmdletInPipeline() == CacheManager.GetUpstreamCmdlet())
-                            {
-                                if (upstreamSelectObjectManager.HasFirst && EntirePipeline.CurrentIndex + 1 <= upstreamSelectObjectManager.First)
-                                    return false;
-                            }
-                        }
-                        else
+                        if (!PipeFromVariableWithProgress)
                             return progressPipelines.RecordsInCurrentPipeline == 1;
+
                     }
 
                     return true;
@@ -531,7 +528,7 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         //If we're actually preceeded by a Select-Object cmdlet, we actually need a SelectPipeline
 
-                        if (upstreamSelectObjectManager != null && upstreamSelectObjectManager.HasFirst)
+                        if (PreviousCmdletIsSelectObject && upstreamSelectObjectManager.HasFirst)
                         {
                             if (SelectPipeline == null)
                             {
@@ -775,9 +772,9 @@ namespace PrtgAPI.PowerShell.Progress
             return val;
         }
 
-        public void CompleteProgress(bool force = false, bool forceReadyOrNot = false, bool cache = false)
+        public void CompleteProgress(bool force = false, bool cache = false)
         {
-            CompleteProgress(CurrentRecord, force, forceReadyOrNot, cache);
+            CompleteProgress(CurrentRecord, force, cache);
         }
 
         public void TryCompleteProgress()
@@ -786,16 +783,16 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 //If an exception was thrown, we should try and clean up our outstanding progress record (if applicable)
                 if (ExpectsContainsProgress)
-                    CompleteProgress(true, true);
+                    CompleteProgress(true);
             }
             catch
             {
             }
         }
 
-        private void CompleteProgress(ProgressRecordEx record, bool force = false, bool forceReadyOrNot = false, bool cache = false)
+        private void CompleteProgress(ProgressRecordEx record, bool force = false, bool cache = false)
         {
-            if (!forceReadyOrNot && !ReadyToComplete())
+            if (!force && !ReadyToComplete())
                 return;
 
             InitialDescription = null;
@@ -828,7 +825,7 @@ namespace PrtgAPI.PowerShell.Progress
             record.RecordType = ProgressRecordType.Processing;
         }
 
-        private bool ReadyToComplete()
+        internal bool ReadyToComplete()
         {
             if (multiOperationAnalyzer.PipeToMultiOperation || multiOperationAnalyzer.IsMultiOperation)
                 return ReadyToCompleteMultiOperation();
@@ -844,7 +841,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                     if (Pipeline.CurrentIndex < Pipeline.List.Count - 1)
                     {
-                        if (upstreamSelectObjectManager != null)
+                        if (PreviousCmdletIsSelectObject)
                         {
                             if (!readyParser.Ready())
                                 return false;
@@ -865,17 +862,6 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
                         var previousManager = previousCmdlet.ProgressManager;
-
-                        /*if (previousManager.recordsProcessed == -1 && previousCmdlet is PrtgOperationCmdlet)
-                        {
-                            var previousNonOperation = CacheManager.TryGetPreviousPrtgCmdletOfNotType<PrtgOperationCmdlet>();
-
-                            if (!(previousNonOperation is PrtgOperationCmdlet))
-                            {
-                                if (previousNonOperation.ProgressManager.recordsProcessed < previousNonOperation.ProgressManager.TotalRecords)
-                                    return false;
-                            }
-                        }*/
 
                         if (previousManager.recordsProcessed < previousManager.TotalRecords) //new issue: get-sensor doesnt update records processed
                             return false;
@@ -1030,7 +1016,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (abortProgress.NeedsCompleting(manager))
             {
-                CompleteProgress(true, true);
+                CompleteProgress(true);
                 return true;
             }
 
@@ -1043,7 +1029,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             var maxCount = Pipeline.List.Count;
 
-            if (upstreamSelectObjectManager != null)
+            if (PreviousCmdletIsSelectObject)
                 maxCount = GetIncrementProgressFromPipelineTotalRecords(maxCount);
 
             var originalIndex = index;
@@ -1173,7 +1159,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             TotalRecords = Pipeline.List.Count;
 
-            if (upstreamSelectObjectManager != null)
+            if (PreviousCmdletIsSelectObject)
                 TotalRecords = GetSelectObjectOperationStraightFromVariableTotalRecords();
 
             var count = Pipeline.CurrentIndex + 1;
@@ -1198,7 +1184,7 @@ namespace PrtgAPI.PowerShell.Progress
             var previousManager = previousCmdlet.ProgressManager;
             TotalRecords = previousManager.TotalRecords;
 
-            if (upstreamSelectObjectManager != null)
+            if (PreviousCmdletIsSelectObject)
                 TotalRecords = GetSelectObjectOperationFromCmdletFromVariableTotalRecords();
 
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,

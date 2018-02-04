@@ -68,21 +68,18 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
 
-                if (previousCmdlet != null) //todo: what if we had two skiplasts in a row. whats the total now?
+                if (previousCmdlet != null)
                 {
                     var previousManager = previousCmdlet.ProgressManager;
                     var total = previousManager.TotalRecords.Value;
 
                     maxCount = total - upstreamSelectObjectManager.TotalSkipLast;
-
-                    if (upstreamSelectObjectManager.HasSkip)
-                        maxCount = maxCount - upstreamSelectObjectManager.TotalSkip;
                 }
                 else
                 {
                     if (PipeFromVariableWithProgress)
                     {
-                        if (upstreamSelectObjectManager.HasSkip || upstreamSelectObjectManager.HasSkipLast)
+                        if (upstreamSelectObjectManager.HasSkipLast)
                             maxCount = EntirePipeline.List.Count - upstreamSelectObjectManager.TotalAnySkip;
                     }
                 }
@@ -96,7 +93,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (!ProgressEnabled)
                 return;
 
-            if (upstreamSelectObjectManager != null)
+            if (PreviousCmdletIsSelectObject)
             {
                 if (readyParser.Ready())
                 {
@@ -104,8 +101,16 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (PreviousContainsProgress)
                         {
-                            //The previous cmdlet can't be writing progress if it's not active
-                            CompleteProgress(PreviousRecord, true);
+                            if (PostProcessMode() || NextCmdletIsPostProcessMode)
+                            {
+                                if(ReadyToComplete())
+                                    CompleteProgress(PreviousRecord, true);
+                            }
+                            else
+                            {
+                                //The previous cmdlet can't be writing progress if it's not active
+                                CompleteProgress(PreviousRecord, true);
+                            }
                         }
                         else
                             CompleteProgress();

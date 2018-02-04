@@ -79,7 +79,8 @@ namespace PrtgAPI.PowerShell.Base
                 //so we don't need to complete anything
                 if (!(ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineContainsOperation))
                 {
-                    ProgressManager.CompleteProgress(true);
+                    if (ProgressManager.ReadyToComplete())
+                        ProgressManager.CompleteProgress(true);
 
                     if(!ProgressManager.GetRecordsWithVariableProgress)
                         ProgressManager.MaybeCompletePreviousProgress();

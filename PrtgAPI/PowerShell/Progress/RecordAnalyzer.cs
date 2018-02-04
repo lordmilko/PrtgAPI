@@ -16,9 +16,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// </summary>
         public bool IsMultiOperation => manager.PostProcessMode();
 
-        public bool IsPipeFromSelectObject => IsPipeDirectFromSelectObject || IsPipeFromActionFromSelectObject;
-
-        private bool IsPipeDirectFromSelectObject => manager.upstreamSelectObjectManager != null;
+        public bool IsPipeFromSelectObject => manager.PreviousCmdletIsSelectObject || IsPipeFromActionFromSelectObject;
 
         private bool IsPipeFromActionFromSelectObject
         {
@@ -48,7 +46,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if (IsPipeDirectFromSelectObject)
+                if (manager.PreviousCmdletIsSelectObject)
                     return SelectObjectPipelineStillWriting;
 
                 if (IsPipeFromActionFromSelectObject)
@@ -109,7 +107,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if (IsPipeDirectFromSelectObject)
+                if (manager.PreviousCmdletIsSelectObject)
                     return PreviousSelectObjectStillWriting;
 
                 if (IsPipeFromActionFromSelectObject)
