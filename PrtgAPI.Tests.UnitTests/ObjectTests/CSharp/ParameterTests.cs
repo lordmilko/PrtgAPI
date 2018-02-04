@@ -10,6 +10,42 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     public class ParameterTests
     {
         [TestMethod]
+        public void TableParameters_CanSetSortDirection()
+        {
+            var parameters = new SensorParameters();
+
+            parameters.SortBy = Property.Id;
+            Assert.AreEqual(parameters.SortBy, Property.Id, "Retrieve initial value from property");
+            Assert.AreEqual(parameters[Parameter.SortBy], Property.Id, "Retrieve initial raw value from indexer");
+
+            parameters.SortDirection = SortDirection.Descending;
+            Assert.AreEqual(parameters.SortBy, Property.Id, "Retrieve initial reversed value from property");
+            Assert.AreEqual(parameters[Parameter.SortBy], "-objid", "Retrieve initial reversed raw value from indexer");
+
+            parameters.SortBy = Property.Name;
+            Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve new value from property");
+            Assert.AreEqual(parameters[Parameter.SortBy], "-name", "Retrieve new reversed raw value from indexer");
+
+            parameters.SortDirection = SortDirection.Ascending;
+            Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve new forwards value from property");
+            Assert.AreEqual(parameters[Parameter.SortBy], Property.Name, "Retrieve new forwards raw value from indexer");
+
+            parameters.SortBy = null;
+            Assert.AreEqual(parameters.SortBy, null, "Property value is null");
+            Assert.AreEqual(parameters[Parameter.SortBy], null, "Raw value is null");
+
+            parameters.SortDirection = SortDirection.Descending;
+            parameters.SortBy = Property.Active;
+
+            parameters.SortBy = null;
+            Assert.AreEqual(parameters.SortBy, null, "Reversed property value is null");
+            Assert.AreEqual(parameters[Parameter.SortBy], null, "Reversed raw value is null");
+
+            parameters[Parameter.SortBy] = "name";
+            Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve property directly set using string");
+        }
+
+        [TestMethod]
         public void CustomParameter_ToString_FormatsCorrectly()
         {
             var parameter = new CustomParameter("name", "val");

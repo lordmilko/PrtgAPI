@@ -72,6 +72,7 @@ namespace PrtgAPI
         /// <summary>
         /// A <see cref="Property"/> used to specify which property to sort PRTG Response by.
         /// </summary>
+        [ParameterType(ParameterType.SingleValue)]
         SortBy,
 
         /// <summary>

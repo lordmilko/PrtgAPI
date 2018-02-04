@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Request;
 
@@ -26,10 +28,81 @@ namespace PrtgAPI.Parameters
         /// <see cref="Property"/> to sort response by.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public Property SortBy
+        public Property? SortBy
         {
-            get { return (Property)this[Parameter.SortBy]; }
-            set { this[Parameter.SortBy] = value; }
+            get { return GetSortBy(); }
+            set { SetSortBy(value, true); }
+        }
+
+        private SortDirection sortDirection = SortDirection.Ascending;
+
+        /// <summary>
+        /// The direction to sort returned objects by. By default, when <see cref="SortBy"/> is specified objects are sorted ascending from lowest to highest. 
+        /// </summary>
+        public SortDirection SortDirection
+        {
+            get { return sortDirection; }
+            set
+            {
+                sortDirection = value;
+
+                SetSortBy(null, false);
+            }
+        }
+
+        private Property? GetSortBy()
+        {
+            var val = this[Parameter.SortBy];
+
+            if (val == null)
+                return null;
+
+            if (val is Property)
+                return (Property) val;
+
+            var str = val.ToString();
+
+            if (str.StartsWith("-"))
+            {
+                var description = str.Substring(1);
+
+                return description.DescriptionToEnum<Property>();
+            }
+
+            return str.DescriptionToEnum<Property>();
+        }
+
+        private void SetSortBy(Property? newVal, bool setSort)
+        {
+            if (!setSort)
+            {
+                var val = this[Parameter.SortBy];
+
+                if (val != null)
+                {
+                    if (val is Property?)
+                        newVal = (Property?) val;
+                    else
+                    {
+                        var str = val.ToString();
+
+                        if (str.StartsWith("-"))
+                            str = str.Substring(1);
+
+                        newVal = str.DescriptionToEnum<Property>();
+                    }
+                }
+            }
+
+            if (sortDirection == SortDirection.Ascending)
+                this[Parameter.SortBy] = newVal;
+            else
+            {
+                if (newVal == null)
+                    this[Parameter.SortBy] = null;
+                else
+                    this[Parameter.SortBy] = $"-{((Enum)newVal).GetDescription().ToLower()}";
+            }
         }
 
         /// <summary>
