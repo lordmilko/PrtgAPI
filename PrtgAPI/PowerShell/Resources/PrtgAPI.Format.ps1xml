@@ -61,13 +61,16 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader> <!-- Name -->
-                        <Width>30</Width>
+                        <Width>27</Width>
                     </TableColumnHeader>
                     <TableColumnHeader> <!-- Id -->
                         <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader> <!-- Status -->
-                        <Width>14</Width>
+                        <Width>11</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Host -->
+                        <Width>15</Width>
                     </TableColumnHeader>
                     <TableColumnHeader> <!-- TotalSensors -->
                         <Width>10</Width>
@@ -91,6 +94,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Status</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Host</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>TotalSensors</PropertyName>
