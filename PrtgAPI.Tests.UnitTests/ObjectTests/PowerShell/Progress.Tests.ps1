@@ -7790,6 +7790,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Assert-NoProgress
     }
 
+        #endregion
+        #region No Results
+
     It "Completes all progress records when no results are returned when piping from a cmdlet to a Table" {
         Get-Probe -Count 0 | Get-Device
 
@@ -7834,5 +7837,113 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
         #endregion
+        #region Throw Completes
+
+    It "Table -> Table (Throw) Completes" {
+
+        WithResponseArgs "FaultyTableResponse" (GetCustomCountDictionary @{ Devices = 1 }) {
+            { Get-Probe | Get-Device } | Should Throw "Requested content 'Devices' too many times"
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+        ))
+    }
+
+    It "Table -> Table -> Table (Throw) Completes" {
+
+        WithResponseArgs "FaultyTableResponse" (GetCustomCountDictionary @{ Sensors = 1 }) {
+            { Get-Probe | Get-Device | Get-Sensor } | Should Throw "Requested content 'Sensors' too many times"
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/2)" 50)
+        ))
+    }
+
+    It "Table -> Table (Throw) -> Table Completes" {
+        WithResponseArgs "FaultyTableResponse" (GetCustomCountDictionary @{ Devices = 2 }) {
+            { Get-Probe -Count 3 | Get-Device -Count 1 | Get-Sensor } | Should Throw "Requested content 'Devices' too many times"
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/1)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/3)" 66)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+        ))
+    }
+
+    It "Table -> Action (Throw) Completes" {
+         WithResponseArgs "FaultyTableResponse" "Pause" {
+            { Get-Sensor | Pause-Object -Forever -Batch:$false } | Should Throw "Requested function 'Pause'"
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Detecting total number of items")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50) # Pause-Object cleans up his cloned record
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50) # Get-Sensor cleans up the original record
+        ))
+    }
+
+    It "Variable -> Table (Throw) Completes" {
+
+        WithResponseArgs "FaultyTableResponse" (GetCustomCountDictionary @{ Devices = 2 }) {
+            { $probes = Get-Probe -Count 3; $probes | Get-Device } | Should Throw "Requested content 'Devices' too many times"
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+        ))
+    }
+
+        #endregion
+        
+    It "Selects a property" {
+        Get-Probe | Get-Device | Select Name
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+        ))
+    }
+
     #endregion
 }

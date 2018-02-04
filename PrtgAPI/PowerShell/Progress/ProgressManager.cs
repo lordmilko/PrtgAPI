@@ -367,12 +367,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 var commands = CacheManager.GetPipelineCommands().Skip(2);
 
-                if (commands.OfType<SelectObjectCommand>().Where(c =>
-                {
-                    var d = new SelectObjectDescriptor(c);
-
-                    return d.HasFirst || d.HasLast || d.HasSkip || d.HasSkipLast || d.HasIndex;
-                }).Any())
+                if (commands.OfType<SelectObjectCommand>().Any(c => new SelectObjectDescriptor(c).HasFilters))
                     return true;
 
                 return false;
@@ -783,6 +778,19 @@ namespace PrtgAPI.PowerShell.Progress
         public void CompleteProgress(bool force = false, bool forceReadyOrNot = false, bool cache = false)
         {
             CompleteProgress(CurrentRecord, force, forceReadyOrNot, cache);
+        }
+
+        public void TryCompleteProgress()
+        {
+            try
+            {
+                //If an exception was thrown, we should try and clean up our outstanding progress record (if applicable)
+                if (ExpectsContainsProgress)
+                    CompleteProgress(true, true);
+            }
+            catch
+            {
+            }
         }
 
         private void CompleteProgress(ProgressRecordEx record, bool force = false, bool forceReadyOrNot = false, bool cache = false)

@@ -7,7 +7,7 @@ namespace PrtgAPI.PowerShell.Progress
     {
         private Stack<ProgressPipeline> progressPipelines = new Stack<ProgressPipeline>();
 
-        private ProgressPipeline currentPipeline => progressPipelines.Peek();
+        internal ProgressPipeline currentPipeline => progressPipelines.Peek();
 
         internal int Count => progressPipelines.Count;
 

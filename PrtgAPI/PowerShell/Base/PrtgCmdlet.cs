@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.PowerShell.Commands;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
@@ -46,7 +48,22 @@ namespace PrtgAPI.PowerShell.Base
             {
                 using (ProgressManager = new ProgressManager(this))
                 {
-                    action();
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        //todo: should we make cmdlets always complete their progress if they have any in their endprocessing block?
+                        //and will this cause issues for the ISE?
+
+                        if (PipeToSelectObject() && ex is PipelineStoppedException)
+                            throw;
+
+                        ProgressManager.TryCompleteProgress();
+
+                        throw;
+                    }
                 }
             }
             catch
@@ -81,6 +98,15 @@ namespace PrtgAPI.PowerShell.Base
         protected override void EndProcessing()
         {
             UnregisterEvents(false);
+        }
+
+        private bool PipeToSelectObject()
+        {
+            var commands = ProgressManager.CacheManager.GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(this);
+
+            return commands.Skip(myIndex + 1).OfType<SelectObjectCommand>().Any(c => new SelectObjectDescriptor(c).HasFilters);
         }
 
         #region Events

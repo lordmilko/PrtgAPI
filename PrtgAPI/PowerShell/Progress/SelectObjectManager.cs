@@ -34,6 +34,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool Wait => HasKey("Wait") && (SwitchParameter)GetKey("Wait") == SwitchParameter.Present; //todo: test this works
 
+        public bool HasFilters => HasFirst || HasLast || HasSkip || HasSkipLast || HasIndex;
 
         public SelectObjectDescriptor(SelectObjectCommand command)
         {

@@ -27,13 +27,8 @@ namespace PrtgAPI.PowerShell.Base
             }
             catch (PipelineStoppedException)
             {
-                try
-                {
-                    ProgressManager.CompletePrematurely(ProgressManager);
-                }
-                catch
-                {
-                }
+                //Invoked when Select was the last cmdlet in the pipeline
+                ProgressManager.TryCompleteProgress();
 
                 throw;
             }
