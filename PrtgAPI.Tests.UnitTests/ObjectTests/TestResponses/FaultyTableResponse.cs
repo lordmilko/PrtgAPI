@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetTableResponse(ref address, function);
                 default:
                     if (faultyFunctions != null && faultyFunctions.Contains(function))
-                        throw new Exception($"Requested function '{function}'");
+                        throw new InvalidOperationException($"Requested function '{function}'");
 
                     return base.GetResponse(ref address, function);
             }

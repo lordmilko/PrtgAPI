@@ -8,6 +8,8 @@ namespace PrtgAPI.PowerShell.Progress
     {
         private Stack<ProgressRecordEx> progressRecords = new Stack<ProgressRecordEx>();
 
+        internal List<ProgressRecordEx> Records => progressRecords.ToList();
+
         internal object FirstCmdletInPipeline { get; private set; }
 
         internal int Count => progressRecords.Count;
