@@ -121,6 +121,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private bool ignoreName;
 
+        private const string NAME_PARAMETER = "name_";
+        private const string SENSORTYPE_PARAMETER = "sensortype";
+
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
@@ -136,15 +139,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private NewSensorParameters CreateRawParameters()
         {
-            if (!RawParameters.ContainsKey("name_"))
-                throw new InvalidOperationException("Hashtable record 'name_' is mandatory, however a value was not specified");
+            if (!RawParameters.ContainsKey(NAME_PARAMETER))
+                throw new InvalidOperationException($"Hashtable record '{NAME_PARAMETER}' is mandatory, however a value was not specified");
 
-            if (!RawParameters.ContainsKey("sensortype"))
-                throw new InvalidOperationException("Hashtable record 'sensortype' is mandatory, however a value was not specified'");
+            if (!RawParameters.ContainsKey(SENSORTYPE_PARAMETER))
+                throw new InvalidOperationException($"Hashtable record '{SENSORTYPE_PARAMETER}' is mandatory, however a value was not specified'");
 
-            var parameters = new RawSensorParameters(RawParameters["name_"]?.ToString(), RawParameters["sensortype"]?.ToString())
+            var parameters = new RawSensorParameters(RawParameters[NAME_PARAMETER]?.ToString(), RawParameters[SENSORTYPE_PARAMETER]?.ToString())
             {
-                Parameters = RawParameters.Keys.Cast<object>().Select(k => new CustomParameter(k.ToString(), RawParameters[k])).ToList()
+                Parameters = RawParameters.Keys.Cast<object>().Where(k => k.ToString() != SENSORTYPE_PARAMETER).Select(k => new CustomParameter(k.ToString(), RawParameters[k])).ToList()
             };
 
             return parameters;
