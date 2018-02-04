@@ -116,7 +116,7 @@ Describe "Get-ObjectLog_IT" {
     }
 
     It "filters by name" {
-        $log = Get-ObjectLog "System Health" | select -First 1
+        $log = Get-ObjectLog "System Health" -Since AllTime | select -First 1
 
         $log.Count | Should Be 1
 
