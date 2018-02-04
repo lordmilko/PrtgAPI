@@ -98,7 +98,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (upstreamSelectObjectManager != null)
             {
-                if (!notReady.NotReady())
+                if (readyParser.Ready())
                 {
                     if ((upstreamSelectObjectManager.HasFirst || upstreamSelectObjectManager.HasSkip || upstreamSelectObjectManager.HasIndex) && PreviousRecord != null)
                     {

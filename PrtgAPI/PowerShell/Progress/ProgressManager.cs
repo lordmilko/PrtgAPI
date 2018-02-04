@@ -486,7 +486,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
         }
 
-        internal NotReadyParser notReady;
+        internal ReadyParser readyParser;
         private MultiOperationRecordAnalyzer multiOperationAnalyzer;
 
         private AbortProgressParser abortProgress = new AbortProgressParser();
@@ -625,7 +625,7 @@ namespace PrtgAPI.PowerShell.Progress
                     downstreamSelectObjectManager = null;
             }
 
-            notReady = new NotReadyParser(this);
+            readyParser = new ReadyParser(this);
             multiOperationAnalyzer = new MultiOperationRecordAnalyzer(this);
 
             CalculateProgressScenario();
@@ -846,7 +846,7 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (upstreamSelectObjectManager != null)
                         {
-                            if (notReady.NotReady())
+                            if (!readyParser.Ready())
                                 return false;
                         }
                         else
@@ -854,7 +854,7 @@ namespace PrtgAPI.PowerShell.Progress
                     }
                     else
                     {
-                        if (notReady.NotReady())
+                        if (!readyParser.Ready())
                             return false;
                     }
                 }

@@ -121,7 +121,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool ReceivedLastRecord => ReceivedLastSelectObjectRecord || ReceivedLastNormalCmdletRecord;
 
-        public bool ReceivedLastSelectObjectRecord => !manager.notReady.NotReady() && IsPipeFromSelectObject;
+        public bool ReceivedLastSelectObjectRecord => manager.readyParser.Ready() && IsPipeFromSelectObject;
 
         /// <summary>
         /// Indicates whether the current <see cref="PrtgMultiOperationCmdlet"/> has received the last record from the previous record-generating cmdlet, or from the variable pumping records directly into it.

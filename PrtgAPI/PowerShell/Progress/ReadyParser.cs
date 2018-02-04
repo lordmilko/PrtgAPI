@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace PrtgAPI.PowerShell.Progress
 {
-    class NotReadyParser
+    class ReadyParser
     {
         private SelectObjectManager selectObject;
 
@@ -16,7 +16,7 @@ namespace PrtgAPI.PowerShell.Progress
         public bool PipeFromVariableWithProgress => manager.PipeFromVariableWithProgress;
         public Pipeline EntirePipeline => manager.EntirePipeline;
 
-        public NotReadyParser(ProgressManager manager)
+        public ReadyParser(ProgressManager manager)
         {
             this.manager = manager;
 
@@ -26,37 +26,37 @@ namespace PrtgAPI.PowerShell.Progress
             previousManager = previousCmdlet?.ProgressManager;
         }
 
-        public bool NotReady()
+        public bool Ready()
         {
             if (manager.UnsupportedSelectObjectProgress)
-                return false;
+                return true;
 
             if (manager.upstreamSelectObjectManager == null)
-                return false;
+                return true;
 
             var firstCmdlet = manager.upstreamSelectObjectManager.Commands.Last();
 
             if (firstCmdlet.HasFirst)
-                return NotReadyFirst();
+                return ReadyFirst();
             if (firstCmdlet.HasLast)
-                return NotReadyLast();
+                return ReadyLast();
             if (firstCmdlet.HasSkip)
-                return NotReadySkip();
+                return ReadySkip();
             if (firstCmdlet.HasSkipLast)
-                return NotReadySkipLast();
+                return ReadySkipLast();
             if (firstCmdlet.HasIndex)
-                return NotReadyIndex();
+                return ReadyIndex();
 
-            return false;
+            return true;
         }
 
-        private bool NotReadyFirst()
+        private bool ReadyFirst()
         {
             if (PipeFromVariableWithProgress)
             {
                 //12.1c: Variable -> Select -First -> Table
                 if (EntirePipeline.CurrentIndex + 1 < selectObject.First)
-                    return true;
+                    return false;
             }
             else
             {
@@ -65,67 +65,41 @@ namespace PrtgAPI.PowerShell.Progress
 
                 //12.1a: Get-Probe -Count 3 | Select -First 2 | Get-Device
                 if (previousManager.recordsProcessed < selectObject.First)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool NotReadyFirst_Skip()
-        {
-            if (PipeFromVariableWithProgress)
-            {
-                //12.6b: Variable -> Select -First -Skip -> Table
-                if (Pipeline.CurrentIndex + 1 >= selectObject.First + selectObject.Skip)
-                    return false;
-
-                //12.7b: Variable -> Select -First -> Select -Skip -> Table
-                if (Pipeline.CurrentIndex + 1 >= selectObject.First && selectObject.SplitOverTwo)
-                    return false;
-            }
-            else
-            {
-                //12.2b: Table -> Select -First -Skip -> Table
-                if (previousManager.recordsProcessed >= selectObject.First + selectObject.Skip)
-                    return false;
-
-                //12.3b: Table -> Select -First -> Select -Skip -> Table
-                if (previousManager.recordsProcessed >= selectObject.First && selectObject.SplitOverTwo)
                     return false;
             }
 
             return true;
         }
 
-        private bool NotReadyLast()
+        private bool ReadyLast()
         {
             if (Pipeline == null)
-                return false;
+                return true;
 
             //13.1a: Table -> Select -Last -> Table
             if (Pipeline.CurrentIndex + 1 < Pipeline.List.Count)
-                return true;
+                return false;
 
-            return false;
+            return true;
         }
         
-        private bool NotReadySkip()
+        private bool ReadySkip()
         {
             if (PipeFromVariableWithProgress) //todo: why isnt this causing a null reference exception in 102.3c?
             {
                 //14.1c: Variable -> Select -Skip -> Table
                 if (Pipeline.CurrentIndex >= Pipeline.List.Count - 1)
-                    return false;
+                    return true;
             }
 
             //14.1a: Table -> Select -Skip -> Table
-            return true;
+            return false;
         }
 
-        private bool NotReadySkipLast()
+        private bool ReadySkipLast()
         {
             if (Pipeline == null)
-                return false;
+                return true;
 
             if (PipeFromVariableWithProgress)
             {
@@ -133,9 +107,9 @@ namespace PrtgAPI.PowerShell.Progress
                 var maxCount = EntirePipeline.List.Count - selectObject.TotalAnySkip;
 
                 if (Pipeline.CurrentIndex + 1 == maxCount)
-                    return false;
+                    return true;
 
-                return true;
+                return false;
             }
             else
             {
@@ -147,29 +121,29 @@ namespace PrtgAPI.PowerShell.Progress
                     var maxCount = total - selectObject.TotalAnySkip;
 
                     if (Pipeline.CurrentIndex + 1 == maxCount)
-                        return false;
+                        return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
-        private bool NotReadyIndex()
+        private bool ReadyIndex()
         {
             if (PipeFromVariableWithProgress)
             {
                 //16.1c: Variable -> Select -Index -> Table
                 if (Pipeline.CurrentIndex + 1 == selectObject.Index.Last() + 1)
-                    return false;
+                    return true;
             }
             else
             {
                 //16.1a: Table -> Select -Index -> Table
                 if (previousManager.recordsProcessed == selectObject.Index.Last() + 1)
-                    return false;
+                    return true;
             }
 
-            return true;
+            return false;
         }
     }
 }
