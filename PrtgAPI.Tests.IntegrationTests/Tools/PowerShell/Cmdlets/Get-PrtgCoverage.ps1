@@ -20,31 +20,3 @@
 
     start $dir\index.htm
 }
-
-function GetProjectRoot
-{
-    $path = (Get-Module "PrtgAPI.Tests").Path | split-path
-
-    Write-Host "path is $path"
-
-    $junction = gi $path | select -expand target
-
-    if($junction -ne $null)
-    {
-        $path = $junction
-    }
-
-    $moduleName = "PrtgAPI.Tests.IntegrationTests"
-    $rootIndex = $path.ToLower().IndexOf($moduleName.ToLower())
-
-    if($rootIndex -eq -1)
-    {
-        throw "Could not identity root folder"
-    }
-
-    $rootFolder = $path.Substring(0, $rootIndex)      # e.g. C:\PrtgAPI
-
-    Write-Host -ForegroundColor Cyan "Building PrtgAPI from $rootFolder"
-
-    return $rootFolder
-}
