@@ -144,7 +144,6 @@
     <Compile Include="ObjectTests\TestResponses\Objects\SensorSettingsResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\FailedRequestResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\FaultyTableResponse.cs" />
-    <Compile Include="ObjectTests\TestResponses\GroupResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\LocationUnresolvedResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\LogAddressValidatorResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\MultiTypeResponse.cs" />
