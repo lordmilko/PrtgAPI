@@ -117,4 +117,24 @@ Describe "Set-ObjectProperty_IT" {
         $newDevice = Get-Device -Id (Settings Device)
         $newDevice.Interval | Should Be "00:05:00"
     }
+
+    function SetDirect($property, $value)
+    {
+        $object = Get-Sensor -Id (Settings UpSensor)
+
+        $initialValue = $object | Get-ObjectProperty $property
+        $object | Set-ObjectProperty $property $value
+
+        $newValue = $object | Get-ObjectProperty $property
+
+        $newValue | Should Not Be $initialValue
+        $newValue | Should Be $value
+
+        $object | Set-ObjectProperty $property $initialValue
+    }
+
+    It "can set direct properties" {
+        SetDirect "InheritTriggers" $false
+        SetDirect "Comments" "test comment!"
+    }
 }

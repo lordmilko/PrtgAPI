@@ -17,6 +17,7 @@ LONG DESCRIPTION
 
     Yes       : Supported
     No        : Not currently supported
+	Direct    : Supports Get and Set, however can only be Get via direct requests
     N/A       : Not Applicable
 
     This help topic describes properties that are supported on Devices, Groups and Probes. For information about
@@ -158,6 +159,11 @@ LONG DESCRIPTION
     | Device Type                 | Get | Set | Description                                                          |
     | --------------------------- | --------- | -------------------------------------------------------------------- |
     | AutoDiscoveryMode           |    Yes    | Specifies how detailed auto-discovery operations should be           |
+
+	| Other                       | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | InheritTriggers             |   Direct  | Whether to inherit notification triggers.                            |
+    | Comments                    |   Direct  | Any comments aplied to this object                                   |
 
 EXAMPLES
     Set the Windows UserName to "Administrator" on all probes named "contoso"

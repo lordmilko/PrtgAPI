@@ -20,6 +20,12 @@ namespace PrtgAPI
         GetObjectProperty,
 
         /// <summary>
+        /// Alternate method of retrieveing the value of a <see cref="Property"/> for a specified PRTG Object. Does not support all <see cref="Property"/> values.
+        /// </summary>
+        [Description("getobjectstatus.htm")]
+        GetObjectStatus,
+
+        /// <summary>
         /// Retrieve the total number sensors in each sensor status (up, down, paused, etc) on a PRTG Server.
         /// </summary>
         [Description("gettreenodestats.xml")]

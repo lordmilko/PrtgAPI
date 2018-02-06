@@ -129,12 +129,6 @@ LONG DESCRIPTION
     | SqlTransactionMode         |    Yes    | The SQL transaction mode PRTG should use for the SQL query file |
     | SqlProcessingMode          | GetDirect | How to handle the data returned from the SQL query file         |
 
-    | Other                      | Get | Set | Description                                                     |
-    | -------------------------- | --------- | --------------------------------------------------------------- |
-    | InheritTriggers            | No  | Yes | Whether to inherit notification triggers. To retrieve the value |
-    |                            |           | of this property, use property NotificationTypes of Sensors,    |
-    |                            |           | Devices, Groups and Probes                                      |
-
 EXAMPLES
     Retrieve all object properties of sensor with ID 1001
 

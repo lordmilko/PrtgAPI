@@ -1710,7 +1710,7 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
 
-            var response = requestEngine.ExecuteRequest(XmlFunction.GetObjectProperty, parameters);
+            var response = requestEngine.ExecuteRequest(GetGetObjectPropertyFunction(property), parameters);
 
             return ValidateRawObjectProperty(response, parameters);
         }
@@ -1726,9 +1726,17 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
 
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.GetObjectProperty, parameters).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(GetGetObjectPropertyFunction(property), parameters).ConfigureAwait(false);
 
             return ValidateRawObjectProperty(response, parameters);
+        }
+
+        private XmlFunction GetGetObjectPropertyFunction(string property)
+        {
+            if (property.TrimEnd('_').ToLower() == "comments")
+                return XmlFunction.GetObjectStatus;
+
+            return XmlFunction.GetObjectProperty;
         }
 
         private string ValidateRawObjectProperty(XDocument response, GetObjectPropertyRawParameters parameters)

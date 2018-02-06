@@ -1029,7 +1029,6 @@ namespace PrtgAPI
         /// A <see cref="SqlServerQueryTarget"/> describing the SQL query file used to query a database. This value can only be retrieved via direct calls to PRTG.<para/>
         /// Corresponds to Data -> SQL Query File.
         /// </summary>
-        [Description("sqlquery")]
         [TypeLookup(typeof(SpecialPropertySettings))]
         [Category(nameof(ObjectPropertyCategory.Data))]
         SqlServerQuery,
@@ -1064,7 +1063,6 @@ namespace PrtgAPI
         /// can only be retrieved via direct calls to PRTG.<para/>
         /// Corresponds to Data -> Data Processing.
         /// </summary>
-        [Description("executionmode")]
         [TypeLookup(typeof(SpecialPropertySettings))]
         [Category(nameof(ObjectPropertyCategory.Data))]
         SqlProcessingMode,
@@ -1073,13 +1071,21 @@ namespace PrtgAPI
 
         /// <summary>
         /// Whether to inherit notification triggers from the parent object.<para/>
-        /// Corresponds to Notifications Tab -> Trigger Inheritance<para/>
+        /// Corresponds to Notifications Tab -> Trigger Inheritance.<para/>
         /// To retrieve the value of this property, use <see cref="SensorOrDeviceOrGroupOrProbe.NotificationTypes"/> 
         /// </summary>
-        [Description("inherittriggers")]
         [TypeLookup(typeof(SpecialPropertySettings))]
         [Category(nameof(ObjectPropertyCategory.Special))]
         InheritTriggers,
+
+        /// <summary>
+        /// Any comments applied to the object.<para>
+        /// Corresponds to Comments Tab -> Comments.</para>
+        /// </summary>
+        [DescriptionAttribute("comments")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [Category(nameof(ObjectPropertyCategory.Special))]
+        Comments,
 
         #endregion
         #region Devices

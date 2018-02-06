@@ -186,22 +186,4 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 
         $source.Id | Should Be $sensors.Id
     }
-    
-    Context "Other" {
-        It "Triggers" {
-            $object = Get-Sensor -Id (Settings UpSensor)
-
-            $initialValue = $object.NotificationTypes.InheritTriggers
-
-            $object | Set-ObjectProperty InheritTriggers $false
-
-            $newObject = Get-Sensor -Id (Settings UpSensor)
-
-            $newValue = $newObject.NotificationTypes.InheritTriggers
-
-            $newValue | Should Not Be $initialValue
-
-            $newValue | Should Be $false
-        }
-    }
 }

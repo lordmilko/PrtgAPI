@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Serialization;
 
 namespace PrtgAPI.Objects.Undocumented
 {
@@ -23,12 +24,18 @@ namespace PrtgAPI.Objects.Undocumented
 
         public string AmazonSecretKey { get; set; }
 
+        [XmlElement("injected_inherittriggers")]
         public bool? InheritTriggers { get; set; }
+
+        [XmlElement("injected_comments")]
+        public string Comments { get; set; }
 
         public string Host { get; set; }
 
+        [XmlElement("injected_sqlquery")]
         public SqlServerQueryTarget SqlServerQuery { get; set; }
 
+        [XmlElement("injected_executionmode")]
         public SqlProcessingMode SqlProcessingMode { get; set; }
     }
 }
