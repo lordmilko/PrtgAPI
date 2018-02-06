@@ -8,7 +8,6 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for creating a new WMI Service sensor.
     /// </summary>
-    [NamePrefix]
     public class WmiServiceSensorParameters : SensorParametersInternal
     {
         /// <summary>

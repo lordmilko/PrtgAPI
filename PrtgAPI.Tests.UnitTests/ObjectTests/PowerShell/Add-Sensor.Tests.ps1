@@ -37,7 +37,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $sensor = $device | Add-Sensor $params -Resolve
 
-        $sensor.Id | Should Be 1002
+        $sensor.Id | Should Be 1000
     }
 
     function GetItemSubset($skip, $select)
@@ -106,5 +106,15 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
         SetAddressValidatorResponse "addsensor5.htm?name_=Service"
 
         $device | Add-Sensor $params -Resolve:$false
+    }
+
+    It "adds a sensor from sensor parameters piped from Get-SensorTarget" {
+        SetMultiTypeResponse
+
+        Get-Device -Count 1 | Get-SensorTarget ExeXml *test* -Parameters | Add-Sensor -Resolve:$false
+    }
+
+    It "throws piping sensors not created by Get-SensorTarget" {
+        { New-SensorParameters ExeXml | Add-Sensor } | Should Throw "Only sensor parameters created by Get-SensorTarget can be piped"
     }
 }

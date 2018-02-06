@@ -140,4 +140,38 @@ Describe "Add-Sensor_IT" {
             $newSensor | Remove-Object -Force
         }
     }
+
+    Context "WmiService" {
+        It "adds a new sensor" {
+
+            $device = Get-Device -Id (Settings Device)
+
+            $params = New-SensorParameters WmiService
+
+            $services = $device | Get-SensorTarget WmiService *prtg*
+            $services.Count | Should Be 2
+
+            $params.Services = $services
+
+            $sensors = $device | Add-Sensor $params
+
+            $sensors.Count | Should Be 2
+
+            $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
+            $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+
+            $sensors | Remove-Object -Force
+        }
+    }
+
+    It "adds sensor parameters piped from Get-SensorTarget" {
+        $sensors = Get-Device -Id (Settings Device) | Get-SensorTarget WmiService *prtg* -Parameters | Add-Sensor
+
+        $sensors.Count | Should Be 2
+
+        $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
+        $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+
+        $sensors | Remove-Object -Force
+    }
 }

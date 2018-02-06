@@ -11,6 +11,8 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     public abstract class SensorParametersInternal : NewSensorParameters
     {
+        internal Device targetDevice;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SensorParametersInternal"/> class.
         /// </summary>

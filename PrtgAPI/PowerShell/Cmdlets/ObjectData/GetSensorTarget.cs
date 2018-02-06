@@ -129,7 +129,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 s => s.Name
             );
 
-        private NewSensorParameters ParametersNotSupported<T>(List<T> items)
+        private SensorParametersInternal ParametersNotSupported<T>(List<T> items)
         {
             throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported");
         }
@@ -148,7 +148,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void GetTargets<T>(
             string typeDescription,
             Func<int, Func<int, bool>, List<T>> getItems,
-            Func<List<T>, NewSensorParameters> createParams,
+            Func<List<T>, SensorParametersInternal> createParams,
             params Func<T, string>[] nameProperties)
         {
             if (nameProperties.Length == 0)
@@ -182,10 +182,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return true;
         }
 
-        private void Write<T>(List<T> items, Func<List<T>, NewSensorParameters> createParams)
+        private void Write<T>(List<T> items, Func<List<T>, SensorParametersInternal> createParams)
         {
             if (Parameters)
-                WriteObject(createParams(items));
+            {
+                var parameters = createParams(items);
+                parameters.targetDevice = Device;
+
+                WriteObject(parameters);
+            }
             else
             {
                 foreach (var item in items)

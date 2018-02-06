@@ -65,14 +65,43 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Device</para>
     /// <para type="link">New-SensorParameters</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true, DefaultParameterSetName = "Default")]
     public class AddSensor : AddObject<NewSensorParameters, Sensor, Device>
     {
+        /// <summary>
+        /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Target")]
+        public new NewSensorParameters Parameters
+        {
+            get { return base.Parameters; }
+            set { base.Parameters = value; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AddSensor"/> class.
         /// </summary>
         public AddSensor() : base(BaseType.Sensor, CommandFunction.AddSensor5)
         {
+        }
+
+        /// <summary>
+        /// Performs record-by-record processing functionality for the cmdlet.
+        /// </summary>
+        protected override void ProcessRecordEx()
+        {
+            if (ParameterSetName == "Default")
+                base.ProcessRecordEx();
+            else
+            {
+                var internalParams = Parameters as SensorParametersInternal;
+
+                if (internalParams?.targetDevice != null)
+                    AddObjectInternal(internalParams.targetDevice);
+                else
+                    throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters");
+            }
         }
 
         /// <summary>

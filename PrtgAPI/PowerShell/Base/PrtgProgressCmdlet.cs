@@ -339,7 +339,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="type">The type whose description should be retrieved.</param>
         /// <returns>The type's name or description.</returns>
-        protected static string GetTypeDescription(Type type)
+        internal static string GetTypeDescription(Type type)
         {
             var attribute = type.GetCustomAttribute<DescriptionAttribute>();
 

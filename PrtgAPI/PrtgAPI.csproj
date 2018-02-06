@@ -51,7 +51,6 @@
     <Compile Include="Attributes\LengthLimitAttribute.cs" />
     <Compile Include="Attributes\LiteralValueAttribute.cs" />
     <Compile Include="Attributes\MutuallyExclusiveAttribute.cs" />
-    <Compile Include="Attributes\NamePrefixAttribute.cs" />
     <Compile Include="Attributes\NumericEnumAttribute.cs" />
     <Compile Include="Attributes\SecondaryPropertyAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />

@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         public Priority Priority
         {
-            get { return (Priority)GetCustomParameterEnumXml<Priority>(ObjectProperty.Priority); }
+            get { return (Priority)(GetCustomParameterEnumXml<Priority>(ObjectProperty.Priority) ?? Priority.Three); }
             set { SetCustomParameterEnumXml(ObjectProperty.Priority, value); }
         }
 

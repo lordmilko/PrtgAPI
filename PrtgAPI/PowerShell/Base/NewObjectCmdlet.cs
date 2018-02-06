@@ -81,7 +81,29 @@ namespace PrtgAPI.PowerShell.Base
 
             var after = ResolveObject(getObjects, a => !exceptFunc(before, a).Any());
 
-            return exceptFunc(before, after);
+            var newObjects = exceptFunc(before, after);
+
+            return CleanObjects(newObjects);
+        }
+
+        private List<T> CleanObjects<T>(List<T> newObjects)
+        {
+            if (newObjects.All(o => o is Sensor))
+            {
+                newObjects = newObjects.Cast<Sensor>().Select(o =>
+                {
+                    //When creating certain sensor types (such as OracleTablespace)
+                    //PRTG may sometimes prepend spaces to the front of the sensor name
+                    if (o.Name != o.Name.Trim(' '))
+                        client.RenameObject(o.Id, o.Name.Trim(' '));
+
+                    o = client.GetSensors(Property.Id, o.Id).First();
+
+                    return o;
+                }).Cast<T>().ToList();
+            }
+
+            return newObjects;
         }
     }
 }

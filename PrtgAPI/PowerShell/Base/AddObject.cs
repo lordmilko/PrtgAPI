@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
@@ -22,7 +22,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
         public TDestination Destination { get; set; }
 
         /// <summary>
@@ -46,25 +46,21 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"{Parameters.Name} {WhatIfDescription()}(Destination: {Destination.Name} (ID: {Destination.Id}))"))
+            AddObjectInternal(Destination);
+        }
+
+        internal void AddObjectInternal(TDestination destination)
+        {
+            if (ShouldProcess($"{Parameters.Name} {WhatIfDescription()}(Destination: {destination.Name} (ID: {destination.Id}))"))
             {
                 ExecuteOperation(() =>
                 {
                     if (Resolve)
                     {
-                        var nameOperator = FilterOperator.Equals;
-
-                        if (Attribute.GetCustomAttribute(typeof (Parameter), typeof (NamePrefixAttribute)) == null)
-                            nameOperator = FilterOperator.Contains;
-
-                        var filters = new[]
-                        {
-                            new SearchFilter(Property.ParentId, Destination.Id),
-                            new SearchFilter(Property.Name, nameOperator, Parameters.Name)
-                        };
+                        var filters = GetFilters(destination);
 
                         var obj = ResolveWithDiff(
-                            () => client.AddObject(Destination.Id, Parameters, function),
+                            () => client.AddObject(destination.Id, Parameters, function),
                             () => GetObjects(filters),
                             Except
                         ).OrderBy(o => o.Id);
@@ -72,9 +68,33 @@ namespace PrtgAPI.PowerShell.Base
                         WriteObject(obj, true);
                     }
                     else
-                        client.AddObject(Destination.Id, Parameters, function);
-                }, $"Adding PRTG {Destination.BaseType}s", $"Adding {type} '{Parameters.Name}' to {Destination.BaseType.ToString().ToLower()} ID {Destination.Id}");
+                        client.AddObject(destination.Id, Parameters, function);
+
+                }, $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s", $"Adding {type} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }
+        }
+
+        private SearchFilter[] GetFilters(TDestination destination)
+        {
+            var filters = new List<SearchFilter>()
+            {
+                new SearchFilter(Property.ParentId, destination.Id)
+            };
+
+            if (Parameters is NewSensorParameters)
+            {
+                //When creating new sensors, PRTG may dynamically assign a name based on the sensor's parameters.
+                //As such, we instead filter for sensors of the newly created type
+                var sensorType = Parameters[Parameter.SensorType];
+
+                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType.ToString();
+
+                filters.Add(new SearchFilter(Property.Type, str.ToLower()));
+            }
+            else
+                filters.Add(new SearchFilter(Property.Name, Parameters.Name));
+
+            return filters.ToArray();
         }
 
         private List<TObject> Except(List<TObject> before, List<TObject> after)

@@ -51,6 +51,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class AddDevice : AddObject<NewDeviceParameters, Device, GroupOrProbe>
     {
         /// <summary>
+        /// <para type="description">The parent object to create an object under.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Basic")]
+        public new GroupOrProbe Destination
+        {
+            get { return base.Destination; }
+            set { base.Destination = value; }
+        }
+
+        /// <summary>
         /// <para type="description">The name to use for the device. If a <see cref="Host"/> is not specified, this value will be used as the hostname as well.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Basic")]
