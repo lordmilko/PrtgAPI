@@ -30,7 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SpecifiedNoPass_Yields_PassHash()
         {
-            var url = CreateUrl(new Parameters.Parameters());
+            var url = CreateUrl(new Parameters.Parameters(), false);
 
             Assert.IsTrue(url.Contains("passhash=password"));
             Assert.IsFalse(url.Contains("password=password"));
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var url = CreateUrl(new Parameters.Parameters
             {
                 [Parameter.PassHash] = "password"
-            });
+            }, false);
 
             Assert.IsTrue(url.Contains("passhash=password"));
             Assert.IsFalse(url.Contains("password=password"));
@@ -54,7 +54,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var url = CreateUrl(new Parameters.Parameters
             {
                 [Parameter.Password] = "password"
-            });
+            }, false);
 
             Assert.IsFalse(url.Contains("passhash=password"));
             Assert.IsTrue(url.Contains("password=password"));
@@ -73,7 +73,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.FilterXyz] = new[] {new SearchFilter(Property.Name, "dc1")}
             });
 
-            Assert.IsTrue(urlWithArray == urlWithoutArray);
+            var expected = "filter_name=dc1";
+            Assert.AreEqual(expected, urlWithoutArray, "URL without array was not correct");
+            Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
         [TestMethod]
@@ -89,7 +91,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.Columns] = new[] {Property.Id }
             });
 
-            Assert.IsTrue(urlWithArray == urlWithoutArray);
+            var expected = "columns=objid";
+            Assert.AreEqual(expected, urlWithoutArray, "URL without array was not correct");
+            Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
         [TestMethod]
@@ -105,11 +109,47 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.Custom] = new[] { new CustomParameter("foo", "bar") }
             });
 
-            Assert.IsTrue(urlWithArray == urlWithoutArray);
+            var expected = "foo=bar";
+            Assert.AreEqual(expected, urlWithoutArray, "URL without array was not correct");
+            Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
         [TestMethod]
-        public void PrtgUrl_ParameterValue_With_EnumFlags()
+        public void PrtgUrl_SearchFilter_FromParameters_With_EnumFlags()
+        {
+            var flagsParameters = new SensorParameters
+            {
+                Status = new[] {Status.Paused}
+            };
+
+            flagsParameters.GetParameters().Remove(Parameter.Content);
+            flagsParameters.GetParameters().Remove(Parameter.Columns);
+            flagsParameters.GetParameters().Remove(Parameter.Count);
+
+            var flagsUrl = CreateUrl(flagsParameters);
+
+            var manualParameters = new SensorParameters
+            {
+                Status = new[]
+                {
+                    Status.PausedByUser, Status.PausedByDependency, Status.PausedBySchedule, Status.PausedByLicense,
+                    Status.PausedUntil
+                }
+            };
+
+            manualParameters.GetParameters().Remove(Parameter.Content);
+            manualParameters.GetParameters().Remove(Parameter.Columns);
+            manualParameters.GetParameters().Remove(Parameter.Count);
+
+            var manualUrl = CreateUrl(manualParameters);
+
+            var expected = "filter_status=7&filter_status=8&filter_status=9&filter_status=11&filter_status=12";
+            Assert.AreEqual(expected, flagsUrl, "Flags URL was not correct");
+            Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
+        }
+
+        [TestMethod]
+        public void PrtgUrl_FilterValue_With_EnumFlags()
         {
             //Specifying FilterXyz doesn't actually make sense here (we should be using a SearchFilter) however
             //the point of the test is to validate flag parsing
@@ -129,7 +169,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                     }.ToList().Select(s => new SearchFilter(Property.Status, s)).ToArray()
             });
 
-            Assert.IsTrue(flagsUrl == manualUrl);
+            var expected = "filter_status=7&filter_status=8&filter_status=9&filter_status=11&filter_status=12";
+            Assert.AreEqual(expected, flagsUrl, "Flags URL was not correct");
+            Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
         }
 
         [TestMethod]
@@ -151,7 +193,9 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             });
 
-            Assert.IsTrue(flagsUrl == manualUrl);
+            var expected = "filter_status=7&filter_status=8&filter_status=9&filter_status=11&filter_status=12";
+            Assert.AreEqual(expected, flagsUrl, "Flags URL was not correct");
+            Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
         }
 
         [TestMethod]
@@ -172,9 +216,20 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             
         }
 
-        private string CreateUrl(Parameters.Parameters parameters)
+        private string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
         {
             var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);
+
+            if (truncate)
+            {
+                var suffix = "https://prtg.example.com/api/table.xml?";
+                var prefix = $"&username=username&passhash=password";
+
+                Assert.IsTrue(url.Url.StartsWith(suffix), "URL did not start with suffix");
+                Assert.IsTrue(url.Url.EndsWith(prefix), "URL did not end with prefix");
+
+                return url.Url.Substring(suffix.Length, url.Url.Length - (suffix.Length + prefix.Length));
+            }
 
             return url.Url;
         }

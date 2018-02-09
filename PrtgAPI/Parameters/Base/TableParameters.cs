@@ -158,7 +158,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <typeparam name="TArray">The type of array to store.</typeparam>
         /// <param name="property">The property to set the value of.</param>
-        /// <param name="value">THe values to filter for. If this value is null the filters will be removed.</param>
+        /// <param name="value">The values to filter for. If this value is null the filters will be removed.</param>
         protected void SetMultiParameterFilterValue<TArray>(Property property, TArray[] value)
         {
             var filters = (List<SearchFilter>)this[Parameter.FilterXyz] ?? new List<SearchFilter>();

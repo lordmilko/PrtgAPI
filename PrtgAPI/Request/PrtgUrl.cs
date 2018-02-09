@@ -251,11 +251,12 @@ namespace PrtgAPI.Request
 
             foreach (var obj in enumerable)
             {
-                //todo: change this to be toxml()
-                builder.Append(HttpUtility.UrlEncode(obj.GetType().IsEnum ? ((Enum)obj).GetDescription() : Convert.ToString(obj)) + ",");
+                if(obj != null)
+                    builder.Append(HttpUtility.UrlEncode(obj.GetType().IsEnum ? ((Enum)obj).GetDescription() : Convert.ToString(obj)) + ",");
             }
 
-            builder.Length--;
+            if(builder.Length > 0)
+                builder.Length--;
 
             return builder.ToString().ToLower();
         }
@@ -278,16 +279,7 @@ namespace PrtgAPI.Request
                 {
                     var filter = (SearchFilter)val;
 
-                    string result = null;
-
-                    if (filter.Value.GetType().IsEnum)
-                    {
-                        var e = (Enum) filter.Value;
-
-                        result = FormatFlagEnum(e, v => filter.ToString(v));
-                    }
-
-                    query = result ?? ((SearchFilter)val).ToString();
+                    query = FormatMultiParameterFilter(filter, filter.Value);
                 }
                 else if(val.GetType().IsEnum) //If it's an enum other than FilterXyz
                 {
@@ -307,6 +299,36 @@ namespace PrtgAPI.Request
                 builder.Length--;
 
             return builder.ToString();
+        }
+
+        private string FormatMultiParameterFilter(SearchFilter filter, object value)
+        {
+            string query;
+
+            string result = null;
+
+            if (value.GetType().IsEnum)
+            {
+                var e = (Enum)value;
+
+                result = FormatFlagEnum(e, filter.ToString);
+            }
+
+            if (result != null)
+                query = result;
+            else
+            {
+                if (value is IEnumerable && !(value is string))
+                {
+                    var formatted = ((IEnumerable)value).Cast<object>().Select(o => FormatMultiParameterFilter(filter, o));
+
+                    query = string.Join("&", formatted);
+                }
+                else
+                    query = filter.ToString(value);
+            }
+
+            return query;
         }
 
         /// <summary>
