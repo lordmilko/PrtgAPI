@@ -50,7 +50,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "doesn't stream when piped from a normal object" {
-        SetAddressValidatorResponse "count=50000&id=3000&filter_drel=7days"
+        SetAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
 
         Get-Device -Count 1 | Get-ObjectLog
     }
@@ -62,7 +62,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "retrieves from the last week when a timespan isn't specified" {
-        SetAddressValidatorResponse "count=50000&id=3000&filter_drel=7days"
+        SetAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
 
         Get-Device -Count 1 | Get-ObjectLog
     }
@@ -74,7 +74,7 @@ Describe "Get-ObjectLog" {
         $start = $end.AddDays(-7)
         $startStr = $start.ToString("yyyy-MM-dd-HH-mm-ss")
         
-        SetAddressValidatorResponse "count=50000&id=3000&filter_dend=$endStr&filter_dstart=$startStr"        
+        SetAddressValidatorResponse "count=*&id=3000&filter_dend=$endStr&filter_dstart=$startStr"        
 
         Get-Device -Count 1 | Get-ObjectLog -StartDate $end
     }
@@ -116,7 +116,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "filters by name" {
-        SetAddressValidatorResponse "count=50000&id=3000&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
+        SetAddressValidatorResponse "count=*&id=3000&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
 
         $logs = Get-Device -Count 1 | Get-ObjectLog "WMI Remote Ping1"
 

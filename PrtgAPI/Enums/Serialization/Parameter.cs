@@ -50,7 +50,7 @@ namespace PrtgAPI
         Output,
 
         /// <summary>
-        /// Maximum number of records returned from a PRTG Request. Maximum: 50000
+        /// Maximum number of records returned from a PRTG Request.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
         Count,

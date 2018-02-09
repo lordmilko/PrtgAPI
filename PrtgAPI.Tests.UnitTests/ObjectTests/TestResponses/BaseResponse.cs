@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             List<XElement> xmlList = null;
             var count = list.Count;
 
-            if (queries["count"] != null)
+            if (queries["count"] != null && queries["count"] != "*")
             {
                 var c = Convert.ToInt32(queries["count"]);
 

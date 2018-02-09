@@ -14,11 +14,6 @@ namespace PrtgAPI.Parameters
         private static Property[] defaultProperties = GetDefaultProperties();
 
         /// <summary>
-        /// Maximum number of items that can be returned in a single request.
-        /// </summary>
-        private static readonly int MaxTableItems = 50000;
-
-        /// <summary>
         /// The type of content this request will retrieve.
         /// </summary>
         public Content Content => (Content)this[Parameter.Content];
@@ -36,10 +31,27 @@ namespace PrtgAPI.Parameters
         /// Maximum number of records to return. To retrieve all records in a single request, set this value to a very high number.<para/>
         /// If this value is less than the total number of records available, additional records can be obtained by requesting the next <see cref="Page"/>.
         /// </summary>
-        public int Count
+        public int? Count
         {
-            get { return (int)this[Parameter.Count]; }
-            set { this[Parameter.Count] = value; }
+            get
+            {
+                var val = this[Parameter.Count];
+
+                if (val == null)
+                    return null;
+
+                if (val.ToString() == "*")
+                    return null;
+
+                return (int) val;
+            }
+            set
+            {
+                if (value == null)
+                    this[Parameter.Count] = "*";
+                else
+                    this[Parameter.Count] = value;
+            }
         }
 
         /// <summary>
@@ -58,9 +70,9 @@ namespace PrtgAPI.Parameters
         {
             get
             {
-                if (Start == 0 || Start == null)
+                if (Start == 0 || Start == null || Count == null)
                     return 1;
-                return (Start.Value/Count) + 1;
+                return (Start.Value/Count.Value) + 1;
             }
             set { Start = (value - 1)*Count; }
         }
@@ -72,7 +84,7 @@ namespace PrtgAPI.Parameters
         {
             this[Parameter.Content] = content;
             Properties = defaultProperties;
-            Count = MaxTableItems;
+            Count = null;
         }
 
         static Property[] GetDefaultProperties()

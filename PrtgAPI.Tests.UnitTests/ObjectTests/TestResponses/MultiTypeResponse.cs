@@ -100,7 +100,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 var countStr = components["count"];
 
-                if (countStr != null && countStr != "0" && countStr != "500" && countStr != "50000")
+                if (countStr != null && countStr != "0" && countStr != "500" && countStr != "*")
                     count = Convert.ToInt32(countStr);
 
                 if (components["filter_objid"] != null)

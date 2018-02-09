@@ -228,7 +228,7 @@ namespace PrtgAPI
             {
                 tasks.Add(GetObjectsAsync<T>(parameters));
 
-                i = i + parameters.Count;
+                i = i + parameters.Count.Value;
                 parameters.Page++;
 
                 if (totalObjects - i < parameters.Count)
@@ -261,7 +261,7 @@ namespace PrtgAPI
                 foreach (var obj in response)
                     yield return obj;
 
-                i = i + parameters.Count;
+                i = i + parameters.Count.Value;
                 parameters.Page++;
 
                 if (totalObjects - i < parameters.Count)
