@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new DeviceResponse(probe.Groups.First(g => g.Name == "Servers").Devices.Select(d => d.GetTestItem()).ToArray());
 
                 default:
-                    throw UnknownRequest();
+                    throw UnknownRequest(address);
             }
         }
     }

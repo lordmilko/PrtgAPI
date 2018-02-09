@@ -19,5 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         GroupUniqueChildGroup,
         GroupDuplicateChildGroup,
         GroupNoRecurse,
+
+        GroupDeepNesting
     }
 }

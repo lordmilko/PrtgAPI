@@ -53,7 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new SensorResponse(probe.Groups.Where(g => g.Name == "Servers").SelectMany(g => g.GetSensors(false).Select(s => s.GetTestItem())).ToArray());
 
                 default:
-                    throw UnknownRequest();
+                    throw UnknownRequest(address);
             }
         }
     }

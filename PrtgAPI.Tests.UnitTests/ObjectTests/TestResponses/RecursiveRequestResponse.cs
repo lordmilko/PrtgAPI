@@ -61,6 +61,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case RecursiveRequestScenario.GroupNoRecurse:
                     this.scenario = new GroupNoRecurseScenario();
                     break;
+                case RecursiveRequestScenario.GroupDeepNesting:
+                    this.scenario = new GroupDeepNestingScenario();
+                    break;
                 #endregion
 
                 default:

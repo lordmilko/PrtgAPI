@@ -85,7 +85,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
 
             $sensors = Get-Group | Get-Sensor *
 
-            $sensors.Count | Should Be 6
+            $sensors.Count | Should Be 8
         }
 
         It "retrieves sensors from all groups with a duplicated name with -Recurse:`$false" {

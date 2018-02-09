@@ -406,7 +406,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 var objs = GetObjectsInternal(parameters);
 
-                GetAdditionalRecords(objs, parameters);
+                objs.AddRange(GetAdditionalRecords(parameters));
 
                 return objs;
             }
@@ -420,10 +420,10 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
-        /// <param name="objs">The list of records that were returned from the initial request.</param>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected virtual void GetAdditionalRecords(List<TObject> objs, TParam parameters)
+        protected virtual List<TObject> GetAdditionalRecords(TParam parameters)
         {
+            return new List<TObject>();
         }
     }
 }

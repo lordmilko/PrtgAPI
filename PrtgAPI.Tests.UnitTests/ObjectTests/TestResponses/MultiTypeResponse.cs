@@ -131,7 +131,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count));
                 case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count));
-                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", objid: (2000 + i).ToString()), count));
+                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count));
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
                 case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
                 case Content.Channels:  return new ChannelResponse(new ChannelItem());

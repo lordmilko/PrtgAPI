@@ -37,21 +37,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             switch (requestNum)
             {
                 case 1: //Get all groups. We say there is only one group, named "Servers"
-                case 2: //Get all groups under the parent group that match the initial filter
                     return base.GetResponse(address, content);
 
-                case 3: //Get all groups under the group
+                case 2: //Get all groups under the parent group that match the initial filter (returns "Windows Servers")
                     Assert.AreEqual(Content.Groups, content);
-                    Assert.IsTrue(address.Contains("filter_parentid=2000"));
+                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=2000"));
                     return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.Select(g => g.GetTestItem()).ToArray());
 
-                case 4: //Get all groups under the child group that match the initial filter
+                case 3: //Get all groups under the child group that match the initial filter (returns "Domain Controllers")
                     Assert.AreEqual(Content.Groups, content);
                     Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=2002"));
-                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.Where(g => g.Id == 2002).Select(g => g.GetTestItem()).ToArray());
+                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.First(g => g.Id == 2002).Groups.Select(g => g.GetTestItem()).ToArray());
 
                 default:
-                    throw UnknownRequest();
+                    throw UnknownRequest(address);
             }
         }
     }

@@ -31,7 +31,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         protected override IWebResponse GetResponse(string address, Content content)
         {
             GroupNode group;
-            DeviceNode device;
 
             switch (requestNum)
             {
@@ -49,26 +48,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     Assert.IsTrue(address.Contains("filter_parentid=2000"));
                     return new DeviceResponse(probe.Groups.First(g => g.Name == "Servers").Devices.Select(d => d.GetTestItem()).ToArray());
 
-                case 4: //Get all sensors under the first device
+                case 4: //Get all sensors under the first and second devices
                     Assert.AreEqual(Content.Sensors, content);
-                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=3000"));
+                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=3000&filter_parentid=3001"));
 
                     group = probe.Groups.First(g => g.Name == "Servers");
-                    device = group.Devices.First(d => d.Id == 3000);
 
-                    return new SensorResponse(device.Sensors.Select(s => s.GetTestItem()).ToArray());
-
-                case 5: //Get all sensors under the second device
-                    Assert.AreEqual(Content.Sensors, content);
-                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=3001"));
-
-                    group = probe.Groups.First(g => g.Name == "Servers");
-                    device = group.Devices.First(d => d.Id == 3001);
-
-                    return new SensorResponse(device.Sensors.Select(s => s.GetTestItem()).ToArray());
+                    return new SensorResponse(group.Devices.SelectMany(d => d.Sensors).Select(s => s.GetTestItem()).ToArray());
 
                 default:
-                    throw UnknownRequest();
+                    throw UnknownRequest(address);
             }
         }
     }

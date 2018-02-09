@@ -12,9 +12,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// In addition, the root node of PRTG containing all probes in the system is marked as a group. Get-Group provides a variety of methods of
     /// filtering the groups requested from PRTG, including by group name, ID and tags, as well as by parent probe/group. Multiple filters can be
     /// used in conjunction to further limit the number of results returned.</para>
+    /// 
     /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Device,
     /// a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value to filter upon.
     /// For more information on properties that can be filtered upon, see New-SearchFilter.</para>
+    /// 
+    /// <para type="description">When requesting groups belonging to a specified group, PRTG will not return any objects that may
+    /// be present under further child groups of the parent group (i.e. grandchildren). To work around this, by default Get-Groups will automatically recurse
+    /// child groups if it detects the initial group request did not return all items (as evidenced by the group's TotalGroups property.
+    /// If you do not wish Get-Group to recurse child groups, this behavior can be overridden by specifying -Recurse:$false.</para>
+    /// 
     /// <para type="description">The <see cref="Group"/> objects returned from Get-Group can be piped to a variety of other cmdlets for further processing,
     /// including Get-Group, Get-Device and Get-Sensor, where the ID or name of the group will be used to filter for child objects of the specified type.</para>
     /// 
@@ -41,6 +48,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Group -Count 1</code>
     ///     <para>Get only 1 group from PRTG.</para>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Group -Id 2001 | Get-Group -Recurse:$false</code>
+    ///     <para>Get all groups directly under the specified group, ignoring all grandchildren.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -71,14 +82,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
         }
 
+        internal override List<Group> GetObjectsInternal(GroupParameters parameters)
+        {
+            //No point getting child groups now, since we'll get them anyway when we get additional records
+            if (Group != null && Recurse && Group.TotalGroups > 0)
+                return new List<Group>();
+
+            return base.GetObjectsInternal(parameters);
+        }
+
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
-        /// <param name="groups">The list of records that were returned from the initial request.</param>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override void GetAdditionalRecords(List<Group> groups, GroupParameters parameters)
+        protected override List<Group> GetAdditionalRecords(GroupParameters parameters)
         {
-            GetAdditionalGroupRecords(Group, g => g.TotalGroups, groups, parameters);
+            return GetAdditionalGroupRecords(Group, g => g.TotalGroups, parameters);
         }
 
         /// <summary>

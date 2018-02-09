@@ -12,17 +12,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// in PRTG, and the most populous type of object in the system by far. Get-Sensor provides a variety of methods of filtering the sensors
     /// requested from PRTG, including by sensor name, ID, status and tags as well as parent probe/group/device. Multiple filters
     /// can be used in conjunction to further limit the number of results returned.</para>
+    /// 
     /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Sensor,
     /// a custom <see cref="SearchFilter"/> object can be created specifying the field name, condition and value to filter upon. For information
     /// on properties that can be filtered on, see New-SearchFilter. When searching for Sensor Factory objects, please note that these
     /// objects do not respond to server side filters by "type". To filter for Sensor Factory sensors, filter by the tag "factorysensor".</para>
+    /// 
     /// <para type="description">When invoked with no arguments, Get-Sensor will query the number of sensors present on your PRTG Server.
     /// If PrtgAPI detects the number is about a specified threshold, PrtgAPI will split the request up into several smaller requests
     /// which will each be invoked in parallel. Results will then be "streamed" to the pipeline in the order they arrive. A progress
     /// bar will also be visible up the top indicating the total number of sensors retrieved/remaining.</para>
+    /// 
     /// <para type="description">If you attempt to cancel a large request (Ctrl+C) and immediately issue another request (of any size),
     /// PRTG may fail to immediately respond until it has finished processing the request you initially issued. Please keep this in mind
     /// when dealing with systems with an extreme number of sensors (>10,000).</para>
+    /// 
+    /// <para type="description">When requesting sensors belonging to a specified group, PRTG will not return any objects that may
+    /// be present under further child groups of the parent group. To work around this, by default Get-Sensor will automatically recurse
+    /// child groups if it detects the initial sensor request did not return all items (as evidenced by the parent group's TotalSensors property.
+    /// If you do not wish Get-Sensor to recurse child groups, this behavior can be overridden by specifying -Recurse:$false.</para>
+    /// 
     /// <para type="description">The <see cref="Sensor"/> objects returned from Get-Sensor can be piped to a variety of other cmdlets for further
     /// processing, including Get-Channel, wherein the ID of the sensor will be used to acquire its underlying channels.</para>
     /// 
@@ -64,6 +73,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> flt type contains deprecated | Get-Sensor</code>
     ///     <para>Get all deprecated sensors.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Group -Id 2001 | Get-Sensor -Recurse:$false</code>
+    ///     <para>Get all sensors from devices directly under the specified group, ignoring all child groups.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Device</para>
@@ -108,26 +122,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 var groups = client.GetGroups(Property.Name, Group.Name);
 
                 //If more than 1 group with the specified name exists and we intend on recursing, get the sensors
-                //of each device under the group.
+                //of each device under the group (which will be identified via the group's ID).
                 if (groups.Count > 1 && Recurse)
                 {
-                    return GetObjectsFromGroupNameFilter(Group, null, parameters);
+                    client.Log($"Parent group name '{Group}' is not unique and -{Recurse} was specified; retrieving sensors by child devices");
+
+                    //Get the sensors under the parent group. We'll process all the child groups in GetAdditionalGroupRecords
+                    return GetSensorsFromGroupNameFilter(Group, true, parameters);
+                }
+                else
+                {
+                    if (Recurse)
+                        client.Log($"Parent group '{Group}' is unique; retrieving sensors by group name");
                 }
             }
 
             //If we aren't piping from a group, aren't recursing, or only have 1 group with the specified name,
-            //we can use the default implementation.
+            //we can use the default implementation, as referring to the group by name will be unambiguous. If
+            //we are recursing, we're retrieving the parent group's records; our children's records will be
+            //retrieved in GetAdditionalRecords
             return base.GetObjectsInternal(parameters);
         }
 
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
-        /// <param name="sensors">The list of records that were returned from the initial request.</param>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override void GetAdditionalRecords(List<Sensor> sensors, SensorParameters parameters)
+        protected override List<Sensor> GetAdditionalRecords(SensorParameters parameters)
         {
-            GetAdditionalGroupRecords(Group, g => g.TotalSensors, sensors, parameters);
+            return GetAdditionalGroupRecords(Group, g => g.TotalSensors, parameters);
         }
 
         /// <summary>

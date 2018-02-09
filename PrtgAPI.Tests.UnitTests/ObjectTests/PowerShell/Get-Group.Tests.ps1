@@ -87,5 +87,13 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
 
             $groups.Count | Should Be 1
         }
+
+        It "retrieves groups from a hierarchy 6 levels deep" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDeepNesting"
+
+            $groups = Get-Group | Get-Group *
+
+            $groups.Count | Should Be 33
+        }
     }
 }

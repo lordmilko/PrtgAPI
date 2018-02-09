@@ -5,7 +5,7 @@ using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes
 {
-    [DebuggerDisplay("Name: {Name,nq}, TotalGroups: {TotalGroups}, TotalDevices: {TotalDevices}, TotalSensors: {TotalSensors}")]
+    [DebuggerDisplay("Name: {Name,nq} ({Id}), TotalGroups: {TotalGroups}, TotalDevices: {TotalDevices}, TotalSensors: {TotalSensors}")]
     class GroupNode : TreeNode<GroupItem>, IGroupContainer, IDeviceContainer
     {
         public List<GroupNode> Groups { get; set; } = new List<GroupNode>();

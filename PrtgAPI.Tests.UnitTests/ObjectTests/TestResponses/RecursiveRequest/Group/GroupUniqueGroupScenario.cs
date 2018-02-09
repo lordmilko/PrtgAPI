@@ -44,7 +44,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.Select(g => g.GetTestItem()).ToArray());
 
                 default:
-                    throw UnknownRequest();
+                    throw UnknownRequest(address);
             }
         }
     }

@@ -11,9 +11,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-Device cmdlet retrieves devices from a PRTG Server. Devices hold sensors used to monitor a particular system.
     /// Get-Device provides a variety of methods of filtering the devices requested from PRTG, including by device name, ID and tags, as well as parent probe/group.
     /// Multiple filters can be used in conjunction to futher limit the number of results returned.</para>
+    /// 
     /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Device, a custom <see cref="SearchFilter"/>
     /// object can be created by specifying the field name, condition and value to filter upon. For information on properties that can be filtered upon,
     /// see New-SearchFilter.</para>
+    /// 
+    /// <para type="description">When requesting devices belonging to a specified group, PRTG will not return any objects that may
+    /// be present under further child groups of the parent group. To work around this, by default Get-Device will automatically recurse
+    /// child groups if it detects the initial device request did not return all items (as evidenced by the parent group's TotalDevices property.
+    /// If you do not wish Get-Device to recurse child groups, this behavior can be overridden by specifying -Recurse:$false.</para>
+    /// 
     /// <para type="description">The <see cref="Device"/> objects returned from Get-Device can be piped to a variety of other cmdlets for further processing, including Get-Sensor,
     /// wherein the ID of each device will be used to filter for its parent sensors.</para>
     /// 
@@ -50,6 +57,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> flt location contains "new york" | Get-Device</code>
     ///     <para>Get all devices whose location contains "new york"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Group -Id 2001 | Get-Device -Recurse:$false</code>
+    ///     <para>Get all devices directly under the specified group, ignoring all child groups.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -83,11 +95,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
-        /// <param name="devices">The list of records that were returned from the initial request.</param>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override void GetAdditionalRecords(List<Device> devices, DeviceParameters parameters)
+        protected override List<Device> GetAdditionalRecords(DeviceParameters parameters)
         {
-            GetAdditionalGroupRecords(Group, g => g.TotalDevices, devices, parameters);
+            return GetAdditionalGroupRecords(Group, g => g.TotalDevices, parameters);
         }
 
         /// <summary>

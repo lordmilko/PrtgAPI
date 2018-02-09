@@ -20,9 +20,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         protected abstract IWebResponse GetResponse(string address, Content content);
 
-        protected Exception UnknownRequest()
+        protected Exception UnknownRequest(string address)
         {
-            return new NotImplementedException($"Don't know how to handle request #{requestNum}");
+            return new NotImplementedException($"Don't know how to handle request #{requestNum}: {address}");
         }
     }
 }
