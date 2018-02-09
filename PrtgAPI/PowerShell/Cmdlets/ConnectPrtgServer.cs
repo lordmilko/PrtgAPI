@@ -121,7 +121,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (RetryDelay != null)
                     PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
 
-                if (Progress == false || (MyInvocation.ScriptName != string.Empty && !MyInvocation.ScriptName.EndsWith("Connect-GoPrtgServer.ps1")) || GetVariableValue("global:psISE") != null)
+                if (Progress == false || (!string.IsNullOrEmpty(MyInvocation.ScriptName) && !GoPrtgScript()) || GetVariableValue("global:psISE") != null)
                     PrtgSessionState.EnableProgress = false;
                 else
                     PrtgSessionState.EnableProgress = true;
@@ -130,6 +130,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 throw new Exception($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
             }
+        }
+
+        private bool GoPrtgScript()
+        {
+            var script = MyInvocation.ScriptName;
+
+            return script.EndsWith("Connect-GoPrtgServer.ps1") || script.EndsWith("Update-GoPrtgCredential.ps1");
         }
     }
 }
