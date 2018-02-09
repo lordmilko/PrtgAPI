@@ -3,9 +3,9 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class DeleteParameters : BaseActionParameters
+    class DeleteParameters : BaseMultiActionParameters
     {
-        public DeleteParameters(int objectId) : base(objectId)
+        public DeleteParameters(int[] objectIds) : base(objectIds)
         {
             this[Parameter.Approve] = 1;
         }

@@ -4,6 +4,8 @@ using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
+    //PRTG does not support batching move requests
+
     /// <summary>
     /// <para type="synopsis">Moves a device or group within the PRTG Object Tree.</para>
     /// 

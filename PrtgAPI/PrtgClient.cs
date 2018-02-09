@@ -2248,16 +2248,16 @@ namespace PrtgAPI
         public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Permanently remove an object such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
+        /// Permanently remove one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
-        /// <param name="objectId">ID of the object to delete.</param>
-        public void RemoveObject(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectId));
+        /// <param name="objectIds">IDs of the objects to remove.</param>
+        public void RemoveObject(params int[] objectIds) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectIds));
 
         /// <summary>
-        /// Asynchronously permanently remove an object such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
+        /// Asynchronously permanently remove one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
-        /// <param name="objectId">ID of the object to delete.</param>
-        public async Task RemoveObjectAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectId)).ConfigureAwait(false);
+        /// <param name="objectIds">IDs of the objects to remove.</param>
+        public async Task RemoveObjectAsync(params int[] objectIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectIds)).ConfigureAwait(false);
 
         /// <summary>
         /// Rename a Sensor, Device, Group or Probe within PRTG.

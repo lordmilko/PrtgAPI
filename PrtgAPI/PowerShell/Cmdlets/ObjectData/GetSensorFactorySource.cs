@@ -92,9 +92,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         List<PrtgObject> GetSensors(List<FactoryIds> ids)
         {
-            var filters = ids.Select(id => new SearchFilter(Property.Id, id.SensorId)).ToArray();
-
-            return client.GetSensors(filters).Cast<PrtgObject>().ToList();
+            return client.GetSensors(Property.Id, ids.Select(i => i.SensorId)).Cast<PrtgObject>().ToList();
         }
 
         List<PrtgObject> GetChannels(List<FactoryIds> ids)
