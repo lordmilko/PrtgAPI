@@ -85,25 +85,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             //todo we need to talk about the unit conversion issue in the cmdlet's help
 
-            var str = string.Empty;
+            var str = Channel != null ? $"'{Channel.Name}' (Channel ID: {Channel.Id}, Sensor ID: {Channel.SensorId})" : $"Channel ID: {ChannelId} (Sensor ID: {SensorId})";
 
             if (!MyInvocation.BoundParameters.ContainsKey("Value"))
                 throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
             if (ParameterSetName == "Default")
             {
-                str = Channel != null ? $"'{Channel.Name}' (Channel ID: {Channel.Id}, Sensor ID: {Channel.SensorId})" : $"Channel {ChannelId} (Sensor ID: {SensorId})";
-
                 SensorId = Channel.SensorId;
                 ChannelId = Channel.Id;
             }
 
             if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
             {
-                if (Batch)
+                if (Batch?.IsPresent == true)
                 {
                     if (ParameterSetName == "Default")
-                        ExecuteQueueOperation(Channel, progressActivity, $"Queuing channel '{Channel.Name}'");
+                    {
+                        var desc = Channel != null ? Channel.Name : $"ID {ChannelId}";
+                        ExecuteQueueOperation(Channel, progressActivity, $"Queuing channel '{desc}'");
+                    }
                     else
                         PerformSingleOperation();
                 }
