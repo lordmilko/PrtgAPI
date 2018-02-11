@@ -49,6 +49,6 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $device = $probe | Add-Device $params -Resolve
 
-        $device.Id | Should Be 1002
+        $device.Id | Should Be 1002,1003
     }
 }

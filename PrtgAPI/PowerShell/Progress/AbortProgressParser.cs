@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else
                 {
-                    if (manager.recordsProcessed == firstCmdlet.First)
+                    if (manager.RecordsProcessed == firstCmdlet.First)
                         return true;
                 }
 
@@ -74,7 +74,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else
                 {
-                    if (manager.recordsProcessed == firstCmdlet.Index.Last() + 1)
+                    if (manager.RecordsProcessed == firstCmdlet.Index.Last() + 1)
                         return true;
                 }
             }
@@ -84,7 +84,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressFirst(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.First < manager.recordsProcessed)
+            if (selectObject.First < manager.RecordsProcessed)
                 return true;
 
             return false;
@@ -92,7 +92,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressLast(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (manager.recordsProcessed > manager.TotalRecords - selectObject.Last)
+            if (manager.RecordsProcessed > manager.TotalRecords - selectObject.Last)
                 return true;
 
             return false;
@@ -105,7 +105,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressSkipLast(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (manager.recordsProcessed == manager.TotalRecords - selectObject.TotalSkipLast)
+            if (manager.RecordsProcessed == manager.TotalRecords - selectObject.TotalSkipLast)
             {
                 manager.CompleteProgress();
                 return true;
@@ -116,7 +116,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool AbortProgressIndex(ProgressManager manager, SelectObjectManager selectObject)
         {
-            if (selectObject.Index.Any(i => i == manager.recordsProcessed - 1))
+            if (selectObject.Index.Any(i => i == manager.RecordsProcessed - 1))
                 return false;
 
             return true;

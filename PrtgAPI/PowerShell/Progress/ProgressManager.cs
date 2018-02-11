@@ -81,6 +81,10 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool GetResultsWithProgress => PartOfChain && ProgressEnabled;
 
+        public bool VariableUpdateRecordsResponsibility => (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet) && !PipelineContainsOperation;
+
+        public bool VariableUpdateRecordsFromPipeline => !PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable;
+
         #endregion
         #region Extended Pipeline Chain Analysis
         #region Pipe To/From Progress Compatible Cmdlet
@@ -570,7 +574,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal PrtgCmdlet cmdlet;
 
-        internal int recordsProcessed = -1;
+        internal int RecordsProcessed { get; set; } = -1;
 
         private bool variableProgressDisplayed;
 
@@ -796,7 +800,7 @@ namespace PrtgAPI.PowerShell.Progress
                 return;
 
             InitialDescription = null;
-            recordsProcessed = -1;
+            RecordsProcessed = -1;
 
             /*
              * If we've been displaying the number of records we need to process, we have a process record and need to complete it
@@ -822,6 +826,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             record.Activity = DefaultActivity;
             record.StatusDescription = DefaultDescription;
+            record.CurrentOperation = null;
             record.RecordType = ProgressRecordType.Processing;
         }
 
@@ -863,13 +868,13 @@ namespace PrtgAPI.PowerShell.Progress
                         var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
                         var previousManager = previousCmdlet.ProgressManager;
 
-                        if (previousManager.recordsProcessed < previousManager.TotalRecords) //new issue: get-sensor doesnt update records processed
+                        if (previousManager.RecordsProcessed < previousManager.TotalRecords) //new issue: get-sensor doesnt update records processed
                             return false;
                     }
                     else
                     {
                         //We're the second object in Variable -> Object -> Action -> Object. We're responsible for our own record keeping
-                        if (recordsProcessed < TotalRecords)
+                        if (RecordsProcessed < TotalRecords)
                             return false;
                     }
                 }
@@ -937,11 +942,11 @@ namespace PrtgAPI.PowerShell.Progress
         {
             //When a variable to cmdlet chain contains an operation, responsibility for updating the number of records processed
             //"resets", and we become responsible for updating our own count again
-            if ((PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet) && !PipelineContainsOperation)
+            if (VariableUpdateRecordsResponsibility)
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 //we're responsible for updating our own progress, which we must do via analyzing the pipeline.
-                if (!PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable)
+                if (VariableUpdateRecordsFromPipeline)
                 {
                     IncrementProgressFromPipeline(record, obj, writeObject);
                 }
@@ -985,27 +990,27 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (manager.TotalRecords > 0)
             {
-                if (manager.recordsProcessed < 0)
-                    manager.recordsProcessed++;
+                if (manager.RecordsProcessed < 0)
+                    manager.RecordsProcessed++;
 
-                manager.recordsProcessed++;
+                manager.RecordsProcessed++;
 
                 if (obj != null && Scenario != ProgressScenario.StreamProgress)
-                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({manager.recordsProcessed}/{manager.TotalRecords})";
+                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({manager.RecordsProcessed}/{manager.TotalRecords})";
                 else
-                    record.StatusDescription = $"{InitialDescription} {manager.recordsProcessed}/{manager.TotalRecords}";
+                    record.StatusDescription = $"{InitialDescription} {manager.RecordsProcessed}/{manager.TotalRecords}";
 
-                if (manager.recordsProcessed > 0)
-                    record.PercentComplete = (int)(manager.recordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
+                if (manager.RecordsProcessed > 0)
+                    record.PercentComplete = (int)(manager.RecordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
 
                 if (abortProgress.AbortProgress(manager))
                     return;
 
                 if (!writeObject)
-                    manager.recordsProcessed--;
+                    manager.RecordsProcessed--;
 
                 //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
-                if ((NextCmdletIsOperation && manager.recordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
+                if ((NextCmdletIsOperation && manager.RecordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
 
                 CompletePrematurely(manager);
@@ -1187,14 +1192,17 @@ namespace PrtgAPI.PowerShell.Progress
             if (PreviousCmdletIsSelectObject)
                 TotalRecords = GetSelectObjectOperationFromCmdletFromVariableTotalRecords();
 
+            if(TotalRecords == null)
+                throw new InvalidOperationException("Cannot display records procesed as TotalRecords is not initialized");
+
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,
             //but for REASONS UNKNOWN (TODO: WHY) thats not the case, so we have to do it instead
-            if (previousManager.recordsProcessed < 0)
-                previousManager.recordsProcessed++;
+            if (previousManager.RecordsProcessed < 0)
+                previousManager.RecordsProcessed++;
 
-            previousManager.recordsProcessed++;
+            previousManager.RecordsProcessed++;
 
-            var count = previousManager.recordsProcessed;
+            var count = previousManager.RecordsProcessed;
 
             CurrentRecord.Activity = activity;
             CurrentRecord.PercentComplete = (int)((count) / Convert.ToDouble(TotalRecords) * 100);
@@ -1220,10 +1228,10 @@ namespace PrtgAPI.PowerShell.Progress
                 {
                     if (!PipelineUpstreamContainsBlockingCmdlet)
                     {
-                        var previousManager = previousCmdlet.ProgressManager;
+                        var tuple = GetPreviousProgressManagerForOperation(previousCmdlet);
 
-                        processed = previousManager.recordsProcessed;
-                        total = previousManager.TotalRecords;
+                        total = tuple.Item1;
+                        processed = tuple.Item2;
                     }
                 }
                 else
@@ -1246,11 +1254,47 @@ namespace PrtgAPI.PowerShell.Progress
                 }
 
                 PreviousRecord.StatusDescription = $"{progressMessage} ({processed}/{total})";
+                PreviousRecord.PercentComplete = (int)((processed) / Convert.ToDouble(total) * 100);
 
                 WriteProgress(PreviousRecord);
 
                 SkipCurrentRecord();
             }
+        }
+
+        private Tuple<int, int> GetPreviousProgressManagerForOperation(PrtgCmdlet previousNonOperationCmdlet)
+        {
+            var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
+
+            var previousManager = previousCmdlet.ProgressManager;
+
+            if (previousManager.TotalRecords != null)
+            {
+                //The previous cmdlet (whether it be our original non-operation cmdlet or an operation cmdlet
+                //contains records, so we'll return his progress manager
+                var total = previousManager.TotalRecords;
+                var processed = previousManager.RecordsProcessed;
+
+                //The previous manager is just holding onto the TotalRecords for bookkeeping; the records processed are
+                //actually stored on the cmdlet before that
+                if (previousManager.RecordsProcessed == -1)
+                    processed = previousNonOperationCmdlet.ProgressManager.RecordsProcessed;
+
+                var tuple = Tuple.Create(total.Value, processed);
+
+                return tuple;
+            }
+
+            //The previous cmdlet's TotalRecords were useless; lets stick with analyzing the previous non-pperation cmdlet
+            previousManager = previousNonOperationCmdlet.ProgressManager;
+
+            if (previousManager.TotalRecords != null)
+            {
+                return Tuple.Create(previousManager.TotalRecords.Value, previousManager.RecordsProcessed);
+            }
+
+            //Neither of our previous cmdlets have TotalRecords. This is not allowed
+            throw new InvalidOperationException("Cannot display records procesed as previous TotalRecords is not initialized");
         }
 
         private void SkipCurrentRecord()

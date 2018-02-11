@@ -11,6 +11,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class MultiTypeResponse : IWebResponse
     {
+        private SensorType? newSensorType;
+
         public MultiTypeResponse()
         {
         }
@@ -60,6 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(XmlFunction.GetObjectProperty):
                     return GetRawObjectProperty(address);
                 case nameof(CommandFunction.AddSensor2):
+                    newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToString().ToEnum<SensorType>();
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
                 case nameof(JsonFunction.GetAddSensorProgress):
@@ -67,7 +70,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
                     return new BasicResponse($"{{\"progress\":\"{progress}\",\"targeturl\":\" /addsensor4.htm?id=4251&tmpid=119\"}}");
                 case nameof(HtmlFunction.AddSensor4):
-                    return new ExeFileTargetResponse();
+                    return GetSensorTargetResponse();
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):
@@ -178,6 +181,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             components.Remove("id");
 
             throw new NotImplementedException($"Unknown raw object property '{components[0]}' passed to {GetType().Name}");
+        }
+
+        private IWebResponse GetSensorTargetResponse()
+        {
+            switch (newSensorType)
+            {
+                case SensorType.ExeXml:
+                    return new ExeFileTargetResponse();
+                case SensorType.WmiService:
+                    return new WmiServiceTargetResponse();
+                default:
+                    throw new NotSupportedException($"Sensor type {newSensorType} not supported");
+            }
         }
 
         public static Content GetContent(string address)

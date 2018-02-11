@@ -92,7 +92,7 @@ namespace PrtgAPI.PowerShell.Progress
                 {
                     var pm = cmdlet.ProgressManager;
 
-                    if (pm.recordsProcessed > -1 && pm.recordsProcessed < pm.TotalRecords)
+                    if (pm.RecordsProcessed > -1 && pm.RecordsProcessed < pm.TotalRecords)
                         return true;
                 }
 
@@ -134,12 +134,12 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (!(previousNonOperationCmdlet is PrtgOperationCmdlet))
                         {
-                            if (previousNonOperationCmdlet.ProgressManager.recordsProcessed == previousNonOperationCmdlet.ProgressManager.TotalRecords)
+                            if (previousNonOperationCmdlet.ProgressManager.RecordsProcessed == previousNonOperationCmdlet.ProgressManager.TotalRecords)
                                 return true;
                         }
                     }
 
-                    if (previousManger.recordsProcessed == previousManger.TotalRecords)
+                    if (previousManger.RecordsProcessed == previousManger.TotalRecords)
                         return true;
                 }
 
@@ -216,7 +216,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else if (IsMultiOperation)
                 {
-                    if (previousManger.recordsProcessed == -1)
+                    if (previousManger.RecordsProcessed == -1)
                     {
                         if (previousCmdlet is PrtgOperationCmdlet)
                         {
@@ -226,14 +226,14 @@ namespace PrtgAPI.PowerShell.Progress
                             if (previousNonOperationCmdlet is PrtgOperationCmdlet)
                                 return false;
 
-                            if (previousNonOperationCmdlet.ProgressManager.recordsProcessed < previousNonOperationCmdlet.ProgressManager.TotalRecords)
+                            if (previousNonOperationCmdlet.ProgressManager.RecordsProcessed < previousNonOperationCmdlet.ProgressManager.TotalRecords)
                                 return true;
                         }
 
                         return false;
                     }
 
-                    if (previousManger.recordsProcessed < previousManger.TotalRecords)
+                    if (previousManger.RecordsProcessed < previousManger.TotalRecords)
                         return true;
                 }
 
@@ -261,7 +261,7 @@ namespace PrtgAPI.PowerShell.Progress
                 {
                     if (selectObject.HasFirst)
                     {
-                        if (recordManager.recordsProcessed < selectObject.First)
+                        if (recordManager.RecordsProcessed < selectObject.First)
                             return true;
                     }
                 }

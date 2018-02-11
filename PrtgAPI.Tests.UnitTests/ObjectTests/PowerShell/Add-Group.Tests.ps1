@@ -28,6 +28,6 @@ Describe "Add-Group" -Tag @("PowerShell", "UnitTest") {
 
         $group = $probe | Add-Group $params -Resolve
 
-        $group.Id | Should Be 1002
+        $group.Id | Should Be 1002,1003
     }
 }

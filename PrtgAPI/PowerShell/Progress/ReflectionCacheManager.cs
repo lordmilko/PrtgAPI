@@ -128,6 +128,12 @@ namespace PrtgAPI.PowerShell.Progress
 
         public PrtgCmdlet GetPreviousPrtgCmdlet() => previousPrtgCmdlet.Value;
 
+        /// <summary>
+        /// Returns the last <see cref="PrtgCmdlet"/> not of type T. If the first cmdlet in the pipeline is of type T,
+        /// that cmdlet will be returned. If there are no previous cmdlets in the pipeline, this method will return null.
+        /// </summary>
+        /// <typeparam name="T">The type of cmdlet to try and avoid.</typeparam>
+        /// <returns>The previous PrtgCmdlet not of type T, unless a cmdlet of type T is the first cmdlet in the pipeline. If there is no previous PrtgCmdlet, this method returns null.</returns>
         public PrtgCmdlet TryGetPreviousPrtgCmdletOfNotType<T>()
         {
             var commands = GetPipelineCommands();

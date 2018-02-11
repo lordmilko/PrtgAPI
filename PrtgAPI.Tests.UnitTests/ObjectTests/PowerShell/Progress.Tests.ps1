@@ -4506,6 +4506,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
+            ###################################################################
+
             (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100)
             (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
@@ -4553,6 +4555,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
+
+            ###################################################################
 
             (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
 
@@ -7319,6 +7323,536 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG EXE/Script File Search" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (100%)")
 
             (Gen "PRTG EXE/Script File Search (Completed)" "Processing device 'Probe Device3' (4/5)" 80 "Probing target device (100%)")
+        ))
+    }
+
+        #endregion
+        #region 104.3: Something -> Get-SensorTarget -> Add-Sensor -> Action
+
+    It "104.3a: Table -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$false" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "104.3b: Variable -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$false" {
+        $device = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $device | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "104.3c: Table -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$true" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$true
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+        ))
+    }
+
+    It "104.3d: Variable -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$true" {
+        $device = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $device | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$true
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total1' (2/2)" 100)
+
+            (Gen1 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+
+            (Gen1 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total0' and 'Volume IO _Total1' forever (4/4)" 100)
+        ))
+    }
+
+        #endregion
+        #region 104.4: Something -> Table -> Get-SensorTarget -> Add-Sensor -> Action
+
+    It "104.4a: Table -> Table -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$false" {
+        WithResponseArgs "DiffBasedResolveResponse" 3 {
+            Get-Probe -Count 1 | Get-Device -Count 2 | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.10' (1/1)" 100)
+        ))
+    }
+
+    It "104.4b: Variable -> Table -> Get-SensorTarget -> Add-Sensor -> Action -Batch:`$false" {
+        $probes = Get-Probe -Count 2
+        
+        WithResponseArgs "DiffBasedResolveResponse" (,@(1,8)) {
+            $probes | Get-Device -Count 2 | Get-SensorTarget WmiService -Params | Add-Sensor | Pause-Object -Forever -Batch:$false
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+
+            ##########################################################################################
+
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (50%)")
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 104.5: Variable -> Get-SensorTarget -> Select -Something -> Add-Sensor
+
+    It "104.5a: Variable -> Get-SensorTarget -> Select -First -> Add-Sensor" {
+
+        $devices = Get-Device -Count 3
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Get-SensorTarget WmiService -Parameters | Select -First 2 | Add-Sensor
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/3)" 66)
+        ))
+    }
+
+    It "104.5b: Variable -> Get-SensorTarget -> Select -Last -> Add-Sensor" {
+        
+        $devices = Get-Device -Count 3
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Get-SensorTarget WmiService -Parameters | Select -Last 1 | Add-Sensor
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+        ))
+    }
+
+    It "104.5c: Variable -> Get-SensorTarget -> Select -Skip -> Add-Sensor" {
+        
+        $devices = Get-Device -Count 3
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Get-SensorTarget WmiService -Parameters | Select -Skip 1 | Add-Sensor
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
+        ))
+    }
+
+    It "104.5d: Variable -> Get-SensorTarget -> Select -SkipLast -> Add-Sensor" {
+        $devices = Get-Device -Count 3
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Get-SensorTarget WmiService -Parameters | Select -SkipLast 1 | Add-Sensor
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
+        ))
+    }
+
+    It "104.5e: Variable -> Get-SensorTarget -> Select -Index -> Add-Sensor" {
+        $devices = Get-Device -Count 3
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Get-SensorTarget WmiService -Parameters | Select -Index 0,1 | Add-Sensor
+        }
+
+        Validate(@(
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (50%)")
+            (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+
+            (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/3)" 66)
         ))
     }
 

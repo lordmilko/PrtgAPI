@@ -26,6 +26,6 @@ Describe "Add-NotificationTrigger" {
 
         $trigger = $params | Add-NotificationTrigger -Resolve
 
-        $trigger.SubId | Should Be 2
+        $trigger.SubId | Should Be 2,3
     }
 }

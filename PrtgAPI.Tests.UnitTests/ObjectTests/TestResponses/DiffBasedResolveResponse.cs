@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
@@ -7,28 +8,83 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
     public class DiffBasedResolveResponse : MultiTypeResponse
     {
+        private int start = -1;
+
+        private int[] skip;
+
         private int requestCount;
+
+        private int totalRequestCount;
+
+        public DiffBasedResolveResponse()
+        {
+            start = 1;
+        }
+
+        public DiffBasedResolveResponse(int start)
+        {
+            this.start = start;
+        }
+
+        public DiffBasedResolveResponse(int[] skip)
+        {
+            this.skip = skip;
+        }
 
         protected override IWebResponse GetResponse(ref string address, string function)
         {
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
-                    return GetTableResponse(address, function);
+                    return GetTableResponse(ref address, function);
             }
 
             return base.GetResponse(ref address, function);
         }
 
-        private IWebResponse GetTableResponse(string address, string function)
+        private IWebResponse GetTableResponse(ref string address, string function)
         {
             var components = UrlHelpers.CrackUrl(address);
 
             Content content = components["content"].ToEnum<Content>();
 
+            totalRequestCount++;
+
+            if (skip != null)
+            {
+                if (skip.Any(i => i == totalRequestCount))
+                    return base.GetResponse(ref address, function);
+            }
+            else
+            {
+                if (start > 1)
+                {
+                    start--;
+                    return base.GetResponse(ref address, function);
+                }
+            }
+
             requestCount++;
 
-            var count = requestCount == 1 ? 2 : 3;
+            int count;
+
+            //1: Before
+            //2: After
+            //3: Clean
+            
+            //4: Before
+            //5: After
+            //6: Clean
+
+            //7: Before
+            //8: After
+            //9: Clean
+
+            //On the first, third and fourth request (Before, Clean and Before on the next one)
+            if (requestCount == 1 || requestCount % 3 == 0 || requestCount % 3 == 1)
+                count = 2;
+            else
+                count = 4;
 
             switch (content)
             {

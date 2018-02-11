@@ -83,6 +83,10 @@ namespace PrtgAPI.PowerShell.Base
 
             var newObjects = exceptFunc(before, after);
 
+            //ProgressManager will be null if we are invoking this cmdlet from within another cmdlet
+            if(ProgressManager != null)
+                ProgressManager.TotalRecords = newObjects.Count;
+
             return CleanObjects(newObjects);
         }
 
@@ -90,17 +94,17 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (newObjects.All(o => o is Sensor))
             {
-                newObjects = newObjects.Cast<Sensor>().Select(o =>
+                var sensors = newObjects.Cast<Sensor>().ToList();
+
+                foreach (var obj in sensors)
                 {
-                    //When creating certain sensor types (such as OracleTablespace)
-                    //PRTG may sometimes prepend spaces to the front of the sensor name
-                    if (o.Name != o.Name.Trim(' '))
-                        client.RenameObject(o.Id, o.Name.Trim(' '));
+                    //PRTG may sometimes prepend spaces to the front of the sensor name. This can even happen
+                    //in the Web UI
+                    if (obj.Name != obj.Name.Trim(' '))
+                        client.RenameObject(obj.Id, obj.Name.Trim(' '));
+                }
 
-                    o = client.GetSensors(Property.Id, o.Id).First();
-
-                    return o;
-                }).Cast<T>().ToList();
+                newObjects = client.GetSensors(Property.Id, sensors.Select(s => s.Id)).Cast<T>().ToList();
             }
 
             return newObjects;

@@ -56,10 +56,12 @@ namespace PrtgAPI.PowerShell.Progress
 
         private int? GetSelectObjectOperationFromCmdletFromVariableTotalRecords()
         {
-            if (Scenario == ProgressScenario.SelectSkipLast)
-                TotalRecords -= upstreamSelectObjectManager.TotalSkipLast;
+            var totalRecords = TotalRecords;
 
-            return TotalRecords;
+            if (Scenario == ProgressScenario.SelectSkipLast && totalRecords > 1)
+                totalRecords -= upstreamSelectObjectManager.TotalSkipLast;
+
+            return totalRecords;
         }
 
         private int GetIncrementProgressFromPipelineTotalRecords(int maxCount)

@@ -156,11 +156,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             TypeDescription = typeDescription;
 
-            var items = getItems(Device.Id, DisplayProgress);
+            WriteProcessProgressRecords<T>(
+                f => ParseItems(getItems(Device.Id, f), createParams, nameProperties)
+            );
+        }
 
+        private object ParseItems<T>(List<T> items, Func<List<T>, SensorParametersInternal> createParams, Func<T, string>[] nameProperties)
+        {
             items = FilterByName(items, nameProperties);
 
-            Write(items, createParams);
+            if (Parameters)
+            {
+                var parameters = createParams(items);
+                parameters.targetDevice = Device;
+
+                return parameters;
+            }
+
+            return items;
         }
 
         private List<T> FilterByName<T>(List<T> items, params Func<T, string>[] nameProperties)
@@ -173,29 +186,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             return items;
-        }
-
-        private bool DisplayProgress(int percentage)
-        {
-            DisplayProcessProgress(percentage);
-
-            return true;
-        }
-
-        private void Write<T>(List<T> items, Func<List<T>, SensorParametersInternal> createParams)
-        {
-            if (Parameters)
-            {
-                var parameters = createParams(items);
-                parameters.targetDevice = Device;
-
-                WriteObject(parameters);
-            }
-            else
-            {
-                foreach (var item in items)
-                    WriteObject(item);
-            }
         }
     }
 }

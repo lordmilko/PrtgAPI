@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Progress;
@@ -54,7 +56,52 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        internal void DisplayProcessProgress(int percentage)
+        internal void WriteProcessProgressRecords<T>(Func<Func<int, bool>, object> getItems)
+        {
+            var items = getItems(DisplayProgress);
+
+            if (items is IEnumerable)
+            {
+                ProgressManager.TotalRecords = ((IEnumerable) items).Cast<object>().Count();
+
+                foreach (var obj in (IEnumerable) items)
+                {
+                    UpdateRecordsProcessed();
+
+                    WriteObject(obj);
+                }
+            }
+            else
+            {
+                ProgressManager.TotalRecords = 1;
+
+                UpdateRecordsProcessed();
+
+                WriteObject(items);
+            }
+
+            CompleteDisplayProcessProgress();
+        }
+
+        private void UpdateRecordsProcessed()
+        {
+            if (!ProgressManager.VariableUpdateRecordsResponsibility)
+            {
+                if (ProgressManager.RecordsProcessed < 0)
+                    ProgressManager.RecordsProcessed++;
+
+                ProgressManager.RecordsProcessed++;
+            }
+        }
+
+        private bool DisplayProgress(int percentage)
+        {
+            DisplayProcessProgress(percentage, false);
+
+            return true;
+        }
+
+        private void DisplayProcessProgress(int percentage, bool complete = true)
         {
             if (!ProgressManager.ProgressEnabled)
                 return;
@@ -75,22 +122,31 @@ namespace PrtgAPI.PowerShell.Base
 
             if (percentage == 100)
             {
-                //If we're Variable -> Action -> Me, we wrote all our progress to the previous cmdlet's CurrentOperation,
-                //so we don't need to complete anything
-                if (!(ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineContainsOperation))
-                {
-                    if (ProgressManager.ReadyToComplete())
-                        ProgressManager.CompleteProgress(true);
-
-                    if(!ProgressManager.GetRecordsWithVariableProgress)
-                        ProgressManager.MaybeCompletePreviousProgress();
-                }
+                if (complete)
+                    CompleteDisplayProcessProgress();
             }
             else
             {
                 //Null out the previous record's operation so it doesn't get removed on the next request
-                if (ProgressManager.PreviousRecord != null && ProgressManager.PreviousRecord.CurrentOperation != null)
+                if (ProgressManager.PreviousRecord?.CurrentOperation != null)
                     ProgressManager.PreviousRecord.CurrentOperation = null;
+            }
+        }
+
+        private void CompleteDisplayProcessProgress()
+        {
+            if (!ProgressManager.ProgressEnabled)
+                return;
+
+            //If we're Variable -> Action -> Me, we wrote all our progress to the previous cmdlet's CurrentOperation,
+            //so we don't need to complete anything
+            if (!(ProgressManager.PipeFromVariableWithProgress && ProgressManager.PipelineContainsOperation))
+            {
+                if (ProgressManager.ReadyToComplete())
+                    ProgressManager.CompleteProgress(true);
+
+                if (!ProgressManager.GetRecordsWithVariableProgress)
+                    ProgressManager.MaybeCompletePreviousProgress();
             }
         }
 

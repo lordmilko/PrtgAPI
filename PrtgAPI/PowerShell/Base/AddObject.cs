@@ -65,12 +65,22 @@ namespace PrtgAPI.PowerShell.Base
                             Except
                         ).OrderBy(o => o.Id);
 
-                        WriteObject(obj, true);
+                        foreach (var o in obj)
+                        {
+                            if (ProgressManager.RecordsProcessed < 0)
+                                ProgressManager.RecordsProcessed++;
+
+                            ProgressManager.RecordsProcessed++;
+
+                            WriteObject(o);
+                        }
+
+                        ProgressManager.RecordsProcessed = -1;
                     }
                     else
                         client.AddObject(destination.Id, Parameters, function);
 
-                }, $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s", $"Adding {type} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
+                }, $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s", $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }
         }
 
