@@ -5,9 +5,11 @@ namespace PrtgAPI.Objects.Deserialization.Cache
 {
     static class ReflectionCacheManager
     {
-        private static Dictionary<Type, TypeCache> typeCache = new Dictionary<Type, TypeCache>();
-        private static Dictionary<Type, EnumXmlCache> enumCache = new Dictionary<Type, EnumXmlCache>();
-        private static Dictionary<Type, List<XmlMapping>> mappingCache = new Dictionary<Type, List<XmlMapping>>();
+        private static readonly Dictionary<Type, TypeCache> typeCache = new Dictionary<Type, TypeCache>();
+        private static readonly Dictionary<Type, EnumXmlCache> enumCache = new Dictionary<Type, EnumXmlCache>();
+        private static readonly Dictionary<Type, List<XmlMapping>> mappingCache = new Dictionary<Type, List<XmlMapping>>();
+
+        private static readonly object lockObj = new object();
 
         public static TypeCache Get(Type type)
         {
@@ -26,13 +28,16 @@ namespace PrtgAPI.Objects.Deserialization.Cache
 
         private static T GetValue<T>(Type type, Dictionary<Type, T> dict, Func<Type, T> init)
         {
-            T value;
-
-            if (!dict.TryGetValue(type, out value))
+            lock (lockObj)
             {
-                value = init(type);
-                dict[type] = value;
-                return value;
+                T value;
+
+                if (!dict.TryGetValue(type, out value))
+                {
+                    value = init(type);
+                    dict[type] = value;
+                    return value;
+                }
             }
 
             return dict[type];
