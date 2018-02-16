@@ -76,7 +76,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void DisplayMultiOperationProgress(string activity, string progressMessage)
         {
-            if (ProgressManager.ProgressEnabled)
+            if (ProgressManager.ProgressEnabled && !ProgressManagerEx.PipeFromSingleVariable)
                 ProgressManager.ProcessPostProcessProgress(activity, progressMessage);
         }
 

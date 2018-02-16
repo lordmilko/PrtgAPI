@@ -58,7 +58,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="complete"></param>
         protected void CompletePostProcessProgress(bool complete = true)
         {
-            if (ProgressManager.ProgressEnabled && complete)
+            if (ProgressManager.ProgressEnabled && complete && !ProgressManagerEx.PipeFromSingleVariable)
                 ProgressManager.CompleteProgress(true, true);
         }
 

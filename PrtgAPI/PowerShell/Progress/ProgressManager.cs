@@ -73,7 +73,9 @@ namespace PrtgAPI.PowerShell.Progress
         public bool LastPrtgCmdletInPipeline => CacheManager.GetNextPrtgCmdlet() == null;
 
         //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
-        public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain);
+        public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain) || (EntirePipeline?.List.Count == 1 && progressPipelines.Count > 1);
+
+        public bool PipeFromSingleVariable => EntirePipeline?.List.Count == 1 && progressPipelines.Count == 2;
 
         public bool ProgressEnabled => PrtgSessionState.EnableProgress && !UnsupportedSelectObjectProgress;
 
@@ -1309,6 +1311,11 @@ namespace PrtgAPI.PowerShell.Progress
                 SkipCurrentRecord();
 
                 CurrentRecord.ProgressWritten = true;
+            }
+            else
+            {
+                if (PipeFromSingleVariable)
+                    cmdlet.ProgressManagerEx.PipeFromSingleVariable = true;
             }
         }
 

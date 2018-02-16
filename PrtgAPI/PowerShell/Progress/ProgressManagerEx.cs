@@ -18,5 +18,7 @@ namespace PrtgAPI.PowerShell.Progress
         internal ProgressRecordEx PreviousRecord { get; set; }
 
         internal long? lastSourceId { get; set; }
+
+        internal bool PipeFromSingleVariable { get; set; }
     }
 }

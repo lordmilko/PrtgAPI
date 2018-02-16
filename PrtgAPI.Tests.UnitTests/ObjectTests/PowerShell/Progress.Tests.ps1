@@ -3147,7 +3147,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "23a: Table -> Where { Variable(1) -> Table }" {
         Get-Device | where { ($_ | Get-Sensor).Name -eq "Volume IO _Total0" }
 
-        Assert-NoProgress
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+        ))
     }
 
     It "23b: Variable -> Where { Variable(1) -> Table }" {
@@ -3168,7 +3174,21 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
@@ -3180,7 +3200,21 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
@@ -3225,19 +3259,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
     
     #endregion
-    #region 26: Something -> Where { Variable -> Where { Variable(1) -> Table } }
+    #region 26: Something -> Where { Variable(1) -> Where { Variable(1) -> Table } }
 
-    It "26a: Table -> Where { Variable -> Where { Variable(1) -> Table } }" {
+    It "26a: Table -> Where { Variable(1) -> Where { Variable(1) -> Table } }" {
         Get-Probe | where {
             ($_ | Get-Device | where {
                 ($_|Get-Sensor).Name -eq "Volume IO _Total0"
             }).Name -eq "Probe Device0"
         }
 
-        Assert-NoProgress
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all devices")
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all devices")
+
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/1)" 100 "Retrieving all devices")
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+                (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (1/1)" 100 "Retrieving all devices")
+        ))
     }
 
-    It "26b: Variable -> Where { Variable -> Where { Variable -> Table } }" {
+    It "26b: Variable -> Where { Variable(1) -> Where { Variable -> Table } }" {
         $probes = Get-Probe
 
         $probes | where {
@@ -3246,7 +3296,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             }).Name -eq "Probe Device0"
         }
 
-        Assert-NoProgress
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+        ))
     }
 
     #endregion
@@ -3258,8 +3320,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+                (Gen "PRTG Sensor Search" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing probe '127.0.0.10' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+                (Gen "PRTG Sensor Search" "Processing probe '127.0.0.11' (1/1)" 100 "Retrieving all sensors")
+                (Gen "PRTG Sensor Search (Completed)" "Processing probe '127.0.0.11' (1/1)" 100 "Retrieving all sensors")
+
             (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
@@ -4007,29 +4075,104 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #endregion
     #region 31: Something -> Table -> Where { Variable(1) -> Action }
 
-    It "31a: Table -> Table -> Where { Variable(1) -> Action }" {
+    It "31a: Table -> Table -> Where { Variable(1) -> Action -Batch:`$false }" {
         Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+
             (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
     }
     
-    It "31b: Variable -> Table -> Where { Variable(1) -> Action }" {
+    It "31b: Variable -> Table -> Where { Variable(1) -> Action:`$false }" {
         $probes = Get-Probe
 
         $probes | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$false }
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+
             (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
+    }
 
+    It "31c: Table -> Table -> Where { Variable(1) -> Action -Batch:`$true }" {
+        Get-Probe | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$true }
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+            (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+        ))
+    }
+
+    It "31d: Variable -> Table -> Where { Variable(1) -> Action -Batch:`$true }" {
+        $probes = Get-Probe
+
+        $probes | Get-Device | Where { $_ | Pause-Object -Forever -Batch:$true }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+
+                (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
+        ))
     }
 
     #endregion
