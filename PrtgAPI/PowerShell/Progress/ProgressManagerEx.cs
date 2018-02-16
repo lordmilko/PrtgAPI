@@ -14,6 +14,9 @@ namespace PrtgAPI.PowerShell.Progress
         /// </summary>
         internal ProgressRecordEx CachedRecord { get; set; }
 
+        internal ProgressRecordEx CurrentRecord { get; set; }
+        internal ProgressRecordEx PreviousRecord { get; set; }
+
         internal long? lastSourceId { get; set; }
     }
 }

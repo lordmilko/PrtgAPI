@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Management.Automation;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -7,6 +8,33 @@ namespace PrtgAPI.PowerShell.Progress
     /// </summary>
     public class ProgressRecordEx : ProgressRecord
     {
+        [DebuggerDisplay("{Completed}")]
+        internal class SharedState
+        {
+            /// <summary>
+            /// Indicates whether this record has been completed. If this record was previously completed and is re-written with <see cref="ProgressRecordType.Processing"/>, this value will become false.
+            /// </summary>
+            public bool Completed { get; set; }
+        }
+
+        /// <summary>
+        /// Indicates whether progress has been written to this record.
+        /// </summary>
+        public bool ProgressWritten { get; set; }
+
+        /// <summary>
+        /// Indicates whether the cmdlet that owns this record is responsible for completing it.
+        /// </summary>
+        public bool CmdletOwnsRecord { get; set; } = true;
+
+
+        internal SharedState State { get; set; } = new SharedState();
+
+        /// <summary>
+        /// Indicates whether this progress record is currently in a completed state.
+        /// </summary>
+        public bool Completed => State.Completed;
+
         /// <summary>
         /// The SourceId to be used when writing progress.
         /// </summary>

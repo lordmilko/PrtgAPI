@@ -30,6 +30,15 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (PrtgSessionState.Client == null)
                 throw new Exception("You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.");
+
+            BeginProcessingEx();
+        }
+
+        /// <summary>
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
+        /// </summary>
+        protected virtual void BeginProcessingEx()
+        {
         }
 
         /// <summary>
@@ -54,13 +63,10 @@ namespace PrtgAPI.PowerShell.Base
                     }
                     catch (Exception ex)
                     {
-                        //todo: should we make cmdlets always complete their progress if they have any in their endprocessing block?
-                        //and will this cause issues for the ISE?
+                        if (!(PipeToSelectObject() && ex is PipelineStoppedException))
+                            ProgressManager.TryCompleteProgress();
 
-                        if (PipeToSelectObject() && ex is PipelineStoppedException)
-                            throw;
-
-                        ProgressManager.TryCompleteProgress();
+                        ProgressManager.CompleteUncompleted(true);
 
                         throw;
                     }
@@ -97,6 +103,8 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void EndProcessing()
         {
+            ProgressManager?.CompleteUncompleted();
+
             UnregisterEvents(false);
         }
 

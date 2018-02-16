@@ -41,28 +41,33 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             //all progress records before writing the progress, then revert any changes WriteProgress
             //may have caused
 
-            var pipeline = ProgressManager.progressPipelines.currentPipeline;
-
-            var preRecords = pipeline.Records.Select(ProgressManager.CloneRecord).ToList();
-
-            action();
-
-            var postRecords = pipeline.Records;
-
-            for (int i = 0; i < postRecords.Count; i++)
+            if (ProgressManager.progressPipelines.Count > 0)
             {
-                if (postRecords[i].Activity != preRecords[i].Activity)
-                    postRecords[i].Activity = preRecords[i].Activity;
+                var pipeline = ProgressManager.progressPipelines.currentPipeline;
 
-                if (postRecords[i].StatusDescription != preRecords[i].StatusDescription)
-                    postRecords[i].StatusDescription = preRecords[i].StatusDescription;
+                var preRecords = pipeline.Records.Select(ProgressManager.CloneRecord).ToList();
 
-                if (postRecords[i].CurrentOperation != preRecords[i].CurrentOperation)
-                    postRecords[i].CurrentOperation = preRecords[i].CurrentOperation;
+                action();
 
-                if (postRecords[i].ParentActivityId != preRecords[i].ParentActivityId)
-                    postRecords[i].ParentActivityId = preRecords[i].ParentActivityId;
+                var postRecords = pipeline.Records;
+
+                for (int i = 0; i < postRecords.Count; i++)
+                {
+                    if (postRecords[i].Activity != preRecords[i].Activity)
+                        postRecords[i].Activity = preRecords[i].Activity;
+
+                    if (postRecords[i].StatusDescription != preRecords[i].StatusDescription)
+                        postRecords[i].StatusDescription = preRecords[i].StatusDescription;
+
+                    if (postRecords[i].CurrentOperation != preRecords[i].CurrentOperation)
+                        postRecords[i].CurrentOperation = preRecords[i].CurrentOperation;
+
+                    if (postRecords[i].ParentActivityId != preRecords[i].ParentActivityId)
+                        postRecords[i].ParentActivityId = preRecords[i].ParentActivityId;
+                }
             }
+            else
+                action();
         }
     }
 }

@@ -2798,6 +2798,57 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+    It "17d: Table -> Where (`$false) -> Table" {
+
+        Get-Device -Count 3 | where { $false } | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/3)" 33)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/3)" 66)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/3)" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
+        ))
+    }
+
+    It "17e: Table -> Where (`$false) -> Action" {
+        Get-Device -Count 3 | where { $false } | Pause-Object -Forever -Batch
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/3)" 33)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
+        ))
+    }
+
+    It "17f: Variable -> Table -> Where (`$false) -> Table" {
+
+        $probes = Get-Probe -Count 3
+
+        $probes | Get-Device | where { $false } | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+        ))
+    }
+
+    It "17g: Variable -> Table -> Where (`$false) -> Action" {
+
+        $probes = Get-Probe -Count 3
+
+        $probes | Get-Device | where { $false } | Pause-Object -Forever -Batch
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/3)" 66 "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+            (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.12' (3/3)" 100 "Retrieving all devices")
+        ))
+    }
+
     #endregion
     #region 18: Something -> Table -> Where -> Table
     

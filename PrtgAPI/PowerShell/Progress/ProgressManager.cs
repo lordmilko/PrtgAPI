@@ -605,6 +605,12 @@ namespace PrtgAPI.PowerShell.Progress
             if (PreviousRecord != null)
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
 
+            if (cmdlet.ProgressManagerEx.CurrentRecord != null)
+                CurrentRecord.ProgressWritten = cmdlet.ProgressManagerEx.CurrentRecord.ProgressWritten;
+
+            cmdlet.ProgressManagerEx.CurrentRecord = CurrentRecord;
+            cmdlet.ProgressManagerEx.PreviousRecord = PreviousRecord;
+
             EntirePipeline = CacheManager.GetPipelineInput();
             CmdletPipeline = CacheManager.GetCmdletPipelineInput();
 
@@ -731,13 +737,22 @@ namespace PrtgAPI.PowerShell.Progress
 
             WriteProgress();
         }
-
+        
         private void WriteProgress(ProgressRecordEx progressRecord, bool cache = false)
+        {
+            WriteProgress(progressRecord, PreviousRecord, cache);
+        }
+
+        private void WriteProgress(ProgressRecordEx progressRecord, ProgressRecordEx previousRecord, bool cache = false)
         {
             if (progressRecord.Activity == DefaultActivity || progressRecord.StatusDescription == DefaultDescription)
                 throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
 
-            if (PreviousRecord == null)
+            progressRecord.State.Completed = progressRecord.RecordType == ProgressRecordType.Completed;
+
+            progressRecord.ProgressWritten = true;
+
+            if (previousRecord == null)
             {
                 if (cache)
                     progressWriter.WriteProgress(progressRecord.SourceId, progressRecord);
@@ -754,7 +769,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
             else
             {
-                var sourceId = PreviousRecord.SourceId;
+                var sourceId = previousRecord.SourceId;
                 progressRecord.SourceId = sourceId;
 
                 progressWriter.WriteProgress(sourceId, progressRecord);
@@ -819,6 +834,8 @@ namespace PrtgAPI.PowerShell.Progress
                 record.RecordType = ProgressRecordType.Completed;
 
                 WriteProgress(record, cache);
+
+                record.ProgressWritten = false;
             }
 
             if (!PipeToBlockingSelectObjectCmdlet)
@@ -828,6 +845,35 @@ namespace PrtgAPI.PowerShell.Progress
             record.StatusDescription = DefaultDescription;
             record.CurrentOperation = null;
             record.RecordType = ProgressRecordType.Processing;
+        }
+
+        internal void CompleteUncompleted(bool suppressExceptions = false)
+        {
+            try
+            {
+                var progressManagerEx = cmdlet.ProgressManagerEx;
+
+                if (progressManagerEx.CurrentRecord == null)
+                    return;
+
+                if (!progressManagerEx.CurrentRecord.ProgressWritten)
+                    return;
+
+                if (!progressManagerEx.CurrentRecord.CmdletOwnsRecord)
+                    return;
+
+                if (progressManagerEx.CurrentRecord.Completed)
+                    return;
+
+                progressManagerEx.CurrentRecord.RecordType = ProgressRecordType.Completed;
+
+                WriteProgress(progressManagerEx.CurrentRecord, progressManagerEx.PreviousRecord, progressManagerEx.CachedRecord != null);
+            }
+            catch
+            {
+                if (!suppressExceptions)
+                    throw;
+            }
         }
 
         internal bool ReadyToComplete()
@@ -1254,11 +1300,15 @@ namespace PrtgAPI.PowerShell.Progress
                 }
 
                 PreviousRecord.StatusDescription = $"{progressMessage} ({processed}/{total})";
-                PreviousRecord.PercentComplete = (int)((processed) / Convert.ToDouble(total) * 100);
+                PreviousRecord.PercentComplete = (int) ((processed)/Convert.ToDouble(total)*100);
+
+                PreviousRecord.CmdletOwnsRecord = false;
 
                 WriteProgress(PreviousRecord);
 
                 SkipCurrentRecord();
+
+                CurrentRecord.ProgressWritten = true;
             }
         }
 
@@ -1310,7 +1360,8 @@ namespace PrtgAPI.PowerShell.Progress
                 ParentActivityId = progressRecord.ParentActivityId,
                 PercentComplete = progressRecord.PercentComplete,
                 RecordType = progressRecord.RecordType,
-                SecondsRemaining = progressRecord.SecondsRemaining
+                SecondsRemaining = progressRecord.SecondsRemaining,
+                State = progressRecord.State
             };
 
             return record;
@@ -1327,6 +1378,7 @@ namespace PrtgAPI.PowerShell.Progress
             destinationRecord.RecordType = sourceRecord.RecordType;
             destinationRecord.SecondsRemaining = sourceRecord.SecondsRemaining;
             destinationRecord.SourceId = sourceRecord.SourceId;
+            destinationRecord.State = sourceRecord.State;
         }
 
         internal static bool IsPureThirdPartyCmdlet(Type cmdlet)
