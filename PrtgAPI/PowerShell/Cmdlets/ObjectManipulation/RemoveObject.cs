@@ -64,7 +64,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public RemoveObject()
         {
-            Batch = null;
+            batch = null;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
                 {
-                    if (Force.IsPresent && Batch == null)
+                    if (Force.IsPresent && batch == null)
                         Batch = true;
 
                     ExecuteOrQueue(Object, progressActivity);

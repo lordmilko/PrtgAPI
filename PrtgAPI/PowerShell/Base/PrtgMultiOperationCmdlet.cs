@@ -18,12 +18,19 @@ namespace PrtgAPI.PowerShell.Base
         /// request against PRTG for processing all objects. By default this value is true.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SwitchParameter? Batch { get; set; } = SwitchParameter.Present;
+        public SwitchParameter Batch
+        {
+            get { return batch ?? false; }
+            set { batch = value; }
+        }
+
         /// <summary>
         /// <para type="description">Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter PassThru { get; set; }
+
+        internal bool? batch = SwitchParameter.Present;
 
         internal List<PrtgObject> objects = new List<PrtgObject>();
 
@@ -263,6 +270,6 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Whether this cmdlet will execute its post processing operation.
         /// </summary>
-        protected override bool ShouldPostProcess() => Batch?.IsPresent == true;
+        protected override bool ShouldPostProcess() => Batch.IsPresent;
     }
 }
