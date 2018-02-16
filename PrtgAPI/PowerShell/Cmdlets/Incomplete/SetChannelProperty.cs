@@ -98,18 +98,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
             {
-                if (Batch?.IsPresent == true)
-                {
-                    if (ParameterSetName == "Default")
-                    {
-                        var desc = Channel != null ? Channel.Name : $"ID {ChannelId}";
-                        ExecuteQueueOperation(Channel, progressActivity, $"Queuing channel '{desc}'");
-                    }
-                    else
-                        PerformSingleOperation();
-                }
-                else
-                    PerformSingleOperation();
+                var desc = Channel != null ? Channel.Name : $"ID {ChannelId}";
+
+                //Can't batch something if there's no pipeline input
+                if (Channel == null)
+                    Batch = false;
+
+                ExecuteOrQueue(Channel, progressActivity, $"Queuing channel '{desc}'");
             }
         }
 

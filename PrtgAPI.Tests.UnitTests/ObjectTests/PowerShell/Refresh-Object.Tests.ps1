@@ -42,4 +42,24 @@ Describe "Refresh-Object" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Refresh-Object -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Refresh-Object -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Refresh-Object -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

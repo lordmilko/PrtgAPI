@@ -51,4 +51,24 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Rename-Object newName -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Rename-Object newName -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Rename-Object newName -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

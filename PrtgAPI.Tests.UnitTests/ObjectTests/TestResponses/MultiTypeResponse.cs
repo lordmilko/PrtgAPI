@@ -76,7 +76,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(CommandFunction.AddDevice2):
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
+                case nameof(CommandFunction.DeleteObject):
+                case nameof(CommandFunction.DiscoverNow):
                 case nameof(CommandFunction.LoadLookups):
+                case nameof(CommandFunction.MoveObjectNow):
                 case nameof(CommandFunction.RecalcCache):
                 case nameof(CommandFunction.Rename):
                 case nameof(CommandFunction.RestartServer):
@@ -84,7 +87,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(CommandFunction.ReloadFileLists):
                 case nameof(CommandFunction.SaveNow):
                 case nameof(CommandFunction.ScanNow):
+                case nameof(CommandFunction.SetPosition):
                 case nameof(CommandFunction.Simulate):
+                case nameof(CommandFunction.SortSubObjects):
                     return new BasicResponse(string.Empty);
                 default:
                     throw GetUnknownFunctionException(function);

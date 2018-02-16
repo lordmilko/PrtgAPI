@@ -21,4 +21,14 @@ Describe "Move-Object" -Tag @("PowerShell", "UnitTest") {
 
         $device | Move-Object 1234 -WhatIf
     }
+
+    It "passes through" {
+        SetMultiTypeResponse
+
+        $device = Get-Device -Count 1
+
+        $newDevice = $device | Move-Object 5678 -PassThru
+
+        $newDevice | Should Be $device
+    }
 }

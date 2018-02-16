@@ -41,4 +41,24 @@ Describe "Resume-Object" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Resume-Object -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Resume-Object -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Resume-Object -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

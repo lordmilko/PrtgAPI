@@ -86,4 +86,12 @@ Describe "Edit-NotificationTriggerProperty" {
 
         $trigger | Edit-NotificationTriggerProperty Latency 70 -WhatIf
     }
+
+    It "passes through" {
+        $trigger = GetTrigger "Speed"
+
+        $newTrigger = $trigger | Edit-NotificationTriggerProperty Latency 50 -PassThru
+
+        $newTrigger | Should Be $trigger
+    }
 }

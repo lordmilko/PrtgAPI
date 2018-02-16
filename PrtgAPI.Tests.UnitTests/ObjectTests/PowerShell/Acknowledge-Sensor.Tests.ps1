@@ -59,4 +59,24 @@ Describe "Acknowledge-Sensor" {
 
         $sensors | Acknowledge-Sensor -Duration 5 -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Acknowledge-Sensor -Forever -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Acknowledge-Sensor -Forever -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

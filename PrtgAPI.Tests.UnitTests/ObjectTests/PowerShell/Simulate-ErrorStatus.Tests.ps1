@@ -41,4 +41,24 @@ Describe "Simulate-ErrorStatus" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Simulate-ErrorStatus -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Simulate-ErrorStatus -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Simulate-ErrorStatus -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

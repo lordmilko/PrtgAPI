@@ -6,10 +6,6 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
     $channel = Get-Sensor | Get-Channel
 
-    It "sets a property with a valid type" {
-        $channel | Set-ChannelProperty ErrorLimitMessage "oh no!"
-    }
-
     It "sets a property with an invalid type" {
         $timeSpan = New-TimeSpan -Seconds 10
 
@@ -38,10 +34,6 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
     It "requires Value be specified" {
         { $channel | Set-ChannelProperty UpperErrorLimit } | Should Throw "Value parameter is mandatory"
     }
-    
-    It "sets a property using the manual parameter set" {
-        Set-ChannelProperty -SensorId 1001 -ChannelId 1 LimitsEnabled $true
-    }
 
     It "setting an invalid enum value lists all valid possibilities" {
 
@@ -50,24 +42,76 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         { $channel | Set-ChannelProperty ColorMode "banana" } | Should Throw $expected
     }
 
-    It "executes with -Batch:`$true" {
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
 
-        $channel.Count | Should Be 2
+        $channel = Get-Sensor -Count 1 | Get-Channel
 
-        SetAddressValidatorResponse "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+        $newChannel = $channel | Set-ChannelProperty LimitsEnabled $false -PassThru -Batch:$false
 
-        $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$true
+        $newChannel | Should Be $channel
     }
 
-    It "executes with -Batch:`$false" {
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
 
-        $channel.Count | Should Be 2
+        $channel = Get-Sensor -Count 1 | Get-Channel
 
-        SetAddressValidatorResponse @(
-            "editsettings?id=4000&limiterrormsg_1=oh+no!&limitmode_1=1&"
-            "editsettings?id=4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
-        )
+        $newChannel = $channel | Set-ChannelProperty LimitsEnabled $false -PassThru -Batch:$true
 
-        $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$false
+        $newChannel | Should Be $channel
+    }
+
+    Context "Default" {
+
+        It "sets a property with a valid type" {
+            
+            SetAddressValidatorResponse "id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+
+            $channel | Set-ChannelProperty ErrorLimitMessage "oh no!"
+        }
+
+        It "executes with -Batch:`$true" {
+
+            $channel.Count | Should Be 2
+
+            SetAddressValidatorResponse "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+
+            $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$true
+        }
+
+        It "executes with -Batch:`$false" {
+
+            $channel.Count | Should Be 2
+
+            SetAddressValidatorResponse @(
+                "editsettings?id=4000&limiterrormsg_1=oh+no!&limitmode_1=1&"
+                "editsettings?id=4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            )
+
+            $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$false
+        }
+    }
+
+    Context "Manual" {
+        It "sets a property using the manual parameter set" {
+
+            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+
+            Set-ChannelProperty -SensorId 1001 -ChannelId 1 LimitsEnabled $true
+        }
+
+        It "executes with -Batch:`$true" {
+            
+            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+
+            Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$true LimitsEnabled $true
+        }
+
+        It "executes with -Batch:`$false" {
+            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+
+            Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$false LimitsEnabled $true
+        }
     }
 }

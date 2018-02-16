@@ -22,7 +22,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Object", SupportsShouldProcess = true)]
-    public class MoveObject : PrtgOperationCmdlet
+    public class MoveObject : PrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The device to move to another group or probe.</para>
@@ -62,7 +62,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ShouldProcess($"'{obj.Name}' (ID: {obj.Id}) (Destination ID: {DestinationId})"))
             {
-                ExecuteOperation(() => client.MoveObject(obj.Id, DestinationId), "Moving PRTG Objects", $"Moving {obj.BaseType.ToString().ToLower()} {obj.Name} (ID: {obj.Id}) to object ID {DestinationId}");
+                ExecuteOperation(obj, () => client.MoveObject(obj.Id, DestinationId), "Moving PRTG Objects", $"Moving {obj.BaseType.ToString().ToLower()} {obj.Name} (ID: {obj.Id}) to object ID {DestinationId}");
             }
         }
     }

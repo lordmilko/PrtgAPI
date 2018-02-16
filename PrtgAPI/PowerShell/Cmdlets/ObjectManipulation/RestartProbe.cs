@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -39,13 +41,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Restart-PrtgCore</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Probe", SupportsShouldProcess = true)]
-    public class RestartProbe : PrtgPostProcessCmdlet
+    public class RestartProbe : PrtgPostProcessCmdlet, IPrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The probe to restart. If no probe is specified, all probes will be restarted.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Probe Probe { get; set; }
+
+        /// <summary>
+        /// <para type="description">Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// <para type="description">Forces the PRTG Probe Service to be restarted on all specified probes without displaying a confirmation prompt.</para>
@@ -112,6 +120,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         probesRestarted.Add(probe);
 
                     ExecuteOperation(() => client.RestartProbe(probe?.Id), progressActivity, progressMessage, !Wait);
+
+                    if(!Wait)
+                        PassThruObject(probe);
                 }
             }
         }
@@ -126,6 +137,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 List<Probe> probes = Probe == null ? client.GetProbes() : probesRestarted;
 
                 client.WaitForProbeRestart(restartTime.Value, probes, WriteProbeProgress);
+
+                PassThruObject(probes);
             }
         }
 
@@ -183,6 +196,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Writes the specified object to the pipeline if <see cref="PassThru"/> is specified.
+        /// </summary>
+        /// <param name="obj">The object to write to the pipeline.</param>
+        public void PassThruObject(object obj)
+        {
+            if (PassThru)
+            {
+                if (obj is IEnumerable)
+                {
+                    foreach (var o in (IEnumerable)obj)
+                        WriteObject(o);
+                }
+                else
+                    WriteObject(obj);
+            }
         }
 
         /// <summary>

@@ -57,4 +57,22 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
 
         { Restart-Probe -Timeout 19 -Force } | Should Throw "Timed out waiting for 1 probe to restart"
     }
+
+    It "passes through when waiting" {
+        SetResponseAndClient "RestartProbeResponse"
+
+        $probe = Get-Probe -Count 1
+
+        $newProbe = $probe | Restart-Probe -Wait -PassThru
+
+        $newProbe | Should Be $probe
+    }
+
+    It "passes through when not waiting" {
+        $probe = Get-Probe -Count 1
+
+        $newProbe = $probe | Restart-Probe -Wait:$false -PassThru
+
+        $newProbe | Should Be $probe
+    }
 }

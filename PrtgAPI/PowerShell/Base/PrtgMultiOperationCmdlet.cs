@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -10,7 +11,7 @@ namespace PrtgAPI.PowerShell.Base
     /// <summary>
     /// Base class for all cmdlets that perform actions or manipulate multiple objects in a single request against PRTG.
     /// </summary>
-    public abstract class PrtgMultiOperationCmdlet : PrtgPostProcessCmdlet
+    public abstract class PrtgMultiOperationCmdlet : PrtgPostProcessCmdlet, IPrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">Specifies whether this cmdlet should queue all objects piped to this cmdlet to execute a single
@@ -18,6 +19,11 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter? Batch { get; set; } = SwitchParameter.Present;
+        /// <summary>
+        /// <para type="description">Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter PassThru { get; set; }
 
         internal List<PrtgObject> objects = new List<PrtgObject>();
 
@@ -33,15 +39,24 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="activity">The progress activity title to display when queuing the object.</param>
         protected void ExecuteOrQueue(SensorOrDeviceOrGroupOrProbe obj, string activity)
         {
-            if (Batch?.IsPresent == true)
-                ExecuteQueueOperation(obj, activity);
-            else
-                PerformSingleOperation();
+            ExecuteOrQueue(obj, activity, $"Queuing {obj.BaseType.ToString().ToLower()} '{obj.Name}'");
         }
 
-        private void ExecuteQueueOperation(SensorOrDeviceOrGroupOrProbe obj, string activity)
+        /// <summary>
+        /// If <see cref="Batch"/> is true, queues the object for processing after all items have been identified. Otherwise, executes this cmdlet's action immediately. 
+        /// </summary>
+        /// <param name="obj">The object to process.</param>
+        /// <param name="activity">The progress activity title to display when queuing the object.</param>
+        /// <param name="progressMessage">The progress message to display.</param>
+        protected void ExecuteOrQueue(PrtgObject obj, string activity, string progressMessage)
         {
-            ExecuteQueueOperation(obj, activity, $"Queuing {obj.BaseType.ToString().ToLower()} '{obj.Name}'");
+            if (Batch.IsPresent)
+                ExecuteQueueOperation(obj, activity, progressMessage);
+            else
+            {
+                PerformSingleOperation();
+                PassThruObject(obj);
+            }
         }
 
         /// <summary>
@@ -203,15 +218,16 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// Provides a one-time, postprocessing functionality for the cmdlet.
+        /// Provides an enhanced one-time, postprocessing functionality for the cmdlet.
         /// </summary>
         protected override void EndProcessingEx()
         {
-            if (objects.Count > 0 && Batch?.IsPresent == true)
+            if (objects.Count > 0 && Batch.IsPresent)
             {
                 var ids = objects.Select(o => o.Id).ToArray();
 
                 PerformMultiOperation(ids);
+                PassThruObject(objects);
             }
         }
 
@@ -225,6 +241,24 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected abstract void PerformMultiOperation(int[] ids);
+
+        /// <summary>
+        /// Writes the specified object to the pipeline if <see cref="PassThru"/> is specified.
+        /// </summary>
+        /// <param name="obj">The object to write to the pipeline.</param>
+        public void PassThruObject(object obj)
+        {
+            if (PassThru)
+            {
+                if (obj is IEnumerable)
+                {
+                    foreach (var o in (IEnumerable)obj)
+                        WriteObject(o);
+                }
+                else
+                    WriteObject(obj);
+            }
+        }
 
         /// <summary>
         /// Whether this cmdlet will execute its post processing operation.

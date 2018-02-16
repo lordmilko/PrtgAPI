@@ -21,7 +21,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "SortPrtgObject", SupportsShouldProcess = true)]
-    public class SortPrtgObject : PrtgOperationCmdlet
+    public class SortPrtgObject : PrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The device, group or probe whose children should be sorted.</para>
@@ -35,7 +35,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                ExecuteOperation(() => client.SortAlphabetically(Object.Id), "Sorting PRTG Objects", $"Sorting children of object {Object.Name} (ID: {Object.Id})");
+                ExecuteOperation(Object, () => client.SortAlphabetically(Object.Id), "Sorting PRTG Objects", $"Sorting children of object {Object.Name} (ID: {Object.Id})");
         }
     }
 }

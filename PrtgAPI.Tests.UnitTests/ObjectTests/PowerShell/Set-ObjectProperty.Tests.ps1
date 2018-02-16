@@ -122,4 +122,24 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Set-ObjectProperty name blah -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Set-ObjectProperty name blah -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

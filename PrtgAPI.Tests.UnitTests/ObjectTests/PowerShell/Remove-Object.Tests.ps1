@@ -36,4 +36,24 @@ Describe "Remove-Object" -Tag @("PowerShell", "UnitTest") {
         {
         }
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Remove-Object -Force -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Remove-Object -Force -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

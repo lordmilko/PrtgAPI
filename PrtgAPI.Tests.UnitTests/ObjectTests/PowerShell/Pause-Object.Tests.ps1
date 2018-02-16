@@ -82,4 +82,24 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
 
         $sensors | Pause-Object -Duration 5 -Batch:$false
     }
+
+    It "passes through with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Pause-Object -Forever -PassThru -Batch:$false
+
+        $newSensor | Should Be $sensor
+    }
+
+    It "passes through with -Batch:`$true" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        $newSensor = $sensor | Pause-Object -Forever -PassThru -Batch:$true
+
+        $newSensor | Should Be $sensor
+    }
 }

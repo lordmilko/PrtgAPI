@@ -22,7 +22,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectPosition", SupportsShouldProcess = true)]
-    public class SetObjectPosition : PrtgOperationCmdlet
+    public class SetObjectPosition : PrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The object to move.</para>
@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (Current Position: {Object.Position}) (New Position: {Position})"))
-                ExecuteOperation(() => client.SetPosition(Object, Position), "Modify PRTG Object Positions", $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
+                ExecuteOperation(Object, () => client.SetPosition(Object, Position), "Modify PRTG Object Positions", $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
         }
     }
 }
