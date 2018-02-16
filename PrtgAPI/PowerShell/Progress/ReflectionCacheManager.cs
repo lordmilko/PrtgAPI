@@ -68,6 +68,26 @@ namespace PrtgAPI.PowerShell.Progress
 
         public object GetDownstreamCmdlet() => runtimeOutputPipeDownstreamCmdletCommand.Value;
 
+        public object GetDownstreamCmdletNotOfType<T>()
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            if (myIndex == commands.Count - 1)
+                return null;
+
+            var nextIndex = myIndex + 1;
+
+            for (int i = nextIndex; i < commands.Count; i++)
+            {
+                if (!(commands[i] is T))
+                    return commands[i];
+            }
+
+            return null;
+        }
+
         private object GetUpstreamCmdletInternal()
         {
             var commands = GetPipelineCommands();
@@ -85,6 +105,26 @@ namespace PrtgAPI.PowerShell.Progress
         }
 
         public object GetUpstreamCmdlet() => upstreamCmdlet.Value;
+
+        public object GetUpstreamCmdletNotOfType<T>()
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            if (myIndex <= 0)
+                return null;
+
+            var previousIndex = myIndex - 1;
+
+            for (int i = previousIndex; i >= 0; i--)
+            {
+                if (!(commands[i] is T))
+                    return commands[i];
+            }
+
+            return null;
+        }
 
         private PrtgCmdlet GetNextPrtgCmdletInternal()
         {
@@ -348,7 +388,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public Pipeline GetSelectPipelineOutput()
         {
-            var command = (SelectObjectCommand)GetUpstreamCmdlet();
+            var command = (SelectObjectCommand)GetUpstreamCmdletNotOfType<WhereObjectCommand>();
 
             var queue = (Queue<PSObject>) command.GetInternalField("selectObjectQueue");
 

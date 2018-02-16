@@ -88,9 +88,14 @@ namespace PrtgAPI.PowerShell.Progress
                 for (int i = myIndex - 1; i >= 0; i--)
                 {
                     if (cmds[i] is SelectObjectCommand)
-                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand)cmds[i]));
+                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand) cmds[i]));
                     else
+                    {
+                        if (i == myIndex - 1 && cmds[i] is WhereObjectCommand)
+                            continue;
+
                         break;
+                    }
                 }
             }
             else
@@ -98,9 +103,14 @@ namespace PrtgAPI.PowerShell.Progress
                 for (int i = myIndex + 1; i < cmds.Count; i++)
                 {
                     if (cmds[i] is SelectObjectCommand)
-                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand)cmds[i]));
+                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand) cmds[i]));
                     else
+                    {
+                        if (i == myIndex + 1 && cmds[i] is WhereObjectCommand)
+                            continue;
+
                         break;
+                    }
                 }
             }
         }

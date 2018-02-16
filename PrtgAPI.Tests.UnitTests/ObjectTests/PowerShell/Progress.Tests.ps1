@@ -4774,6 +4774,741 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     }
 
     #endregion
+    #region 36: Something -> Select -> Where -> [Table] -> Something
+        #region 36.1: Something -> Select -First -> Where -> [Table] -> Something
+
+    It "36.1a: Table -> Select -First -> Where -> Table -> Object" {
+
+        Get-Device -Count 10 | Select -First 5 | where { $_.Id -lt 3003 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device4' (5/10)" 50)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50)
+        ))
+    }
+
+    It "36.1b: Variable -> Select -First -> Where -> Table -> Table" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -First 5 | where { $_.Id -lt 3003 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/10)" 10 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/10)" 10) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/10)" 10) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device2' (3/10)" 30 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/10)" 30) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/10)" 30) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/10)" 30)
+        ))
+    }
+
+    It "36.1c: Table -> Select -First -> Where -> Action" {
+        Get-Device -Count 10 | Select -First 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/10)" 30)
+        ))
+    }
+
+    It "36.1d: Variable -> Select -First -> Where -> Action" {
+
+        $devices = Get-Device -Count 10
+
+        $devices | Select -First 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
+        
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/10)" 30)
+        ))
+    }
+
+        #endregion
+        #region 36.2: Something -> Select -Last -> Where -> [Table] -> Something
+
+    It "36.2a: Table -> Select -Last -> Where -> Table -> Object" {
+        Get-Device -Count 10 | Select -Last 5 | where { $_.Id -lt 3007 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device4' (5/10)" 50)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device6' (2/5)" 40)
+        ))
+    }
+
+    It "36.2b: Variable -> Select -Last -> Where -> Table -> Object" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Last 5 | where { $_.Id -lt 3007 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device5' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device6' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device6' (2/5)" 40)
+        ))
+    }
+
+    It "36.2c: Table -> Select -Last -> Where -> Action" {
+        Get-Device -Count 10 | Select -Last 5 | where { $_.Id -lt 3007 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (2/5)" 40)
+        ))
+    }
+
+    It "36.2d: Variable -> Select -Last -> Where -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Last 5 | where { $_.Id -lt 3007 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (2/5)" 40)
+        ))
+    }
+
+        #endregion
+        #region 36.3: Something -> Select -Skip -> Where -> [Table] -> Something
+
+    It "36.3a: Table -> Select -Skip -> Where -> Table -> Object" {
+        Get-Device -Count 10 | Select -Skip 7 | where { $_.Id -lt 3008 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device4' (5/10)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device5' (6/10)" 60)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device6' (7/10)" 70)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device8' (9/10)" 90)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device9' (10/10)" 100)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
+        ))
+    }
+
+    It "36.3b: Variable -> Select -Skip -> Where -> Table -> Object" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Skip 7 | where { $_.Id -lt 3008 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device7' (8/10)" 80 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device7' (8/10)" 80) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device7' (8/10)" 80) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device7' (8/10)" 80)
+        ))
+    }
+
+    It "36.3c: Table -> Select -Skip -> Where -> Action" {
+        Get-Device -Count 10 | Select -Skip 7 | where { $_.Id -lt 3008 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' forever (8/10)" 80)
+            (Gen "Pausing PRTG Objects (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
+        ))
+    }
+
+    It "36.3d: Variable -> Select -Skip -> Where -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Skip 7 | where { $_.Id -lt 3008 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' forever (8/10)" 80)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device7' forever (8/10)" 80)
+        ))
+    }
+
+        #endregion
+        #region 36.4: Something -> Select -SkipLast -> Where -> [Table] -> Something
+
+    It "36.4a: Table -> Select -SkipLast -> Where -> Table -> Object" {
+        Get-Device -Count 10 | Select -SkipLast 5 | where { $_.Id -lt 3003 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device2' (3/10)" 30)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                    (Gen3 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                    (Gen3 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60)
+        ))
+    }
+
+    It "36.4b: Variable -> Select -SkipLast -> Where -> Table -> Object" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -SkipLast 5 | where { $_.Id -lt 3003 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/5)" 60) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/5)" 60)
+        ))
+    }
+
+    It "36.4c: Table -> Select -SkipLast -> Where -> Action" {
+        Get-Device -Count 10 | Select -SkipLast 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/5)" 60)
+        ))
+    }
+
+    It "36.4d: Variable -> Select -SkipLast -> Where -> Action" {
+        $devices = Get-Device -Count 10
+        
+        $devices | Select -SkipLast 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/5)" 60)
+        ))
+    }
+
+        #endregion
+        #region 36.5: Something -> Select -Index -> Where -> [Table] -> Something
+
+    It "36.5a: Table -> Select -Index -> Where -> Table -> Object" {
+        Get-Device -Count 10 | Select -Index 1,3,5,7,8 | where { $_.Id -lt 3005 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device3' (4/10)" 40) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device5' (6/10)" 60)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device7' (8/10)" 80)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device8' (9/10)" 90)
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device8' (9/10)" 90)
+        ))
+    }
+
+    It "36.5b: Variable -> Select -Index -> Where -> Table -> Object" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Index 1,3,5,7,8 | where { $_.Id -lt 3005 } | Get-Sensor -Count 1 | Get-Channel
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device3' (4/10)" 40 "Retrieving all sensors")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device3' (4/10)" 40) +
+                (Gen2 "PRTG Channel Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device3' (4/10)" 40) +
+                (Gen2 "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/1)" 100 "Retrieving all channels")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device3' (4/10)" 40)
+        ))
+    }
+
+    It "36.5c: Table -> Select -Index -> Where -> Action" {
+        Get-Device -Count 10 | Select -Index 1,3,5,7,8 | where { $_.Id -lt 3005 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/10)" 40)
+        ))
+    }
+
+    It "36.5d: Variable -> Select -Index -> Where -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | Select -Index 1,3,5,7,8 | where { $_.Id -lt 3005 } | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/10)" 40)
+        ))
+    }
+
+        #endregion
+    #endregion
+    #region 37: Something -> Where -> Select -> Something
+        #region 37.1: Something -> Where -> Select -First -> Something
+
+    It "37.1a: Table -> Where -> Select -First -> Table" {
+
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -First 5 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+    It "37.1b: Variable -> Where -> Select -First -> Table" {
+
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -First 5 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/10)" 10 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device2' (3/10)" 30 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device3' (4/10)" 40 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device4' (5/10)" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50 "Retrieving all sensors")
+        ))
+    }
+
+    It "37.1c: Table -> Where -> Select -First -> Action" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -First 5 | Pause-Object -Forever -Batch:$false
+
+        Assert-NoProgress
+    }
+
+    It "37.1d: Variable -> Where -> Select -First -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -First 5 | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/10)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/10)" 50)
+        ))
+    }
+
+        #endregion
+        #region 37.2: Something -> Where -> Select -Last -> Something
+
+    It "37.2a: Table -> Where -> Select -Last -> Table" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Last 5 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+    It "37.2b: Variable -> Where -> Select -Last -> Table" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Last 5 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device2' (1/5)" 20 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device3' (2/5)" 40 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device4' (3/5)" 60 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device5' (4/5)" 80 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device6' (5/5)" 100 "Retrieving all sensors")
+
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device6' (5/5)" 100 "Retrieving all sensors")
+        ))
+    }
+
+    It "37.2c: Table -> Where -> Select -Last -> Action" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Last 5 | Pause-Object -Forever -Batch:$false
+
+        Assert-NoProgress
+    }
+
+    It "37.2d: Variable -> Where -> Select -Last -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Last 5 | Pause-Object -Forever -Batch:$false
+        
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (5/5)" 100)
+        ))
+    }
+
+        #endregion
+        #region 37.3: Something -> Where -> Select -Skip -> Something
+
+    It "37.3a: Table -> Where -> Select -Skip -> Table" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Skip 5 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+    It "37.3b: Variable -> Where -> Select -Skip -> Table" {
+
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Skip 5 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device5' (6/10)" 60 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device6' (7/10)" 70 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device6' (7/10)" 70 "Retrieving all sensors")
+        ))
+    }
+
+    It "37.3c: Table -> Where -> Select -Skip -> Action" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Skip 5 | Pause-Object -Forever -Batch:$false
+
+        Assert-NoProgress
+    }
+
+    It "37.3d: Variable -> Where -> Select -Skip -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Skip 5 | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (6/10)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (7/10)" 70)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (7/10)" 70)
+        ))
+    }
+
+        #endregion
+        #region 37.4: Something -> Where -> Select -SkipLast -> Something
+
+    It "37.4a: Table -> Where -> Select -SkipLast -> Table" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -SkipLast 5 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+    It "37.4b: Variable -> Where -> Select -SkipLast -> Table" {
+
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -SkipLast 5 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/5)" 20 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/5)" 40 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/5)" 40 "Retrieving all sensors")
+        ))
+    }
+
+    It "37.4c: Table -> Where -> Select -SkipLast -> Action" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -SkipLast 5 | Pause-Object -Forever -Batch:$false
+
+        Assert-NoProgress
+    }
+
+    It "37.4d: Variable -> Where -> Select -SkipLast -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -SkipLast 5 | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/5)" 40)
+        ))
+    }
+
+        #endregion
+        #region 37.5: Something -> Where -> Select -Index -> Something
+
+    It "37.5a: Table -> Where -> Select -Index -> Table" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Index 0,1,3,5 | Get-Sensor
+
+        Assert-NoProgress
+    }
+
+    It "37.5b: Variable -> Where -> Select -Index -> Table" {
+
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Index 0,1,3,5 | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/10)" 10 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/10)" 20 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device3' (4/10)" 40 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device5' (6/10)" 60 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device5' (6/10)" 60 "Retrieving all sensors")
+        ))
+    }
+
+    It "37.5c: Table -> Where -> Select -Index -> Action" {
+        Get-Device -Count 10 | where { $_.Id -lt 3007 } | Select -Index 0,1,3,5 | Pause-Object -Forever -Batch:$false
+
+        Assert-NoProgress
+    }
+
+    It "37.5d: Variable -> Where -> Select -Index -> Action" {
+        $devices = Get-Device -Count 10
+
+        $devices | where { $_.Id -lt 3007 } | Select -Index 0,1,3,5 | Pause-Object -Forever -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (6/10)" 60)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device5' forever (6/10)" 60)
+        ))
+    }
+
+        #endregion
+    #endregion
     #region 100: Get-SensorFactorySource
         #region 100a: Something -> Get-SensorFactorySource
 

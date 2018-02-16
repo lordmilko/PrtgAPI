@@ -618,7 +618,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             progressWriter = GetWriter();
 
-            if (CacheManager.GetUpstreamCmdlet() is SelectObjectCommand)
+            if (CacheManager.GetUpstreamCmdletNotOfType<WhereObjectCommand>() is SelectObjectCommand)
             {
                 upstreamSelectObjectManager = new SelectObjectManager(CacheManager, cmdlet, Direction.Upstream);
 
@@ -626,7 +626,7 @@ namespace PrtgAPI.PowerShell.Progress
                     upstreamSelectObjectManager = null;
             }
 
-            if (CacheManager.GetDownstreamCmdlet() is SelectObjectCommand)
+            if (CacheManager.GetDownstreamCmdletNotOfType<WhereObjectCommand>() is SelectObjectCommand)
             {
                 downstreamSelectObjectManager = new SelectObjectManager(CacheManager, cmdlet, Direction.Downstream);
 
