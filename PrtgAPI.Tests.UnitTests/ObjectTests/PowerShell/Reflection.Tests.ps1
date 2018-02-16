@@ -4,6 +4,8 @@ Describe "Test-Reflection" -Tag @("PowerShell", "UnitTest") {
 
     SetActionResponse
 
+    Enable-PrtgProgress
+
     It "can detect next cmdlet on pipeline" {
         Test-Reflection1 -Downstream | Test-Reflection2 -Downstream | Should Be "Test-Reflection2"
     }
@@ -40,4 +42,6 @@ Describe "Test-Reflection" -Tag @("PowerShell", "UnitTest") {
             $value | Test-Reflection1 -VariableInputObject | Should Be 1
         }
     }
+
+    Disable-PrtgProgress
 }

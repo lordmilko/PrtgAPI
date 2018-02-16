@@ -560,5 +560,14 @@ namespace PrtgAPI.Objects.Undocumented
         #endregion
 
         //todo: the rest, including proxy settings for http sensors automatic monitoring data analysis
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

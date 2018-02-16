@@ -5,6 +5,9 @@ namespace PrtgAPI
 {
     enum CommandFunction
     {
+        /// <summary>
+        /// Renames an object.
+        /// </summary>
         [Description("rename.htm")]
         Rename,
 
@@ -14,24 +17,45 @@ namespace PrtgAPI
         [Description("setobjectproperty.htm")]
         SetObjectProperty,
 
+        /// <summary>
+        /// Pauses an object indefinitely.
+        /// </summary>
         [Description("pause.htm")]
         Pause,
 
+        /// <summary>
+        /// Pauses an object for a specified duration (in minutes).
+        /// </summary>
         [Description("pauseobjectfor.htm")]
         PauseObjectFor,
 
+        /// <summary>
+        /// Simulates an error on a sensor.
+        /// </summary>
         [Description("simulate.htm")]
         Simulate,
 
+        /// <summary>
+        /// Acknowledges a sensor in a <see cref="Status.Down"/> state.
+        /// </summary>
         [Description("acknowledgealarm.htm")]
         AcknowledgeAlarm,
 
+        /// <summary>
+        /// Refreshes an object (as well as any child objects).
+        /// </summary>
         [Description("scannow.htm")]
         ScanNow,
 
+        /// <summary>
+        /// Starts an auto-discovery operation.
+        /// </summary>
         [Description("discovernow.htm")]
         DiscoverNow,
 
+        /// <summary>
+        /// Repositions an object under its parent object.
+        /// </summary>
         [Description("setposition.htm")]
         SetPosition,
 
@@ -41,19 +65,31 @@ namespace PrtgAPI
         [Description("notificationtest.htm")]
         NotificationTest,
 
+        /// <summary>
+        /// Permanently removes an object from PRTG.
+        /// </summary>
         [Description("deleteobject.htm")]
         DeleteObject,
 
+        /// <summary>
+        /// Clones an object and all children to under another object.
+        /// </summary>
         [Description("duplicateobject.htm")]
         DuplicateObject,
 
         [Description("setlonlat.htm")]
         SetLonLat,
 
+        /// <summary>
+        /// Moves an object to under a new parent object.
+        /// </summary>
         [Undocumented]
         [Description("moveobjectnow.htm")]
         MoveObjectNow,
 
+        /// <summary>
+        /// Sorts the children of an object in alphabetical order.
+        /// </summary>
         [Description("sortsubobjects.htm")]
         SortSubObjects,
 

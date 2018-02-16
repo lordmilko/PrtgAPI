@@ -3,7 +3,7 @@
 Describe "Acknowledge-Sensor_IT" {
 
     $message = "Unit Testing FTW!"
-
+    
     It "can acknowledge indefinitely" {
 
         $sensor = Get-Sensor -Id (Settings DownSensor)
@@ -96,6 +96,20 @@ Describe "Acknowledge-Sensor_IT" {
         Sleep 30
 
         $newUpSensor = Get-Sensor -Id (Settings UpSensor)
+
+        if($newUpSensor.Status -ne "Down")
+        {
+            LogTestDetail "Sleeping for 30 more seconds as object has not refreshed"
+            $upSensor | Refresh-Object
+            Sleep 10
+            $upSensor | Refresh-Object
+            Sleep 10
+            $upSensor | Refresh-Object
+            Sleep 10
+
+            $newUpSensor = Get-Sensor -Id (Settings UpSensor)
+        }
+
         $newUpSensor.Status | Should Be Down
 
         $downIds = ((Settings UpSensor),(Settings DownSensor))
@@ -131,6 +145,20 @@ Describe "Acknowledge-Sensor_IT" {
         Sleep 30
 
         $finalUpSensor = Get-Sensor -Id (Settings UpSensor)
+
+        if($finalUpSensor.Status -ne "Up")
+        {
+            LogTestDetail "Sleeping for 30 more seconds as object has not refreshed"
+            $finalSensors | Refresh-Object
+            Sleep 10
+            $finalSensors | Refresh-Object
+            Sleep 10
+            $finalSensors | Refresh-Object
+            Sleep 10
+
+            $finalUpSensor = Get-Sensor -Id (Settings UpSensor)
+        }
+
         $finalUpSensor.Status | Should Be Up
     }
 }

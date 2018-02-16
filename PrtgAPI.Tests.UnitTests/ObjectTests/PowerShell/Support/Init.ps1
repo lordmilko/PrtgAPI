@@ -23,6 +23,8 @@ function InitializeModules($testProject, $scriptRoot)
     {
         ImportModules $testProject $scriptRoot
     }
+
+    $global:ErrorActionPreference = "Stop"
 }
 
 function ImportModules($testProject, $scriptRoot)

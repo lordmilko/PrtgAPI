@@ -16,7 +16,7 @@ namespace PrtgAPI
         private string lastvalue;
 
         /// <summary>
-        /// Last value of this sensor's primary channel. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpause (otherwise it may just display "No Data").
+        /// Last display value of this channel. If this channel's sensor is currently paused, this may display "No data"
         /// </summary>
         [XmlElement("lastvalue")]
         [PropertyParameter(nameof(Property.LastValue))]
@@ -27,7 +27,8 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// The numeric last value of this object.
+        /// The raw last value of this channel.<para/>
+        /// This value is represented in the smallest unit the <see cref="Unit"/> can be divided into (seconds, bits, bytes, etc)
         /// </summary>
         public double LastValueNumeric => Convert.ToDouble((Convert.ToDecimal(lastValueNumeric) /10).ToString("F"));
 

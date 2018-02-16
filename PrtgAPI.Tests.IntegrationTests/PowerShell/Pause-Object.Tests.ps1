@@ -140,6 +140,20 @@ Describe "Pause-Object_IT" {
         Sleep 10
 
         $finalSensors = Get-Sensor -Id $ids
+
+        if($finalSensors[0].Status -ne "Up")
+        {
+            LogTestDetail "Sleeping for 30 more seconds as object has not refreshed"
+            $sensors | Refresh-Object
+            Sleep 10
+            $sensors | Refresh-Object
+            Sleep 10
+            $sensors | Refresh-Object
+            Sleep 10
+
+            $finalSensors = Get-Sensor -Id $ids
+        }
+
         $finalSensors[0].Status | Should Be Up
         $finalSensors[1].Status | Should Be Down
     }

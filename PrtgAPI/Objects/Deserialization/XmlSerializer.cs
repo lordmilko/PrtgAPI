@@ -340,7 +340,7 @@ namespace PrtgAPI.Objects.Deserialization
 
             double dVal;
 
-            //XML values should always be InvariantCulture. If value was scraped from HTML, value will be CurrentCulture PRTG Server.
+            //XML values should always be InvariantCulture. If value was scraped from HTML, value will be the CurrentCulture of the PRTG Server.
             if (!double.TryParse(s, numberStyle, NumberFormatInfo.InvariantInfo, out dVal))
             {
                 dVal = double.Parse(s, numberStyle, NumberFormatInfo.CurrentInfo);

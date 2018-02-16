@@ -100,7 +100,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectProperty_CanSetLocation()
         {
-            SetObjectProperty(ObjectProperty.Location, "23 Fleet Street", "23 Fleet St, Boston, MA 02113, USA");
+            SetObjectProperty(ObjectProperty.Location, "23 Fleet Street, Boston", "23 Fleet St, Boston, MA 02113, USA");
         }
 
         [TestMethod]

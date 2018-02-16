@@ -44,7 +44,7 @@ namespace PrtgAPI
         private string lastValue;
 
         /// <summary>
-        /// Last value of this sensor's primary channel. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpause (otherwise it may just display "No Data").
+        /// Last value of this sensor's primary channel. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpaused (otherwise it may just display "No data").
         /// </summary>
         [XmlElement("lastvalue")]
         [PropertyParameter(nameof(Property.LastValue))]

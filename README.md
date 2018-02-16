@@ -146,6 +146,15 @@ foreach (var channel in channels)
 }
 ```
 
+Many operations will let you specify multiple Object IDs at once, allowing you to potentially modify thousands of objects in a single request
+
+```c#
+//Acknowledge all down sensors indefinitely via a single request.
+var sensors = client.GetSensors(Status.Down);
+
+client.AcknowledgeSensor(sensors.Select(s => s.Id).ToArray());
+```
+
 #### Other Objects
 
 Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical logs and data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)

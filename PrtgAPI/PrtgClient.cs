@@ -917,7 +917,7 @@ namespace PrtgAPI
         /// <returns></returns>
         public async Task<List<Channel>> GetChannelsAsync(int sensorId, string channelName) => await GetChannelsInternalAsync(sensorId, name => name == channelName).ConfigureAwait(false);
 
-        internal XElement GetChannelProperties(int sensorId, int channelId)
+        private XElement GetChannelProperties(int sensorId, int channelId)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
@@ -926,7 +926,7 @@ namespace PrtgAPI
             return ChannelSettings.GetChannelXml(response, channelId);
         }
 
-        internal async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
+        private async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 

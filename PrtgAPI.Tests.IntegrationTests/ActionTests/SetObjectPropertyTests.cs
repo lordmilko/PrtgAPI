@@ -16,7 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         {
             var initial = client.GetDeviceProperties(Settings.Device);
 
-            client.SetObjectProperty(Settings.Device, ObjectProperty.Location, "23 Fleet Street");
+            client.SetObjectProperty(Settings.Device, ObjectProperty.Location, "23 Fleet Street, Boston");
 
             var newSettings = client.GetDeviceProperties(Settings.Device);
 
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         {
             var initial = await client.GetDevicePropertiesAsync(Settings.Device);
 
-            await client.SetObjectPropertyAsync(Settings.Device, ObjectProperty.Location, "23 Fleet Street");
+            await client.SetObjectPropertyAsync(Settings.Device, ObjectProperty.Location, "23 Fleet Street, Boston");
 
             var newSettings = await client.GetDevicePropertiesAsync(Settings.Device);
 

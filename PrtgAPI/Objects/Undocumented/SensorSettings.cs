@@ -311,7 +311,7 @@ namespace PrtgAPI.Objects.Undocumented
         /// Corresponds to Schedules, Dependencies and Maintenance Window -> Dependency.
         /// </summary>
         [XmlElement("injected_dependencyvalue")]
-        public string DependentObjectId { get; set; }
+        public int? DependentObjectId { get; set; }
 
         /// <summary>
         /// Duration (in seconds) to delay resuming this sensor after its master object returns to <see cref="Status.Up"/>. This property only applies when <see cref="DependencyType"/> is <see cref="PrtgAPI.DependencyType.Object"/>.<para/>
@@ -541,5 +541,14 @@ namespace PrtgAPI.Objects.Undocumented
         public SqlTransactionMode? SqlTransactionMode { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

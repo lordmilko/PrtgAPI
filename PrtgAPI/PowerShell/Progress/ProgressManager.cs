@@ -780,6 +780,9 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal long GetLastSourceId()
         {
+            if (!PrtgSessionState.EnableProgress)
+                return -1;
+
             var val = Convert.ToInt64(cmdlet.CommandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
 
             if (PipeFromVariableWithProgress && FirstInChain)
