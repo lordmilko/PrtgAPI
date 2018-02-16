@@ -117,10 +117,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
                     var values = components.GetValues("filter_objid");
 
-                    if (values.Length > 1)
+                    if (values?.Length > 1)
                         count = 2;
+                    else
+                    {
+                        if (values?.First() == "-1")
+                            count = 0;
+                    }
                 }
-                    
             }
             else
             {

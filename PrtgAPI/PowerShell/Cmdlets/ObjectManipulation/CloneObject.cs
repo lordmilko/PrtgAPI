@@ -15,16 +15,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Clone-Object cmdlet duplicates a PRTG Sensor, Device, Group or Notification Trigger, including
     /// all objects defined under it (such as all sensors of a device, or all devices and sensors of a group).</para>
-    /// <para type="description">To clone an object, you must specify the Object ID of the parent the cloned object will sit under.
-    /// Sensors can only be cloned to <see cref="Device"/> objects, whereas devices and groups can both cloned to other groups
+    /// <para type="description">Clone-Object can operate in two modes: Clone From and Clone To. In Clone From mode (the default) objects
+    /// you wish to clone are piped into Clone-Object, requiring you to specify the Object ID of the parent the cloned object will sit under.
+    /// In Clone To mode, objects you wish to clone a single object to are piped to Clone-Object, requiring you to specify the ID of the object you
+    /// wish to clone.</para>
+    /// <para type="description">Sensors can only be cloned to <see cref="Device"/> objects, whereas devices and groups can both cloned to other groups
     /// or directly under a probe.</para>
     /// 
-    /// <para type="description">When cloning sensors, devices and groups object, a name can optionally be specified. When cloning sensors and groups,
+    /// <para type="description">When cloning sensors, devices and groups objects (in Clone From mode), a name can optionally be specified. When cloning sensors and groups,
     /// if a name is not specified the name of the original sensor or group will be used. When cloning devices, if a name is not
     /// specified PrtgAPI will automatically name the device as "Clone of &lt;device&gt;, where &lt;device&gt;
     /// is the name of the original device. When cloning devices, a Hostname/IP Address can optionally be specified. If a Hostname/IP Address
     /// is ommitted, PrtgAPI will use the name of the device as the hostname. Cloning a notification trigger with Clone-Object is equivalent
     /// to passing a trigger to the New-TriggerParameters cmdlet, followed by Add-NotificationTrigger.</para>
+    /// 
+    /// <para type="description">To clone a single child object to multiple destination objects, the -SourceId parameter can be specified. When operating
+    /// in Clone To mode, Clone-Object will automatically assign the newly created object the same name as the source object. When Clone-Object executes,
+    /// it will automatically attempt to resolve the target object specified by the -SourceId parameter. If -SourceId cannot be resolved to a valid
+    /// sensor, device or group, Clone-Object will throw an exception specifying that the specified object ID is not valid.</para>
     /// 
     /// <para type="description">When an object has been cloned, by default Clone-Object will attempt to automatically resolve the object
     /// into its resultant <see cref="Sensor"/>, <see cref="Device"/>, <see cref="Group"/> or <see cref="NotificationTrigger"/>  object.
@@ -47,6 +55,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object 5678 MyNewSensor</code>
     ///     <para>Clone the sensor with ID 1234 to the device with ID 5678 renamed as "MyNewSensor"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device *exch* | Clone-Object -SourceId 2002</code>
+    ///     <para>Clone the object with ID 2002 to all devices whose name contains "exch"</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -75,61 +88,93 @@ namespace PrtgAPI.PowerShell.Cmdlets
     [Cmdlet(VerbsCommon.Copy, "Object", SupportsShouldProcess = true)]
     public class CloneObject : NewObjectCmdlet
     {
+        const string SensorToDestination = "SensorToDestination";
+        const string DeviceToDestination = "DeviceToDestination";
+        const string GroupToDestination = "GroupToDestination";
+        const string TriggerToDestination = "TriggerToDestination";
+
+        const string TargetForSource = "TargetForSource";
+
         /// <summary>
         /// <para type="description">The ID of the device (for sensors), group or probe (for groups and devices) that will hold the cloned object.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = SensorToDestination)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = DeviceToDestination)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = GroupToDestination)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = TriggerToDestination)]
         public int DestinationId { get; set; }
 
         /// <summary>
         /// <para type="description">The name to rename the cloned object to.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Sensor")]
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Device")]
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Group")]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = SensorToDestination)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = DeviceToDestination)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = GroupToDestination)]
         public string Name { get; set; }
 
         /// <summary>
         /// <para type="description">The hostname or IP Address to set on the cloned device.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Device")]
+        [Parameter(Mandatory = false, Position = 2, ParameterSetName = DeviceToDestination)]
         public new string Host { get; set; }
 
         /// <summary>
         /// <para type="description">The sensor to clone.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Sensor")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = SensorToDestination)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">The device to clone.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Device")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DeviceToDestination)]
         public Device Device { get; set; }
 
         /// <summary>
         /// <para type="description">The group to clone.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Group")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = GroupToDestination)]
         public Group Group { get; set; }
 
         /// <summary>
         /// <para type="description">The notification trigger to clone.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Trigger")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = TriggerToDestination)]
         public NotificationTrigger Trigger { get; set; }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// <para type="description">The ID of the object to clone.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = TargetForSource)]
+        public int SourceId { get; set; }
+
+        /// <summary>
+        /// <para type="description">The object to clone the object specified by the <see cref="SourceId"/> to.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = TargetForSource)]
+        public DeviceOrGroupOrProbe Destination { get; set; }
+
+        private SensorOrDeviceOrGroupOrProbe sourceObj;
+        private Func<int, List<PrtgObject>> sourceObjResolver;
+
+        /// <summary>
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
+        /// </summary>
+        protected override void BeginProcessingEx()
+        {
+            if (ParameterSetName == TargetForSource)
+                SetSourceIdObject();
+        }
+
+        /// <summary>
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
             var config = GetCmdletConfig();
 
             if (ShouldProcess($"{config.NameDescrption} ({config.IdDescription}, Destination: {DestinationId})"))
-            {
                 ExecuteOperation(() => Clone(config), config);
-            }
         }
 
         private void Clone(CloneCmdletConfig config)
@@ -154,7 +199,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 response.Properties.Add(new PSNoteProperty("Name", config.Name));
 
                 if(config.Host != null)
-                    response.Properties.Add(new PSNoteProperty("HostName", config.Host));
+                    response.Properties.Add(new PSNoteProperty("Host", config.Host));
 
                 WriteObject(response);
             }
@@ -203,39 +248,75 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             switch (ParameterSetName)
             {
-                case "Sensor":
+                case SensorToDestination:
                     parameters = new CloneCmdletConfig(
                         Sensor,
                         Name ?? Sensor.Name,
-                        id => client.GetSensors(Property.Id, id).Cast<PrtgObject>().ToList()
+                        GetSensors
                     );
                     break;
-                case "Device":
+                case DeviceToDestination:
                     parameters = new CloneCmdletConfig(
                         Device,
                         string.IsNullOrEmpty(Name) ? $"Clone of {Device.Name}" : Name,
                         Host ?? Device.Host,
-                        id => client.GetDevices(Property.Id, id).Cast<PrtgObject>().ToList()
+                        GetDevices
                     );
                     break;
-                case "Group":
+                case GroupToDestination:
                     parameters = new CloneCmdletConfig(
                         Group,
                         Name ?? Group.Name,
-                        id => client.GetGroups(Property.Id, id).Cast<PrtgObject>().ToList()
+                        GetGroups
                     );
                     break;
-                case "Trigger":
+                case TriggerToDestination:
                     parameters = new CloneCmdletConfig(Trigger, null, null);
+                    break;
+                case TargetForSource:
+                    DestinationId = Destination.Id;
+                    parameters = new CloneCmdletConfig(sourceObj, sourceObj.Name, sourceObjResolver);
                     break;
                 default:
                     throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
             }
 
-            if (ParameterSetName != "Trigger")
+            if (ParameterSetName != TriggerToDestination)
                 parameters.AllowBasic = true;
 
             return parameters;
+        }
+        
+        private void SetSourceIdObject()
+        {
+            var sensor = client.GetSensors(Property.Id, SourceId).FirstOrDefault();
+
+            if (sensor != null)
+            {
+                sourceObj = sensor;
+                sourceObjResolver = GetSensors;
+                return;
+            }
+
+            var device = client.GetDevices(Property.Id, SourceId).FirstOrDefault();
+
+            if (device != null)
+            {
+                sourceObj = device;
+                sourceObjResolver = GetDevices;
+                return;
+            }
+
+            var group = client.GetGroups(Property.Id, SourceId).FirstOrDefault();
+
+            if (group != null)
+            {
+                sourceObj = group;
+                sourceObjResolver = GetGroups;
+                return;
+            }
+            
+            throw new PSArgumentException($"Cannot clone object with ID '{SourceId}' as it is not a sensor, device or group");
         }
 
         private void ExecuteOperation(Action action, CloneCmdletConfig config)
@@ -247,5 +328,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             WriteObject(ResolveObject(() => getObjects(id), o => o.Count == 0, "Could not resolve object with ID '{id}'", trueType), true);
         }
+
+        private Func<int, List<PrtgObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<PrtgObject>().ToList();
+        private Func<int, List<PrtgObject>> GetDevices => id => client.GetDevices(Property.Id, id).Cast<PrtgObject>().ToList();
+        private Func<int, List<PrtgObject>> GetGroups => id => client.GetGroups(Property.Id, id).Cast<PrtgObject>().ToList();
     }
 }

@@ -34,6 +34,37 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
         $triggers | Clone-Object 5678 -Resolve:$false
     }
 
+    It "Clones a source ID" {
+
+        $devices = WithResponse "MultiTypeResponse" {
+            Get-Device -Count 1
+        }
+
+        try
+        {
+            # MultiTypeResponse will respond with an object to the request for sensors, despite the fact this is a device
+            SetAddressValidatorResponse @(
+                "api/table.xml?content=sensors&columns=probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name&count=*&filter_objid=1234&"
+                "api/duplicateobject.htm?id=4000&name=Volume+IO+_Total0&targetid=3000&"
+                "api/table.xml?content=sensors&columns=probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name&count=*&filter_objid=9999&"
+            )
+
+            $devices | Clone-Object -SourceId 1234
+        }
+        finally
+        {
+            SetCloneResponse
+        }
+    }
+
+    It "throws cloning an unknown source ID" {
+        $devices = Run Device { Get-Device }
+
+        WithResponseArgs "AddressValidatorResponse" "a" {
+            { $devices | Clone-Object -SourceId -1 } | Should Throw "Cannot clone object with ID '-1' as it is not a sensor, device or group"
+        }
+    }
+
     It "doesn't resolve a sensor/group" {
         $sensor = Run Sensor { Get-Sensor }
 

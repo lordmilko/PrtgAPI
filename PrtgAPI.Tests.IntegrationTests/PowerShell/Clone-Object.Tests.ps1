@@ -73,6 +73,8 @@ Describe "Clone-Object_IT" {
 
             $newDevice.Name | Should Be $newName
             $newDevice.Host | Should Be $device.Host
+
+            $newDevice | Remove-Object -Force
         }
     }
 
@@ -122,6 +124,39 @@ Describe "Clone-Object_IT" {
             $newSensorTrigger.OnNotificationAction.ToString() | Should Be $triggers.OnNotificationAction.ToString()
 
             $newSensorTrigger | Remove-NotificationTrigger -Force
+        }
+    }
+
+    Context "SourceId" {
+        It "clones a source sensor to a device" {
+            $device = Get-Device -Id (Settings Device)
+
+            $id = Settings UpSensor
+
+            $sensor = Get-Sensor -Id $id
+
+            $sensorsBefore = Get-Sensor $sensor.Name
+            $sensorsBefore.Count | Should Be 1
+
+            $device | Clone-Object -SourceId $id
+
+            $sensorsAfter = Get-Sensor $sensor.Name
+            $sensorsAfter.Count | Should Be 2
+        }
+
+        It "clones a source device to a probe" {
+            $probe = Get-Probe -Id (Settings Probe)
+
+            $id = Settings Device
+
+            $device = Get-Device -Id $id
+            $devicesBefore = Get-Device $device.Name
+            $devicesBefore.Count | Should Be 1
+
+            $probe | Clone-Object -SourceId $id
+
+            $devicesAfter = Get-Device $device.Name
+            $devicesAfter.Count | Should Be 2
         }
     }
 }
