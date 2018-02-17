@@ -87,7 +87,7 @@
     <Compile Include="ObjectTests\CSharp\ChannelTests.cs" />
     <Compile Include="ObjectTests\CSharp\CloneTests.cs" />
     <Compile Include="ObjectTests\CSharp\GetObjectPropertyTests.cs" />
-    <Compile Include="ObjectTests\CSharp\RemoveTests.cs" />
+    <Compile Include="ObjectTests\CSharp\OrganizationTests.cs" />
     <Compile Include="ObjectTests\CSharp\DeviceSettingsTests.cs" />
     <Compile Include="ObjectTests\CSharp\GetSensorHistoryTests.cs" />
     <Compile Include="ObjectTests\CSharp\GroupTests.cs" />
@@ -95,7 +95,6 @@
     <Compile Include="ObjectTests\CSharp\ParameterTests.cs" />
     <Compile Include="ObjectTests\CSharp\PositionTests.cs" />
     <Compile Include="ObjectTests\CSharp\RefreshTests.cs" />
-    <Compile Include="ObjectTests\CSharp\RenameTests.cs" />
     <Compile Include="ObjectTests\CSharp\SensorSettingsTests.cs" />
     <Compile Include="ObjectTests\CSharp\SensorTargetTests.cs" />
     <Compile Include="ObjectTests\CSharp\ServerStatusTests.cs" />

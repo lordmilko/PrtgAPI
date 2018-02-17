@@ -1152,7 +1152,7 @@ namespace PrtgAPI
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
         public void AddGroup(int parentId, NewGroupParameters parameters) =>
-            AddObject(parentId, parameters, CommandFunction.AddDevice2);
+            AddObject(parentId, parameters, CommandFunction.AddGroup2);
 
         /// <summary>
         /// Asynchronously add a new group to a PRTG Group or Probe.
@@ -1160,7 +1160,7 @@ namespace PrtgAPI
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
         public async Task AddGroupAsync(int parentId, NewGroupParameters parameters) =>
-            await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2).ConfigureAwait(false);
+            await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2).ConfigureAwait(false);
 
         internal void AddObject(int objectId, NewObjectParameters parameters, CommandFunction function)
         {

@@ -140,6 +140,8 @@ for(int i = 0; i < 2; i++)
                     {
                         if (ex.Message.Contains("Sequence contains no elements"))
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
+
+						throw;
                     }
                 }
             }

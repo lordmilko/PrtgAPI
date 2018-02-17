@@ -8,19 +8,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     public class AutoDiscoverTests : BaseTest
     {
         [TestMethod]
-        public void AutoDiscover_CanExecute()
-        {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
-
-            client.AutoDiscover(1001);
-        }
+        public void AutoDiscover_CanExecute() =>
+            Execute(c => c.AutoDiscover(1001), "api/discovernow.htm?id=1001");
 
         [TestMethod]
-        public async Task AutoDiscover_CanExecuteAsync()
-        {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
-
-            await client.AutoDiscoverAsync(1001);
-        }
+        public async Task AutoDiscover_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.AutoDiscoverAsync(1001), "api/discovernow.htm?id=1001");
     }
 }

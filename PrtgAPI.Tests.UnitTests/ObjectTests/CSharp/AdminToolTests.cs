@@ -8,67 +8,60 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     [TestClass]
     public class AdminToolTests : BaseTest
     {
-        PrtgClient client = Initialize_Client(new BasicResponse(string.Empty));
+        [TestMethod]
+        public void AdminTool_BackupConfig_CanExecute() =>
+            Execute(c => c.BackupConfigDatabase(), "api/savenow.htm");
 
         [TestMethod]
-        public void AdminTool_BackupConfig_CanExecute()
-        {
-            client.BackupConfigDatabase();
-        }
-
-        [TestMethod]
-        public async Task AdminTool_BackupConfig_CanExecuteAsync()
-        {
-            await client.BackupConfigDatabaseAsync();
-        }
+        public async Task AdminTool_BackupConfig_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.BackupConfigDatabaseAsync(), "api/savenow.htm");
 
         [TestMethod]
         public void AdminTool_ClearCache_CanExecute()
         {
-            client.ClearSystemCache(SystemCacheType.General);
-            client.ClearSystemCache(SystemCacheType.GraphData);
+            Execute(c => c.ClearSystemCache(SystemCacheType.General), "api/clearcache.htm");
+            Execute(c => c.ClearSystemCache(SystemCacheType.GraphData), "api/recalccache.htm");
         }
 
         [TestMethod]
         public async Task AdminTool_ClearCache_CanExecuteAsync()
         {
-            await client.ClearSystemCacheAsync(SystemCacheType.General);
-            await client.ClearSystemCacheAsync(SystemCacheType.GraphData);
+            await ExecuteAsync(async c => await c.ClearSystemCacheAsync(SystemCacheType.General), "api/clearcache.htm");
+            await ExecuteAsync(async c => await c.ClearSystemCacheAsync(SystemCacheType.GraphData), "api/recalccache.htm");
         }
 
         [TestMethod]
         public void AdminTool_LoadConfigFiles_CanExecute()
         {
-            client.LoadConfigFiles(ConfigFileType.General);
-            client.LoadConfigFiles(ConfigFileType.Lookups);
+            Execute(c => c.LoadConfigFiles(ConfigFileType.General), "api/reloadfilelists.htm");
+            Execute(c => c.LoadConfigFiles(ConfigFileType.Lookups), "api/loadlookups.htm");
         }
 
         [TestMethod]
         public async Task AdminTool_LoadConfigFiles_CanExecuteAsync()
         {
-            await client.LoadConfigFilesAsync(ConfigFileType.General);
-            await client.LoadConfigFilesAsync(ConfigFileType.Lookups);
+            await ExecuteAsync(async c => await c.LoadConfigFilesAsync(ConfigFileType.General), "api/reloadfilelists.htm");
+            await ExecuteAsync(async c => await c.LoadConfigFilesAsync(ConfigFileType.Lookups), "api/loadlookups.htm");
         }
 
         [TestMethod]
         public void AdminTool_RestartCore_CanExecute()
         {
-            client.RestartCore();
+            Execute(c => c.RestartCore(), "api/restartserver.htm");
         }
 
         [TestMethod]
-        public async Task AdminTool_RestartCore_CanExecuteAsync()
-        {
-            await client.RestartCoreAsync();
-        }
+        public async Task AdminTool_RestartCore_CanExecuteAsync() =>
+            await ExecuteAsync(c => c.RestartCoreAsync(), "api/restartserver.htm");
 
         [TestMethod]
         public void AdminTool_RestartCore_CanWait()
         {
+            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
             RestartCoreStage lastCoreStage = RestartCoreStage.Shutdown;
 
             var webClient = new MockWebClient(new RestartPrtgCoreResponse());
-            var customClient = new PrtgClient(client.Server, client.UserName, client.PassHash, AuthMode.PassHash, webClient);
+            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
 
             customClient.RestartCore(true, stage =>
             {
@@ -86,30 +79,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task AdminTool_RestartCore_CanWaitAsync()
         {
+            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
             var webClient = new MockWebClient(new RestartPrtgCoreResponse());
-            var customClient = new PrtgClient(client.Server, client.UserName, client.PassHash, AuthMode.PassHash, webClient);
+            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
 
             await customClient.RestartCoreAsync(true);
         }
 
         
         [TestMethod]
-        public void AdminTool_RestartProbe_CanExecute()
-        {
-            client.RestartProbe(1001);
-        }
+        public void AdminTool_RestartProbe_CanExecute() =>
+            Execute(c => c.RestartProbe(1001), "api/restartprobes.htm?id=1001");
 
         [TestMethod]
-        public async Task AdminTool_RestartProbe_CanExecuteAsync()
-        {
-            await client.RestartProbeAsync(1001);
-        }
+        public async Task AdminTool_RestartProbe_CanExecuteAsync() =>
+            await ExecuteAsync(c => c.RestartProbeAsync(1001), "api/restartprobes.htm?id=1001");
 
         [TestMethod]
         public void AdminTool_RestartProbe_CanWait()
         {
+            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
             var webClient = new MockWebClient(new RestartProbeResponse());
-            var customClient = new PrtgClient(client.Server, client.UserName, client.PassHash, AuthMode.PassHash, webClient);
+            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
 
             var count = 0;
 
@@ -126,8 +117,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task AdminTool_RestartProbe_CanWaitAsync()
         {
+            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
             var webClient = new MockWebClient(new RestartProbeResponse());
-            var customClient = new PrtgClient(client.Server, client.UserName, client.PassHash, AuthMode.PassHash, webClient);
+            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
 
             var count = 0;
 

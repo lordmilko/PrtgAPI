@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -8,19 +7,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     public class RefreshTests : BaseTest
     {
         [TestMethod]
-        public void Refresh_CanExecute()
-        {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
-
-            client.RefreshObject(1001);
-        }
+        public void Refresh_CanExecute() =>
+            Execute(c => c.RefreshObject(1001), "api/scannow.htm?id=1001");
 
         [TestMethod]
-        public async Task Refresh_CanExecuteAsync()
-        {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
-
-            await client.RefreshObjectAsync(1001);
-        }
+        public async Task Refresh_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.RefreshObjectAsync(1001), "api/scannow.htm?id=1001");
     }
 }

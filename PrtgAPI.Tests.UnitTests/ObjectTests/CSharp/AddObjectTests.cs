@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +16,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void AddSensor_CanExecute()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var builder = new StringBuilder();
+
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2fScript+Sensor&priority_=3&inherittriggers_=1&exefile_=test.ps1%7ctest.ps1%7c%7c&");
+            builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
+            builder.Append("&intervalgroup=1&interval_=60%7c60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+
+            var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
@@ -25,7 +32,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task AddSensor_CanExecuteAsync()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var builder = new StringBuilder();
+
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2fScript+Sensor&priority_=3&inherittriggers_=1&exefile_=test.ps1%7ctest.ps1%7c%7c&");
+            builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
+            builder.Append("&intervalgroup=1&interval_=60%7c60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+
+            var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
@@ -126,7 +139,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void AddDevice_CanExecute()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001";
+
+            var client = Initialize_Client(new AddressValidatorResponse(url));
 
             var parameters = new NewDeviceParameters("device", "host");
 
@@ -136,7 +151,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task AddDevice_CanExecuteAsync()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001";
+
+            var client = Initialize_Client(new AddressValidatorResponse(url));
 
             var parameters = new NewDeviceParameters("device", "host");
 
@@ -146,7 +163,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void AddGroup_CanExecute()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
 
             var parameters = new NewGroupParameters("group");
 
@@ -156,7 +173,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task AddGroup_CanExecuteAsync()
         {
-            var client = Initialize_Client(new BasicResponse(string.Empty));
+            var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
 
             var parameters = new NewGroupParameters("group");
 

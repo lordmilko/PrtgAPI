@@ -10,41 +10,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     public class PositionTests : BaseTest
     {
         [TestMethod]
-        public void Position_Absolute_CanExecute()
-        {
-            var client = GetClient();
-
-            client.SetPosition(GetSensor(), 1);
-        }
+        public void Position_Absolute_CanExecute() =>
+            Execute(c => c.SetPosition(GetSensor(), 1), "api/setposition.htm?id=2203&newpos=9");
 
         [TestMethod]
-        public async Task Position_Absolute_CanExecuteAsync()
-        {
-            var client = GetClient();
-
-            await client.SetPositionAsync(GetSensor(), 1);
-        }
+        public async Task Position_Absolute_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.SetPositionAsync(GetSensor(), 1), "api/setposition.htm?id=2203&newpos=9");
 
         [TestMethod]
-        public void Position_Relative_CanExecute()
-        {
-            var client = GetClient();
-
-            client.SetPosition(1001, Position.Down);
-        }
+        public void Position_Relative_CanExecute() =>
+            Execute(c => c.SetPosition(1001, Position.Down), "api/setposition.htm?id=1001&newpos=down");
 
         [TestMethod]
-        public async Task Position_Relative_CanExecuteAsync()
-        {
-            var client = GetClient();
-
-            await client.SetPositionAsync(1001, Position.Down);
-        }
-
-        private PrtgClient GetClient()
-        {
-            return Initialize_Client(new BasicResponse(string.Empty));
-        }
+        public async Task Position_Relative_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.SetPositionAsync(1001, Position.Down), "api/setposition.htm?id=1001&newpos=down");
 
         private Sensor GetSensor()
         {
