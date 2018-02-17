@@ -21,6 +21,9 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Name] = value; }
         }
 
+        /// <summary>
+        /// The parent to clone the specified object ID to.
+        /// </summary>
         public int TargetId
         {
             get { return (int)this[Parameter.TargetId]; }

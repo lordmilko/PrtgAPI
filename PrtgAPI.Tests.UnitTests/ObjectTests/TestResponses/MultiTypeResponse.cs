@@ -121,7 +121,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                         count = 2;
                     else
                     {
-                        if (values?.First() == "-1")
+                        
+                        if (values?.First() == "-2")
+                        {
+                            if (content != Content.Devices)
+                                count = 0;
+                        }
+                        if (values?.First() == "-3")
+                        {
+                            if (content != Content.Groups)
+                                count = 0;
+                        }
+                        else if (values?.First() == "-4")
                             count = 0;
                     }
                 }

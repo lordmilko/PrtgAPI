@@ -7,9 +7,48 @@ function SetCloneResponse
     SetPrtgClient $client
 }
 
+function CloneSourceId($sourceId, $content, $properties, $name, $realSourceId)
+{
+    $devices = WithResponse "MultiTypeResponse" {
+        Get-Device -Count 1
+    }
+
+    try
+    {
+        # MultiTypeResponse will respond with an object to the request for sensors, despite the fact this is a device
+        SetAddressValidatorResponse @(
+            (GetLookup $content $properties $sourceId)
+            "api/duplicateobject.htm?id=$realSourceId&name=$name&targetid=3000&"
+            "api/table.xml?content=$($content | Select -Last 1)&columns=$($properties|select -Last 1)&count=*&filter_objid=9999&"
+        )
+
+        $devices | Clone-Object -SourceId $sourceId
+    }
+    finally
+    {
+        SetCloneResponse
+    }
+}
+
+function GetLookup($content, $properties, $sourceId)
+{
+    $list = @()
+
+    for($i = 0; $i -lt $content.Length; $i++)
+    {
+        $list += "api/table.xml?content=$($content[$i])&columns=$($properties[$i])&count=*&filter_objid=$sourceId&"
+    }
+
+    $list
+}
+
 Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
 
     SetCloneResponse
+
+    $sensorProperties = "probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
+    $deviceProperties = "location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
+    $groupProperties = "probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
 
     It "Retries resolving an object" {
         $sensor = Run Sensor { Get-Sensor }
@@ -29,39 +68,31 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
     It "Clones a trigger" {
         $group = Run Group { Get-Group }
 
-        $triggers = Run NotificationTrigger { $group | Get-Trigger }
+        $trigger = Run NotificationTrigger { $group | Get-Trigger } | Select -First 1
 
-        $triggers | Clone-Object 5678 -Resolve:$false
+        WithResponse "DiffBasedResolveResponse" {
+            $trigger | Clone-Object 1001
+        }
     }
 
-    It "Clones a source ID" {
+    It "Clones a sensor source ID" {
+        
+        CloneSourceId -1 @("sensors") @($sensorProperties) "Volume+IO+_Total0" 4000
+    }
 
-        $devices = WithResponse "MultiTypeResponse" {
-            Get-Device -Count 1
-        }
+    It "Clones a device source ID" {
+        CloneSourceId -2 @("sensors", "devices") @($sensorProperties, $deviceProperties) "Probe+Device0" 3000
+    }
 
-        try
-        {
-            # MultiTypeResponse will respond with an object to the request for sensors, despite the fact this is a device
-            SetAddressValidatorResponse @(
-                "api/table.xml?content=sensors&columns=probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name&count=*&filter_objid=1234&"
-                "api/duplicateobject.htm?id=4000&name=Volume+IO+_Total0&targetid=3000&"
-                "api/table.xml?content=sensors&columns=probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name&count=*&filter_objid=9999&"
-            )
-
-            $devices | Clone-Object -SourceId 1234
-        }
-        finally
-        {
-            SetCloneResponse
-        }
+    It "Clones a group source ID" {
+        CloneSourceId -3 @("sensors", "devices", "groups") @($sensorProperties, $deviceProperties, $groupProperties) "Windows+Infrastructure0" 2000
     }
 
     It "throws cloning an unknown source ID" {
         $devices = Run Device { Get-Device }
 
         WithResponseArgs "AddressValidatorResponse" "a" {
-            { $devices | Clone-Object -SourceId -1 } | Should Throw "Cannot clone object with ID '-1' as it is not a sensor, device or group"
+            { $devices | Clone-Object -SourceId -4 } | Should Throw "Cannot clone object with ID '-4' as it is not a sensor, device or group"
         }
     }
 
