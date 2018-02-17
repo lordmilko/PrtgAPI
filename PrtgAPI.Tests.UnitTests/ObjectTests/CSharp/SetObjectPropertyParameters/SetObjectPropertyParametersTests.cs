@@ -2,12 +2,21 @@
 using PrtgAPI.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Exceptions.Internal;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class SetObjectPropertyParametersTests
+    public class SetObjectPropertyParametersTests : BaseTest
     {
+        [TestMethod]
+        public void SetObjectProperty_SetsAChild_OfAnInternalProperty()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("editsettings?id=1001&hostv6_=dc-1&ipversion_=1"));
+
+            client.SetObjectProperty(1001, ObjectProperty.Hostv6, "dc-1");
+        }
+
         #region SetObjectPropertyParameters
 
         [TestMethod]
@@ -92,6 +101,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void SetObjectPropertyParameters_WithPropertyParameter_MissingPropertyParameterAttribute()
         {
             ExecuteExceptionWithPropertyParameter<MissingAttributeException>(FakeObjectProperty.NormalProperty, "missing a PrtgAPI.Attributes.PropertyParameterAttribute");
+        }
+
+        [TestMethod]
+        public void SetObjectPropertyParameters_Throws_SettingAChild_OfARandomEnum()
+        {
+            ExecuteExceptionWithTypeLookup<ArgumentException>(FakeObjectProperty.ChildOfEnum, "Requested value 'Status' was not found");
         }
 
         #endregion SetObjectPropertyParameters

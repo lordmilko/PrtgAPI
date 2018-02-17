@@ -30,6 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TypeLookup(typeof(FakeSettings))]
         ParentProperty,
 
+        [TypeLookup(typeof(FakeSettings))]
         [DependentProperty(nameof(ParentProperty), "value")]
         ChildProperty,
 
@@ -76,7 +77,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         ArrayProperty,
 
         [TypeLookup(typeof(FakeSettings))]
-        IntegerProperty
+        IntegerProperty,
+
+        [TypeLookup(typeof(FakeSettings))]
+        [DependentProperty(nameof(Status), Status.Up)]
+        ChildOfEnum
 
         #endregion
     }

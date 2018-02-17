@@ -20,6 +20,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [XmlElement("injected_parentproperty")]
         public string ParentProperty { get; set; }
 
+        [XmlElement("injected_childproperty")]
+        public string ChildProperty { get; set; }
+
         [XmlElement("injected_parentofwrongtypeproperty")]
         public string ParentOfWrongType { get; set; }
 
@@ -57,6 +60,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [XmlElement("injected_integerproperty")]
         public int IntegerProperty { get; set; }
+
+        [XmlElement("injected_childofenum")]
+        public string ChildOfEnum { get; set; }
 
         #endregion
     }

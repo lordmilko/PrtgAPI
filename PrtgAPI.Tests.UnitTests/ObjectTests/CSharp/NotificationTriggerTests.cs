@@ -102,6 +102,27 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 "Object may be in a corrupted state"
             );
         }
+
+        [TestMethod]
+        public void NotificationTrigger_CanRemove()
+        {
+            var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
+            var trigger = triggerClient.GetNotificationTriggers(0).First();
+
+            var client = Initialize_Client(new AddressValidatorResponse("deletesub.htm?id=0&subid=1"));
+
+            client.RemoveNotificationTrigger(trigger);
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_CanRemoveAsync()
+        {
+            var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
+            var trigger = (await triggerClient.GetNotificationTriggersAsync(0)).First();
+
+            var client = Initialize_Client(new AddressValidatorResponse("deletesub.htm?id=0&subid=1"));
+
+            await client.RemoveNotificationTriggerAsync(trigger);
         }
 
         [TestMethod]

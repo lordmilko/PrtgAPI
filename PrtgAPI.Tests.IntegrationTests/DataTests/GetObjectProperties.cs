@@ -62,6 +62,15 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             }
         }
 
+        [TestMethod]
+        public void Data_GetObjectProperties_Throws_RetrievingAnInvalidProperty()
+        {
+            AssertEx.Throws<PrtgRequestException>(
+                () => client.GetObjectPropertyRaw(Settings.UpSensor, "banana"),
+                "A value for property 'banana' could not be found"
+            );
+        }
+
         private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(PrtgClient client, List<ObjectProperty> blacklist)
         {
             var list = GetObjectPropertyMaps(client);

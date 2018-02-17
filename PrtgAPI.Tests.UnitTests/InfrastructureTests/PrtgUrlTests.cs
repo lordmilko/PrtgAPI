@@ -221,6 +221,44 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             Assert.AreEqual(string.Empty, url);
         }
 
+        [TestMethod]
+        public void PrtgUrl_MultiParameter_With_Enum()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Service] = Status.Up
+            });
+
+            var expected = "service__check=3";
+
+            Assert.AreEqual(expected, url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_MultiParameter_With_EnumFlags()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Service] = Status.Paused
+            });
+
+            var expected = "service__check=7&service__check=8&service__check=9&service__check=11&service__check=12";
+
+            Assert.AreEqual(expected, url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_Throws_UsingList_With_SingleParameter()
+        {
+            AssertEx.Throws<ArgumentException>(() =>
+            {
+                var url = CreateUrl(new Parameters.Parameters
+                {
+                    [Parameter.Name] = new[] {1, 2}
+                });
+            }, "Parameter 'Name' is of type SingleValue, however a list of elements was specified");
+        }
+
         private string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
         {
             var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);

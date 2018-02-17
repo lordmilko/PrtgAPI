@@ -18,7 +18,7 @@ namespace PrtgAPI
         SetObjectProperty,
 
         /// <summary>
-        /// Pauses an object indefinitely.
+        /// Pauses an object indefinitely or resumes an object from a paused or simulated error state.
         /// </summary>
         [Description("pause.htm")]
         Pause,

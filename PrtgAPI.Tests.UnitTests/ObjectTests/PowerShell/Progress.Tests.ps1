@@ -7031,7 +7031,35 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "101b2: displays 10 items 'and others' with 12 objects" {
+    It "101b2: displays 9 items 'and others' with 11 objects of a specific type" {
+        $sensors = Get-Sensor -Count 11
+
+        $sensors | Acknowledge-Sensor -Forever
+
+        $final = "Acknowledging sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total2', " +
+                 "'Volume IO _Total3', 'Volume IO _Total4', 'Volume IO _Total5', 'Volume IO _Total6', " +
+                 "'Volume IO _Total7', 'Volume IO _Total8' and 2 others forever (11/11)"
+
+        Validate(@(
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/11)" 9)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/11)" 18)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/11)" 27)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/11)" 36)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/11)" 45)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/11)" 54)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/11)" 63)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/11)" 72)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/11)" 81)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/11)" 90)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/11)" 100)
+            (Gen "Acknowledge PRTG Sensors"         $final 100)
+            (Gen "Acknowledge PRTG Sensors (Completed)" $final 100)
+        ))
+    }
+
+    ###################################################################
+
+    It "101b3: displays 10 items 'and others' with 12 objects" {
 
         $sensors = Get-Sensor -Count 12
 
@@ -7059,7 +7087,36 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "101b3: processes multiple object types" {
+    It "101b4: displays 10 items 'and others' with 12 objects of a specific type" {
+        $sensors = Get-Sensor -Count 12
+
+        $sensors | Acknowledge-Sensor -Forever
+
+        $final = "Acknowledging sensors 'Volume IO _Total0', 'Volume IO _Total1', 'Volume IO _Total2', " +
+                 "'Volume IO _Total3', 'Volume IO _Total4', 'Volume IO _Total5', 'Volume IO _Total6', " +
+                 "'Volume IO _Total7', 'Volume IO _Total8', 'Volume IO _Total9' and 2 others forever (12/12)"
+
+        Validate(@(
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/12)" 8)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/12)" 16)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/12)" 25)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/12)" 33)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/12)" 41)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/12)" 50)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/12)" 58)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/12)" 66)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/12)" 75)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/12)" 83)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/12)" 91)
+            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total11' (12/12)" 100)
+            (Gen "Acknowledge PRTG Sensors"         $final 100)
+            (Gen "Acknowledge PRTG Sensors (Completed)" $final 100)
+        ))
+    }
+
+    ###################################################################
+
+    It "101b5: processes multiple object types" {
         $sensors = Get-Sensor -Count 2
         $devices = Get-Device -Count 2
         $groups = Get-Group -Count 2
@@ -7086,7 +7143,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "101b4: processes multiple object types 'and others' with more than 10 objects" {
+    ###################################################################
+
+    It "101b6: processes multiple object types 'and others' with more than 10 objects" {
         $sensors = Get-Sensor -Count 4
         $devices = Get-Device -Count 7
         $groups = Get-Group -Count 4
@@ -7123,7 +7182,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
-    It "101b5: displays unique channel names and groups by channel ID" {
+    ###################################################################
+
+    It "101b7: displays unique channel names and groups by channel ID" {
 
         $sensors = Get-Sensor -Count 3
 

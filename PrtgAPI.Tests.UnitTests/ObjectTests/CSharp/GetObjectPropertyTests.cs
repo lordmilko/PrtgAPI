@@ -45,6 +45,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task GetObjectPropertiesRawAsync() => await GetObjectPropertyAsync(async c => (await c.GetObjectPropertiesRawAsync(1001, ObjectType.Sensor))["name"], "Server CPU Usage");
 
+        [TestMethod]
+        public void GetObjectProperty_Throws_RetrievingAnInvalidProperty()
+        {
+            AssertEx.Throws<PrtgRequestException>(
+                () => GetObjectProperty(c => c.GetObjectPropertyRaw(1001, "banana")),
+                "A value for property 'banana' could not be found"
+            );
+        }
+
+        [TestMethod]
+        public void GetObjectProperty_Processes_SpecialCases()
+        {
+            Execute(c => c.GetObjectProperty(1001, ObjectProperty.Comments), "api/getobjectstatus.htm?id=1001&name=comments");
+        }
+
         private void GetObjectProperty<T>(Func<PrtgClient, T> getProperty, string expected = "testName")
         {
             var client = Initialize_Client(new MultiTypeResponse());

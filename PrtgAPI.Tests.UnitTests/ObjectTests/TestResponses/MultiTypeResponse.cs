@@ -60,6 +60,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(HtmlFunction.ObjectData):
                     return GetObjectDataResponse(address);
                 case nameof(XmlFunction.GetObjectProperty):
+                case nameof(XmlFunction.GetObjectStatus):
                     return GetRawObjectProperty(address);
                 case nameof(CommandFunction.AddSensor2):
                     newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToString().ToEnum<SensorType>();
@@ -77,6 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
                 case nameof(CommandFunction.DeleteObject):
+                case nameof(HtmlFunction.RemoveSubObject):
                 case nameof(CommandFunction.DiscoverNow):
                 case nameof(CommandFunction.LoadLookups):
                 case nameof(CommandFunction.MoveObjectNow):
@@ -195,6 +197,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             if (components["name"] == "intervalgroup")
                 return new RawPropertyResponse(null);
+
+            if (components["name"] == "comments")
+                return new RawPropertyResponse("Do not turn off!");
+
+            if (components["name"] == "banana")
+                return new RawPropertyResponse("(Property not found)");
 
             components.Remove("username");
             components.Remove("passhash");
