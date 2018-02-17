@@ -40,12 +40,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public void SensorTarget_FailedRequest()
         {
             var faultyClient = Initialize_Client(new FaultySensorTargetResponse(FaultySensorTargetResponse.Scenario.Credentials));
 
-            faultyClient.Targets.GetExeXmlFiles(1001);
+            AssertEx.Throws<PrtgRequestException>(() => faultyClient.Targets.GetExeXmlFiles(1001), "Failed to retrieve data from device; required credentials");
         }
 
         private PrtgClient client => Initialize_Client(new ExeFileTargetResponse());

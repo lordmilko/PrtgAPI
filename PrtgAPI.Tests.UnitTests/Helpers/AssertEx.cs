@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests
 {
-    static class Assert2
+    public static class AssertEx
     {
         public static void AllPropertiesAreNull(object obj)
         {
@@ -42,6 +43,24 @@ namespace PrtgAPI.Tests.UnitTests
             catch (Exception ex)
             {
                 Assert.AreEqual(typeof (T), ex.GetType(), "Incorrect exception type thrown");
+            }
+        }
+
+        public static async Task ThrowsAsync<T>(Func<Task> action, string message) where T : Exception
+        {
+            try
+            {
+                await action();
+
+                Assert.Fail($"Expected an assertion of type {typeof(T)} to be thrown, however no exception occurred");
+            }
+            catch (T ex)
+            {
+                Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual(typeof(T), ex.GetType(), "Incorrect exception type thrown");
             }
         }
     }

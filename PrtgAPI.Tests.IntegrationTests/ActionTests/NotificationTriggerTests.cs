@@ -185,8 +185,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             var triggers = client.GetNotificationTriggers(Settings.ChannelSensor).Where(t => t.Inherited == false).ToList();
 
-            Assert2.AreEqual(1, triggers.Count, "Initial trigger did not add successfully");
-            Assert2.IsTrue(triggers.First().Channel.ToString() == channel.Name, "Initial trigger channel did not serialize properly");
+            AssertEx.AreEqual(1, triggers.Count, "Initial trigger did not add successfully");
+            AssertEx.IsTrue(triggers.First().Channel.ToString() == channel.Name, "Initial trigger channel did not serialize properly");
 
             //Clone the trigger
 
@@ -198,11 +198,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             var newTriggers = client.GetNotificationTriggers(Settings.ChannelSensor).Where(t => t.Inherited == false).ToList();
 
-            Assert2.AreEqual(2, newTriggers.Count, "Second trigger did not add successfully");
+            AssertEx.AreEqual(2, newTriggers.Count, "Second trigger did not add successfully");
 
             foreach (var trigger in newTriggers)
             {
-                Assert2.IsTrue(trigger.Channel.ToString() == channel.Name, "Second trigger channel did not serialize properly");
+                AssertEx.IsTrue(trigger.Channel.ToString() == channel.Name, "Second trigger channel did not serialize properly");
             }
         }
 
@@ -231,7 +231,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         {
             var initialTriggers = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
 
-            Assert2.AreEqual(1, initialTriggers.Count, $"Did not have initial expected number of {triggerType} triggers");
+            AssertEx.AreEqual(1, initialTriggers.Count, $"Did not have initial expected number of {triggerType} triggers");
 
             var parameters = getParameters(initialTriggers.First());
 
@@ -239,14 +239,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             var triggersNew = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
 
-            Assert2.AreEqual(2, triggersNew.Count, "Trigger was not added successfully");
+            AssertEx.AreEqual(2, triggersNew.Count, "Trigger was not added successfully");
 
             var newTrigger = triggersNew.First(a => initialTriggers.All(b => b.SubId != a.SubId));
             client.RemoveNotificationTrigger(newTrigger);
 
             var postRemoveTriggers = client.GetNotificationTriggers(Settings.Device).Where(t => t.Type == triggerType && !t.Inherited).ToList();
 
-            Assert2.IsTrue(initialTriggers.Count == postRemoveTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {postRemoveTriggers.Count}");
+            AssertEx.IsTrue(initialTriggers.Count == postRemoveTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {postRemoveTriggers.Count}");
         }
 
         #endregion
@@ -259,7 +259,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             Thread.Sleep(5000);
             var afterTriggers = client.GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
-            Assert2.IsTrue(afterTriggers.Count == initialTriggers.Count + 1, $"Initial triggers was {initialTriggers.Count}, but after adding a trigger the number of triggers was {afterTriggers.Count}");
+            AssertEx.IsTrue(afterTriggers.Count == initialTriggers.Count + 1, $"Initial triggers was {initialTriggers.Count}, but after adding a trigger the number of triggers was {afterTriggers.Count}");
             var newTrigger = afterTriggers.First(a => initialTriggers.All(b => b.SubId != a.SubId));
 
             ValidateNewTrigger(parameters, newTrigger, empty);
@@ -269,7 +269,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             Thread.Sleep(5000);
             var removeTriggers = client.GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
-            Assert2.IsTrue(initialTriggers.Count == removeTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {removeTriggers.Count}");
+            AssertEx.IsTrue(initialTriggers.Count == removeTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {removeTriggers.Count}");
         }
 
         private void ValidateNewTrigger(TriggerParameters parameters, NotificationTrigger trigger, bool empty)
@@ -307,7 +307,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                             }
                         }
 
-                        Assert2.AreEqual(paramValue, triggerValue, triggerProp.Name);
+                        AssertEx.AreEqual(paramValue, triggerValue, triggerProp.Name);
 
                         //when we create a trigger without customization, some fields get default values
                         //we should have verification of those values, but ONLY when we're doing
@@ -318,7 +318,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                 }
 
                 if (!found)
-                    Assert2.Fail($"Couldn't find notification trigger property that corresponded to parameter property '{paramProp.Name}'");
+                    AssertEx.Fail($"Couldn't find notification trigger property that corresponded to parameter property '{paramProp.Name}'");
             }
         }
     }

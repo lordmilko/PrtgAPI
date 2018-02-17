@@ -94,7 +94,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 ExeFile = null
             };
 
-            Assert2.Throws<InvalidOperationException>(() => client.AddSensor(1001, parameters), "Property 'ExeFile' requires a value");
+            AssertEx.Throws<InvalidOperationException>(() => client.AddSensor(1001, parameters), "Property 'ExeFile' requires a value");
         }
 
         [TestMethod]
@@ -104,25 +104,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var parameters = new WmiServiceSensorParameters(new List<SensorTarget<WmiServiceTarget>>().Cast<WmiServiceTarget>().ToList());
 
-            Assert2.Throws<InvalidOperationException>(() => client.AddSensor(1001, parameters), "Property 'Services' requires a value");
+            AssertEx.Throws<InvalidOperationException>(() => client.AddSensor(1001, parameters), "Property 'Services' requires a value");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void AddSensor_Throws_MissingSensorName()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
 
-            client.AddSensor(1001, new ExeXmlSensorParameters("test.ps1", null));
+            AssertEx.Throws<ArgumentException>(() => client.AddSensor(1001, new ExeXmlSensorParameters("test.ps1", null)), "objectName cannot be null or empty");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void AddSensor_Throws_MissingSensorType()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
 
-            client.AddSensor(1001, new RawSensorParameters("sensorName", null));
+            AssertEx.Throws<ArgumentException>(() => client.AddSensor(1001, new RawSensorParameters("sensorName", null)), "sensorType cannot be null or empty");
         }
 
         [TestMethod]

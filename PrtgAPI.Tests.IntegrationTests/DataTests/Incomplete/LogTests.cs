@@ -20,13 +20,13 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
             var logs = client.GetLogs(null, DateTime.Now.AddDays(-1), count: count);
 
-            Assert2.AreEqual(count, logs.Count, "Did not retrieve expected number of logs");
+            AssertEx.AreEqual(count, logs.Count, "Did not retrieve expected number of logs");
 
             var first = logs.First();
             var last = logs.Last();
 
-            Assert2.AreEqual(DateTime.Now.AddDays(-1).Date, first.DateTime.Date, "Start date was incorrect");
-            Assert2.IsTrue(last.DateTime.Date < DateTime.Now.AddDays(-2), "Logs didn't appear to go back far enough");
+            AssertEx.AreEqual(DateTime.Now.AddDays(-1).Date, first.DateTime.Date, "Start date was incorrect");
+            AssertEx.IsTrue(last.DateTime.Date < DateTime.Now.AddDays(-2), "Logs didn't appear to go back far enough");
         }
 
         [TestMethod]
@@ -37,8 +37,8 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             var first = logs.First();
             var last = logs.Last();
 
-            Assert2.AreEqual(DateTime.Now.Date, first.DateTime.Date, "Start date was incorrect");
-            Assert2.AreEqual(DateTime.Now.AddDays(-1).Date, last.DateTime.Date, "End date was incorrect");
+            AssertEx.AreEqual(DateTime.Now.Date, first.DateTime.Date, "Start date was incorrect");
+            AssertEx.AreEqual(DateTime.Now.AddDays(-1).Date, last.DateTime.Date, "End date was incorrect");
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             
             foreach (var log in logs)
             {
-                Assert2.AreEqual(log.Status, LogStatus.Up, $"Response included an item that was not {LogStatus.Up}");
+                AssertEx.AreEqual(log.Status, LogStatus.Up, $"Response included an item that was not {LogStatus.Up}");
             }
         }
     }

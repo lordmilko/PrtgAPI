@@ -16,7 +16,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = new PrtgClient("prtg.example.com", "username", "12345678", AuthMode.PassHash, webClient);
             var result = client.GetSensorTotals();
 
-            Assert2.AllPropertiesAreNotDefault(result);
+            AssertEx.AllPropertiesAreNotDefault(result);
         }
 
         [TestMethod]

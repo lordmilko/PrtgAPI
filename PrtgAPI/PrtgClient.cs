@@ -1696,7 +1696,7 @@ namespace PrtgAPI
 
             var typeName = val?.GetType().Name ?? "null";
 
-            throw new InvalidCastException($"Cannot convert a value of type {typeName} to type {typeof(T)}");
+            throw new InvalidCastException($"Cannot convert a value of type '{typeName}' to type '{typeof(T)}'");
         }
 
         /// <summary>

@@ -95,7 +95,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             if (reply.Status != IPStatus.Success)
             {
-                Assert2.Fail("Ping responded with " + reply.Status.ToString());
+                AssertEx.Fail("Ping responded with " + reply.Status.ToString());
             }
         }
 
@@ -382,7 +382,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 Thread.Sleep(30 * 1000);
             }
             else
-                Assert2.Fail($"{friendlyName} is not running. Service status is {service.Status}", true);
+                AssertEx.Fail($"{friendlyName} is not running. Service status is {service.Status}", true);
         }
 
         public void RepairState()
@@ -457,7 +457,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 var value = property.GetValue(null);
 
-                Assert2.IsTrue(value != null && value.ToString() != "-1", $"Setting '{property.Name}' must be initialized before running tests. Please specify a value in file Settings.cs");
+                AssertEx.IsTrue(value != null && value.ToString() != "-1", $"Setting '{property.Name}' must be initialized before running tests. Please specify a value in file Settings.cs");
             }
         }
 

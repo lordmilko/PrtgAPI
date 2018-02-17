@@ -11,10 +11,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     public class SetObjectPropertyTests : BaseTest
     {
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void SetObjectProperty_Enum_With_Int()
         {
-            SetObjectProperty(ObjectProperty.IntervalErrorMode, 1);
+            AssertEx.Throws<ArgumentException>(
+                () => SetObjectProperty(ObjectProperty.IntervalErrorMode, 1),
+                "'1' is not a valid value for enum IntervalErrorMode. Please specify one of 'DownImmediately'"
+            );
         }
 
         [TestMethod]
@@ -38,15 +40,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectProperty_Int_With_Enum()
         {
-            try
-            {
-                SetObjectProperty(ObjectProperty.DBPort, Status.Up, "8");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Expected type: 'System.Int32'. Actual type: 'PrtgAPI.Status'"))
-                    throw;
-            }
+            AssertEx.Throws<InvalidTypeException>(
+                () => SetObjectProperty(ObjectProperty.DBPort, Status.Up, "8"),
+                "Expected type: 'System.Int32'. Actual type: 'PrtgAPI.Status'"
+            );
         }
 
         [TestMethod]
@@ -71,16 +68,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectProperty_Int_With_Bool()
         {
-            try
-            {
-                SetObjectProperty(ObjectProperty.DBPort, true, "1");
-                Assert.Fail("Expected an exception to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Expected type: 'System.Int32'. Actual type: 'System.Boolean'"))
-                    throw;
-            }
+            AssertEx.Throws<InvalidTypeException>(
+                () => SetObjectProperty(ObjectProperty.DBPort, true, "1"),
+                "Expected type: 'System.Int32'. Actual type: 'System.Boolean'"
+            );
         }
 
         [TestMethod]
@@ -122,21 +113,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public void Location_FailsToResolve()
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            Location.Resolve(client, "something");
+            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something"), "Could not resolve 'something' to an actual address");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public async Task Location_FailsToResolveAsync()
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            await Location.ResolveAsync(client, "something");
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await Location.ResolveAsync(client, "something"), "Could not resolve 'something' to an actual address");
         }
 
         [TestMethod]
@@ -144,25 +133,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new LocationUnresolvedResponse(true));
 
-            try
-            {
-                Location.Resolve(client, "something");
-                Assert.Fail("Expected an exception to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("the PRTG map provider is not currently available"))
-                    throw;
-            }
+            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something"), "the PRTG map provider is not currently available");
         }
 
         [TestMethod]
-        public async Task SetObjectPropertyRaw_CanExecuteAsync()
-        {
-            var client = Initialize_Client(new MultiTypeResponse());
+        public void SetObjectProperty_CanExecute() =>
+            Execute(c => c.SetObjectPropertyRaw(1001, "name_", "testName"), "editsettings?id=1001&name_=testName");
 
-            await client.SetObjectPropertyRawAsync(1001, "name_", "testName");
-        }
+        [TestMethod]
+        public async Task SetObjectPropertyRaw_CanExecuteAsync() =>
+            await ExecuteAsync(async c => await c.SetObjectPropertyRawAsync(1001, "name_", "testName"), "editsettings?id=1001&name_=testName");
 
         [TestMethod]
         public async Task SetChannelProperty_CanExecuteAsync()

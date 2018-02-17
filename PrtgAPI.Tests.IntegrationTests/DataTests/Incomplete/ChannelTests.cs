@@ -11,14 +11,14 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         {
             var channels = client.GetChannels(Settings.ChannelSensor);
 
-            Assert2.AreEqual(Settings.ChannelsInTestSensor, channels.Count, nameof(Settings.ChannelsInTestSensor));
+            AssertEx.AreEqual(Settings.ChannelsInTestSensor, channels.Count, nameof(Settings.ChannelsInTestSensor));
 
             var channel = channels.First(c => c.Id == Settings.Channel);
 
-            Assert2.AreEqual(Settings.ChannelErrorLimit, channel.UpperErrorLimit, nameof(Settings.ChannelErrorLimit));
-            Assert2.AreEqual(Settings.ChannelErrorMessage, channel.ErrorLimitMessage, nameof(Settings.ChannelErrorMessage));
-            Assert2.AreEqual(Settings.ChannelWarningLimit, channel.UpperWarningLimit, nameof(Settings.ChannelWarningLimit));
-            Assert2.AreEqual(Settings.ChannelWarningMessage, channel.WarningLimitMessage, nameof(Settings.ChannelWarningMessage));
+            AssertEx.AreEqual(Settings.ChannelErrorLimit, channel.UpperErrorLimit, nameof(Settings.ChannelErrorLimit));
+            AssertEx.AreEqual(Settings.ChannelErrorMessage, channel.ErrorLimitMessage, nameof(Settings.ChannelErrorMessage));
+            AssertEx.AreEqual(Settings.ChannelWarningLimit, channel.UpperWarningLimit, nameof(Settings.ChannelWarningLimit));
+            AssertEx.AreEqual(Settings.ChannelWarningMessage, channel.WarningLimitMessage, nameof(Settings.ChannelWarningMessage));
         }
     }
 }

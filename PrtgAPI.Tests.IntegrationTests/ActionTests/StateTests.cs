@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         [TestCategory("IntegrationTest")]
         public void Action_State_AcknowledgeAndResume()
         {
-            Assert2.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
+            AssertEx.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
 
             var message = "Unit Testing FTW!";
 
@@ -19,15 +19,15 @@ namespace PrtgAPI.Tests.IntegrationTests
             client.AcknowledgeSensor(Settings.DownSensor, 1, message);
             CheckAndSleep(Settings.DownSensor);
             var sensor1 = GetSensor(Settings.DownSensor);
-            Assert2.IsTrue(sensor1.Message.Contains(message), $"Sensor message was {sensor1.Message} instead of {message}");
-            Assert2.AreEqual(Status.DownAcknowledged, sensor1.Status, $"Sensor status was {sensor1.Status} instead of {Status.DownAcknowledged}");
+            AssertEx.IsTrue(sensor1.Message.Contains(message), $"Sensor message was {sensor1.Message} instead of {message}");
+            AssertEx.AreEqual(Status.DownAcknowledged, sensor1.Status, $"Sensor status was {sensor1.Status} instead of {Status.DownAcknowledged}");
 
             Logger.LogTestDetail("Waiting 30 seconds for status to update");
             Thread.Sleep(30000);
             client.RefreshObject(Settings.DownSensor);
 
             var sensor2 = GetSensor(Settings.DownSensor);
-            Assert2.IsTrue(sensor2.Status != Status.DownAcknowledged, $"Sensor status was still {Status.DownAcknowledged}");
+            AssertEx.IsTrue(sensor2.Status != Status.DownAcknowledged, $"Sensor status was still {Status.DownAcknowledged}");
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             client.PauseObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor1 = GetSensor(Settings.UpSensor);
-            Assert2.IsTrue(sensor1.Status == Status.PausedByUser, $"Sensor status was {sensor1.Status} instead of {Status.PausedByUser}.");
+            AssertEx.IsTrue(sensor1.Status == Status.PausedByUser, $"Sensor status was {sensor1.Status} instead of {Status.PausedByUser}.");
 
             Logger.LogTestDetail("Resuming object");
             client.ResumeObject(Settings.UpSensor);
@@ -59,7 +59,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 }
             }
 
-            Assert2.IsTrue(sensor2.Status != Status.PausedByUser, $"Sensor status was still {Status.PausedByUser}.");
+            AssertEx.IsTrue(sensor2.Status != Status.PausedByUser, $"Sensor status was still {Status.PausedByUser}.");
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var initial = GetSensor(Settings.UpSensor);
 
-            Assert2.AreEqual(Status.Up, initial.Status, "Initial status was not up");
+            AssertEx.AreEqual(Status.Up, initial.Status, "Initial status was not up");
 
             Logger.LogTestDetail("Pausing for 1 minute");
             client.PauseObject(Settings.UpSensor, 1);
@@ -76,7 +76,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             CheckAndSleep(Settings.UpSensor);
 
             var sensor1 = GetSensor(Settings.UpSensor);
-            Assert2.AreEqual(Status.PausedUntil, sensor1.Status, "Sensor did not pause properly");
+            AssertEx.AreEqual(Status.PausedUntil, sensor1.Status, "Sensor did not pause properly");
 
             Logger.LogTestDetail("Sleeping for 1 minute");
 
@@ -104,14 +104,14 @@ namespace PrtgAPI.Tests.IntegrationTests
                 } while (sensor2.Status == Status.Unknown);
             }
 
-            Assert2.AreEqual(Status.Up, sensor2.Status, "Sensor did not unpause properly");
+            AssertEx.AreEqual(Status.Up, sensor2.Status, "Sensor did not unpause properly");
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
         public void Action_State_SimulateErrorAndResume()
         {
-            Assert2.AreEqual(Status.Up, GetSensor(Settings.UpSensor).Status, $"Initial sensor state was not {Status.Up}");
+            AssertEx.AreEqual(Status.Up, GetSensor(Settings.UpSensor).Status, $"Initial sensor state was not {Status.Up}");
 
             Logger.LogTestDetail("Simulating error status");
             client.SimulateError(Settings.UpSensor);
@@ -127,13 +127,13 @@ namespace PrtgAPI.Tests.IntegrationTests
                 sensor1 = GetSensor(Settings.UpSensor);
             }
 
-            Assert2.IsTrue(sensor1.Status == Status.Down, $"Sensor status was {sensor1.Status} instead of Down.");
+            AssertEx.IsTrue(sensor1.Status == Status.Down, $"Sensor status was {sensor1.Status} instead of Down.");
 
             Logger.LogTestDetail("Resuming sensor");
             client.ResumeObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
             var sensor2 = GetSensor(Settings.UpSensor);
-            Assert2.IsTrue(sensor2.Status != Status.Down, $"Sensor status was still Down.");
+            AssertEx.IsTrue(sensor2.Status != Status.Down, $"Sensor status was still Down.");
         }
 
         [TestMethod]
@@ -142,14 +142,14 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             var sensors = client.GetSensors(Status.Paused).Select(s => s.Status).ToList();
 
-            Assert2.IsTrue(sensors.Any(s => s == Status.PausedByDependency) && sensors.Any(s => s == Status.PausedByUser), "Could not find paused sensors of different types.");
+            AssertEx.IsTrue(sensors.Any(s => s == Status.PausedByDependency) && sensors.Any(s => s == Status.PausedByUser), "Could not find paused sensors of different types.");
         }
 
         private Sensor GetSensor(int sensorId)
         {
             var sensor = client.GetSensors(Property.Id, sensorId).FirstOrDefault();
 
-            Assert2.IsTrue(sensor != null, "GetSensors did not return any results.");
+            AssertEx.IsTrue(sensor != null, "GetSensors did not return any results.");
 
             return sensor;
         }

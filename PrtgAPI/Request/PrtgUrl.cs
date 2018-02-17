@@ -142,6 +142,9 @@ namespace PrtgAPI.Request
         /// <returns></returns>
         private string ProcessCustomParameter(object value)
         {
+            if (value == null)
+                return string.Empty;
+
             var arr = value as IEnumerable<CustomParameter>;
 
             if (arr != null)
@@ -166,7 +169,7 @@ namespace PrtgAPI.Request
             if (singleParam != null)
                 return FormatSingleParameterWithValEncode(singleParam.Name, singleParam.Value);
 
-            throw new ArgumentException($"Expected one or more objects of type {nameof(CustomParameter)}, however argument was of type {value.GetType()}", nameof(value));
+            throw new ArgumentException($"Expected parameter '{Parameter.Custom}' to contain one or more objects of type '{nameof(CustomParameter)}', however value was of type '{value.GetType()}'", nameof(value));
         }
 
         private string ProcessIEnumerableParameter(ParameterType parameterType, IEnumerable value, string description)

@@ -27,33 +27,32 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public void PrtgClient_Constructor_CantRetrievePassHash()
         {
             var webClient = new MockWebClient(new PassHashResponse("PRTG Network Monitor is starting"));
 
-            var client = new PrtgClient("prtg.example.com", "username", "password", AuthMode.Password, webClient);
+            AssertEx.Throws<PrtgRequestException>(
+                () => new PrtgClient("prtg.example.com", "username", "password", AuthMode.Password, webClient),
+                "Could not retrieve PassHash from PRTG Server."
+            );
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void PrtgClient_Constructor_ServerCannotBeNull()
         {
-            var client = new PrtgClient(null, "username", "password");
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient(null, "username", "password"), "Value cannot be null.\r\nParameter name: server");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void PrtgClient_Constructor_UsernameCannotBeNull()
         {
-            var client = new PrtgClient("prtg.example.com", null, "password");
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", null, "password"), "Value cannot be null.\r\nParameter name: username");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void PrtgClient_Constructor_PasswordCannotBeNull()
         {
-            var client = new PrtgClient("prtg.example.com", "username", null);
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", "username", null), "Value cannot be null.\r\nParameter name: pass");
         }
 
         [TestMethod]
@@ -73,15 +72,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 retriesMade++;
             };
 
-            try
-            {
-                var sensors = client.StreamSensors().ToList();
-                Assert.Fail("StreamSensors did not throw");
-            }
-            catch (WebException)
-            {
-            }
-
+            AssertEx.Throws<WebException>(() => client.StreamSensors().ToList(), string.Empty);
             Assert.AreEqual(retriesToMake * 2, retriesMade, "An incorrect number of retries were made.");
         }
 
@@ -102,27 +93,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             client.RetryRequest += OnClientOnRetryRequest;
 
-            try
-            {
-                var sensors = client.GetSensors().ToList();
-                Assert.Fail("GetSensors did not throw");
-            }
-            catch (WebException)
-            {
-            }
-
+            AssertEx.Throws<WebException>(() => client.GetSensors().ToList(), string.Empty);
             Assert.AreEqual(retriesToMake, prtgClientRetriesNormally, "An incorrect number of retries were made.");
 
             client.RetryRequest -= OnClientOnRetryRequest;
 
-            try
-            {
-                var moreSensors = client.GetSensors().ToList();
-            }
-            catch (WebException)
-            {
-            }
-
+            AssertEx.Throws<WebException>(() => client.GetSensors().ToList(), string.Empty);
             Assert.AreEqual(retriesToMake, prtgClientRetriesNormally, "Retry handler was called after it was removed");
         }
 
@@ -274,29 +250,19 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, new MockWebClient(response));
 
-            try
-            {
-                client.GetSensors();
-            }
-            catch (PrtgRequestException ex)
-            {
-                if (ex.Message != $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}")
-                    Assert.Fail($"Exception did not contain expected error message. Expected: '{expectedError}'. Received: '{ex.Message}'");
-            }
+            AssertEx.Throws<PrtgRequestException>(() => client.GetSensors(), $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(TimeoutException))]
         public void PrtgClient_HandlesTimeoutSocketException()
         {
-            ExecuteSocketException(SocketError.TimedOut);
+            AssertEx.Throws<TimeoutException>(() => ExecuteSocketException(SocketError.TimedOut), "Connection timed out while communicating with remote server");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(WebException))]
         public void PrtgClient_HandlesConnectionRefusedSocketException()
         {
-            ExecuteSocketException(SocketError.ConnectionRefused);
+            AssertEx.Throws<WebException>(() => ExecuteSocketException(SocketError.ConnectionRefused), "Server rejected HTTPS connection");
         }
 
         private void ExecuteSocketException(SocketError error)

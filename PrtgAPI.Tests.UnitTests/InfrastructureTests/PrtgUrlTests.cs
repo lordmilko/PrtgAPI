@@ -201,19 +201,24 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_Throws_WhenCustomParameterValueIsWrongType()
         {
-            try
+            AssertEx.Throws<ArgumentException>(() =>
             {
                 var url = CreateUrl(new Parameters.Parameters
                 {
                     [Parameter.Custom] = 3
                 });
-            }
-            catch (ArgumentException ex)
+            }, "Expected parameter 'Custom' to contain one or more objects of type 'CustomParameter', however value was of type 'System.Int32'");
+        }
+
+        [TestMethod]
+        public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsNull()
+        {
+            var url = CreateUrl(new Parameters.Parameters
             {
-                if (!ex.Message.Contains("Expected one or more objects of type CustomParameter, however argument was of type System.Int32"))
-                    throw;
-            }
-            
+                [Parameter.Custom] = null
+            });
+
+            Assert.AreEqual(string.Empty, url);
         }
 
         private string CreateUrl(Parameters.Parameters parameters, bool truncate = true)

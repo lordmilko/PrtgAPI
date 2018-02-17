@@ -73,7 +73,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var obj = GetSingleItem();
 
-            Assert2.AllPropertiesAreNotDefault(obj, customHandler);
+            AssertEx.AllPropertiesAreNotDefault(obj, customHandler);
         }
 
         protected void Object_AllFields_HaveValues_Multiple()
@@ -82,7 +82,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             foreach (var obj in objs)
             {
-                Assert2.AllPropertiesAreNotDefault(obj);
+                AssertEx.AllPropertiesAreNotDefault(obj);
             }
         }
     }

@@ -16,11 +16,10 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         {
             var triggers = client.GetNotificationTriggers(Settings.Device);
 
-            Assert2.AreEqual(Settings.NotificationTiggersOnDevice, triggers.Count(t => !t.Inherited), nameof(Settings.NotificationTiggersOnDevice));
+            AssertEx.AreEqual(Settings.NotificationTiggersOnDevice, triggers.Count(t => !t.Inherited), nameof(Settings.NotificationTiggersOnDevice));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidStateException))]
         public void Data_NotificationTrigger_GetNotificationTriggers_Sensor_ThrowsWithInvalidChannel()
         {
             try
@@ -31,12 +30,15 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 }
                 catch (Exception ex)
                 {
-                    Assert2.Fail($"Failed to retrieve initial triggers of sensor: {ex.Message}");
+                    AssertEx.Fail($"Failed to retrieve initial triggers of sensor: {ex.Message}");
                 }
 
                 AddInvalidTrigger();
 
-                client.GetNotificationTriggers(Settings.UpSensor);
+                AssertEx.Throws<InvalidStateException>(
+                    () => client.GetNotificationTriggers(Settings.UpSensor),
+                    "Object may be in a corrupted state"
+                );
             }
             finally
             {
@@ -45,7 +47,6 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidStateException))]
         public async Task Data_NotificationTrigger_GetNotificationTriggers_Sensor_ThrowsWithInvalidChannelAsync()
         {
             try
@@ -56,12 +57,15 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 }
                 catch (Exception ex)
                 {
-                    Assert2.Fail($"Failed to retrieve initial triggers of sensor: {ex.Message}");
+                    AssertEx.Fail($"Failed to retrieve initial triggers of sensor: {ex.Message}");
                 }
 
                 AddInvalidTrigger();
 
-                await client.GetNotificationTriggersAsync(Settings.UpSensor);
+                await AssertEx.ThrowsAsync<InvalidStateException>(
+                    async () => await client.GetNotificationTriggersAsync(Settings.UpSensor),
+                    "Object may be in a corrupted state"
+                );
             }
             finally
             {
@@ -90,11 +94,6 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             };
 
             method.Invoke(requestEngine, new[] { editSettings, param, null });
-        }
-
-        private void AssertEquals(string fieldName, object field1, object field2)
-        {
-            Assert2.IsTrue(field1.ToString() == field2.ToString(), $"{fieldName} was '{field1}' instead of '{field2}'");
         }
     }
 }

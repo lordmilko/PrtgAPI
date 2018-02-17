@@ -43,11 +43,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             var newFiles = GetBackupFiles();
 
-            Assert2.AreEqual(originalFiles.Count + 1, newFiles.Count, "New backup file was not created");
+            AssertEx.AreEqual(originalFiles.Count + 1, newFiles.Count, "New backup file was not created");
 
             var diff = newFiles.Select(f => f.FullName).Except(originalFiles.Select(fn => fn.FullName)).ToList();
 
-            Assert2.AreEqual(1, diff.Count, "Backup file was not successfully created");
+            AssertEx.AreEqual(1, diff.Count, "Backup file was not successfully created");
 
             var firstFile = diff.First();
 

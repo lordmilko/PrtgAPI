@@ -15,14 +15,16 @@ namespace PrtgAPI.Tests.IntegrationTests
     public class PrtgClientConnectionTests : BasePrtgClientTest
     {
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void Logic_Client_NullCredentials()
         {
             var server = $"http://{Settings.Server}";
             string username = null;
             string password = null;
 
-            var client = new PrtgClient(server, username, password);
+            AssertEx.Throws<ArgumentNullException>(
+                () => new PrtgClient(server, username, password),
+                "Value cannot be null.\r\nParameter name: username"
+            );
         }
 
         [TestMethod]
@@ -35,28 +37,30 @@ namespace PrtgAPI.Tests.IntegrationTests
             try
             {
                 var client = new PrtgClient(server, username, password);
-                Assert2.Fail("Invalid credentials were specified however an exception was not thrown");
+                AssertEx.Fail("Invalid credentials were specified however an exception was not thrown");
             }
             catch (HttpRequestException ex)
             {
                 if (ex.Message != "Could not authenticate to PRTG; the specified username and password were invalid.")
                 {
-                    Assert2.Fail(ex.Message);
+                    AssertEx.Fail(ex.Message);
                 }
             }
             catch (Exception ex)
             {
-                Assert2.Fail(ex.Message);
+                AssertEx.Fail(ex.Message);
             }
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void Logic_Client_NullServer()
         {
             string server = null;
 
-            var client = new PrtgClient(server, Settings.UserName, Settings.Password);
+            AssertEx.Throws<ArgumentNullException>(
+                () => new PrtgClient(server, Settings.UserName, Settings.Password),
+                "Value cannot be null.\r\nParameter name: server"
+            );
         }
 
         [TestMethod]
@@ -71,24 +75,22 @@ namespace PrtgAPI.Tests.IntegrationTests
             catch (WebException ex)
             {
                 if (ex.Message != $"The remote name could not be resolved: '{server}'")
-                    Assert2.Fail($"Request did not fail with expected error message: {ex.Message}");
+                    AssertEx.Fail($"Request did not fail with expected error message: {ex.Message}");
             }
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public void Logic_Client_InvalidRequest()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            client.RemoveObject(0);
+            AssertEx.Throws<PrtgRequestException>(() => client.RemoveObject(0), "Some of the selected objects could not be deleted");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(PrtgRequestException))]
         public async Task Logic_Client_InvalidRequestAsync()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            await client.RemoveObjectAsync(0);
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.RemoveObjectAsync(0), "Some of the selected objects could not be deleted");
         }
 
         [TestMethod]
@@ -169,21 +171,19 @@ namespace PrtgAPI.Tests.IntegrationTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.TimeoutException))]
         public void Logic_Client_Timeout()
         {
             var localClient = GetTimeoutClient();
 
-            localClient.GetSensors();
+            AssertEx.Throws<System.TimeoutException>(() => localClient.GetSensors(), "The server timed out while executing request");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.TimeoutException))]
         public async Task Logic_Client_Timeout_Async()
         {
             var localClient = GetTimeoutClient();
 
-            await localClient.GetSensorsAsync();
+            await AssertEx.ThrowsAsync<System.TimeoutException>(async () => await localClient.GetSensorsAsync(), "The server timed out while executing request");
         }
 
         private PrtgClient GetTimeoutClient()
@@ -219,7 +219,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     Logger.LogTestDetail($"Handling retry {retriesMade + 1}");
 
                     if (!isAsync)
-                        Assert2.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
+                        AssertEx.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
                     retriesMade++;
                 };
                 localClient.RetryCount = retriesToMake;
@@ -255,7 +255,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                     Thread.Sleep(20000);
                 }
 
-                Assert2.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
+                AssertEx.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
             });
         }
     }

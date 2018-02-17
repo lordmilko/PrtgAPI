@@ -37,25 +37,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidTriggerTypeException))]
         public void AddNotificationTrigger_UnsupportedType()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
 
             var parameters = new StateTriggerParameters(1001);
 
-            client.AddNotificationTrigger(parameters);
+            AssertEx.Throws<InvalidTriggerTypeException>(() => client.AddNotificationTrigger(parameters), "Trigger type 'State' is not a valid trigger type");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidTriggerTypeException))]
         public async Task AddNotificationTrigger_UnsupportedTypeAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
 
             var parameters = new StateTriggerParameters(1001);
 
-            await client.AddNotificationTriggerAsync(parameters);
+            await AssertEx.ThrowsAsync<InvalidTriggerTypeException>(async() => await client.AddNotificationTriggerAsync(parameters), "Trigger type 'State' is not a valid trigger type");
         }
 
         [TestMethod]
@@ -73,16 +71,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Channel = new TriggerChannel(1)
             };
 
-            try
-            {
-                client.AddNotificationTrigger(parameters);
-                Assert.Fail("Exception should have been thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Channel '1' is not a valid value for Device, Group or Probe"))
-                    throw;
-            }
+            AssertEx.Throws<InvalidOperationException>(() => client.AddNotificationTrigger(parameters), "Channel '1' is not a valid value for Device, Group or Probe");
         }
 
         [TestMethod]
@@ -100,16 +89,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Channel = new TriggerChannel(1)
             };
 
-            try
-            {
-                await client.AddNotificationTriggerAsync(parameters);
-                Assert.Fail("Exception should have been thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Channel '1' is not a valid value for Device, Group or Probe"))
-                    throw;
-            }
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.AddNotificationTriggerAsync(parameters), "Channel '1' is not a valid value for Device, Group or Probe");
         }
 
         [TestMethod]
@@ -119,16 +99,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var parameters = new ThresholdTriggerParameters(1001);
 
-            try
-            {
-                client.AddNotificationTrigger(parameters);
-                Assert.Fail("Exception should have been thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Channel 'Primary' is not a valid value for sensor"))
-                    throw;
-            }
+            AssertEx.Throws<InvalidOperationException>(() => client.AddNotificationTrigger(parameters), "Channel 'Primary' is not a valid value for sensor");
         }
 
         [TestMethod]
@@ -138,16 +109,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var parameters = new ThresholdTriggerParameters(1001);
 
-            try
-            {
-                await client.AddNotificationTriggerAsync(parameters);
-                Assert.Fail("Exception should have been thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Channel 'Primary' is not a valid value for sensor"))
-                    throw;
-            }
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.AddNotificationTriggerAsync(parameters), "Channel 'Primary' is not a valid value for sensor");
         }
     }
 }

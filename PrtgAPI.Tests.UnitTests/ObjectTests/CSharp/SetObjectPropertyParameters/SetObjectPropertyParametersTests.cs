@@ -31,13 +31,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingXmlElementAndDescription_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.MissingXmlElementAndDescription, typeof(MissingAttributeException), "missing a System.ComponentModel.DescriptionAttribute");
+            ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.MissingXmlElementAndDescription, "missing a System.ComponentModel.DescriptionAttribute");
         }
 
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingTypeLookupAttribute_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.MissingTypeLookup, typeof(MissingAttributeException), "missing a PrtgAPI.Attributes.TypeLookupAttribute");
+            ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.MissingTypeLookup, "missing a PrtgAPI.Attributes.TypeLookupAttribute");
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingFromTypeLookupTarget()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.MissingFromTypeLookupTarget, typeof(MissingMemberException), "MissingFromTypeLookupTarget cannot be found on type");
+            ExecuteExceptionWithTypeLookup<MissingMemberException>(FakeObjectProperty.MissingFromTypeLookupTarget, "MissingFromTypeLookupTarget cannot be found on type");
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_ChildDependsOnWrongValueType_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.ParentOfWrongType, typeof(InvalidTypeException), "Dependencies of property 'ParentOfWrongType' should be of type System.String");
+            ExecuteExceptionWithTypeLookup<InvalidTypeException>(FakeObjectProperty.ParentOfWrongType, "Dependencies of property 'ParentOfWrongType' should be of type System.String");
         }
 
         [TestMethod]
@@ -79,7 +79,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_ChildHasReverseDependency_AndIsMissingTypeLookup_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.ParentOfReverseDependencyMissingTypeLookup, typeof(MissingAttributeException), "missing a PrtgAPI.Attributes.TypeLookupAttribute");
+            ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.ParentOfReverseDependencyMissingTypeLookup, "missing a PrtgAPI.Attributes.TypeLookupAttribute");
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SetObjectPropertyParameters_WithPropertyParameter_MissingPropertyParameterAttribute()
         {
-            ExecuteExceptionWithPropertyParameter(FakeObjectProperty.NormalProperty, typeof(MissingAttributeException), "missing a PrtgAPI.Attributes.PropertyParameterAttribute");
+            ExecuteExceptionWithPropertyParameter<MissingAttributeException>(FakeObjectProperty.NormalProperty, "missing a PrtgAPI.Attributes.PropertyParameterAttribute");
         }
 
         #endregion SetObjectPropertyParameters
@@ -100,13 +100,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void DynamicPropertyTypeParser_SetArray_WithoutSplittableStringAttribute_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty.ArrayPropertyMissingSplittableString, new[] {"a", "b"}, typeof(NotSupportedException), "missing a SplittableStringAttribute");
+            ExecuteExceptionWithTypeLookupAndValue<NotSupportedException>(FakeObjectProperty.ArrayPropertyMissingSplittableString, new[] {"a", "b"}, "missing a SplittableStringAttribute");
         }
 
         [TestMethod]
         public void DynamicPropertyTypeParser_ParseValue_WithTypeAttribute_AndNotIFormattable_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookup(FakeObjectProperty.TypeWithoutIFormattable, typeof (NotSupportedException), "does not implement IFormattable is not currently supported");
+            ExecuteExceptionWithTypeLookup<NotSupportedException>(FakeObjectProperty.TypeWithoutIFormattable, "does not implement IFormattable is not currently supported");
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void DynamicPropertyTypeParser_AssignsDouble_ToInt_WithDecimalPlaces_ShouldThrow()
         {
-            ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty.IntegerProperty, 1.2, typeof(InvalidTypeException), "Expected type: 'System.Int32'. Actual type: 'System.Double'");
+            ExecuteExceptionWithTypeLookupAndValue<InvalidTypeException>(FakeObjectProperty.IntegerProperty, 1.2, "Expected type: 'System.Int32'. Actual type: 'System.Double'");
         }
 
         #endregion
@@ -148,42 +148,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             parameters.AddValue(property, value, true);
         }
 
-        private void ExecuteExceptionWithTypeLookup(FakeObjectProperty property, Type exceptionType, string message)
+        private void ExecuteExceptionWithTypeLookup<T>(FakeObjectProperty property, string message) where T : Exception
         {
-            try
-            {
-                ExecuteWithTypeLookup(property);
-                Assert.Fail($"Expected an exception of type ${exceptionType.Name} to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == exceptionType)
-                {
-                    if (!ex.Message.Contains(message))
-                        throw;
-                }
-                else
-                    throw;
-            }
+            AssertEx.Throws<T>(() => ExecuteWithTypeLookup(property), message);
         }
 
-        private void ExecuteExceptionWithTypeLookupAndValue(FakeObjectProperty property, object value, Type exceptionType, string message)
+        private void ExecuteExceptionWithTypeLookupAndValue<T>(FakeObjectProperty property, object value, string message) where T : Exception
         {
-            try
-            {
-                ExecuteWithTypeLookupInternal(property, value);
-                Assert.Fail($"Expected an exception of type ${exceptionType.Name} to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == exceptionType)
-                {
-                    if (!ex.Message.Contains(message))
-                        throw;
-                }
-                else
-                    throw;
-            }
+            AssertEx.Throws<T>(() => ExecuteWithTypeLookupInternal(property, value), message);
         }
 
         private void ExecuteWithPropertyParameter(FakeObjectProperty property)
@@ -197,23 +169,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             parameters.AddValue(property, value, true);
         }
 
-        private void ExecuteExceptionWithPropertyParameter(FakeObjectProperty property, Type exceptionType, string message)
+        private void ExecuteExceptionWithPropertyParameter<T>(FakeObjectProperty property, string message) where T : Exception
         {
-            try
-            {
-                ExecuteWithPropertyParameter(property);
-                Assert.Fail($"Expected an exception of type {exceptionType.Name} to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == exceptionType)
-                {
-                    if (!ex.Message.Contains(message))
-                        throw;
-                }
-                else
-                    throw;
-            }
+            AssertEx.Throws<T>(() => ExecuteWithPropertyParameter(property), message);
         }
     }
 }

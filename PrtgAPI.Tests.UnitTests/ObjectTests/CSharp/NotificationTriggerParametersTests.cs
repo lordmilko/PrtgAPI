@@ -388,19 +388,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TriggerParameters_Create_FromNullTrigger()
         {
-            var parameters = new StateTriggerParameters(1234, null);
+            AssertEx.Throws<ArgumentNullException>(() => new StateTriggerParameters(1234, null), "Value cannot be null.\r\nParameter name: sourceTrigger");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        [ExpectedException(typeof(ArgumentException))]
         public void TriggerParameters_Create_FromInvalidTriggerType()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.State);
-            var parameters = new ChangeTriggerParameters(1234, trigger);
+            AssertEx.Throws<ArgumentException>(
+                () => new ChangeTriggerParameters(1234, trigger),
+                "A NotificationTrigger of type 'State' cannot be used to initialize trigger parameters of type 'Change'"
+            );
         }
 
         private void TriggerParameters_Create_FromExistingTrigger(NotificationTrigger trigger, TriggerParameters parameters)

@@ -14,7 +14,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var settings = client.GetDeviceProperties(2212);
 
-            Assert2.AllPropertiesAreNotDefault(settings);
+            AssertEx.AllPropertiesAreNotDefault(settings);
         }
 
         [TestMethod]
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var settings = await client.GetDevicePropertiesAsync(2212);
 
-            Assert2.AllPropertiesAreNotDefault(settings);
+            AssertEx.AllPropertiesAreNotDefault(settings);
         }
 
         [TestMethod]

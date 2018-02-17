@@ -15,7 +15,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var result = client.GetStatus();
 
-            Assert2.AllPropertiesAreNotDefault(result);
+            AssertEx.AllPropertiesAreNotDefault(result);
         }
 
         [TestMethod]
@@ -25,7 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var result = await client.GetStatusAsync();
 
-            Assert2.AllPropertiesAreNotDefault(result);
+            AssertEx.AllPropertiesAreNotDefault(result);
         }
 
         [TestMethod]

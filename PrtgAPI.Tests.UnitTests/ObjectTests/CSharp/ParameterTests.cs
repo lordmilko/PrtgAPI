@@ -134,10 +134,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void SensorHistoryParameters_Throws_WhenAverageIsLessThanZero()
         {
-            var parameters = new SensorHistoryParameters(1001, -1, null, null);
+            AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null), "Average must be greater than or equal to 0");
         }
 
         [TestMethod]

@@ -63,30 +63,30 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
             var newSensors = client.GetSensors();
 
-            Assert2.IsTrue(newSensors.Count > sensors.Count, "New sensor was not added properly");
+            AssertEx.IsTrue(newSensors.Count > sensors.Count, "New sensor was not added properly");
 
             var newSensor = newSensors.Where(s => s.Name == "raw c# sensor").ToList();
 
-            Assert2.AreEqual(1, newSensor.Count, "A copy of the new sensor already exists");
+            AssertEx.AreEqual(1, newSensor.Count, "A copy of the new sensor already exists");
 
             try
             {
                 var properties = client.GetSensorProperties(newSensor.First().Id);
 
-                Assert2.AreEqual(properties.Name, "raw c# sensor", "Name was not correct");
-                Assert2.AreEqual(properties.Tags.First(), new[] {"xmlexesensor"}.First(), "Tags was not correct");
-                Assert2.AreEqual(properties.Priority, Priority.Four, "Priority was not correct");
-                Assert2.AreEqual(properties.ExeFile, "test.ps1", "ExeFile was not correct");
-                Assert2.AreEqual(properties.ExeParameters, "arg1 arg2 arg3", "ExeParameters was not correct");
-                Assert2.AreEqual(properties.SetExeEnvironmentVariables, true, "SetExeEnvironmentVariables was not correct");
-                Assert2.AreEqual(properties.UseWindowsAuthentication, true, "UseWindowsAuthentication was not correct");
-                Assert2.AreEqual(properties.Mutex, "testMutex", "Mutex was not correct");
-                Assert2.AreEqual(properties.Timeout, 70, "Timeout was not correct");
-                Assert2.AreEqual(properties.DebugMode, DebugMode.WriteToDisk, "DebugMode was not correct");
-                Assert2.AreEqual(properties.InheritInterval, false, "InheritInterval was not correct");
-                Assert2.AreEqual(properties.Interval.TimeSpan, new TimeSpan(0, 0, 30), "Interval was not correct");
-                Assert2.AreEqual(properties.IntervalErrorMode, IntervalErrorMode.TwoWarningsThenDown, "IntervalErrorMode was not correct");
-                Assert2.AreEqual(newSensor.First().NotificationTypes.InheritTriggers, false, "InheritTriggers was not correct");
+                AssertEx.AreEqual(properties.Name, "raw c# sensor", "Name was not correct");
+                AssertEx.AreEqual(properties.Tags.First(), new[] {"xmlexesensor"}.First(), "Tags was not correct");
+                AssertEx.AreEqual(properties.Priority, Priority.Four, "Priority was not correct");
+                AssertEx.AreEqual(properties.ExeFile, "test.ps1", "ExeFile was not correct");
+                AssertEx.AreEqual(properties.ExeParameters, "arg1 arg2 arg3", "ExeParameters was not correct");
+                AssertEx.AreEqual(properties.SetExeEnvironmentVariables, true, "SetExeEnvironmentVariables was not correct");
+                AssertEx.AreEqual(properties.UseWindowsAuthentication, true, "UseWindowsAuthentication was not correct");
+                AssertEx.AreEqual(properties.Mutex, "testMutex", "Mutex was not correct");
+                AssertEx.AreEqual(properties.Timeout, 70, "Timeout was not correct");
+                AssertEx.AreEqual(properties.DebugMode, DebugMode.WriteToDisk, "DebugMode was not correct");
+                AssertEx.AreEqual(properties.InheritInterval, false, "InheritInterval was not correct");
+                AssertEx.AreEqual(properties.Interval.TimeSpan, new TimeSpan(0, 0, 30), "Interval was not correct");
+                AssertEx.AreEqual(properties.IntervalErrorMode, IntervalErrorMode.TwoWarningsThenDown, "IntervalErrorMode was not correct");
+                AssertEx.AreEqual(newSensor.First().NotificationTypes.InheritTriggers, false, "InheritTriggers was not correct");
             }
             finally
             {
@@ -117,31 +117,20 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
-            try
-            {
-                client.AddSensor(9995, parameters);
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("The parent object (i.e. device/group) for your newly created sensor doesn't exist anymore"))
-                    Assert2.Fail(ex.Message);
-            }
+            AssertEx.Throws<PrtgRequestException>(
+                () => client.AddSensor(9995, parameters),
+                "The parent object (i.e. device/group) for your newly created sensor doesn't exist anymore"
+            );
         }
 
         private void AddToInvalidObject(int objectId)
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
-            try
-            {
-                client.AddSensor(objectId, parameters);
-                Assert2.Fail("Expected an exception to be thrown");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("The desired object cannot be created here"))
-                    Assert2.Fail(ex.Message);
-            }
+            AssertEx.Throws<PrtgRequestException>(
+                () => client.AddSensor(objectId, parameters),
+                "The desired object cannot be created here"
+            );
         }
     }
 }

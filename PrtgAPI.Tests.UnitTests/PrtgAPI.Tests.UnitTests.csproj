@@ -56,7 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Helpers\Assert2.cs" />
+    <Compile Include="Helpers\AssertEx.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="InfrastructureTests\AssemblyTests.cs" />
     <Compile Include="InfrastructureTests\SerializationTests.cs" />

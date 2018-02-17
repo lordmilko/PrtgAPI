@@ -65,7 +65,7 @@
     <Compile Include="DataTests\Incomplete\LogTests.cs" />
     <Compile Include="Support\EnumHelpers.cs" />
     <Compile Include="Support\ServerManager.cs" />
-    <Compile Include="Support\Assert2.cs" />
+    <Compile Include="Support\AssertEx.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
     <Compile Include="DataTests\Incomplete\ChannelTests.cs" />
     <Compile Include="DataTests\Incomplete\NotificationActionTests.cs" />

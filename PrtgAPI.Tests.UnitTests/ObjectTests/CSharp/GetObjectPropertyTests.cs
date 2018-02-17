@@ -22,8 +22,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         public void GetObjectProperty_Nullable_AsUnderlying() => GetObjectProperty(c => c.GetObjectProperty<bool>(1001, ObjectProperty.InheritAccess), "True");
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidCastException))]
-        public void GetObjectProperty_Nullable_AsUnderlying_WithNull_Throws() => GetObjectProperty(c => c.GetObjectProperty<bool>(1001, ObjectProperty.InheritInterval), "True");
+        public void GetObjectProperty_Nullable_AsUnderlying_WithNull_Throws()
+        {
+            AssertEx.Throws<InvalidCastException>(
+                () => GetObjectProperty(c => c.GetObjectProperty<bool>(1001, ObjectProperty.InheritInterval), "True"),
+                "Cannot convert a value of type 'null' to type 'System.Boolean'"
+            );
+        }
 
         [TestMethod]
         public void GetObjectProperty_Nullable_AsNullable() => GetObjectProperty(c => c.GetObjectProperty<bool?>(1001, ObjectProperty.InheritAccess), "True");

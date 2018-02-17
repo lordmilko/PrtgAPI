@@ -86,16 +86,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")));
 
-            try
-            {
-                var triggers = client.GetNotificationTriggers(1001).First();
-                Assert.Fail("Expected an exception to be raised, however no error occurred");
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.Contains("Object may be in a corrupted state"))
-                    throw;
-            }
+            AssertEx.Throws<InvalidStateException>(
+                () => client.GetNotificationTriggers(1001).First(),
+                "Object may be in a corrupted state"
+            );
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_Throws_WhenChannelCantBeResolvedAsync()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")));
+
+            await AssertEx.ThrowsAsync<InvalidStateException>(
+                async () => (await client.GetNotificationTriggersAsync(1001)).First(),
+                "Object may be in a corrupted state"
+            );
+        }
         }
 
         [TestMethod]
