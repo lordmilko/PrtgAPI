@@ -43,7 +43,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (Current Position: {Object.Position}) (New Position: {Position})"))
-                ExecuteOperation(Object, () => client.SetPosition(Object, Position), "Modify PRTG Object Positions", $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
+                ExecuteOperation(() => client.SetPosition(Object, Position), $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
         }
+
+        internal override string ProgressActivity => "Modify PRTG Object Positions";
     }
 }

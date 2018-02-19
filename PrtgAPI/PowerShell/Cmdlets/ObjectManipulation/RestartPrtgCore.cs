@@ -63,7 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private int secondsRemaining = 150;
         private int secondsElapsed;
 
-        private string progressActivity = "Restart PRTG Core";
+        internal override string ProgressActivity => "Restart PRTG Core";
         private string statusDescription = "Restarting PRTG Core";
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 {
                     restartTime = DateTime.Now;
 
-                    ExecuteOperation(() => client.RestartCore(), progressActivity, statusDescription);
+                    ExecuteOperation(() => client.RestartCore(), statusDescription);
                 }
             }
         }
@@ -130,7 +130,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 return false;
             }
 
-            DisplayPostProcessProgress(progressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation);
+            DisplayPostProcessProgress(ProgressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation);
 
             for (int i = 0; i < 5; i++)
             {

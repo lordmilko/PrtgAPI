@@ -76,7 +76,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [AllowEmptyString]
         public object Value { get; set; }
 
-        private string progressActivity = "Modify PRTG Channel Settings";
+        internal override string ProgressActivity => "Modify PRTG Channel Settings";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -104,7 +104,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (Channel == null)
                     Batch = false;
 
-                ExecuteOrQueue(Channel, progressActivity, $"Queuing channel '{desc}'");
+                ExecuteOrQueue(Channel, $"Queuing channel '{desc}'");
             }
         }
 
@@ -120,7 +120,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
                 message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
 
-            ExecuteOperation(() => client.SetObjectProperty(SensorId, ChannelId, Property, Value), progressActivity, message);
+            ExecuteOperation(() => client.SetObjectProperty(SensorId, ChannelId, Property, Value), message);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 var message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
 
-                ExecuteMultiOperation(() => client.SetObjectProperty(sensorIds, groups[i].Key, Property, Value), progressActivity, message, complete);
+                ExecuteMultiOperation(() => client.SetObjectProperty(sensorIds, groups[i].Key, Property, Value), message, complete);
             }
         }
     }

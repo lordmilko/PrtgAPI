@@ -80,7 +80,7 @@ namespace PrtgAPI.PowerShell.Base
                     else
                         client.AddObject(destination.Id, Parameters, function);
 
-                }, $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s", $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
+                }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }
         }
 
@@ -125,5 +125,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="filters">An array of search filters used to retrieve all children of the <see cref="Destination"/> with the specified name.</param>
         /// <returns>All objects under the parent object that match the new object's name.</returns>
         protected abstract List<TObject> GetObjects(SearchFilter[] filters);
+
+        internal override string ProgressActivity => $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s";
     }
 }

@@ -42,7 +42,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var server = PrtgUrl.AddUrlPrefix(client.Server);
 
-            ExecuteOperation(() => Process.Start($"{server}{Object.Url}"), "Opening PRTG Objects", $"Opening {Object.BaseType.ToString().ToLower()} '{Object.Name}'");
+            ExecuteOperation(() => Process.Start($"{server}{Object.Url}"), $"Opening {Object.BaseType.ToString().ToLower()} '{Object.Name}'");
         }
+
+        internal override string ProgressActivity => "Opening PRTG Objects";
     }
 }

@@ -85,7 +85,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private string durationDescription;
         private string whatIfDescription;
 
-        private string progressActivity = "Pausing PRTG Objects";
+        internal override string ProgressActivity => "Pausing PRTG Objects";
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -122,7 +122,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"{Object.Name} (ID: {Object.Id}) (Duration: {whatIfDescription})"))
-                ExecuteOrQueue(Object, progressActivity);
+                ExecuteOrQueue(Object);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), progressActivity, $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {durationDescription}");
+            ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {durationDescription}");
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            ExecuteMultiOperation(() => client.PauseObject(ids, duration, Message), progressActivity, $"Pausing {GetMultiTypeListSummary()} {durationDescription}");
+            ExecuteMultiOperation(() => client.PauseObject(ids, duration, Message), $"Pausing {GetMultiTypeListSummary()} {durationDescription}");
         }
     }
 }

@@ -54,8 +54,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ShouldProcess($"'{Trigger.OnNotificationAction}' (Object ID: {Trigger.ObjectId}, Sub ID: {Trigger.SubId})"))
             {
                 if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete notification trigger '{Trigger.OnNotificationAction}' (Object ID: {Trigger.ObjectId}, Sub ID: {Trigger.SubId})", "WARNING!"))
-                    ExecuteOperation(() => client.RemoveNotificationTrigger(Trigger), "Removing Notification Triggers", $"Removing notification trigger '{Trigger.OnNotificationAction}' from Object {Trigger.ObjectId}");
+                    ExecuteOperation(() => client.RemoveNotificationTrigger(Trigger), $"Removing notification trigger '{Trigger.OnNotificationAction}' from Object {Trigger.ObjectId}");
             }
         }
+
+        internal override string ProgressActivity => "Removing Notification Triggers";
     }
 }

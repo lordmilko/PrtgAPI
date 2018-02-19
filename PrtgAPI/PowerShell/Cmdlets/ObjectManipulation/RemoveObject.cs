@@ -57,7 +57,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false)]
         public SwitchParameter Force { get; set; }
 
-        private string progressActivity = "Removing PRTG Objects";
+        internal override string ProgressActivity => "Removing PRTG Objects";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveObject"/> class.
@@ -79,7 +79,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (Force.IsPresent && batch == null)
                         Batch = true;
 
-                    ExecuteOrQueue(Object, progressActivity);
+                    ExecuteOrQueue(Object);
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RemoveObject(Object.Id), progressActivity, $"Removing {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
+            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformMultiOperation(int[] ids)
         {
-            ExecuteMultiOperation(() => client.RemoveObject(ids), progressActivity, $"Removing {GetMultiTypeListSummary()}");
+            ExecuteMultiOperation(() => client.RemoveObject(ids), $"Removing {GetMultiTypeListSummary()}");
         }
     }
 }

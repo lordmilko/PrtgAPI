@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private string durationDescription;
         private string whatIfDescription;
 
-        private string progressActivity = "Acknowledge PRTG Sensors";
+        internal override string ProgressActivity => "Acknowledge PRTG Sensors";
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -125,7 +125,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id}) (Duration: {whatIfDescription})"))
-                ExecuteOrQueue(Sensor, progressActivity);
+                ExecuteOrQueue(Sensor);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), progressActivity, $"Acknowledging sensor '{Sensor.Name}' {durationDescription}");
+            ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), $"Acknowledging sensor '{Sensor.Name}' {durationDescription}");
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            ExecuteMultiOperation(() => client.AcknowledgeSensor(ids, duration, Message), progressActivity, $"Acknowledging {GetCommonObjectBaseType()} {GetListSummary()} {durationDescription}");
+            ExecuteMultiOperation(() => client.AcknowledgeSensor(ids, duration, Message), $"Acknowledging {GetCommonObjectBaseType()} {GetListSummary()} {durationDescription}");
         }
     }
 }

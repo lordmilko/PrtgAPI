@@ -39,8 +39,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ShouldProcess($"'{Device.Name}' (ID: {Device.Id})"))
             {
-                ExecuteOperation(Device, () => client.AutoDiscover(Device.Id), "PRTG Auto-Discovery", $"Starting Auto-Discovery on device '{Device}'");
+                ExecuteOperation(() => client.AutoDiscover(Device.Id), $"Starting Auto-Discovery on device '{Device}'");
             }
         }
+
+        internal override string ProgressActivity => "PRTG Auto-Discovery";
     }
 }

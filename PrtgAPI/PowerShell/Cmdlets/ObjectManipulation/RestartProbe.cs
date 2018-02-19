@@ -81,9 +81,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private int secondsRemaining = 150;
         private int secondsElapsed;
 
-        private readonly List<Probe> probesRestarted = new List<Probe>();
+        private List<Probe> probesRestarted = new List<Probe>();
 
-        private string progressActivity = "Restart PRTG Probes";
+        internal override string ProgressActivity => "Restart PRTG Probes";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -119,7 +119,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (probe != null)
                         probesRestarted.Add(probe);
 
-                    ExecuteOperation(() => client.RestartProbe(probe?.Id), progressActivity, progressMessage, !Wait);
+                    ExecuteOperation(() => client.RestartProbe(probe?.Id), progressMessage, !Wait);
 
                     if(!Wait)
                         PassThruObject(probe);
@@ -134,9 +134,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Wait && restartTime != null)
             {
-                List<Probe> probes = Probe == null ? client.GetProbes() : probesRestarted;
+                probesRestarted = Probe == null ? client.GetProbes() : probesRestarted;
 
-                client.WaitForProbeRestart(restartTime.Value, probes, WriteProbeProgress);
+                client.WaitForProbeRestart(restartTime.Value, probesRestarted, WriteProbeProgress);
 
                 PassThruObject(probes);
             }
@@ -158,7 +158,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var completedPercent = (int) (completed/(double) probeStatuses.Count*100);
             var currentOperation = "Waiting for all probes to restart";
 
-            DisplayPostProcessProgress(progressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation, complete);
+            DisplayPostProcessProgress(ProgressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation, complete);
 
             if (complete)
                 return false;

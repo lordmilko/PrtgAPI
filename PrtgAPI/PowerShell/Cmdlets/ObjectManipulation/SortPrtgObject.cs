@@ -35,7 +35,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                ExecuteOperation(Object, () => client.SortAlphabetically(Object.Id), "Sorting PRTG Objects", $"Sorting children of object {Object.Name} (ID: {Object.Id})");
+                ExecuteOperation(() => client.SortAlphabetically(Object.Id), $"Sorting children of object {Object.Name} (ID: {Object.Id})");
         }
+
+        internal override string ProgressActivity => "Sorting PRTG Objects";
     }
 }

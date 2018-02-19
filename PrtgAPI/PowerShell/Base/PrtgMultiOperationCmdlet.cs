@@ -43,24 +43,21 @@ namespace PrtgAPI.PowerShell.Base
         /// If <see cref="Batch"/> is true, queues the object for processing after all items have been identified. Otherwise, executes this cmdlet's action immediately. 
         /// </summary>
         /// <param name="obj">The object to process.</param>
-        /// <param name="activity">The progress activity title to display when queuing the object.</param>
-        protected void ExecuteOrQueue(SensorOrDeviceOrGroupOrProbe obj, string activity)
+        protected void ExecuteOrQueue(SensorOrDeviceOrGroupOrProbe obj)
         {
-            ExecuteOrQueue(obj, activity, $"Queuing {obj.BaseType.ToString().ToLower()} '{obj.Name}'");
+            ExecuteOrQueue(obj, $"Queuing {obj.BaseType.ToString().ToLower()} '{obj.Name}'");
         }
 
         /// <summary>
         /// If <see cref="Batch"/> is true, queues the object for processing after all items have been identified. Otherwise, executes this cmdlet's action immediately. 
         /// </summary>
         /// <param name="obj">The object to process.</param>
-        /// <param name="activity">The progress activity title to display when queuing the object.</param>
         /// <param name="progressMessage">The progress message to display.</param>
-        protected void ExecuteOrQueue(PrtgObject obj, string activity, string progressMessage)
+        protected void ExecuteOrQueue(PrtgObject obj, string progressMessage)
         {
             if (Batch.IsPresent)
-                ExecuteQueueOperation(obj, activity, progressMessage);
+                ExecuteQueueOperation(obj, progressMessage);
             else
-            {
                 PerformSingleOperation();
                 PassThruObject(obj);
             }
@@ -70,36 +67,34 @@ namespace PrtgAPI.PowerShell.Base
         /// Queues an object for execution after all objects have been identified.
         /// </summary>
         /// <param name="obj">The object to queue.</param>
-        /// <param name="activity">The progress activity title to display.</param>
         /// <param name="progressMessage">The progress message to display.</param>
-        protected void ExecuteQueueOperation(PrtgObject obj, string activity, string progressMessage)
+        private void ExecuteQueueOperation(PrtgObject obj, string progressMessage)
         {
-            ExecuteOperation(() => QueueObject(obj), activity, progressMessage);
+            ExecuteOperation(() => QueueObject(obj), progressMessage);
         }
         
         /// <summary>
         /// Executes this cmdlet's action on all queued objects.
         /// </summary>
         /// <param name="action">The action to execute.</param>
-        /// <param name="activity">The progress activity title to display.</param>
         /// <param name="progressMessage">The progress message to display.</param>
         /// <param name="complete">Whether progress should be completed after calling this method.<para/>
         /// If the queued objects are to be split over several method calls, this value should only be true on the final call.</param>
-        protected void ExecuteMultiOperation(Action action, string activity, string progressMessage, bool complete = true)
+        protected void ExecuteMultiOperation(Action action, string progressMessage, bool complete = true)
         {
             progressMessage += $" ({objects.Count}/{objects.Count})";
 
-            DisplayMultiOperationProgress(activity, progressMessage);
+            DisplayMultiOperationProgress(progressMessage);
 
             action();
 
             CompletePostProcessProgress(complete);
         }
 
-        private void DisplayMultiOperationProgress(string activity, string progressMessage)
+        private void DisplayMultiOperationProgress(string progressMessage)
         {
             if (ProgressManager.ProgressEnabled && !ProgressManagerEx.PipeFromSingleVariable)
-                ProgressManager.ProcessPostProcessProgress(activity, progressMessage);
+                ProgressManager.ProcessPostProcessProgress(ProgressActivity, progressMessage);
         }
 
         internal string GetMultiTypeListSummary()

@@ -90,8 +90,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (ShouldProcess($"{Trigger.OnNotificationAction} (Object ID: {Trigger.ObjectId})", $"Edit-NotificationTriggerProperty {Property} = '{Value}'"))
             {
-                ExecuteOperation(Trigger, () => client.SetNotificationTrigger(parameters), "Edit Notification Triggers", $"Setting trigger property {Property} to value '{Value}'");
+                ExecuteOperation(() => client.SetNotificationTrigger(parameters), $"Setting trigger property {Property} to value '{Value}'");
             }
         }
+
+        internal override string ProgressActivity => "Edit Notification Triggers";
     }
 }

@@ -37,7 +37,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public Sensor Sensor { get; set; }
 
-        private string progressActivity = "Simulating Sensor Errors";
+        internal override string ProgressActivity => "Simulating Sensor Errors";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -45,7 +45,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Sensor.Name}' (ID: {Sensor.Id})"))
-                ExecuteOrQueue(Sensor, progressActivity);
+                ExecuteOrQueue(Sensor);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.SimulateError(Sensor.Id), progressActivity, $"Processing sensor '{Sensor.Name}'");
+            ExecuteOperation(() => client.SimulateError(Sensor.Id), $"Processing sensor '{Sensor.Name}'");
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            ExecuteMultiOperation(() => client.SimulateError(ids), progressActivity, $"Simulating errors on {GetCommonObjectBaseType()} {GetListSummary()}");
+            ExecuteMultiOperation(() => client.SimulateError(ids), $"Simulating errors on {GetCommonObjectBaseType()} {GetListSummary()}");
         }
     }
 }

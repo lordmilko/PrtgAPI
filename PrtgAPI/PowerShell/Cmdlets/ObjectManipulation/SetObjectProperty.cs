@@ -98,7 +98,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = "Unsafe")]
         public SwitchParameter Force { get; set; }
 
-        private string progressActivity = "Modify PRTG Object Settings";
+        internal override string ProgressActivity => "Modify PRTG Object Settings";
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -125,14 +125,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ParameterSetName == "Default")
             {
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
-                    ExecuteOrQueue(Object, progressActivity);
+                    ExecuteOrQueue(Object);
             }
             else
             {
                 if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on {Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
                 {
                     if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {RawProperty} = '{RawValue}'"))
-                        ExecuteOrQueue(Object, progressActivity);
+                        ExecuteOrQueue(Object);
                 }
             }
         }
@@ -149,9 +149,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void PerformSingleOperation()
         {
             if (ParameterSetName == "Default")
-                ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), progressActivity, $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
+                ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
             else
-                ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), progressActivity, $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
+                ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
         }
 
         /// <summary>
@@ -161,9 +161,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void PerformMultiOperation(int[] ids)
         {
             if(ParameterSetName == "Default")
-                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), progressActivity, $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
+                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
             else
-                ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), progressActivity, $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
+                ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
         }
     }
 }

@@ -14,12 +14,11 @@ namespace PrtgAPI.PowerShell.Base
         /// Executes an action and displays a progress message (if required).
         /// </summary>
         /// <param name="action">The action to be performed.</param>
-        /// <param name="activity">The title of the progress message to display.</param>
         /// <param name="progressMessage">The body of the progress message to display.</param>
         /// <param name="complete">Whether to allow <see cref="PrtgOperationCmdlet"/> to dynamically determine whether progress should be completed</param>
-        protected virtual void ExecuteOperation(Action action, string activity, string progressMessage, bool complete = true)
+        protected virtual void ExecuteOperation(Action action, string progressMessage, bool complete = true)
         {
-            ProgressManager.ProcessOperationProgress(activity, progressMessage);
+            ProgressManager.ProcessOperationProgress(ProgressActivity, progressMessage);
 
             try
             {
@@ -103,5 +102,7 @@ namespace PrtgAPI.PowerShell.Base
                 }
             }
         }
+
+        internal abstract string ProgressActivity { get; }
     }
 }

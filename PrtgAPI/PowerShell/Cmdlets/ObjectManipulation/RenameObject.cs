@@ -52,7 +52,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, Position = 0)]
         public string Name { get; set; }
 
-        private string progressActivity = "Rename PRTG Objects";
+        internal override string ProgressActivity => "Rename PRTG Objects";
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -60,7 +60,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (New Name: {Name})"))
-                ExecuteOrQueue(Object, progressActivity);                
+                ExecuteOrQueue(Object);                
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RenameObject(Object.Id, Name), progressActivity, $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
+            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            ExecuteMultiOperation(() => client.SetObjectProperty(ids, ObjectProperty.Name, Name), progressActivity, $"Renaming {GetMultiTypeListSummary()} to '{Name}'");
+            ExecuteMultiOperation(() => client.SetObjectProperty(ids, ObjectProperty.Name, Name), $"Renaming {GetMultiTypeListSummary()} to '{Name}'");
         }
     }
 }

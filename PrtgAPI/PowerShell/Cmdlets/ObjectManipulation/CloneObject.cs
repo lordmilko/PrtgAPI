@@ -157,6 +157,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private SensorOrDeviceOrGroupOrProbe sourceObj;
         private Func<int, List<PrtgObject>> sourceObjResolver;
 
+        private CloneCmdletConfig config;
+
         /// <summary>
         /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
         /// </summary>
@@ -171,13 +173,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            var config = GetCmdletConfig();
+            config = GetCmdletConfig();
 
             if (ShouldProcess($"{config.NameDescrption} ({config.IdDescription}, Destination: {DestinationId})"))
-                ExecuteOperation(() => Clone(config), config);
+                ExecuteOperation(Clone);
         }
 
-        private void Clone(CloneCmdletConfig config)
+        private void Clone()
         {
             if (config.Object is NotificationTrigger)
             {
@@ -319,9 +321,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             throw new PSArgumentException($"Cannot clone object with ID '{SourceId}' as it is not a sensor, device or group");
         }
 
-        private void ExecuteOperation(Action action, CloneCmdletConfig config)
+        private void ExecuteOperation(Action action)
         {
-            ExecuteOperation(action, $"Cloning PRTG {config.TypeDescription}s", $"Cloning {config.TypeDescription.ToLower()} '{config.NameDescrption}' ({config.IdDescription})");
+            ExecuteOperation(action, $"Cloning {config.TypeDescription.ToLower()} '{config.NameDescrption}' ({config.IdDescription})");
         }
 
         private void ResolveObject<T>(int id, Func<int, List<T>> getObjects, Type trueType)
@@ -332,5 +334,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private Func<int, List<PrtgObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<PrtgObject>().ToList();
         private Func<int, List<PrtgObject>> GetDevices => id => client.GetDevices(Property.Id, id).Cast<PrtgObject>().ToList();
         private Func<int, List<PrtgObject>> GetGroups => id => client.GetGroups(Property.Id, id).Cast<PrtgObject>().ToList();
+
+        internal override string ProgressActivity => $"Cloning PRTG {config.TypeDescription}s";
     }
 }
