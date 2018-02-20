@@ -209,6 +209,7 @@
     <Compile Include="PowerShell\Progress\AbortProgressParser.cs" />
     <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
+    <Compile Include="PowerShell\Progress\ProgressState.cs" />
     <Compile Include="PowerShell\Progress\ReadyParser.cs" />
     <Compile Include="PowerShell\Progress\ProcessingOption.cs" />
     <Compile Include="PowerShell\Progress\ProgressManager.cs" />

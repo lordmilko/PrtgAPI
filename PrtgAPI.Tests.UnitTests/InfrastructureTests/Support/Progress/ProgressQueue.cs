@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
         {
             if (!ProgressSnapshots.Any() && AnyRecords)
             {
-                List<ProgressRecord> list;
+                List<ProgressRecordEx> list;
 
                 lock (queueLock)
                 {

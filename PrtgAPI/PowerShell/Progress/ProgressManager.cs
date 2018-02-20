@@ -11,33 +11,44 @@ namespace PrtgAPI.PowerShell.Progress
 {
     internal partial class ProgressManager : IDisposable
     {
-        internal const string DefaultActivity = "Activity";
-        internal const string DefaultDescription = "Description";
-
         #region Progress Pipeline State
 
         internal static ProgressPipelineStack progressPipelines = new ProgressPipelineStack();
 
         internal int ProgressPipelinesCount => progressPipelines.Count;
 
+        public bool IsOnlyRecordInCurrentPipeline => progressPipelines.RecordsInCurrentPipeline == 1;
+
+        public bool HasMultipleRecordsInCurrentPipeline => progressPipelines.RecordsInCurrentPipeline > 1;
+
+        public bool HasMultiplePipelines => progressPipelines.Count > 1;
+
         #endregion
         #region Progress Record State
 
-        public ProgressRecordEx CurrentRecord => progressPipelines.CurrentRecordInPipeline;
+        private Lazy<ProgressState> currentState = new Lazy<ProgressState>(() => progressPipelines.CurrentRecordInPipeline);
 
-        public ProgressRecordEx PreviousRecord => progressPipelines.PreviousRecordInPipeline;
+        public ProgressState CurrentState => currentState.Value;
+
+        private Lazy<ProgressState> previousState = new Lazy<ProgressState>(() => progressPipelines.PreviousRecordInPipeline);
+
+        public ProgressState PreviousState => previousState.Value;
+
+        public ProgressRecordEx CurrentRecord => CurrentState.ProgressRecord;
+
+        public ProgressRecordEx PreviousRecord => PreviousState?.ProgressRecord;
 
         /// <summary>
         /// Indicates that the current cmdlet expects that it will contain progress, either because it already does, or it will when a record is written to the pipeline.
         /// </summary>
-        public bool ExpectsContainsProgress => CurrentRecord.Activity != DefaultActivity && (CurrentRecord.StatusDescription != DefaultDescription || InitialDescription != string.Empty);
+        public bool ExpectsContainsProgress => CurrentRecord.HasActivity && (CurrentRecord.HasDescription || InitialDescription != string.Empty);
 
         /// <summary>
         /// Indicates that a record has actually been written to the pipeline for this cmdlet, thus initializing the status description.
         /// </summary>
-        public bool ProgressWritten => CurrentRecord.StatusDescription != DefaultDescription;
+        public bool ProgressWritten => CurrentRecord.HasDescription;
 
-        public bool PreviousContainsProgress => PreviousRecord != null && PreviousRecord.Activity != DefaultActivity && PreviousRecord.StatusDescription != DefaultDescription;
+        public bool PreviousContainsProgress => PreviousRecord?.ContainsProgress == true;
 
         #endregion
         #region Pipeline Chain Analysis
@@ -45,7 +56,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// <summary>
         /// Indicates whether the current cmdlet is first in a chain of pure PrtgAPI cmdlets (with no third party filters in between, etc)
         /// </summary>
-        public bool FirstInChain => pipeToProgressCompatibleCmdlet && progressPipelines.RecordsInCurrentPipeline == 1;
+        public bool FirstInChain => pipeToProgressCompatibleCmdlet && IsOnlyRecordInCurrentPipeline;
 
         private bool? partOfChain;
 
@@ -58,7 +69,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 if (partOfChain == null)
                 {
-                    if (pipeFromProgressCompatibleCmdlet && (pipeToProgressCompatibleCmdlet || progressPipelines.RecordsInCurrentPipeline > 1))
+                    if (pipeFromProgressCompatibleCmdlet && (pipeToProgressCompatibleCmdlet || HasMultipleRecordsInCurrentPipeline))
                         partOfChain = true;
                     else
                         partOfChain = false;
@@ -75,17 +86,43 @@ namespace PrtgAPI.PowerShell.Progress
         //Display progress when piping multiple values from a variable, or a single value to multiple cmdlets
         public bool PipeFromVariableWithProgress => EntirePipeline?.List.Count > 1 || (EntirePipeline?.List.Count == 1 && PartOfChain) || (EntirePipeline?.List.Count == 1 && progressPipelines.Count > 1);
 
-        public bool PipeFromSingleVariable => EntirePipeline?.List.Count == 1 && progressPipelines.Count == 2;
+        public bool PipeFromSingleVariable => EntirePipeline?.List.Count == 1 && HasMultiplePipelines;
 
         public bool ProgressEnabled => PrtgSessionState.EnableProgress && !UnsupportedSelectObjectProgress;
 
-        public bool GetRecordsWithVariableProgress => (PipeFromVariableWithProgress || CanUseSelectObjectProgress || PipelineUpstreamContainsBlockingCmdlet) && ProgressEnabled;
+        public bool GetRecordsWithVariableProgress => (PipeFromVariableWithProgress || CanUseSelectObjectProgress || PipelineUpstreamContainsBlockingCmdlet || PipeFromPrtgCmdletPostProcessMode) && ProgressEnabled;
 
         public bool GetResultsWithProgress => PartOfChain && ProgressEnabled;
 
-        public bool VariableUpdateRecordsResponsibility => (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet) && !PipelineContainsOperation;
+        public bool PreviousOperationDestroyed => PipelineContainsOperation && PreviousRecord == null;
 
         public bool VariableUpdateRecordsFromPipeline => !PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable;
+        public bool NormalSeemsLikePipeFromVariable => (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet) && !PipelineContainsOperation || PreviousOperationDestroyed || PipeFromPrtgCmdletPostProcessMode;
+
+        public bool OperationSeemsLikePipeFromVariable
+        {
+            get
+            {
+                if (PipeFromPrtgCmdletPostProcessMode && !(CacheManager.GetPreviousPrtgCmdlet() is PrtgOperationCmdlet))
+                    return true;
+
+                if (!PipelineBeforeMeContainsOperation || (PreviousOperationDestroyed && Pipeline != null))
+                {
+                    if (PipeFromVariableWithProgress)
+                        return true;
+
+                    if (PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable)
+                        return true;
+
+                    if (PipelineUpstreamContainsBlockingCmdlet)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
+        public bool UsePipelineForNormalSeemsLikePipeFromVariable => !PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable;
 
         #endregion
         #region Extended Pipeline Chain Analysis
@@ -507,18 +544,6 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                //if we're select -first -last piping from a variable, the object queue is empty.
-                //if we're after the first select-object in the pipeline, we can look at the length
-                //of the entirepipeline?
-
-                //i think, rather, we need an equivalent of "cmdletbeforeselectobjectunusable" for variable piping.
-                //is the VARIABLE itself unusable?
-
-                //we could rename cmdletbeforeselectobjectunusuable to "sourcebeforeselectobjectunusable"
-                //and say the source is also unusable if the upstreamcmdlet is also the first cmdlet in the pipeline?
-                //that wont work cos that statement will always be true. maybe if we said if last AND first are specified,
-                //and we're piping from a variable and we havent processed -first records yet?
-
                 if (PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable)
                 {
                     if (SelectPipeline == null)
@@ -530,7 +555,7 @@ namespace PrtgAPI.PowerShell.Progress
                 }
                 else
                 {
-                    if (progressPipelines.RecordsInCurrentPipeline == 1)
+                    if (IsOnlyRecordInCurrentPipeline)
                     {
                         //If we're actually preceeded by a Select-Object cmdlet, we actually need a SelectPipeline
 
@@ -572,7 +597,11 @@ namespace PrtgAPI.PowerShell.Progress
 
         public string InitialDescription { get; set; }
 
-        public int? TotalRecords { get; set; }
+        public int? TotalRecords
+        {
+            get { return CurrentState?.TotalRecords; }
+            set { CurrentState.TotalRecords = value; }
+        }
 
         internal PrtgCmdlet cmdlet;
 
@@ -593,7 +622,7 @@ namespace PrtgAPI.PowerShell.Progress
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressManager"/> class. You MUST dispose the created object, else <see cref="ProgressManager"/>  will leak <see cref="progressPip"/> .
+        /// Initializes a new instance of the <see cref="ProgressManager"/> class. You MUST dispose the created object, else <see cref="ProgressManager"/>  will leak <see cref="progressPipelines"/> .
         /// </summary>
         /// <param name="cmdlet">The cmdlet to manage.</param>
         public ProgressManager(PrtgCmdlet cmdlet)
@@ -602,7 +631,7 @@ namespace PrtgAPI.PowerShell.Progress
             CacheManager = new ReflectionCacheManager(cmdlet);
 
             var sourceId = GetLastSourceId();
-            progressPipelines.Push(DefaultActivity, DefaultDescription, this, sourceId);
+            progressPipelines.Push(this, sourceId);
 
             if (PreviousRecord != null)
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
@@ -716,7 +745,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public void RemovePreviousOperation()
         {
-            if (PreviousRecord != null && PreviousRecord.CurrentOperation != null)
+            if (PreviousRecord?.HasOperation == true)
             {
                 PreviousRecord.CurrentOperation = null;
 
@@ -747,7 +776,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private void WriteProgress(ProgressRecordEx progressRecord, ProgressRecordEx previousRecord, bool cache = false)
         {
-            if (progressRecord.Activity == DefaultActivity || progressRecord.StatusDescription == DefaultDescription)
+            if (progressRecord.ContainsProgress == false)
                 throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
 
             progressRecord.State.Completed = progressRecord.RecordType == ProgressRecordType.Completed;
@@ -846,8 +875,8 @@ namespace PrtgAPI.PowerShell.Progress
             if (!PipeToBlockingSelectObjectCmdlet)
                 TotalRecords = null;
 
-            record.Activity = DefaultActivity;
-            record.StatusDescription = DefaultDescription;
+            record.Activity = ProgressRecordEx.DefaultActivity;
+            record.StatusDescription = ProgressRecordEx.DefaultDescription;
             record.CurrentOperation = null;
             record.RecordType = ProgressRecordType.Processing;
         }
@@ -993,11 +1022,11 @@ namespace PrtgAPI.PowerShell.Progress
         {
             //When a variable to cmdlet chain contains an operation, responsibility for updating the number of records processed
             //"resets", and we become responsible for updating our own count again
-            if (VariableUpdateRecordsResponsibility)
+            if (NormalSeemsLikePipeFromVariable)
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 //we're responsible for updating our own progress, which we must do via analyzing the pipeline.
-                if (VariableUpdateRecordsFromPipeline)
+                if (UsePipelineForNormalSeemsLikePipeFromVariable)
                 {
                     IncrementProgressFromPipeline(record, obj, writeObject);
                 }
@@ -1134,10 +1163,7 @@ namespace PrtgAPI.PowerShell.Progress
             //If we already had an operation cmdlet, the responsibility of updating the previous cmdlet's
             //records processed has now shifted back on to him, so we don't need to do it for him. As such,
             //we may assume we're now a "normal" pipeline
-            if ((PipeFromVariableWithProgress ||
-                (PipeFromBlockingSelectObjectCmdlet && SourceBeforeSelectObjectUnusable) ||
-                PipelineUpstreamContainsBlockingCmdlet)
-                && !PipelineBeforeMeContainsOperation)
+            if (OperationSeemsLikePipeFromVariable)
             {
                 //Variable -> Action
                 //Variable -> Action -> Object

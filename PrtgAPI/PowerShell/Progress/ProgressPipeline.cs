@@ -1,42 +1,41 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
 
 namespace PrtgAPI.PowerShell.Progress
 {
     class ProgressPipeline
     {
-        private Stack<ProgressRecordEx> progressRecords = new Stack<ProgressRecordEx>();
+        private Stack<ProgressState> progressStates = new Stack<ProgressState>();
 
-        internal List<ProgressRecordEx> Records => progressRecords.ToList();
+        internal List<ProgressRecordEx> Records => progressStates.Select(r => r.ProgressRecord).ToList();
 
         internal object FirstCmdletInPipeline { get; private set; }
 
-        internal int Count => progressRecords.Count;
+        internal int Count => progressStates.Count;
 
-        internal ProgressRecordEx Peek()
+        internal ProgressState Peek()
         {
-            return progressRecords.Peek();
+            return progressStates.Peek();
         }
 
-        internal ProgressRecordEx CurrentRecord => progressRecords.Peek();
+        internal ProgressState CurrentState => progressStates.Peek();
 
-        internal ProgressRecordEx PreviousRecord => progressRecords.Skip(1).FirstOrDefault();
+        internal ProgressState PreviousState => progressStates.Skip(1).FirstOrDefault();
 
-        internal ProgressPipeline(string defaultActivity, string defaultDescription, object firstCmdletInPipeline, int offset, long sourceId)
+        internal ProgressPipeline(object firstCmdletInPipeline, int offset, long sourceId)
         {
-            Push(defaultActivity, defaultDescription, offset, sourceId);
+            Push(offset, sourceId);
             FirstCmdletInPipeline = firstCmdletInPipeline;
         }
 
-        internal void Push(string defaultActivity, string defaultDescription, int offset, long sourceId)
+        internal void Push(int offset, long sourceId)
         {
-            progressRecords.Push(new ProgressRecordEx(offset + 1, defaultActivity, defaultDescription, sourceId));
+            progressStates.Push(new ProgressState(offset, sourceId));
         }
 
         internal void Pop()
         {
-            progressRecords.Pop();
+            progressStates.Pop();
         }
     }
 }

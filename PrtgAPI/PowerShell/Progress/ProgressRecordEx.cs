@@ -8,6 +8,9 @@ namespace PrtgAPI.PowerShell.Progress
     /// </summary>
     public class ProgressRecordEx : ProgressRecord
     {
+        internal const string DefaultActivity = "Activity";
+        internal const string DefaultDescription = "Description";
+
         [DebuggerDisplay("{Completed}")]
         internal class SharedState
         {
@@ -27,13 +30,32 @@ namespace PrtgAPI.PowerShell.Progress
         /// </summary>
         public bool CmdletOwnsRecord { get; set; } = true;
 
-
         internal SharedState State { get; set; } = new SharedState();
 
         /// <summary>
         /// Indicates whether this progress record is currently in a completed state.
         /// </summary>
         public bool Completed => State.Completed;
+
+        /// <summary>
+        /// Indicates that the progress record's <see cref="ProgressRecord.Activity"/> has a value.
+        /// </summary>
+        public bool HasActivity => Activity != DefaultActivity;
+
+        /// <summary>
+        /// Indicates that the progress record's <see cref="ProgressRecord.StatusDescription"/> has a value.
+        /// </summary>
+        public bool HasDescription => StatusDescription != DefaultDescription;
+
+        /// <summary>
+        /// Indicates that both the progress record's <see cref="ProgressRecord.Activity"/> and <see cref="ProgressRecord.StatusDescription"/> have values.
+        /// </summary>
+        public bool ContainsProgress => HasActivity && HasDescription;
+
+        /// <summary>
+        /// Indicates that the progress record's <see cref="ProgressRecord.CurrentOperation"/> has a value.
+        /// </summary>
+        public bool HasOperation => CurrentOperation != null;
 
         /// <summary>
         /// The SourceId to be used when writing progress.
@@ -48,6 +70,16 @@ namespace PrtgAPI.PowerShell.Progress
         /// <param name="statusDescription">A description of the status of the activity.</param>
         /// <param name="sourceId">The internal source ID to associate with this record.</param>
         public ProgressRecordEx(int activityId, string activity, string statusDescription, long sourceId) : base(activityId, activity, statusDescription)
+        {
+            SourceId = sourceId;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgressRecordEx"/> class.
+        /// </summary>
+        /// <param name="activityId">A unique numeric key that identifies the activity to which this record applies.</param>
+        /// <param name="sourceId">The internal source ID to associate with this record.</param>
+        public ProgressRecordEx(int activityId, long sourceId) : base(activityId, DefaultActivity, DefaultDescription)
         {
             SourceId = sourceId;
         }

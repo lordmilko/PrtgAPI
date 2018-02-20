@@ -5,7 +5,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 {
@@ -49,7 +49,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 
     public class ProgressGrouper
     {
-        public static ProgressHierarchy GetHierarchy(List<ProgressRecord> records)
+        public static ProgressHierarchy GetHierarchy(List<ProgressRecordEx> records)
         {
             var parent = new ProgressRecord(0, "Activity", "Description");
             parent.GetType().GetField("id", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(parent, -1);
@@ -62,7 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             return hierarchy;
         }
 
-        static int GetChildren(ProgressHierarchy hierarchy, List<ProgressRecord> list, int i = 0)
+        static int GetChildren(ProgressHierarchy hierarchy, List<ProgressRecordEx> list, int i = 0)
         {
             /*
              * Given a list of ParentID/ID pairs in the form
@@ -157,7 +157,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
             return returnIndex;
         }
 
-        static void AddLostChildren(ProgressHierarchy hierarchy, List<ProgressRecord> list, int i)
+        static void AddLostChildren(ProgressHierarchy hierarchy, List<ProgressRecordEx> list, int i)
         {
             //We will build a collection of progress records we need to append to the root, then apply them
 

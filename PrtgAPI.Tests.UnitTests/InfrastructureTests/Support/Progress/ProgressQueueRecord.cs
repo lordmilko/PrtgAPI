@@ -1,13 +1,12 @@
-﻿using System.Management.Automation;
-using PrtgAPI.PowerShell.Progress;
+﻿using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 {
     public class ProgressQueueRecord
     {
-        public ProgressRecord ProgressRecord { get; }
+        public ProgressRecordEx ProgressRecord { get; }
 
-        public bool ContainsProgress => ProgressRecord.Activity != ProgressManager.DefaultActivity && (ProgressRecord.StatusDescription != ProgressManager.DefaultDescription);
+        public bool ContainsProgress => ProgressRecord?.ContainsProgress == true;
 
         public ProgressQueueRecord(ProgressRecordEx progressRecord)
         {

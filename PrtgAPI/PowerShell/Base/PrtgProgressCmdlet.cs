@@ -85,7 +85,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void UpdateRecordsProcessed()
         {
-            if (!ProgressManager.VariableUpdateRecordsResponsibility)
+            if (!ProgressManager.NormalSeemsLikePipeFromVariable)
             {
                 if (ProgressManager.RecordsProcessed < 0)
                     ProgressManager.RecordsProcessed++;

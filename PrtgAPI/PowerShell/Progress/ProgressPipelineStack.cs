@@ -13,11 +13,11 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal int RecordsInCurrentPipeline => currentPipeline.Count;
 
-        internal ProgressRecordEx CurrentRecordInPipeline => currentPipeline.CurrentRecord;
+        internal ProgressState CurrentRecordInPipeline => currentPipeline.CurrentState;
 
-        internal ProgressRecordEx PreviousRecordInPipeline => currentPipeline.PreviousRecord;
+        internal ProgressState PreviousRecordInPipeline => currentPipeline.PreviousState;
 
-        internal void Push(string defaultActivity, string defaultDescription, ProgressManager manager, long sourceId)
+        internal void Push(ProgressManager manager, long sourceId)
         {
             var firstCmdletInPipeline = manager.CacheManager.GetFirstCmdletInPipeline();
 
@@ -25,17 +25,17 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (progressPipelines.Count == 0)
             {
-                progressPipelines.Push(new ProgressPipeline(defaultActivity, defaultDescription, firstCmdletInPipeline, offset, sourceId));
+                progressPipelines.Push(new ProgressPipeline(firstCmdletInPipeline, offset, sourceId));
             }
             else
             {
                 if (currentPipeline.FirstCmdletInPipeline.Equals(firstCmdletInPipeline))
                 {
-                    currentPipeline.Push(defaultActivity, defaultDescription, offset, sourceId);
+                    currentPipeline.Push(offset, sourceId);
                 }
                 else
                 {
-                    progressPipelines.Push(new ProgressPipeline(defaultActivity, defaultDescription, firstCmdletInPipeline, offset, sourceId));
+                    progressPipelines.Push(new ProgressPipeline(firstCmdletInPipeline, offset, sourceId));
                 }
             }
         }
