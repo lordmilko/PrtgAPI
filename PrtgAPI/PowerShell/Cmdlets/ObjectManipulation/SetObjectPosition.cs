@@ -47,5 +47,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         internal override string ProgressActivity => "Modify PRTG Object Positions";
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Object;
     }
 }

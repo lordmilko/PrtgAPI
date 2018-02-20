@@ -157,7 +157,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             //PrtgOperationCmdlets use TrySetPreviousOperation, so they won't be caught by the fact PipelineContainsOperation would be true for them
             //(causing them to SetPreviousOperation, which would fail)
-            if (!ProgressManager.PipelineContainsOperation)
+            if (ProgressManager.PipelineContainsOperation == false || ProgressManager.PreviousOperationDestroyed || ProgressManager.PipeFromPrtgCmdletPostProcessMode)
             {
                 if (ProgressManager.PipelineIsProgressPure)
                 {
@@ -207,27 +207,31 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Updates progress as each object in the current cmdlet is written to the pipeline.
         /// </summary>
-        protected void DuringUpdateProgress(PrtgObject obj)
+        protected void DuringUpdateProgress(object obj)
         {
+            ProgressManager.CurrentState.Current = obj;
+
+            var prtgObj = obj as PrtgObject;
+
             switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:
                     break;
                 case ProgressScenario.StreamProgress:
                 case ProgressScenario.MultipleCmdlets:
-                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach, obj);
+                    UpdateScenarioProgress_MultipleCmdlets(ProgressStage.BeforeEach, prtgObj);
                     break;
                 case ProgressScenario.VariableToSingleCmdlet:
                     ProgressManager.CompletePrematurely(ProgressManager);
                     break;
                 case ProgressScenario.VariableToMultipleCmdlets:
                 case ProgressScenario.MultipleCmdletsFromBlockingSelect:
-                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, obj);
+                    UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, prtgObj);
                     break;
                 case ProgressScenario.SelectLast:
                 case ProgressScenario.SelectSkipLast:
                     if (ProgressManager.PartOfChain)
-                        UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, obj);
+                        UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, prtgObj);
                     break;
                 default:
                     throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
@@ -295,7 +299,8 @@ namespace PrtgAPI.PowerShell.Base
                 }
                 else if (stage == ProgressStage.BeforeEach)
                 {
-                    ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
+                    if(!ProgressManager.PipeFromPrtgCmdletPostProcessMode)
+                        ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
                 }
                 else //PostLoop
                 {
@@ -338,8 +343,9 @@ namespace PrtgAPI.PowerShell.Base
             else if (stage == ProgressStage.BeforeEach)
             {
                 //When a variable to cmdlet chain contains an operation, responsibility of updating the number of records processed
-                //"resets", and we become responsible for updating our own count again
-                if (ProgressManager.PipelineContainsOperation && ProgressManager.ExpectsContainsProgress)
+                //"resets", and we become responsible for updating our own count again. If that operation was a multi operation cmdlet
+                //operating in both batch and paass through mode however, we're still acting as if we've piped from a variable
+                if (ProgressManager.PipelineContainsOperation && ProgressManager.ExpectsContainsProgress && !ProgressManager.PipeFromPrtgCmdletPostProcessMode)
                     ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
             }
             else //PostLoop
@@ -376,13 +382,16 @@ namespace PrtgAPI.PowerShell.Base
         /// Writes a list to the output pipeline.
         /// </summary>
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
-        internal void WriteList<T>(IEnumerable<T> sendToPipeline)
+        /// <param name="isLazy">Specifies whether the records to send to pipeline have not yet been retrieved from PRTG.</param>
+        internal void WriteList<T>(IEnumerable<T> sendToPipeline, bool isLazy = false)
         {
+            ProgressManager.CurrentState.RegisterRecords(sendToPipeline, isLazy);
+
             PreUpdateProgress();
 
             foreach (var item in sendToPipeline)
             {
-                DuringUpdateProgress(item as PrtgObject);
+                DuringUpdateProgress(item);
 
                 WriteObject(item);
             }

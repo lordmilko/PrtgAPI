@@ -160,5 +160,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 ExecuteMultiOperation(() => client.SetObjectProperty(sensorIds, groups[i].Key, Property, Value), message, complete);
             }
         }
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Channel;
     }
 }

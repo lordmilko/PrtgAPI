@@ -168,6 +168,7 @@
     <Compile Include="Parameters\ObjectManipulation\SetObjectPropertyParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\RemoveTriggerParameters.cs" />
+    <Compile Include="PowerShell\Base\IPrtgMultiPassThruCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPrtgPassThruCmdlet.cs" />
     <Compile Include="PowerShell\Base\NewObjectCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgMultiOperationCmdlet.cs" />

@@ -96,7 +96,19 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool PreviousOperationDestroyed => PipelineContainsOperation && PreviousRecord == null;
 
-        public bool VariableUpdateRecordsFromPipeline => !PartOfChain || FirstInChain || SourceBeforeSelectObjectUnusable;
+        public bool PipeFromPrtgCmdletPostProcessMode
+        {
+            get
+            {
+                var previousCmdlet = CacheManager.GetPreviousPrtgCmdletOfType<PrtgPostProcessCmdlet>();
+
+                if (previousCmdlet?.ProgressManager?.PostProcessMode() == true)
+                    return true;
+
+                return false;
+            }
+        }
+
         public bool NormalSeemsLikePipeFromVariable => (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet) && !PipelineContainsOperation || PreviousOperationDestroyed || PipeFromPrtgCmdletPostProcessMode;
 
         public bool OperationSeemsLikePipeFromVariable
@@ -634,7 +646,12 @@ namespace PrtgAPI.PowerShell.Progress
             progressPipelines.Push(this, sourceId);
 
             if (PreviousRecord != null)
+            {
                 CurrentRecord.ParentActivityId = PreviousRecord.ActivityId;
+
+                if (CurrentRecord.ParentActivityId > CurrentRecord.ActivityId)
+                    CurrentRecord.ParentActivityId = -1;
+            }
 
             if (cmdlet.ProgressManagerEx.CurrentRecord != null)
                 CurrentRecord.ProgressWritten = cmdlet.ProgressManagerEx.CurrentRecord.ProgressWritten;
@@ -915,7 +932,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (multiOperationAnalyzer.PipeToMultiOperation || multiOperationAnalyzer.IsMultiOperation)
                 return ReadyToCompleteMultiOperation();
 
-            if (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet)
+            if (PipeFromVariableWithProgress || PipeFromBlockingSelectObjectCmdlet || PipelineUpstreamContainsBlockingCmdlet || PipeFromPrtgCmdletPostProcessMode)
             {
                 //If we're not part of a chain, the first in the chain, or the pipeline contains an operation
                 if (!PartOfChain || FirstInChain || PipeFromBlockingSelectObjectCmdlet || (PipelineContainsOperation && PreviousRecord == null))
@@ -943,7 +960,7 @@ namespace PrtgAPI.PowerShell.Progress
                 else
                 {
                     //We're the Object or Action in Variable -> Object -> Action
-                    if (!PipelineContainsOperation || cmdlet is PrtgOperationCmdlet)
+                    if (!PipelineContainsOperation || cmdlet is PrtgOperationCmdlet || PipeFromPrtgCmdletPostProcessMode)
                     {
                         var previousCmdlet = CacheManager.GetPreviousPrtgCmdlet();
                         var previousManager = previousCmdlet.ProgressManager;
@@ -1090,7 +1107,9 @@ namespace PrtgAPI.PowerShell.Progress
                     manager.RecordsProcessed--;
 
                 //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
-                if ((NextCmdletIsOperation && manager.RecordsProcessed < 2) || !NextCmdletIsOperation) //todo: what happens when WE'RE an operation cmdlet?
+                //But if the previous cmdlet is a post process cmdlet executing with -PassThru, we're effectively operating in "variable progress"
+                //mode, so we need to display some progress for the record that was piped into us
+                if ((NextCmdletIsOperation && manager.RecordsProcessed < 2) || !NextCmdletIsOperation || PipeFromPrtgCmdletPostProcessMode) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
 
                 CompletePrematurely(manager);
@@ -1309,6 +1328,13 @@ namespace PrtgAPI.PowerShell.Progress
 
                         total = tuple.Item1;
                         processed = tuple.Item2;
+
+                        var multiPassThruCmdlet = CacheManager.GetPreviousPrtgCmdlet() as IPrtgMultiPassThruCmdlet;
+
+                        if (multiPassThruCmdlet != null && multiPassThruCmdlet.PassThru && multiPassThruCmdlet.CurrentMultiPassThru != null)
+                        {
+                            processed = multiPassThruCmdlet.PassThruObjects.IndexOf(multiPassThruCmdlet.CurrentMultiPassThru) + 1;
+                        }
                     }
                 }
                 else

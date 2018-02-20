@@ -141,5 +141,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             ExecuteMultiOperation(() => client.PauseObject(ids, duration, Message), $"Pausing {GetMultiTypeListSummary()} {durationDescription}");
         }
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Object;
     }
 }

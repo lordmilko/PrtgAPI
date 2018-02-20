@@ -82,7 +82,7 @@ namespace PrtgAPI.PowerShell.Base
             var parameters = ProcessParameters();
             var records = GetRecordsInternal(parameters);
 
-            WriteList(records);
+            WriteList(records, streamResults);
 
             //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableBaseCmdlet object
             Filter = null;

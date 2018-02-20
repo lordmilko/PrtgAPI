@@ -30,6 +30,12 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal void Push(int offset, long sourceId)
         {
+            //If two batch/passthru cmdlets are chained together via an intermediate table cmdlet, the first action cmdlet's endprocessing
+            //block will end when the second's endprocessing executes, resulting in the first cmdlet to be lost from the progress pipeline
+
+            if (progressStates.Count > 0 && CurrentState?.ProgressRecord?.ActivityId == offset + 1)
+                offset++;
+
             progressStates.Push(new ProgressState(offset, sourceId));
         }
 

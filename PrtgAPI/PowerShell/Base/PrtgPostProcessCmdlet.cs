@@ -57,6 +57,13 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="complete"></param>
         protected void CompletePostProcessProgress(bool complete = true)
         {
+            //If we're a PassThru cmdlet and the next cmdlet is a multi operation cmdlet, we should leave our progress
+            //open so the next cmdlet can complete it
+            var nextCmdlet = ProgressManager.CacheManager.GetNextPrtgCmdlet() as PrtgPostProcessCmdlet;
+
+            if (nextCmdlet?.ProgressManager?.PostProcessMode() == true)
+                return;
+
             if (ProgressManager.ProgressEnabled && complete && !ProgressManagerEx.PipeFromSingleVariable)
                 ProgressManager.CompleteProgress(true, true);
         }

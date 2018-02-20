@@ -20,6 +20,11 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
             ProgressManager.CustomWriter = cmdlet => new MockProgressWriter(cmdlet);
         }
 
+        public static void Unbind()
+        {
+            ProgressManager.CustomWriter = null;
+        }
+
         public void WriteProgress(ProgressRecordEx progressRecord)
         {
             ProgressQueue.Enqueue(progressRecord);

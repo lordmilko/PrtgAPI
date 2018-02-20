@@ -165,5 +165,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
                 ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
         }
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Object;
     }
 }

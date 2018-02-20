@@ -41,7 +41,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Restart-PrtgCore</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Probe", SupportsShouldProcess = true)]
-    public class RestartProbe : PrtgPostProcessCmdlet, IPrtgPassThruCmdlet
+    public class RestartProbe : PrtgPostProcessCmdlet, IPrtgMultiPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The probe to restart. If no probe is specified, all probes will be restarted.</para>
@@ -50,7 +50,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public Probe Probe { get; set; }
 
         /// <summary>
-        /// <para type="description">Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
+        /// <para type="description">Specifies whether to return the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter PassThru { get; set; }
@@ -84,6 +84,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private List<Probe> probesRestarted = new List<Probe>();
 
         internal override string ProgressActivity => "Restart PRTG Probes";
+
+        private bool allProbesRestarted;
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
@@ -120,9 +122,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         probesRestarted.Add(probe);
 
                     ExecuteOperation(() => client.RestartProbe(probe?.Id), progressMessage, !Wait);
-
-                    if(!Wait)
-                        PassThruObject(probe);
                 }
             }
         }
@@ -138,7 +137,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 client.WaitForProbeRestart(restartTime.Value, probesRestarted, WriteProbeProgress);
 
-                PassThruObject(probes);
+                allProbesRestarted = true;
+                WriteMultiPassThru();
             }
         }
 
@@ -199,20 +199,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Writes the specified object to the pipeline if <see cref="PassThru"/> is specified.
+        /// Writes the current <see cref="PassThruObject"/> to the pipeline if <see cref="PassThru"/> is specified.
         /// </summary>
-        /// <param name="obj">The object to write to the pipeline.</param>
-        public void PassThruObject(object obj)
+        public void WritePassThru()
         {
             if (PassThru)
             {
-                if (obj is IEnumerable)
-                {
-                    foreach (var o in (IEnumerable)obj)
-                        WriteObject(o);
-                }
-                else
-                    WriteObject(obj);
+                if (Wait && !allProbesRestarted)
+                    return;
+                
+                WriteObject(PassThruObject);
             }
         }
 
@@ -220,5 +216,38 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Whether this cmdlet will execute its post processing operation.
         /// </summary>
         protected override bool ShouldPostProcess() => Wait;
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public object PassThruObject => Probe;
+
+        /// <summary>
+        /// The objects that should be output from the cmdlet.
+        /// </summary>
+        public List<object> PassThruObjects => probesRestarted.Cast<object>().ToList();
+
+        /// <summary>
+        /// Stores the last object that was output from the cmdlet.
+        /// </summary>
+        public object CurrentMultiPassThru { get; set; }
+
+        /// <summary>
+        /// Writes all objects stored in <see cref="PassThruObjects"/> if <see cref="IPrtgPassThruCmdlet.PassThru"/> is specified.
+        /// </summary>
+        public void WriteMultiPassThru()
+        {
+            if (PassThru)
+            {
+                if (Wait && !allProbesRestarted)
+                    return;
+
+                foreach (var o in probesRestarted)
+                {
+                    CurrentMultiPassThru = o;
+                    WriteObject(o);
+                }
+            }
+        }
     }
 }

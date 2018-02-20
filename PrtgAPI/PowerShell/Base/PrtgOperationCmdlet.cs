@@ -32,7 +32,12 @@ namespace PrtgAPI.PowerShell.Base
                 throw;
             }
 
-            if(complete)
+            var passThru = this as IPrtgPassThruCmdlet;
+
+            if (passThru != null && !ProgressManager.PostProcessMode())
+                passThru.WritePassThru();
+
+            if (complete)
                 CompleteOperationProgress();
         }
 

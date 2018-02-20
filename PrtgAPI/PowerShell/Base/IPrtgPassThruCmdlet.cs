@@ -9,14 +9,18 @@ namespace PrtgAPI.PowerShell.Base
     public interface IPrtgPassThruCmdlet
     {
         /// <summary>
-        /// Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
+        /// Specifies whether to return the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
         /// </summary>
         SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Writes the specified object to the pipeline if <see cref="PassThru"/> is specified.
+        /// Returns the current object that should be passed through this cmdlet.
         /// </summary>
-        /// <param name="obj">The object to write to the pipeline.</param>
-        void PassThruObject(object obj);
+        object PassThruObject { get; }
+
+        /// <summary>
+        /// Writes the current <see cref="PassThruObject"/> to the pipeline if <see cref="PassThru"/> is specified.
+        /// </summary>
+        void WritePassThru();
     }
 }

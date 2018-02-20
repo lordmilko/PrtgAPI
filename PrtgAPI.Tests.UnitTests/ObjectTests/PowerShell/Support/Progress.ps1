@@ -14,10 +14,16 @@ function Describe($name, $script)
 {
     Pester\Describe $name {
 
-        BeforeAll {    InitializeUnitTestModules }
+        BeforeAll {
+            InitializeUnitTestModules
+            InitializeClient
+        }
         AfterEach {
             [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::RecordQueue.Clear()
             Clear-Progress
+        }
+        AfterAll {
+            UninitializeClient
         }
 
         & $script
@@ -69,6 +75,12 @@ function InitializeClient {
     SetMultiTypeResponse
 
     Enable-PrtgProgress
+}
+
+function UninitializeClient {
+    [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Unbind()
+
+    Disable-PrtgProgress
 }
 
 function RunCustomCount($hashtable, $action)

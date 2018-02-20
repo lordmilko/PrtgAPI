@@ -194,6 +194,26 @@ namespace PrtgAPI.PowerShell.Progress
             return null;
         }
 
+        public PrtgCmdlet GetPreviousPrtgCmdletOfType<T>()
+        {
+            var commands = GetPipelineCommands();
+
+            var myIndex = commands.IndexOf(cmdlet);
+
+            for (int i = myIndex - 1; i >= 0; i--)
+            {
+                if (commands[i] is PrtgCmdlet)
+                {
+                    if (commands[i] is T)
+                    {
+                        return (PrtgCmdlet)commands[i];
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public PrtgOperationCmdlet TryGetFirstOperationCmdletAfterSelectObject()
         {
             var commands = GetPipelineCommands();

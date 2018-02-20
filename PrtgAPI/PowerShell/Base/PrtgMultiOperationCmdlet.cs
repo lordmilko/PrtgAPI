@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -11,7 +10,7 @@ namespace PrtgAPI.PowerShell.Base
     /// <summary>
     /// Base class for all cmdlets that perform actions or manipulate multiple objects in a single request against PRTG.
     /// </summary>
-    public abstract class PrtgMultiOperationCmdlet : PrtgPostProcessCmdlet, IPrtgPassThruCmdlet
+    public abstract class PrtgMultiOperationCmdlet : PrtgPostProcessCmdlet, IPrtgMultiPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">Specifies whether this cmdlet should queue all objects piped to this cmdlet to execute a single
@@ -25,7 +24,7 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// <para type="description">Returns the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
+        /// <para type="description">Specifies whether to return the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter PassThru { get; set; }
@@ -59,8 +58,6 @@ namespace PrtgAPI.PowerShell.Base
                 ExecuteQueueOperation(obj, progressMessage);
             else
                 PerformSingleOperation();
-                PassThruObject(obj);
-            }
         }
 
         /// <summary>
@@ -87,6 +84,10 @@ namespace PrtgAPI.PowerShell.Base
             DisplayMultiOperationProgress(progressMessage);
 
             action();
+
+            ProgressManager.RecordsProcessed = -1;
+
+            WriteMultiPassThru();
 
             CompletePostProcessProgress(complete);
         }
@@ -228,8 +229,14 @@ namespace PrtgAPI.PowerShell.Base
             {
                 var ids = objects.Select(o => o.Id).ToArray();
 
+                if (ProgressManager.OperationSeemsLikePipeFromVariable && ProgressManager.PreviousRecord == null && ProgressManager.EntirePipeline != null && ProgressManager.CacheManager.GetPreviousPrtgCmdlet() == null)
+                {
+                    ProgressManager.TotalRecords = ProgressManager.EntirePipeline.List.Count;
+                }
+                else
+                    ProgressManager.TotalRecords = objects.Count;
+
                 PerformMultiOperation(ids);
-                PassThruObject(objects);
             }
         }
 
@@ -245,20 +252,38 @@ namespace PrtgAPI.PowerShell.Base
         protected abstract void PerformMultiOperation(int[] ids);
 
         /// <summary>
-        /// Writes the specified object to the pipeline if <see cref="PassThru"/> is specified.
+        /// Writes the current <see cref="PassThruObject"/> to the pipeline if <see cref="PassThru"/> is specified.
         /// </summary>
-        /// <param name="obj">The object to write to the pipeline.</param>
-        public void PassThruObject(object obj)
+        public void WritePassThru()
         {
             if (PassThru)
             {
-                if (obj is IEnumerable)
+                WriteObject(PassThruObject);
+            }
+        }
+
+        /// <summary>
+        /// The objects that should be output from the cmdlet.
+        /// </summary>
+        public List<object> PassThruObjects => objects.Cast<object>().ToList();
+
+        /// <summary>
+        /// Stores the last object that was output from the cmdlet.
+        /// </summary>
+        public object CurrentMultiPassThru { get; set; }
+
+        /// <summary>
+        /// Writes all objects stored in <see cref="PassThruObjects"/> if <see cref="IPrtgPassThruCmdlet.PassThru"/> is specified.
+        /// </summary>
+        public void WriteMultiPassThru()
+        {
+            if (PassThru)
+            {
+                foreach (var o in PassThruObjects)
                 {
-                    foreach (var o in (IEnumerable)obj)
-                        WriteObject(o);
+                    CurrentMultiPassThru = o;
+                    WriteObject(o);
                 }
-                else
-                    WriteObject(obj);
             }
         }
 
@@ -266,5 +291,10 @@ namespace PrtgAPI.PowerShell.Base
         /// Whether this cmdlet will execute its post processing operation.
         /// </summary>
         protected override bool ShouldPostProcess() => Batch.IsPresent;
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public abstract object PassThruObject { get; }
     }
 }

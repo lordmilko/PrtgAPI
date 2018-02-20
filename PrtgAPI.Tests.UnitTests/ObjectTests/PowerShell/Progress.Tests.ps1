@@ -1,9 +1,7 @@
 ﻿. $PSScriptRoot\Support\Progress.ps1
 
 Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
-    
-    InitializeClient
-    
+        
     $filter = "*"
     $ignoreNotImplemented = $false
 
@@ -4689,13 +4687,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
@@ -4712,13 +4710,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
@@ -4739,16 +4737,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (2/2)" 100)
 
             ###################################################################
 
@@ -4758,16 +4756,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Processing device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (2/2)" 100)
 
             (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
@@ -9201,6 +9199,1375 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Assert-NoProgress
     }
 
+    #endregion
+    #region 108: PassThru
+        #region 108.1: PassThru -Batch:$false
+            #region 108.1.1: Something -> Action -PassThru -Batch:$false -> Table
+
+    It "108.1.1a: Table -> Action -PassThru -Batch:`$false -> Table" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.1b: Variable -> Action -PassThru -Batch:`$false -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+        ))
+    }
+
+            #endregion
+            #region 108.1.2: Something -> Action -PassThru -Batch:$false -> Table -> Table
+
+    It "108.1.2a: Table -> Action -PassThru -Batch:`$false -> Table -> Table" {
+
+        Get-Group | Pause-Object -Forever -Batch:$false -PassThru | Get-Device | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.2b: Variable -> Action -PassThru -Batch:`$false -> Table -> Table" {
+        $groups = Get-Group
+
+        $groups | Pause-Object -Forever -Batch:$false -PassThru | Get-Device | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.1.3: Something -> Action -PassThru -Batch:$false -> Action
+
+    It "108.1.3a: Table -> Action -PassThru -Batch:`$false -> Action" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.3b: Variable -> Action -PassThru -Batch:`$false -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.1.4: Something -> Action -PassThru -Batch:$false -> Action -PassThru -Batch:$false -> Table
+
+    It "108.1.4a: Table -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Table" {
+
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.4b: Variable -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Table" {
+        $devices = Get-Device
+        
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.1.5: Something -> Action -PassThru -Batch:$false -> Action -PassThru -Batch:$false -> Action -> -PassThru -Batch:$false -> Table
+
+    It "108.1.5a: Table -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Table" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.5b: Variable -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Action -PassThru -Batch:`$false -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+            (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.1.6: Something -> Action -PassThru -Batch:$false -> Table -> Action -PassThru -Batch:$false -> Table -> Action -PassThru -Batch:$false
+
+    It "108.1.6a: Table -> Action -PassThru -Batch:`$false -> Table -> Action -PassThru -Batch:`$false -> Table -> Action -PassThru -Batch:`$false" {
+
+        Get-Probe | Pause-Object -Forever -PassThru -Batch:$false | Get-Group | Resume-Object -PassThru -Batch:$false | Get-Device | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50 "Retrieving all groups")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            ##########################################################################################
+
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100 "Retrieving all groups")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.1.6b: Variable -> Action -PassThru -Batch:`$false -> Table -> Action -PassThru -Batch:`$false -> Table -> Action -PassThru -Batch:`$false" {
+        $probes = Get-Probe
+        
+        $probes | Pause-Object -Forever -PassThru -Batch:$false | Get-Group | Resume-Object -PassThru -Batch:$false | Get-Device | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50 "Retrieving all groups")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            ##########################################################################################
+
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100 "Retrieving all groups")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.1.7: Variable -> Action -PassThru -Batch:$false -> Select -Something -> Table
+
+    It "108.1.7a: Variable -> Action -PassThru -Batch:`$false -> Select -First -> Table" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -First 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
+        ))
+    }
+
+    It "108.1.7b: Variable -> Action -PassThru -Batch:`$false -> Select -Last -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Last 2 | Get-Sensor
+    }
+
+    It "108.1.7c: Variable -> Action -PassThru -Batch:`$false -> Select -Skip -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Skip 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+        ))
+    }
+    
+    It "108.1.7d: Variable -> Action -PassThru -Batch:`$false -> Select -SkipLast -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -SkipLast 2 | Get-Sensor
+
+        #todo: this displays incorrectly because the statusdescriptions for records 2, 3 and 4 aren't updated
+        #by Get-Sensor to display records 0, 1 and 2
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+        ))
+    }
+    
+    It "108.1.7e: Variable -> Action -PassThru -Batch:`$false -> Select -Index -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Index 1,3 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
+        ))
+    }
+
+            #endregion
+            #region 108.1.8: Variable -> Action -PassThru -Batch:$false -> Select -Something -> Action
+
+    It "108.1.8a: Variable -> Action -PassThru -PassThru -Batch:`$false -> Select -First -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -First 2 | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/5)" 20)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/5)" 40)
+
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (2/5)" 40)
+        ))
+    }
+    
+    It "108.1.8b: Variable -> Action -PassThru -Batch:`$false -> Select -Last -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Last 2 | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (2/2)" 100)
+        ))
+    }
+
+    It "108.1.8c: Variable -> Action -PassThru -Batch:`$false -> Select -Skip -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Skip 2 | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (3/5)" 60)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (4/5)" 80)
+
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (5/5)" 100)
+        ))
+    }
+
+    It "108.1.8d: Variable -> Action -PassThru -Batch:`$false -> Select -SkipLast -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -SkipLast 2 | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device2' (5/5)" 100)
+        ))
+    }
+
+    It "108.1.8e: Variable -> Action -PassThru -Batch:`$false -> Select -Index -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Index 1,3 | Resume-Object -Batch:$false
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (4/5)" 80)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device3' (4/5)" 80)
+        ))
+    }
+
+            #endregion
+        #endregion
+        #region 108.2: PassThru -Batch:$true
+            #region 108.2.1: Something -> Action -PassThru -Batch:$true -> Table
+
+    It "108.2.1a: Table -> Action -PassThru -Batch:`$true -> Table" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.2.1b: Variable -> Action -PassThru -Batch:`$true -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.2.2: Something -> Action -PassThru -Batch:$true -> Table -> Table
+
+    It "108.2.2a: Table -> Action -PassThru -Batch:`$true -> Table -> Table" {
+
+        Get-Group | Pause-Object -Forever -Batch:$true -PassThru | Get-Device | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Group Search" "Retrieving all groups")
+            (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100)
+        ))
+    }
+
+    It "108.2.2b: Variable -> Action -PassThru -Batch:`$true -> Table -> Table" {
+        $groups = Get-Group
+
+        $groups | Pause-Object -Forever -Batch:$true -PassThru | Get-Device | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
+                    (Gen3 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100) +
+                (Gen2 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing groups 'Windows Infrastructure0' and 'Windows Infrastructure1' forever (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.2.3: Something -> Action -PassThru -Batch:$true -> Action
+
+    It "108.2.3a: Table -> Action -PassThru -Batch:`$true -> Action" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "108.2.3b: Variable -> Action -PassThru -Batch:`$true -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.2.4: Something -> Action -PassThru -Batch:$true -> Action -PassThru -Batch:$true -> Table
+
+    It "108.2.4a: Table -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Table" {
+
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "108.2.4b: Variable -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Table" {
+        $devices = Get-Device
+        
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.2.5: Something -> Action -PassThru -Batch:$true -> Action -PassThru -Batch:$true -> Action -> -PassThru -Batch:$true -> Table
+
+    It "108.2.5a: Table -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Table" {
+        Get-Device | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -PassThru -Batch:$true | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+
+            (Gen "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Modify PRTG Object Settings (Completed)" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100)
+        ))
+    }
+
+    It "108.2.5b: Variable -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Action -PassThru -Batch:`$true -> Table" {
+        $devices = Get-Device
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Resume-Object -PassThru -Batch:$true | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$true | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+
+            (Gen "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen1 "Modify PRTG Object Settings" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+
+            (Gen "Modify PRTG Object Settings (Completed)" "Setting devices 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+            #region 108.2.6: Something -> Action -PassThru -Batch:$true -> Table -> Action -PassThru -Batch:$true -> Table -> Action -PassThru -Batch:$true
+
+    It "108.2.6a: Table -> Action -PassThru -Batch:`$true -> Table -> Action -PassThru -Batch:`$true -> Table -> Action -PassThru -Batch:`$true" {
+
+        Get-Probe | Pause-Object -Forever -PassThru -Batch:$true | Get-Group | Resume-Object -PassThru -Batch:$true | Get-Device | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$true
+
+        Validate(@(
+            (Gen "PRTG Probe Search" "Retrieving all probes")
+            (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
+
+            (Gen "Pausing PRTG Objects" "Queuing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing probe '127.0.0.11' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects (Completed)" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Resuming groups 'Windows Infrastructure0', 'Windows Infrastructure1', 'Windows Infrastructure0' and 'Windows Infrastructure1' (4/4)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming groups 'Windows Infrastructure0', 'Windows Infrastructure1', 'Windows Infrastructure0' and 'Windows Infrastructure1' (4/4)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Setting devices 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (8/8)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings (Completed)" "Setting devices 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (8/8)" 100)
+        ))
+    }
+
+    It "108.2.6b: Variable -> Action -PassThru -Batch:`$true -> Table -> Action -PassThru -Batch:`$true -> Table -> Action -PassThru -Batch:`$true" {
+        $probes = Get-Probe
+        
+        $probes | Pause-Object -Forever -PassThru -Batch:$true | Get-Group | Resume-Object -PassThru -Batch:$true | Get-Device | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing probe '127.0.0.10' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing probe '127.0.0.11' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all groups")
+            
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.10' (1/2)" 50) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            ###################################################################
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all groups")
+            
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure0' (1/2)" 50)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Queuing group 'Windows Infrastructure1' (2/2)" 100)
+
+            (Gen1 "Pausing PRTG Objects (Completed)" "Pausing probes '127.0.0.10' and '127.0.0.11' forever (2/2)" 100) +
+                (Gen2 "PRTG Group Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100) +
+                    (Gen3 "Resuming PRTG Objects" "Resuming groups 'Windows Infrastructure0', 'Windows Infrastructure1', 'Windows Infrastructure0' and 'Windows Infrastructure1' (4/4)" 100)
+
+            ###################################################################
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/4)" 25) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/4)" 50) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (3/4)" 75) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100 "Retrieving all devices")
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Queuing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming groups 'Windows Infrastructure0', 'Windows Infrastructure1', 'Windows Infrastructure0' and 'Windows Infrastructure1' (4/4)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings" "Setting devices 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (8/8)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (4/4)" 100) +
+                (Gen2 "Modify PRTG Object Settings (Completed)" "Setting devices 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0', 'Probe Device1', 'Probe Device0' and 'Probe Device1' setting 'Interval' to '00:00:30' (8/8)" 100)
+        ))
+    }
+    
+            #endregion
+            #region 108.2.7: Variable -> Action -PassThru -Batch:$true -> Select -Something -> Table
+    
+    It "108.2.7a: Variable -> Action -PassThru -Batch:`$true -> Select -First -> Table" {
+
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -First 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+        ))
+    }
+
+    It "108.2.7b: Variable -> Action -PassThru -Batch:`$true -> Select -Last -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Last 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device3' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device4' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device4' (2/2)" 100 "Retrieving all sensors")
+        ))
+    }
+
+    It "108.2.7c: Variable -> Action -PassThru -Batch:`$true -> Select -Skip -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Skip 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device2' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device3' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device4' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device4' (1/1)" 100 "Retrieving all sensors")
+        ))
+    }
+
+    It "108.2.7d: Variable -> Action -PassThru -Batch:`$true -> Select -SkipLast -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -SkipLast 2 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/3)" 33 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/3)" 66 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100 "Retrieving all sensors")
+
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+        ))
+    }
+
+    It "108.2.7e: Variable -> Action -PassThru -Batch:`$true -> Select -Index -> Table" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Index 1,3 | Get-Sensor
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search" "Processing device 'Probe Device3' (1/1)" 100 "Retrieving all sensors")
+
+            (Gen1 "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100) +
+                (Gen2 "PRTG Sensor Search (Completed)" "Processing device 'Probe Device3' (1/1)" 100 "Retrieving all sensors")
+        ))
+    }
+    
+            #endregion
+            #region 108.2.8: Variable -> Action -PassThru -Batch:$true -> Select -Something -> Action
+    
+    It "108.2.8a: Variable -> Action -PassThru -PassThru -Batch:`$true -> Select -First -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -First 2 | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0' and 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "108.2.8b: Variable -> Action -PassThru -Batch:`$true -> Select -Last -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Last 2 | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device3' (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device4' (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device3' and 'Probe Device4' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device3' and 'Probe Device4' (2/2)" 100)
+        ))
+    }
+
+    It "108.2.8c: Variable -> Action -PassThru -Batch:`$true -> Select -Skip -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Skip 2 | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device2', 'Probe Device3' and 'Probe Device4' (3/3)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device2', 'Probe Device3' and 'Probe Device4' (3/3)" 100)
+        ))
+    }
+
+    It "108.2.8d: Variable -> Action -PassThru -Batch:`$true -> Select -SkipLast -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -SkipLast 2 | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device0' (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device2' (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device0', 'Probe Device1' and 'Probe Device2' (3/3)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device0', 'Probe Device1' and 'Probe Device2' (3/3)" 100)
+        ))
+    }
+
+    It "108.2.8e: Variable -> Action -PassThru -Batch:`$true -> Select -Index -> Action" {
+        $devices = Get-Device -Count 5
+
+        $devices | Pause-Object -Forever -PassThru -Batch:$true | Select -Index 1,3 | Resume-Object -Batch:$true
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0', 'Probe Device1', 'Probe Device2', 'Probe Device3' and 'Probe Device4' forever (5/5)" 100)
+
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device1' (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Queuing device 'Probe Device3' (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming devices 'Probe Device1' and 'Probe Device3' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming devices 'Probe Device1' and 'Probe Device3' (2/2)" 100)
+        ))
+    }
+
+            #endregion
+        #endregion
     #endregion
     #region Sanity Checks
 

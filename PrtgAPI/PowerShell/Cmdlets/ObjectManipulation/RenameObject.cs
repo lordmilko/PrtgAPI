@@ -79,5 +79,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             ExecuteMultiOperation(() => client.SetObjectProperty(ids, ObjectProperty.Name, Name), $"Renaming {GetMultiTypeListSummary()} to '{Name}'");
         }
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Object;
     }
 }

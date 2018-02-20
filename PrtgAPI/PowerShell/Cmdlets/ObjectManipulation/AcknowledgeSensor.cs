@@ -144,5 +144,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             ExecuteMultiOperation(() => client.AcknowledgeSensor(ids, duration, Message), $"Acknowledging {GetCommonObjectBaseType()} {GetListSummary()} {durationDescription}");
         }
+
+        /// <summary>
+        /// Returns the current object that should be passed through this cmdlet.
+        /// </summary>
+        public override object PassThruObject => Sensor;
     }
 }
