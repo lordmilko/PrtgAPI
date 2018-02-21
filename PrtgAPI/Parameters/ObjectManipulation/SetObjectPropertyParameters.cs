@@ -11,6 +11,12 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Id] = value; }
         }
 
+        protected override int[] ObjectIdsInternal
+        {
+            get { return ObjectIds; }
+            set { ObjectIds = value; }
+        }
+
         public SetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
         {
             if (objectIds == null)

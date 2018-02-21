@@ -260,6 +260,26 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
+        public void PrtgClient_SplitsRequests_BatchingOver1500Items()
+        {
+            var range = Enumerable.Range(1, 2000).ToArray();
+
+            var server = "prtg.example.com";
+            var username = "username";
+            var passhash = "1234567890";
+
+            string[] urls =
+            {
+                $"https://{server}/api/pause.htm?id={string.Join(",", Enumerable.Range(1, 1500))}&action=0&username={username}&passhash={passhash}",
+                $"https://{server}/api/pause.htm?id={string.Join(",", Enumerable.Range(1501, 500))}&action=0&username={username}&passhash={passhash}"
+            };
+
+            var client = new PrtgClient(server, username, passhash, AuthMode.PassHash, new MockWebClient(new AddressValidatorResponse(urls, true)));
+
+            client.PauseObject(range);
+        }
+
+        [TestMethod]
         public void PrtgClient_HandlesConnectionRefusedSocketException()
         {
             AssertEx.Throws<WebException>(() => ExecuteSocketException(SocketError.ConnectionRefused), "Server rejected HTTPS connection");

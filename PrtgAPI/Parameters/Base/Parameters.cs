@@ -8,8 +8,14 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/>.
     /// </summary>
-    public class Parameters
+    public class Parameters : IParameters
     {
+        bool IParameters.Cookie
+        {
+            get { return Cookie; }
+            set { Cookie = value; }
+        }
+
         internal bool Cookie { get; set; }
 
         private readonly Dictionary<Parameter, object> parameters = new Dictionary<Parameter, object>();

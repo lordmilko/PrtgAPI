@@ -13,6 +13,12 @@ namespace PrtgAPI.Parameters
             set { this[Parameter.Id] = value; }
         }
 
+        protected override int[] ObjectIdsInternal
+        {
+            get { return SensorIds; }
+            set { SensorIds = value; }
+        }
+
         public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelProperty property, object value)
         {
             if (sensorIds == null)

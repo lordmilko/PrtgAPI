@@ -8,6 +8,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     {
         private Func<Enum, PropertyInfo> getPropertyInfo;
 
+        protected override int[] ObjectIdsInternal { get; set; }
+
         public FakeSetObjectPropertyParameters(Func<Enum, PropertyInfo> getPropertyInfo)
         {
             this.getPropertyInfo = getPropertyInfo;

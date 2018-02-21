@@ -136,6 +136,8 @@
     <Compile Include="Objects\Undocumented\ProbeSettings.cs" />
     <Compile Include="Parameters\Base\BaseMultiActionParameters.cs" />
     <Compile Include="Parameters\Base\BaseSetObjectPropertyParameters.cs" />
+    <Compile Include="Parameters\Base\IMultiTargetParameters.cs" />
+    <Compile Include="Parameters\Base\IParameters.cs" />
     <Compile Include="Parameters\Helpers\TypeCategory.cs" />
     <Compile Include="Parameters\Helpers\DynamicPropertyTypeParser.cs" />
     <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />

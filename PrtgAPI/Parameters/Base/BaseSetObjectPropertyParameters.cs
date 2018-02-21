@@ -19,7 +19,7 @@ namespace PrtgAPI.Parameters
     {
     }
 
-    abstract class BaseSetObjectPropertyParameters<TObjectProperty> : Parameters
+    abstract class BaseSetObjectPropertyParameters<TObjectProperty> : Parameters, IMultiTargetParameters
     {
         public List<CustomParameter> CustomParameters
         {
@@ -98,7 +98,7 @@ namespace PrtgAPI.Parameters
                 }
                 catch (ArgumentException)
                 {
-                    var @interface = GetType().GetInterfaces().FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(IObjectInternalProperty<>));
+                    var @interface = GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IObjectInternalProperty<>));
 
                     if (@interface != null)
                     {
@@ -238,5 +238,13 @@ namespace PrtgAPI.Parameters
 
             return name;
         }
+
+        int[] IMultiTargetParameters.ObjectIds
+        {
+            get { return ObjectIdsInternal; }
+            set { ObjectIdsInternal = value; }
+        }
+
+        protected abstract int[] ObjectIdsInternal { get; set; }
     }
 }

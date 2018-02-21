@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
@@ -15,6 +16,8 @@ namespace PrtgAPI.Request
     {
         private IWebClient webClient;
         private PrtgClient prtgClient;
+
+        private const int BatchLimit = 1500;
 
         internal RequestEngine(PrtgClient prtgClient, IWebClient webClient)
         {
@@ -24,7 +27,7 @@ namespace PrtgAPI.Request
 
         #region JSON + Response Parser
 
-        internal string ExecuteRequest(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(JsonFunction function, IParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
             var url = GetPrtgUrl(function, parameters);
 
@@ -33,7 +36,7 @@ namespace PrtgAPI.Request
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(JsonFunction function, IParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             var url = GetPrtgUrl(function, parameters);
 
@@ -70,8 +73,11 @@ namespace PrtgAPI.Request
         #endregion
         #region Command + Response Parser
 
-        internal string ExecuteRequest(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(CommandFunction function, IParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
+            if (parameters is IMultiTargetParameters)
+                return ExecuteMultiRequest(p => GetPrtgUrl(function, p), (IMultiTargetParameters)parameters, responseParser);
+
             var url = GetPrtgUrl(function, parameters);
 
             var response = ExecuteRequest(url, responseParser);
@@ -79,8 +85,11 @@ namespace PrtgAPI.Request
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(CommandFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(CommandFunction function, IParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
+            if (parameters is IMultiTargetParameters)
+                return await ExecuteMultiRequestAsync(p => GetPrtgUrl(function, p), (IMultiTargetParameters)parameters, responseParser).ConfigureAwait(false);
+
             var url = GetPrtgUrl(function, parameters);
 
             var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
@@ -110,6 +119,50 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+
+
+        private string ExecuteMultiRequest(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        {
+            var allIds = parameters.ObjectIds;
+
+            try
+            {
+                for (int i = 0; i < allIds.Length; i += BatchLimit)
+                {
+                    parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
+
+                    ExecuteRequest(getUrl(parameters), responseParser);
+                }
+            }
+            finally
+            {
+                parameters.ObjectIds = allIds;
+            }
+
+            return string.Empty;
+        }
+
+        internal async Task<string> ExecuteMultiRequestAsync(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        {
+            var allIds = parameters.ObjectIds;
+
+            try
+            {
+                for (int i = 0; i < allIds.Length; i += BatchLimit)
+                {
+                    parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
+
+                    await ExecuteRequestAsync(getUrl(parameters), responseParser).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                parameters.ObjectIds = allIds;
+            }
+
+            return string.Empty;
+        }
+
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
@@ -296,16 +349,16 @@ namespace PrtgAPI.Request
             }
         }
 
-        private PrtgUrl GetPrtgUrl(CommandFunction function, Parameters.Parameters parameters) =>
+        private PrtgUrl GetPrtgUrl(CommandFunction function, IParameters parameters) =>
             new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
-        private PrtgUrl GetPrtgUrl(HtmlFunction function, Parameters.Parameters parameters) =>
+        private PrtgUrl GetPrtgUrl(HtmlFunction function, IParameters parameters) =>
             new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
-        private PrtgUrl GetPrtgUrl(JsonFunction function, Parameters.Parameters parameters) =>
+        private PrtgUrl GetPrtgUrl(JsonFunction function, IParameters parameters) =>
             new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
-        private PrtgUrl GetPrtgUrl(XmlFunction function, Parameters.Parameters parameters) =>
+        private PrtgUrl GetPrtgUrl(XmlFunction function, IParameters parameters) =>
             new PrtgUrl(prtgClient.connectionDetails, function, parameters);
 
         internal static void SetErrorUrlAsRequestUri(HttpResponseMessage response)

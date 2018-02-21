@@ -7,7 +7,7 @@ namespace PrtgAPI.Parameters
     /// Base class for all parameters that perform an action against a PRTG server pertaining to one or more objects in a single request.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    class BaseMultiActionParameters : Parameters
+    class BaseMultiActionParameters : Parameters, IMultiTargetParameters
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseActionParameters"/> class.

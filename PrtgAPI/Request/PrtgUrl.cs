@@ -25,27 +25,27 @@ namespace PrtgAPI.Request
             private set { url = value; }
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, XmlFunction function, Parameters.Parameters parameters) :
+        public PrtgUrl(ConnectionDetails connectionDetails, XmlFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, JsonFunction function, Parameters.Parameters parameters) :
+        public PrtgUrl(ConnectionDetails connectionDetails, JsonFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, CommandFunction function, Parameters.Parameters parameters) :
+        public PrtgUrl(ConnectionDetails connectionDetails, CommandFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, HtmlFunction function, Parameters.Parameters parameters) :
+        public PrtgUrl(ConnectionDetails connectionDetails, HtmlFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        private PrtgUrl(ConnectionDetails connectionDetails, string function, Parameters.Parameters parameters)
+        private PrtgUrl(ConnectionDetails connectionDetails, string function, IParameters parameters)
         {
             StringBuilder urlBuilder = new StringBuilder();
 
