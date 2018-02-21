@@ -7,72 +7,22 @@ namespace PrtgAPI.PowerShell.Progress
     {
         public ProgressRecordEx ProgressRecord { get; }
 
-        private IEnumerable<object> rawRecords;
 
-        public IEnumerable<object> Records
+        public void Add(object obj)
         {
-            get { return rawRecords; }
-            private set
-            {
-                rawRecords = value;
-
-                if (!IsLazy)
-                    recordsList = rawRecords.ToList();
-            }
+            Records.Add(obj);
+            Current = obj;
         }
 
-        private List<object> recordsList;
+        public List<object> Records { get; set; } = new List<object>();
 
-        private object obj;
-
-        public object Current
-        {
-            get { return obj; }
-            set
-            {
-                if (IsLazy)
-                {
-                    if (lazyRecordsProcessed < 1)
-                        lazyRecordsProcessed = 1;
-                    else
-                        lazyRecordsProcessed++;
-                }
-
-                obj = value;
-            }
-        }
-
-        public int CurrentItem
-        {
-            get
-            {
-                if (IsLazy)
-                    return lazyRecordsProcessed;
-
-                var index = recordsList.ToList().IndexOf(obj);
-
-                if (index == -1)
-                    return index;
-
-                return index + 1;
-            }
-        }
+        public object Current { get; set; }
 
         public int? TotalRecords { get; set; }
-
-        public bool IsLazy { get; set; }
-
-        private int lazyRecordsProcessed = -1;
 
         public ProgressState(int offset, long sourceId)
         {
             ProgressRecord = new ProgressRecordEx(offset + 1, sourceId);
-        }
-
-        public void RegisterRecords<T>(IEnumerable<T> records, bool isLazy)
-        {
-            IsLazy = isLazy;
-            Records = records.Cast<object>();
         }
     }
 }

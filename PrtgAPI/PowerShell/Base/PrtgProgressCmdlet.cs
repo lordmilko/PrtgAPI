@@ -209,6 +209,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void DuringUpdateProgress(object obj)
         {
+            ProgressManager.CurrentState.Add(obj);
             ProgressManager.CurrentState.Current = obj;
 
             var prtgObj = obj as PrtgObject;
@@ -382,11 +383,8 @@ namespace PrtgAPI.PowerShell.Base
         /// Writes a list to the output pipeline.
         /// </summary>
         /// <param name="sendToPipeline">The list that will be output to the pipeline.</param>
-        /// <param name="isLazy">Specifies whether the records to send to pipeline have not yet been retrieved from PRTG.</param>
-        internal void WriteList<T>(IEnumerable<T> sendToPipeline, bool isLazy = false)
+        internal void WriteList<T>(IEnumerable<T> sendToPipeline)
         {
-            ProgressManager.CurrentState.RegisterRecords(sendToPipeline, isLazy);
-
             PreUpdateProgress();
 
             foreach (var item in sendToPipeline)
