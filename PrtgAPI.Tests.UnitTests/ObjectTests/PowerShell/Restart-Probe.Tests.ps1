@@ -63,7 +63,7 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
 
         $probe = Get-Probe -Count 1
 
-        $newProbe = $probe | Restart-Probe -Wait -PassThru
+        $newProbe = $probe | Restart-Probe -Wait -PassThru -Force
 
         $newProbe | Should Be $probe
     }
@@ -71,7 +71,7 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
     It "passes through when not waiting" {
         $probe = Get-Probe -Count 1
 
-        $newProbe = $probe | Restart-Probe -Wait:$false -PassThru
+        $newProbe = $probe | Restart-Probe -Wait:$false -PassThru -Force
 
         $newProbe | Should Be $probe
     }

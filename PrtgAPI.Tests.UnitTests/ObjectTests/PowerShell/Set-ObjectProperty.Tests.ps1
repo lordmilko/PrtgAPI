@@ -110,7 +110,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7c5+minutes&"
 
-        $sensors | Set-ObjectProperty -RawProperty "interval_" -RawValue "300|5 minutes"
+        $sensors | Set-ObjectProperty -RawProperty "interval_" -RawValue "300|5 minutes" -Force
     }
 
     It "executes with -Batch:`$false" {
