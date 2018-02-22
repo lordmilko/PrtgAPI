@@ -1115,7 +1115,7 @@ namespace PrtgAPI
         #region Add Objects
 
         /// <summary>
-        /// Add a new sensor to a PRTG Device.
+        /// Add a new <see cref="Sensor"/> to a PRTG <see cref="Device"/>.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
@@ -1123,7 +1123,7 @@ namespace PrtgAPI
             AddObject(deviceId, parameters, CommandFunction.AddSensor5);
 
         /// <summary>
-        /// Asynchronously add a new sensor to a PRTG Device.
+        /// Asynchronously add a new <see cref="Sensor"/> to a PRTG <see cref="Device"/>.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
@@ -1131,7 +1131,17 @@ namespace PrtgAPI
             await AddObjectAsync(deviceId, parameters, CommandFunction.AddSensor5).ConfigureAwait(false);
 
         /// <summary>
-        /// Add a new device to a PRTG Group or Probe.
+        /// Add a new <see cref="Device"/> to a PRTG .
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="name">The name to use for the new device.</param>
+        /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device.</param>
+        /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
+        public void AddDevice(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual) =>
+                AddDevice(parentId, new NewDeviceParameters(name, host) {AutoDiscoveryMode = discoveryMode});
+
+        /// <summary>
+        /// Add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
@@ -1139,7 +1149,17 @@ namespace PrtgAPI
             AddObject(parentId, parameters, CommandFunction.AddDevice2);
 
         /// <summary>
-        /// Asynchronously add a new device to a PRTG Group or Probe.
+        /// Asynchronously add a new <see cref="Device"/> to a PRTG .
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="name">The name to use for the new device.</param>
+        /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device.</param>
+        /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
+        public async Task AddDeviceAsync(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual) =>
+                await AddDeviceAsync(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or device the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
@@ -1147,7 +1167,15 @@ namespace PrtgAPI
             await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2).ConfigureAwait(false);
 
         /// <summary>
-        /// Add a new group to a PRTG Group or Probe.
+        /// Add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="name">The name to use for the new group.</param>
+        public void AddGroup(int parentId, string name) =>
+            AddGroup(parentId, new NewGroupParameters(name));
+
+        /// <summary>
+        /// Add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
@@ -1155,7 +1183,15 @@ namespace PrtgAPI
             AddObject(parentId, parameters, CommandFunction.AddGroup2);
 
         /// <summary>
-        /// Asynchronously add a new group to a PRTG Group or Probe.
+        /// Asynchronously add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
+        /// </summary>
+        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="name">The name to use for the new group.</param>
+        public async Task AddGroupAsync(int parentId, string name) =>
+            await AddGroupAsync(parentId, new NewGroupParameters(name)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>

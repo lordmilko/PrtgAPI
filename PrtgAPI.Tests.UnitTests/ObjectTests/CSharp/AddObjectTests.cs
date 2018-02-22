@@ -149,6 +149,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void AddDevice_Light_CanExecute()
+        {
+            var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=1&discoveryschedule_=0&id=1001";
+
+            var client = Initialize_Client(new AddressValidatorResponse(url));
+
+            client.AddDevice(1001, "device", "host", AutoDiscoveryMode.Automatic);
+        }
+
+        [TestMethod]
         public async Task AddDevice_CanExecuteAsync()
         {
             var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001";
@@ -158,6 +168,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var parameters = new NewDeviceParameters("device", "host");
 
             await client.AddDeviceAsync(1001, parameters);
+        }
+
+        [TestMethod]
+        public async Task AddDevice_Light_CanExecuteAsync()
+        {
+            var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=1&discoveryschedule_=0&id=1001";
+
+            var client = Initialize_Client(new AddressValidatorResponse(url));
+
+            await client.AddDeviceAsync(1001, "device", "host", AutoDiscoveryMode.Automatic);
         }
 
         [TestMethod]
@@ -171,6 +191,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void AddGroup_Light_CanExecute()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
+
+            client.AddGroup(1001, "group");
+        }
+
+        [TestMethod]
         public async Task AddGroup_CanExecuteAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
@@ -178,6 +206,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var parameters = new NewGroupParameters("group");
 
             await client.AddGroupAsync(1001, parameters);
+        }
+
+        [TestMethod]
+        public async Task AddGroup_Light_CanExecuteAsync()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
+
+            await client.AddGroupAsync(1001, "group");
         }
     }
 }

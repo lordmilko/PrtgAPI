@@ -34,10 +34,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </example>
     /// <example>
     ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
-    ///     <para>C:\> $device = Get-Probe contoso | Get-Device dc-1</para>
-    ///     <para>C:\> $device | Set-ObjectProperty Location "23 Fleet Street"</para>
-    ///     <para>Create a new device named "dc-1", retrieve the newly created device and then set its location.</para>
+    ///     <para>C:\> Get-Probe contoso | Add-Device $params -PassThru | Set-ObjectProperty Location "23 Fleet Street"</para>
+    ///     <para>Create a new device named "dc-1" and then set its location.</para>
     /// </example>
     /// 
     /// <para type="link">Add-Device</para>

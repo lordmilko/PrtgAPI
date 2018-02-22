@@ -24,6 +24,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> $params = New-GroupParameters Servers</code>
     ///     <para>C:\> $params.Tags = "awesomeGroup"</para>
     ///     <para>C:\> Get-Probe Contoso | Add-Group $params</para>
+    ///     <para>Add a new group called "Servers" to the Contoso probe with a custom tag "awesomeGroup".</para>
     /// </example>
     /// 
     /// <para type="link">Add-Group</para>
