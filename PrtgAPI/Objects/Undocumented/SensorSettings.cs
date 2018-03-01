@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Objects.Deserialization;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     //todo: move settings that are shared between all object types to objectsettings base class
 
@@ -218,7 +219,7 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_schedule")]
         internal string scheduleStr { get; set; }
 
-        private Lazy<Schedule> schedule;
+        private LazyValue<Schedule> schedule;
 
         /// <summary>
         /// The schedule during which monitoring is active. If the schedule is not active, sensors will be <see cref="Status.PausedBySchedule"/>.<para/>
@@ -229,12 +230,7 @@ namespace PrtgAPI.Objects.Undocumented
             get
             {
                 if (schedule == null)
-                {
-                    if (scheduleStr != null)
-                        schedule = new Lazy<Schedule>(() => new Schedule(scheduleStr));
-                    else
-                        schedule = new Lazy<Schedule>(() => null);
-                }
+                    schedule = new LazyValue<Schedule>(scheduleStr, () => new Schedule(scheduleStr));
 
                 return schedule.Value;
             }
@@ -250,7 +246,7 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_maintstart")]
         internal string maintenanceStartStr { get; set; }
 
-        private Lazy<DateTime?> maintenanceStart;
+        private LazyValue<DateTime?> maintenanceStart;
 
         /// <summary>
         /// The start time of a one-time maintenance window. If <see cref="MaintenanceEnabled"/> is false, this property will contain the default maintenance start value.<para/>
@@ -261,13 +257,7 @@ namespace PrtgAPI.Objects.Undocumented
             get
             {
                 if (maintenanceStart == null)
-                {
-                    if (maintenanceStartStr != null)
-                        maintenanceStart = new Lazy<DateTime?>(() => DateTime.ParseExact(maintenanceStartStr, TimeFormat, null));
-                    else
-                        maintenanceStart = new Lazy<DateTime?>(() => null);
-                }
-                    
+                    maintenanceStart = new LazyValue<DateTime?>(maintenanceStartStr, () => DateTime.ParseExact(maintenanceStartStr, TimeFormat, null));
 
                 return maintenanceStart.Value;
             }
@@ -276,7 +266,7 @@ namespace PrtgAPI.Objects.Undocumented
         [XmlElement("injected_maintend")]
         internal string maintenanceEndStr { get; set; }
 
-        private Lazy<DateTime?> maintenanceEnd;
+        private LazyValue<DateTime?> maintenanceEnd;
 
         /// <summary>
         /// The end time of a one-time maintenance window. If <see cref="MaintenanceEnabled"/> is false, this property will contain the default maintenance end value.<para/>
@@ -287,13 +277,7 @@ namespace PrtgAPI.Objects.Undocumented
             get
             {
                 if (maintenanceEnd == null)
-                {
-                    if (maintenanceEndStr != null)
-                        maintenanceEnd = new Lazy<DateTime?>(() => DateTime.ParseExact(maintenanceEndStr, TimeFormat, null));
-                    else
-                        maintenanceEnd = new Lazy<DateTime?>(() => null);
-                }
-                    
+                    maintenanceEnd = new LazyValue<DateTime?>(maintenanceEndStr, () => DateTime.ParseExact(maintenanceEndStr, TimeFormat, null));
 
                 return maintenanceEnd.Value;
             }

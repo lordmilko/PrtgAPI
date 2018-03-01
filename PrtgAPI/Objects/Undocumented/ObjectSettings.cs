@@ -6,7 +6,7 @@ using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Html;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     /// <summary>
     /// Settings that apply to Objects within PRTG.

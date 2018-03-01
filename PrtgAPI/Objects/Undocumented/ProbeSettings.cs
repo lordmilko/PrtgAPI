@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     /// <summary>
     /// Settings that apply to Probes within PRTG.

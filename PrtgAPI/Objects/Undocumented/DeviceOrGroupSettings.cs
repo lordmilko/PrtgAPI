@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     /// <summary>
     /// Settings that apply to Devices and Groups within PRTG.

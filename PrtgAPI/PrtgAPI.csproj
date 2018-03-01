@@ -257,12 +257,12 @@
     </Compile>
     <Compile Include="Attributes\RequireValueAttribute.cs" />
     <Compile Include="Attributes\SplittableStringAttribute.cs" />
-    <Compile Include="Enums\Deserialization\TriggerChannel.cs" />
-    <Compile Include="Enums\Deserialization\TriggerCondition.cs" />
-    <Compile Include="Enums\Deserialization\TriggerPeriod.cs" />
-    <Compile Include="Enums\Deserialization\TriggerTime.cs" />
-    <Compile Include="Enums\Deserialization\TriggerType.cs" />
-    <Compile Include="Enums\Deserialization\TriggerUnitSize.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerChannel.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerCondition.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerPeriod.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerTime.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerType.cs" />
+    <Compile Include="Enums\Deserialization\Triggers\TriggerUnitSize.cs" />
     <Compile Include="Enums\ModifyAction.cs" />
     <Compile Include="Enums\Serialization\ObjectProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerProperty.cs" />
@@ -285,7 +285,7 @@
     <Compile Include="Objects\NotificationAction\NotificationAction.cs" />
     <Compile Include="Objects\NotificationTrigger.cs" />
     <Compile Include="Objects\Deserialization\SensorHistoryData.cs" />
-    <Compile Include="Objects\SettingEvent.cs" />
+    <Compile Include="Objects\ModificationEvent.cs" />
     <Compile Include="Parameters\ObjectManipulation\DeleteParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\ChangeTriggerParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\SpeedTriggerParameters.cs" />
@@ -326,7 +326,7 @@
     <Compile Include="Attributes\UndocumentedAttribute.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\AutoMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\DebugMode.cs" />
-    <Compile Include="Enums\Deserialization\DependencyType.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\DependencyType.cs" />
     <Compile Include="Enums\Deserialization\IntervalDownMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\ScanningInterval.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\WmiMode.cs" />

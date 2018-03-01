@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     /// <summary>
     /// Settings that are found within container objects in PRTG, including Devices, Groups and Probes.
