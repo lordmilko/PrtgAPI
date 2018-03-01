@@ -113,7 +113,7 @@ namespace PrtgAPI.Request
         {
             var url = GetPrtgUrl(function, parameters);
 
-            var response = await ExecuteRequestAsync(url, responseParser);
+            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
             return response;
         }

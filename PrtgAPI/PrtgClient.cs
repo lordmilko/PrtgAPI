@@ -371,7 +371,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
-        /// <returns></returns>
+        /// <returns>All sensors whose property matched the specified value.</returns>
         public List<Sensor> GetSensors(Property property, object value) => GetSensors(new SearchFilter(property, value));
 
         /// <summary>
@@ -379,7 +379,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
-        /// <returns></returns>
+        /// <returns>All sensors whose property matched the specified value.</returns>
         public async Task<List<Sensor>> GetSensorsAsync(Property property, object value) => await GetSensorsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace PrtgAPI
         /// </summary>
         /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public async Task<SensorTotals> GetSensorTotalsAsync() =>
-            await GetObjectAsync<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
+            await GetObjectAsync<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters()).ConfigureAwait(false);
 
         #endregion
         #region Devices
@@ -1205,7 +1205,7 @@ namespace PrtgAPI
         /// <param name="objectId">The object to retrieve supported trigger types for.</param>
         /// <returns>The trigger types supported by the object.</returns>
         public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(int objectId) =>
-            (await GetNotificationTriggerDataAsync(objectId)).SupportedTypes.ToList();
+            (await GetNotificationTriggerDataAsync(objectId).ConfigureAwait(false)).SupportedTypes.ToList();
 
         private NotificationTriggerData GetNotificationTriggerData(int objectId) =>
             GetObject<NotificationTriggerData>(
@@ -1638,7 +1638,7 @@ namespace PrtgAPI
                 await requestEngine.ExecuteRequestAsync(
                     CommandFunction.DuplicateObject,
                     parameters,
-                    async r => await Task.FromResult(CloneRequestParser(r))
+                    async r => await Task.FromResult(CloneRequestParser(r)).ConfigureAwait(false)
                 ).ConfigureAwait(false), CloneResponseParser
             );
 
@@ -2050,7 +2050,7 @@ namespace PrtgAPI
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) =>
-            await SetObjectPropertyRawAsync(new[] {objectId}, property, value);
+            await SetObjectPropertyRawAsync(new[] {objectId}, property, value).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modify unsupported properties and settings of one or more PRTG Objects.

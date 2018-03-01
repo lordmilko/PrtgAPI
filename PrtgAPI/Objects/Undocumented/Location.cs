@@ -75,13 +75,13 @@ namespace PrtgAPI
 
             for (int i = 0; i < 10; i++)
             {
-                result = await client.ResolveAddressAsync(value.ToString());
+                result = await client.ResolveAddressAsync(value.ToString()).ConfigureAwait(false);
 
                 if (result.Any())
                     break;
 
 #if !DEBUG
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
 #endif
             }
 
