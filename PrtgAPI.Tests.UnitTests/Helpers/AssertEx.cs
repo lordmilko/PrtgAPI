@@ -40,7 +40,7 @@ namespace PrtgAPI.Tests.UnitTests
             {
                 Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is AssertFailedException))
             {
                 Assert.AreEqual(typeof (T), ex.GetType(), "Incorrect exception type thrown");
             }

@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization.Cache;
@@ -22,6 +24,13 @@ namespace PrtgAPI.Objects.Deserialization
             outerType = type;
         }
 
+        public object DeserializeExisting(XDocument doc, object obj)
+        {
+            var properties = doc.Elements().First().Elements().Select(s => s.Name.ToString()).ToList();
+
+            return Deserialize(outerType, obj, doc.Elements().First(), properties.ToArray());
+        }
+
         public object Deserialize(XDocument doc, params string[] properties)
         {
             return Deserialize(outerType, doc.Elements().First(), properties);
@@ -31,6 +40,11 @@ namespace PrtgAPI.Objects.Deserialization
         {
             var obj = Activator.CreateInstance(type, true);
 
+            return Deserialize(type, obj, elm, properties);
+        }
+
+        private object Deserialize(Type type, object obj, XElement elm, params string[] properties)
+        {
             var mappings = ReflectionCacheManager.Map(type);
 
             if (properties != null && properties.Length > 0)
@@ -41,7 +55,7 @@ namespace PrtgAPI.Objects.Deserialization
             foreach (var mapping in mappings)
             {
                 Logger.Debug($"\nDeserialize property {mapping.PropertyCache.Property.Name}: ");
-                
+
                 try
                 {
                     switch (mapping.AttributeType)
@@ -64,7 +78,7 @@ namespace PrtgAPI.Objects.Deserialization
                     //throw new Exception("An error occurred while trying to deserialize property " + mapping.Property.Name);
                     throw;
                 }
-                
+
             }
 
             Logger.Debug("\n");
@@ -82,7 +96,16 @@ namespace PrtgAPI.Objects.Deserialization
             }
             else
             {
-                ProcessSingleXmlElement(obj, mapping, elm);
+                if (mapping.PropertyCache.Property.PropertyType.GetCustomAttribute<XmlRootAttribute>() != null)
+                {
+                    var elms = mapping.AttributeValue.Select(a => elm.Elements(a)).First(x => x != null).FirstOrDefault();
+
+                    var result = elms != null ? Deserialize(mapping.PropertyCache.Property.PropertyType, elms) : null;
+
+                    mapping.PropertyCache.Property.SetValue(obj, result);
+                }
+                else
+                    ProcessSingleXmlElement(obj, mapping, elm);
             }
         }
 

@@ -1,11 +1,21 @@
 ﻿using System;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 {
+    class CustomType
+    {
+        [XmlElement("propertyname")]
+        [XmlElement("injected_propertyname")]
+        public int Property { get; set; }
+    }
+
     [TestClass]
     public class SerializationTests
     {
@@ -98,6 +108,36 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var properties = client.GetSensorProperties(1001);
 
             Assert.AreEqual("Weekdays Nights (17:00 - 9:00) [GMT+1100]", properties.Schedule.ToString(), "Schedule was not correct");
+        }
+
+        [TestMethod]
+        public void Object_Deserializes_PropertyWithMultipleAttributes_WhenOneValueIsSet()
+        {
+            var val = XmlDeserializer<CustomType>.DeserializeType(
+                new XDocument(
+                    new XElement("properties",
+                        new XElement("injected_propertyname", "3"),
+                        new XElement("propertyname")
+                    )
+                )
+            );
+
+            Assert.AreEqual(3, val.Property);
+        }
+
+        [TestMethod]
+        public void Object_Deserializes_PropertyWithMultipleAttributes_WhenBothValuesAreSet()
+        {
+            var val = XmlDeserializer<CustomType>.DeserializeType(
+                new XDocument(
+                    new XElement("properties",
+                        new XElement("injected_propertyname", "3"),
+                        new XElement("propertyname", "4")
+                    )
+                )
+            );
+
+            Assert.AreEqual(4, val.Property);
         }
 
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)

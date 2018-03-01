@@ -27,6 +27,7 @@ namespace PrtgAPI.Objects.Shared
         /// Tags contained on this object.
         /// </summary>
         [XmlElement("tags")]
+        [XmlElement("injected_tags")]
         [SplittableString(' ')]
         [PropertyParameter(nameof(Property.Tags))] //todo: give this some attribute we can use to decide to split it later
         public string[] Tags { get; set; }
@@ -37,5 +38,16 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("active_raw")]
         [PropertyParameter(nameof(Property.Active))]
         public bool Active { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectTable"/> class.
+        /// </summary>
+        public ObjectTable()
+        {
+        }
+
+        internal ObjectTable(string raw) : base(raw)
+        {
+        }
     }
 }

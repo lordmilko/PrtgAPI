@@ -409,6 +409,46 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
+                <TypeName>PrtgAPI.NotificationAction</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>45</Width>
+                        <Alignment>Left</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
+                        <Width>8</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Active -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Email -->
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Active</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Email</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
                 <TypeName>PrtgAPI.TriggerTypePSObject</TypeName>
             </ViewSelectedBy>
             <TableControl>

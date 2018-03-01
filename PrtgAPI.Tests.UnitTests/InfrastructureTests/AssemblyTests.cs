@@ -34,5 +34,30 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 var category = val.GetEnumAttribute<CategoryAttribute>(true);
             }
         }
+
+        [TestMethod]
+        public void InjectedProperties_On_ILazy_AreMarkedInternal()
+        {
+            var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
+
+            var types = assembly.GetTypes().Where(t => typeof(ILazy).IsAssignableFrom(t)).ToList();
+
+            foreach (var type in types)
+            {
+                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                    .Where(p =>
+                    {
+                        var attributes = p.GetCustomAttributes<XmlElementAttribute>().ToList();
+
+                        if (attributes.Count() > 1)
+                            return false;
+
+                        return attributes.FirstOrDefault()?.ElementName.StartsWith("injected") == true;
+                    });
+
+                foreach (var property in properties)
+                    Assert.IsTrue(property.SetMethod.IsAssembly, $"Property '{property.Name}' is not marked Internal");
+            }
+        }
     }
 }

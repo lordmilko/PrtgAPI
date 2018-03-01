@@ -18,7 +18,7 @@ namespace PrtgAPI.Objects.Deserialization
         public string[] AttributeValue { get; private set; }
         public XmlAttributeType AttributeType { get; private set; }
 
-        internal XmlMapping(Type type, PropertyCache cache, string[] value, XmlAttributeType attributeType)
+        private XmlMapping(Type type, PropertyCache cache, string[] value, XmlAttributeType attributeType)
         {
             if (value.Length == 0)
                 throw new ArgumentException("Array length cannot be null", nameof(value));
@@ -31,14 +31,14 @@ namespace PrtgAPI.Objects.Deserialization
 
         public XElement GetSingleXElementAttributeValue(XElement elm)
         {
-            var value = AttributeValue.Select(a => elm.Element(a)).FirstOrDefault(x => x != null);
-
+            var value = AttributeValue.Select(a => elm.Element(a)).Where(x => x != null).FirstOrDefault(x => !string.IsNullOrEmpty(x.Value));
+            
             return value;
         }
 
         public XAttribute GetSingleXAttributeAttributeValue(XElement elm)
         {
-            var value = AttributeValue.Select(a => elm.Attribute(a)).FirstOrDefault(x => x != null);
+            var value = AttributeValue.Select(a => elm.Attribute(a)).Where(x => x != null).FirstOrDefault(x => !string.IsNullOrEmpty(x.Value));
 
             return value;
         }

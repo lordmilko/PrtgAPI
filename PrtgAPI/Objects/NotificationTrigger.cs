@@ -132,22 +132,26 @@ namespace PrtgAPI
         internal TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
 
         [DataMember(Name = "onnotificationid")]
-        private string onNotificationAction;
+        private string onNotificationActionStr;
+
+        private NotificationAction onNotificationAction;
 
         /// <summary>
         /// Notification action that will occur when trigger is activated.
         /// Applies to: State, Volume, Threshold, Change, Speed Triggers
         /// </summary>
-        public NotificationAction OnNotificationAction => new NotificationAction(onNotificationAction);
+        public NotificationAction OnNotificationAction => onNotificationAction ?? (onNotificationAction = new NotificationAction(onNotificationActionStr));
 
         [DataMember(Name = "offnotificationid")]
-        private string offNotificationAction;
+        private string offNotificationActionStr;
+
+        private NotificationAction offNotificationAction;
 
         /// <summary>
         /// Notification action that will occur when trigger is deactivated.
         /// Applies to: State, Threshold, Speed Triggers
         /// </summary>
-        public NotificationAction OffNotificationAction => offNotificationAction == null ? null : new NotificationAction(offNotificationAction);
+        public NotificationAction OffNotificationAction => offNotificationActionStr == null ? null : offNotificationAction ?? (offNotificationAction = new NotificationAction(offNotificationActionStr));
 
         private int? threshold;
 
@@ -187,13 +191,15 @@ namespace PrtgAPI
         public int? EscalationLatency { get; set; }
 
         [DataMember(Name = "escnotificationid")]
-        private string escalationNotificationAction;
+        private string escalationNotificationActionStr;
+
+        private NotificationAction escalationNotificationAction;
 
         /// <summary>
         /// Notification action to repeat when the trigger cause does not get cleared.
         /// Applies to: State Triggers
         /// </summary>
-        public NotificationAction EscalationNotificationAction => escalationNotificationAction == null ? null : new NotificationAction(escalationNotificationAction);
+        public NotificationAction EscalationNotificationAction => escalationNotificationActionStr == null ? null : escalationNotificationAction ?? (escalationNotificationAction = new NotificationAction(escalationNotificationActionStr));
 
         /// <summary>
         /// Interval to repeat the <see cref="EscalationNotificationAction"/>, in minutes.

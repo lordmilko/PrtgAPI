@@ -28,6 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetTableText(address);
                 case nameof(HtmlFunction.ChannelEdit):
                     return new ChannelResponse(channels).GetResponseText(ref address);
+                case nameof(HtmlFunction.EditNotification):
+                    return new NotificationActionResponse(new NotificationActionItem()).GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(NotificationTriggerResponse)}");
             }

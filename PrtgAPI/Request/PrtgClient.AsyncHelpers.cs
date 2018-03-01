@@ -88,6 +88,46 @@ namespace PrtgAPI
         }
 
         //######################################
+        // GetNotificationActionsInternal
+        //######################################
+
+		internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters)
+        {
+            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
+
+            var items = response.Descendants("item").ToList();
+
+            foreach (var item in items)
+            {
+                var id = Convert.ToInt32(item.Element("objid").Value);
+
+                var properties = GetNotificationActionProperties(id);
+
+                item.Add(properties.Nodes());
+            }
+
+            return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+        }
+
+		internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters)
+        {
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+
+            var items = response.Descendants("item").ToList();
+
+            foreach (var item in items)
+            {
+                var id = Convert.ToInt32(item.Element("objid").Value);
+
+                var properties = await GetNotificationActionPropertiesAsync(id).ConfigureAwait(false);
+
+                item.Add(properties.Nodes());
+            }
+
+            return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+        }
+
+        //######################################
         // ValidateTriggerParameters
         //######################################
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
@@ -17,6 +18,43 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         public void NotificationAction_AllFields_HaveValues() => Object_AllFields_HaveValues();
+
+        [TestMethod]
+        public void NotificationAction_NotificationTypes_AllFields_HaveValues()
+        {
+            var obj = GetSingleItem();
+
+            var actions = obj.GetType().GetProperties().Where(p => p.PropertyType.Name.EndsWith("Settings")).Select(p => p.GetValue(obj)).ToList();
+
+            foreach (var action in actions)
+            {
+                try
+                {
+                    AssertEx.AllPropertiesAreNotDefault(action);
+                }
+                catch (AssertFailedException ex)
+                {
+                    throw new AssertFailedException($"{action.GetType()}: {ex.Message}", ex);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void NotificationAction_Types_ToString()
+        {
+            var obj = GetSingleItem();
+
+            Assert.AreEqual("PRTG Users Group, test@example.com", obj.Email.ToString(), "Email was not correct");
+            Assert.AreEqual("None", obj.Push.ToString(), "Push was not correct");
+            Assert.AreEqual("1234567890", obj.SMS.ToString(), "SMS was not correct");
+            Assert.AreEqual("Log: PRTG Network Monitor, Type: Warning", obj.EventLog.ToString(), "EventLog was not correct");
+            Assert.AreEqual("localhost:514", obj.Syslog.ToString(), "Syslog was not correct");
+            Assert.AreEqual("localhost:162", obj.SNMP.ToString(), "SNMP was not correct");
+            Assert.AreEqual("http://localhost", obj.Http.ToString(), "HTTP was not correct");
+            Assert.AreEqual("Demo EXE Notification - OutFile.bat", obj.Program.ToString(), "Program was not correct");
+            Assert.AreEqual("message subject", obj.Amazon.ToString(), "Amazon was not correct");
+            Assert.AreEqual("PRTG System Administrator, PRTG Administrators", obj.Ticket.ToString(), "Ticket was not correcet");
+        }
 
         protected override List<NotificationAction> GetObjects(PrtgClient client) => client.GetNotificationActions();
 

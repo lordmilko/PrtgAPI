@@ -66,6 +66,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToString().ToEnum<SensorType>();
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
+                case nameof(HtmlFunction.EditNotification):
+                    return new NotificationActionResponse(new NotificationActionItem());
                 case nameof(JsonFunction.GetAddSensorProgress):
                     var progress = hitCount[function] % 2 == 0 ? 100 : 50;
 
@@ -159,6 +161,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count));
                 case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
                 case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
+                case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
                 case Content.Channels:  return new ChannelResponse(new ChannelItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");

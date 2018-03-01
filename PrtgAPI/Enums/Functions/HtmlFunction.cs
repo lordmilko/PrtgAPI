@@ -26,6 +26,10 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [Description("addsensor4.htm")]
-        AddSensor4
+        AddSensor4,
+
+        [Undocumented]
+        [Description("controls/editnotification.htm")]
+        EditNotification
     }
 }

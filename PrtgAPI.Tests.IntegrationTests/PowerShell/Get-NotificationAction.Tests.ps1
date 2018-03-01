@@ -12,4 +12,18 @@ Describe "Get-NotificationAction_IT" {
 
         $actions.Count | Should Be 1
     }
+
+    It "can filter by id" {
+        $actions = Get-NotificationAction -Id 301
+
+        $actions.Count | Should Be 1
+        $actions.Count | Should BeLessThan (Settings NotificationActionsInTestServer)
+        $actions.Name | Should Be "Email to all members of group PRTG Users Group"
+    }
+
+    It "can filter by tags" {
+        $actions = Get-NotificationAction -Tags (Settings NotificationActionTag)
+        $actions.Count | Should Be 1
+        $actions.Count | Should BeLessThan (Settings NotificationActionsInTestServer)
+    }
 }

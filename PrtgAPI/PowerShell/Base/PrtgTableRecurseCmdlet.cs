@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Base
     /// </summary>
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
-    public abstract class PrtgTableRecurseCmdlet<TObject, TParam> : PrtgTableCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
+    public abstract class PrtgTableRecurseCmdlet<TObject, TParam> : PrtgTableStatusCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
     {
         /// <summary>
         /// <para type="description">When piping from a <see cref="Group"/>, specifies that PrtgAPI should also recursively traverse all subgroups until

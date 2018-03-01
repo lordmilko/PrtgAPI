@@ -921,18 +921,14 @@ namespace PrtgAPI
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            var response = requestEngine.ExecuteRequest(HtmlFunction.ChannelEdit, parameters);
-
-            return ChannelSettings.GetChannelXml(response, channelId);
+            return requestEngine.ExecuteRequest(HtmlFunction.ChannelEdit, parameters, r => ChannelSettings.GetChannelXml(r, channelId));
         }
 
         private async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            var response = await requestEngine.ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters);
-
-            return ChannelSettings.GetChannelXml(response, channelId);
+            return await requestEngine.ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters, r => ChannelSettings.GetChannelXml(r, channelId)).ConfigureAwait(false);
         }
 
         #endregion
@@ -1016,16 +1012,92 @@ namespace PrtgAPI
         #region Notifications
 
         /// <summary>
-        /// Retrieve all notification actions on a PRTG Server.
+        /// Retrieve all notification actions on a PRTG Server, optionally filtering for objects by one or more conditions.
         /// </summary>
-        /// <returns></returns>
-        public List<NotificationAction> GetNotificationActions() => GetObjects<NotificationAction>(new NotificationActionParameters());
+        /// <returns>All objects that match the specified conditions.</returns>
+        public List<NotificationAction> GetNotificationActions(params SearchFilter[] filters) =>
+            GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve all notification actions on a PRTG Server.
+        /// Retrieve notification actions from a PRTG Server based on the value of a certain property.
         /// </summary>
-        /// <returns></returns>
-        public Task<List<NotificationAction>> GetNotificationActionsAsync() => GetObjectsAsync<NotificationAction>(new NotificationActionParameters());
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>All notification actions whose property matched the specified value.</returns>
+        public List<NotificationAction> GetNotificationActions(Property property, object value) =>
+            GetNotificationActions(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieve all notification actions on a PRTG Server, optionally filtering for objects by one or more conditions.
+        /// </summary>
+        /// <returns>All objects that match the specified conditions.</returns>
+        public async Task<List<NotificationAction>> GetNotificationActionsAsync(params SearchFilter[] filters) =>
+            await GetNotificationActionsInternalAsync(new NotificationActionParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieve notification actions from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>All notification actions whose property matched the specified value.</returns>
+        public async Task<List<NotificationAction>> GetNotificationActionsAsync(Property property, object value) =>
+            await GetNotificationActionsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        private XElement GetNotificationActionProperties(int id)
+        {
+            var xml = requestEngine.ExecuteRequest(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml);
+
+            xml = GroupNotificationActionProperties(xml);
+
+            return xml;
+        }
+
+        private async Task<XElement> GetNotificationActionPropertiesAsync(int id)
+        {
+            var xml = await requestEngine.ExecuteRequestAsync(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml).ConfigureAwait(false);
+
+            xml = GroupNotificationActionProperties(xml);
+
+            return xml;
+        }
+
+        private XElement GroupNotificationActionProperties(XElement xml)
+        {
+            var regex = new Regex("(.+)_(\\d+)");
+
+            var properties = xml.Descendants().Where(d => regex.Match(d.Name.ToString()).Success).ToList();
+
+            var categorized = properties.Select(p =>
+            {
+                var id = Convert.ToInt32(regex.Replace(p.Name.ToString(), "$2"));
+
+                if (Enum.IsDefined(typeof(NotificationType), id))
+                {
+                    var e = (NotificationType)id;
+
+                    return new
+                    {
+                        Name = regex.Replace(p.Name.ToString(), "$1"),
+                        Category = e,
+                        Value = p.Value
+                    };
+                }
+
+                return null;
+            }).Where(p => p != null).ToList();
+
+            var grouped = categorized.GroupBy(c => c.Category).ToList();
+
+            var newXml = grouped.Select(g => new XElement($"category_{g.Key.ToString().ToLower()}",
+                g.Select(i => new XElement(i.Name, i.Value)))
+            );
+
+            properties.Remove();
+
+            xml.Add(newXml);
+
+            return xml;
+        }
 
         /// <summary>
         /// Retrieve all notification triggers of a PRTG Object.
@@ -1039,6 +1111,7 @@ namespace PrtgAPI
             var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
 
             UpdateTriggerChannels(parsed);
+            UpdateTriggerActions(parsed);
 
             return parsed;
         }
@@ -1054,9 +1127,49 @@ namespace PrtgAPI
 
             var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
 
-            await UpdateTriggerChannelsAsync(parsed);
+            await UpdateTriggerChannelsAsync(parsed).ConfigureAwait(false);
+            await UpdateTriggerActionsAsync(parsed).ConfigureAwait(false);
 
             return parsed;
+        }
+
+        private void UpdateTriggerActions(List<NotificationTrigger> triggers)
+        {
+            var actions = GroupTriggerActions(triggers);
+
+            foreach (var group in actions)
+            {
+                var lazy = new Lazy<XDocument>(() => new XDocument(GetNotificationActionProperties(group.First().Id)));
+
+                foreach (var action in group)
+                    action.LazyXml = lazy;
+            }
+        }
+
+        private async Task UpdateTriggerActionsAsync(List<NotificationTrigger> triggers)
+        {
+            var actions = GroupTriggerActions(triggers);
+
+            var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.First().Id));
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            for (int i = 0; i < actions.Count; i++)
+            {
+                foreach (var action in actions[i])
+                {
+                    var i1 = i;
+                    action.LazyXml = new Lazy<XDocument>(() => new XDocument(results[i1]));
+                }
+            }
+        }
+
+        private List<IGrouping<int, NotificationAction>> GroupTriggerActions(List<NotificationTrigger> triggers)
+        {
+            var actions = triggers.SelectMany(
+                t => t.GetType().GetProperties().Where(p => p.PropertyType == typeof(NotificationAction)).Select(p => (NotificationAction)p.GetValue(t)
+            ).Where(a => a != null && a.Id != -1)).GroupBy(a => a.Id).ToList();
+
+            return actions;
         }
 
         private List<NotificationTrigger> ParseNotificationTriggerResponse(int objectId, XDocument xmlResponse)

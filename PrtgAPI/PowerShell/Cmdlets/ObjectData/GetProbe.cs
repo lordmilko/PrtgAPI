@@ -51,7 +51,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SearchFilter</para>
     [OutputType(typeof(Probe))]
     [Cmdlet(VerbsCommon.Get, "Probe")]
-    public class GetProbe : PrtgTableCmdlet<Probe, ProbeParameters>
+    public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GetProbe"/> class.

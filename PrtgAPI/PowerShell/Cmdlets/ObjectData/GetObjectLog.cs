@@ -82,7 +82,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = "RecordAge")]
-    public class GetObjectLog : PrtgTableBaseCmdlet<Log, LogParameters>
+    public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>
     {
         /// <summary>
         /// <para type="description">Object to retrieve logs for. If no object is specified, defaults to the root object (group ID: 0)</para>

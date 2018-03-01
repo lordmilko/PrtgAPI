@@ -118,6 +118,20 @@ namespace PrtgAPI.Request
             return response;
         }
 
+        internal XElement ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters, Func<string, XElement> xmlParser)
+        {
+            var response = ExecuteRequest(function, parameters);
+
+            return xmlParser(response);
+        }
+
+        internal async Task<XElement> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters, Func<string, XElement> xmlParser)
+        {
+            var response = await ExecuteRequestAsync(function, parameters).ConfigureAwait(false);
+
+            return xmlParser(response);
+        }
+
         #endregion
 
 

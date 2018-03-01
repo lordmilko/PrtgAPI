@@ -60,6 +60,9 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string ChannelErrorMessage;
         public static string ChannelWarningMessage;
 
+        //Notification Actions
+        public static string NotificationActionTag;
+
         //Object Counts
 
         public static int ProbesInTestServer = -1;
