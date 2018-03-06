@@ -57,13 +57,7 @@ namespace PrtgAPI.PowerShell.Base
                 {
                     if (Resolve)
                     {
-                        var filters = GetFilters(destination);
-
-                        var obj = ResolveWithDiff(
-                            () => client.AddObject(destination.Id, Parameters, function),
-                            () => GetObjects(filters),
-                            Except
-                        ).OrderBy(o => o.Id);
+                        var obj = AddAndResolveObject(destination.Id, Parameters, function, GetObjects);
 
                         foreach (var o in obj)
                         {
@@ -78,40 +72,10 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.RecordsProcessed = -1;
                     }
                     else
-                        client.AddObject(destination.Id, Parameters, function);
+                        client.AddObject(destination.Id, Parameters, function, GetObjects, false);
 
                 }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }
-        }
-
-        private SearchFilter[] GetFilters(TDestination destination)
-        {
-            var filters = new List<SearchFilter>()
-            {
-                new SearchFilter(Property.ParentId, destination.Id)
-            };
-
-            if (Parameters is NewSensorParameters)
-            {
-                //When creating new sensors, PRTG may dynamically assign a name based on the sensor's parameters.
-                //As such, we instead filter for sensors of the newly created type
-                var sensorType = Parameters[Parameter.SensorType];
-
-                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType.ToString();
-
-                filters.Add(new SearchFilter(Property.Type, str.ToLower()));
-            }
-            else
-                filters.Add(new SearchFilter(Property.Name, Parameters.Name));
-
-            return filters.ToArray();
-        }
-
-        private List<TObject> Except(List<TObject> before, List<TObject> after)
-        {
-            var beforeIds = before.Select(b => b.Id).ToList();
-
-            return after.Where(a => !beforeIds.Contains(a.Id)).ToList();
         }
 
         internal virtual string WhatIfDescription()

@@ -68,15 +68,23 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
+        public void AllTextTemplates_UseSpaces()
+        {
+            var path = GetProjectRoot();
+
+            var files = Directory.GetFiles(path, "*.tt", SearchOption.AllDirectories);
+
+            foreach (var file in files)
+            {
+                if (File.ReadAllText(file).Contains("\t"))
+                    throw new Exception($"{file} contains tabs");
+            }
+        }
+
+        [TestMethod]
         public void AllAwaits_Call_ConfigureAwaitFalse()
         {
-            var dll = new Uri(typeof (PrtgClient).Assembly.CodeBase);
-            var root = dll.Host + dll.PathAndQuery + dll.Fragment;
-
-            var thisProject = Assembly.GetExecutingAssembly().GetName().Name;
-
-            var prefix = root.IndexOf(thisProject, StringComparison.InvariantCulture);
-            var path = root.Substring(0, prefix) + "PrtgAPI";
+            var path = GetProjectRoot();
 
             var files = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
@@ -153,6 +161,19 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             if (args.Arguments.First().Expression.IsKind(SyntaxKind.FalseLiteralExpression) == false)
                 throw new Exception("ConfigureAwait has a value other than 'false'");
+        }
+
+        private string GetProjectRoot()
+        {
+            var dll = new Uri(typeof(PrtgClient).Assembly.CodeBase);
+            var root = dll.Host + dll.PathAndQuery + dll.Fragment;
+
+            var thisProject = Assembly.GetExecutingAssembly().GetName().Name;
+
+            var prefix = root.IndexOf(thisProject, StringComparison.InvariantCulture);
+            var path = root.Substring(0, prefix) + "PrtgAPI";
+
+            return path;
         }
     }
 }

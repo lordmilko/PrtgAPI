@@ -70,7 +70,7 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
 
         $trigger = Run NotificationTrigger { $group | Get-Trigger } | Select -First 1
 
-        WithResponse "DiffBasedResolveResponse" {
+        WithResponseArgs "DiffBasedResolveResponse" $false {
             $trigger | Clone-Object 1001
         }
     }
@@ -91,7 +91,7 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
     It "throws cloning an unknown source ID" {
         $devices = Run Device { Get-Device }
 
-        WithResponseArgs "AddressValidatorResponse" "a" {
+        WithResponse "MultiTypeResponse" {
             { $devices | Clone-Object -SourceId -4 } | Should Throw "Cannot clone object with ID '-4' as it is not a sensor, device or group"
         }
     }

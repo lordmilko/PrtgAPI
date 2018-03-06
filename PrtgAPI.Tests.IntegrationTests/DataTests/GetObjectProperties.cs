@@ -18,9 +18,9 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         {
             var dictionary = client.GetObjectPropertiesRaw(0, ObjectType.Group);
 
-            Assert.AreEqual("Root", dictionary["name"], "Failed to retrieve name");
-            Assert.AreEqual(Settings.Server, dictionary["windowslogindomain"], "Failed to retrieve domain");
-            Assert.AreEqual(Settings.WindowsUserName.ToLower(), dictionary["windowsloginusername"].ToLower(), "Failed to retrieve username");
+            AssertEx.AreEqual("Root", dictionary["name"], "Failed to retrieve name");
+            AssertEx.AreEqual(Settings.Server, dictionary["windowslogindomain"], "Failed to retrieve domain");
+            AssertEx.AreEqual(Settings.WindowsUserName.ToLower(), dictionary["windowsloginusername"].ToLower(), "Failed to retrieve username");
         }
 
         [TestMethod]
@@ -128,11 +128,11 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 var direct = client.GetObjectProperty(prop.Item2.Id, property);
 
                 if (prop.Item3 is IEnumerable)
-                    Assert.AreEqual(string.Join(" ", (IEnumerable)prop.Item3), string.Join(" ", (IEnumerable)direct), $"Values of property '{prop.Item1}' were not equal");
+                    AssertEx.AreEqual(string.Join(" ", (IEnumerable)prop.Item3), string.Join(" ", (IEnumerable)direct), $"Values of property '{prop.Item1}' were not equal");
                 else
-                    Assert.AreEqual(prop.Item3, direct, $"Values of property '{prop.Item1}' were not equal");
+                    AssertEx.AreEqual(prop.Item3, direct, $"Values of property '{prop.Item1}' were not equal");
 
-                Assert.AreEqual(prop.Item3.GetType(), direct.GetType(), $"Types of property '{prop.Item1}' were not equal");
+                AssertEx.AreEqual(prop.Item3.GetType(), direct.GetType(), $"Types of property '{prop.Item1}' were not equal");
             }
         }
 

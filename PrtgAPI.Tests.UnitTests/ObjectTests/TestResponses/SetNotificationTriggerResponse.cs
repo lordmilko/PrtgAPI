@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
@@ -34,6 +31,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new ChannelResponse(new ChannelItem());
                 case nameof(HtmlFunction.RemoveSubObject):
                     return new BasicResponse(string.Empty);
+                case nameof(HtmlFunction.EditNotification):
+                    return new NotificationActionResponse(new NotificationActionItem());
                 default:
                     throw GetUnknownFunctionException(function);
             }

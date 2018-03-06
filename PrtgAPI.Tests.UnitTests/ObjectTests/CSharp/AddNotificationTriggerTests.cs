@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Channel = new TriggerChannel(1)
             };
 
-            client.AddNotificationTrigger(parameters);
+            client.AddNotificationTrigger(parameters, false);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Channel = new TriggerChannel(1)
             };
 
-            await client.AddNotificationTriggerAsync(parameters);
+            await client.AddNotificationTriggerAsync(parameters, false);
         }
 
         [TestMethod]
@@ -110,6 +110,72 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var parameters = new ThresholdTriggerParameters(1001);
 
             await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.AddNotificationTriggerAsync(parameters), "Channel 'Primary' is not a valid value for sensor");
+        }
+
+        [TestMethod]
+        public void AddNotificationTrigger_ResolveScenarios()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse(false));
+
+            var parameters = new StateTriggerParameters(1001)
+            {
+                OnNotificationAction = {Id = 301}
+            };
+
+            var resolvedTrigger = client.AddNotificationTrigger(parameters);
+
+            Assert.AreEqual("Email to all members of group PRTG Users Group 2", resolvedTrigger.OnNotificationAction.ToString());
+
+            var trigger = client.AddNotificationTrigger(parameters, false);
+            Assert.AreEqual(null, trigger, "Trigger was not null");
+        }
+
+        [TestMethod]
+        public async Task AddNotificationTrigger_ResolveScenariosAsync()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse(false));
+
+            var parameters = new StateTriggerParameters(1001)
+            {
+                OnNotificationAction = { Id = 301 }
+            };
+
+            var resolvedTrigger = await client.AddNotificationTriggerAsync(parameters);
+
+            Assert.AreEqual("Email to all members of group PRTG Users Group 2", resolvedTrigger.OnNotificationAction.ToString());
+
+            var trigger = await client.AddNotificationTriggerAsync(parameters, false);
+            Assert.AreEqual(null, trigger, "Trigger was not null");
+        }
+
+        [TestMethod]
+        public void AddNotificationTrigger_Throws_ResolvingMultiple()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse(true));
+
+            var parameters = new StateTriggerParameters(1001)
+            {
+                OnNotificationAction = { Id = 301 }
+            };
+
+            var str = "Could not uniquely identify created NotificationTrigger: multiple new objects ('Type = State, Inherited = False, OnNotificationAction = Email to all members of group PRTG Users Group 2',";
+
+            AssertEx.Throws<ObjectResolutionException>(() => client.AddNotificationTrigger(parameters), str);
+        }
+
+        [TestMethod]
+        public async Task AddNotificationTrigger_Throws_ResolvingMultipleAsync()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse(true));
+
+            var parameters = new StateTriggerParameters(1001)
+            {
+                OnNotificationAction = { Id = 301 }
+            };
+
+            var str = "Could not uniquely identify created NotificationTrigger: multiple new objects ('Type = State, Inherited = False, OnNotificationAction = Email to all members of group PRTG Users Group 2',";
+
+            await AssertEx.ThrowsAsync<ObjectResolutionException>(async () => await client.AddNotificationTriggerAsync(parameters), str);
         }
     }
 }

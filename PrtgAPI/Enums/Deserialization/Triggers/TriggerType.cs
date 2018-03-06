@@ -9,7 +9,7 @@ namespace PrtgAPI
     public enum TriggerType
     {
         /// <summary>
-        /// Trigger when an object changes state.
+        /// Trigger when an object enters a specific state.
         /// </summary>
         State,
 

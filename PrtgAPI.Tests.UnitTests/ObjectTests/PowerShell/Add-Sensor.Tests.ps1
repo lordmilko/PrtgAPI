@@ -37,7 +37,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $sensor = $device | Add-Sensor $params -Resolve
 
-        $sensor.Id | Should Be 1000,1001
+        $sensor.Id | Should Be 1002,1003
     }
 
     function GetItemSubset($skip, $select)

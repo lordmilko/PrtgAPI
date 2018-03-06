@@ -52,26 +52,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b) => ExecuteOperation(a, b), Parameters, Resolve ? Resolver : (Action<Action>)null);
+            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b) => ExecuteOperation(a, b), Parameters, Resolve ? Resolver : (Action)null);
         }
 
-        private void Resolver(Action addTrigger)
+        private void Resolver()
         {
-            var objs = GetResolvedTriggers(addTrigger);
+            var objs = AddAndResolveRunner(() => client.AddNotificationTriggerInternal(Parameters, true, DisplayResolutionError, ShouldStop));
 
             foreach (var o in objs.OrderBy(i => i.SubId))
                 WriteObject(o);
-        }
-
-        internal List<NotificationTrigger> GetResolvedTriggers(Action addTrigger)
-        {
-            var objs = ResolveWithDiff(
-                addTrigger,
-                () => client.GetNotificationTriggers(Parameters.ObjectId).Where(t => !t.Inherited).ToList(),
-                Except
-            );
-
-            return objs;
         }
 
         private List<NotificationTrigger> Except(List<NotificationTrigger> before, List<NotificationTrigger> after)
@@ -126,20 +115,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
     internal static class InternalNotificationTriggerCommand
     {
-        public static void ProcessRecordEx(PrtgOperationCmdlet cmdlet, Action<Action, string> executeOperation, TriggerParameters parameters, Action<Action> resolver = null)
+        public static void ProcessRecordEx(PrtgOperationCmdlet cmdlet, Action<Action, string> executeOperation, TriggerParameters parameters, Action executeAndResolve = null)
         {
             if (cmdlet.ShouldProcess($"Object ID: {parameters.ObjectId} (Type: {parameters.Type}, Action: {parameters.OnNotificationAction})"))
             {
                 if (cmdlet is AddNotificationTrigger)
                     executeOperation(() =>
                     {
-                        if (resolver == null)
-                            PrtgSessionState.Client.SetNotificationTrigger(parameters);
+                        if (executeAndResolve == null)
+                            PrtgSessionState.Client.AddNotificationTrigger(parameters);
                         else
-                            resolver(() => PrtgSessionState.Client.SetNotificationTrigger(parameters));
-                    }, $"Updating notification trigger with ID {parameters.ObjectId} (Sub ID: {parameters.SubId})");
+                            executeAndResolve();
+                    }, $"Adding notification trigger '{parameters.OnNotificationAction?.Name ?? "None"}' to object ID {parameters.ObjectId}");
                 else
-                    executeOperation(() => PrtgSessionState.Client.AddNotificationTrigger(parameters), $"Adding notification trigger '{parameters.OnNotificationAction}' to object ID {parameters.ObjectId}");
+                    executeOperation(() => PrtgSessionState.Client.SetNotificationTrigger(parameters), $"Updating notification trigger with ID {parameters.ObjectId} (Sub ID: {parameters.SubId})");
             }
         }
     }

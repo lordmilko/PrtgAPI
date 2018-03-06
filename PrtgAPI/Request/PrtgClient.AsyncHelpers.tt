@@ -16,6 +16,7 @@ using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 //Methods with complex logic surrounding sync/async function calls.
@@ -75,7 +76,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-		internal <#= GetSignature("GetNotificationActionsInternal", "List<NotificationAction>", i) #>(NotificationActionParameters parameters)
+        internal <#= GetSignature("GetNotificationActionsInternal", "List<NotificationAction>", i) #>(NotificationActionParameters parameters)
         {
             var response = <#= CallFunction("requestEngine.ExecuteRequest", "XmlFunction.TableData, parameters", i) #>;
 
@@ -170,7 +171,7 @@ for(int i = 0; i < 2; i++)
                         if (ex.Message.Contains("Sequence contains no elements"))
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
 
-						throw;
+                        throw;
                     }
                 }
             }
@@ -367,7 +368,7 @@ for(int i = 0; i < 2; i++)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            <#= DeclareFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "GetSensorTargetTmpId", i) #>;
+            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "GetSensorTargetTmpId", i) #>;
 
             var tmpId = Convert.ToInt32(<#= CallFunction("requestEngine.ExecuteRequest", "CommandFunction.AddSensor2, parameters, getSensorTargetTmpId", i) #>);
 
@@ -425,6 +426,180 @@ for(int i = 0; i < 2; i++)
             return page;
         }
 <#
+}
+#>
+        //######################################
+        // AddObject
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("AddObject", "List<T>", i) #><T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+            Func<SearchFilter[], <#= GetFuncRet("List<T>", i) #>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
+            bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
+        {
+            if (resolve)
+            {
+                var filters = GetFilters(parentId, parameters);
+
+                <#= DeclareAction0("addObjectInternal", "AddObjectInternal", "parentId, parameters, function", i) #>;
+                <#= DeclareFuncWithVariable0("getObjs", "getObjects", "filters", "List<T>", i) #>;
+
+                return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple", i) #>).OrderBy(o => o.Id).ToList();
+            }
+            else
+            {
+                <#= CallFunction("AddObjectInternal", "parentId, parameters, function", i) #>;
+
+                return null;
+            }
+        }
+
+        private <#= GetSignature("AddObjectInternal", "void", i) #>(int objectId, NewObjectParameters parameters, CommandFunction function)
+        {
+            var lengthLimit = ValidateObjectParameters(parameters);
+
+            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+
+            if (lengthLimit.Count > 0)
+                <#= CallFunction("AddObjectWithExcessiveValue", "lengthLimit, internalParams, function", i) #>;
+            else
+                <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+        }
+
+        private <#= GetSignature("ResolveWithDiff", "List<T>", i) #><T>(<#= GetActionParam0(i) #> createObject, Func<<#= GetFuncRet("List<T>", i) #>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
+            Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+        {
+            var before = <#= CallFunc("getObjects", "", i) #>;
+
+            <#= CallFunc("createObject", "", i) #>;
+
+            var after = <#= CallFunction("ResolveObject", "getObjects, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop", i) #>;
+
+            var newObjects = exceptFunc(before, after);
+
+            if(!allowMultiple && newObjects.Count > 1)
+            {
+                var typeName = typeof (T).Name;
+
+                IEnumerable<string> names;
+
+                if (typeof (PrtgObject).IsAssignableFrom(typeof (T)))
+                {
+                    var objs = newObjects.Cast<PrtgObject>();
+
+                    names = objs.Select(o => $"'{o.Name}' (ID: {o.Id})");
+                }
+                else
+                    names = newObjects.Select(o => $"'{o}'");
+
+                var str = $"Could not uniquely identify created {typeName}: multiple new objects ({string.Join(", ", names)}) were found under parent object. Did you create an additional object with the same type or name under the parent while resolution was occurring?";
+
+                throw new ObjectResolutionException(str);
+            }
+
+            return <#= CallFunction("CleanObjects", "newObjects", i) #>;
+        }
+
+        internal <#= GetSignature("ResolveObject", "List<T>", i) #><T>(Func< <#= GetFuncRet("List<T>", i) #>> getObjects, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            List<T> @object;
+
+            var retriesRemaining = 4;
+            var delay = 3;
+
+            do
+            {
+                @object = <#= CallFunc("getObjects", "", i) #>;
+
+                if (!recordsFound(@object))
+                {
+                    if (retriesRemaining == 0)
+                    {
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                    }
+
+                    var type = trueType ?? typeof (T);
+
+                    errorCallback?.Invoke(type, retriesRemaining);
+                    retriesRemaining--;
+
+#if DEBUG
+                    if (!UnitTest())
+#endif
+                        <#= SleepPre(i) #>delay * 1000<#= SleepPost(i) #>;
+
+                    delay *= 2;
+                }
+
+                if (shouldStop?.Invoke() == true)
+                    break;
+
+            } while (!recordsFound(@object));
+
+            return @object;
+        }
+        
+        private <#= GetSignature("CleanObjects", "List<T>", i) #><T>(List<T> newObjects)
+        {
+            if (newObjects.All(o => o is Sensor))
+            {
+                var sensors = newObjects.Cast<Sensor>().ToList();
+
+                bool modified = false;
+
+                foreach (var obj in sensors)
+                {
+                    //PRTG may sometimes prepend spaces to the front of the sensor name. This can even happen
+                    //in the Web UI
+                    if (obj.Name != obj.Name.Trim(' '))
+                    {
+                        modified = true;
+                        <#= CallFunction("RenameObject", "obj.Id, obj.Name.Trim(' ')", i) #>;
+                    }
+                }
+
+                if(modified)
+                    newObjects = (<#= CallFunction("GetSensors", "Property.Id, sensors.Select(s => s.Id)", i) #>).Cast<T>().ToList();
+            }
+
+            return newObjects;
+        }
+
+<#
+}
+#>
+        //######################################
+        // AddNotificationTriggerInternal
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("AddNotificationTriggerInternal", "List<NotificationTrigger>", i)#>(TriggerParameters parameters, bool resolve,
+            Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            if (resolve)
+            {
+                <#= DeclareAction0("addTrigger", "SetNotificationTrigger", "parameters", i) #>;
+                <#= DeclareFuncThen0("getTrigger", "GetNotificationTriggers", "parameters.ObjectId", "List<NotificationTrigger>", ".Where(t => !t.Inherited).ToList();", i) #>
+
+                var objs = <#= CallFunction("ResolveWithDiff", "addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop", i) #>;
+
+                return objs;
+            }
+            else
+            {
+                SetNotificationTrigger(parameters);
+
+                return null;
+            }
+        }
+<#
 if(i == 0)
     WriteLine("");
 }
@@ -455,6 +630,14 @@ if(i == 0)
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
     }
 
+    public string CallFunc(string name, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters})";
+        else
+            return $"await {name}({parameters}).ConfigureAwait(false)";
+    }
+
     public string CallGenericFunction(string name, string type, string parameters, int i)
     {
         if(i == 0)
@@ -479,12 +662,67 @@ if(i == 0)
             return $"await Task.Delay({duration}).ConfigureAwait(false);";
     }
 
-    public string DeclareFunc1(string funcName, string args, string returnType, string function, int i)
+    public string SleepPre(int i)
+    {
+        if(i == 0)
+            return "Thread.Sleep(";
+        else
+            return "await Task.Delay(";
+    }
+
+    public string SleepPost(int i)
+    {
+        if(i == 0)
+            return ")";
+        else
+            return ").ConfigureAwait(false)";
+    }
+
+    public string DeclareLightFunc1(string funcName, string args, string returnType, string function, int i)
     {
         if(i == 0)
             return $"Func<{args}, {returnType}> {funcName} = {function}";
         else
             return $"Func<{args}, Task<{returnType}>> {funcName} = o => Task.FromResult({function}(o))";
+    }
 
+    public string DeclareAction0(string variableName, string function, string args, int i)
+    {
+        if(i == 0)
+            return $"Action {variableName} = () => {function}({args})";
+        else
+            return $"Func<Task> {variableName} = async () => await {function}Async({args}).ConfigureAwait(false)";
+    }
+
+    public string DeclareFuncWithVariable0(string variableName, string function, string args, string functionReturnType, int i)
+    {
+        if(i == 0)
+            return $"Func<{functionReturnType}> {variableName} = () => {function}({args})";
+        else
+            return $"Func<Task<{functionReturnType}>> {variableName} = async () => await {function}({args}).ConfigureAwait(false)";
+    }
+
+    public string DeclareFuncThen0(string variableName, string function, string args, string functionReturnType, string then, int i)
+    {
+        if(i == 0)
+            return $"Func<{functionReturnType}> {variableName} = () => {function}({args}){then}";
+        else
+            return $"Func<Task<{functionReturnType}>> {variableName} = async () => (await {function}Async({args}).ConfigureAwait(false)){then}";
+    }
+
+    public string GetFuncRet(string type, int i)
+    {
+        if(i == 0)
+            return type;
+        else
+            return $"Task<{type}>";
+    }
+
+    public string GetActionParam0(int i)
+    {
+        if(i == 0)
+            return "Action";
+        else
+            return "Func<Task>";
     }
 #>

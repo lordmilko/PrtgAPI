@@ -56,7 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ActionTests\AddSensorTests.cs" />
+    <Compile Include="ActionTests\AddObjectTests.cs" />
     <Compile Include="ActionTests\AdminToolTests.cs" />
     <Compile Include="ActionTests\NotificationTriggerTests.cs" />
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />

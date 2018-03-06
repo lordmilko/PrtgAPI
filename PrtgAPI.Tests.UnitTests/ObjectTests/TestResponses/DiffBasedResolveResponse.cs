@@ -12,6 +12,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private int[] skip;
 
+        private bool multiple = true;
+
+        public bool LeadingSpace { get; set; }
+        private bool flip;
+
         private int requestCount;
 
         private int totalRequestCount;
@@ -29,6 +34,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         public DiffBasedResolveResponse(int[] skip)
         {
             this.skip = skip;
+        }
+
+        public DiffBasedResolveResponse(bool multiple)
+        {
+            this.multiple = multiple;
         }
 
         protected override IWebResponse GetResponse(ref string address, string function)
@@ -66,29 +76,44 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             requestCount++;
 
+            var leading = LeadingSpace ? " " : "";
+
             int count;
 
             //1: Before
             //2: After
-            //3: Clean
-            
-            //4: Before
-            //5: After
-            //6: Clean
 
-            //7: Before
-            //8: After
-            //9: Clean
+            //3: Before
+            //4: After
 
-            //On the first, third and fourth request (Before, Clean and Before on the next one)
-            if (requestCount == 1 || requestCount % 3 == 0 || requestCount % 3 == 1)
+            //5: Before
+            //6: After
+
+            //Every odd request (the first request) returns 2; the second request returns 2 
+            if (requestCount%2 != 0)
+            {
                 count = 2;
+
+                if (flip)
+                {
+                    LeadingSpace = true;
+                    flip = false;
+                }
+            }
             else
-                count = 4;
+            {
+                count = multiple ? 4 : 3;
+
+                if (LeadingSpace)
+                {
+                    flip = true;
+                    LeadingSpace = false;
+                }
+            }
 
             switch (content)
             {
-                case Content.Sensors: return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}",     objid: (1000 + i).ToString()), count));
+                case Content.Sensors: return new SensorResponse(GetItems(i => new SensorItem(name: $"{leading}Volume IO _Total{i}",     objid: (1000 + i).ToString()), count));
                 case Content.Devices: return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}",         objid: (1000 + i).ToString()), count));
                 case Content.Groups:  return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", objid: (1000 + i).ToString()), count));
                 case Content.Triggers:

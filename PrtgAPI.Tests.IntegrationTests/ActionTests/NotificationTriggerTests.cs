@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
@@ -319,6 +320,107 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 
                 if (!found)
                     AssertEx.Fail($"Couldn't find notification trigger property that corresponded to parameter property '{paramProp.Name}'");
+            }
+        }
+
+        [TestMethod]
+        public void AddNotificationTrigger_Resolves()
+        {
+            Resolves(true);
+        }
+
+        [TestMethod]
+        public void AddNotificationTrigger_DoesntResolve()
+        {
+            Resolves(false);
+        }
+
+        [TestMethod]
+        public async Task AddNotificationTrigger_ResolvesAsync()
+        {
+            await ResolvesAsync(true);
+        }
+
+        [TestMethod]
+        public async Task AddNotificationTrigger_DoesntResolveAsync()
+        {
+            await ResolvesAsync(false);
+        }
+
+        private void Resolves(bool resolve)
+        {
+            var device = client.GetDevices(Property.Id, Settings.Device).Single();
+            var deviceTriggers = client.GetNotificationTriggers(device.Id).Where(t => t.Type == TriggerType.Threshold).ToList();
+            AssertEx.AreEqual(1, deviceTriggers.Count, "Found incorrect number of source triggers");
+
+            var probe = client.GetProbes(Property.Id, Settings.Probe).Single();
+            var probeTrggers = client.GetNotificationTriggers(probe.Id).Where(t => t.Type == TriggerType.Threshold).ToList();
+            AssertEx.AreEqual(0, probeTrggers.Count, "Found incorrect number of existing triggers on target object");
+
+            var parameters = new ThresholdTriggerParameters(Settings.Probe, deviceTriggers.Single());
+            var newTrigger = client.AddNotificationTrigger(parameters, resolve);
+
+            var manualTrigger = client.GetNotificationTriggers(probe.Id).Where(t => t.Type == TriggerType.Threshold).ToList();
+
+            try
+            {
+                if (resolve)
+                {
+                    AssertEx.AreEqual(1, manualTrigger.Count, "Found incorrect number of new triggers on target object");
+
+                    AssertEx.AreEqual(manualTrigger.Single().ParentId, newTrigger.ParentId, "Parent ID was not correct");
+                    AssertEx.AreEqual(manualTrigger.Single().SubId, newTrigger.SubId, "Sub ID was not correct");
+                }
+                else
+                {
+                    AssertEx.AreEqual(null, newTrigger, "New trigger was not null");
+                }
+            }
+            finally
+            {
+                if (resolve)
+                    client.RemoveNotificationTrigger(newTrigger);
+                else
+                    client.RemoveNotificationTrigger(manualTrigger.Single());
+            }
+            
+        }
+
+        private async Task ResolvesAsync(bool resolve)
+        {
+            var device = (await client.GetDevicesAsync(Property.Id, Settings.Device)).Single();
+            var deviceTriggers = (await client.GetNotificationTriggersAsync(device.Id)).Where(t => t.Type == TriggerType.Threshold).ToList();
+            AssertEx.AreEqual(1, deviceTriggers.Count, "Found incorrect number of source triggers");
+
+            var probe = (await client.GetProbesAsync(Property.Id, Settings.Probe)).Single();
+            var probeTrggers = (await client.GetNotificationTriggersAsync(probe.Id)).Where(t => t.Type == TriggerType.Threshold).ToList();
+            AssertEx.AreEqual(0, probeTrggers.Count, "Found incorrect number of existing triggers on target object");
+
+            var parameters = new ThresholdTriggerParameters(Settings.Probe, deviceTriggers.Single());
+            var newTrigger = await client.AddNotificationTriggerAsync(parameters, resolve);
+
+            var manualTrigger = (await client.GetNotificationTriggersAsync(probe.Id)).Where(t => t.Type == TriggerType.Threshold).ToList();
+
+            try
+            {
+                if (resolve)
+                {
+                    AssertEx.AreEqual(1, manualTrigger.Count, "Found incorrect number of new triggers on target object");
+
+                    AssertEx.AreEqual(manualTrigger.Single().ParentId, newTrigger.ParentId, "Parent ID was not correct");
+                    AssertEx.AreEqual(manualTrigger.Single().SubId, newTrigger.SubId, "Sub ID was not correct");
+                }
+                else
+                {
+                    AssertEx.AreEqual(null, newTrigger, "New trigger was not null");
+                }
+            }
+            finally
+            {
+                if (resolve)
+                    await client.RemoveNotificationTriggerAsync(newTrigger);
+                else
+                    await client.RemoveNotificationTriggerAsync(manualTrigger.Single());
             }
         }
     }

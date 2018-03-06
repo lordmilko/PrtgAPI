@@ -148,7 +148,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (Stopping)
                     return false;
 #if DEBUG
-                if(!UnitTest())
+                if(!client.UnitTest())
                     Thread.Sleep(1000);
 #endif
 

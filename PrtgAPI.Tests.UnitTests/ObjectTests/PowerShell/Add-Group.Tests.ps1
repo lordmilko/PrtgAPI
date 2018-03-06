@@ -20,7 +20,7 @@ Describe "Add-Group" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "resolves a created sensor" {
-        SetResponseAndClient "DiffBasedResolveResponse"
+        SetResponseAndClientWithArguments "DiffBasedResolveResponse" $false
 
         $params = New-GroupParameters Servers
 
@@ -28,6 +28,6 @@ Describe "Add-Group" -Tag @("PowerShell", "UnitTest") {
 
         $group = $probe | Add-Group $params -Resolve
 
-        $group.Id | Should Be 1002,1003
+        $group.Id | Should Be 1002
     }
 }

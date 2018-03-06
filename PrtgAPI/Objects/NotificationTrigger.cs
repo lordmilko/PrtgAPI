@@ -240,6 +240,15 @@ namespace PrtgAPI
             return false;
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"Type = {Type}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}";
+        }
+
 #pragma warning restore CS0649
     }
 }

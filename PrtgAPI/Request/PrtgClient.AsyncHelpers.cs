@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 //Methods with complex logic surrounding sync/async function calls.
@@ -91,7 +92,7 @@ namespace PrtgAPI
         // GetNotificationActionsInternal
         //######################################
 
-		internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters)
+        internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
@@ -109,7 +110,7 @@ namespace PrtgAPI
             return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
         }
 
-		internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters)
+        internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
@@ -229,7 +230,7 @@ namespace PrtgAPI
                         if (ex.Message.Contains("Sequence contains no elements"))
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
 
-						throw;
+                        throw;
                     }
                 }
             }
@@ -251,7 +252,7 @@ namespace PrtgAPI
                         if (ex.Message.Contains("Sequence contains no elements"))
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
 
-						throw;
+                        throw;
                     }
                 }
             }
@@ -593,7 +594,6 @@ namespace PrtgAPI
 
             return page;
         }
-
         private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback)
         {
             var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
@@ -627,6 +627,319 @@ namespace PrtgAPI
             var page = await requestEngine.ExecuteRequestAsync(HtmlFunction.AddSensor4, parameters).ConfigureAwait(false);
 
             return page;
+        }
+        //######################################
+        // AddObject
+        //######################################
+
+        internal List<T> AddObject<T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+            Func<SearchFilter[], List<T>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
+            bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
+        {
+            if (resolve)
+            {
+                var filters = GetFilters(parentId, parameters);
+
+                Action addObjectInternal = () => AddObjectInternal(parentId, parameters, function);
+                Func<List<T>> getObjs = () => getObjects(filters);
+
+                return (ResolveWithDiff(addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
+            }
+            else
+            {
+                AddObjectInternal(parentId, parameters, function);
+
+                return null;
+            }
+        }
+
+        private void AddObjectInternal(int objectId, NewObjectParameters parameters, CommandFunction function)
+        {
+            var lengthLimit = ValidateObjectParameters(parameters);
+
+            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+
+            if (lengthLimit.Count > 0)
+                AddObjectWithExcessiveValue(lengthLimit, internalParams, function);
+            else
+                requestEngine.ExecuteRequest(function, internalParams);
+        }
+
+        private List<T> ResolveWithDiff<T>(Action createObject, Func<List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
+            Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+        {
+            var before = getObjects();
+
+            createObject();
+
+            var after = ResolveObject(getObjects, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop);
+
+            var newObjects = exceptFunc(before, after);
+
+            if(!allowMultiple && newObjects.Count > 1)
+            {
+                var typeName = typeof (T).Name;
+
+                IEnumerable<string> names;
+
+                if (typeof (PrtgObject).IsAssignableFrom(typeof (T)))
+                {
+                    var objs = newObjects.Cast<PrtgObject>();
+
+                    names = objs.Select(o => $"'{o.Name}' (ID: {o.Id})");
+                }
+                else
+                    names = newObjects.Select(o => $"'{o}'");
+
+                var str = $"Could not uniquely identify created {typeName}: multiple new objects ({string.Join(", ", names)}) were found under parent object. Did you create an additional object with the same type or name under the parent while resolution was occurring?";
+
+                throw new ObjectResolutionException(str);
+            }
+
+            return CleanObjects(newObjects);
+        }
+
+        internal List<T> ResolveObject<T>(Func< List<T>> getObjects, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            List<T> @object;
+
+            var retriesRemaining = 4;
+            var delay = 3;
+
+            do
+            {
+                @object = getObjects();
+
+                if (!recordsFound(@object))
+                {
+                    if (retriesRemaining == 0)
+                    {
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                    }
+
+                    var type = trueType ?? typeof (T);
+
+                    errorCallback?.Invoke(type, retriesRemaining);
+                    retriesRemaining--;
+
+#if DEBUG
+                    if (!UnitTest())
+#endif
+                        Thread.Sleep(delay * 1000);
+
+                    delay *= 2;
+                }
+
+                if (shouldStop?.Invoke() == true)
+                    break;
+
+            } while (!recordsFound(@object));
+
+            return @object;
+        }
+        
+        private List<T> CleanObjects<T>(List<T> newObjects)
+        {
+            if (newObjects.All(o => o is Sensor))
+            {
+                var sensors = newObjects.Cast<Sensor>().ToList();
+
+                bool modified = false;
+
+                foreach (var obj in sensors)
+                {
+                    //PRTG may sometimes prepend spaces to the front of the sensor name. This can even happen
+                    //in the Web UI
+                    if (obj.Name != obj.Name.Trim(' '))
+                    {
+                        modified = true;
+                        RenameObject(obj.Id, obj.Name.Trim(' '));
+                    }
+                }
+
+                if(modified)
+                    newObjects = (GetSensors(Property.Id, sensors.Select(s => s.Id))).Cast<T>().ToList();
+            }
+
+            return newObjects;
+        }
+
+        internal async Task<List<T>> AddObjectAsync<T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+            Func<SearchFilter[], Task<List<T>>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
+            bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
+        {
+            if (resolve)
+            {
+                var filters = GetFilters(parentId, parameters);
+
+                Func<Task> addObjectInternal = async () => await AddObjectInternalAsync(parentId, parameters, function).ConfigureAwait(false);
+                Func<Task<List<T>>> getObjs = async () => await getObjects(filters).ConfigureAwait(false);
+
+                return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
+            }
+            else
+            {
+                await AddObjectInternalAsync(parentId, parameters, function).ConfigureAwait(false);
+
+                return null;
+            }
+        }
+
+        private async Task AddObjectInternalAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
+        {
+            var lengthLimit = ValidateObjectParameters(parameters);
+
+            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+
+            if (lengthLimit.Count > 0)
+                await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, function).ConfigureAwait(false);
+            else
+                await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+        }
+
+        private async Task<List<T>> ResolveWithDiffAsync<T>(Func<Task> createObject, Func<Task<List<T>>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
+            Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+        {
+            var before = await getObjects().ConfigureAwait(false);
+
+            await createObject().ConfigureAwait(false);
+
+            var after = await ResolveObjectAsync(getObjects, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop).ConfigureAwait(false);
+
+            var newObjects = exceptFunc(before, after);
+
+            if(!allowMultiple && newObjects.Count > 1)
+            {
+                var typeName = typeof (T).Name;
+
+                IEnumerable<string> names;
+
+                if (typeof (PrtgObject).IsAssignableFrom(typeof (T)))
+                {
+                    var objs = newObjects.Cast<PrtgObject>();
+
+                    names = objs.Select(o => $"'{o.Name}' (ID: {o.Id})");
+                }
+                else
+                    names = newObjects.Select(o => $"'{o}'");
+
+                var str = $"Could not uniquely identify created {typeName}: multiple new objects ({string.Join(", ", names)}) were found under parent object. Did you create an additional object with the same type or name under the parent while resolution was occurring?";
+
+                throw new ObjectResolutionException(str);
+            }
+
+            return await CleanObjectsAsync(newObjects).ConfigureAwait(false);
+        }
+
+        internal async Task<List<T>> ResolveObjectAsync<T>(Func< Task<List<T>>> getObjects, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            List<T> @object;
+
+            var retriesRemaining = 4;
+            var delay = 3;
+
+            do
+            {
+                @object = await getObjects().ConfigureAwait(false);
+
+                if (!recordsFound(@object))
+                {
+                    if (retriesRemaining == 0)
+                    {
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                    }
+
+                    var type = trueType ?? typeof (T);
+
+                    errorCallback?.Invoke(type, retriesRemaining);
+                    retriesRemaining--;
+
+#if DEBUG
+                    if (!UnitTest())
+#endif
+                        await Task.Delay(delay * 1000).ConfigureAwait(false);
+
+                    delay *= 2;
+                }
+
+                if (shouldStop?.Invoke() == true)
+                    break;
+
+            } while (!recordsFound(@object));
+
+            return @object;
+        }
+        
+        private async Task<List<T>> CleanObjectsAsync<T>(List<T> newObjects)
+        {
+            if (newObjects.All(o => o is Sensor))
+            {
+                var sensors = newObjects.Cast<Sensor>().ToList();
+
+                bool modified = false;
+
+                foreach (var obj in sensors)
+                {
+                    //PRTG may sometimes prepend spaces to the front of the sensor name. This can even happen
+                    //in the Web UI
+                    if (obj.Name != obj.Name.Trim(' '))
+                    {
+                        modified = true;
+                        await RenameObjectAsync(obj.Id, obj.Name.Trim(' ')).ConfigureAwait(false);
+                    }
+                }
+
+                if(modified)
+                    newObjects = (await GetSensorsAsync(Property.Id, sensors.Select(s => s.Id)).ConfigureAwait(false)).Cast<T>().ToList();
+            }
+
+            return newObjects;
+        }
+
+        //######################################
+        // AddNotificationTriggerInternal
+        //######################################
+
+        internal List<NotificationTrigger> AddNotificationTriggerInternal(TriggerParameters parameters, bool resolve,
+            Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            if (resolve)
+            {
+                Action addTrigger = () => SetNotificationTrigger(parameters);
+                Func<List<NotificationTrigger>> getTrigger = () => GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
+
+                var objs = ResolveWithDiff(addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop);
+
+                return objs;
+            }
+            else
+            {
+                SetNotificationTrigger(parameters);
+
+                return null;
+            }
+        }
+
+        internal async Task<List<NotificationTrigger>> AddNotificationTriggerInternalAsync(TriggerParameters parameters, bool resolve,
+            Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+        {
+            if (resolve)
+            {
+                Func<Task> addTrigger = async () => await SetNotificationTriggerAsync(parameters).ConfigureAwait(false);
+                Func<Task<List<NotificationTrigger>>> getTrigger = async () => (await GetNotificationTriggersAsync(parameters.ObjectId).ConfigureAwait(false)).Where(t => !t.Inherited).ToList();
+
+                var objs = await ResolveWithDiffAsync(addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop).ConfigureAwait(false);
+
+                return objs;
+            }
+            else
+            {
+                SetNotificationTrigger(parameters);
+
+                return null;
+            }
         }
     }
 }

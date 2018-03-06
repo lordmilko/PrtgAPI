@@ -1231,108 +1231,146 @@ namespace PrtgAPI
         /// Add a new <see cref="Sensor"/> to a PRTG <see cref="Device"/>.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
-        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public void AddSensor(int deviceId, NewSensorParameters parameters) =>
-            AddObject(deviceId, parameters, CommandFunction.AddSensor5);
+        /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
+        /// Depending on the type of sensor parameters specified, this may result in the creation of several new sensors.</param>
+        /// <param name="resolve">Whether to resolve the new sensors to their resultant <see cref="Sensor"/> objects.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
+        public List<Sensor> AddSensor(int deviceId, NewSensorParameters parameters, bool resolve = true) =>
+            AddObject(deviceId, parameters, CommandFunction.AddSensor5, GetSensors, resolve, allowMultiple: true);
 
         /// <summary>
         /// Asynchronously add a new <see cref="Sensor"/> to a PRTG <see cref="Device"/>.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
-        /// <param name="parameters">A set of parameters describing properties of the sensor to create.</param>
-        public async Task AddSensorAsync(int deviceId, NewSensorParameters parameters) =>
-            await AddObjectAsync(deviceId, parameters, CommandFunction.AddSensor5).ConfigureAwait(false);
+        /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
+        /// Depending on the type of sensor parameters specified, this may result in the creation of several new sensors.</param>
+        /// <param name="resolve">Whether to resolve the new sensors to their resultant <see cref="Sensor"/> objects.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
+        public async Task<List<Sensor>> AddSensorAsync(int deviceId, NewSensorParameters parameters, bool resolve = true) =>
+            await AddObjectAsync(deviceId, parameters, CommandFunction.AddSensor5, GetSensorsAsync, resolve, allowMultiple: true).ConfigureAwait(false);
 
         /// <summary>
-        /// Add a new <see cref="Device"/> to a PRTG .
+        /// Add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
         /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device.</param>
         /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
-        public void AddDevice(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual) =>
-                AddDevice(parentId, new NewDeviceParameters(name, host) {AutoDiscoveryMode = discoveryMode});
+        /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device parameters. Otherwise, null.</returns>
+        public Device AddDevice(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true) =>
+                AddDevice(parentId, new NewDeviceParameters(name, host) {AutoDiscoveryMode = discoveryMode}, resolve);
 
         /// <summary>
         /// Add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
-        public void AddDevice(int parentId, NewDeviceParameters parameters) =>
-            AddObject(parentId, parameters, CommandFunction.AddDevice2);
+        /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
+        public Device AddDevice(int parentId, NewDeviceParameters parameters, bool resolve = true) =>
+            AddObject(parentId, parameters, CommandFunction.AddDevice2, GetDevices, resolve)?.Single();
 
         /// <summary>
-        /// Asynchronously add a new <see cref="Device"/> to a PRTG .
+        /// Asynchronously add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
         /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device.</param>
         /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
-        public async Task AddDeviceAsync(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual) =>
-                await AddDeviceAsync(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }).ConfigureAwait(false);
+        /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device parameters. Otherwise, null.</returns>
+        public async Task<Device> AddDeviceAsync(int parentId, string name, string host, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true) =>
+                await AddDeviceAsync(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously add a new <see cref="Device"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or device the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
-        public async Task AddDeviceAsync(int parentId, NewDeviceParameters parameters) =>
-            await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2).ConfigureAwait(false);
+        /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
+        public async Task<Device> AddDeviceAsync(int parentId, NewDeviceParameters parameters, bool resolve = true) =>
+            (await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2, GetDevicesAsync, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
         /// Add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
-        public void AddGroup(int parentId, string name) =>
-            AddGroup(parentId, new NewGroupParameters(name));
+        /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group parameters. Otherwise, null.</returns>
+        public Group AddGroup(int parentId, string name, bool resolve = true) =>
+            AddGroup(parentId, new NewGroupParameters(name), resolve);
 
         /// <summary>
         /// Add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
-        public void AddGroup(int parentId, NewGroupParameters parameters) =>
-            AddObject(parentId, parameters, CommandFunction.AddGroup2);
+        /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
+        public Group AddGroup(int parentId, NewGroupParameters parameters, bool resolve = true) =>
+            AddObject(parentId, parameters, CommandFunction.AddGroup2, GetGroups, resolve)?.Single();
 
         /// <summary>
         /// Asynchronously add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/>.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
-        public async Task AddGroupAsync(int parentId, string name) =>
-            await AddGroupAsync(parentId, new NewGroupParameters(name)).ConfigureAwait(false);
+        /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group parameters. Otherwise, null.</returns>
+        public async Task<Group> AddGroupAsync(int parentId, string name, bool resolve = true) =>
+            await AddGroupAsync(parentId, new NewGroupParameters(name), resolve).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously add a new <see cref="Group"/> to a PRTG <see cref="Group"/> or <see cref="Probe"/> with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
-        public async Task AddGroupAsync(int parentId, NewGroupParameters parameters) =>
-            await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2).ConfigureAwait(false);
+        /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
+        public async Task<Group> AddGroupAsync(int parentId, NewGroupParameters parameters, bool resolve = true) =>
+            (await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
 
-        internal void AddObject(int objectId, NewObjectParameters parameters, CommandFunction function)
+        private SearchFilter[] GetFilters(int destinationId, NewObjectParameters parameters)
         {
-            var lengthLimit = ValidateObjectParameters(parameters);
+            var filters = new List<SearchFilter>()
+            {
+                new SearchFilter(Property.ParentId, destinationId)
+            };
 
-            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+            if (parameters is NewSensorParameters)
+            {
+                //When creating new sensors, PRTG may dynamically assign a name based on the sensor's parameters.
+                //As such, we instead filter for sensors of the newly created type
+                var sensorType = parameters[Parameter.SensorType];
 
-            if (lengthLimit.Count > 0)
-                AddObjectWithExcessiveValue(lengthLimit, internalParams, function);
+                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType.ToString();
+
+                filters.Add(new SearchFilter(Property.Type, str.ToLower()));
+            }
             else
-                requestEngine.ExecuteRequest(function, internalParams);
+                filters.Add(new SearchFilter(Property.Name, parameters.Name));
+
+            return filters.ToArray();
         }
 
-        private async Task AddObjectAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
+        private List<T> ExceptTableObject<T>(List<T> before, List<T> after) where T : SensorOrDeviceOrGroupOrProbe
         {
-            var lengthLimit = ValidateObjectParameters(parameters);
+            var beforeIds = before.Select(b => b.Id).ToList();
 
-            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
-
-            if (lengthLimit.Count > 0)
-                await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, function).ConfigureAwait(false);
-            else
-                await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+            return after.Where(a => !beforeIds.Contains(a.Id)).ToList();
         }
 
         private List<KeyValuePair<Parameter, object>> ValidateObjectParameters(NewObjectParameters parameters)
@@ -1522,14 +1560,27 @@ namespace PrtgAPI
         /// <summary>
         /// Add a notification trigger to a PRTG Server.
         /// </summary>
-        /// <param name="parameters"></param>
-        public void AddNotificationTrigger(TriggerParameters parameters) => SetNotificationTrigger(parameters);
+        /// <param name="parameters">A set of parameters describing the type of notification trigger to create and the object to apply it to.</param>
+        /// <param name="resolve">Whether to resolve the new trigger to its resultant <see cref="NotificationTrigger"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the trigger that was created from this method's trigger parameters. Otherwise, null.</returns>
+        public NotificationTrigger AddNotificationTrigger(TriggerParameters parameters, bool resolve = true) =>
+            AddNotificationTriggerInternal(parameters, resolve)?.Single();
 
         /// <summary>
         /// Asynchronously add a notification trigger to a PRTG Server.
         /// </summary>
-        /// <param name="parameters"></param>
-        public async Task AddNotificationTriggerAsync(TriggerParameters parameters) => await SetNotificationTriggerAsync(parameters).ConfigureAwait(false);
+        /// <param name="parameters">A set of parameters describing the type of notification trigger to create and the object to apply it to.</param>
+        /// <param name="resolve">Whether to resolve the new trigger to its resultant <see cref="NotificationTrigger"/> object.
+        /// If this value is false, this method will return null.</param>
+        /// <returns>If <paramref name="resolve"/> is true, the trigger that was created from this method's trigger parameters. Otherwise, null.</returns>
+        public async Task<NotificationTrigger> AddNotificationTriggerAsync(TriggerParameters parameters, bool resolve = true) =>
+            (await AddNotificationTriggerInternalAsync(parameters, resolve).ConfigureAwait(false))?.Single();
+
+        private List<NotificationTrigger> ExceptTrigger(List<NotificationTrigger> before, List<NotificationTrigger> after, TriggerParameters parameters)
+        {
+            return after.Where(a => !before.Any(b => a.ObjectId == b.ObjectId && a.SubId == b.SubId) && a.OnNotificationAction.Id == parameters.OnNotificationAction.Id).ToList();
+        }
 
         /// <summary>
         /// Add or edit a notification trigger on a PRTG Server.
@@ -2573,5 +2624,14 @@ namespace PrtgAPI
         }
 
 #endregion
+#if DEBUG
+#pragma warning disable 1591
+        [ExcludeFromCodeCoverage]
+        internal bool UnitTest()
+#pragma warning restore 1591
+        {
+            return Server == "prtg.example.com";
+        }
+#endif
     }
 }

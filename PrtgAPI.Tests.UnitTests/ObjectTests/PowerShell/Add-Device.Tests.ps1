@@ -41,7 +41,7 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "resolves a created device" {
-        SetResponseAndClient "DiffBasedResolveResponse"
+        SetResponseAndClientWithArguments "DiffBasedResolveResponse" $false
 
         $params = New-DeviceParameters dc-1
 
@@ -49,6 +49,6 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $device = $probe | Add-Device $params -Resolve
 
-        $device.Id | Should Be 1002,1003
+        $device.Id | Should Be 1002
     }
 }

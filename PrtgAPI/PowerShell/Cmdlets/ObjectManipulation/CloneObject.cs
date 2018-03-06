@@ -234,8 +234,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (Resolve)
             {
-                var cmdlet = new AddNotificationTrigger {Parameters = parameters};
-                var triggers = cmdlet.GetResolvedTriggers(() => client.AddNotificationTrigger(parameters));
+                var triggers = client.AddNotificationTriggerInternal(parameters, true, DisplayResolutionError, ShouldStop);
 
                 foreach (var obj in triggers)
                     WriteObject(obj);
@@ -328,7 +327,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ResolveObject<T>(int id, Func<int, List<T>> getObjects, Type trueType)
         {
-            WriteObject(ResolveObject(() => getObjects(id), o => o.Count == 0, "Could not resolve object with ID '{id}'", trueType), true);
+            var objs = client.ResolveObject(
+                () => getObjects(id),
+                o => o.Count > 0,
+                $"Could not resolve object with ID '{id}'",
+                trueType,
+                DisplayResolutionError,
+                ShouldStop
+            );
+
+            foreach (var obj in objs)
+                WriteObject(obj);
         }
 
         private Func<int, List<PrtgObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<PrtgObject>().ToList();

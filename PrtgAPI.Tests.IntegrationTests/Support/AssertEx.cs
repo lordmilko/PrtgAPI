@@ -18,6 +18,11 @@ namespace PrtgAPI.Tests.IntegrationTests
             ExecuteAssert(() => Assert.IsTrue(condition, message), "Assert.IsTrue");
         }
 
+        public static void IsFalse(bool condition, string message)
+        {
+            ExecuteAssert(() => Assert.IsFalse(condition, message), "Assert.IsFalse");
+        }
+
         public static void AreNotEqual<T>(T notExpected, T actual, string message)
         {
             ExecuteAssert(() => Assert.AreNotEqual(notExpected, actual, message), "Assert.AreNotEqual");

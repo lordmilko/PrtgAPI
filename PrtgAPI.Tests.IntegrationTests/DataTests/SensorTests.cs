@@ -62,14 +62,14 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             var parameters = new SensorParameters {SortBy = Property.Id};
             var ascending = client.GetSensors(parameters);
             var linqAscending = ascending.OrderBy(s => s.Id);
-            Assert.IsTrue(ascending.SequenceEqual(linqAscending), "Ascending lists were not equal");
+            AssertEx.IsTrue(ascending.SequenceEqual(linqAscending), "Ascending lists were not equal");
 
             parameters.SortDirection = SortDirection.Descending;
             var descending = client.GetSensors(parameters);
             var linqDescending = descending.OrderByDescending(s => s.Id);
-            Assert.IsTrue(descending.SequenceEqual(linqDescending), "Descending lists were not equal");
+            AssertEx.IsTrue(descending.SequenceEqual(linqDescending), "Descending lists were not equal");
 
-            Assert.IsFalse(ascending.SequenceEqual(descending), "Ascending and descending lists were equal");
+            AssertEx.IsFalse(ascending.SequenceEqual(descending), "Ascending and descending lists were equal");
         }
     }
 }
