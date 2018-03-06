@@ -853,7 +853,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 //If an exception was thrown, we should try and clean up our outstanding progress record (if applicable)
                 if (ExpectsContainsProgress)
-                    CompleteProgress(true);
+                    CompleteProgress(true, cmdlet.ProgressManagerEx.CachedRecord != null);
             }
             catch
             {
