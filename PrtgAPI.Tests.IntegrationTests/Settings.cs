@@ -61,7 +61,8 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string ChannelWarningMessage;
 
         //Notification Actions
-        public static string NotificationActionTag;
+        public static string NotificationActionTag1;
+        public static string NotificationActionTag2;
 
         //Object Counts
 

@@ -7,7 +7,7 @@ Describe "Get-NotificationAction" -Tag @("PowerShell", "UnitTest") {
         $actions.Count | Should Be 1
     }
 
-    It "can filter by ID" {
+    It "can filter by Id" {
 
         $expected = @(
             "api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_objid=301&",

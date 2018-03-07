@@ -16,6 +16,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// object can be created by specifying the field name, condition and value to filter upon. For information on properties that can be filtered upon,
     /// see New-SearchFilter.</para>
     /// 
+    /// <para type="description">Get-Device provides two parameter sets for filtering objects by tags. When filtering for devices
+    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
+    /// For scenarios in which you wish to filter for devices containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
     /// <para type="description">When requesting devices belonging to a specified group, PRTG will not return any objects that may
     /// be present under further child groups of the parent group. To work around this, by default Get-Device will automatically recurse
     /// child groups if it detects the initial device request did not return all items (as evidenced by the parent group's TotalDevices property.
@@ -45,8 +50,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Device -Tags C_OS_Win</code>
-    ///     <para>Get all devices that have the tag "C_OS_Win"</para>
+    ///     <code>C:\> Get-Device -Tag C_OS_Win,exch</code>
+    ///     <para>Get all devices that have the tag "C_OS_Win" or "exch"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device -Tags ny,C_OS_Win</code>
+    ///     <para>Get all Windows servers in New York</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -70,7 +80,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SearchFilter</para>
     /// </summary>
     [OutputType(typeof(Device))]
-    [Cmdlet(VerbsCommon.Get, "Device")]
+    [Cmdlet(VerbsCommon.Get, "Device", DefaultParameterSetName = LogicalAndTags)]
     public class GetDevice : PrtgTableRecurseCmdlet<Device, DeviceParameters>
     {
         /// <summary>

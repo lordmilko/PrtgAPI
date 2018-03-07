@@ -17,6 +17,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value to filter upon.
     /// For more information on properties that can be filtered upon, see New-SearchFilter.</para>
     /// 
+    /// <para type="description">Get-Group provides two parameter sets for filtering objects by tags. When filtering for groups
+    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
+    /// For scenarios in which you wish to filter for groups containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
     /// <para type="description">When requesting groups belonging to a specified group, PRTG will not return any objects that may
     /// be present under further child groups of the parent group (i.e. grandchildren). To work around this, by default Get-Groups will automatically recurse
     /// child groups if it detects the initial group request did not return all items (as evidenced by the group's TotalGroups property.
@@ -60,7 +65,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SearchFilter</para>
     /// </summary>
     [OutputType(typeof(Group))]
-    [Cmdlet(VerbsCommon.Get, "Group")]
+    [Cmdlet(VerbsCommon.Get, "Group", DefaultParameterSetName = LogicalAndTags)]
     public class GetGroup : PrtgTableRecurseCmdlet<Group, GroupParameters>
     {
         /// <summary>

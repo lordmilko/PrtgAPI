@@ -13,9 +13,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// with the PRTG Remote Probe installer for monitoring of remote sites. Get-Probe provides a variety of methods of filtering
     /// the probes requested from PRTG, including by probe name, ID and tags. Multiple filters can be used in conjunction to further
     /// limit the number of results returned.</para>
+    /// 
     /// <para type="description">For scenarios in which you wish to filter on properties not covered by the parameters available
     /// in Get-Probe, a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value
     /// to filter upon. For information on properties that can be filtered upon, see New-SearchFilter</para>
+    /// 
+    /// <para type="description">Get-Probe provides two parameter sets for filtering objects by tags. When filtering for probes
+    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
+    /// For scenarios in which you wish to filter for probes containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
     /// <para type="description">The <see cref="Probe"/> objects returned from Get-Probe can be piped to a variety of other cmdlets for
     /// further processing, including Get-Group, Get-Device and Get-Sensor, where the ID or name of the probe will be used to filter
     /// for child objects of the specified type.</para>
@@ -50,7 +57,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">New-SearchFilter</para>
     [OutputType(typeof(Probe))]
-    [Cmdlet(VerbsCommon.Get, "Probe")]
+    [Cmdlet(VerbsCommon.Get, "Probe", DefaultParameterSetName = LogicalAndTags)]
     public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>
     {
         /// <summary>

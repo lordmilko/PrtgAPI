@@ -12,6 +12,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// can be triggered under various circumstances via notification triggers. For more information on notification triggers, see
     /// Get-NotificationTrigger.</para>
     /// 
+    /// <para type="synopsis">Get-NotificationAction supports filtering returned actions by a number of parameters, including by -Name,
+    /// -Id, -Tags or a custom SearchFilter. When filtering by tags, the -Tag parameter can be used, performing a logical OR between all
+    /// specified operands. For scenarios in which you wish to filter for devices containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
+    /// <para type="description">Get-Device provides two parameter sets for filtering objects by tags. When filtering for devices
+    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
+    /// For scenarios in which you wish to filter for devices containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger</code>
     ///     <para>Get all notification actions.</para>
@@ -21,13 +31,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-NotificationTrigger *pager*</code>
     ///     <para>Get all notification actions whose name contains "pager"</para>
     /// </example>
-    /// 
-    /// <para type="link">Get-NotificationTrigger</para>
+    /// <example>
+    ///     <code>C:\> Get-NotificationTrigger -Id 301,302</code>
+    ///     <para>Get the notification actions with IDs 301 and 302.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-NotificationTrigger -Tags PagerDuty</code>
+    ///     <para>Get all notification actions tagged with "PagerDuty"</para>
+    ///     <para/>
+    /// </example>
     /// </summary>
     [OutputType(typeof(NotificationAction))]
-    [Cmdlet(VerbsCommon.Get, "NotificationAction")]
+    [Cmdlet(VerbsCommon.Get, "NotificationAction", DefaultParameterSetName = LogicalAndTags)]
     public class GetNotificationAction : PrtgTableFilterCmdlet<NotificationAction, NotificationActionParameters>
     {
+        private string[] tag;
         private string[] tags;
 
         /// <summary>
@@ -47,11 +66,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessAdditionalParameters()
         {
-            if (Tags != null)
-            {
-                tags = Tags;
-                Tags = null;
-            }
+            StoreParams();
 
             base.ProcessAdditionalParameters();
         }
@@ -63,10 +78,37 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>The filtered records.</returns>
         protected override IEnumerable<NotificationAction> PostProcessAdditionalFilters(IEnumerable<NotificationAction> records)
         {
-            if (tags != null)
-                Tags = tags;
+            RestoreParams();
 
             return base.PostProcessAdditionalFilters(records);
+        }
+
+        private void StoreParams()
+        {
+            if (Tag != null)
+            {
+                tag = Tag;
+                Tag = null;
+            }
+            if (Tags != null)
+            {
+                tags = Tags;
+                Tags = null;
+            }
+        }
+
+        private void RestoreParams()
+        {
+            if (tag != null)
+            {
+                Tag = tag;
+                tag = null;
+            }
+            if (tags != null)
+            {
+                Tags = tags;
+                tags = null;
+            }
         }
 
         /// <summary>

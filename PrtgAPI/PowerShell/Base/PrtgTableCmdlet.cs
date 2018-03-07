@@ -330,25 +330,20 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="value">The value to filter for.</param>
         protected void AddWildcardFilter(Property property, string value)
         {
-            var trimmed = value.Trim('*');
+            var parts = CleanWildcard(value);
 
-            //If the string contains a * in the middle, split the string into its components,
-            //then ask PRTG to return all objects whose name matches the longest section of the string.
-            //We will further filter this in FilterResponseRecordsByName
-            var parts = value.Split('*').Where(p => p != string.Empty).ToList();
-
-            if (parts.Count > 1)
-            {
-                var longest = parts.OrderByDescending(p => p.Length).First();
-
-                trimmed = longest;
-            }
+            var trimmed = string.Join(",", parts);
 
             //If another filter has been specified, an equals filter will become case sensitive. To work around this, we always do "contains", and then filter for
             //what we really wanted once the response is returned
             var filter = new SearchFilter(property, FilterOperator.Contains, trimmed);
 
             AddToFilter(filter);
+        }
+
+        internal List<string> CleanWildcard(string str)
+        {
+            return str.Split('*').Where(p => p != string.Empty).ToList();
         }
 
         private void AddToFilter(SearchFilter filter, bool invalidatesStream = true)

@@ -27,6 +27,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// PRTG may fail to immediately respond until it has finished processing the request you initially issued. Please keep this in mind
     /// when dealing with systems with an extreme number of sensors (>10,000).</para>
     /// 
+    /// <para type="description">Get-Sensor provides two parameter sets for filtering objects by tags. When filtering for sensors
+    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
+    /// For scenarios in which you wish to filter for sensors containing ALL specified tags, the -Tags
+    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// 
     /// <para type="description">When requesting sensors belonging to a specified group, PRTG will not return any objects that may
     /// be present under further child groups of the parent group. To work around this, by default Get-Sensor will automatically recurse
     /// child groups if it detects the initial sensor request did not return all items (as evidenced by the parent group's TotalSensors property.
@@ -61,13 +66,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor</code>
-    ///     <para>Get all sensors that have the tag "wmimemorysensor"</para>
+    ///     <code>C:\> Get-Sensor -Count 1</code>
+    ///     <para>Get only 1 sensor from PRTG.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Count 1</code>
-    ///     <para>Get only 1 sensor from PRTG.</para>
+    ///     <code>C:\> Get-Sensor -Tag wmicpu*,wmimem*</code>
+    ///     <para>Get all WMI CPU Load and WMI Memory sensors.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Tags ny,wmicpu*</code>
+    ///     <para>Get all WMI CPU Load sensors from all New York devices.</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -87,7 +97,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SearchFilter</para>
     /// </summary>
     [OutputType(typeof(Sensor))]
-    [Cmdlet(VerbsCommon.Get, "Sensor")]
+    [Cmdlet(VerbsCommon.Get, "Sensor", DefaultParameterSetName = LogicalAndTags)]
     public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>
     {
         /// <summary>

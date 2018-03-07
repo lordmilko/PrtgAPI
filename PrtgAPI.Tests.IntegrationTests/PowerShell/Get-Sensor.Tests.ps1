@@ -54,11 +54,35 @@ Describe "Get-Sensor_IT" {
         ($sensors | where { ($_|select -expand Tags) -notcontains "pingsensor" }).Count | Should Be 0
     }
 
-    It "can filter by multiple tags" {
-        $sensors = Get-Sensor -Tags wmicpu*,wmimemory*
+    It "can filter by multiple OR tags" {
+        $sensors = Get-Sensor -Tag wmicpu*,wmimemory*
 
         ($sensors | where name -Like Memory*).Count | Should BeGreaterThan 0
         ($sensors | where name -Like "CPU Load*").Count | Should BeGreaterThan 0
+    }
+
+    It "can filter by multiple AND tags" {
+        
+        $tag1 = "wmi*"
+        $tag2 = Settings GroupTag
+
+        $tags = $tag1,$tag2
+       
+        $tag1Sensors = Get-Sensor -Tags $tag1
+        $tag2Sensors = Get-Sensor -Tags $tag2
+        $either = Get-Sensor -Tag $tags
+        $both = Get-Sensor -Tags $tags
+
+        $tag1Sensors.Count | Should BeGreaterThan 0
+        $tag2Sensors.Count | Should BeGreaterThan 0
+        $either.Count | Should BeGreaterThan 0
+        $both.Count | Should BeGreaterThan 0
+
+        $either.Count | Should BeGreaterThan $tag1Sensors.Count
+        $either.Count | Should BeGreaterTHan $tag2Sensors.Count
+        
+        $both.Count | Should BeLessThan $tag1Sensors.Count
+        $both.Count | Should BeLessThan $tag2Sensors.Count
     }
 
     It "can filter by status" {

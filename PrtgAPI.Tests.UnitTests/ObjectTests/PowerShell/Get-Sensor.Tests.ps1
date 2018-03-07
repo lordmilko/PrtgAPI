@@ -55,6 +55,18 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         Get-Sensor -Status Up,Down
     }
 
+    It "filters via OR tags" {
+        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2cu)&filter_tags=@sub(wmimem)" {
+            Get-Sensor -Tag wmi*u*,wmimem*
+        }
+    }
+
+    It "filters via AND tags" {
+        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2cu%2cwmimem)" {
+            Get-Sensor -Tags wmi*u*,wmimem*
+        }
+    }
+
     Context "Group Recursion" {
         It "retrieves sensors from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorUniqueGroup"
