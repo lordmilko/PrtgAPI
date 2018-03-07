@@ -276,26 +276,29 @@ namespace PrtgAPI.Request
 
             foreach (var val in enumerable)
             {
-                string query;
-
-                if (description == Parameter.FilterXyz.GetDescription())
+                if (val != null)
                 {
-                    var filter = (SearchFilter)val;
+                    string query;
 
-                    query = FormatMultiParameterFilter(filter, filter.Value);
-                }
-                else if(val.GetType().IsEnum) //If it's an enum other than FilterXyz
-                {
-                    var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
+                    if (description == Parameter.FilterXyz.GetDescription())
+                    {
+                        var filter = (SearchFilter)val;
 
-                    query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val);
-                }
-                else
-                {
-                    query = FormatSingleParameterWithValEncode(description, val);
-                }
+                        query = FormatMultiParameterFilter(filter, filter.Value);
+                    }
+                    else if (val.GetType().IsEnum) //If it's an enum other than FilterXyz
+                    {
+                        var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
 
-                builder.Append(query + "&");
+                        query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val);
+                    }
+                    else
+                    {
+                        query = FormatSingleParameterWithValEncode(description, val);
+                    }
+
+                    builder.Append(query + "&");
+                }
             }
 
             if(builder.Length > 0)

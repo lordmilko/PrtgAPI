@@ -10,7 +10,7 @@ namespace PrtgAPI.Parameters
         {
             this[Parameter.Custom] = new List<CustomParameter>
             {
-                new CustomParameter("cache", false),
+                new CustomParameter("cache", 0),
                 new CustomParameter("dom", 0),
                 new CustomParameter("path", address)
             };

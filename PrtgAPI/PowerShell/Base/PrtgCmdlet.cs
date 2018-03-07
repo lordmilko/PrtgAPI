@@ -131,6 +131,7 @@ namespace PrtgAPI.PowerShell.Base
             eventManager.RemoveEvent(eventManager.LogVerboseEventState, EventManager.LogVerboseEventStack, resetState);
         }
 
+        [ExcludeFromCodeCoverage]
         private void OnRetryRequest(object sender, RetryRequestEventArgs args)
         {
             var msg = args.Exception.Message.TrimEnd('.');

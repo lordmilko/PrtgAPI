@@ -32,21 +32,21 @@ namespace PrtgAPI.Objects.Deserialization
 
         internal static XmlDeserializer<T> DeserializeList(XDocument doc)
         {
-            return DeserializeInternal<XmlDeserializer<T>, T>(doc);
+            return DeserializeInternal<XmlDeserializer<T>>(doc);
         }
 
         internal static T DeserializeType(XDocument doc)
         {
-            return DeserializeInternal<T, T>(doc);
+            return DeserializeInternal<T>(doc);
         }
 
         internal static void UpdateType(XDocument doc, T obj)
         {
-            DeserializeInternal<T, T>(doc, obj);
+            DeserializeInternal<T>(doc, obj);
         }
 
 #pragma warning disable 693
-        private static T DeserializeInternal<T, TInner>(XDocument doc, object target = null)
+        private static T DeserializeInternal<T>(XDocument doc, object target = null)
 #pragma warning restore 693
         {
             var deserializer = new XmlSerializer(typeof(T));

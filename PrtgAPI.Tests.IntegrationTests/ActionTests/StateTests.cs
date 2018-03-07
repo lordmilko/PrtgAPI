@@ -86,9 +86,9 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             var sensor2 = GetSensor(Settings.UpSensor);
 
-            if (sensor2.Status == Status.Unknown)
+            if (sensor2.Status != Status.Up)
             {
-                Logger.LogTestDetail($"Status was {Status.Unknown}. Waiting up to 5 minutes for sensor to go {Status.Up}");
+                Logger.LogTestDetail($"Status was {sensor2.Status}. Waiting up to 5 minutes for sensor to go {Status.Up}");
 
                 int attempts = 10;
 
@@ -96,7 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 {
                     sensor2 = GetSensor(Settings.UpSensor);
 
-                    if (sensor2.Status == Status.Unknown)
+                    if (sensor2.Status != Status.Up)
                     {
                         Thread.Sleep(30000);
                         attempts--;

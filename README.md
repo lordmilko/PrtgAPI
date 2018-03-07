@@ -75,7 +75,7 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", Aut
 
 #### Common Objects
 
-[Sensors](https://github.com/lordmilko/PrtgAPI/wiki/Sensors), [Devices](https://github.com/lordmilko/PrtgAPI/wiki/Devices), [Groups](https://github.com/lordmilko/PrtgAPI/wiki/Groups), [Probes](https://github.com/lordmilko/PrtgAPI/wiki/Probes) and [Channels](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can all be retrieved using their corresponding `Get<name>` methods
+[Sensors](https://github.com/lordmilko/PrtgAPI/wiki/Sensors), [Devices](https://github.com/lordmilko/PrtgAPI/wiki/Devices), [Groups](https://github.com/lordmilko/PrtgAPI/wiki/Groups), [Probes](https://github.com/lordmilko/PrtgAPI/wiki/Probes) and [Channels](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can all be retrieved using their corresponding `Get` methods
 
 ```c#
 var devices = client.GetDevices();
@@ -264,10 +264,10 @@ Get all [devices](https://github.com/lordmilko/PrtgAPI/wiki/Devices) whose names
 ```powershell
 C:\> Get-Device *dc*
 
-Name                Id      Status      Group           Probe
-----                --      ------      -----           -----
-dc1                 2001    Up          Servers         Local Probe
-dc2                 2002    Down        Servers         Local Probe
+Name                Id      Status    Host      Group           Probe
+----                --      ------    ----      -----           -----
+dc1                 2001    Up        10.0.0.1  Servers         Local Probe
+dc2                 2002    Down      dc-2      Servers         Local Probe
 
 ```
 

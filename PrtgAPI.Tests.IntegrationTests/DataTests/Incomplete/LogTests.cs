@@ -16,7 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         [TestMethod]
         public void Data_Log_GetLogs_SpecifiesStartDate()
         {
-            var count = 5000;
+            var count = 6000;
 
             var logs = client.GetLogs(null, DateTime.Now.AddDays(-1), count: count);
 
@@ -32,7 +32,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         [TestMethod]
         public void Data_Log_GetLogs_SpecifiesEndDate()
         {
-            var logs = client.GetLogs(null, endDate: DateTime.Now.AddDays(-1), count: 5000);
+            var logs = client.GetLogs(null, endDate: DateTime.Now.AddDays(-1), count: 6000);
 
             var first = logs.First();
             var last = logs.Last();
