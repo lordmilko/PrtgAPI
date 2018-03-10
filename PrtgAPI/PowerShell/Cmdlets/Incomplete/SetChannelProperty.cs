@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
@@ -115,12 +117,28 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             string message;
 
+            Action action;
+
             if (ParameterSetName == "Default")
+            {
                 message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
+
+                action = () => client.GetVersionClient(Property).SetChannelProperty(
+                    new[] { SensorId },
+                    ChannelId,
+                    new List<Channel> { Channel },
+                    Property,
+                    Value
+                );
+            }
             else
+            {
                 message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
 
-            ExecuteOperation(() => client.SetObjectProperty(SensorId, ChannelId, Property, Value), message);
+                action = () => client.SetObjectProperty(SensorId, ChannelId, Property, Value);
+            }
+
+            ExecuteOperation(action, message);
         }
 
         /// <summary>
@@ -156,8 +174,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     type += "s";
 
                 var message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
+                
 
-                ExecuteMultiOperation(() => client.SetObjectProperty(sensorIds, groups[i].Key, Property, Value), message, complete);
+
+                ExecuteMultiOperation(() => client.GetVersionClient(Property).SetChannelProperty(sensorIds, groups[i].Key, groups[i].ToList(), Property, Value), message, complete);
             }
         }
 

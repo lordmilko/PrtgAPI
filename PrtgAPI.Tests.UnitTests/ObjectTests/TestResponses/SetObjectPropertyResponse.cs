@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
@@ -27,6 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 case nameof(HtmlFunction.EditSettings):
                     return new BasicResponse(GetSetObjectPropertyResponse(address));
+                case nameof(JsonFunction.GetStatus):
+                    return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(JsonFunction.GeoLocator):
                     return new BasicResponse(GetLocationResponse(address));
                 default:

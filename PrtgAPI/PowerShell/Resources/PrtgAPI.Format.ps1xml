@@ -617,6 +617,9 @@
                                 <PropertyName>PassHash</PropertyName>
                             </ListItem>
                             <ListItem>
+                              <PropertyName>Version</PropertyName>
+                            </ListItem>
+                            <ListItem>
                                 <PropertyName>RetryCount</PropertyName>
                             </ListItem>
                             <ListItem>

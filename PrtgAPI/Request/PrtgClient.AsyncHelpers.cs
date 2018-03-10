@@ -30,7 +30,7 @@ namespace PrtgAPI
         // GetChannelsInternal
         //######################################
 
-        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null)
+        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
@@ -40,6 +40,9 @@ namespace PrtgAPI
 
             if (nameFilter != null)
                 items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
+
+            if (idFilter != null)
+                items.Where(e => !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))).Remove();
 
             items = response.Descendants("item").ToList();
 
@@ -59,7 +62,7 @@ namespace PrtgAPI
             return new List<Channel>();
         }
 
-        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null)
+        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
@@ -69,6 +72,9 @@ namespace PrtgAPI
 
             if (nameFilter != null)
                 items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
+
+            if (idFilter != null)
+                items.Where(e => !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))).Remove();
 
             items = response.Descendants("item").ToList();
 

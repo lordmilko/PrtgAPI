@@ -55,6 +55,7 @@
     <Compile Include="Attributes\SecondaryPropertyAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="Attributes\TypeLookupAttribute.cs" />
+    <Compile Include="Attributes\VersionAttribute.cs" />
     <Compile Include="Enums\Deserialization\ClusterNodeType.cs" />
     <Compile Include="Enums\Deserialization\LicenseType.cs" />
     <Compile Include="Enums\Deserialization\LogStatus.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Enums\Serialization\SensorTypeInternal.cs" />
     <Compile Include="Enums\SystemCacheType.cs" />
     <Compile Include="Enums\ConfigFileType.cs" />
+    <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Events\EventStack.cs" />
     <Compile Include="Events\EventState.cs" />
     <Compile Include="Events\LogVerboseEventArgs.cs" />
@@ -313,6 +315,14 @@
       <DependentUpon>PrtgClient.AsyncHelpers.tt</DependentUpon>
     </Compile>
     <Compile Include="Request\RequestEngine.cs" />
+    <Compile Include="Request\Version\ChannelLimitAnalyzer.cs" />
+    <Compile Include="Request\Version\VersionClient.cs" />
+    <Compile Include="Request\Version\VersionClient18_1.cs" />
+    <Compile Include="Request\Version\VersionClient18_1.Methods.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VersionClient18_1.Methods.tt</DependentUpon>
+    </Compile>
     <Compile Include="_Todo.cs" />
     <Compile Include="Properties\AssemblyFileVersion.cs">
       <AutoGen>True</AutoGen>
@@ -429,6 +439,7 @@
     <Compile Include="PrtgClient.cs" />
     <Compile Include="Request\PrtgUrl.cs" />
     <Compile Include="Request\PrtgWebClient.cs" />
+    <None Include="Request\T4Functions.ttinc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -472,6 +483,10 @@
     <Content Include="Request\PrtgClient.AsyncHelpers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrtgClient.AsyncHelpers.cs</LastGenOutput>
+    </Content>
+    <Content Include="Request\Version\VersionClient18_1.Methods.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VersionClient18_1.Methods.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

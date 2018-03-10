@@ -55,6 +55,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new BasicResponse(string.Empty);
                 case nameof(XmlFunction.HistoricData):
                     return new SensorHistoryResponse();
+                case nameof(JsonFunction.GetStatus):
+                    return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(JsonFunction.Triggers):
                     return new TriggerOverviewResponse();
                 case nameof(HtmlFunction.ObjectData):

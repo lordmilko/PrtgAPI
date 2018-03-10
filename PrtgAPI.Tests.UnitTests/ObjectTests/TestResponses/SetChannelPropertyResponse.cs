@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    class SetChannelPropertyResponse : IWebResponse
+    class SetChannelPropertyResponse : MultiTypeResponse
     {
         private ChannelProperty property;
         private int channelId;
@@ -20,8 +21,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             this.value = value;
         }
 
-        public string GetResponseText(ref string address)
+        protected override IWebResponse GetResponse(ref string address, string function)
         {
+            if (function == nameof(JsonFunction.GetStatus))
+                return new ServerStatusResponse(new ServerStatusItem());
+
             var queries = UrlHelpers.CrackUrl(address);
             queries.Remove("id");
             queries.Remove("username");
@@ -54,7 +58,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             else
                 throw new NotImplementedException($"Test code for property '{property}' is not implemented.");
 
-            return "OK";
+            return new BasicResponse(string.Empty);
         }
 
         private void AssertCollectionLength(string address, NameValueCollection collection, int count)

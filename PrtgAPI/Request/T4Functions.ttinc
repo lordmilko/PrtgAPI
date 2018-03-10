@@ -1,0 +1,128 @@
+﻿<#+
+    public string GetSignature(string name, string returnType, int i)
+    {
+        if(i == 0)
+            return $"{returnType} {name}";
+        else
+        {
+            if(returnType == "void")
+                returnType = "Task";
+            else
+                returnType = $"Task<{returnType}>";
+        }
+
+        return $"async {returnType} {name}Async";
+    }
+
+    public string CallFunction(string name, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters})";
+        else
+            return $"await {name}Async({parameters}).ConfigureAwait(false)";
+    }
+
+    public string CallFunc(string name, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters})";
+        else
+            return $"await {name}({parameters}).ConfigureAwait(false)";
+    }
+
+    public string CallGenericFunction(string name, string type, string parameters, int i)
+    {
+        if(i == 0)
+            return $"{name}<{type}>({parameters})";
+        else
+            return $"await {name}Async<{type}>({parameters}).ConfigureAwait(false)";
+    }
+
+    public string AwaitOrForceResult(string function, int i)
+    {
+        if(i == 0)
+            return $"{function}.Result;";
+        else
+            return $"await {function}.ConfigureAwait(false);";
+    }
+
+    public string Sleep(int duration, int i)
+    {
+        if(i == 0)
+            return $"Thread.Sleep({duration});";
+        else
+            return $"await Task.Delay({duration}).ConfigureAwait(false);";
+    }
+
+    public string SleepPre(int i)
+    {
+        if(i == 0)
+            return "Thread.Sleep(";
+        else
+            return "await Task.Delay(";
+    }
+
+    public string SleepPost(int i)
+    {
+        if(i == 0)
+            return ")";
+        else
+            return ").ConfigureAwait(false)";
+    }
+
+    public string DeclareLightFunc1(string funcName, string args, string returnType, string function, int i)
+    {
+        if(i == 0)
+            return $"Func<{args}, {returnType}> {funcName} = {function}";
+        else
+            return $"Func<{args}, Task<{returnType}>> {funcName} = o => Task.FromResult({function}(o))";
+    }
+
+    public string DeclareAction0(string variableName, string function, string functionArgs, int i)
+    {
+        if(i == 0)
+            return $"Action {variableName} = () => {function}({functionArgs})";
+        else
+            return $"Func<Task> {variableName} = async () => await {function}Async({functionArgs}).ConfigureAwait(false)";
+    }
+
+	public string DeclareFunc(string variableName, string lambdaArgs, string inputTypes, string function, string args, string functionReturnType, int i)
+    {
+        if(i == 0)
+            return $"Func<{inputTypes}, {functionReturnType}> {variableName} = ({lambdaArgs}) => {function}({args})";
+        else
+            return $"Func<{inputTypes}, Task<{functionReturnType}>> {variableName} = async ({lambdaArgs}) => await {function}Async({args}).ConfigureAwait(false)";
+    }
+
+	public string DeclareFuncFromVariable0(string variableName, string function, string args, string functionReturnType, int i)
+    {
+        if(i == 0)
+            return $"Func<{functionReturnType}> {variableName} = () => {function}({args})";
+        else
+            return $"Func<Task<{functionReturnType}>> {variableName} = async () => await {function}({args}).ConfigureAwait(false)";
+    }
+
+    public string DeclareFuncThen0(string variableName, string function, string args, string functionReturnType, string then, int i)
+    {
+        if(i == 0)
+            return $"Func<{functionReturnType}> {variableName} = () => {function}({args}){then}";
+        else
+            return $"Func<Task<{functionReturnType}>> {variableName} = async () => (await {function}Async({args}).ConfigureAwait(false)){then}";
+    }
+
+    public string GetFuncRet(string type, int i)
+    {
+        if(i == 0)
+            return type;
+        else
+            return $"Task<{type}>";
+    }
+
+    public string GetActionParam0(int i)
+    {
+        if(i == 0)
+            return "Action";
+        else
+            return "Func<Task>";
+    }
+#>

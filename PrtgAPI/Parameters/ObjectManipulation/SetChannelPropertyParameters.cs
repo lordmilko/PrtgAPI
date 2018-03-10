@@ -19,7 +19,7 @@ namespace PrtgAPI.Parameters
             set { SensorIds = value; }
         }
 
-        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelProperty property, object value)
+        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
         {
             if (sensorIds == null)
                 throw new ArgumentNullException(nameof(sensorIds));
@@ -31,6 +31,9 @@ namespace PrtgAPI.Parameters
             this.channelId = channelId;
 
             AddTypeSafeValue(property, value, true);
+
+            if (versionSpecific != null)
+                AddDependentProperty(versionSpecific.Item2, versionSpecific.Item1);
         }
 
         protected override PropertyInfo GetPropertyInfo(Enum property)

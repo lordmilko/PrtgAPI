@@ -66,7 +66,10 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
         It "sets a property with a valid type" {
             
-            SetAddressValidatorResponse "id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            )
 
             $channel | Set-ChannelProperty ErrorLimitMessage "oh no!"
         }
@@ -75,7 +78,10 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
             $channel.Count | Should Be 2
 
-            SetAddressValidatorResponse "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+            )
 
             $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$true
         }
@@ -85,6 +91,7 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             $channel.Count | Should Be 2
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
                 "editsettings?id=4000&limiterrormsg_1=oh+no!&limitmode_1=1&"
                 "editsettings?id=4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
             )
@@ -96,20 +103,29 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
     Context "Manual" {
         It "sets a property using the manual parameter set" {
 
-            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "editsettings?id=1001&limitmode_1=1&"
+            )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 LimitsEnabled $true
         }
 
         It "executes with -Batch:`$true" {
             
-            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "editsettings?id=1001&limitmode_1=1&"
+            )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$true LimitsEnabled $true
         }
 
         It "executes with -Batch:`$false" {
-            SetAddressValidatorResponse "id=1001&limitmode_1=1&"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "editsettings?id=1001&limitmode_1=1&"
+            )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$false LimitsEnabled $true
         }

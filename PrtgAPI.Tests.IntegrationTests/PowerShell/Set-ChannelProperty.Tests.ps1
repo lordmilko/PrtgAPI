@@ -21,6 +21,8 @@ Describe "Set-ChannelProperty_IT" {
         $newValue | Should Not BeNullOrEmpty
 
         $newValue | Should Be $value
+
+        (& $channel) | Set-ChannelProperty $property $initialValue
     }
 
     function SetChild($property, $value, $dependentProperty, $dependentValue)
@@ -45,6 +47,35 @@ Describe "Set-ChannelProperty_IT" {
         $newDependent | Assert-Equal $dependentValue
 
         (& $channel) | Set-ChannelProperty $dependentProperty $initialDependent
+    }
+
+    function SetLimit
+    {
+        $client = Get-PrtgClient
+
+        $c1 = & $channel
+
+        $c1.UpperErrorLimit | Assert-Equal $null -Message "Initial channel UpperErrorLimit was not null"
+
+        Invoke-WebRequest "$($client.Server)/editsettings?id=$($c1.SensorId)&limitmaxerror_$($c1.Id)=1&username=$($client.UserName)&passhash=$($client.PassHash)"
+
+        $c2 = & $channel
+
+        $c2.UpperErrorLimit | Assert-Equal 1 -Message "Initial channel UpperErrorLimit was not 1"
+    }
+
+    function SetValueWithLimit($property, $value)
+    {
+        SetLimit
+
+        SetValue $property $value
+    }
+
+    function SetChildWithLimit($property, $value, $dependentProperty, $dependentValue)
+    {
+        SetLimit
+
+        SetChild $property $value $dependentProperty $dependentValue
     }
 
     function ClearDependents($property, $value, $dependents)
@@ -201,9 +232,14 @@ Describe "Set-ChannelProperty_IT" {
         SetChild "UpperWarningLimit"    200                "LimitsEnabled" $true
         SetChild "LowerErrorLimit"     -200                "LimitsEnabled" $true
         SetChild "LowerWarningLimit"   -300                "LimitsEnabled" $true
-        SetChild "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true
-        SetChild "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true
-        SetValue "LimitsEnabled"        $true
+        
+        { SetChild "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true } | Should Throw "does not have a limit value defined on it"
+        { SetChild "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true } | Should Throw "does not have a limit value defined on it"
+        { SetValue "LimitsEnabled" $true                                           } | Should Throw "does not have a limit value defined on it"
+
+        SetValueWithLimit "LimitsEnabled" $true
+        SetChildWithLimit "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true
+        SetChildWithLimit "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true
     }
 
     It "can set the properties of multiple in a single request" {
@@ -218,7 +254,7 @@ Describe "Set-ChannelProperty_IT" {
         $channels[0].LimitsEnabled | Should Be $false
         $channels[1].LimitsEnabled | Should Be $false
 
-        $channels | Set-ChannelProperty LimitsEnabled $true
+        $channels | Set-ChannelProperty LowerWarningLimit 20
 
         $newChannels = $sensor | Get-Channel -Id $ids
 

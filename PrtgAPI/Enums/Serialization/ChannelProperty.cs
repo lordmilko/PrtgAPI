@@ -107,6 +107,7 @@ namespace PrtgAPI
         /// <summary>
         /// Whether limits are enabled for this object. If limits are disabled, limit thresholds will be ignored.
         /// </summary>
+        [Version(nameof(RequestVersion.v18_1))]
         LimitsEnabled,
 
         /// <summary>
@@ -136,12 +137,14 @@ namespace PrtgAPI
         /// <summary>
         /// The message to display when this channel causes the sensor to go into an error state.
         /// </summary>
+        [Version(nameof(RequestVersion.v18_1))]
         [DependentProperty(nameof(LimitsEnabled), true)]
         ErrorLimitMessage,
 
         /// <summary>
         /// The message to display when this channel causes the sensor to go into a warning state.
         /// </summary>
+        [Version(nameof(RequestVersion.v18_1))]
         [DependentProperty(nameof(LimitsEnabled), true)]
         WarningLimitMessage
     }

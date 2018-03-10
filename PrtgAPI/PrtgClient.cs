@@ -82,6 +82,17 @@ namespace PrtgAPI
             remove { logVerbose -= value; }
         }
 
+        /// <summary>
+        /// Specifies the version of the PRTG Server this client is connected to.
+        /// </summary>
+        public Version Version
+        {
+            private set { version = value; }
+            get { return version ?? (version = GetStatus().Version); }
+        }
+
+        private Version version;
+
         internal void Log(string message)
         {
             HandleEvent(logVerbose, new LogVerboseEventArgs(message));
@@ -123,6 +134,33 @@ namespace PrtgAPI
         }
 
 #region Requests
+
+        internal VersionClient GetVersionClient(object obj)
+        {
+            VersionAttribute attr;
+
+            if (obj is Enum)
+                attr = ((Enum) obj).GetEnumAttribute<VersionAttribute>();
+            else
+                throw new NotImplementedException($"Don't know how to get {nameof(VersionAttribute)} for '{obj}'");
+
+            var ver = attr?.Version ?? RequestVersion.v14_4;
+
+            if (attr != null && attr.IsActive(Version))
+            {
+                switch (ver)
+                {
+                    case RequestVersion.v18_1:
+                        return new VersionClient18_1(this);
+
+                    default:
+                        return new VersionClient(ver, this);
+                }
+            }
+            else
+                return new VersionClient(ver, this);
+        }
+
     #region Object Data
 
         private string GetPassHash(string password)
@@ -148,7 +186,7 @@ namespace PrtgAPI
         {
             var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
-            return XmlDeserializer<T>.DeserializeList(response);
+            return SetVersion(XmlDeserializer<T>.DeserializeList(response));
         }
 
         private async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters) => (await GetObjectsRawAsync<T>(parameters).ConfigureAwait(false)).Items;
@@ -157,7 +195,7 @@ namespace PrtgAPI
         {
             var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
-            return XmlDeserializer<T>.DeserializeList(response);
+            return SetVersion(XmlDeserializer<T>.DeserializeList(response));
         }
 
         private T GetObject<T>(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
@@ -188,6 +226,14 @@ namespace PrtgAPI
             var response = await requestEngine.ExecuteRequestAsync(function, parameters, responseParser).ConfigureAwait(false);
 
             var data = JsonDeserializer<T>.DeserializeType(response);
+
+            return data;
+        }
+
+        private XmlDeserializer<T> SetVersion<T>(XmlDeserializer<T> data)
+        {
+            if (version == null)
+                version = Version.Parse(data.Version.Trim('+'));
 
             return data;
         }
@@ -2048,8 +2094,8 @@ namespace PrtgAPI
         /// <param name="property">The property of each channel to modify</param>
         /// <param name="value">The value to set each channel's property to.</param>
         public void SetObjectProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            SetObjectProperty(new SetChannelPropertyParameters(sensorIds, channelId, property, value), sensorIds.Length);
-
+            GetVersionClient(property).SetChannelProperty(sensorIds, channelId, null, property, value);
+        
         /// <summary>
         /// Asynchronously modify channel properties for a PRTG Sensor.
         /// </summary>
@@ -2068,7 +2114,7 @@ namespace PrtgAPI
         /// <param name="property">The property of each channel to modify</param>
         /// <param name="value">The value to set each channel's property to.</param>
         public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            await SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, property, value), sensorIds.Length).ConfigureAwait(false);
+            await GetVersionClient(property).SetChannelPropertyAsync(sensorIds, channelId, null, property, value).ConfigureAwait(false);
 
         #endregion Channel
             #region Custom
@@ -2115,10 +2161,10 @@ namespace PrtgAPI
 
             #endregion
 
-        private void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
+        internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
             requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ParseSetObjectPropertyUrl(numObjectIds, m));
 
-        private async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
+        internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
             await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
 
         private string ParseSetObjectPropertyUrl(int numObjectIds, HttpResponseMessage response)

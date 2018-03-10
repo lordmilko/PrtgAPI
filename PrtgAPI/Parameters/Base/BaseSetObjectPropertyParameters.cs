@@ -72,11 +72,11 @@ namespace PrtgAPI.Parameters
             }
         }
 
-        private void AddDependentProperty(DependentPropertyAttribute attrib, Enum parent)
+        internal void AddDependentProperty(object val, Enum parent)
         {
             var info = GetPropertyInfo(parent);
 
-            var dependencyParser = new DynamicPropertyTypeParser(parent, info, attrib.RequiredValue);
+            var dependencyParser = new DynamicPropertyTypeParser(parent, info, val);
             AddParameter(parent, info, dependencyParser.ParseValue());
         }
 
@@ -110,7 +110,7 @@ namespace PrtgAPI.Parameters
                         throw;
                 }
                 
-                AddDependentProperty(parentOfChild, parent);
+                AddDependentProperty(parentOfChild.RequiredValue, parent);
                 AddDependentPropertyRecursiveUp(parent);
             }
         }

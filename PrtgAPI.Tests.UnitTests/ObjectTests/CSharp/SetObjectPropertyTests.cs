@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -10,6 +13,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     [TestClass]
     public class SetObjectPropertyTests : BaseTest
     {
+        #region Type Parsing
+
         [TestMethod]
         public void SetObjectProperty_Enum_With_Int()
         {
@@ -73,6 +78,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 "Expected type: 'System.Int32'. Actual type: 'System.Boolean'"
             );
         }
+
+        #endregion
+        #region Normal
 
         [TestMethod]
         public void SetObjectProperty_ReverseDependencyProperty()
@@ -229,5 +237,820 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Thread.CurrentThread.CurrentCulture = originalCulture;
             }
         }
+
+        #endregion
+        #region Version Specific
+            #region Single
+
+        [TestMethod]
+        public void SetChannelProperty_SingleValue_OnlyUpperErrorLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_SingleValue_OnlyLowerErrorLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 1, null, null},
+                new int?[] {null, 1, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_SingleValue_OnlyUpperWarningLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, 1, null},
+                new int?[] {null, null, 1, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_SingleValue_OnlyLowerWarningLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, 1},
+                new int?[] {null, null, null, 1}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1" });
+        }
+
+            #endregion
+            #region Multiple
+
+        [TestMethod]
+        public void SetChannelProperty_MultipleValues_OnlyUpperErrorLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {2, null, null, null},
+                new int?[] {2, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1"
+            });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_MultipleValues_OnlyLowerErrorLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 1, null, null},
+                new int?[] {null, 2, null, null},
+                new int?[] {null, 2, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            //todo: does this actually group together the sensor IDs to execute against for the request?
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1"
+            });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_MultipleValues_OnlyUpperWarningLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, 1, null},
+                new int?[] {null, null, 2, null},
+                new int?[] {null, null, 2, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1"
+            });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_MultipleValues_OnlyLowerWarningLimit()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, 1},
+                new int?[] {null, null, null, 2},
+                new int?[] {null, null, null, 2}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1"
+                
+            });
+        }
+
+            #endregion
+            #region Version Properties
+
+        [TestMethod]
+        public void SetChannelProperty_VersionProperty_ErrorLimitMessage()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_VersionProperty_WarningLimitMessage()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.WarningLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_VersionProperty_LimitsEnabled_True()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.LimitsEnabled,
+                (object)true,
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_VersionProperty_LimitsEnabled_False()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.LimitsEnabled,
+                (object)false,
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_VersionProperty_NormalProperty()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.SpikeFilterMax,
+                (object)100,
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+        }
+
+            #endregion
+
+        [TestMethod]
+        public void SetChannelProperty_ThreeValues()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1,    null, 2,    1}, //1001 - 2
+                new int?[] {1,    null, null, 4}, //2001 - 2
+                new int?[] {5,    null, 8,    7}, //3001 - 4
+                new int?[] {2,    3,    15,   6}, //4001 - 1
+                new int?[] {null, 3,    20,   5}, //5001 - 1
+                new int?[] {4,    3,    null, 8}  //6001 - 1
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001,4001,5001,6001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v18_1, new[]
+            {
+                "id=4001,5001,6001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=3",
+                "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1",
+                "id=3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=5"
+            });
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_SomeNull()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 2, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            Action<RequestVersion> action = version => SetChannelProperty(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+
+            action(RequestVersion.v14_4);
+
+            var builder = new StringBuilder();
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Sensor ID 2001 does not have a limit value defined on it. ");
+            builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
+
+            AssertEx.Throws<InvalidOperationException>(() => action(RequestVersion.v18_1), builder.ToString());
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_AllNull()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            Action<RequestVersion> action = version => SetChannelProperty(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+
+            action(RequestVersion.v14_4);
+
+            var builder = new StringBuilder();
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Sensor IDs 1001 and 2001 do not have a limit value defined on them. ");
+            builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
+
+            AssertEx.Throws<InvalidOperationException>(() => action(RequestVersion.v18_1), builder.ToString());
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_VersionSpecific_ResolvesChannels()
+        {
+            var addresses = new[]
+            {
+                "api/table.xml?content=channels&columns=lastvalue,objid,name&count=*&id=1001",
+                "controls/channeledit.htm?id=1001&channel=1",
+                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
+            };
+
+            var property = ChannelProperty.ErrorLimitMessage;
+            var val = "hello";
+            
+            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
+            SetVersion(client, RequestVersion.v18_1);
+
+            client.GetVersionClient(property).SetChannelProperty(new[] { 1001 }, 1, null, property, val);
+        }
+
+        private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
+        {
+            var property = config.Item1;
+            var val = config.Item2;
+            var matrix = config.Item3;
+
+            var channels = matrix.Select(CreateChannel).ToList();
+
+            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
+            SetVersion(client, version);
+
+            client.GetVersionClient(property).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, property, val);
+        }
+
+        private void SetVersion(PrtgClient client, RequestVersion version)
+        {
+            var f = client.GetInternalFieldInfo("version");
+            f.SetValue(client, new Version(version.ToString().TrimStart('v').Replace('_', '.')));
+        }
+
+        private Channel CreateChannel(int?[] limits, int i)
+        {
+            return new Channel
+            {
+                Id = 1,
+                SensorId = 1001 + i*1000,
+                UpperErrorLimit = limits[0],
+                LowerErrorLimit = limits[1],
+                UpperWarningLimit = limits[2],
+                LowerWarningLimit = limits[3]
+            };
+        }
+
+        #endregion
+        #region Version Specific Async
+            #region Single
+
+        [TestMethod]
+        public async Task SetChannelProperty_SingleValue_OnlyUpperErrorLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_SingleValue_OnlyLowerErrorLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 1, null, null},
+                new int?[] {null, 1, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_SingleValue_OnlyUpperWarningLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, 1, null},
+                new int?[] {null, null, 1, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_SingleValue_OnlyLowerWarningLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, 1},
+                new int?[] {null, null, null, 1}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1" });
+        }
+
+            #endregion
+            #region Multiple
+
+        [TestMethod]
+        public async Task SetChannelProperty_MultipleValues_OnlyUpperErrorLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {2, null, null, null},
+                new int?[] {2, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1"
+            });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_MultipleValues_OnlyLowerErrorLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 1, null, null},
+                new int?[] {null, 2, null, null},
+                new int?[] {null, 2, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            //todo: does this actually group together the sensor IDs to execute against for the request?
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1"
+            });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_MultipleValues_OnlyUpperWarningLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, 1, null},
+                new int?[] {null, null, 2, null},
+                new int?[] {null, null, 2, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1"
+            });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_MultipleValues_OnlyLowerWarningLimitAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, 1},
+                new int?[] {null, null, null, 2},
+                new int?[] {null, null, null, 2}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
+            {
+                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=2",
+                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1"
+
+            });
+        }
+
+            #endregion
+            #region Version Properties
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionProperty_ErrorLimitMessageAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionProperty_WarningLimitMessageAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.WarningLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionProperty_LimitsEnabled_TrueAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.LimitsEnabled,
+                (object)true,
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=1&limitmaxerror_2=1" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionProperty_LimitsEnabled_FalseAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1, null, null, null},
+                new int?[] {1, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.LimitsEnabled,
+                (object)false,
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionProperty_NormalPropertyAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.SpikeFilterMax,
+                (object)100,
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+        }
+
+            #endregion
+
+        [TestMethod]
+        public async Task SetChannelProperty_ThreeValuesAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {1,    null, 2,    1}, //1001 - 2
+                new int?[] {1,    null, null, 4}, //2001 - 2
+                new int?[] {5,    null, 8,    7}, //3001 - 4
+                new int?[] {2,    3,    15,   6}, //4001 - 1
+                new int?[] {null, 3,    20,   5}, //5001 - 1
+                new int?[] {4,    3,    null, 8}  //6001 - 1
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001,4001,5001,6001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
+            {
+                "id=4001,5001,6001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=3",
+                "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1",
+                "id=3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=5"
+            });
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_SomeNullAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, 2, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            Func<RequestVersion, Task> action = async version => await SetChannelPropertyAsync(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+
+            await action(RequestVersion.v14_4);
+
+            var builder = new StringBuilder();
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Sensor ID 2001 does not have a limit value defined on it. ");
+            builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await action(RequestVersion.v18_1), builder.ToString());
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_AllNullAsync()
+        {
+            var matrix = new[]
+            {
+                new int?[] {null, null, null, null},
+                new int?[] {null, null, null, null}
+            };
+
+            var config = Tuple.Create(
+                ChannelProperty.ErrorLimitMessage,
+                (object)"test",
+                matrix
+            );
+
+            Func<RequestVersion, Task> action = async version => await SetChannelPropertyAsync(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+
+            await action(RequestVersion.v14_4);
+
+            var builder = new StringBuilder();
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Sensor IDs 1001 and 2001 do not have a limit value defined on them. ");
+            builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await action(RequestVersion.v18_1), builder.ToString());
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_VersionSpecific_ResolvesChannelsAsync()
+        {
+            var addresses = new[]
+            {
+                "api/table.xml?content=channels&columns=lastvalue,objid,name&count=*&id=1001",
+                "controls/channeledit.htm?id=1001&channel=1",
+                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
+            };
+
+            var property = ChannelProperty.ErrorLimitMessage;
+            var val = "hello";
+
+            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
+            SetVersion(client, RequestVersion.v18_1);
+
+            await client.GetVersionClient(property).SetChannelPropertyAsync(new[] { 1001 }, 1, null, property, val);
+        }
+
+        private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
+        {
+            var property = config.Item1;
+            var val = config.Item2;
+            var matrix = config.Item3;
+
+            var channels = matrix.Select(CreateChannel).ToList();
+
+            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
+            SetVersion(client, version);
+
+            await client.GetVersionClient(property).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, property, val);
+        }
+
+        #endregion
     }
 }

@@ -211,7 +211,7 @@ namespace PrtgAPI.Helpers
                 .Cast<DependentPropertyAttribute>()
                 .Any(a => a.Name == element.ToString()))
                 .Select(e => e.Name.ToEnum<T>())
-                .ToArray();
+                .OrderBy(e => e).ToArray();
 
             return elms;
         }

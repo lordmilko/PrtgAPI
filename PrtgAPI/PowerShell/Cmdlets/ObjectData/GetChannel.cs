@@ -71,20 +71,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>A list of channels.</returns>
         protected override IEnumerable<Channel> GetRecords()
         {
-            Func<string, bool> filter = null;
+            Func<string, bool> nameFilter = null;
+            Func<int, bool> idFilter = null;
 
             if (Name != null)
             {
                 var pattern = new WildcardPattern(Name.ToLower());
-                filter = name => pattern.IsMatch(name.ToLower());
+                nameFilter = name => pattern.IsMatch(name.ToLower());
             }
-
-            var results = client.GetChannelsInternal(SensorId ?? Sensor.Id, filter).OrderBy(c => c.Id).ToList();
 
             if (Id != null)
-            {
-                results = results.Where(r => Id.Contains(r.Id)).ToList();
-            }
+                idFilter = id => Id.Contains(id);
+
+            var results = client.GetChannelsInternal(
+                SensorId ?? Sensor.Id,
+                nameFilter,
+                idFilter
+            ).OrderBy(c => c.Id).ToList();
 
             return results;
         }
