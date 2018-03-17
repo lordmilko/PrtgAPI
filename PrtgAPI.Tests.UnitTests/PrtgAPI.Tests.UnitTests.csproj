@@ -113,6 +113,7 @@
     <Compile Include="ObjectTests\CSharp\RefreshTests.cs" />
     <Compile Include="ObjectTests\CSharp\SensorSettingsTests.cs" />
     <Compile Include="ObjectTests\CSharp\SensorTargetTests.cs" />
+    <Compile Include="ObjectTests\CSharp\SensorTypeTests.cs" />
     <Compile Include="ObjectTests\CSharp\ServerStatusTests.cs" />
     <Compile Include="ObjectTests\CSharp\SetNotificationTriggerTests.cs" />
     <Compile Include="ObjectTests\CSharp\SetObjectPropertyParameters\FakeMultipleFormattable.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="ObjectTests\TestResponses\SensorTarget\FaultySensorTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTarget\SqlServerQueryFileTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTotalsResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\SensorTypeResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\ServerStatusResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SetChannelPropertyResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SetNotificationTriggerResponse.cs" />
@@ -244,6 +246,7 @@
     <None Include="ObjectTests\PowerShell\Get-SensorHistory.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Get-SensorTarget.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Get-SensorTotals.Tests.ps1" />
+    <None Include="ObjectTests\PowerShell\Get-SensorType.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\GoPrtg\Connect-GoPrtgServer.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\GoPrtg\Get-GoPrtgServer.Tests.ps1" />
     <None Include="ObjectTests\PowerShell\Load-PrtgConfigFile.Tests.ps1" />

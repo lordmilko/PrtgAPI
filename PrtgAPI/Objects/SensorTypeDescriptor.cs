@@ -22,7 +22,7 @@ namespace PrtgAPI
     public class SensorTypeDescriptor
     {
         /// <summary>
-        /// The ID of the object the sensor will be created under.
+        /// The internal identifier of the sensor type.
         /// </summary>
         [DataMember(Name = "id")]
         public string Id { get; set; }

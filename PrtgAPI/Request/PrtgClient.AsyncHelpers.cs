@@ -16,6 +16,7 @@ using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request;
 
 //Methods with complex logic surrounding sync/async function calls.
 //For each method, two variants a generated. A synchronous method with the
@@ -148,7 +149,7 @@ namespace PrtgAPI
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-            var channel = GetTriggerChannel(parameters);
+            var channel = RequestParser.GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
@@ -187,7 +188,7 @@ namespace PrtgAPI
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-            var channel = GetTriggerChannel(parameters);
+            var channel = RequestParser.GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
@@ -419,7 +420,7 @@ namespace PrtgAPI
 
                 var logs = GetLogs(null, endDate: restartTime, status: statuses.ToArray());
 
-                UpdateProbeStatus(probeStatuses, logs);
+                ResponseParser.UpdateProbeStatus(probeStatuses, logs);
 
                 if (progressCallback == null)
                     Thread.Sleep(5000);
@@ -448,7 +449,7 @@ namespace PrtgAPI
 
                 var logs = await GetLogsAsync(null, endDate: restartTime, status: statuses.ToArray()).ConfigureAwait(false);
 
-                UpdateProbeStatus(probeStatuses, logs);
+                ResponseParser.UpdateProbeStatus(probeStatuses, logs);
 
                 if (progressCallback == null)
                     await Task.Delay(5000).ConfigureAwait(false);
@@ -594,7 +595,7 @@ namespace PrtgAPI
             if (!continueQuery)
                 return null;
 
-            ValidateSensorTargetProgressResult(p);
+            ResponseParser.ValidateSensorTargetProgressResult(p);
 
             var page = requestEngine.ExecuteRequest(HtmlFunction.AddSensor4, parameters);
 
@@ -628,7 +629,7 @@ namespace PrtgAPI
             if (!continueQuery)
                 return null;
 
-            ValidateSensorTargetProgressResult(p);
+            ResponseParser.ValidateSensorTargetProgressResult(p);
 
             var page = await requestEngine.ExecuteRequestAsync(HtmlFunction.AddSensor4, parameters).ConfigureAwait(false);
 
@@ -644,12 +645,12 @@ namespace PrtgAPI
         {
             if (resolve)
             {
-                var filters = GetFilters(parentId, parameters);
+                var filters = RequestParser.GetFilters(parentId, parameters);
 
                 Action addObjectInternal = () => AddObjectInternal(parentId, parameters, function);
                 Func<List<T>> getObjs = () => getObjects(filters);
 
-                return (ResolveWithDiff(addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
+                return (ResolveWithDiff(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -661,9 +662,9 @@ namespace PrtgAPI
 
         private void AddObjectInternal(int objectId, NewObjectParameters parameters, CommandFunction function)
         {
-            var lengthLimit = ValidateObjectParameters(parameters);
+            var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
-            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+            var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
                 AddObjectWithExcessiveValue(lengthLimit, internalParams, function);
@@ -777,12 +778,12 @@ namespace PrtgAPI
         {
             if (resolve)
             {
-                var filters = GetFilters(parentId, parameters);
+                var filters = RequestParser.GetFilters(parentId, parameters);
 
                 Func<Task> addObjectInternal = async () => await AddObjectInternalAsync(parentId, parameters, function).ConfigureAwait(false);
                 Func<Task<List<T>>> getObjs = async () => await getObjects(filters).ConfigureAwait(false);
 
-                return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
+                return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -794,9 +795,9 @@ namespace PrtgAPI
 
         private async Task AddObjectInternalAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
         {
-            var lengthLimit = ValidateObjectParameters(parameters);
+            var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
-            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+            var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
                 await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, function).ConfigureAwait(false);
@@ -916,7 +917,7 @@ namespace PrtgAPI
                 Action addTrigger = () => SetNotificationTrigger(parameters);
                 Func<List<NotificationTrigger>> getTrigger = () => GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
 
-                var objs = ResolveWithDiff(addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop);
+                var objs = ResolveWithDiff(addTrigger, getTrigger, (b,a) => ResponseParser.ExceptTrigger(b, a, parameters), errorCallback, shouldStop);
 
                 return objs;
             }
@@ -936,7 +937,7 @@ namespace PrtgAPI
                 Func<Task> addTrigger = async () => await SetNotificationTriggerAsync(parameters).ConfigureAwait(false);
                 Func<Task<List<NotificationTrigger>>> getTrigger = async () => (await GetNotificationTriggersAsync(parameters.ObjectId).ConfigureAwait(false)).Where(t => !t.Inherited).ToList();
 
-                var objs = await ResolveWithDiffAsync(addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop).ConfigureAwait(false);
+                var objs = await ResolveWithDiffAsync(addTrigger, getTrigger, (b,a) => ResponseParser.ExceptTrigger(b, a, parameters), errorCallback, shouldStop).ConfigureAwait(false);
 
                 return objs;
             }

@@ -213,6 +213,7 @@ Get-SensorFactorySource
 Get-SensorHistory
 Get-SensorTarget
 Get-SensorTotals
+Get-SensorType
 Install-GoPrtgServer
 Load-PrtgConfigFile
 Move-Object
@@ -342,4 +343,5 @@ Objects can be [cloned or created from scratch](https://github.com/lordmilko/Prt
 * Test Server State Restoration
 * Mock WriteProgress
 * [Test Logging](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#logging)
+* [PowerShell Property Binding](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#powershell-property-binding)
 * Dynamic PowerShell Formats

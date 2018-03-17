@@ -19,6 +19,7 @@ using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request;
 
 //Methods with complex logic surrounding sync/async function calls.
 //For each method, two variants a generated. A synchronous method with the
@@ -119,7 +120,7 @@ for(int i = 0; i < 2; i++)
                     throw new InvalidTriggerTypeException(parameters.ObjectId, parameters.Type, data.SupportedTypes.ToList());
             }
 
-            var channel = GetTriggerChannel(parameters);
+            var channel = RequestParser.GetTriggerChannel(parameters);
 
             if (channel == null)
                 return;
@@ -302,7 +303,7 @@ for(int i = 0; i < 2; i++)
 
                 var logs = <#= CallFunction("GetLogs", "null, endDate: restartTime, status: statuses.ToArray()", i) #>;
 
-                UpdateProbeStatus(probeStatuses, logs);
+                ResponseParser.UpdateProbeStatus(probeStatuses, logs);
 
                 if (progressCallback == null)
                     <#= Sleep(5000, i) #>
@@ -423,7 +424,7 @@ for(int i = 0; i < 2; i++)
             if (!continueQuery)
                 return null;
 
-            ValidateSensorTargetProgressResult(p);
+            ResponseParser.ValidateSensorTargetProgressResult(p);
 
             var page = <#= CallFunction("requestEngine.ExecuteRequest", "HtmlFunction.AddSensor4, parameters", i) #>;
 
@@ -446,12 +447,12 @@ for(int i = 0; i < 2; i++)
         {
             if (resolve)
             {
-                var filters = GetFilters(parentId, parameters);
+                var filters = RequestParser.GetFilters(parentId, parameters);
 
                 <#= DeclareAction0("addObjectInternal", "AddObjectInternal", "parentId, parameters, function", i) #>;
                 <#= DeclareFuncFromVariable0("getObjs", "getObjects", "filters", "List<T>", i) #>;
 
-                return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ExceptTableObject, errorCallback, shouldStop, allowMultiple", i) #>).OrderBy(o => o.Id).ToList();
+                return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple", i) #>).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -463,9 +464,9 @@ for(int i = 0; i < 2; i++)
 
         private <#= GetSignature("AddObjectInternal", "void", i) #>(int objectId, NewObjectParameters parameters, CommandFunction function)
         {
-            var lengthLimit = ValidateObjectParameters(parameters);
+            var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
-            var internalParams = GetInternalNewObjectParameters(objectId, parameters);
+            var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
                 <#= CallFunction("AddObjectWithExcessiveValue", "lengthLimit, internalParams, function", i) #>;
@@ -592,7 +593,7 @@ for(int i = 0; i < 2; i++)
                 <#= DeclareAction0("addTrigger", "SetNotificationTrigger", "parameters", i) #>;
                 <#= DeclareFuncThen0("getTrigger", "GetNotificationTriggers", "parameters.ObjectId", "List<NotificationTrigger>", ".Where(t => !t.Inherited).ToList();", i) #>
 
-                var objs = <#= CallFunction("ResolveWithDiff", "addTrigger, getTrigger, (b,a) => ExceptTrigger(b, a, parameters), errorCallback, shouldStop", i) #>;
+                var objs = <#= CallFunction("ResolveWithDiff", "addTrigger, getTrigger, (b,a) => ResponseParser.ExceptTrigger(b, a, parameters), errorCallback, shouldStop", i) #>;
 
                 return objs;
             }

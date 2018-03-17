@@ -121,6 +121,8 @@
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="Request\RequestParser.cs" />
+    <Compile Include="Request\ResponseParser.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Objects\Deserialization\Cache\ReflectionCacheManager.cs" />
     <Compile Include="Objects\Deserialization\Cache\EnumXmlCache.cs" />
@@ -207,6 +209,7 @@
     <Compile Include="PowerShell\Base\PrtgTableStatusCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\EnablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorType.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTarget.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />

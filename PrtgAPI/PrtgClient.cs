@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
@@ -518,22 +515,22 @@ namespace PrtgAPI
             #endregion
 
         /// <summary>
-        /// Retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.
+        /// Retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.<para/>
+        /// If the specified object does not support querying sensor types, this method returns null.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
-        /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
-        [ExcludeFromCodeCoverage]
-        public List<SensorTypeDescriptor> GetSensorTypes(int objectId) =>
-            GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).Types;
+        /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
+        public List<SensorTypeDescriptor> GetSensorTypes(int objectId = 1) =>
+            GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContent).Types ?? new List<SensorTypeDescriptor>();
 
         /// <summary>
-        /// Asynchronously retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.
+        /// Asynchronously retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.<para/>
+        /// If the specified object does not support querying sensor types, this method returns null.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
-        /// <returns>A list descriptions of sensor types supported by the specified object.</returns>
-        [ExcludeFromCodeCoverage]
-        public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId) =>
-            (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId)).ConfigureAwait(false)).Types;
+        /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
+        public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = 1) =>
+            (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types ?? new List<SensorTypeDescriptor>();
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
@@ -1093,7 +1090,7 @@ namespace PrtgAPI
         {
             var xml = requestEngine.ExecuteRequest(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml);
 
-            xml = GroupNotificationActionProperties(xml);
+            xml = ResponseParser.GroupNotificationActionProperties(xml);
 
             return xml;
         }
@@ -1102,45 +1099,7 @@ namespace PrtgAPI
         {
             var xml = await requestEngine.ExecuteRequestAsync(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml).ConfigureAwait(false);
 
-            xml = GroupNotificationActionProperties(xml);
-
-            return xml;
-        }
-
-        private XElement GroupNotificationActionProperties(XElement xml)
-        {
-            var regex = new Regex("(.+)_(\\d+)");
-
-            var properties = xml.Descendants().Where(d => regex.Match(d.Name.ToString()).Success).ToList();
-
-            var categorized = properties.Select(p =>
-            {
-                var id = Convert.ToInt32(regex.Replace(p.Name.ToString(), "$2"));
-
-                if (Enum.IsDefined(typeof(NotificationType), id))
-                {
-                    var e = (NotificationType)id;
-
-                    return new
-                    {
-                        Name = regex.Replace(p.Name.ToString(), "$1"),
-                        Category = e,
-                        Value = p.Value
-                    };
-                }
-
-                return null;
-            }).Where(p => p != null).ToList();
-
-            var grouped = categorized.GroupBy(c => c.Category).ToList();
-
-            var newXml = grouped.Select(g => new XElement($"category_{g.Key.ToString().ToLower()}",
-                g.Select(i => new XElement(i.Name, i.Value)))
-            );
-
-            properties.Remove();
-
-            xml.Add(newXml);
+            xml = ResponseParser.GroupNotificationActionProperties(xml);
 
             return xml;
         }
@@ -1154,7 +1113,7 @@ namespace PrtgAPI
         {
             var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, new NotificationTriggerParameters(objectId));
 
-            var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
+            var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
             UpdateTriggerChannels(parsed);
             UpdateTriggerActions(parsed);
@@ -1171,7 +1130,7 @@ namespace PrtgAPI
         {
             var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new NotificationTriggerParameters(objectId)).ConfigureAwait(false);
 
-            var parsed = ParseNotificationTriggerResponse(objectId, xmlResponse);
+            var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
             await UpdateTriggerChannelsAsync(parsed).ConfigureAwait(false);
             await UpdateTriggerActionsAsync(parsed).ConfigureAwait(false);
@@ -1181,7 +1140,7 @@ namespace PrtgAPI
 
         private void UpdateTriggerActions(List<NotificationTrigger> triggers)
         {
-            var actions = GroupTriggerActions(triggers);
+            var actions = ResponseParser.GroupTriggerActions(triggers);
 
             foreach (var group in actions)
             {
@@ -1194,7 +1153,7 @@ namespace PrtgAPI
 
         private async Task UpdateTriggerActionsAsync(List<NotificationTrigger> triggers)
         {
-            var actions = GroupTriggerActions(triggers);
+            var actions = ResponseParser.GroupTriggerActions(triggers);
 
             var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.First().Id));
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -1207,34 +1166,6 @@ namespace PrtgAPI
                     action.LazyXml = new Lazy<XDocument>(() => new XDocument(results[i1]));
                 }
             }
-        }
-
-        private List<IGrouping<int, NotificationAction>> GroupTriggerActions(List<NotificationTrigger> triggers)
-        {
-            var actions = triggers.SelectMany(
-                t => t.GetType().GetProperties().Where(p => p.PropertyType == typeof(NotificationAction)).Select(p => (NotificationAction)p.GetValue(t)
-            ).Where(a => a != null && a.Id != -1)).GroupBy(a => a.Id).ToList();
-
-            return actions;
-        }
-
-        private List<NotificationTrigger> ParseNotificationTriggerResponse(int objectId, XDocument xmlResponse)
-        {
-            var xmlResponseContent = xmlResponse.Descendants("item").Select(x => new
-            {
-                Content = x.Element("content").Value,
-                Id = Convert.ToInt32(x.Element("objid").Value)
-            }).ToList();
-
-            var triggers = JsonDeserializer<NotificationTrigger>.DeserializeList(xmlResponseContent, e => e.Content,
-                (e, o) =>
-                {
-                    o.SubId = e.Id;
-                    o.ObjectId = objectId;
-                }
-            );
-
-            return triggers;
         }
 
         /// <summary>
@@ -1389,108 +1320,11 @@ namespace PrtgAPI
         public async Task<Group> AddGroupAsync(int parentId, NewGroupParameters parameters, bool resolve = true) =>
             (await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
 
-        private SearchFilter[] GetFilters(int destinationId, NewObjectParameters parameters)
+
         {
-            var filters = new List<SearchFilter>()
-            {
-                new SearchFilter(Property.ParentId, destinationId)
-            };
 
-            if (parameters is NewSensorParameters)
-            {
-                //When creating new sensors, PRTG may dynamically assign a name based on the sensor's parameters.
-                //As such, we instead filter for sensors of the newly created type
-                var sensorType = parameters[Parameter.SensorType];
-
-                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType.ToString();
-
-                filters.Add(new SearchFilter(Property.Type, str.ToLower()));
-            }
-            else
-                filters.Add(new SearchFilter(Property.Name, parameters.Name));
-
-            return filters.ToArray();
         }
 
-        private List<T> ExceptTableObject<T>(List<T> before, List<T> after) where T : SensorOrDeviceOrGroupOrProbe
-        {
-            var beforeIds = before.Select(b => b.Id).ToList();
-
-            return after.Where(a => !beforeIds.Contains(a.Id)).ToList();
-        }
-
-        private List<KeyValuePair<Parameter, object>> ValidateObjectParameters(NewObjectParameters parameters)
-        {
-            var properties = parameters.GetType().GetNormalProperties().ToList();
-
-            foreach (var property in properties)
-            {
-                var attrib = property.GetCustomAttribute<RequireValueAttribute>();
-
-                if (attrib != null && attrib.ValueRequired)
-                {
-                    var val = property.GetValue(parameters);
-
-                    if (string.IsNullOrEmpty(val?.ToString()))
-                    {
-                        throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
-                    }
-
-                    var list = val as IEnumerable;
-
-                    if (list != null)
-                    {
-                        var casted = list.Cast<object>();
-
-                        if (!casted.Any())
-                            throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty list was specified");
-                    }
-                }
-            }
-
-            var lengthLimit = parameters.GetParameters().Where(p => p.Key.GetEnumAttribute<LengthLimitAttribute>() != null).ToList();
-
-            return lengthLimit;
-        }
-
-        private Parameters.Parameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
-        {
-            var newParams = new Parameters.Parameters();
-
-            foreach (var param in parameters.GetParameters())
-            {
-                newParams[param.Key] = param.Value;
-            }
-
-            newParams[Parameter.Id] = deviceId;
-
-            return newParams;
-        }
-
-            #region Sensor Targets
-
-        private string GetSensorTargetTmpId(HttpResponseMessage message)
-        {
-            var id = Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+)(tmpid=)(.+)", "$3");
-
-            return id;
-        }
-
-        private void ValidateSensorTargetProgressResult(SensorTargetProgress p)
-        {
-            if (p.TargetUrl.StartsWith("addsensorfailed"))
-            {
-                var parts = UrlHelpers.CrackUrl(p.TargetUrl);
-                var message = parts["errormsg"];
-
-                if (message.StartsWith("Incomplete connection settings"))
-                    throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
-
-                throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message}");
-            }
-        }
-
-            #endregion
         #endregion
         #region Sensor State
 
@@ -1623,11 +1457,6 @@ namespace PrtgAPI
         public async Task<NotificationTrigger> AddNotificationTriggerAsync(TriggerParameters parameters, bool resolve = true) =>
             (await AddNotificationTriggerInternalAsync(parameters, resolve).ConfigureAwait(false))?.Single();
 
-        private List<NotificationTrigger> ExceptTrigger(List<NotificationTrigger> before, List<NotificationTrigger> after, TriggerParameters parameters)
-        {
-            return after.Where(a => !before.Any(b => a.ObjectId == b.ObjectId && a.SubId == b.SubId) && a.OnNotificationAction.Id == parameters.OnNotificationAction.Id).ToList();
-        }
-
         /// <summary>
         /// Add or edit a notification trigger on a PRTG Server.
         /// </summary>
@@ -1648,26 +1477,6 @@ namespace PrtgAPI
             await ValidateTriggerParametersAsync(parameters).ConfigureAwait(false);
 
             await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
-        }
-
-        private TriggerChannel GetTriggerChannel(TriggerParameters parameters)
-        {
-            TriggerChannel channel = null;
-
-            switch (parameters.Type)
-            {
-                case TriggerType.Speed:
-                    channel = ((SpeedTriggerParameters) parameters).Channel;
-                    break;
-                case TriggerType.Volume:
-                    channel = ((VolumeTriggerParameters) parameters).Channel;
-                    break;
-                case TriggerType.Threshold:
-                    channel = ((ThresholdTriggerParameters) parameters).Channel;
-                    break;
-            }
-
-            return channel;
         }
 
         /// <summary>
@@ -1708,7 +1517,7 @@ namespace PrtgAPI
             CloneObject(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host));
 
         private int CloneObject(CloneSensorOrGroupParameters parameters) =>
-            Amend(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, CloneRequestParser), CloneResponseParser);
+            Amend(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, ResponseParser.CloneRequestParser), ResponseParser.CloneResponseParser);
 
         /// <summary>
         /// Asynchronously clone a sensor or group to another device or group.
@@ -1735,31 +1544,9 @@ namespace PrtgAPI
                 await requestEngine.ExecuteRequestAsync(
                     CommandFunction.DuplicateObject,
                     parameters,
-                    async r => await Task.FromResult(CloneRequestParser(r)).ConfigureAwait(false)
-                ).ConfigureAwait(false), CloneResponseParser
+                    async r => await Task.FromResult(ResponseParser.CloneRequestParser(r)).ConfigureAwait(false)
+                ).ConfigureAwait(false), ResponseParser.CloneResponseParser
             );
-
-        private string CloneRequestParser(HttpResponseMessage response)
-        {
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-                return null;
-            
-            var message = response.RequestMessage.RequestUri.ToString();
-
-            if (message.Contains("the object is currently not valid"))
-                RequestEngine.SetErrorUrlAsRequestUri(response);
-
-            return message;
-        }
-
-        private int CloneResponseParser(string response)
-        {
-            var decodedResponse = HttpUtility.UrlDecode(response);
-
-            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
-
-            return id;
-        }
 
         #endregion
         #region Get Object Properties
@@ -1911,7 +1698,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidCastException"/>
         /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
         public T GetObjectProperty<T>(int objectId, ObjectProperty property) =>
-            GetTypedProperty<T>(GetObjectProperty(objectId, property));
+            ResponseParser.GetTypedProperty<T>(GetObjectProperty(objectId, property));
 
         /// <summary>
         /// Asynchronously retrieve a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
@@ -1923,27 +1710,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidCastException"/>
         /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
         public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property) =>
-            GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property).ConfigureAwait(false));
-
-        private T GetTypedProperty<T>(object val)
-        {
-            if (val is T)
-                return (T) val;
-
-            var underlying = Nullable.GetUnderlyingType(typeof (T));
-
-            if (underlying != null)
-            {
-                if (val == null)
-                    return default(T);
-
-                return (T) val;
-            }
-
-            var typeName = val?.GetType().Name ?? "null";
-
-            throw new InvalidCastException($"Cannot convert a value of type '{typeName}' to type '{typeof(T)}'");
-        }
+            ResponseParser.GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property).ConfigureAwait(false));
 
         /// <summary>
         /// Retrieve unsupported properties and settings of a PRTG Object.
@@ -1956,9 +1723,9 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
 
-            var response = requestEngine.ExecuteRequest(GetGetObjectPropertyFunction(property), parameters);
+            var response = requestEngine.ExecuteRequest(RequestParser.GetGetObjectPropertyFunction(property), parameters);
 
-            return ValidateRawObjectProperty(response, parameters);
+            return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
 
         /// <summary>
@@ -1972,41 +1739,23 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property);
 
-            var response = await requestEngine.ExecuteRequestAsync(GetGetObjectPropertyFunction(property), parameters).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(RequestParser.GetGetObjectPropertyFunction(property), parameters).ConfigureAwait(false);
 
-            return ValidateRawObjectProperty(response, parameters);
-        }
-
-        private XmlFunction GetGetObjectPropertyFunction(string property)
-        {
-            if (property.TrimEnd('_').ToLower() == "comments")
-                return XmlFunction.GetObjectStatus;
-
-            return XmlFunction.GetObjectProperty;
-        }
-
-        private string ValidateRawObjectProperty(XDocument response, GetObjectPropertyRawParameters parameters)
-        {
-            var value = response.Descendants("result").First().Value;
-
-            if (value == "(Property not found)")
-                throw new PrtgRequestException($"PRTG was unable to complete the request. A value for property '{parameters.Name}' could not be found.");
-
-            return value;
+            return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
 
         private T GetObjectProperties<T>(int objectId, ObjectType objectType)
         {
             var response = GetObjectPropertiesRawInternal(objectId, objectType);
 
-            return GetObjectProperties<T>(response);
+            return ResponseParser.GetObjectProperties<T>(response);
         }
 
         private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
         {
             var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
 
-            return GetObjectProperties<T>(response);
+            return ResponseParser.GetObjectProperties<T>(response);
         }
 
         private string GetObjectPropertiesRawInternal(int objectId, ObjectType objectType) =>
@@ -2014,16 +1763,6 @@ namespace PrtgAPI
 
         private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, ObjectType objectType) =>
             await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
-
-        private T GetObjectProperties<T>(string response)
-        {
-            var xml = ObjectSettings.GetXml(response);
-            var xDoc = new XDocument(xml);
-
-            var items = XmlDeserializer<T>.DeserializeType(xDoc);
-
-            return items;
-        }
 
         #endregion
         #region Set Object Properties
@@ -2162,21 +1901,10 @@ namespace PrtgAPI
             #endregion
 
         internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ParseSetObjectPropertyUrl(numObjectIds, m));
+            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
 
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
-
-        private string ParseSetObjectPropertyUrl(int numObjectIds, HttpResponseMessage response)
-        {
-            if (numObjectIds > 1)
-            {
-                if (response.RequestMessage?.RequestUri?.AbsolutePath == "/error.htm")
-                    RequestEngine.SetErrorUrlAsRequestUri(response);
-            }
-
-            return null;
-        }
+            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
         {
@@ -2265,7 +1993,7 @@ namespace PrtgAPI
         /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
         public void ClearSystemCache(SystemCacheType cache) =>
-            requestEngine.ExecuteRequest(GetClearSystemCacheFunction(cache), new Parameters.Parameters());
+            requestEngine.ExecuteRequest(RequestParser.GetClearSystemCacheFunction(cache), new Parameters.Parameters());
 
         /// <summary>
         /// Asynchronously clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
@@ -2274,43 +2002,21 @@ namespace PrtgAPI
         /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
         public async Task ClearSystemCacheAsync(SystemCacheType cache) =>
-            await requestEngine.ExecuteRequestAsync(GetClearSystemCacheFunction(cache), new Parameters.Parameters()).ConfigureAwait(false);
-
-        [ExcludeFromCodeCoverage]
-        private CommandFunction GetClearSystemCacheFunction(SystemCacheType cache)
-        {
-            if (cache == SystemCacheType.General)
-                return CommandFunction.ClearCache;
-            if (cache == SystemCacheType.GraphData)
-                return CommandFunction.RecalcCache;
-
-            throw new NotImplementedException($"Don't know how to handle cache type '{cache}'");
-        }
+            await requestEngine.ExecuteRequestAsync(RequestParser.GetClearSystemCacheFunction(cache), new Parameters.Parameters()).ConfigureAwait(false);
         
         /// <summary>
         /// Reload config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public void LoadConfigFiles(ConfigFileType fileType) =>
-            requestEngine.ExecuteRequest(GetLoadSystemFilesFunction(fileType), new Parameters.Parameters());
+            requestEngine.ExecuteRequest(RequestParser.GetLoadSystemFilesFunction(fileType), new Parameters.Parameters());
 
         /// <summary>
         /// Asymchronously reload config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public async Task LoadConfigFilesAsync(ConfigFileType fileType) =>
-            await requestEngine.ExecuteRequestAsync(GetLoadSystemFilesFunction(fileType), new Parameters.Parameters()).ConfigureAwait(false);
-
-        [ExcludeFromCodeCoverage]
-        private CommandFunction GetLoadSystemFilesFunction(ConfigFileType fileType)
-        {
-            if (fileType == ConfigFileType.General)
-                return CommandFunction.ReloadFileLists;
-            if (fileType == ConfigFileType.Lookups)
-                return CommandFunction.LoadLookups;
-
-            throw new NotImplementedException($"Don't know how to handle file type '{fileType}'");
-        }
+            await requestEngine.ExecuteRequestAsync(RequestParser.GetLoadSystemFilesFunction(fileType), new Parameters.Parameters()).ConfigureAwait(false);
 
         /// <summary>
         /// Restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.<para/>
@@ -2353,26 +2059,6 @@ namespace PrtgAPI
             {
                 var probe = probeId == null ? await GetProbesAsync().ConfigureAwait(false) : await GetProbesAsync(Property.Id, probeId).ConfigureAwait(false);
                 await WaitForProbeRestartAsync(restartTime, probe, progressCallback).ConfigureAwait(false);
-            }
-        }
-
-        private void UpdateProbeStatus(List<RestartProbeProgress> probes, List<Log> logs)
-        {
-            foreach (var probe in probes)
-            {
-                if (!probe.Disconnected)
-                {
-                    //If we got a log saying the probe disconnected, or the probe was already disconnected, flag it as having disconnected
-                    if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
-                        probe.Disconnected = true;
-                }
-                if (probe.Disconnected && !probe.Reconnected) //If it's already disconnected and hasn't reconnected, check its status
-                {
-                    //If the probe has disconnected and we see it's reconnected, flag it as such. If it was already disconnected though,
-                    //it'll never reconnect, so let it through
-                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
-                        probe.Reconnected = true;
-                }
             }
         }
 
@@ -2579,9 +2265,9 @@ namespace PrtgAPI
         {
             var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
 
-            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, ValidateSensorHistoryResponse);
+            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, ResponseParser.ValidateSensorHistoryResponse);
 
-            return ParseSensorHistoryResponse(response, sensorId);
+            return ResponseParser.ParseSensorHistoryResponse(response, sensorId);
         }
 
         /// <summary>
@@ -2595,40 +2281,9 @@ namespace PrtgAPI
         {
             var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
 
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.HistoricData, parameters, ValidateSensorHistoryResponse).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.HistoricData, parameters, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
 
-            return ParseSensorHistoryResponse(response, sensorId);
-        }
-
-        private void ValidateSensorHistoryResponse(string response)
-        {
-            if (response == "Not enough monitoring data")
-                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
-        }
-
-        private List<SensorHistoryData> ParseSensorHistoryResponse(XDocument response, int sensorId)
-        {
-            var items = XmlDeserializer<SensorHistoryData>.DeserializeList(response).Items;
-
-            var regex = new Regex("^(.+)(\\(.+\\))$");
-
-            foreach (var history in items)
-            {
-                history.SensorId = sensorId;
-
-                foreach (var value in history.ChannelRecords)
-                {
-                    value.Name = value.Name.Replace(" ", "");
-
-                    if (regex.Match(value.Name).Success)
-                        value.Name = regex.Replace(value.Name, "$1");
-
-                    value.DateTime = history.DateTime;
-                    value.SensorId = sensorId;
-                }
-            }
-
-            return items;
+            return ResponseParser.ParseSensorHistoryResponse(response, sensorId);
         }
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
