@@ -26,7 +26,7 @@ namespace PrtgAPI.PowerShell.Base
         protected abstract IEnumerable<T> GetRecords();
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

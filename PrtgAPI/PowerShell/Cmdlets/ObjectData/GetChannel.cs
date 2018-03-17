@@ -44,13 +44,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The Sensor to retrieve channels for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Sensor")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">The ID of the Sensor to retrieve channels for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "SensorId")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Manual)]
         public int? SensorId { get; set; }
 
         /// <summary>

@@ -48,40 +48,40 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Channel to set the properties of.</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "Default")]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public Channel Channel { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public int SensorId { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public int ChannelId { get; set; }
 
         /// <summary>
         /// <para type="description">Property of the channel to set.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, Position = 2, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, Position = 2, ParameterSetName = ParameterSet.Manual)]
         public ChannelProperty Property { get; set; }
 
         /// <summary>
         /// <para type="description">Value to set the property to.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Default")]
-        [Parameter(Mandatory = false, Position = 3, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, Position = 3, ParameterSetName = ParameterSet.Manual)]
         [AllowEmptyString]
         public object Value { get; set; }
 
         internal override string ProgressActivity => "Modify PRTG Channel Settings";
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
@@ -92,7 +92,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (!MyInvocation.BoundParameters.ContainsKey("Value"))
                 throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
             {
                 SensorId = Channel.SensorId;
                 ChannelId = Channel.Id;
@@ -119,7 +119,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             Action action;
 
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
             {
                 message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
 

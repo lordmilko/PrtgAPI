@@ -52,35 +52,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The sensor to acknowledge.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Until")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Until)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Forever)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">A message to display on the object indicating the reason it is acknowledged.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default")]
-        [Parameter(Mandatory = false, ParameterSetName = "Until")]
-        [Parameter(Mandatory = false, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Until)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Forever)]
         public string Message { get; set; }
 
         /// <summary>
         /// <para type="description">The duration to acknowledge the sensor for, in minutes.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default)]
         public int Duration { get; set; }
 
         /// <summary>
         /// <para type="description">The datetime at which the object should become unacknowledged.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Until")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Until)]
         public DateTime Until { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates the object should be acknowledged indefinitely.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Forever)]
         public SwitchParameter Forever { get; set; }
 
         private int? duration;
@@ -99,19 +99,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             switch (ParameterSetName)
             {
-                case "Default":
+                case ParameterSet.Default:
                     duration = Duration;
                     break;
 
-                case "Until":
+                case ParameterSet.Until:
                     duration = (int)Math.Ceiling((Until - DateTime.Now).TotalMinutes);
                     break;
 
-                case "Forever":
+                case ParameterSet.Forever:
                     break;
             }
 
-            if (duration < 1 && ParameterSetName != "Forever")
+            if (duration < 1 && ParameterSetName != ParameterSet.Forever)
                 throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
 
             minutesDescription = duration == 1 ? "minute" : "minutes";
@@ -120,7 +120,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

@@ -28,13 +28,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The object to retrieve historical data for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Default", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, ValueFromPipeline = true)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
         /// <para type="description">The ID of the object to retrieve historical data for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public int Id { get; set; }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override IEnumerable<ModificationEvent> GetRecords()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
                 Id = Object.Id;
 
             var results = client.GetModificationHistory(Id);

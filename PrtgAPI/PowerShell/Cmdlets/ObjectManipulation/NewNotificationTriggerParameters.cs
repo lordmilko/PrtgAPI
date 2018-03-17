@@ -92,29 +92,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The ID of the object the notification trigger will be created for.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        [Parameter(ParameterSetName = "AddFrom", Mandatory = true, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = ParameterSet.AddFrom, Mandatory = true, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         public int? Id { get; set; }
 
         /// <summary>
         /// <para type="description">The notification trigger import trigger parameters from.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "AddFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
-        [Parameter(ParameterSetName = "EditFrom", Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
+        [Parameter(ParameterSetName = ParameterSet.AddFrom, Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
+        [Parameter(ParameterSetName = ParameterSet.EditFrom, Mandatory = true, ValueFromPipeline = true, HelpMessage = "The notification trigger whose properties will be used as the basis of creating a new trigger.")]
         public NotificationTrigger Source { get; set; }
 
         /// <summary>
         /// <para type="description">The Sub ID of the trigger to manipulate.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
+        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
         public int? TriggerId { get; set; }
 
         /// <summary>
         /// <para type="description">The type of notification trigger to manipulate.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Add", Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
-        [Parameter(ParameterSetName = "Edit", Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]
+        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
+        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]
         public TriggerType? Type { get; set; }
 
         /// <summary>

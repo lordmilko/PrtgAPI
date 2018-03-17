@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private bool allProbesRestarted;
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

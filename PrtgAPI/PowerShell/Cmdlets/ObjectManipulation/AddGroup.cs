@@ -46,8 +46,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Basic)]
         public new GroupOrProbe Destination
         {
             get { return base.Destination; }
@@ -57,7 +57,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The name to use for the group.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Basic)]
         public string Name { get; set; }
 
         /// <summary>
@@ -68,11 +68,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Basic")
+            if (ParameterSetName == ParameterSet.Basic)
             {
                 Parameters = new NewGroupParameters(Name);
             }

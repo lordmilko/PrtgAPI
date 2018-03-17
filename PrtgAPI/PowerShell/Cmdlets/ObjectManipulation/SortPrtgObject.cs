@@ -30,7 +30,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public DeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

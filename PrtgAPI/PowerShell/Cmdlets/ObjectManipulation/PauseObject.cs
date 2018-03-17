@@ -49,35 +49,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The object to pause.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Until")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Until)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Forever)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
         /// <para type="description">A message to display on the object indicating the reason it is paused.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default")]
-        [Parameter(Mandatory = false, ParameterSetName = "Until")]
-        [Parameter(Mandatory = false, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Until)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Forever)]
         public string Message { get; set; }
 
         /// <summary>
         /// <para type="description">The duration to pause the object for, in minutes.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Default", HelpMessage = "The duration to pause the object for, in minutes.")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, HelpMessage = "The duration to pause the object for, in minutes.")]
         public int Duration { get; set; }
 
         /// <summary>
         /// <para type="description">The datetime at which the object should be unpaused.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Until")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Until)]
         public DateTime Until { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates the object should be paused indefinitely.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Forever")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Forever)]
         public SwitchParameter Forever { get; set; }
 
         private int? duration;
@@ -96,15 +96,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             switch (ParameterSetName)
             {
-                case "Default":
+                case ParameterSet.Default:
                     duration = Duration;
                     break;
 
-                case "Until":
+                case ParameterSet.Until:
                     duration = (int)Math.Ceiling((Until - DateTime.Now).TotalMinutes);
                     break;
 
-                case "Forever":
+                case ParameterSet.Forever:
                     break;
             }
 
@@ -117,7 +117,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

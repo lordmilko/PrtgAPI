@@ -81,7 +81,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = "RecordAge")]
+    [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = ParameterSet.RecordAge)]
     public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>
     {
         /// <summary>
@@ -93,19 +93,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Start time to retrieve logs from. If no value is specified, defaults to the current date and time.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "DateTime")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTime)]
         public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// <para type="description">End time to retrieve logs until. If no value is specified, defaults to 7 prior from the <see cref="StartDate"/>.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "DateTime")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTime)]
         public DateTime? EndDate { get; set; }
 
         /// <summary>
         /// <para type="description">Time period to retrieve logs from. If no value is specified, retrieves logs from 7 days ago to the current date and time.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "RecordAge")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RecordAge)]
         public RecordAge? Since { get; set; }
 
         /// <summary>

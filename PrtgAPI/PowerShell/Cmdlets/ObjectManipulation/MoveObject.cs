@@ -27,13 +27,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The device to move to another group or probe.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Device")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Device)]
         public Device Device { get; set; }
 
         /// <summary>
         /// <para type="description">The group to move to another group or probe.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Group")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Group)]
         public Group Group { get; set; }
 
         /// <summary>
@@ -43,16 +43,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int DestinationId { get; set; }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
             switch (ParameterSetName)
             {
-                case "Device":
+                case ParameterSet.Device:
                     ExecuteOperation(Device);
                     break;
-                case "Group":
+                case ParameterSet.Group:
                     ExecuteOperation(Group);
                     break;
             }

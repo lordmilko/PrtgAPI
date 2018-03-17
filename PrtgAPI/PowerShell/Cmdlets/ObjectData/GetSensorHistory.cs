@@ -56,13 +56,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Sensor to retrieve historic data for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Default", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, ValueFromPipeline = true)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the sensor to retrieve historic data for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Manual")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public int Id { get; set; }
 
         /// <summary>
@@ -87,11 +87,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private static int count;
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
                 Id = Sensor.Id;
 
             var response = client.GetSensorHistory(Id, Average, StartDate, EndDate);

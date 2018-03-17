@@ -53,8 +53,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Basic)]
         public new GroupOrProbe Destination
         {
             get { return base.Destination; }
@@ -64,19 +64,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The name to use for the device. If a <see cref="Host"/> is not specified, this value will be used as the hostname as well.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Basic)]
         public string Name { get; set; }
 
         /// <summary>
         /// <para type="description">The IPv4 Address/HostName to use for monitoring this device. If this value is not specified, the <see cref="Name"/> will be used as the hostname.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Basic)]
         public new string Host { get; set; }
 
         /// <summary>
         /// <para type="description">Whether to perform an <see cref="AutoDiscoveryMode.Automatic"/> auto-discovery on the newly created device.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Basic")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Basic)]
         public SwitchParameter AutoDiscover { get; set; }
 
         /// <summary>
@@ -87,11 +87,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Basic")
+            if (ParameterSetName == ParameterSet.Basic)
             {
                 Parameters = new NewDeviceParameters(Name, GetHost());
 

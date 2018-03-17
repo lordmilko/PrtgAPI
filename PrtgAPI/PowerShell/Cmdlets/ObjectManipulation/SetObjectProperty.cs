@@ -69,33 +69,33 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The property to modify.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         public ObjectProperty Property { get; set; }
 
         /// <summary>
         /// <para type="description">The value to set for the specified property.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Default")]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Default)]
         public object Value { get; set; }
 
         /// <summary>
         /// <para type="description">The raw name of the property to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.</para>
         /// This value typically ends in an underscore.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Unsafe")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
         public string RawProperty { get; set; }
 
         /// <summary>
         /// <para type="description">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.<para/>
         /// WARNING: If an invalid value is set for a property, minor corruption may occur.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Unsafe")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
         public string RawValue { get; set; }
 
         /// <summary>
         /// <para type="description">Sets an unsafe object property without prompting for confirmation. WARNING: Setting an invalid value for a property can cause minor corruption. Only use if you know what you are doing.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Unsafe")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
         public SwitchParameter Force { get; set; }
 
         internal override string ProgressActivity => "Modify PRTG Object Settings";
@@ -107,7 +107,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             base.BeginProcessing();
 
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
             {
                 //Value is not required, but is required in that we need to explicitly say null
                 if (!MyInvocation.BoundParameters.ContainsKey("Value"))
@@ -118,11 +118,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
             {
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
                     ExecuteOrQueue(Object);
@@ -148,7 +148,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
                 ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
             else
                 ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
@@ -160,7 +160,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            if(ParameterSetName == "Default")
+            if(ParameterSetName == ParameterSet.Default)
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
             else
                 ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");

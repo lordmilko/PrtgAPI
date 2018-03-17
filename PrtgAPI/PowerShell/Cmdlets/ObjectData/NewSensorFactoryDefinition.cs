@@ -107,7 +107,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">    '$expr' (for the default expression)</para>
         /// <para type="description">    '$_'    (the current sensor</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Aggregate")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Aggregate)]
         public ScriptBlock Aggregator { get; set; }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Provides the following automatic variables:</para>
         /// <para type="description">    '$acc' (the accumulated result)</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Aggregate")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Aggregate)]
         public ScriptBlock Finalizer { get; set; }
 
         private int id;

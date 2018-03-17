@@ -37,29 +37,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ObjectProperty", DefaultParameterSetName = "Default")]
+    [Cmdlet(VerbsCommon.Get, "ObjectProperty", DefaultParameterSetName = ParameterSet.Default)]
     public class GetObjectProperty : PrtgProgressCmdlet
     {
         /// <summary>
         /// <para type="description">The object to retrieve properties of.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Single")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "RawProperty")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Raw")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Property)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Raw)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
         /// <para type="description">The name of a single property to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Single")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Property)]
         public ObjectProperty Property { get; set; }
 
         /// <summary>
         /// <para type="description">The raw name of one or more properties to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// Note: PRTG does not support retrieving raw section inheritance settings.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "RawProperty")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawProperty)]
         public string[] RawProperty { get; set; }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Note: objects may have additional properties that cannot be retrieved via this method.
         /// For more information, see Get-Help about_ObjectProperty</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Raw")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
         public SwitchParameter Raw { get; set; }
 
         /// <summary>
@@ -78,17 +78,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Single")
+            if (ParameterSetName == ParameterSet.Property)
             {
                 var value = client.GetObjectProperty(Object.Id, Property);
 
                 WriteObject(value, true);
             }
-            else if (ParameterSetName == "Raw")
+            else if (ParameterSetName == ParameterSet.Raw)
             {
                 var dictionary = client.GetObjectPropertiesRaw(Object.Id, TypeFromBase());
 
@@ -101,7 +101,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 WriteObject(obj);
             }
-            else if (ParameterSetName == "RawProperty")
+            else if (ParameterSetName == ParameterSet.RawProperty)
             {
                 if (RawProperty.Length == 1)
                     WriteObject(client.GetObjectPropertyRaw(Object.Id, RawProperty[0]));

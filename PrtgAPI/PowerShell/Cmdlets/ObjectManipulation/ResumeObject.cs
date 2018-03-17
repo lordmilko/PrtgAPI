@@ -42,7 +42,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         internal override string ProgressActivity => "Resuming PRTG Objects";
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

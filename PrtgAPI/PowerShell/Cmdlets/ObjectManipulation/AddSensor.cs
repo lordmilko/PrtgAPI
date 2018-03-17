@@ -65,14 +65,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Device</para>
     /// <para type="link">New-SensorParameters</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true, DefaultParameterSetName = "Default")]
+    [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class AddSensor : AddObject<NewSensorParameters, Sensor, Device>
     {
         /// <summary>
         /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Target")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Target)]
         public new NewSensorParameters Parameters
         {
             get { return base.Parameters; }
@@ -87,11 +87,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
                 base.ProcessRecordEx();
             else
             {

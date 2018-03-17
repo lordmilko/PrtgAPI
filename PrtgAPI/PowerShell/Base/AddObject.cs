@@ -22,13 +22,13 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public TDestination Destination { get; set; }
 
         /// <summary>
         /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Default")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         public TParams Parameters { get; set; }
 
         private CommandFunction function;
@@ -42,7 +42,7 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {

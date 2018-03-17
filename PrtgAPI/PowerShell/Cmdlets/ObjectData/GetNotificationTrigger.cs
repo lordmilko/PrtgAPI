@@ -57,7 +57,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// </summary>
     [OutputType(typeof(NotificationTrigger))]
-    [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = "Default")]
+    [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = ParameterSet.Default)]
     public class GetNotificationTrigger : PrtgObjectCmdlet<NotificationTrigger>
     {
         /// <summary>
@@ -69,33 +69,33 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain OnNotificationAction. Can include wildcards.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Default")]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Default)]
         public string OnNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects of a certain type.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
         public TriggerType? Type { get; set; }
 
         /// <summary>
         /// <para type="description">List all notification trigger types compatible with the specified object.</para> 
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Types")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Type)]
         public SwitchParameter Types { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates whether to include inherited triggers in the response.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default", HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
         public bool? Inherited { get; set; }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == "Default")
+            if (ParameterSetName == ParameterSet.Default)
                 base.ProcessRecordEx();
             else
             {

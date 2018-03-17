@@ -91,32 +91,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "SensorParameters", DefaultParameterSetName = "Default")]
+    [Cmdlet(VerbsCommon.New, "SensorParameters", DefaultParameterSetName = ParameterSet.Default)]
     public class NewSensorParametersCommand : PSCmdlet
     {
         /// <summary>
         /// <para type="description">The type of sensor to create.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Default", Position = 0)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, Position = 0)]
         public SensorType Type { get; set; }
 
         /// <summary>
         /// <para type="description">The name to give the new sensor. If no value is specified, the default name of the specified sensor type will be used.
         /// If the specified sensor type does not support specifying a name, this field is used for any mandatory values required by the sensor type.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default", Position = 1)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, Position = 1)]
         public object First { get; set; }
 
         /// <summary>
         /// <para type="description">A mandatory value required by the specified sensor type.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = "Default", Position = 2)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, Position = 2)]
         public object Second { get; set; }
 
         /// <summary>
         /// <para type="description">A collection of raw parameters for adding an unsupported sensor type.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Raw", Position = 0)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw, Position = 0)]
         public Hashtable RawParameters { get; set; }
 
         private bool ignoreName;
