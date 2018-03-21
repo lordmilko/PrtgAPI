@@ -1647,7 +1647,7 @@ namespace PrtgAPI
 
             var rawValue = GetObjectPropertyRaw(objectId, rawName);
 
-            return DeserializeRawPropertyValue(property, rawName, rawValue);
+            return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
         }
 
         /// <summary>
@@ -1662,30 +1662,7 @@ namespace PrtgAPI
 
             var rawValue = await GetObjectPropertyRawAsync(objectId, rawName).ConfigureAwait(false);
 
-            return DeserializeRawPropertyValue(property, rawName, rawValue);
-        }
-
-        private object DeserializeRawPropertyValue(ObjectProperty property, string rawName, string rawValue)
-        {
-            var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
-            var deserializer = new XmlSerializer(typeLookup);
-
-            var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
-
-            var xml = new XDocument(
-                new XElement("properties",
-                    new XElement(elementName, rawValue)
-                )
-            );
-
-            var settings = deserializer.Deserialize(xml, elementName);
-
-            var value = settings.GetType().GetProperties().First(p => p.Name == property.ToString()).GetValue(settings);
-
-            if (value == null && rawValue != string.Empty)
-                return rawValue;
-
-            return value;
+            return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
         }
 
         /// <summary>

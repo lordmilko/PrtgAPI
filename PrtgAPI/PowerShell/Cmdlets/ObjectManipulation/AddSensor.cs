@@ -95,10 +95,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 base.ProcessRecordEx();
             else
             {
-                var internalParams = Parameters as SensorParametersInternal;
+                var internalParams = Parameters as ISourceParameters<Device>;
 
-                if (internalParams?.targetDevice != null)
-                    AddObjectInternal(internalParams.targetDevice);
+                if (internalParams?.Source != null)
+                    AddObjectInternal(internalParams.Source);
                 else
                     throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters");
             }

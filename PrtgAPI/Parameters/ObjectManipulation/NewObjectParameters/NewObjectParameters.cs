@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 
@@ -18,15 +15,17 @@ namespace PrtgAPI.Parameters
         /// The name to use for this object.
         /// </summary>
         [RequireValue(true)]
+        [PropertyParameter(nameof(ObjectProperty.Name))]
         public string Name
         {
-            get { return (string)GetCustomParameter(ObjectProperty.Name); }
+            get { return GetCustomParameter(ObjectProperty.Name)?.ToString(); }
             set { SetCustomParameter(ObjectProperty.Name, value); }
         }
 
         /// <summary>
         /// Tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
         /// </summary>
+        [PropertyParameter(nameof(ObjectProperty.Tags))]
         public string[] Tags
         {
             get { return GetCustomParameterArray(ObjectProperty.Tags, ' '); }
@@ -162,7 +161,7 @@ namespace PrtgAPI.Parameters
             if (index == -1)
                 return null;
             else
-                return Parameters[index].Value;
+                return InternalParameters[index].Value;
         }
 
         #region SetCustomParameter
@@ -188,11 +187,11 @@ namespace PrtgAPI.Parameters
         /// <typeparam name="T">The type of enum to serialize.</typeparam>
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="enum">The enum to serialize.</param>
-        protected void SetCustomParameterEnumXml<T>(ObjectProperty property, T @enum) where T : struct =>
+        protected void SetCustomParameterEnumXml<T>(ObjectProperty property, T @enum) =>
             SetCustomParameterEnumXml(GetObjectPropertyName(property), @enum);
 
         [ExcludeFromCodeCoverage]
-        internal void SetCustomParameterEnumXml<T>(ObjectPropertyInternal property, T @enum) where T : struct =>
+        internal void SetCustomParameterEnumXml<T>(ObjectPropertyInternal property, T @enum) =>
             SetCustomParameterEnumXml(GetObjectPropertyInternalName(property), @enum);
 
         /// <summary>
@@ -201,8 +200,17 @@ namespace PrtgAPI.Parameters
         /// <typeparam name="T">The type of enum to serialize.</typeparam>
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="enum">The enum to serialize.</param>
-        protected void SetCustomParameterEnumXml<T>(string name, T @enum) where T : struct =>
-            SetCustomParameterInternal(name, ((Enum)(object)@enum).EnumToXml());
+        protected void SetCustomParameterEnumXml<T>(string name, T @enum) =>
+            SetCustomParameterInternal(name, GetEnumVal(@enum));
+
+        private object GetEnumVal<T>(T @enum)
+        {
+            if (@enum == null)
+                return null;
+
+            //If we're not an enum we expect to throw an exception
+            return ((Enum)(object)@enum).EnumToXml();
+        }
 
         #endregion
         #region SetCustomParameterBool
@@ -270,9 +278,9 @@ namespace PrtgAPI.Parameters
             var index = GetCustomParameterIndex(name);
 
             if (index == -1)
-                Parameters.Add(parameter);
+                InternalParameters.Add(parameter);
             else
-                Parameters[index] = parameter;
+                InternalParameters[index] = parameter;
         }
 
         #region Helpers
@@ -293,14 +301,14 @@ namespace PrtgAPI.Parameters
 
         private int GetCustomParameterIndex(string name)
         {
-            var index = Parameters.FindIndex(a => a.Name == name);
+            var index = InternalParameters.FindIndex(a => a.Name == name);
 
             return index;
         }
 
         #endregion
 
-        private List<CustomParameter> Parameters
+        internal List<CustomParameter> InternalParameters
         {
             get
             {

@@ -6,7 +6,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
 {
     public class ExeXmlRawSensorParameters : RawSensorParameters
     {
-        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile, Priority priority = Priority.Three) : base(sensorName, sensorType, priority)
+        public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile) : base(sensorName, sensorType)
         {
             ExeFile = exeFile;
 
@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
             DebugMode = DebugMode.Discard;
             InheritInterval = true;
             Interval = ScanningInterval.SixtySeconds;
-            IntervalErrorMode = IntervalErrorMode.OneWarningThenDown;
+            IntervalErrorMode = PrtgAPI.IntervalErrorMode.OneWarningThenDown;
         }
 
         public new string[] Tags
@@ -78,24 +78,6 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
         {
             get { return (DebugMode)GetCustomParameterEnumXml<DebugMode>("writeresult_"); }
             set { SetCustomParameterEnumXml("writeresult_", value); }
-        }
-
-        public bool? InheritInterval
-        {
-            get { return GetCustomParameterBool("intervalgroup"); }
-            set { SetCustomParameterBool("intervalgroup", value); }
-        }
-
-        public ScanningInterval Interval
-        {
-            get { return (ScanningInterval)GetCustomParameterInternal("interval_"); }
-            set { SetCustomParameterInternal("interval_", value); }
-        }
-
-        public IntervalErrorMode IntervalErrorMode
-        {
-            get { return (IntervalErrorMode)GetCustomParameterEnumXml<IntervalErrorMode>("errorintervalsdown_"); }
-            set { SetCustomParameterEnumXml("errorintervalsdown_", value); }
         }
     }
 

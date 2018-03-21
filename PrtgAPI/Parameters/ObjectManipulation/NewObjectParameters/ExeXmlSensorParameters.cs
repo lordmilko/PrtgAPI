@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
@@ -22,18 +21,16 @@ namespace PrtgAPI.Parameters
         /// <param name="timeout">The duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.</param>
         /// <param name="debugMode">Indicates whether to store raw EXE/Script XML/JSON output for debugging purposes.</param>
         /// <param name="inheritInterval">Whether this sensor's scanning interval settings are inherited from its parent.</param>
-        /// <param name="interval">The scanning interval of the sensor. Applies only if <paramref name="inheritInterval"/> is false. If you wish to specify a non-standard scanning interval, you may do so by specifying a <see cref="TimeSpan"/> to property <see cref="Interval"/>.</param>
+        /// <param name="interval">The scanning interval of the sensor. Applies only if <paramref name="inheritInterval"/> is false. If you wish to specify a non-standard scanning interval, you may do so by specifying a <see cref="TimeSpan"/> to property <see cref="NewSensorParameters.Interval"/>.</param>
         /// <param name="intervalErrorMode">The number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.</param>
-        /// <param name="priority">The priority of the sensor, controlling how the sensor is displayed in table lists.</param>
-        /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default value is "xmlexesensor".</param>
         public ExeXmlSensorParameters(ExeFileTarget exeFile, string sensorName = "XML Custom EXE/Script Sensor", string exeParameters = null,
             bool setExeEnvironmentVariables = false, bool useWindowsAuthentication = false,
             string mutex = null, int timeout = 60, DebugMode debugMode = DebugMode.Discard, bool inheritInterval = true,
-            StandardScanningInterval interval = StandardScanningInterval.SixtySeconds, IntervalErrorMode intervalErrorMode = IntervalErrorMode.OneWarningThenDown,
-            Priority priority = Priority.Three, bool inheritTriggers = true, params string[] tags) :
+            StandardScanningInterval interval = StandardScanningInterval.SixtySeconds,
+            IntervalErrorMode intervalErrorMode = PrtgAPI.IntervalErrorMode.OneWarningThenDown, params string[] tags) :
             
-            base(sensorName, priority, inheritTriggers, SensorType.ExeXml)
+            base(sensorName, SensorType.ExeXml)
         {
             if (exeFile == null)
                 throw new ArgumentNullException(nameof(exeFile));
@@ -52,7 +49,6 @@ namespace PrtgAPI.Parameters
             InheritInterval = inheritInterval;
             Interval = interval;
             IntervalErrorMode = intervalErrorMode;
-            InheritTriggers = inheritTriggers;
         }
 
         /// <summary>
@@ -127,33 +123,5 @@ namespace PrtgAPI.Parameters
             get { return (DebugMode)GetCustomParameterEnumXml<DebugMode>(ObjectProperty.DebugMode); }
             set { SetCustomParameterEnumXml(ObjectProperty.DebugMode, value); }
         }
-
-        /// <summary>
-        /// Whether this sensor's scanning interval settings are inherited from its parent.
-        /// </summary>
-        public bool? InheritInterval
-        {
-            get { return GetCustomParameterBool(ObjectProperty.InheritInterval); }
-            set { SetCustomParameterBool(ObjectProperty.InheritInterval, value); }
-        }
-
-        /// <summary>
-        /// The scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
-        /// </summary>
-        public ScanningInterval Interval
-        {
-            get { return (ScanningInterval)GetCustomParameter(ObjectProperty.Interval); }
-            set { SetCustomParameter(ObjectProperty.Interval, value); }
-        }
-
-        /// <summary>
-        /// The number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
-        /// </summary>
-        public IntervalErrorMode IntervalErrorMode
-        {
-            get { return (IntervalErrorMode)GetCustomParameterEnumXml<IntervalErrorMode>(ObjectProperty.IntervalErrorMode); }
-            set { SetCustomParameterEnumXml(ObjectProperty.IntervalErrorMode, value); }
-        }
     }
-
 }

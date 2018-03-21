@@ -50,9 +50,9 @@ namespace PrtgAPI.Request
                 //As such, we instead filter for sensors of the newly created type
                 var sensorType = parameters[Parameter.SensorType];
 
-                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType.ToString();
+                var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType?.ToString();
 
-                filters.Add(new SearchFilter(Property.Type, str.ToLower()));
+                filters.Add(new SearchFilter(Property.Type, str?.ToLower() ?? string.Empty));
             }
             else
                 filters.Add(new SearchFilter(Property.Name, parameters.Name));

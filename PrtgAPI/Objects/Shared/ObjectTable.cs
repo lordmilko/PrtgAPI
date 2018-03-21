@@ -18,10 +18,13 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Type))]
         public string Type { get; set; }
 
+        /// <summary>
+        /// The raw type name of this object.
+        /// </summary>
         [XmlElement("type_raw")]
-        internal string typeStr { get; set; }
+        public string RawType { get; set; }
 
-        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?) EnumHelpers.XmlToEnum<XmlEnumAttribute>(typeStr, typeof (SensorTypeInternal), false);
+        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?) EnumHelpers.XmlToEnum<XmlEnumAttribute>(RawType, typeof (SensorTypeInternal), false);
 
         /// <summary>
         /// Tags contained on this object.

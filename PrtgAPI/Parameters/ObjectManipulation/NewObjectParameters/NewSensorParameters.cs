@@ -1,4 +1,5 @@
 ﻿using System;
+using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -11,35 +12,63 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// The priority of the sensor, controlling how the sensor is displayed in table lists.
         /// </summary>
-        public Priority Priority
+        [PropertyParameter(nameof(ObjectProperty.Priority))]
+        public Priority? Priority
         {
-            get { return (Priority)(GetCustomParameterEnumXml<Priority>(ObjectProperty.Priority) ?? Priority.Three); }
+            get { return (Priority?)GetCustomParameterEnumXml<Priority?>(ObjectProperty.Priority); }
             set { SetCustomParameterEnumXml(ObjectProperty.Priority, value); }
         }
 
         /// <summary>
         /// Whether to inherit notification triggers from the parent object.
         /// </summary>
-        public bool InheritTriggers
+        [PropertyParameter(nameof(ObjectProperty.InheritTriggers))]
+        public bool? InheritTriggers
         {
-            get { return (bool) GetCustomParameterBool(ObjectProperty.InheritTriggers); }
+            get { return GetCustomParameterBool(ObjectProperty.InheritTriggers); }
             set { SetCustomParameterBool(ObjectProperty.InheritTriggers, value); }
+        }
+
+        /// <summary>
+        /// Whether this sensor's scanning interval settings are inherited from its parent.
+        /// </summary>
+        [PropertyParameter(nameof(ObjectProperty.InheritInterval))]
+        public bool? InheritInterval
+        {
+            get { return GetCustomParameterBool(ObjectProperty.InheritInterval); }
+            set { SetCustomParameterBool(ObjectProperty.InheritInterval, value); }
+        }
+
+        /// <summary>
+        /// The scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
+        /// </summary>
+        [PropertyParameter(nameof(ObjectProperty.Interval))]
+        public ScanningInterval Interval
+        {
+            get { return (ScanningInterval)GetCustomParameter(ObjectProperty.Interval); }
+            set { SetCustomParameter(ObjectProperty.Interval, value); }
+        }
+
+        /// <summary>
+        /// The number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
+        /// </summary>
+        [PropertyParameter(nameof(ObjectProperty.IntervalErrorMode))]
+        public IntervalErrorMode? IntervalErrorMode
+        {
+            get { return (IntervalErrorMode?)GetCustomParameterEnumXml<IntervalErrorMode?>(ObjectProperty.IntervalErrorMode); }
+            set { SetCustomParameterEnumXml(ObjectProperty.IntervalErrorMode, value); }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewSensorParameters"/> class.
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>
-        /// <param name="priority">The priority of the sensor, controlling how the sensor is displayed in table lists.</param>
-        /// <param name="inheritTriggers">Whether to inherit notification triggers from the parent object.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        public NewSensorParameters(string sensorName, Priority priority, bool inheritTriggers, object sensorType) : base(sensorName)
+        protected NewSensorParameters(string sensorName, object sensorType) : base(sensorName)
         {
             if (string.IsNullOrEmpty(sensorType?.ToString()))
                 throw new ArgumentException($"{nameof(sensorType)} cannot be null or empty", nameof(sensorType));
 
-            Priority = priority;
-            InheritTriggers = inheritTriggers;
             this[Parameter.SensorType] = sensorType;
         }
     }

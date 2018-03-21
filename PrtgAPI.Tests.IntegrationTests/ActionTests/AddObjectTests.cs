@@ -17,11 +17,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         [TestMethod]
         public void AddSensor_AddsWithRawParameters()
         {
-            var parameters = new RawSensorParameters("raw c# sensor", "exexml", Priority.Four, false);
+            var parameters = new RawSensorParameters("raw c# sensor", "exexml");
             parameters.Parameters.AddRange(
                 new List<CustomParameter>
                 {
                     new CustomParameter("tags_", "xmlexesensor"),
+                    new CustomParameter("priority_", 4),
+                    new CustomParameter("inherittriggers_", 0),
                     new CustomParameter("exefile_", "test.ps1|test.ps1||"),
                     new CustomParameter("exeparams_", "arg1 arg2 arg3"),
                     new CustomParameter("environment_", 1),
@@ -34,6 +36,29 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                     new CustomParameter("errorintervalsdown_", 2),
                 }
             );
+
+            AddAndValidateRawParameters(parameters);
+        }
+
+        [TestMethod]
+        public void AddSensor_AddsWithDictionaryParameters()
+        {
+            var parameters = new RawSensorParameters("raw c# sensor", "exexml")
+            {
+                Tags = new[] { "xmlexesensor" },
+                Priority = Priority.Four,
+                InheritInterval = false,
+                Interval = ScanningInterval.ThirtySeconds,
+                IntervalErrorMode = IntervalErrorMode.TwoWarningsThenDown,
+                InheritTriggers = false,
+                ["exefile_"] = "test.ps1|test.ps1||",
+                ["exeparams_"] = "arg1 arg2 arg3",
+                ["environment_"] = 1,
+                ["usewindowsauthentication_"] = 1,
+                ["mutexname_"] = "testMutex",
+                ["timeout_"] = 70,
+                ["writeresult_"] = 1
+            };
 
             AddAndValidateRawParameters(parameters);
         }

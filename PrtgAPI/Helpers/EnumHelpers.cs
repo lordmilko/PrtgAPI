@@ -127,6 +127,11 @@ namespace PrtgAPI.Helpers
 
             try
             {
+                var underlying = Nullable.GetUnderlyingType(type);
+
+                if (underlying != null)
+                    type = underlying;
+
                 var e = Enum.Parse(type, value, true);
 
                 if (allowFlags == false && ((Enum)e).GetUnderlyingFlags().Any())

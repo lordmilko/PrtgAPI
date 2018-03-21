@@ -63,6 +63,20 @@ function Run($objectType, $script)
     return $result
 }
 
+function WithStrict($script)
+{
+    try
+    {
+        Set-StrictMode -Version 3
+
+        & $script
+    }
+    finally
+    {
+        Set-StrictMode -Off
+    }
+}
+
 function GetCustomCountDictionary($hashtable)
 {
     $dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
@@ -182,8 +196,6 @@ function BuildStr($str)
 
     return $str
 }
-
-
 
 function SetPrtgClient($client)
 {

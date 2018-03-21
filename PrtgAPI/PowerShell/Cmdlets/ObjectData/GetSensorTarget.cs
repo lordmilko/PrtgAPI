@@ -168,7 +168,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Parameters)
             {
                 var parameters = createParams(items);
-                parameters.targetDevice = Device;
+                parameters.Source = Device;
 
                 return parameters;
             }

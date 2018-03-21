@@ -43,6 +43,29 @@ namespace PrtgAPI.Objects.Deserialization
             return Deserialize(type, obj, elm, properties);
         }
 
+        public static object DeserializeRawPropertyValue(ObjectProperty property, string rawName, string rawValue)
+        {
+            var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
+            var deserializer = new XmlSerializer(typeLookup);
+
+            var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
+
+            var xml = new XDocument(
+                new XElement("properties",
+                    new XElement(elementName, rawValue)
+                )
+            );
+
+            var settings = deserializer.Deserialize(xml, elementName);
+
+            var value = settings.GetType().GetProperties().First(p => p.Name == property.ToString()).GetValue(settings);
+
+            if (value == null && rawValue != string.Empty)
+                return rawValue;
+
+            return value;
+        }
+
         private object Deserialize(Type type, object obj, XElement elm, params string[] properties)
         {
             var mappings = ReflectionCacheManager.Map(type);

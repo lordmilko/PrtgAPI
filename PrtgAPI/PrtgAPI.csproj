@@ -119,8 +119,10 @@
     <Compile Include="Exceptions\InvalidStateException.cs" />
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
+    <Compile Include="Helpers\DictionaryHelpers.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="Parameters\Base\ISourceParameters.cs" />
     <Compile Include="Request\RequestParser.cs" />
     <Compile Include="Request\ResponseParser.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
@@ -162,6 +164,7 @@
     <Compile Include="Objects\Undocumented\ProbeSettings.cs" />
     <Compile Include="Parameters\Base\BaseMultiActionParameters.cs" />
     <Compile Include="Parameters\Base\BaseSetObjectPropertyParameters.cs" />
+    <Compile Include="Parameters\Base\PSObjectSensorParameters.cs" />
     <Compile Include="Parameters\Base\IMultiTargetParameters.cs" />
     <Compile Include="Parameters\Base\IParameters.cs" />
     <Compile Include="Parameters\Helpers\TypeCategory.cs" />
@@ -255,6 +258,8 @@
     <Compile Include="PowerShell\Progress\RecordAnalyzer.cs" />
     <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
     <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
+    <Compile Include="PowerShell\PSVariableEx.cs" />
+    <Compile Include="PowerShell\ParameterSet.cs" />
     <Compile Include="Properties\AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -215,13 +215,22 @@ namespace PrtgAPI.Request
 
         private string FormatSingleParameterInternal(string name, object val, bool encodeValue, bool isEnum = false)
         {
-            string str;
+            string str = string.Empty;
 
             if (val is string)
                 str = val.ToString();
             else
             {
-                if (val is IFormattable)
+                if (val is IFormattableMultiple)
+                {
+                    var ps = ((IFormattableMultiple) val).GetSerializedFormats().Select(f =>
+                        FormatSingleParameterInternal(name, f, encodeValue, isEnum)
+                    ).ToList();
+
+                    if(ps.Count > 0)
+                        return string.Join("&", ps);
+                }
+                else if (val is IFormattable)
                     str = ((IFormattable)val).GetSerializedFormat();
                 else
                     str = Convert.ToString(val);

@@ -28,7 +28,7 @@ namespace PrtgAPI
         Two = 2,
 
         /// <summary>
-        /// Prioroty 3.
+        /// Priority 3 (default).
         /// </summary>
         [XmlEnum("3")]
         Three = 3,

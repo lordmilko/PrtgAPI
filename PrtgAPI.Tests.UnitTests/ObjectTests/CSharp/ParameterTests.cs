@@ -6,6 +6,19 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
+    class FakeSensorParameters : RawSensorParameters
+    {
+        public FakeSensorParameters() : base("fake_name", "fake_type")
+        {
+        }
+
+        public int RestartStage
+        {
+            get { return (int)GetCustomParameterEnumXml<int>(ObjectProperty.AutoDiscoverySchedule); }
+            set { SetCustomParameterEnumXml<int>(ObjectProperty.AutoDiscoverySchedule, value); }
+        }
+    }
+
     [TestClass]
     public class ParameterTests
     {
@@ -71,6 +84,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Down, "Status was not down");
         }
 
+        #region LogParameters
+
         [TestMethod]
         public void LogParameters_Date_CanBeGetAndSet()
         {
@@ -111,6 +126,41 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.AreEqual(end.ToString(), parameters.EndDate.ToString(), "End was not correct");
         }
 
+        #endregion
+        #region NewSensorParameters
+
+        [TestMethod]
+        public void NewSensorParameters_Enum_CanBeSet()
+        {
+            var parameters = new ExeXmlSensorParameters("test.ps1")
+            {
+                Priority = Priority.Three
+            };
+
+            Assert.AreEqual(Priority.Three, parameters.Priority);
+        }
+
+        [TestMethod]
+        public void NewSensorParameters_Enum_CanBeSetToNull()
+        {
+            var parameters = new ExeXmlSensorParameters("test.ps1")
+            {
+                Priority = null
+            };
+
+            Assert.AreEqual(null, parameters.Priority);
+        }
+
+        [TestMethod]
+        public void NewSensorParameters_Enum_Throws_WhenSetNotEnum()
+        {
+            var parameters = new FakeSensorParameters();
+
+            AssertEx.Throws<InvalidCastException>(() => parameters.RestartStage = 1, "Unable to cast object of type 'System.Int32' to type 'System.Enum'");
+        }
+
+        #endregion
+
         [TestMethod]
         public void RawSensorParameters_Parameters_InitializesIfNull()
         {
@@ -120,6 +170,36 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             };
 
             Assert.AreEqual(typeof (List<CustomParameter>), parameters.Parameters.GetType());
+        }
+
+        [TestMethod]
+        public void RawSensorParameters_CanBeUsedAsDictionary()
+        {
+            var parameters = new RawSensorParameters("testName", "sensorType");
+
+            parameters["customParam"] = 3;
+            Assert.AreEqual(3, parameters["customParam"]);
+
+            parameters["customParam_"] = 4;
+            Assert.AreEqual(4, parameters["customParam_"]);
+
+            Assert.AreNotEqual(parameters["customParam"], parameters["customParam_"]);
+
+            Assert.IsTrue(parameters.Contains("customParam"));
+
+            parameters["CUSTOMPARAM"] = 5;
+            Assert.AreEqual(5, parameters["CUSTOMPARAM"]);
+            Assert.AreEqual(5, parameters["customParam"]);
+
+            Assert.IsTrue(parameters.Contains("customParam_"));
+
+            parameters.Remove("customParam_");
+
+            Assert.IsFalse(parameters.Contains("customParam_"));
+            AssertEx.Throws<InvalidOperationException>(() =>
+            {
+                var val = parameters["customParam_"];
+            }, "Parameter with name 'customParam_' does not exist.");
         }
 
         [TestMethod]

@@ -174,4 +174,30 @@ Describe "Add-Sensor_IT" {
 
         $sensors | Remove-Object -Force
     }
+    
+    It "adds a sensor constructed through empty parameters" {
+
+        $device = Get-Device -Id (Settings Device)
+
+        $target = $device | Get-SensorTarget -RawType exexml *test*
+
+        $params = New-SensorParameters -Empty
+        $params["name_"] = "empty sensor"
+        $params["sensortype"] = "exexml"
+        $params["exefile_"] = $target
+        $params["interval_"] = "300|5 minutes"
+        $params["timeout_"] = 70
+
+        $newSensor = $device | Add-Sensor $params
+
+        $newSensor.Count | Should Be 1
+
+        $properties = $newSensor | Get-ObjectProperty
+
+        $newSensor.RawType | Should Be "exexml"
+        $properties.Name | Should Be "empty sensor"
+        $properties.ExeFile.ToString() | Should Be "testScript.bat"
+        $properties.Interval.ToString() | Should Be ([TimeSpan]"00:05:00").ToString()
+        $properties.Timeout | Should Be 70
+    }
 }

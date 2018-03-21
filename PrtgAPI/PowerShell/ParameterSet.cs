@@ -59,6 +59,8 @@
 
         internal const string Target = "TargetSet";
 
+        internal const string Empty = "EmptySet";
+
         internal const string Add = "AddSet";
         internal const string Edit = "EditSet";
         internal const string AddFrom = "AddFromSet";
