@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -35,6 +36,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var target2Hash = target2.GetHashCode();
 
             Assert.AreEqual(target1Hash, target2Hash);
+        }
+        
+        [TestMethod]
+        public void ScanningInterval_HasCorrectHashCode()
+        {
+            ScanningInterval interval1 = ScanningInterval.OneHour;
+            ScanningInterval interval2 = new TimeSpan(1, 0, 0);
+
+            var code1 = interval1.GetHashCode();
+            var code2 = interval2.GetHashCode();
+
+            Assert.AreEqual(interval1, interval2);
+
+            var timeSpan = new TimeSpan(1, 0, 0);
+
+            Assert.AreNotEqual(code2, timeSpan);
         }
     }
 }

@@ -63,6 +63,7 @@
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
     <Compile Include="DataTests\GetObjectProperties.cs" />
     <Compile Include="DataTests\Incomplete\LogTests.cs" />
+    <Compile Include="DataTests\SensorTargetTests.cs" />
     <Compile Include="Support\EnumHelpers.cs" />
     <Compile Include="Support\ServerManager.cs" />
     <Compile Include="Support\AssertEx.cs" />

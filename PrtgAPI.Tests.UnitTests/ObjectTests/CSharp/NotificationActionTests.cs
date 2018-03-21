@@ -40,6 +40,30 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void NotificationAction_FiltersByProperty()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse(new[]
+            {
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
+            }));
+
+            client.GetNotificationActions(Property.Name, "ticket");
+        }
+
+        [TestMethod]
+        public async Task NotificationAction_FiltersByPropertyAsync()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse(new[]
+            {
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
+            }));
+
+            await client.GetNotificationActionsAsync(Property.Name, "ticket");
+        }
+        
+        [TestMethod]
         public void NotificationAction_Types_ToString()
         {
             var obj = GetSingleItem();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
@@ -730,6 +731,7 @@ namespace PrtgAPI.PowerShell.Progress
                 return new ProgressWriter(cmdlet);
         }
 
+        [ExcludeFromCodeCoverage]
         ~ProgressManager()
         {
             Dispose(false);
@@ -745,6 +747,7 @@ namespace PrtgAPI.PowerShell.Progress
             GC.SuppressFinalize(this);
         }
 
+        [ExcludeFromCodeCoverage]
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)

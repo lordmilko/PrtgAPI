@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
@@ -18,8 +19,9 @@ namespace PrtgAPI.Parameters
         /// <param name="notifyStarted">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensor in the event PRTG restarts it.</param>
         /// <param name="monitorPerformance">Whether to collect performance metrics for the service.</param>
         /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default values are "wmiservicesensor" and "servicesensor".</param>
+        [ExcludeFromCodeCoverage]
         public WmiServiceSensorParameters(WmiServiceTarget service, bool startStopped = false, bool notifyStarted = true, bool monitorPerformance = false, params string[] tags) :
-            this(new List<WmiServiceTarget>() {service}, startStopped, notifyStarted, monitorPerformance, tags)
+            this(new List<WmiServiceTarget> {service}, startStopped, notifyStarted, monitorPerformance, tags)
         {
         }
 

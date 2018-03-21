@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.ServiceProcess;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Undocumented;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// Describes a system service on a Microsoft Windows system that can be monitored via WMI.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class WmiServiceTarget : SensorTarget<WmiServiceTarget>
     {
         /// <summary>

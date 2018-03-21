@@ -144,6 +144,7 @@
     <Compile Include="Objects\NotificationAction\NotificationActionSNMPSettings.cs" />
     <Compile Include="Objects\NotificationAction\NotificationActionSyslogSettings.cs" />
     <Compile Include="Objects\NotificationAction\NotificationActionTicketSettings.cs" />
+    <Compile Include="Objects\Undocumented\SensorTarget\GenericSensorTarget.cs" />
     <Compile Include="Objects\UserGroup.cs" />
     <Compile Include="Objects\UserAccount.cs" />
     <Compile Include="Objects\RestartProbeProgress.cs" />

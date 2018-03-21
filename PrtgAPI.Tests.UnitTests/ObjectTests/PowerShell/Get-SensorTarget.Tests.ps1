@@ -108,4 +108,52 @@ Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
             { CreateParameters "SqlServerDB" $query "SqlServerDBSensorParameters" "QueryFile" } | Should Throw $err
         }
     }
+
+    Context "Raw" {
+        SetResponseAndClient "ExeFileTargetResponse"
+
+        It "resolves raw EXE files" {
+            $items = $device | Get-SensorTarget -RawType exexml
+
+            $items.Count | Should BeGreaterThan 1
+
+            $item = $items | Select -First 1
+
+            $item | Should Not BeNullOrEmpty
+
+            $item.GetType().Name | Should Be "GenericSensorTarget"
+        }
+
+        It "specifies a table name" {
+            $items = $device | Get-SensorTarget -RawType exexml -Table exefile
+
+            $items.Count | Should BeGreaterThan 1
+
+            $item = $items | Select -First 1
+
+            $item | Should Not BeNullOrEmpty
+
+            $item.GetType().Name | Should Be "GenericSensorTarget"
+        }
+
+        it "specifies an invalid table name" {
+            { $device | Get-SensorTarget -RawType exexml -Table blah } | Should Throw "Cannot find any tables named 'blah'. Available tables: 'exefile'."
+        }
+
+        It "filters returned EXE files" {
+            $item = @($device | Get-SensorTarget -RawType exexml *test*)
+
+            $item.Count | Should Be 1
+
+            $item.Name | Should Be "testScript.bat"
+
+            $nothing = $device | Get-SensorTarget -RawType "exexml" "fake_prtgapi_item"
+
+            $nothing | Should BeNullOrEmpty
+        }
+    }
+
+    It "retrieves targets from an unsupported sensor type" {
+        { $device | Get-SensorTarget Http } | Should Throw "Sensor type 'Http' is not currently supported"
+    }
 }

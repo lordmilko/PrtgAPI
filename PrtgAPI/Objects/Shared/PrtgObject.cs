@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
@@ -69,6 +70,7 @@ namespace PrtgAPI.Objects.Shared
             }
         }
 
+        [ExcludeFromCodeCoverage]
         string IFormattable.GetSerializedFormat()
         {
             return raw ?? ToString();

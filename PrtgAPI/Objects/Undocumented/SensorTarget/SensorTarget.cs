@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using PrtgAPI.Objects.Undocumented;
 
 namespace PrtgAPI
 {
@@ -14,7 +14,7 @@ namespace PrtgAPI
         /// <summary>
         /// The name of the target.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; internal set; }
 
         private readonly string raw;
 
@@ -49,6 +49,7 @@ namespace PrtgAPI
             return raw;
         }
 
+        [ExcludeFromCodeCoverage]
         internal static T ParseStringCompatible(object obj)
         {
             if (obj == null)
@@ -73,8 +74,9 @@ namespace PrtgAPI
         protected static List<T> CreateFromDropDownOptions(string response, string name, Func<string, T> createObj)
         {
             var files = ObjectSettings.GetDropDownList(response)
-                .First(d => d.Name == name).Options
-                .Select(o => createObj(o.Value))
+                .Where(d => d.Name == name)
+                .SelectMany(d => d.Options
+                .Select(o => createObj(o.Value)))
                 .ToList();
 
             return files;
@@ -113,6 +115,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object..</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        [ExcludeFromCodeCoverage]
         public override bool Equals(object other)
         {
             if (ReferenceEquals(null, other))
@@ -134,6 +137,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object..</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        [ExcludeFromCodeCoverage]
         public bool Equals(T other)
         {
             if (ReferenceEquals(null, other))

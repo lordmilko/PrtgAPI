@@ -9,6 +9,11 @@ namespace PrtgAPI.Parameters
             SensorType = type;
         }
 
+        internal SensorTargetParameters(int deviceId, string sensorType) : base(deviceId)
+        {
+            this[Parameter.SensorType] = sensorType;
+        }
+
         public SensorType SensorType
         {
             get { return this[Parameter.SensorType].ToString().XmlToEnum<SensorType>(); }

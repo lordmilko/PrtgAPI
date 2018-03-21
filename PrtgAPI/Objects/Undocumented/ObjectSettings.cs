@@ -22,7 +22,7 @@ namespace PrtgAPI
         {
             var inputXml = GetInputXml(response);
             var ddlXml = GetDropDownListXml(response);
-            var textXml = GetTextAreaXml(response, standardNameRegex);
+            var textXml = GetTextAreaXml(response);
             var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
 
             var elm = new XElement("properties", inputXml, ddlXml, textXml, dependencyXml);
@@ -72,6 +72,15 @@ namespace PrtgAPI
             var properties = GetProperties(inputs, nameRegex, nameTransformer);
 
             return properties;
+        }
+
+        internal static List<Input> GetFilteredInputs(string response, string nameRegex = null)
+        {
+            var inputs = GetInput(response, nameRegex: nameRegex);
+
+            var filtered = FilterInputTags(inputs).Select(i => i.Value).ToList();
+
+            return filtered;
         }
 
         internal static List<XElement> GetInputXml(string response, string matchRegex = null, string nameRegex = null, Func<string, string> nameTransformer = null)
@@ -145,8 +154,11 @@ namespace PrtgAPI
             return null;
         }
 
-        internal static List<XElement> GetTextAreaXml(string response, string nameRegex)
+        internal static Dictionary<string, string> GetTextAreaFields(string response, string nameRegex = null)
         {
+            if (nameRegex == null)
+                nameRegex = standardNameRegex;
+
             var pattern = "(<textarea.+?>)(.*?)(<\\/textarea>)";
 
             //todo: what if there are none: will that cause an exception? (e.g. when doing sensor settings properties)
@@ -158,9 +170,16 @@ namespace PrtgAPI
             {
                 Name = Regex.Replace(m, nameRegex, "$2", RegexOptions.Singleline),
                 Value = Regex.Replace(m, pattern, "$2", RegexOptions.Singleline)
-            }).ToList();
+            }).ToDictionary(i => i.Name, i => i.Value);
 
-            var xml = namesAndValues.Select(n => new XElement($"{prefix}{n.Name}", n.Value)).ToList();
+            return namesAndValues;
+        }
+
+        internal static List<XElement> GetTextAreaXml(string response, string nameRegex = null)
+        {
+            var text = GetTextAreaFields(response, nameRegex);
+
+            var xml = text.Select(n => new XElement($"{prefix}{n.Key}", n.Value)).ToList();
 
             return xml;
         }

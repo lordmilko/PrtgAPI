@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Xml.Serialization;
+using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -22,6 +24,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// parameters for the specified sensor type by specifying the -Parameters (alias: -Params) parameter. When creating sensor parameters
     /// with the -Params parameter, the default sensor name of the specified sensor type will be used.</para>
     /// 
+    /// <para type="description">Sensor types not supported by PrtgAPI can still be interrogated by Get-SensorTarget via the -RawType parameter.
+    /// Raw sensor type names can be found by inspecting the Id column of items output from the Get-SensorType cmdlet. When operating on raw types,
+    /// by default Get-SensorTarget will attempt to guess the name of the data table within PRTG the sensor targets are stored in. If PRTG detects
+    /// more than one data table exists, an <see cref="ArgumentException"/> will be thrown listing the names of all of the available tables. The name
+    /// of the table to use can then be specified to the -Table parameter.</para>
+    /// 
+    /// <para type="description">Sensor targets identified for raw types are represented as a "generic" sensor target type. Generic sensor targets
+    /// allow accessing both their Name and Value as named properties. Any other properties of the sensor target can be obtained by accessing the
+    /// Properties array of the object. Generic sensor targets capable of being used with any <see cref="NewSensorParameters"/> type, including
+    /// <see cref="RawSensorParameters"/> and <see cref="DynamicSensorParameters"/>.</para>
+    /// 
     /// <para type="description">While resources returned by Get-SensorTarget are guaranteed to be compatible with the target device,
     /// there is no restriction preventing such resources from being used on other devices as well. Attempting to create a sensor
     /// on an incompatible device may succeed, however the sensor will likely enter a <see cref="Status.Down"/> state upon refreshing,
@@ -40,14 +53,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> $params = $device | Get-SensorTarget WmiService *exchange* -Params</para>
     ///     <para>C:\> $device | Add-Sensor $params</para>
     ///     <para>Add all WMI Services whose name contains "Exchange" to the Device with ID 1001, creating sensor parameters immediately.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $targets = Get-Device -Id 1001 | Get-SensorTarget -RawType vmwaredatastoreextern</code>
+    ///     <para>Get all VMware Datastores from the device with ID 1001.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $targets = Get-Device -Id 1001 | Get-SensorTarget -RawType wmivolume</code>
+    ///     <para>C:\> $targets | foreach { $_.Properties[3] }</para>
+    ///     <para>List the disk type (Local Disk, Compact Disk etc) of all WMI Volume targets.</para>
     /// </example>
     /// 
     /// <para type="link">New-SensorParameters</para>
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>
+    /// <para type="link">Get-SensorType</para>
     /// 
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "SensorTarget")]
+    [Cmdlet(VerbsCommon.Get, "SensorTarget", DefaultParameterSetName = ParameterSet.Default)]
     public class GetSensorTarget : PrtgProgressCmdlet
     {
         /// <summary>
@@ -60,7 +85,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The type of sensor target to query for. Not all sensor types may require or support target resolution.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         public SensorType Type { get; set; }
 
         /// <summary>
@@ -74,8 +99,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// parameters applicable to the specified sensor type.</para>
         /// </summary>
         [Alias("Params")]
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
         public SwitchParameter Parameters { get; set; }
+
+        /// <summary>
+        /// <para type="description">The raw type of sensor target to query for. Types that require additional information before querying (such as Oracle Tablespace) cannot be queried.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
+        public string RawType { get; set; }
+
+        /// <summary>
+        /// <para type="description">The name of the Dropdown List or Checkbox Group the sensor targets belong to. If this value is null,
+        /// PrtgAPI will attempt to guess the name of the table.  If this value cannot be guessed or is not valid,
+        /// an <see cref="ArgumentException"/> will be thrown listing all possible values.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        public string Table { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetSensorTarget"/> class.
@@ -89,6 +128,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            if (ParameterSetName == ParameterSet.Default)
+            {
+                ProcessDefaultParameterSet();
+            }
+            else
+            {
+                var type = EnumHelpers.XmlToEnum<XmlEnumAttribute>(RawType, typeof(SensorTypeInternal), false);
+
+                var str = (type as Enum)?.GetDescription() ?? "Sensor Target";
+
+                GetTargets(
+                   str,
+                    (d, c) => client.Targets.GetSensorTargets(d, RawType, Table, c),
+                   ParametersNotSupported,
+                    e => e.Name
+                );
+            }
+        }
+
+        private void ProcessDefaultParameterSet()
+        {
             switch (Type)
             {
                 case SensorType.ExeXml:
@@ -101,7 +161,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     GetSqlServerQuery();
                     break;
                 default:
-                    throw new NotImplementedException($"Sensor type '{Type}' is currently not supported");
+                    throw new NotImplementedException($"Sensor type '{Type}' is not currently supported");
             }
         }
 

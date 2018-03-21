@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
@@ -535,11 +536,19 @@ namespace PrtgAPI
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            Func<HttpResponseMessage, string> getSensorTargetTmpId = GetSensorTargetTmpId;
+            return ResolveSensorTargets(deviceId, parameters, progressCallback, parser);
+        }
 
-            var tmpId = Convert.ToInt32(requestEngine.ExecuteRequest(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId));
+        internal List<T> ResolveSensorTargets<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback);
+            return ResolveSensorTargets(deviceId, parameters, progressCallback, parser);
+        }
+
+        private List<T> ResolveSensorTargets<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var response = GetSensorTargetsResponse(deviceId, parameters, progressCallback);
 
             if (response == null)
                 return null;
@@ -551,16 +560,74 @@ namespace PrtgAPI
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            Func<HttpResponseMessage, Task<string>> getSensorTargetTmpId = o => Task.FromResult(GetSensorTargetTmpId(o));
+            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, parser).ConfigureAwait(false);
+        }
 
-            var tmpId = Convert.ToInt32(await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId).ConfigureAwait(false));
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback).ConfigureAwait(false);
+            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, parser).ConfigureAwait(false);
+        }
+
+        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var response = await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback).ConfigureAwait(false);
 
             if (response == null)
                 return null;
 
             return parser(response);
+        }
+
+        //######################################
+        // GetSensorTargetsResponse
+        //######################################
+
+        private string GetSensorTargetsResponse(int deviceId, string sensorType, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            return GetSensorTargetsResponse(deviceId, parameters, progressCallback);
+        }
+
+        private string GetSensorTargetsResponse(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback)
+        {
+            Func<HttpResponseMessage, string> getSensorTargetTmpId = ResponseParser.GetSensorTargetTmpId;
+
+            var tmpIdStr = requestEngine.ExecuteRequest(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId);
+
+            int tmpId;
+
+            if (!int.TryParse(tmpIdStr, out tmpId))
+                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid");
+
+            var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback);
+
+            return response;
+        }
+
+        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, string sensorType, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            return await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback).ConfigureAwait(false);
+        }
+
+        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback)
+        {
+            Func<HttpResponseMessage, Task<string>> getSensorTargetTmpId = o => Task.FromResult(ResponseParser.GetSensorTargetTmpId(o));
+
+            var tmpIdStr = await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId).ConfigureAwait(false);
+
+            int tmpId;
+
+            if (!int.TryParse(tmpIdStr, out tmpId))
+                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid");
+
+            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback).ConfigureAwait(false);
+
+            return response;
         }
 
         //######################################
@@ -574,6 +641,11 @@ namespace PrtgAPI
             SensorTargetProgress p;
             bool continueQuery = true;
 
+            var stopwatch = new Stopwatch();
+            var timeout = TimeSpan.FromSeconds(60);
+
+            stopwatch.Start();
+
             do
             {
                 p = GetObject<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters);
@@ -585,6 +657,9 @@ namespace PrtgAPI
                 {
                     if (!continueQuery)
                         break;
+
+                        if (stopwatch.Elapsed > timeout)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
 
 #if !DEBUG
                     Thread.Sleep(1000);
@@ -608,6 +683,11 @@ namespace PrtgAPI
             SensorTargetProgress p;
             bool continueQuery = true;
 
+            var stopwatch = new Stopwatch();
+            var timeout = TimeSpan.FromSeconds(60);
+
+            stopwatch.Start();
+
             do
             {
                 p = await GetObjectAsync<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters).ConfigureAwait(false);
@@ -619,6 +699,9 @@ namespace PrtgAPI
                 {
                     if (!continueQuery)
                         break;
+
+                        if (stopwatch.Elapsed > timeout)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
 
 #if !DEBUG
                     await Task.Delay(1000).ConfigureAwait(false);

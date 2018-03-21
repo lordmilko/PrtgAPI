@@ -97,6 +97,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             Assert.AreEqual(300, interval.TimeSpan.TotalSeconds);
         }
+        
+        [TestMethod]
+        public void ScanningInterval_From_TimeSpan()
+        {
+            var interval = ScanningInterval.Parse(new TimeSpan(0, 5, 0));
+
+            Assert.AreEqual(300, interval.TimeSpan.TotalSeconds);
+        }
 
         [TestMethod]
         public void Object_DeserializesSchedule()

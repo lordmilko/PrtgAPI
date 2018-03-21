@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
@@ -373,16 +374,58 @@ for(int i = 0; i < 2; i++)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "GetSensorTargetTmpId", i) #>;
+            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, parser", i) #>;
+        }
 
-            var tmpId = Convert.ToInt32(<#= CallFunction("requestEngine.ExecuteRequest", "CommandFunction.AddSensor2, parameters, getSensorTargetTmpId", i) #>);
+        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, string sensorType, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            var response = <#= CallFunction("WaitForSensorTargetResolution", "deviceId, tmpId, progressCallback", i) #>;
+            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, parser", i) #>;
+        }
+
+        private <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, Func<string, List<T>> parser)
+        {
+            var response = <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback", i) #>;
 
             if (response == null)
                 return null;
 
             return parser(response);
+        }
+
+<#
+}
+#>
+        //######################################
+        // GetSensorTargetsResponse
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, string sensorType, Func<int, bool> progressCallback)
+        {
+            var parameters = new SensorTargetParameters(deviceId, sensorType);
+
+            return <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback", i) #>;
+        }
+
+        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback)
+        {
+            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "ResponseParser.GetSensorTargetTmpId", i) #>;
+
+            var tmpIdStr = <#= CallFunction("requestEngine.ExecuteRequest", "CommandFunction.AddSensor2, parameters, getSensorTargetTmpId", i) #>;
+
+            int tmpId;
+
+            if (!int.TryParse(tmpIdStr, out tmpId))
+                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid");
+
+            var response = <#= CallFunction("WaitForSensorTargetResolution", "deviceId, tmpId, progressCallback", i) #>;
+
+            return response;
         }
 
 <#
@@ -403,6 +446,11 @@ for(int i = 0; i < 2; i++)
             SensorTargetProgress p;
             bool continueQuery = true;
 
+            var stopwatch = new Stopwatch();
+            var timeout = TimeSpan.FromSeconds(60);
+
+            stopwatch.Start();
+
             do
             {
                 p = <#= CallGenericFunction("GetObject", "SensorTargetProgress", "JsonFunction.GetAddSensorProgress, parameters", i) #>;
@@ -414,6 +462,9 @@ for(int i = 0; i < 2; i++)
                 {
                     if (!continueQuery)
                         break;
+
+                        if (stopwatch.Elapsed > timeout)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
 
 #if !DEBUG
                     <#= Sleep(1000, i) #>
