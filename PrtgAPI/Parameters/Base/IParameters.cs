@@ -10,6 +10,8 @@ namespace PrtgAPI.Parameters
     {
         bool Cookie { get; set; }
 
+        object this[Parameter parameter] { get; set; }
+
         Dictionary<Parameter, object> GetParameters();
     }
 }

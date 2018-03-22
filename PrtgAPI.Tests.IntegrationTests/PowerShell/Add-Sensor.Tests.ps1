@@ -164,6 +164,25 @@ Describe "Add-Sensor_IT" {
         }
     }
 
+    Context "HTTP" {
+        It "adds a new sensor" {
+            $device = Get-Device -Id (Settings Device)
+
+            $params = New-SensorParameters Http "HTTPS" "https://"
+
+            $newSensor = $device | Add-Sensor $params
+
+            $newSensor.Count | Should Be 1
+
+            $properties = $newSensor | Get-ObjectProperty
+
+            $properties.Name | Should Be "HTTPS"
+            $properties.Url | Should Be "https://"
+
+            $newSensor | Remove-Object -Force
+        }
+    }
+
     It "adds sensor parameters piped from Get-SensorTarget" {
         $sensors = Get-Device -Id (Settings Device) | Get-SensorTarget WmiService *prtg* -Parameters | Add-Sensor
 
@@ -199,5 +218,16 @@ Describe "Add-Sensor_IT" {
         $properties.ExeFile.ToString() | Should Be "testScript.bat"
         $properties.Interval.ToString() | Should Be ([TimeSpan]"00:05:00").ToString()
         $properties.Timeout | Should Be 70
+        
+        $newSensor | Remove-Object -Force
+    }
+    
+    It "pipes dynamic parameters to Add-Sensor" {
+        $sensor = Get-Device -Id (Settings Device) | New-SensorParameters -RawType http | Add-Sensor
+
+        $sensor.Name | Should Be "http"
+        $sensor.RawType | Should Be "http"
+
+        $sensor | Remove-Object -Force
     }
 }

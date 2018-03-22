@@ -41,8 +41,19 @@ LONG DESCRIPTION
     | Timeout                    |    Yes    | Timeout for HTTP requests                                       |
     | Url                        |    Yes    | URL to monitor. If protocol is ommitted, HTTP is used           |
     | HttpRequestMethod          |    Yes    | Request method to use to access URL                             |
+	| PostData                   |    Yes    | Data to include in POST request                                 |
+	| UseCustomPostContent       |    Yes    | Whether to use custom content type for POST request             |
+	| PostContentType            |    Yes    | Custom content type to use for POST request                     |
     | SNI                        |    No     | Server Name Indication of target                                |
     | UseSNIFromUrl              |    Yes    | Whether to use SNI from the Url or parent device                |
+
+	| Proxy Settings for HTTP    | Get | Set | Description                                                     |
+    | -------------------------- | --------- | --------------------------------------------------------------- |
+    | InheritProxy               |    Yes    | Whether to inherit Proxy Settings                               |
+	| ProxyAddress               |    Yes    | Proxy server address                                            |
+	| ProxyPort                  |    Yes    | Proxy server port                                               |
+	| ProxyUser                  |    Yes    | Proxy server username                                           |
+	| ProxyPassword              | No  | Yes | Proxy server password                                           |
 
     | Ping Settings              | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
@@ -84,7 +95,7 @@ LONG DESCRIPTION
     | SetExeEnvironmentVariables |    Yes    | Whether to set PRTG variables as environment variables          |
     | UseWindowsAuthentication   |    Yes    | Whether run with credentials of Device or of Probe Service      |
     | Mutex                      |    Yes    | Mutex to execute related sensors sequentially                   |
-    | EnableChangeTriggers       |    Yes    |
+    | EnableChangeTriggers       |    Yes    | Whether change triggers applied to this sensor are active       |
     | ExeValueType               |    No     | How the channel value is numerically represented                |
     | DebugMode                  |    Yes    | How debug data should be stored                                 |
 

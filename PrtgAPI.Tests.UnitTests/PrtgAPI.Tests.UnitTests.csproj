@@ -44,6 +44,7 @@
       <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.1\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -102,6 +103,7 @@
     <Compile Include="ObjectTests\CSharp\BaseTest.cs" />
     <Compile Include="ObjectTests\CSharp\ChannelTests.cs" />
     <Compile Include="ObjectTests\CSharp\CloneTests.cs" />
+    <Compile Include="ObjectTests\CSharp\DynamicSensorParameterTests.cs" />
     <Compile Include="ObjectTests\CSharp\GetObjectPropertyTests.cs" />
     <Compile Include="ObjectTests\CSharp\OrganizationTests.cs" />
     <Compile Include="ObjectTests\CSharp\DeviceSettingsTests.cs" />
@@ -187,6 +189,7 @@
     <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Sensor\SensorDuplicateChildGroupScenario.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorFactorySourceResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTarget\FaultySensorTargetResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\SensorTarget\HttpTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTarget\SqlServerQueryFileTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTotalsResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTypeResponse.cs" />

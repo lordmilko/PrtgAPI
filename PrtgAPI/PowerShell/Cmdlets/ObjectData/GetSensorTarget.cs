@@ -216,7 +216,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             TypeDescription = typeDescription;
 
-            WriteProcessProgressRecords<T>(
+            WriteProcessProgressRecords(
                 f => ParseItems(getItems(Device.Id, f), createParams, nameProperties)
             );
         }

@@ -103,6 +103,27 @@ namespace PrtgAPI
         public HttpRequestMethod? HttpRequestMethod { get; set; }
 
         /// <summary>
+        /// Data to include in POST requests. Applies when <see cref="HttpRequestMethod"/> is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.<para/>
+        /// Corresponds to HTTP Specific -> Postdata.
+        /// </summary>
+        [XmlElement("injected_postdata")]
+        public string PostData { get; set; }
+
+        /// <summary>
+        /// Whether POST requests should use a custom content type. If false, content type "application/x-www-form-urlencoded" will be used.<para/>
+        /// Corresponds to HTTP Specific -> Content Type.
+        /// </summary>
+        [XmlElement("injected_postcontentoptions")]
+        public bool? UseCustomPostContent { get; set; }
+
+        /// <summary>
+        /// Custom content type to use for POST requests.<para/>
+        /// Corresponds to HTTP Specific -> Custom Content Type.
+        /// </summary>
+        [XmlElement("injected_postcontenttype")]
+        public string PostContentType { get; set; }
+
+        /// <summary>
         /// The Server Name Indication to use for requests.<para/>
         /// Corresponds to HTTP Specific -> Server Name Indication.
         /// </summary>
@@ -115,6 +136,46 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("injected_sni_inheritance")]
         public bool? UseSNIFromUrl { get; set; }
+
+        #endregion
+        #region Proxy Settings for HTTP Sensors
+
+        /// <summary>
+        /// Whether to inherit HTTP Proxy settings from the parent object.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Inherit Proxy Settings.
+        /// </summary>
+        [XmlElement("injected_httpproxy")]
+        public bool? InheritProxy { get; set; }
+
+        /// <summary>
+        /// IP Address/DNS name of the proxy server to use for HTTP/HTTPS requests.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Name.
+        /// </summary>
+        [XmlElement("injected_proxy")]
+        public string ProxyAddress { get; set; }
+
+        /// <summary>
+        /// Port to use to connect to the proxy server.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Port.
+        /// </summary>
+        [XmlElement("injected_proxyport")]
+        public int? ProxyPort { get; set; }
+
+        /// <summary>
+        /// Username to use to for proxy server authentication.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> User.
+        /// </summary>
+        [XmlElement("injected_proxyuser")]
+        public string ProxyUser { get; set; }
+
+        [XmlElement("injected_proxypassword")]
+        internal string proxyPassword { get; set; }
+
+        /// <summary>
+        /// Whether a HTTP/HTTPS proxy password has been set.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Password.
+        /// </summary>
+        public bool HasProxyPassword => !string.IsNullOrEmpty(proxyPassword);
 
         #endregion
         #region Ping Settings
@@ -169,7 +230,7 @@ namespace PrtgAPI
 
         /// <summary>
         /// Whether to inherit Scanning Interval settings from the parent object.<para/>
-        /// Corresponds to Scanning Interval -> Inherit Scanning Interval
+        /// Corresponds to Scanning Interval -> Inherit Scanning Interval.
         /// </summary>
         [XmlElement("injected_intervalgroup")]
         public bool? InheritInterval { get; set; }
@@ -194,14 +255,9 @@ namespace PrtgAPI
             }
         }
 
-
-        //public ScanningInterval Interval { get; set; }  //todo: what if its a custom interval, how do we tell the deserializer how to deserialize it. use a parse method? shouldnt we be throwing right now though?
-        //maybe we have an internal raw property and a public one that creates an object from it. need to store with a private field, and also change Schedule to do the same
-        //what happens if you assign an invalid interval via set-objectproperty?
-
         /// <summary>
         /// How this sensor should react in the event of a sensor query failure.<para/>
-        /// Corresponds to Scanning Interval -> If a Sensor Query Fails
+        /// Corresponds to Scanning Interval -> If a Sensor Query Fails.
         /// </summary>
         [XmlElement("injected_errorintervalsdown")]
         public IntervalErrorMode? IntervalErrorMode { get; set; }
@@ -211,7 +267,7 @@ namespace PrtgAPI
 
         /// <summary>
         /// Whether to inherit Schedules, Dependencies and Maintenance Window settings from the parent object.<para/>
-        /// Corresponds to Schedules, Dependencies and Maintenance Window -> Inherit Settings
+        /// Corresponds to Schedules, Dependencies and Maintenance Window -> Inherit Settings.
         /// </summary>
         [XmlElement("injected_scheduledependency")]
         public bool? InheritDependency { get; set; }

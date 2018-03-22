@@ -1320,10 +1320,29 @@ namespace PrtgAPI
         public async Task<Group> AddGroupAsync(int parentId, NewGroupParameters parameters, bool resolve = true) =>
             (await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
 
+        /// <summary>
+        /// Create a set of dynamic sensor parameters for creating a new sensor of a specified type.
+        /// </summary>
+        /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
+        /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
+        /// Note: sensor parameters cannot be created for types that require additional information
+        /// to be added before interrogating the target device.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
+        public DynamicSensorParameters GetDynamicSensorParameters(int deviceId, string sensorType, Func<int, bool> progressCallback = null) =>
+            new DynamicSensorParameters(GetSensorTargetsResponse(deviceId, sensorType, progressCallback), sensorType);
 
-        {
-
-        }
+        /// <summary>
+        /// Asynchronously create a set of dynamic sensor parameters for creating a new sensor of a specified type.
+        /// </summary>
+        /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
+        /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
+        /// Note: sensor parameters cannot be created for types that require additional information
+        /// to be added before interrogating the target device.</param>
+        /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
+        /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
+        public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(int deviceId, string sensorType, Func<int, bool> progressCallback = null) =>
+            new DynamicSensorParameters(await GetSensorTargetsResponseAsync(deviceId, sensorType, progressCallback).ConfigureAwait(false), sensorType);
 
         #endregion
         #region Sensor State

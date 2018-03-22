@@ -84,6 +84,34 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Down, "Status was not down");
         }
 
+        [TestMethod]
+        public void SensorParameters_HttpSensor_CanBeGetAndSet()
+        {
+            var parameters = new HttpSensorParameters();
+
+            SetAndGet(parameters, nameof(HttpSensorParameters.Timeout), 300);
+            SetAndGet(parameters, nameof(HttpSensorParameters.Url), "http://localhost");
+            SetAndGet(parameters, nameof(HttpSensorParameters.HttpRequestMethod), HttpRequestMethod.HEAD);
+            SetAndGet(parameters, nameof(HttpSensorParameters.PostData), "test");
+            SetAndGet(parameters, nameof(HttpSensorParameters.UseCustomPostContent), true);
+            SetAndGet(parameters, nameof(HttpSensorParameters.PostContentType), "stuff");
+            SetAndGet(parameters, nameof(HttpSensorParameters.UseSNIFromUrl), true);
+        }
+
+        private void SetAndGet(Parameters.Parameters parameters, string property, object value)
+        {
+            var prop = parameters.GetType().GetProperty(property);
+
+            if (prop == null)
+                throw new ArgumentException($"Could not find property '{property}'");
+
+            prop.SetValue(parameters, value);
+
+            var val = prop.GetValue(parameters);
+
+            Assert.AreEqual(value, val);
+        }
+
         #region LogParameters
 
         [TestMethod]

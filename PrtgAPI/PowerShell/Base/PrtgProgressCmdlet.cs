@@ -56,7 +56,7 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        internal void WriteProcessProgressRecords<T>(Func<Func<int, bool>, object> getItems)
+        internal void WriteProcessProgressRecords(Func<Func<int, bool>, object> getItems)
         {
             var items = getItems(DisplayProgress);
 

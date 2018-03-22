@@ -259,7 +259,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             }, "Parameter 'Name' is of type SingleValue, however a list of elements was specified");
         }
 
-        private string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
+        public static string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
         {
             var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);
 

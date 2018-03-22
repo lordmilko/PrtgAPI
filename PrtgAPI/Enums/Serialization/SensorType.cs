@@ -21,6 +21,11 @@ namespace PrtgAPI
         /// Microsoft SQL v2 sensor, for monitoring a database on Microsoft SQL Server.
         /// </summary>
         [XmlEnum("mssqlv2")]
-        SqlServerDB
+        SqlServerDB,
+
+        /// <summary>
+        /// HTTP sensor, for monitoring a web server of HTTP/HTTPS.
+        /// </summary>
+        Http
     }
 }

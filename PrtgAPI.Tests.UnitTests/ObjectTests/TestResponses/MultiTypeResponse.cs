@@ -226,6 +226,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new ExeFileTargetResponse();
                 case SensorType.WmiService:
                     return new WmiServiceTargetResponse();
+                case SensorType.Http:
+                    return new HttpTargetResponse();
                 default:
                     throw new NotSupportedException($"Sensor type {newSensorType} not supported");
             }

@@ -105,11 +105,24 @@ Describe "Set-ObjectProperty_Sensors_IT" {
     It "HTTP Specific" {
         $object = Get-Sensor -Id (Settings UpSensor)
 
-        SetValue "Timeout" "500"
-        SetValue "Url" "https://"
-        SetValue "HttpRequestMethod" "POST"
+        SetValue "Timeout"              "500"
+        SetValue "Url"                  "https://"
+        SetValue "HttpRequestMethod"    "POST"
+        SetChild "PostData"             "blah"       "HttpRequestMethod" "POST"
+        { SetValue "UseCustomPostContent" $true } | Should Throw "Required field, not defined"
+        SetGrandChild "PostContentType" "customType" "UseCustomPostContent" $true "HttpRequestMethod" "POST"
         #GetValue "SNI" "blah"
         SetValue "UseSNIFromUrl" $true
+    }
+
+    It "Proxy Settings for HTTP Sensors" {
+        $object = Get-Sensor -Id (Settings UpSensor)
+
+        SetValue      "InheritProxy"  $false
+        SetChild      "ProxyAddress"  "https://proxy.example.com"      "InheritProxy" $false
+        SetChild      "ProxyPort"     "3128"                           "InheritProxy" $false
+        SetChild      "ProxyUser"     "newUser"                        "InheritProxy" $false
+        SetWriteChild "ProxyPassword" "newPassword" "HasProxyPassword" "InheritProxy" $false
     }
 
     It "Sensor Settings (EXE/XML)" {

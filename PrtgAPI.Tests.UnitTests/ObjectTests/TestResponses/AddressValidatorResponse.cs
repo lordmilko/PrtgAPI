@@ -30,6 +30,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             this.exactMatch = exactMatch;
         }
 
+        public AddressValidatorResponse(object[] str) : this(str, true)
+        {
+        }
+
         protected override IWebResponse GetResponse(ref string address, string function)
         {
             if (exactMatch)

@@ -17,6 +17,8 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected PrtgClient client => PrtgSessionState.Client;
 
+        private bool noClient;
+
         internal ProgressManager ProgressManager;
 
         internal ProgressManagerEx ProgressManagerEx = new ProgressManagerEx();
@@ -87,7 +89,7 @@ namespace PrtgAPI.PowerShell.Base
 
             //If we're the last cmdlet in the pipeline, we need to unregister ourselves so that the upstream cmdlet
             //regains the ability to invoke its events when its control is returned to it
-            if (EventManager.LogVerboseEventStack.Peek().Target == this)
+            if (!noClient && EventManager.LogVerboseEventStack.Peek().Target == this)
             {
                 UnregisterEvents(true);
             }
@@ -121,8 +123,14 @@ namespace PrtgAPI.PowerShell.Base
 
         private void RegisterEvents()
         {
-            eventManager.AddEvent(OnRetryRequest, eventManager.RetryEventState, EventManager.RetryEventStack);
-            eventManager.AddEvent(OnLogVerbose, eventManager.LogVerboseEventState, EventManager.LogVerboseEventStack);
+            //Cmdlets that optionally depend on a PrtgClient (such as New-SensorParameters) might not have a Client to use for events
+            if (PrtgSessionState.Client != null)
+            {
+                eventManager.AddEvent(OnRetryRequest, eventManager.RetryEventState, EventManager.RetryEventStack);
+                eventManager.AddEvent(OnLogVerbose, eventManager.LogVerboseEventState, EventManager.LogVerboseEventStack);
+            }
+            else
+                noClient = true;
         }
 
         private void UnregisterEvents(bool resetState)

@@ -56,6 +56,9 @@
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="Attributes\TypeLookupAttribute.cs" />
     <Compile Include="Attributes\VersionAttribute.cs" />
+    <Compile Include="Dynamic\DynamicProxy.cs" />
+    <Compile Include="Dynamic\ParameterProxy.cs" />
+    <Compile Include="Dynamic\ExpressionBuilder.cs" />
     <Compile Include="Enums\Deserialization\ClusterNodeType.cs" />
     <Compile Include="Enums\Deserialization\LicenseType.cs" />
     <Compile Include="Enums\Deserialization\LogStatus.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="Parameters\Base\ISourceParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\HttpSensorParameters.cs" />
     <Compile Include="Request\RequestParser.cs" />
     <Compile Include="Request\ResponseParser.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
@@ -166,8 +170,10 @@
     <Compile Include="Parameters\Base\BaseMultiActionParameters.cs" />
     <Compile Include="Parameters\Base\BaseSetObjectPropertyParameters.cs" />
     <Compile Include="Parameters\Base\PSObjectSensorParameters.cs" />
+    <Compile Include="Parameters\Base\IDynamicParameters.cs" />
     <Compile Include="Parameters\Base\IMultiTargetParameters.cs" />
     <Compile Include="Parameters\Base\IParameters.cs" />
+    <Compile Include="Dynamic\DynamicMetaObject.cs" />
     <Compile Include="Parameters\Helpers\TypeCategory.cs" />
     <Compile Include="Parameters\Helpers\DynamicPropertyTypeParser.cs" />
     <Compile Include="Parameters\ObjectData\ChannelPropertiesParameters.cs" />
@@ -181,6 +187,7 @@
     <Compile Include="Parameters\ObjectData\TotalObjectsParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
     <Compile Include="Parameters\Base\BaseActionParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\DynamicSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetProgressParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\CloneDeviceParameters.cs" />

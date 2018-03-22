@@ -144,7 +144,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
                 try
                 {
-                    client.SetObjectProperty(id, prop, $"prop_tempValue");
+                    client.SetObjectProperty(id, prop, "prop_tempValue");
                 }
                 catch (Exception)
                 {
@@ -166,6 +166,10 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 case ObjectPropertyCategory.CredentialsForDatabases:
                 case ObjectPropertyCategory.CredentialsForAmazon:
                     return Settings.Device;
+
+                case ObjectPropertyCategory.HttpSpecific:
+                case ObjectPropertyCategory.ProxySettingsForHttp:
+                    return Settings.UpSensor;
 
                 case ObjectPropertyCategory.SensorSettingsExeXml:
                     return Settings.ExeXml;

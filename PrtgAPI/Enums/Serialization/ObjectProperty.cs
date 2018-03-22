@@ -704,7 +704,7 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> URL.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HTTPSpecific))]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
         Url,
 
         /// <summary>
@@ -712,16 +712,92 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> Request Method.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HTTPSpecific))]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
         HttpRequestMethod,
+
+        /// <summary>
+        /// Data to include in POST requests. Applies when <see cref="HttpRequestMethod"/> is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.<para/>
+        /// Corresponds to HTTP Specific -> Postdata.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(HttpRequestMethod), PrtgAPI.HttpRequestMethod.POST)]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        PostData,
+
+        /// <summary>
+        /// Whether POST requests should use a custom content type. If false, content type "application/x-www-form-urlencoded" will be used.<para/>
+        /// Corresponds to HTTP Specific -> Content Type.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(HttpRequestMethod), PrtgAPI.HttpRequestMethod.POST)]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        UseCustomPostContent,
+
+        /// <summary>
+        /// Custom content type to use for POST requests.<para/>
+        /// Corresponds to HTTP Specific -> Custom Content Type.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(UseCustomPostContent), true, true)]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        PostContentType,
 
         /// <summary>
         /// Whether the Server Name Indication is inherited from the parent device, or derived from the specified <see cref="Url"/>.<para/>
         /// Corresponds to HTTP Specific -> SNI Inheritance.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HTTPSpecific))]
+        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
         UseSNIFromUrl,
+
+        #endregion
+        #region Proxy Settings for HTTP Sensors
+
+        /// <summary>
+        /// Whether to inherit HTTP Proxy settings from the parent object.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Inherit Proxy Settings.
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        InheritProxy,
+
+        /// <summary>
+        /// IP Address/DNS name of the proxy server to use for HTTP/HTTPS requests.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Name.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(InheritProxy), false)]
+        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        ProxyAddress,
+
+        /// <summary>
+        /// Port to use to connect to the proxy server.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Port.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(InheritProxy), false)]
+        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        ProxyPort,
+
+        /// <summary>
+        /// Username to use for proxy server authentication.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> User.
+        /// </summary>
+        [TypeLookup(typeof(SensorSettings))]
+        [DependentProperty(nameof(InheritProxy), false)]
+        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        ProxyUser,
+
+        /// <summary>
+        /// Password to use for proxy server authentication.<para/>
+        /// Corresponds to Proxy Settings for HTTP Sensors -> Password.
+        /// </summary>
+        [Description("proxypassword")]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [DependentProperty(nameof(InheritProxy), false)]
+        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        ProxyPassword,
 
         #endregion
         #region Ping Settings
@@ -1087,8 +1163,8 @@ namespace PrtgAPI
         [Category(nameof(ObjectPropertyCategory.Special))]
         Comments,
 
-        #endregion
-        #region Devices
+    #endregion
+    #region Devices
 
         /// <summary>
         /// The IPv4 Address or HostName to use to connect to a device. The same as <see cref="Hostv4"/>.<para/>

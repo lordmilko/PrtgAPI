@@ -95,5 +95,20 @@ namespace PrtgAPI.Helpers
         {
             return type.GetProperties().Where(p => !p.GetIndexParameters().Any() && p.CanWrite);
         }
+
+        //https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class
+        internal static bool IsSubclassOfRawGeneric(this Type type, Type generic)
+        {
+            while (type != null && type != typeof(object))
+            {
+                var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                if (generic == cur)
+                {
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
     }
 }

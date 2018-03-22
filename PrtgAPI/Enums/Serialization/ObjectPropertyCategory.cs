@@ -78,7 +78,12 @@
         /// <summary>
         /// Properties found under the HTTP Specific section of an object.
         /// </summary>
-        HTTPSpecific,
+        HttpSpecific,
+
+        /// <summary>
+        /// Properties found under the Proxy Settings for HTTP Sensors section of an object.
+        /// </summary>
+        ProxySettingsForHttp,
 
         /// <summary>
         /// Properties found under the Ping Settings section of an object.

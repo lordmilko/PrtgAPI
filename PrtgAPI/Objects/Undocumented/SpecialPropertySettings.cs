@@ -32,6 +32,8 @@ namespace PrtgAPI.Objects.Undocumented
 
         public string Host { get; set; }
 
+        public string ProxyPassword { get; set; }
+
         [XmlElement("injected_sqlquery")]
         public SqlServerQueryTarget SqlServerQuery { get; set; }
 
