@@ -64,7 +64,7 @@
     <Compile Include="ActionTests\SetObjectPropertyTests.cs" />
     <Compile Include="ActionTests\Types\ExeXmlRawSensorParameters.cs" />
     <Compile Include="DataTests\GetObjectProperties.cs" />
-    <Compile Include="DataTests\Incomplete\LogTests.cs" />
+    <Compile Include="DataTests\LogTests.cs" />
     <Compile Include="DataTests\SensorTargetTests.cs" />
     <Compile Include="Support\EnumHelpers.cs" />
     <Compile Include="Support\ServerManager.cs" />
@@ -80,7 +80,7 @@
     <Compile Include="CoreTests\PrtgClientConnectionTests.cs" />
     <Compile Include="DataTests\DeviceTests.cs" />
     <Compile Include="DataTests\GroupTests.cs" />
-    <Compile Include="DataTests\Incomplete\NotificationTriggerTests.cs" />
+    <Compile Include="DataTests\NotificationTriggerTests.cs" />
     <Compile Include="DataTests\ProbeTests.cs" />
     <Compile Include="DataTests\SensorTests.cs" />
     <Compile Include="ActionTests\StateTests.cs" />

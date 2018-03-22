@@ -47,7 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var code1 = interval1.GetHashCode();
             var code2 = interval2.GetHashCode();
 
-            Assert.AreEqual(interval1, interval2);
+            Assert.AreEqual(code1, code2);
 
             var timeSpan = new TimeSpan(1, 0, 0);
 

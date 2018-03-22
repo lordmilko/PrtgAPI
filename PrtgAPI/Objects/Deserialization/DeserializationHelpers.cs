@@ -29,9 +29,9 @@ namespace PrtgAPI.Objects.Deserialization
         internal static DateTime? ConvertPrtgDateTime(double datetime)
         {
             if (datetime != 0)
-                return DateTime.FromOADate((double)datetime).ToLocalTime();
+                return DateTime.FromOADate(datetime).ToLocalTime();
+
             return null;
-            //return null;
         }
 
         /// <summary>

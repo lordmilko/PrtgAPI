@@ -19,7 +19,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             builder.Append("  <title>Add Sensor (Step 2 of 2) | PRTG Continuous Integration</title>\n");
             builder.Append("  <link rel=\"stylesheet\" href=\"/css/prtg0.css?prtgversion=17.4.35.3441&language=en\">\n");
             builder.Append("  <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/print.css?version=17.4.35.3441\" media=\"print\"  />\n");
-            builder.Append("  <script src=\"/javascript/lib/jquery.js?prtgversion=17.4.35.3441&language=en\"></script>\n");
             builder.Append("</head>\n");
             builder.Append("<body id=\"mainbody\" data-theme=\"0\" class=\"systemmenu  language_en\">\n");
             builder.Append("<header class=\"header js-header\">\n");

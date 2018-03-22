@@ -106,7 +106,7 @@
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
     <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\NotificationType.cs" />
-    <Compile Include="Enums\RestartStage.cs" />
+    <Compile Include="Enums\RestartCoreStage.cs" />
     <Compile Include="Enums\Serialization\SortDirection.cs" />
     <Compile Include="Enums\Serialization\ObjectPropertyCategory.cs" />
     <Compile Include="Enums\Serialization\ObjectType.cs" />

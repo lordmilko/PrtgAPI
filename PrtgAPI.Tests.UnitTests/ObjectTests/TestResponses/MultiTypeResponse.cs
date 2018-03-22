@@ -67,7 +67,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(XmlFunction.GetObjectStatus):
                     return GetRawObjectProperty(address);
                 case nameof(CommandFunction.AddSensor2):
-                    newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToString().ToEnum<SensorType>();
+                    newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToEnum<SensorType>();
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditNotification):

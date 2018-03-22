@@ -38,8 +38,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int Id { get; set; }
 
         /// <summary>
-        /// Performs record-by-record processing functionality for the cmdlet.
+        /// Retrieves a list of modification events from a PRTG Server.
         /// </summary>
+        /// <returns>A list of all modification events for the specified object.</returns>
         protected override IEnumerable<ModificationEvent> GetRecords()
         {
             if (ParameterSetName == ParameterSet.Default)

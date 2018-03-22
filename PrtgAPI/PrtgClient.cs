@@ -82,11 +82,7 @@ namespace PrtgAPI
         /// <summary>
         /// Specifies the version of the PRTG Server this client is connected to.
         /// </summary>
-        public Version Version
-        {
-            private set { version = value; }
-            get { return version ?? (version = GetStatus().Version); }
-        }
+        public Version Version => version ?? (version = GetStatus().Version);
 
         private Version version;
 

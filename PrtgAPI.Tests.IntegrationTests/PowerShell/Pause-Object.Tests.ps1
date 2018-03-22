@@ -123,6 +123,7 @@ Describe "Pause-Object_IT" {
 
         $sensors | Refresh-Object
         LogTestDetail "Sleeping for 30 seconds"
+        Sleep 30
 
         LogTestDetail "Confirming sensors are paused"
         $sensors = Get-Sensor -Id $ids

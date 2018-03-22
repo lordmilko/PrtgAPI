@@ -14,6 +14,7 @@
      maybe we should make priority a fancy class? then we can say tostring is numeric <- dont know what that means, but if we're a class we can set priority using numbers instead of words
      todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
     -once nuget is working, publish appveyor.yml to github
+    -make schedule an enum class that lists common schedules and lets you specify custom ones
 
     Project
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it

@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             //Ignore Probe Health sensor due to a bug in PRTG 17.4.35
             var sensors = client.GetSensors(parameters);
 
-            AssertEx.AreEqual(1, sensors.Count, "Did not contain expected number of down sensors");
+            AssertEx.AreEqual(1, sensors.Count, $"Did not contain expected number of down sensors. Sensors found were: {string.Join(",", sensors)}");
             AssertEx.AreEqual(Settings.DownSensor, sensors.First().Id, "ID of down sensor was not correct");
         }
 
