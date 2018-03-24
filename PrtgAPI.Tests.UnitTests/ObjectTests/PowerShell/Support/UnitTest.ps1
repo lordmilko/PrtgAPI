@@ -204,3 +204,16 @@ function SetPrtgClient($client)
 
     $property.SetValue($null, $client)
 }
+
+function SetVersion($versionStr)
+{
+    $client = Get-PrtgClient
+
+    $flags = [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Instance
+
+    $field = $client.GetType().GetField("version", $flags)
+
+    $version = [Version]$versionStr
+
+    $field.SetValue($client, $version)
+}

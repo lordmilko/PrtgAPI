@@ -128,15 +128,19 @@ namespace PrtgAPI
 
 #region Requests
 
-        internal VersionClient GetVersionClient(object obj)
+        internal VersionClient GetVersionClient(object[] obj)
         {
-            VersionAttribute attr;
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
 
-            if (obj is Enum)
-                attr = ((Enum) obj).GetEnumAttribute<VersionAttribute>();
-            else
-                throw new NotImplementedException($"Don't know how to get {nameof(VersionAttribute)} for '{obj}'");
+            var enums = obj.Where(o => o is Enum).ToList();
 
+            if (enums.Count == 0)
+                throw new NotImplementedException($"Don't know how to get {nameof(VersionAttribute)} for '{string.Join(",", obj)}'");
+
+            var result = obj.OfType<Enum>().Select(o => o.GetEnumAttribute<VersionAttribute>()).Where(a => a != null).OrderBy(a => a.Version).ToList();
+
+            var attr = result.FirstOrDefault();
             var ver = attr?.Version ?? RequestVersion.v14_4;
 
             if (attr != null && attr.IsActive(Version))
@@ -152,6 +156,15 @@ namespace PrtgAPI
             }
             else
                 return new VersionClient(ver, this);
+        }
+
+        [ExcludeFromCodeCoverage]
+        internal VersionClient GetVersionClient<T1, T2>(List<T1> parameters) where T1 : PropertyParameter<T2>
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            return GetVersionClient(parameters.Select(p => p.Property).Cast<object>().ToArray());
         }
 
     #region Object Data
@@ -1769,7 +1782,7 @@ namespace PrtgAPI
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         public void SetObjectProperty(int objectId, ObjectProperty property, object value) =>
-            SetObjectProperty(new[] {objectId}, property, value);
+            SetObjectProperty(new[] {objectId}, property, value);  
 
         /// <summary>
         /// Modify properties and settings of one or more PRTG Objects.<para/>
@@ -1780,7 +1793,7 @@ namespace PrtgAPI
         /// <param name="property">The property of each object to modify.</param>
         /// <param name="value">The value to set each object's property to.</param>
         public void SetObjectProperty(int[] objectIds, ObjectProperty property, object value) =>
-            SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, property, value), objectIds.Length);
+            SetObjectProperty(objectIds, new PropertyParameter(property, value));
 
         /// <summary>
         /// Asynchronously modify properties and settings of a PRTG Object.<para/>
@@ -1802,9 +1815,52 @@ namespace PrtgAPI
         /// <param name="property">The property of each object to modify.</param>
         /// <param name="value">The value to set each object's property to.</param>
         public async Task SetObjectPropertyAsync(int[] objectIds, ObjectProperty property, object value) =>
-            await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectIds, property, value).ConfigureAwait(false), objectIds.Length).ConfigureAwait(false);
+            await SetObjectPropertyAsync(objectIds, new PropertyParameter(property, value)).ConfigureAwait(false);
 
             #endregion Normal
+            #region Normal (Multiple
+
+        /// <summary>
+        /// Modify multiple properties of a PRTG Object.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectProperty(int objectId, params PropertyParameter[] parameters) =>
+            SetObjectProperty(new[] {objectId}, parameters);
+
+        /// <summary>
+        /// Modify multiple properties of one or more PRTG Objects.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectProperty(int[] objectIds, params PropertyParameter[] parameters) =>
+            SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
+
+        /// <summary>
+        /// Asynchronously modify multiple properties of a PRTG Object.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyAsync(int objectId, params PropertyParameter[] parameters) =>
+            await SetObjectPropertyAsync(new[] { objectId }, parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modify multiple properties of one or more PRTG Objects.<para/>
+        /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
+        /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyAsync(int[] objectIds, params PropertyParameter[] parameters) =>
+            await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectIds, parameters).ConfigureAwait(false), objectIds.Length).ConfigureAwait(false);
+
+            #endregion
             #region Channel
 
         /// <summary>
@@ -1825,7 +1881,7 @@ namespace PrtgAPI
         /// <param name="property">The property of each channel to modify</param>
         /// <param name="value">The value to set each channel's property to.</param>
         public void SetObjectProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            GetVersionClient(property).SetChannelProperty(sensorIds, channelId, null, property, value);
+            SetObjectProperty(sensorIds, channelId, new ChannelParameter(property, value));
         
         /// <summary>
         /// Asynchronously modify channel properties for a PRTG Sensor.
@@ -1845,9 +1901,48 @@ namespace PrtgAPI
         /// <param name="property">The property of each channel to modify</param>
         /// <param name="value">The value to set each channel's property to.</param>
         public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            await GetVersionClient(property).SetChannelPropertyAsync(sensorIds, channelId, null, property, value).ConfigureAwait(false);
+            await SetObjectPropertyAsync(sensorIds, channelId, new ChannelParameter(property, value)).ConfigureAwait(false);
 
-        #endregion Channel
+            #endregion Channel
+            #region Channel (Multiple)
+
+        /// <summary>
+        /// Modify multiple channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectProperty(int sensorId, int channelId, params ChannelParameter[] parameters) =>
+            SetObjectProperty(new[] { sensorId }, channelId, parameters);
+
+        /// <summary>
+        /// Modify multiple channel properties for one or more PRTG Sensors.
+        /// </summary>
+        /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectProperty(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
+            GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList()).SetChannelProperty(sensorIds, channelId, null, parameters);
+
+        /// <summary>
+        /// Asynchronously modify multiple channel properties for a PRTG Sensor.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyAsync(int sensorId, int channelId, params ChannelParameter[] parameters) =>
+            await SetObjectPropertyAsync(new[] { sensorId }, channelId, parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modify multiple channel properties for one or more PRTG Sensors.
+        /// </summary>
+        /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
+        /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
+            await GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList()).SetChannelPropertyAsync(sensorIds, channelId, null, parameters).ConfigureAwait(false);
+
+            #endregion
             #region Custom
 
         /// <summary>
@@ -1868,7 +1963,7 @@ namespace PrtgAPI
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         public void SetObjectPropertyRaw(int[] objectIds, string property, string value) =>
-            SetObjectProperty(new SetObjectPropertyParameters(objectIds, property, value), objectIds.Length);
+            SetObjectPropertyRaw(objectIds, new CustomParameter(property, value));
 
         /// <summary>
         /// Asynchronously modify unsupported properties and settings of a PRTG Object.
@@ -1888,7 +1983,42 @@ namespace PrtgAPI
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         public async Task SetObjectPropertyRawAsync(int[] objectIds, string property, string value) =>
-            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectIds, property, value), objectIds.Length).ConfigureAwait(false);
+            await SetObjectPropertyRawAsync(objectIds, new CustomParameter(property, value)).ConfigureAwait(false);
+
+            #endregion
+            #region Custom (Multiple)
+
+        /// <summary>
+        /// Modify multiple unsupported properties of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectPropertyRaw(int objectId, params CustomParameter[] parameters) =>
+            SetObjectPropertyRaw(new[] { objectId }, parameters);
+
+        /// <summary>
+        /// Modify multiple unsupported properties of one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetObjectPropertyRaw(int[] objectIds, params CustomParameter[] parameters) =>
+            SetObjectProperty(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
+
+        /// <summary>
+        /// Asynchronously modify multiple unsupported properties of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyRawAsync(int objectId, params CustomParameter[] parameters) =>
+            await SetObjectPropertyRawAsync(new[] { objectId }, parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modify multiple unsupported properties of one or more PRTG Objects.
+        /// </summary>
+        /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetObjectPropertyRawAsync(int[] objectIds, params CustomParameter[] parameters) =>
+            await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length).ConfigureAwait(false);
 
             #endregion
 
@@ -1898,57 +2028,64 @@ namespace PrtgAPI
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
             await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
 
-        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
+        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
         {
-            var attrib = property.GetEnumAttribute<TypeAttribute>();
-
-            if (attrib != null)
+            foreach (var prop in @params)
             {
-                try
-                {
-                    var method = attrib.Class.GetMethod("Resolve", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
 
-                    if (method != null)
+                if (attrib != null)
+                {
+                    try
                     {
-                        value = method.Invoke(null, new[] { this, value });
+                        var method = attrib.Class.GetMethod("Resolve", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+
+                        if (method != null)
+                        {
+                            prop.Value = method.Invoke(null, new[] { this, prop.Value });
+                        }
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        throw ex.InnerException;
                     }
                 }
-                catch (TargetInvocationException ex)
-                {
-                    throw ex.InnerException;
-                }
             }
-            var parameters = new SetObjectPropertyParameters(objectIds, property, value);
+            
+            var parameters = new SetObjectPropertyParameters(objectIds, @params);
 
             return parameters;
         }
 
-        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, ObjectProperty property, object value)
+        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, params PropertyParameter[] @params)
         {
-            var attrib = property.GetEnumAttribute<TypeAttribute>();
-
-            if (attrib != null)
+            foreach (var prop in @params)
             {
-                try
-                {
-                    var method = attrib.Class.GetMethod("ResolveAsync", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
 
-                    if (method != null)
+                if (attrib != null)
+                {
+                    try
                     {
-                        var task = ((Task)method.Invoke(null, new[] { this, value }));
+                        var method = attrib.Class.GetMethod("ResolveAsync", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
 
-                        await task.ConfigureAwait(false);
+                        if (method != null)
+                        {
+                            var task = ((Task)method.Invoke(null, new[] { this, prop.Value }));
 
-                        value = task.GetType().GetProperty("Result").GetValue(task);
+                            await task.ConfigureAwait(false);
+
+                            prop.Value = task.GetType().GetProperty("Result").GetValue(task);
+                        }
                     }
-                }
-                catch (TargetInvocationException ex)
-                {
-                    throw ex.InnerException;
+                    catch (TargetInvocationException ex)
+                    {
+                        throw ex.InnerException;
+                    }
                 }
             }
 
-            var parameters = new SetObjectPropertyParameters(objectIds, property, value);
+            var parameters = new SetObjectPropertyParameters(objectIds, @params);
 
             return parameters;
         }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
@@ -236,6 +237,85 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             {
                 Thread.CurrentThread.CurrentCulture = originalCulture;
             }
+        }
+
+        #endregion
+        #region Multiple
+
+        [TestMethod]
+        public void SetObjectProperty_Modifies_MultipleProperties()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
+
+            client.SetObjectProperty(
+                1001,
+                new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
+                new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+            );
+        }
+
+        [TestMethod]
+        public async Task SetObjectProperty_Modifies_MultiplePropertiesAsync()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
+
+            await client.SetObjectPropertyAsync(
+                1001,
+                new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
+                new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+            );
+        }
+
+        [TestMethod]
+        public void SetChannelProperty_Modifies_MultipleProperties()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
+
+            client.SetObjectProperty(
+                1001,
+                2,
+                new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                new ChannelParameter(ChannelProperty.LowerErrorLimit, 20)
+            );
+        }
+
+        [TestMethod]
+        public async Task SetChannelProperty_Modifies_MultiplePropertiesAsync()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
+
+            await client.SetObjectPropertyAsync(
+                1001,
+                2,
+                new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                new ChannelParameter(ChannelProperty.LowerErrorLimit, 20)
+            );
+        }
+
+        [TestMethod]
+        public void SetObjectProperty_Modifies_MultipleRawProperties()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
+
+            client.SetObjectPropertyRaw(
+                1001,
+                new CustomParameter("windowsloginusername_", "username"),
+                new CustomParameter("windowsloginpassword_", "password"),
+                new CustomParameter("windowsconnection", 0)
+            );
+        }
+
+        [TestMethod]
+        public async Task SetObjectProperty_Modifies_MultipleRawPropertiesAsync()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
+
+            await client.SetObjectPropertyRawAsync(
+                1001,
+                new CustomParameter("windowsloginusername_", "username"),
+                new CustomParameter("windowsloginpassword_", "password"),
+                new CustomParameter("windowsconnection", 0)
+            );
         }
 
         #endregion
@@ -618,7 +698,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, RequestVersion.v18_1);
 
-            client.GetVersionClient(property).SetChannelProperty(new[] { 1001 }, 1, null, property, val);
+            client.GetVersionClient(new object[] {property}).SetChannelProperty(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
         }
 
         private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
@@ -632,7 +712,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, version);
 
-            client.GetVersionClient(property).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, property, val);
+            client.GetVersionClient(new object[] { property }).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, new [] {new ChannelParameter(property, val)});
         }
 
         private void SetVersion(PrtgClient client, RequestVersion version)
@@ -1034,7 +1114,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, RequestVersion.v18_1);
 
-            await client.GetVersionClient(property).SetChannelPropertyAsync(new[] { 1001 }, 1, null, property, val);
+            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
         }
 
         private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
@@ -1048,7 +1128,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, version);
 
-            await client.GetVersionClient(property).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, property, val);
+            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) });
         }
 
         #endregion

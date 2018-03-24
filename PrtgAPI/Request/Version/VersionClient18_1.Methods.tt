@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
@@ -18,9 +19,9 @@ namespace PrtgAPI.Request
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal override <#= GetSignature("SetChannelProperty", "void", i) #>(int[] sensorIds, int channelId, List<Channel> channels, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal override <#= GetSignature("SetChannelProperty", "void", i) #>(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            if (property == ChannelProperty.ErrorLimitMessage || property == ChannelProperty.WarningLimitMessage || (property == ChannelProperty.LimitsEnabled && IsTrue(value)))
+            if (NeedsLimit(@params))
             {
                 <#= DeclareFunc("getChannels", "s", "int", "client.GetChannelsInternal", "s, idFilter: i => i == channelId", "IEnumerable<Channel>", i) #>;
 
@@ -34,15 +35,21 @@ for(int i = 0; i < 2; i++)
                     }
                 }
 
-                var groups = GetGroupedChannels(channels, channelId, property, value);
+                if (channels.Count == 0)
+                {
+                    var plural = sensorIds.Length > 1 ? "s" : "";
+                    throw new InvalidOperationException($"Channel ID {channelId} does not exist on sensor ID{plural} {string.Join(", ", sensorIds)}");
+                }
+
+                var groups = GetGroupedChannels(channels, channelId, @params);
 
                 foreach (var group in groups)
                 {
-                    <#= CallFunction("base.SetChannelProperty", "group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, property, value, Tuple.Create(group.Item3, (object)group.Item1)", i) #>;
+                    <#= CallFunction("base.SetChannelProperty", "group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1)", i) #>;
                 }
             }
             else
-                <#= CallFunction("base.SetChannelProperty", "sensorIds, channelId, null, property, value", i) #>;
+                <#= CallFunction("base.SetChannelProperty", "sensorIds, channelId, null, @params", i) #>;
         }
 <#
 if(i == 0)

@@ -21,6 +21,8 @@ namespace PrtgAPI.Parameters
 
     abstract class BaseSetObjectPropertyParameters<TObjectProperty> : Parameters, IMultiTargetParameters
     {
+        private bool paramsInitialized;
+
         public List<CustomParameter> CustomParameters
         {
             get { return (List<CustomParameter>)this[Parameter.Custom]; }
@@ -29,7 +31,11 @@ namespace PrtgAPI.Parameters
 
         protected void AddTypeSafeValue(Enum property, object value, bool disableDependentsOnNotReqiuiredValue)
         {
-            CustomParameters = new List<CustomParameter>();
+            if (!paramsInitialized)
+            {
+                CustomParameters = new List<CustomParameter>();
+                paramsInitialized = true;
+            }
 
             var info = GetPropertyInfo(property);
 
@@ -237,6 +243,24 @@ namespace PrtgAPI.Parameters
                 name += "_";
 
             return name;
+        }
+
+        /// <summary>
+        /// Searches this object's <see cref="CustomParameters"/> for any objects with a duplicate <see cref="CustomParameter.Name"/> and removes all but the last one.
+        /// </summary>
+        internal void RemoveDuplicateParameters()
+        {
+            var groups = CustomParameters.GroupBy(p => p.Name).Where(g => g.Count() > 1);
+
+            foreach (var group in groups)
+            {
+                var list = group.ToList();
+
+                for (int i = 0; i < list.Count - 1; i++)
+                {
+                    CustomParameters.Remove(list[i]);
+                }
+            }
         }
 
         int[] IMultiTargetParameters.ObjectIds

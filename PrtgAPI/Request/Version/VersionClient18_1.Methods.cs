@@ -6,14 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
     internal partial class VersionClient18_1
     {
-        internal override void SetChannelProperty(int[] sensorIds, int channelId, List<Channel> channels, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal override void SetChannelProperty(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            if (property == ChannelProperty.ErrorLimitMessage || property == ChannelProperty.WarningLimitMessage || (property == ChannelProperty.LimitsEnabled && IsTrue(value)))
+            if (NeedsLimit(@params))
             {
                 Func<int, IEnumerable<Channel>> getChannels = (s) => client.GetChannelsInternal(s, idFilter: i => i == channelId);
 
@@ -27,20 +28,26 @@ namespace PrtgAPI.Request
                     }
                 }
 
-                var groups = GetGroupedChannels(channels, channelId, property, value);
+                if (channels.Count == 0)
+                {
+                    var plural = sensorIds.Length > 1 ? "s" : "";
+                    throw new InvalidOperationException($"Channel ID {channelId} does not exist on sensor ID{plural} {string.Join(", ", sensorIds)}");
+                }
+
+                var groups = GetGroupedChannels(channels, channelId, @params);
 
                 foreach (var group in groups)
                 {
-                    base.SetChannelProperty(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, property, value, Tuple.Create(group.Item3, (object)group.Item1));
+                    base.SetChannelProperty(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1));
                 }
             }
             else
-                base.SetChannelProperty(sensorIds, channelId, null, property, value);
+                base.SetChannelProperty(sensorIds, channelId, null, @params);
         }
 
-        internal override async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal override async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            if (property == ChannelProperty.ErrorLimitMessage || property == ChannelProperty.WarningLimitMessage || (property == ChannelProperty.LimitsEnabled && IsTrue(value)))
+            if (NeedsLimit(@params))
             {
                 Func<int, Task<IEnumerable<Channel>>> getChannels = async (s) => await client.GetChannelsInternalAsync(s, idFilter: i => i == channelId).ConfigureAwait(false);
 
@@ -54,15 +61,21 @@ namespace PrtgAPI.Request
                     }
                 }
 
-                var groups = GetGroupedChannels(channels, channelId, property, value);
+                if (channels.Count == 0)
+                {
+                    var plural = sensorIds.Length > 1 ? "s" : "";
+                    throw new InvalidOperationException($"Channel ID {channelId} does not exist on sensor ID{plural} {string.Join(", ", sensorIds)}");
+                }
+
+                var groups = GetGroupedChannels(channels, channelId, @params);
 
                 foreach (var group in groups)
                 {
-                    await base.SetChannelPropertyAsync(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, property, value, Tuple.Create(group.Item3, (object)group.Item1)).ConfigureAwait(false);
+                    await base.SetChannelPropertyAsync(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1)).ConfigureAwait(false);
                 }
             }
             else
-                await base.SetChannelPropertyAsync(sensorIds, channelId, null, property, value).ConfigureAwait(false);
+                await base.SetChannelPropertyAsync(sensorIds, channelId, null, @params).ConfigureAwait(false);
         }
     }
 }

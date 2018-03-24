@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
@@ -16,12 +17,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         public AddressValidatorResponse(string str)
         {
+            if (string.IsNullOrEmpty(str))
+                throw new ArgumentException("At least one address must be specified", nameof(str));
+
             this.str = str;
             exactMatch = false;
         }
 
         public AddressValidatorResponse(object str, bool exactMatch)
         {
+            if (string.IsNullOrEmpty(str?.ToString()))
+                throw new ArgumentException("At least one address must be specified", nameof(str));
+
             if (str is object[])
                 strArray = ((object[])str).Cast<string>().ToArray();
             else

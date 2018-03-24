@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -38,29 +40,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Set the upper error limit of the "Total" channel of all WMI CPU Load sensors to 90. Will also set LimitsEnabled to $true</para>
     /// </example>
     /// 
-    /// <para type="link">about_ChannelSettings</para>
+    /// <para type="link">Get-Help ChannelSettings</para>
     /// <para type="link">Get-Channel</para>
     /// <para type="link">Get-Sensor</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true)]
-    public class SetChannelProperty : PrtgMultiOperationCmdlet
+    [Cmdlet(VerbsCommon.Set, "ChannelProperty", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
+    public class SetChannelProperty : PrtgMultiOperationCmdlet, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">Channel to set the properties of.</para>
         /// </summary>
         [Parameter(ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = ParameterSet.Dynamic)]
         public Channel Channel { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
         public int SensorId { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
         public int ChannelId { get; set; }
 
         /// <summary>
@@ -80,6 +85,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override string ProgressActivity => "Modify PRTG Channel Settings";
 
+        private DynamicParameterSet<ChannelProperty> dynamicParams;
+
+        private List<ChannelParameter> dynamicParameters;
+
+        /// <summary>
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
+        /// </summary>
+        protected override void BeginProcessingEx()
+        {
+            if (DynamicSet())
+                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new ChannelParameter(p, v));
+
+            base.BeginProcessingEx();
+        }
+
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
@@ -89,10 +109,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             var str = Channel != null ? $"'{Channel.Name}' (Channel ID: {Channel.Id}, Sensor ID: {Channel.SensorId})" : $"Channel ID: {ChannelId} (Sensor ID: {SensorId})";
 
-            if (!MyInvocation.BoundParameters.ContainsKey("Value"))
+            if (!MyInvocation.BoundParameters.ContainsKey("Value") && !DynamicSet())
                 throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
 
-            if (ParameterSetName == ParameterSet.Default)
+            if (Channel != null)
             {
                 SensorId = Channel.SensorId;
                 ChannelId = Channel.Id;
@@ -123,12 +143,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
 
-                action = () => client.GetVersionClient(Property).SetChannelProperty(
+                action = () => client.GetVersionClient(new object[] { Property }).SetChannelProperty(
                     new[] { SensorId },
                     ChannelId,
                     new List<Channel> { Channel },
-                    Property,
-                    Value
+                    new[] {new ChannelParameter(Property, Value)}
+                );
+            }
+            else if (DynamicSet())
+            {
+                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var str = string.Join(", ", strActions);
+
+                var name = Channel != null ? $"channel '{Channel.Name}'" : $"ID {ChannelId}";
+
+                message = $"Setting channel {name} (Sensor ID: {SensorId}) setting {str}";
+
+                action = () => client.GetVersionClient<ChannelParameter, ChannelProperty>(dynamicParameters.ToList()).SetChannelProperty(
+                    new[] { SensorId },
+                    ChannelId,
+                    Channel != null ? new List<Channel> { Channel } : null,
+                    dynamicParameters.ToArray()
                 );
             }
             else
@@ -173,11 +208,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (nameGroups.Count() > 1)
                     type += "s";
 
-                var message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
-                
+                string message;
 
+                if (DynamicSet())
+                {
+                    var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                    var str = string.Join(", ", strActions);
+                    message = $"Setting {type} {summary} setting {str}";
+                }
+                else
+                {
+                    message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
+                    dynamicParameters = new[] {new ChannelParameter(Property, Value)}.ToList();
+                }
 
-                ExecuteMultiOperation(() => client.GetVersionClient(Property).SetChannelProperty(sensorIds, groups[i].Key, groups[i].ToList(), Property, Value), message, complete);
+                ExecuteMultiOperation(() => client.GetVersionClient<ChannelParameter, ChannelProperty>(dynamicParameters).SetChannelProperty(sensorIds, groups[i].Key, groups[i].ToList(), dynamicParameters.ToArray()), message, complete);
             }
         }
 
@@ -185,5 +230,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Returns the current object that should be passed through this cmdlet.
         /// </summary>
         public override object PassThruObject => Channel;
+
+        /// <summary>
+        /// Retrieves an object that defines the dynamic parameters of this cmdlet.
+        /// </summary>
+        /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
+        public object GetDynamicParameters()
+        {
+            if (dynamicParams == null)
+                dynamicParams = new DynamicParameterSet<ChannelProperty>(new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual }, e => BaseSetObjectPropertyParameters<ChannelProperty>.GetPropertyInfoViaPropertyParameter<Channel>(e));
+
+            return dynamicParams.Parameters;
+        }
+
+        private bool DynamicSet()
+        {
+            return ParameterSetName == ParameterSet.Dynamic || ParameterSetName == ParameterSet.DynamicManual;
+        }
     }
 }

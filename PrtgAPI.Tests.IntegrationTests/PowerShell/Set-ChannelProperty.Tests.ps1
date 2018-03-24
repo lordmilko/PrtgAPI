@@ -261,4 +261,23 @@ Describe "Set-ChannelProperty_IT" {
         $newChannels[0].LimitsEnabled | Should Be $true
         $newChannels[1].LimitsEnabled | Should Be $true
     }
+
+    It "sets multiple with dynamic parameters" {
+        $sensor = Get-Sensor -Id (Settings ChannelSensor)
+
+        $channel = $sensor | Get-Channel -Id 0
+        $channel | Set-ChannelProperty LimitsEnabled $false
+
+        $channel = $sensor | Get-Channel -Id 0
+        $channel.LimitsEnabled | Should Be $false
+        $channel.UpperErrorLimit | Should Be $null
+        $channel.LowerErrorLimit | Should Be $null
+
+        $channel | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 50
+
+        $newChannel = $sensor | Get-Channel -Id 0
+        $newChannel.LimitsEnabled | Should Be $true
+        $newChannel.UpperErrorLimit | Should Be 100
+        $newChannel.LowerErrorLimit | Should Be 50
+    }
 }

@@ -118,6 +118,22 @@ Describe "Set-ObjectProperty_IT" {
         $newDevice.Interval | Should Be "00:05:00"
     }
 
+    It "sets multiple with dynamic parameters" {
+        $device = Get-Device -Id (Settings Device)
+
+        $props = $device | Get-ObjectProperty
+
+        $props.VMwareUserName | Should Be $null
+        $props.HasVMwarePassword | Should Be $false
+
+        $device | Set-ObjectProperty -VMwareUserName root -VMwarePassword test
+
+        $newProps = $device | Get-ObjectProperty
+
+        $newProps.VMwareUserName | Should Be "root"
+        $newProps.HasVMwarePassword | Should Be $true
+    }
+
     function SetDirect($property, $value)
     {
         $object = Get-Sensor -Id (Settings UpSensor)

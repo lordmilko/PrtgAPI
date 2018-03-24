@@ -17,14 +17,14 @@ namespace PrtgAPI.Request
             this.client = client;
         }
 
-        internal virtual void SetChannelProperty(int[] sensorIds, int channelId, List<Channel> channels, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal virtual void SetChannelProperty(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            client.SetObjectProperty(new SetChannelPropertyParameters(sensorIds, channelId, property, value, versionSpecific), sensorIds.Length);
+            client.SetObjectProperty(new SetChannelPropertyParameters(sensorIds, channelId, @params, versionSpecific), sensorIds.Length);
         }
 
-        internal virtual async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelProperty property, object value, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal virtual async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            await client.SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, property, value, versionSpecific), sensorIds.Length).ConfigureAwait(false);
+            await client.SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, @params, versionSpecific), sensorIds.Length).ConfigureAwait(false);
         }
     }
 }

@@ -27,6 +27,8 @@
         /// </summary>
         internal const string Dynamic = "DynamicSet";
 
+        internal const string DynamicManual = "DynamicManualSet";
+
         /// <summary>
         /// The parameter set that is used when utilizing a well typed property.
         /// </summary>

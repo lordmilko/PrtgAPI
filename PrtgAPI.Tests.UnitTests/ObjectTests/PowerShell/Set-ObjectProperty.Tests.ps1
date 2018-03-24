@@ -146,4 +146,42 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "sets multiple properties with -Batch:`$true" {
+
+        SetMultiTypeResponse
+
+        $devices = Get-Device -Count 2
+
+        SetAddressValidatorResponse "id=3000,3001&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&username"
+
+        $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret
+    }
+
+    It "sets multiple properties with -Batch:`$false" {
+        SetMultiTypeResponse
+
+        $devices = Get-Device -Count 2
+
+        SetAddressValidatorResponse @(
+            "editsettings?id=3000&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&"
+            "editsettings?id=3001&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&"
+        )
+
+        $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret -Batch:$false
+    }
+
+    It "removes all but the last instance of a parameter" {
+        SetMultiTypeResponse
+
+        $devices = Get-Device -Count 2
+
+        SetAddressValidatorResponse "id=3000,3001&interval_=30%7c30+seconds&intervalgroup=1"
+
+        $devices | Set-ObjectProperty -Interval "00:00:30" -InheritInterval $true
+    }
+
+    It "doesn't specify any dynamic parameters" {
+        { $devices | Set-ObjectProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Property"
+    }
 }

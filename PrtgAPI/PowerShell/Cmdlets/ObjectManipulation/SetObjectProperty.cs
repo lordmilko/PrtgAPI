@@ -1,10 +1,10 @@
-﻿using System.Management.Automation;
-using System.Reflection;
-using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+﻿using System;
+using System.Linq;
+using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -50,15 +50,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Set raw property "name" to value "newName"</para>
     /// </example>
     /// 
-    /// <para type="link">about_ObjectSettings</para>
-    /// <para type="link">about_SensorSettings</para>
+    /// <para type="link">Get-Help ObjectSettings</para>
+    /// <para type="link">Get-Help SensorSettings</para>
     /// <para type="link">Get-ObjectProperty</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true)]
-    public class SetObjectProperty : PrtgMultiOperationCmdlet
+    [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
+    public class SetObjectProperty : PrtgMultiOperationCmdlet, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">The object to modify the properties of.</para>
@@ -100,6 +100,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override string ProgressActivity => "Modify PRTG Object Settings";
 
+        private DynamicParameterSet<ObjectProperty> dynamicParams;
+
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
         /// </summary>
@@ -127,6 +129,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
                     ExecuteOrQueue(Object);
             }
+            else if (ParameterSetName == ParameterSet.Dynamic)
+            {
+                var propertyParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, v));
+
+                var strActions = propertyParameters.Select(p => $"{p.Property} = '{p.Value}'");
+                var str = string.Join(", ", strActions);
+
+                if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {str}"))
+                    ExecuteOrQueue(Object);
+            }
             else
             {
                 if (Force || ShouldContinue($"Are you sure you want to set raw object property '{RawProperty}' to value '{RawValue}' on {Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
@@ -150,6 +162,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ParameterSetName == ParameterSet.Default)
                 ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
+            else if (ParameterSetName == ParameterSet.Dynamic)
+            {
+                var propertyParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, v)).ToArray();
+
+                var strActions = propertyParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var str = string.Join(", ", strActions);
+
+                ExecuteOperation(() => client.SetObjectProperty(Object.Id, propertyParameters), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting {str}");
+            }
             else
                 ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
         }
@@ -162,6 +183,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if(ParameterSetName == ParameterSet.Default)
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
+            else if (ParameterSetName == ParameterSet.Dynamic)
+            {
+                var propertyParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, v)).ToArray();
+
+                var strActions = propertyParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var str = string.Join(", ", strActions);
+
+                ExecuteMultiOperation(() => client.SetObjectProperty(ids, propertyParameters), $"Setting {GetMultiTypeListSummary()} setting {str}");
+            }
             else
                 ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
         }
@@ -170,5 +200,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Returns the current object that should be passed through this cmdlet.
         /// </summary>
         public override object PassThruObject => Object;
+
+        /// <summary>
+        /// Retrieves an object that defines the dynamic parameters of this cmdlet.
+        /// </summary>
+        /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
+        public object GetDynamicParameters()
+        {
+            if(dynamicParams == null)
+                dynamicParams = new DynamicParameterSet<ObjectProperty>(ParameterSet.Dynamic, e => BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(e));
+
+            return dynamicParams.Parameters;
+        }
     }
 }

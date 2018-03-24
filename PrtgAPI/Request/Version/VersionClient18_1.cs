@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
@@ -11,7 +12,14 @@ namespace PrtgAPI.Request
         {
         }
 
-        private List<Tuple<double?, List<Channel>, ChannelProperty>> GetGroupedChannels(List<Channel> channels, int channelId, ChannelProperty property, object value)
+        /// <summary>
+        /// Group the channels we're modifying together based the value and field that contains an existing limit value.
+        /// </summary>
+        /// <param name="channels">The list of channels to group.</param>
+        /// <param name="channelId">The ID of all of the channels.</param>
+        /// <param name="parameters">The parameters to add.</param>
+        /// <returns></returns>
+        private List<Tuple<double?, List<Channel>, ChannelProperty>> GetGroupedChannels(List<Channel> channels, int channelId, ChannelParameter[] parameters)
         {
             var analyzer = new ChannelLimitAnalyzer(new List<Channel>(channels));
 
@@ -48,7 +56,14 @@ namespace PrtgAPI.Request
 
                 var builder = new StringBuilder();
 
-                builder.Append($"Cannot set property '{property}' to value '{value}' for Channel ID {channelId}: ");
+                var propertyNames = string.Join(", ", parameters.Select(p => $"'{p.Property}'"));
+                var values = string.Join(", ", parameters.Select(p => $"'{p.Value}'"));
+
+                if(parameters.Length > 1)
+                    builder.Append($"Cannot set properties {propertyNames} to values {values} for Channel ID {channelId}: ");
+                else
+                    builder.Append($"Cannot set property {propertyNames} to value {values} for Channel ID {channelId}: ");
+                    builder.Append($"Cannot set property {propertyNames} to value {values} for Channel ID {channelId}: ");
 
                 if (analyzer.Channels.Count > 1)
                     builder.Append($"Sensor IDs {sensorIds} do not have a limit value defined on them. ");
@@ -60,6 +75,21 @@ namespace PrtgAPI.Request
             }
 
             return list;
+        }
+
+        private bool NeedsLimit(ChannelParameter[] @params)
+        {
+            var needsLimit = @params.Any(p => p.Property == ChannelProperty.ErrorLimitMessage || p.Property == ChannelProperty.WarningLimitMessage || (p.Property == ChannelProperty.LimitsEnabled && IsTrue(p.Value)));
+
+            if (needsLimit)
+            {
+                if (@params.Any(p => p.Property == ChannelProperty.UpperErrorLimit || p.Property == ChannelProperty.LowerErrorLimit || p.Property == ChannelProperty.UpperWarningLimit || p.Property == ChannelProperty.LowerWarningLimit))
+                    return false;
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsTrue(object val)

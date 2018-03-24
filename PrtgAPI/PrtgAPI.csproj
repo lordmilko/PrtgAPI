@@ -125,8 +125,11 @@
     <Compile Include="Helpers\DictionaryHelpers.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="Parameters\Base\PropertyParameter.cs" />
     <Compile Include="Parameters\Base\ISourceParameters.cs" />
+    <Compile Include="Parameters\ChannelParameter.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\HttpSensorParameters.cs" />
+    <Compile Include="Parameters\PropertyParameter.cs" />
     <Compile Include="Request\RequestParser.cs" />
     <Compile Include="Request\ResponseParser.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />
@@ -237,6 +240,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddSensor.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorFactorySource.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewSensorParameters.cs" />
+    <Compile Include="PowerShell\DynamicParameterSet.cs" />
     <Compile Include="PowerShell\FormatGenerator.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorHistory.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\MoveObject.cs" />

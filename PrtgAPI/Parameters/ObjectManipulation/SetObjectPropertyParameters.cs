@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace PrtgAPI.Parameters
@@ -17,7 +18,7 @@ namespace PrtgAPI.Parameters
             set { ObjectIds = value; }
         }
 
-        public SetObjectPropertyParameters(int[] objectIds, ObjectProperty property, object value)
+        public SetObjectPropertyParameters(int[] objectIds, PropertyParameter[] parameters)
         {
             if (objectIds == null)
                 throw new ArgumentNullException(nameof(objectIds));
@@ -25,11 +26,23 @@ namespace PrtgAPI.Parameters
             if (objectIds.Length == 0)
                 throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
 
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified", nameof(parameters));
+
             ObjectIds = objectIds;
-            AddTypeSafeValue(property, value, false);
+
+            foreach (var param in parameters)
+            {
+                AddTypeSafeValue(@param.Property, @param.Value, false);
+            }
+
+            RemoveDuplicateParameters();
         }
 
-        public SetObjectPropertyParameters(int[] objectIds, string property, string value)
+        public SetObjectPropertyParameters(int[] objectIds, CustomParameter[] parameters)
         {
             if (objectIds == null)
                 throw new ArgumentNullException(nameof(objectIds));
@@ -37,8 +50,14 @@ namespace PrtgAPI.Parameters
             if (objectIds.Length == 0)
                 throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
 
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified", nameof(parameters));
+
             ObjectIds = objectIds;
-            this[Parameter.Custom] = new CustomParameter(property, value);
+            this[Parameter.Custom] = parameters;
         }
 
         protected override PropertyInfo GetPropertyInfo(Enum property)
