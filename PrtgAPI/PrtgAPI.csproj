@@ -329,19 +329,19 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
     <Compile Include="Request\PrtgTargetHelper.cs" />
-    <Compile Include="Request\PrtgClient.AsyncHelpers.cs">
+    <Compile Include="Request\PrtgClient.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>PrtgClient.AsyncHelpers.tt</DependentUpon>
+      <DependentUpon>PrtgClient.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Request\RequestEngine.cs" />
     <Compile Include="Request\Version\ChannelLimitAnalyzer.cs" />
     <Compile Include="Request\Version\VersionClient.cs" />
     <Compile Include="Request\Version\VersionClient18_1.cs" />
-    <Compile Include="Request\Version\VersionClient18_1.Methods.cs">
+    <Compile Include="Request\Version\VersionClient18_1.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>VersionClient18_1.Methods.tt</DependentUpon>
+      <DependentUpon>VersionClient18_1.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="_Todo.cs" />
     <Compile Include="Properties\AssemblyFileVersion.cs">
@@ -500,13 +500,13 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyFileVersion1.cs</LastGenOutput>
     </Content>
-    <Content Include="Request\PrtgClient.AsyncHelpers.tt">
+    <Content Include="Request\PrtgClient.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>PrtgClient.AsyncHelpers.cs</LastGenOutput>
+      <LastGenOutput>PrtgClient.Generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Request\Version\VersionClient18_1.Methods.tt">
+    <Content Include="Request\Version\VersionClient18_1.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>VersionClient18_1.Methods.cs</LastGenOutput>
+      <LastGenOutput>VersionClient18_1.Generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
