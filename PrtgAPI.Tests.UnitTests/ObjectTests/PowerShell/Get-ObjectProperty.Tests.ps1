@@ -37,6 +37,17 @@ Describe "Get-ObjectProperty" {
         $property | Should Be "testName"
     }
 
+    It "retrieves multiple properties" {
+        $sensor = Get-Sensor -Count 1
+
+        $properties = $sensor | Get-ObjectProperty Name,Tags
+
+        $properties.Name | Should Be "testName"
+        $properties.Tags.Count | Should Be 2
+        $properties.Tags[0] | Should Be "tag1"
+        $properties.Tags[1] | Should Be "tag2"
+    }
+
     It "retrieves multiple raw properties" {
         $sensor = Get-Sensor -Count 1
 

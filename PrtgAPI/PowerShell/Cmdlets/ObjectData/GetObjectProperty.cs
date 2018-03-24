@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
@@ -50,10 +51,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
-        /// <para type="description">The name of a single property to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
+        /// <para type="description">The name of one or more properties to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Property)]
-        public ObjectProperty Property { get; set; }
+        public ObjectProperty[] Property { get; set; }
 
         /// <summary>
         /// <para type="description">The raw name of one or more properties to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -84,9 +85,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ParameterSetName == ParameterSet.Property)
             {
-                var value = client.GetObjectProperty(Object.Id, Property);
+                WriteProperties(Property, client.GetObjectProperty);
 
-                WriteObject(value, true);
+                //todo: need tests for this
             }
             else if (ParameterSetName == ParameterSet.Raw)
             {
@@ -103,28 +104,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else if (ParameterSetName == ParameterSet.RawProperty)
             {
-                if (RawProperty.Length == 1)
-                    WriteObject(client.GetObjectPropertyRaw(Object.Id, RawProperty[0]));
-                else
-                {
-                    var obj = new PSObject();
-
-                    foreach (var prop in RawProperty)
-                    {
-                        var val = client.GetObjectPropertyRaw(Object.Id, prop);
-
-                        obj.Properties.Add(new PSNoteProperty(prop.ToLower().Replace("_", ""), val));
-                    }
-
-                    WriteObject(obj);
-                }
+                WriteProperties(RawProperty, client.GetObjectPropertyRaw, p => p.ToLower().Replace("_", ""));
 
                 //todo: unit/integration test this
-
-                //todo: let people specify an array of raw properties. if theres more than 1 property,
-                //return a psobject containing all the properties in lowercase with underscores removed
-
-
             }
             else
             {
@@ -150,6 +132,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
+        private void WriteProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName = null)
+        {
+            if (properties.Length == 1)
+                WriteObject(getValue(Object.Id, properties[0]), true);
+            else
+            {
+                var obj = new PSObject();
+
+                foreach (var prop in properties)
+                {
+                    var name = getPropertyName != null ? getPropertyName(prop) : prop;
+                    var val = getValue(Object.Id, prop);
+
+                    obj.Properties.Add(new PSNoteProperty(name.ToString(), val));
+                }
+
+                WriteObject(obj);
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
         private ObjectType TypeFromBase()
         {
             switch (Object.BaseType)
