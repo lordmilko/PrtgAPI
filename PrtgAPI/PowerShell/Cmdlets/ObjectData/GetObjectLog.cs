@@ -131,7 +131,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             ProcessDateFilter(Property.StartDate, EndDate);
             ProcessRecordAgeFilter();
 
-            ProcessUnspecifiedRange(); 
+            ProcessUnspecifiedRange();
 
             base.ProcessAdditionalParameters();
         }
@@ -159,6 +159,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 AddPipelineFilter(Property.RecordAge, Since, false);
             }
+
+            if (Since == RecordAge.AllTime)
+                StreamProvider.ForceStream = true;
         }
 
         private void ProcessUnspecifiedRange()
@@ -190,13 +193,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
 
                 if (RequiresStreaming())
-                    forceStream = true;
+                    StreamProvider.ForceStream = true;
             }
             else
             {
                 if ((Count == null && RequiresStreaming()) || Count > 20000)
                 {
-                    forceStream = true;
+                    StreamProvider.ForceStream = true;
                 }
             }
         }

@@ -125,11 +125,16 @@
     <Compile Include="Helpers\DictionaryHelpers.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="Parameters\Base\PageableParameters.cs" />
     <Compile Include="Parameters\Base\PropertyParameter.cs" />
     <Compile Include="Parameters\Base\ISourceParameters.cs" />
     <Compile Include="Parameters\ChannelParameter.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\HttpSensorParameters.cs" />
     <Compile Include="Parameters\PropertyParameter.cs" />
+    <Compile Include="PowerShell\Base\IStreamableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\StreamableCmdletProvider.cs" />
+    <Compile Include="PowerShell\ChannelUnitMap.cs" />
+    <Compile Include="PowerShell\SensorHistoryFormatter.cs" />
     <Compile Include="Request\RequestParser.cs" />
     <Compile Include="Request\ResponseParser.cs" />
     <Compile Include="Helpers\UrlHelpers.cs" />

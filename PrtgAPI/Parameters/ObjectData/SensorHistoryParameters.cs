@@ -4,18 +4,24 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
-    class SensorHistoryParameters : Parameters
+    class SensorHistoryParameters : PageableParameters
     {
-        public SensorHistoryParameters(int sensorId, int average, DateTime? startDate, DateTime? endDate)
+        public SensorHistoryParameters(int sensorId, int average, DateTime? startDate, DateTime? endDate, int? count)
         {
             if(average < 0)
                 throw new ArgumentException("Average must be greater than or equal to 0", nameof(average));
 
             SensorId = sensorId;
 
-            StartDate = startDate ?? DateTime.Now.AddHours(-1);
-            EndDate = endDate ?? DateTime.Now;
+            StartDate = startDate ?? DateTime.Now;
+            EndDate = endDate ?? StartDate.AddHours(-1);
             Average = average;
+
+            if (count != null)
+                Count = count;
+
+            SortBy = Property.DateTime;
+            SortDirection = SortDirection.Descending;
         }
 
         [ExcludeFromCodeCoverage]
@@ -27,14 +33,14 @@ namespace PrtgAPI.Parameters
 
         public DateTime StartDate
         {
-            get { return GetDate(Parameter.StartDate); }
-            set { SetDate(Parameter.StartDate, value); }
+            get { return GetDate(Parameter.EndDate); }
+            set { SetDate(Parameter.EndDate, value); }
         }
 
         public DateTime EndDate
         {
-            get { return GetDate(Parameter.EndDate); }
-            set { SetDate(Parameter.EndDate, value); }
+            get { return GetDate(Parameter.StartDate); }
+            set { SetDate(Parameter.StartDate, value); }
         }
 
         public int Average

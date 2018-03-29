@@ -1,62 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 {
-    public class SensorHistoryResponse : MultiTypeResponse
+    public class SensorHistoryResponse : BaseResponse<SensorHistoryItem>
     {
-        private List<SensorHistoryItem> items;
-
-        public SensorHistoryResponse(params SensorHistoryItem[] history)
+        public SensorHistoryResponse(params SensorHistoryItem[] history) : base ("histdata", history)
         {
-            items = history.ToList();
         }
 
-        protected override IWebResponse GetResponse(ref string address, string function)
-        {
-            switch (function)
-            {
-                case nameof(XmlFunction.HistoricData):
-                    return GetHistoricData();
-                case nameof(XmlFunction.TableData):
-                    return GetTableResponse(address);
-                default:
-                    throw GetUnknownFunctionException(function);
-            }
-        }
-
-        private IWebResponse GetTableResponse(string address)
-        {
-            var content = GetContent(address);
-
-            switch (content)
-            {
-                case Content.Sensors:
-                    return new SensorResponse(new SensorItem());
-                default:
-                    throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(SensorHistoryResponse)}");
-            }
-        }
-
-        private IWebResponse GetHistoricData()
-        {
-            List<XElement> xmlList = items.Select(GetItem).ToList();
-
-            var xml = new XElement("histdata",
-                new XAttribute("listend", 1),
-                new XAttribute("totalcount", xmlList.Count),
-                new XElement("prtg-version", "1.2.3.4"),
-                xmlList
-            );
-
-            return new BasicResponse(xml.ToString());
-        }
-
-        private XElement GetItem(SensorHistoryItem item)
+        public override XElement GetItem(SensorHistoryItem item)
         {
             var xml = new XElement("item",
                 new XElement("datetime", item.DateTime),

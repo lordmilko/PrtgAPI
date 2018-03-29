@@ -9,7 +9,7 @@ Describe "Get-SensorHistory_IT" {
         $first = $history | select -First 1
         $last = $history | select -Last 1
 
-        $seconds = [int]($last.DateTime - $first.DateTime).TotalSeconds
+        $seconds = [int]($first.DateTime - $last.DateTime).TotalSeconds
 
         $seconds | Should BeGreaterThan (60 * 57)
         $seconds | Should BeLessThan (60 * 60 + 1)
@@ -18,8 +18,8 @@ Describe "Get-SensorHistory_IT" {
     It "retrieves records for a specified time frame" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
-        $start = (get-date).adddays(-1).addhours(-1)
-        $end = (get-date).adddays(-1)
+        $start = (Get-Date).AddDays(-1)
+        $end = (Get-Date).AddDays(-1).AddHours(-1)
 
         $history = $sensor | Get-SensorHistory -StartDate $start -EndDate $end
 
@@ -28,8 +28,8 @@ Describe "Get-SensorHistory_IT" {
         $first = ($history | select -First 1).DateTime
         $last = ($history | select -Last 1).DateTime
 
-        ($start - $first).TotalSeconds | Should BeLessThan 60
-        ($last - $end) | Should BeLessThan 60
+        ($first - $start).TotalSeconds | Should BeLessThan 60
+        ($end - $last) | Should BeLessThan 60
     }
 
     It "retrieves the raw average" {
@@ -46,8 +46,8 @@ Describe "Get-SensorHistory_IT" {
             $second = $history[$i+1].DateTime
             $third = $history[$i+2].DateTime
 
-            $firstDiff = [int]($second - $first).TotalSeconds
-            $secondDiff = [int]($third - $second).TotalSeconds
+            $firstDiff = [int]($first - $second).TotalSeconds
+            $secondDiff = [int]($second - $third).TotalSeconds
 
             if($firstDiff -ne 30 -or $secondDiff -ne 30)
             {
@@ -72,8 +72,8 @@ Describe "Get-SensorHistory_IT" {
         $second = $history[1].DateTime
         $third = $history[2].DateTime
 
-        [int]($second - $first).TotalSeconds | Should Be 300
-        [int]($third - $second).TotalSeconds | Should Be 300
+        [int]($first - $second).TotalSeconds | Should Be 300
+        [int]($second - $third).TotalSeconds | Should Be 300
     }
 
     It "uses a non-standard average" {
@@ -85,8 +85,26 @@ Describe "Get-SensorHistory_IT" {
         $second = $history[1].DateTime
         $third = $history[2].DateTime
 
-        [int]($second - $first).TotalSeconds | Should Be 320
-        [int]($third - $second).TotalSeconds | Should Be 320
+        [int]($first - $second).TotalSeconds | Should Be 320
+        [int]($second - $third).TotalSeconds | Should Be 320
+    }
+
+    It "retrieves the specified number of records when a count is specified" {
+
+        $sensor = Get-Sensor -Id (Settings UpSensor)
+
+        $history = $sensor | Get-SensorHistory -Count 10
+
+        $history.Count | Should Be 10
+    }
+
+    It "retrieves the specified number of records when an end date and a count is specified" {
+
+        $sensor = Get-Sensor -Id (Settings UpSensor)
+
+        $history = $sensor | Get-SensorHistory -EndDate (Get-Date).AddDays(-1) -Count 600
+
+        $history.Count | Should Be 600
     }
 
     It "uses a custom TypeName and creates custom FormatData" {

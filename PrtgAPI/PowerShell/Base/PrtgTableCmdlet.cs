@@ -4,11 +4,10 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
-using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -17,7 +16,9 @@ namespace PrtgAPI.PowerShell.Base
     /// </summary>
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
-    public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgObjectCmdlet<TObject> where TParam : TableParameters<TObject> where TObject : ObjectTable
+    public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgObjectCmdlet<TObject>, IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>
+        where TParam : TableParameters<TObject>
+        where TObject : ObjectTable
     {
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain name. Can include wildcards.</para>
@@ -42,34 +43,16 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected Content content;
 
-        private int? progressThreshold;
-
-        private bool streamResults;
-        private bool streamSerial;
-
-        /// <summary>
-        /// Indicates that current cmdlet should stream, regardless of whether it determines this is required.
-        /// </summary>
-        protected bool forceStream;
-
-        private int? streamCount;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgTableCmdlet{TObject,TParam}"/> class. 
         /// </summary>
         /// <param name="content">The type of content this cmdlet will retrieve.</param>
-        /// <param name="progressThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
+        /// <param name="streamThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
         /// <param name="streamSerial">Indicates that if the current cmdlet streams, it should do so one at a time instead of all at once.</param>
-        protected PrtgTableCmdlet(Content content, int? progressThreshold, bool streamSerial = false)
+        protected PrtgTableCmdlet(Content content, int? streamThreshold, bool streamSerial = false)
         {
+            ((IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>)this).StreamProvider = new StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>(this, streamThreshold, streamSerial);
             this.content = content;
-            this.progressThreshold = progressThreshold;
-
-            if (progressThreshold != null)
-            {
-                streamResults = true;
-                this.streamSerial = streamSerial;
-            }
         }
 
         /// <summary>
@@ -84,7 +67,7 @@ namespace PrtgAPI.PowerShell.Base
 
             WriteList(records);
 
-            //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableBaseCmdlet object
+            //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
             Filter = null;
         }
 
@@ -161,13 +144,13 @@ namespace PrtgAPI.PowerShell.Base
             IEnumerable<TObject> records;
 
             if (ProgressManager.GetRecordsWithVariableProgress)
-                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters)); //todo: need to test this works properly
+                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters));
             else if (ProgressManager.GetResultsWithProgress)
                 records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
             else
             {
-                if (streamResults || forceStream)
-                    records = StreamResultsWithProgress(parameters);
+                if (StreamProvider.StreamResults || StreamProvider.ForceStream)
+                    records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetFilteredObjects(parameters));
                 else
                     records = GetFilteredObjects(parameters);
             }
@@ -204,16 +187,16 @@ namespace PrtgAPI.PowerShell.Base
             ProcessAdditionalParameters();
             
             if (Filter != null)
-                streamResults = false;
+                StreamProvider.StreamResults = false;
 
             if (Count != null)
             {
                 parameters.Count = Count.Value;
-                streamResults = false;
+                StreamProvider.StreamResults = false;
             }
 
-            if (streamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
-                streamResults = false;
+            if (StreamProvider.StreamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
+                StreamProvider.StreamResults = false;
 
             return parameters;
         }
@@ -236,35 +219,6 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private IEnumerable<TObject> StreamResultsWithProgress(TParam parameters)
-        {
-            ProgressManager.Scenario = ProgressScenario.StreamProgress;
-
-            ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
-
-            streamCount = client.GetTotalObjects(content);
-
-            //Normally if a filter has been specified PrtgAPI won't stream, and so the custom parameters are not necessary.
-            //However, if a cmdlet has specified it wants to force a stream, we apply our filters and use our custom parameters.
-            var records = forceStream ? GetFilteredObjects(parameters) : GetRecords();
-
-            if (streamCount > progressThreshold)
-            {
-                //We'll be replacing this progress record, so just null it out via a call to CompleteProgress()
-                //We strategically set the TotalRecords AFTER calling this method, to avoid CompleteProgress truly completing the record
-                ProgressManager.CompleteProgress();
-                SetObjectSearchProgress(ProcessingOperation.Retrieving);
-                ProgressManager.TotalRecords = streamCount;
-            }
-            else //We won't be showing progress, so complete this record
-            {
-                ProgressManager.TotalRecords = streamCount;
-                ProgressManager.CompleteProgress();
-            }
-
-            return records;
-        }
-
         /// <summary>
         /// Display the initial progress message for the first cmdlet in a chain.<para/>
         /// If the cmdlet is streaming results, will display "detecting total number of items" and return the total number of items that will be retrieved.
@@ -272,12 +226,12 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>If the cmdlet is streaming, the total number of objects that will be retrieved. Otherwise, -1.</returns>
         protected override int DisplayFirstInChainMessage()
         {
-            if (streamResults)
+            if (StreamProvider.StreamResults)
             {
                 ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
-                streamCount = client.GetTotalObjects(content);
+                StreamProvider.StreamCount = client.GetTotalObjects(content);
 
-                return streamCount.Value;
+                return StreamProvider.StreamCount.Value;
             }
 
             return base.DisplayFirstInChainMessage();
@@ -291,7 +245,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns></returns>
         protected override IEnumerable<TObject> GetCount(IEnumerable<TObject> records, ref int count)
         {
-            if (streamResults)
+            if (StreamProvider.StreamResults)
                 return records;
             else
                 return base.GetCount(PostProcessRecords(records), ref count);
@@ -349,7 +303,7 @@ namespace PrtgAPI.PowerShell.Base
         private void AddToFilter(SearchFilter filter, bool invalidatesStream = true)
         {
             if (invalidatesStream)
-                streamResults = false;
+                StreamProvider.StreamResults = false;
 
             Filter = Filter?.Concat(new[] {filter}).ToArray() ?? new[] {filter};
         }
@@ -371,31 +325,9 @@ namespace PrtgAPI.PowerShell.Base
 
         private IEnumerable<TObject> GetObjects(TParam parameters)
         {
-            if (streamResults || forceStream)
+            if (StreamProvider.StreamResults || StreamProvider.ForceStream)
             {
-                //Depending on the number of items we're streaming, we may have made so many requests to PRTG that it can't possibly
-                //respond to any cmdlets further downstream until all of the streaming requests have been completed
-
-                //If we're forcing a stream, we may have actually specified the Count parameter. As such, override the
-                //number of results to retrieve
-                if (forceStream && Count != null)
-                    streamCount = Count.Value;
-
-                //We went down an alternate code path that doesn't retrieve the total number of needed objects
-                if (streamCount == null)
-                {
-                    if (forceStream)
-                        streamCount = client.GetTotalObjects(content);
-                    else
-                        throw new NotImplementedException("Attempted to stream without specifying a stream count. This indicates a bug");
-                }
-
-                //As such, if there are no other PRTG cmdlets after us, stream as normal. Otherwise, only request a couple at a time
-                //so the PRTG will be able to handle the next cmdlet's request
-                if (!streamSerial && ProgressManager.Scenario == ProgressScenario.StreamProgress && !ProgressManager.CacheManager.PipelineRemainingHasCmdlet<PrtgCmdlet>() && ProgressManager.ProgressPipelinesCount == 1) //There are no other cmdlets after us
-                    return client.StreamObjectsInternal(parameters, streamCount.Value, true);
-                else
-                    return client.SerialStreamObjectsInternal(parameters, streamCount.Value, true); //There are other cmdlets after us; do one request at a time
+                return StreamProvider.StreamRecords<TObject>(parameters, Count);
             }
             else
             {
@@ -407,18 +339,30 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        internal virtual List<TObject> GetObjectsInternal(TParam parameters)
-        {
-            return client.GetObjects<TObject>(parameters);
-        }
+        internal virtual List<TObject> GetObjectsInternal(TParam parameters) => client.GetObjects<TObject>(parameters);
 
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected virtual List<TObject> GetAdditionalRecords(TParam parameters)
-        {
-            return new List<TObject>();
-        }
+        protected virtual List<TObject> GetAdditionalRecords(TParam parameters) => new List<TObject>();
+
+        #region IStreamableCmdlet
+
+        List<TObject> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjects(TParam parameters) =>
+            client.GetObjects<TObject>(parameters);
+
+        async Task<List<TObject>> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjectsAsync(TParam parameters) =>
+            await client.GetObjectsAsync<TObject>(parameters).ConfigureAwait(false);
+
+        int IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamTotalObjects(TParam parameters) =>
+            client.GetTotalObjects(content);
+
+        StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.StreamProvider { get; set; }
+
+        internal StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam> StreamProvider => (
+            (IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>)this).StreamProvider;
+
+        #endregion
     }
 }

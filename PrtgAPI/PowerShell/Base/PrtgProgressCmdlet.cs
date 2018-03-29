@@ -369,7 +369,7 @@ namespace PrtgAPI.PowerShell.Base
         /// Set the progress activity, initial description and total number of records (where applicable) for the current cmdlet.
         /// </summary>
         /// <param name="operation">The type of processing that is being performed by this cmdlet.</param>
-        protected void SetObjectSearchProgress(ProcessingOperation operation)
+        internal void SetObjectSearchProgress(ProcessingOperation operation)
         {
             ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} Search";
 

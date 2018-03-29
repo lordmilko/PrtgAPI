@@ -107,7 +107,7 @@
     <Compile Include="ObjectTests\CSharp\GetObjectPropertyTests.cs" />
     <Compile Include="ObjectTests\CSharp\OrganizationTests.cs" />
     <Compile Include="ObjectTests\CSharp\DeviceSettingsTests.cs" />
-    <Compile Include="ObjectTests\CSharp\GetSensorHistoryTests.cs" />
+    <Compile Include="ObjectTests\CSharp\SensorHistoryTests.cs" />
     <Compile Include="ObjectTests\CSharp\GroupTests.cs" />
     <Compile Include="ObjectTests\CSharp\LogTests.cs" />
     <Compile Include="ObjectTests\CSharp\ParameterTests.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace PrtgAPI
@@ -7,6 +8,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents historical monitoring data for a sensor at a specified time period.
     /// </summary>
+    [Description("Sensor History")]
     public class SensorHistoryData
     {
         //todo: Downtime property not currently exposed by PRTG API

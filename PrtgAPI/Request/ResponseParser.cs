@@ -213,10 +213,8 @@ namespace PrtgAPI.Request
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
         }
 
-        internal static List<SensorHistoryData> ParseSensorHistoryResponse(XDocument response, int sensorId)
+        internal static List<SensorHistoryData> ParseSensorHistoryResponse(List<SensorHistoryData> items, int sensorId)
         {
-            var items = XmlDeserializer<SensorHistoryData>.DeserializeList(response).Items;
-
             var regex = new Regex("^(.+)(\\(.+\\))$");
 
             foreach (var history in items)

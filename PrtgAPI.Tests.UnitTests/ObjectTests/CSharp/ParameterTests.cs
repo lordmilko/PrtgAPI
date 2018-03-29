@@ -233,18 +233,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void SensorHistoryParameters_GetsProperties()
         {
-            var start = DateTime.Now.AddHours(-1);
-            var parameters = new SensorHistoryParameters(1001, 600, null, null);
+            var start = DateTime.Now;
+            var parameters = new SensorHistoryParameters(1001, 600, null, null, null);
 
             Assert.AreEqual(parameters.StartDate.ToString(), start.ToString());
-            Assert.AreEqual(parameters.EndDate.ToString(), start.AddHours(1).ToString());
+            Assert.AreEqual(parameters.EndDate.ToString(), start.AddHours(-1).ToString());
             Assert.AreEqual(parameters.Average, 600);
         }
 
         [TestMethod]
         public void SensorHistoryParameters_Throws_WhenAverageIsLessThanZero()
         {
-            AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null), "Average must be greater than or equal to 0");
+            AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null, null), "Average must be greater than or equal to 0");
         }
 
         [TestMethod]

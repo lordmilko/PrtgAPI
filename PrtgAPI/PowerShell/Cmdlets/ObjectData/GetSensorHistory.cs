@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading.Tasks;
+using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -13,13 +15,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// By default, values are returned according to the scanning interval defined on the sensor (e.g. values every 60 seconds). Using the -Average parameter,
     /// values can be averaged together to provide a higher level view of a larger time span. Any number of seconds can be specified as the Average,
     /// however note that depending on the interval of the sensor, certain time spans may result in blank values within the sensor results.</para>
-    /// <para type="description">Historic data values can be retrieved over any time period via the StartDate and EndDate parameters. If these values
-    /// are not overwritten, they will default to 24 hours ago and Now (the time the cmdlet was executed) respectively. If PRTG finds it does not have
-    /// enough monitoring data to return for the specified time span, an exception will be thrown. To work around this, you can request date for a larger
-    /// time frame and then potentially filter the data with the Where-Object and Select-Object cmdlets.</para>
+    /// 
+    /// <para type="description">Historic data values can be retrieved over any time period via the -<see cref="StartDate"/>  and -<see cref="EndDate"/>
+    /// parameters. If these values are not specified, records will be returned from between now and 60 minutes ago.
+    /// If PRTG finds it does not have enough monitoring data to return for the specified time span, an exception will be thrown. To work around this,
+    /// you can request date for a larger time frame and then potentially filter the data with the Where-Object and Select-Object cmdlets.</para>
+    /// 
+    /// <para type="description">When an <see cref="EndDate"/> is specified, Get-SensorHistory will split the sensor history query into a series of smaller
+    /// requests, emitting results to the pipeline as they arrive. If the -<see cref="Count"/> parameter is speciifed, Get-SensorHistory will limit
+    /// results to the specified number items within the specified time period.</para>
+    /// 
     /// <para type="description">PrtgAPI will automatically display all numeric channel values as numbers, with the unit of the channel
     /// displayed in brackets next to the channel header (e.g. "Total(%)"). These units are for display purposes only, and so can be ignored
     /// when attempting to extract certain columns from the sensor history result.</para>
+    /// 
+    /// <para type="description">Note that while Get-SensorHistory considers the "start time" as being the point in time closest to now
+    /// and the "end time" as the point in time furthest away from now, PRTG's underlying API actually defines these in the opposite way.
+    /// Since records are ordered from newest to oldest however, PrtgAPI flips these definitions as to prevent any confusion. Keep this
+    /// in mind in the event the -Verbose parameter is specified, as the start and end times will appear to be switched.</para>
     /// 
     /// <example>
     ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory</code>
@@ -32,7 +45,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory -StartDate (Get-Date).AddDays(-3) -EndDate (Get-Date).AddDays(-1)</code>
+    ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory -StartDate (Get-Date).AddDays(-1) -EndDate (Get-Date).AddDays(-3)</code>
     ///     <para>Get historical values for all channels on the sensor with ID 1001 starting three days ago and ending yesterday.</para>
     ///     <para/>
     /// </example>
@@ -51,7 +64,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Where-Object</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "SensorHistory")]
-    public class GetSensorHistory : PrtgCmdlet
+    public class GetSensorHistory : PrtgObjectCmdlet<PSObject>, IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>
     {
         /// <summary>
         /// <para type="description">Sensor to retrieve historic data for.</para>
@@ -83,8 +96,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false)]
         public int Average { get; set; }
 
-        private static Dictionary<string, TypeNameRecord> typeNameMap = new Dictionary<string, TypeNameRecord>();
-        private static int count;
+        /// <summary>
+        /// <para type="description">Limits results to the specified number of items within the specified time period.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public int? Count { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetSensorHistory"/> class.
+        /// </summary>
+        public GetSensorHistory()
+        {
+            ((IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>)this).StreamProvider = new StreamableCmdletProvider<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>(this, 500, false);
+
+            TypeDescription = "Sensor History";
+            OperationTypeDescription = "sensor histories";
+        }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
@@ -94,196 +121,74 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (ParameterSetName == ParameterSet.Default)
                 Id = Sensor.Id;
 
-            var response = client.GetSensorHistory(Id, Average, StartDate, EndDate);
+            IEnumerable<PSObject> records;
 
-            //Determine the channel to use for each column
-            var channelUnitMap = GetChannelUnitMap(response);
+            var parameters = new SensorHistoryParameters(Id, Average, StartDate, EndDate, Count);
 
-            //Get the type name to use for this object
-            TypeNameRecord typeNameRecord;
-            var isNew = GetOrCreateTypeName(channelUnitMap.Keys.ToList(), out typeNameRecord);
+            if (EndDate == null)
+                StreamProvider.StreamResults = false;
 
-            //Transform the sensor history response into a collection of PSObjects, with values suitable converted to integers
-            var list = response.Select(r => CreateObject(r, channelUnitMap, typeNameRecord.TypeName)).ToList();
-
-            var first = list.FirstOrDefault();
-
-            if (first != null)
+            if (EndDate != null)
             {
-                var columns = first.Properties.Where(p => p is PSNoteProperty).Select(n => n.Name).ToList();
+                StreamProvider.ForceStream = true;
+                records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetFormattedRecords(parameters));
 
-                var tuples = columns.Select(col => Tuple.Create(col, CreateLabel(col, channelUnitMap))).ToList();
-
-                var coverage = tuples.Last(t => t.Item1 == "Coverage");
-                var index = tuples.IndexOf(coverage);
-                tuples[index] = Tuple.Create(coverage.Item1, $"{coverage.Item1}(%)");
-
-                if(isNew)
-                    FormatGenerator.Generate(typeNameRecord.TypeName, tuples, typeNameRecord.Index);
-                
-                FormatGenerator.LoadXml(this);
+                if (Count != null)
+                    records = records.Take(Count.Value);
             }
+            else if (ProgressManager.GetRecordsWithVariableProgress)
+                records = GetResultsWithVariableProgress(() => GetFormattedRecords(parameters));
+            else if (ProgressManager.GetResultsWithProgress)
+                records = GetResultsWithProgress(() => GetFormattedRecords(parameters));
+            else
+                records = GetFormattedRecords(parameters);
 
-            WriteObject(list, true);
+            WriteList(records);
         }
 
-        private string CreateLabel(string column, Dictionary<string, string> channelUnitMap)
+        private IEnumerable<PSObject> GetFormattedRecords(SensorHistoryParameters parameters)
         {
-            if (channelUnitMap.ContainsKey(column))
-            {
-                var val = channelUnitMap[column];
+            IEnumerable<SensorHistoryData> records;
 
-                if (val != null)
-                {
-                    return $"{column}({val})";
-                }
+            if (EndDate == null)
+                records = client.GetSensorHistoryInternal(parameters);
+            else
+            {
+                StreamProvider.StreamSerial = true;
+
+                records = StreamProvider.StreamRecords<SensorHistoryData>(parameters, null);
             }
 
-            return column;
+            var formatter = new SensorHistoryFormatter(this);
+
+            return formatter.Format(records, EndDate != null);
         }
 
-        private Dictionary<string, string> GetChannelUnitMap(List<SensorHistoryData> response)
+        /// <summary>
+        /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a <see cref="PrtgClient"/> based on the type they wish to retrieve.
+        /// </summary>
+        /// <returns>A list of records relevant to the caller.</returns>
+        protected override IEnumerable<PSObject> GetRecords()
         {
-            var channelUnitMap = new Dictionary<string, string>();
-
-            var first = response.FirstOrDefault();
-
-            if (first != null)
-            {
-                foreach (var channel in first.ChannelRecords)
-                {
-                    var unitValue = response
-                        .SelectMany(r => r.ChannelRecords
-                            .Where(v => v.Name == channel.Name && !string.IsNullOrEmpty(v.Value))
-                            .Select(v2 => v2.Value)
-                        ).FirstOrDefault();
-
-                    if (unitValue != null)
-                    {
-                        if (IsValueLookup(unitValue))
-                            unitValue = null;
-                        else
-                        {
-                            if (unitValue.StartsWith("< ") || unitValue.StartsWith("> "))
-                            {
-                                var firstIndex = unitValue.IndexOf(' ') + 1;
-                                var secondIndex = unitValue.IndexOf(' ', firstIndex) + 1;
-
-                                unitValue = unitValue.Substring(secondIndex).Trim();
-                            }
-                            else
-                                unitValue = unitValue.Substring(unitValue.IndexOf(' ') + 1).Trim();
-                        }
-                    }
-
-                    channelUnitMap[channel.Name] = unitValue;
-                }
-            }
-
-            return channelUnitMap;
+            throw new NotSupportedException();
         }
 
-        private PSObject CreateObject(SensorHistoryData date, Dictionary<string, string> channelUnitMap, string typeName)
-        {
-            var obj = new PSObject();
+        #region IStreamableCmdlet
 
-            obj.Properties.Add(new PSNoteProperty("DateTime", date.DateTime));
-            obj.Properties.Add(new PSNoteProperty("SensorId", date.SensorId));
+        List<SensorHistoryData> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjects(SensorHistoryParameters parameters) =>
+            client.GetSensorHistoryInternal(parameters);
 
-            foreach (var channel in date.ChannelRecords)
-            {
-                if (channelUnitMap[channel.Name] != null)
-                {
-                    var value = GetChannelValue(channel);
+        async Task<List<SensorHistoryData>> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjectsAsync(SensorHistoryParameters parameters) =>
+            await client.GetSensorHistoryAsyncInternal(parameters).ConfigureAwait(false);
 
-                    obj.Properties.Add(new PSNoteProperty(channel.Name, value));
-                }
-                else
-                {
-                    obj.Properties.Add(new PSNoteProperty(channel.Name, channel.Value));
-                }
-            }
+        int IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamTotalObjects(SensorHistoryParameters parameters) =>
+            client.GetSensorHistoryTotals(parameters);
 
-            obj.Properties.Add(new PSNoteProperty("Coverage", date.Coverage));
+        StreamableCmdletProvider<GetSensorHistory, SensorHistoryData, SensorHistoryParameters> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.StreamProvider { get; set; }
 
-            obj.TypeNames.Insert(0, typeName);
+        private StreamableCmdletProvider<GetSensorHistory, SensorHistoryData, SensorHistoryParameters> StreamProvider => (
+            (IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>)this).StreamProvider;
 
-            return obj;
-        }
-
-        private object GetChannelValue(ChannelHistoryRecord channel)
-        {
-            double? value = null;
-
-            if (channel.Value != null)
-            {
-                if (IsValueLookup(channel.Value))
-                    return channel.Value;
-
-                var valueStr = channel.Value.Substring(0, channel.Value.IndexOf(' '));
-
-                if (valueStr == "<1")
-                    valueStr = "0";
-                else if (valueStr == ">99")
-                    valueStr = "100";
-                else if (valueStr == "<" || valueStr == ">")
-                {
-                    var first = channel.Value.IndexOf(' ') + 1;
-                    var second = channel.Value.IndexOf(' ', first);
-
-                    valueStr = channel.Value.Substring(first, second - first);
-                }
-
-                value = Convert.ToDouble(valueStr);
-            }
-
-            return value;
-        }
-
-        private bool IsValueLookup(string str)
-        {
-            var ch1 = str[0];
-
-            if (char.IsDigit(ch1))
-                return false;
-
-            if (ch1 == '<' || ch1 == '>')
-            {
-                if (str.Length >= 2)
-                {
-                    var ch2 = str[1];
-
-                    if (char.IsDigit(ch2))
-                        return false;
-
-                    if (ch2 == ' ' && str.Length >= 3)
-                    {
-                        var ch3 = str[2];
-
-                        if (char.IsDigit(ch3))
-                            return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private bool GetOrCreateTypeName(List<string> channels, out TypeNameRecord record)
-        {
-            var key = string.Join("", channels);
-
-            if (typeNameMap.ContainsKey(key))
-            {
-                record = typeNameMap[key];
-                return false;
-            }
-
-            count++;
-            record = new TypeNameRecord(count);
-            typeNameMap[key] = record;
-
-            return true;
-        }
+        #endregion
     }
 }

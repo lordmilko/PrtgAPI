@@ -22,6 +22,8 @@ Useful things you can do with PrtgAPI:
 * Pause/resume items from external systems (such as pre/post event scripts and scheduled tasks)
 * Batch do *anything!*
 
+For information on features that are currently in the pipeline, check out the [Roadmap](https://github.com/lordmilko/PrtgAPI/projects/1).
+
 ## Installation
 
 ### NuGet

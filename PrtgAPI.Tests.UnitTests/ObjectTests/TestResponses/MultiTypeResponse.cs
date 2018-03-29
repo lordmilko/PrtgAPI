@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Web;
@@ -42,7 +43,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
-                    return GetTableResponse(ref address);
+                case nameof(XmlFunction.HistoricData):
+                    return GetTableResponse(ref address, function);
                 case nameof(CommandFunction.Pause):
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
@@ -53,8 +55,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditSettings):
                     return new BasicResponse(string.Empty);
-                case nameof(XmlFunction.HistoricData):
-                    return new SensorHistoryResponse();
                 case nameof(JsonFunction.GetStatus):
                     return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(JsonFunction.Triggers):
@@ -104,12 +104,44 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
         }
 
-        private IWebResponse GetTableResponse(ref string address)
+        private IWebResponse GetTableResponse(ref string address, string function)
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content c;
+            Content? content = null;
 
+            if (Enum.TryParse(components["content"], true, out c))
+                content = c;
+
+            var count = GetCount(components, content);
+
+            //Hack to make test "forces streaming with a date filter and returns no results" work
+            if (content == Content.Messages && count == 0 && components["columns"] == "objid,name")
+            {
+                count = 501;
+                address = address.Replace("count=1", "count=501");
+            }
+
+            if (function == nameof(XmlFunction.HistoricData))
+                return new SensorHistoryResponse(GetItems(i => new SensorHistoryItem(), count));
+
+            switch (content)
+            {
+                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count));
+                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count));
+                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count));
+                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
+                case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
+                case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
+                case Content.Channels:  return new ChannelResponse(new ChannelItem());
+                default:
+                    throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
+            }
+        }
+
+        private int GetCount(NameValueCollection components, Content? content)
+        {
             var count = 2;
 
             if (countOverride == null) //question: will this cause issues with streaming cos the second page have the wrong count
@@ -129,7 +161,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                         count = 2;
                     else
                     {
-                        
+
                         if (values?.First() == "-2")
                         {
                             if (content != Content.Devices)
@@ -147,29 +179,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
             else
             {
-                if (countOverride.ContainsKey(content))
-                    count = countOverride[content];
+                if (content != null && countOverride.ContainsKey(content.Value))
+                    count = countOverride[content.Value];
             }
 
-            //Hack to make test "forces streaming with a date filter and returns no results" work
-            if (content == Content.Messages && count == 0 && components["columns"] == "objid,name")
-            {
-                count = 501;
-                address = address.Replace("count=1", "count=501");
-            }
-
-            switch (content)
-            {
-                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count));
-                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count));
-                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count));
-                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
-                case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
-                case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
-                case Content.Channels:  return new ChannelResponse(new ChannelItem());
-                default:
-                    throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
-            }
+            return count;
         }
 
         private IWebResponse GetObjectDataResponse(string address)

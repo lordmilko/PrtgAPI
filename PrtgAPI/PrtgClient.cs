@@ -186,20 +186,22 @@ namespace PrtgAPI
 
         #region Get Objects
 
-        internal List<T> GetObjects<T>(Parameters.Parameters parameters) => GetObjectsRaw<T>(parameters).Items;
+        internal List<T> GetObjects<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
+            GetObjectsRaw<T>(parameters, function, responseValidator).Items;
 
-        private XmlDeserializer<T> GetObjectsRaw<T>(Parameters.Parameters parameters)
+        private XmlDeserializer<T> GetObjectsRaw<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null)
         {
-            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
+            var response = requestEngine.ExecuteRequest(function, parameters, responseValidator);
 
             return SetVersion(XmlDeserializer<T>.DeserializeList(response));
         }
 
-        private async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters) => (await GetObjectsRawAsync<T>(parameters).ConfigureAwait(false)).Items;
+        internal async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
+            (await GetObjectsRawAsync<T>(parameters, function, responseValidator).ConfigureAwait(false)).Items;
 
-        private async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters)
+        private async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null)
         {
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(function, parameters, responseValidator).ConfigureAwait(false);
 
             return SetVersion(XmlDeserializer<T>.DeserializeList(response));
         }
@@ -213,7 +215,7 @@ namespace PrtgAPI
 
         private async Task<T> GetObjectAsync<T>(XmlFunction function, Parameters.Parameters parameters)
         {
-            var response = await requestEngine.ExecuteRequestAsync(function, new Parameters.Parameters()).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(function, parameters).ConfigureAwait(false);
 
             return XmlDeserializer<T>.DeserializeType(response);
         }
@@ -249,10 +251,17 @@ namespace PrtgAPI
 
         private IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters, bool serial)
         {
+            return StreamObjects<T, ContentParameters<T>>(parameters, serial, () => GetTotalObjects(parameters.Content), null, null);
+        }
+
+        private IEnumerable<TObject> StreamObjects<TObject, TParam>(TParam parameters, bool serial, Func<int> getCount,
+            Func<TParam, Task<List<TObject>>> getObjectsAsync,
+            Func<TParam, List<TObject>> getObjects) where TParam : PageableParameters
+        {
             Log("Preparing to stream objects");
             Log("Requesting total number of objects");
 
-            var totalObjects = GetTotalObjects(parameters.Content);
+            var totalObjects = getCount();
 
             var limit = 20000;
 
@@ -261,24 +270,28 @@ namespace PrtgAPI
                 if(totalObjects > limit)
                     Log($"Switching to serial stream mode as over {limit} objects were detected");
 
-                return SerialStreamObjectsInternal(parameters, totalObjects, false);
+                return SerialStreamObjectsInternal(parameters, totalObjects, false, getObjects);
             }
 
-            return StreamObjectsInternal(parameters, totalObjects, false);
+            return StreamObjectsInternal(parameters, totalObjects, false, getObjectsAsync);
         }
 
-        internal IEnumerable<T> StreamObjectsInternal<T>(ContentParameters<T> parameters, int totalObjects, bool directCall)
+        internal IEnumerable<TObject> StreamObjectsInternal<TObject, TParam>(TParam parameters, int totalObjects, bool directCall,
+            Func<TParam, Task<List<TObject>>> getObjectsAsync = null) where TParam : PageableParameters
         {
             if (directCall)
                 Log("Preparing to stream objects");
 
-            var tasks = new List<Task<List<T>>>();
+            if (getObjectsAsync == null)
+                getObjectsAsync = p => GetObjectsAsync<TObject>(p);
+
+            var tasks = new List<Task<List<TObject>>>();
 
             parameters.Count = 500;
 
             for (int i = 0; i < totalObjects;)
             {
-                tasks.Add(GetObjectsAsync<T>(parameters));
+                tasks.Add(getObjectsAsync(parameters));
 
                 i = i + parameters.Count.Value;
                 parameters.Page++;
@@ -289,21 +302,25 @@ namespace PrtgAPI
 
             Log($"Requesting {totalObjects} objects from PRTG over {tasks.Count} tasks");
 
-            var result = new ParallelObjectGenerator<List<T>>(tasks.WhenAnyForAll()).SelectMany(m => m);
+            var result = new ParallelObjectGenerator<List<TObject>>(tasks.WhenAnyForAll()).SelectMany(m => m);
 
             return result;
         }
 
-        internal IEnumerable<T> SerialStreamObjectsInternal<T>(ContentParameters<T> parameters, int totalObjects, bool directCall)
+        internal IEnumerable<TObject> SerialStreamObjectsInternal<TObject, TParam>(TParam parameters, int totalObjects, bool directCall,
+            Func<TParam, List<TObject>> getObjects = null) where TParam : PageableParameters
         {
             if (directCall)
                 Log("Preparing to serially stream objects");
+
+            if (getObjects == null)
+                getObjects = p => GetObjects<TObject>(p);
 
             parameters.Count = 500;
 
             for (int i = 0; i < totalObjects;)
             {
-                var response = GetObjects<T>(parameters);
+                var response = getObjects(parameters);
 
                 //Some object types (such as Logs) lie about their total number of objects.
                 //If no objects are returned, we've reached the total number of items
@@ -991,7 +1008,7 @@ namespace PrtgAPI
         /// Retrieve logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
         /// </summary>
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time..</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
@@ -1003,7 +1020,7 @@ namespace PrtgAPI
         /// Asynchronously retrieve logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
         /// </summary>
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time..</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
@@ -1015,7 +1032,7 @@ namespace PrtgAPI
         /// Stream logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
         /// </summary>
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time..</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
@@ -2387,16 +2404,22 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
-        /// <param name="startDate">The start date and time to retrieve data from.</param>
-        /// <param name="endDate">The end date and time to retrieve data to.</param>
+        /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
-        public List<SensorHistoryData> GetSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        public List<SensorHistoryData> GetSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
         {
-            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
+            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
 
-            var response = requestEngine.ExecuteRequest(XmlFunction.HistoricData, parameters, ResponseParser.ValidateSensorHistoryResponse);
+            return GetSensorHistoryInternal(parameters);
+        }
 
-            return ResponseParser.ParseSensorHistoryResponse(response, sensorId);
+        internal List<SensorHistoryData> GetSensorHistoryInternal(SensorHistoryParameters parameters)
+        {
+            var items = GetObjects<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse);
+
+            return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
 
         /// <summary>
@@ -2404,15 +2427,60 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
-        /// <param name="startDate">The start date and time to retrieve data from.</param>
-        /// <param name="endDate">The end date and time to retrieve data to.</param>
-        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
+        /// <returns>Historical data for the specified sensor within the desired date range.</returns>
+        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
         {
-            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate);
+            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
 
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.HistoricData, parameters, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
+            return await GetSensorHistoryAsyncInternal(parameters).ConfigureAwait(false);
+        }
 
-            return ResponseParser.ParseSensorHistoryResponse(response, sensorId);
+        internal async Task<List<SensorHistoryData>> GetSensorHistoryAsyncInternal(SensorHistoryParameters parameters)
+        {
+            var items = await GetObjectsAsync<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
+
+            return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
+        }
+
+        /// <summary>
+        /// Stream historical values of a sensors channels from within a specified time period. When this method's response is enumerated,
+        /// requests will be sent to PRTG as required in order to retrieve additional items.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <returns>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</returns>
+        public IEnumerable<SensorHistoryData> StreamSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, null);
+
+            return StreamSensorHistoryInternal(parameters, true);
+        }
+
+        private IEnumerable<SensorHistoryData> StreamSensorHistoryInternal(SensorHistoryParameters parameters, bool serial)
+        {
+            return StreamObjects(
+                parameters,
+                serial,
+                () => GetSensorHistoryTotals(parameters),
+                GetSensorHistoryAsyncInternal,
+                GetSensorHistoryInternal
+            );
+        }
+
+        internal int GetSensorHistoryTotals(SensorHistoryParameters parameters)
+        {
+            parameters.Count = 0;
+
+            var data = GetObjectsRaw<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse);
+
+            parameters.GetParameters().Remove(Parameter.Count);
+
+            return Convert.ToInt32(data.TotalCount);
         }
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both

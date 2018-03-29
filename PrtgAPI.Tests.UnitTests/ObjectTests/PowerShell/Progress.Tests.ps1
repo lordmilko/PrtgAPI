@@ -8848,15 +8848,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     #endregion
     #region 105: Select -Something -> No Progress
 
-    It "105a: Table -> Select -First -> Get-SensorHistory" {
+    It "105a: Table -> Select -First -> New-SensorFactoryDefinition" {
 
-        Get-Sensor -Count 10 | Select -First 5 | Get-SensorHistory
+        Get-Sensor -Count 10 | Select -First 5 | New-SensorFactoryDefinition { "Test" } 0
 
         Assert-NoProgress
     }
 
-    It "105b: Table -> Select -Last -> Get-SensorHistory" {
-        Get-Sensor -Count 10 | Select -Last 5 | Get-SensorHistory
+    It "105b: Table -> Select -Last -> New-SensorFactoryDefinition" {
+        Get-Sensor -Count 10 | Select -Last 5 | New-SensorFactoryDefinition { "Test" } 0
 
         Assert-NoProgress
     }

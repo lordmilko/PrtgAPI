@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.PowerShell.Commands;
 using PrtgAPI.Helpers;
@@ -34,14 +36,29 @@ namespace PrtgAPI.PowerShell
                     else
                     {
                         var files = Directory.GetFiles(prtgTemp);
+                        var processes = Process.GetProcesses().Select(p => p.Id).ToList();
+
+                        var regex = new Regex("(.+DynamicFormat.+_)(.+?)(\\..+)");
 
                         foreach (var file in files)
                         {
-                            new FileInfo(file).Delete();
+                            var delete = true;
+
+                            if (regex.IsMatch(file))
+                            {
+                                var str = regex.Replace(file, "$2");
+                                var pid = Convert.ToInt32(str);
+
+                                if (processes.Contains(pid))
+                                    delete = false;
+                            }
+
+                            if (delete)
+                                new FileInfo(file).Delete();
                         }
                     }
 
-                    folder = prtgTemp + "\\PrtgAPI.DynamicFormat{0}.Format.ps1xml";
+                    folder = prtgTemp + $"\\PrtgAPI.DynamicFormat{{0}}_{Process.GetCurrentProcess().Id}.Format.ps1xml";
                 }
 
                 return folder;
@@ -131,10 +148,13 @@ namespace PrtgAPI.PowerShell
 
         internal string TypeName { get; set; }
 
-        public TypeNameRecord(int index)
+        internal int Impurity { get; set; }
+
+        public TypeNameRecord(int index, int impurity)
         {
             Index = index;
             TypeName = FormatGenerator.PSObjectTypeName + index;
+            Impurity = impurity;
         }
     }
 }
