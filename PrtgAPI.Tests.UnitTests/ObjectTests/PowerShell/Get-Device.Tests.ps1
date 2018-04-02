@@ -63,5 +63,13 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
 
             $devices.Count | Should Be 2
         }
+
+        It "retrieves devices from a group hierarchy with no devices in the parent group" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDeepNesting"
+
+            $devices = Get-Group | Get-Device *
+
+            $devices.Count | Should Be 2
+        }
     }
 }

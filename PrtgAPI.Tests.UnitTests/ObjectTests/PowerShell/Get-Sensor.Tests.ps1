@@ -107,6 +107,14 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
 
             $sensors.Count | Should Be 5
         }
+
+        It "retrieves sensors from a group hierarchy with no devices in the parent group" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDeepNesting"
+
+            $sensors = Get-Group | Get-Sensor *
+
+            $sensors.Count | Should Be 4
+        }
     }
 }
 

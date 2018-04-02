@@ -30,8 +30,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         protected override IWebResponse GetResponse(string address, Content content)
         {
-            GroupNode group;
-
             switch (requestNum)
             {
                 case 1: //Get all groups. We say there is only one group, named "Servers" (pretending we may have piped from a probe or a group)
@@ -52,7 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     Assert.AreEqual(Content.Sensors, content);
                     Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=3000&filter_parentid=3001"));
 
-                    group = probe.Groups.First(g => g.Name == "Servers");
+                    var group = probe.Groups.First(g => g.Name == "Servers");
 
                     return new SensorResponse(group.Devices.SelectMany(d => d.Sensors).Select(s => s.GetTestItem()).ToArray());
 

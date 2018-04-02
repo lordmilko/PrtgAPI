@@ -7,19 +7,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         SensorUniqueChildGroup,
         SensorDuplicateChildGroup,
         SensorNoRecurse,
+        SensorDeepNesting,
 
         DeviceUniqueGroup,
         DeviceDuplicateGroup,
         DeviceUniqueChildGroup,
         DeviceDuplicateChildGroup,
         DeviceNoRecurse,
+        DeviceDeepNesting,
 
         GroupUniqueGroup,
         GroupDuplicateGroup,
         GroupUniqueChildGroup,
         GroupDuplicateChildGroup,
         GroupNoRecurse,
-
         GroupDeepNesting
     }
 }

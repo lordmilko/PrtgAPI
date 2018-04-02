@@ -27,6 +27,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case RecursiveRequestScenario.SensorNoRecurse:
                     this.scenario = new SensorNoRecurseScenario();
                     break;
+                case RecursiveRequestScenario.SensorDeepNesting:
+                    this.scenario = new SensorDeepNestingScenario();
+                    break;
                 #endregion
                 #region Device
                 case RecursiveRequestScenario.DeviceUniqueGroup:
@@ -43,6 +46,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     break;
                 case RecursiveRequestScenario.DeviceNoRecurse:
                     this.scenario = new DeviceNoRecurseScenario();
+                    break;
+                case RecursiveRequestScenario.DeviceDeepNesting:
+                    this.scenario = new DeviceDeepNestingScenario();
                     break;
                 #endregion
                 #region Group

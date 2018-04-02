@@ -45,7 +45,7 @@ namespace PrtgAPI.PowerShell.Base
             //If we have any child groups we need to analyze
             if (group != null && group.TotalGroups > 0)
             {
-                client.Log($"Processing {group.TotalGroups} child groups of parent group {group}");
+                client.Log($"Processing {group.TotalGroups} child group(s) of parent group {group}");
                 return GetAdditionalGroupRecordsInternal(group, objsOfTypeInGroup, parameters);
             }
 
@@ -84,13 +84,18 @@ namespace PrtgAPI.PowerShell.Base
                 var filter = parameters.SearchFilter.FirstOrDefault(f => f.Property == Property.ParentId);
                 var originalValue = filter?.Value;
 
-                if (filter != null)
-                    filter.Value = parentGroup.Id;
+                try
+                {
+                    if (filter != null)
+                        filter.Value = parentGroup.Id;
 
-                childGroups = client.GetObjects<Group>(parameters);
-
-                if (filter != null)
-                    filter.Value = originalValue;
+                    childGroups = client.GetObjects<Group>(parameters);
+                }
+                finally
+                {
+                    if (filter != null)
+                        filter.Value = originalValue;
+                }
 
                 client.Log($"    Found {childGroups.Count} groups: {string.Join(", ", childGroups)}");
                 childObjects.AddRange(childGroups.Cast<TObject>());
@@ -124,7 +129,10 @@ namespace PrtgAPI.PowerShell.Base
 
                 objectsFromChildGroup = client.GetObjects<TObject>(parameters);
 
-                client.Log($"    Found {objectsFromChildGroup.Count} {objsStr}: {string.Join(", ", objectsFromChildGroup)}");
+                if(objectsFromChildGroup.Count > 0)
+                    client.Log($"    Found {objectsFromChildGroup.Count} {objsStr}(s): {string.Join(", ", objectsFromChildGroup)}");
+                else
+                    client.Log($"    Found {objectsFromChildGroup.Count} {objsStr}s");
             }
 
             return objectsFromChildGroup;
@@ -179,35 +187,56 @@ namespace PrtgAPI.PowerShell.Base
             //Save the original filter value
             var originalValue = groupFilter.Value;
 
-            groupFilter.Value = group.Name;
+            try
+            {
+                groupFilter.Value = group.Name;
 
-            var childObjects = client.GetObjects<TObject>(parameters);
+                var childObjects = client.GetObjects<TObject>(parameters);
 
-            groupFilter.Value = originalValue;
-
-            return childObjects;
+                return childObjects;
+            }
+            finally
+            {
+                groupFilter.Value = originalValue;
+            }
         }
 
         private List<TObject> GetSensorsFromGroupViaDevices(Group group, TParam parameters)
         {
-            //Get the group filter that was used to filter by the paren group's name
+            var childObjects = new List<TObject>();
+
+            //Get the group filter that was used to filter by the parent group's name
             var groupFilter = parameters.SearchFilter.First(f => f.Property == Property.Group);
 
             //Save the original filter settings
             var originalProperty = groupFilter.Property;
             var originalValue = groupFilter.Value;
 
-            groupFilter.Property = Property.ParentId;
+            try
+            {
+                groupFilter.Property = Property.ParentId;
 
-            //Get all devices that belong to this group
-            var devices = client.GetDevices(Property.ParentId, group.Id);
-            groupFilter.Value = devices.Select(d => d.Id).ToList();
+                //Get all devices that belong to this group
+                var devices = client.GetDevices(Property.ParentId, group.Id);
+                client.Log($"Found {devices.Count} child devices");
 
-            var childObjects = client.GetObjects<TObject>(parameters);
+                if (devices.Count > 0)
+                {
+                    groupFilter.Value = devices.Select(d => d.Id).ToList();
 
-            //Restore the original filter settings
-            groupFilter.Property = originalProperty;
-            groupFilter.Value = originalValue;
+                    childObjects = client.GetObjects<TObject>(parameters);
+                }
+                else
+                {
+                    client.Log("Skipping retrieving sensors as sensors must be under child group");
+                }
+            }
+            finally
+            {
+                //Restore the original filter settings
+                groupFilter.Property = originalProperty;
+                groupFilter.Value = originalValue;
+            }
 
             return childObjects;
         }

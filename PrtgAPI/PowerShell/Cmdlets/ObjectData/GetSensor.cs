@@ -135,7 +135,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 //of each device under the group (which will be identified via the group's ID).
                 if (groups.Count > 1 && Recurse)
                 {
-                    client.Log($"Parent group name '{Group}' is not unique and -{Recurse} was specified; retrieving sensors by child devices");
+                    client.Log($"Parent group name '{Group}' is not unique and -{nameof(Recurse)} was specified; retrieving sensors by child devices");
 
                     //Get the sensors under the parent group. We'll process all the child groups in GetAdditionalGroupRecords
                     return GetSensorsFromGroupNameFilter(Group, true, parameters);

@@ -150,7 +150,9 @@
     <Compile Include="ObjectTests\TestResponses\DeviceSettingsResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\DiffBasedResolveResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\ExceptionResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Device\DeviceDeepNestingScenario.cs" />
     <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Group\GroupDeepNestingScenario.cs" />
+    <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingScenario.cs" />
     <Compile Include="ObjectTests\TestResponses\SensorTarget\ExeFileTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\Objects\GroupResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\Objects\MessageResponse.cs" />
