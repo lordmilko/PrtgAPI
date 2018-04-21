@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Retrieves historic data values for a PRTG Sensor.</para>
     /// 
     /// <para type="description">The Get-SensorHistory cmdlet retrieves historic data values for all channels of a PRTG Sensor within a specified time period.
-    /// By default, values are returned according to the scanning interval defined on the sensor (e.g. values every 60 seconds). Using the -Average parameter,
-    /// values can be averaged together to provide a higher level view of a larger time span. Any number of seconds can be specified as the Average,
+    /// By default, values are returned according to the scanning interval defined on the sensor (e.g. values every 60 seconds). Using the -<see cref="Average"/> parameter,
+    /// values can be averaged together to provide a higher level view of a larger time span. Any number of seconds can be specified as the <see cref="Average"/>,
     /// however note that depending on the interval of the sensor, certain time spans may result in blank values within the sensor results.</para>
     /// 
     /// <para type="description">Historic data values can be retrieved over any time period via the -<see cref="StartDate"/>  and -<see cref="EndDate"/>
@@ -25,6 +26,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// requests, emitting results to the pipeline as they arrive. If the -<see cref="Count"/> parameter is speciifed, Get-SensorHistory will limit
     /// results to the specified number items within the specified time period.</para>
     /// 
+    /// <para type="description">Due to limitations of the PRTG API, Get-SensorHistory cannot display both downtime and channel value lookups
+    /// at the same time. Value lookups can only be displayed when an -<see cref="Average"/> of 0 is specified, while downtime can only
+    /// be displayed when a specific average has been specified. By default, if no average is specified Get-SensorHistory will use an average of 0
+    /// to enable the display of value lookups. If the -<see cref="Downtime"/> parameter is specified and no -<see cref="Average"/> is specified,
+    /// Get-SensorHistory will use the Interval property of the sensor to specify the true average.</para>
+    /// 
     /// <para type="description">PrtgAPI will automatically display all numeric channel values as numbers, with the unit of the channel
     /// displayed in brackets next to the channel header (e.g. "Total(%)"). These units are for display purposes only, and so can be ignored
     /// when attempting to extract certain columns from the sensor history result.</para>
@@ -35,27 +42,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// in mind in the event the -Verbose parameter is specified, as the start and end times will appear to be switched.</para>
     /// 
     /// <example>
-    ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory</code>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Get-SensorHistory</code>
     ///     <para>Get historical values for all channels on the sensor with ID 1001 over the past 24 hours, using the sensor's default interval.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory -Average 300</code>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Get-SensorHistory -Average 300</code>
     ///     <para>Get historical values for all channels on the sensor with ID 1001 over the past 24 hours, averaging values in 5 minute intervals.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Id 1001 | Get-SensorHistory -StartDate (Get-Date).AddDays(-1) -EndDate (Get-Date).AddDays(-3)</code>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Get-SensorHistory -StartDate (Get-Date).AddDays(-1) -EndDate (Get-Date).AddDays(-3)</code>
     ///     <para>Get historical values for all channels on the sensor with ID 1001 starting three days ago and ending yesterday.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Tags wmicpu* -count 1 | Get-SensorHistory | select Total</code>
+    ///     <code>C:\> Get-Sensor -Tags wmicpu* -count 1 | Get-SensorHistory | select Total</code>
     ///     <para>Get historical values for all channels on a single WMI CPU Load sensor, selecting the "Total" channel (visually displayed as "Total(%)"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Tags wmicpu* -count 1 | where Total -gt 90</code>
+    ///     <code>C:\> Get-Sensor -Tags wmicpu* -count 1 | where Total -gt 90</code>
     ///     <para>Get historical values for all channels on a single WMI CPU Load sensor where the Total channel's value was greater than 90.</para>
     /// </example>
     /// 
@@ -91,10 +98,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public DateTime? EndDate { get; set; }
 
         /// <summary>
-        /// <para type="description">Time span (in seconds) to average results over. For example, a value of 300 will show the average value every 5 minutes.</para>
+        /// <para type="description">Time span (in seconds) to average results over. For example, a value of 300 will show the average value every 5 minutes.
+        /// If a value of 0 is used, PRTG will include value lookup labels in historical results. If a value other than 0 is used, PRTG will include the Downtime
+        /// channel in results.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public int Average { get; set; }
+        public int? Average { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specifies that the Downtime channel should be included in query results in lieu of value lookup labels.
+        /// If this parameter is specified and <see cref="Average"/> is not specified, the Interval of the sensor will be used to determine the average.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
+        public SwitchParameter Downtime { get; set; }
 
         /// <summary>
         /// <para type="description">Limits results to the specified number of items within the specified time period.</para> 
@@ -123,7 +139,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             IEnumerable<PSObject> records;
 
-            var parameters = new SensorHistoryParameters(Id, Average, StartDate, EndDate, Count);
+            var average = Average;
+
+            if (average == null)
+            {
+                //Sensor is implicitly not null because Downtime is part of the Default parameter set
+                average = Downtime ? Convert.ToInt32(Sensor.Interval.TotalSeconds) : 0;
+            }
+            else
+            {
+                if (Downtime && average == 0)
+                    throw new InvalidOperationException($"Cannot retrieve downtime with an {nameof(Average)} of 0");
+            }
+
+            var parameters = new SensorHistoryParameters(Id, average.Value, StartDate, EndDate, Count);
 
             if (EndDate == null)
                 StreamProvider.StreamResults = false;
@@ -168,6 +197,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a <see cref="PrtgClient"/> based on the type they wish to retrieve.
         /// </summary>
         /// <returns>A list of records relevant to the caller.</returns>
+        [ExcludeFromCodeCoverage]
         protected override IEnumerable<PSObject> GetRecords()
         {
             throw new NotSupportedException();

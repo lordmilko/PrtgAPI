@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell
 
             foreach (var record in response)
             {
-                if (readCount < 500 || lazy)
+                if (readCount < 500 || !lazy)
                 {
                     readCount++;
                     firstResponse.Add(record);

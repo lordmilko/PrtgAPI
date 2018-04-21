@@ -175,4 +175,44 @@ Describe "Get-SensorHistory_IT" {
     It "processes all sensors" {
         Get-Sensor | Get-SensorHistory
     }
+
+    Context "Downtime" {
+        It "doesn't include downtime by default" {
+            $record = Get-Sensor -Id (Settings UpSensor) | Get-SensorHistory | Select -First 1
+
+            $record | Should Not BeNullOrEmpty
+
+            $downtime = $record.PSObject.Properties | where Name -EQ "Downtime"
+
+            $downtime | Should BeNullOrEmpty
+        }
+
+        It "includes downtime when -Downtime is specified" {
+            $record = Get-Sensor -Id (Settings UpSensor) | Get-SensorHistory -Downtime | Select -First 1
+
+            $record | Should Not BeNullOrEmpty
+
+            $downtime = $record.PSObject.Properties | where Name -EQ "Downtime"
+
+            $downtime | Should Not BeNullOrEmpty
+            $downtime.Name | Should Be "Downtime"
+        }
+
+        It "includes downtime when an average is specified" {
+            $record = Get-Sensor -Id (Settings UpSensor) | Get-SensorHistory -Average 60 | Select -First 1
+
+            $record | Should Not BeNullOrEmpty
+
+            $downtime = $record.PSObject.Properties | where Name -EQ "Downtime"
+
+            $downtime | Should Not BeNullOrEmpty
+            $downtime.Name | Should Be "Downtime"
+        }
+
+        It "throws specifying -Downtime with an average of 0" {
+            $sensor = Get-Sensor -Id (Settings UpSensor)
+
+            { $sensor | Get-SensorHistory -Average 0 -Downtime } | Should Throw "Cannot retrieve downtime with an Average of 0"
+        }
+    }
 }

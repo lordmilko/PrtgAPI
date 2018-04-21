@@ -2403,7 +2403,10 @@ namespace PrtgAPI
         /// Retrieve the historical values of a sensor's channels from within a specified time period.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
-        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
+        /// is used, PRTG will use the true interval of the sensor.<para/>
+        /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
+        /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
@@ -2426,7 +2429,10 @@ namespace PrtgAPI
         /// Asynchronously retrieve the historical values of a sensor's channels from within a specified time period.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
-        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
+        /// is used, PRTG will use the true interval of the sensor.<para/>
+        /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
+        /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
@@ -2450,7 +2456,10 @@ namespace PrtgAPI
         /// requests will be sent to PRTG as required in order to retrieve additional items.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
-        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes.</param>
+        /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
+        /// is used, PRTG will use the true interval of the sensor.<para/>
+        /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
+        /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <returns>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</returns>
