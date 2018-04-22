@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>, IObjectInternalProperty<ObjectPropertyInternal>
     {
         public int[] ObjectIds

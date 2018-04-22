@@ -6,6 +6,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     [TestClass]
     public class TypeTests
     {
+        #region Sensor Target
+
         [TestMethod]
         public void SensorTarget_ReferenceEquals_SensorTarget()
         {
@@ -53,5 +55,51 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             Assert.AreNotEqual(code2, timeSpan);
         }
+
+        #endregion
+        #region Device Template
+
+        [TestMethod]
+        public void DeviceTemplate_ReferenceEquals_DeviceTemplate()
+        {
+            DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
+            DeviceTemplate template2 = template1;
+
+            Assert.IsTrue(template1.Equals(template2));
+        }
+
+        [TestMethod]
+        public void DeviceTemplate_ValueEquals_DeviceTemplate()
+        {
+            DeviceTemplate template1 = new DeviceTemplate("file1.odt|File 1||");
+            DeviceTemplate template2 = new DeviceTemplate("file1.odt|File 1||");
+            DeviceTemplate template3 = new DeviceTemplate("file2.odt|File 2||");
+
+            Assert.IsTrue(template1.Equals(template2));
+            Assert.IsFalse(template1.Equals(template3));
+        }
+
+        [TestMethod]
+        public void DeviceTemplate_HashCodeEquals_DeviceTemplate()
+        {
+            DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
+            DeviceTemplate template2 = new DeviceTemplate("file.odt|File||");
+
+            var template1Hash = template1.GetHashCode();
+            var template2Hash = template2.GetHashCode();
+
+            Assert.AreEqual(template1Hash, template2Hash);
+        }
+
+        [TestMethod]
+        public void DeviceTemplate_StringEquals_DeviceTemplate()
+        {
+            DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
+            DeviceTemplate template2 = new DeviceTemplate("file.odt|File||");
+
+            Assert.AreEqual(template1.ToString(), template2.ToString());
+        }
+
+        #endregion
     }
 }

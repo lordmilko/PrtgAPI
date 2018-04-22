@@ -207,6 +207,8 @@ Describe "Add-Sensor_IT" {
         $params["interval_"] = "300|5 minutes"
         $params["timeout_"] = 70
 
+        $params["exefile_"] | Should Be $target
+
         $newSensor = $device | Add-Sensor $params
 
         $newSensor.Count | Should Be 1
