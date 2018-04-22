@@ -281,6 +281,17 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+        #region Sensor Types
+
+        internal static List<SensorTypeDescriptor> ParseSensorTypes(List<SensorTypeDescriptor> types)
+        {
+            if (types == null)
+                return new List<SensorTypeDescriptor>();
+
+            return types.GroupBy(t => t.Id).Select(g => g.First()).ToList();
+        }
+
+        #endregion
 
         internal static string ValidateHasContent(HttpResponseMessage message)
         {

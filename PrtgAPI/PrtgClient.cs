@@ -552,7 +552,7 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
         public List<SensorTypeDescriptor> GetSensorTypes(int objectId = 1) =>
-            GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContent).Types ?? new List<SensorTypeDescriptor>();
+            ResponseParser.ParseSensorTypes(GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContent).Types);
 
         /// <summary>
         /// Asynchronously retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.<para/>
@@ -561,7 +561,7 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
         public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = 1) =>
-            (await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types ?? new List<SensorTypeDescriptor>();
+            ResponseParser.ParseSensorTypes((await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types);
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
