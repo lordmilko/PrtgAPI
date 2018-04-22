@@ -60,6 +60,36 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Execute(c => c.GetObjectProperty(1001, ObjectProperty.Comments), "api/getobjectstatus.htm?id=1001&name=comments");
         }
 
+        [TestMethod]
+        public void GetObjectProperty_MultiCheckbox_None()
+        {
+            var client = Initialize_Client(new MultiCheckBoxResponse());
+
+            var properties = client.GetObjectPropertiesRaw(1001, ObjectType.Device);
+
+            Assert.AreEqual(string.Empty, properties["trafficmode"]);
+        }
+
+        [TestMethod]
+        public void GetObjectProperty_MultiCheckbox_One()
+        {
+            var client = Initialize_Client(new MultiCheckBoxResponse(discards: true));
+
+            var properties = client.GetObjectPropertiesRaw(1001, ObjectType.Device);
+
+            Assert.AreEqual("discards", properties["trafficmode"]);
+        }
+
+        [TestMethod]
+        public void GetObjectProperty_MultiCheckbox_Multiple()
+        {
+            var client = Initialize_Client(new MultiCheckBoxResponse(discards: true, broadcast: true, unknown: true));
+
+            var properties = client.GetObjectPropertiesRaw(1001, ObjectType.Device);
+
+            Assert.AreEqual("discards broadcast unknown", properties["trafficmode"]);
+        }
+
         private void GetObjectProperty<T>(Func<PrtgClient, T> getProperty, string expected = "testName")
         {
             var client = Initialize_Client(new MultiTypeResponse());

@@ -144,6 +144,7 @@
     <Compile Include="ObjectTests\TestResponses\AddressValidatorResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\BaseTargetResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\BasicResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\MultiCheckBoxResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\Objects\ChannelResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\CloneResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\Objects\DeviceResponse.cs" />

@@ -214,7 +214,7 @@ namespace PrtgAPI.Parameters
 
         internal void Add(string name, object value)
         {
-            var param = new CustomParameter(name, null);
+            var param = new CustomParameter(name, null, ParameterType.MultiParameter);
 
             var var = new PSVariableEx(
                 name,

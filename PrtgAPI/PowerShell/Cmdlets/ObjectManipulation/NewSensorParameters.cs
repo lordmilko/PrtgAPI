@@ -269,7 +269,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             var toAdd = RawParameters.Keys.Cast<object>()
                     .Where(k => k.ToString() != SensorTypeParameter)
-                    .Select(k => new CustomParameter(k.ToString(), RawParameters[k]))
+                    .Select(k => new CustomParameter(k.ToString(), RawParameters[k], ParameterType.MultiParameter))
                     .ToList();
 
             foreach (var param in toAdd)

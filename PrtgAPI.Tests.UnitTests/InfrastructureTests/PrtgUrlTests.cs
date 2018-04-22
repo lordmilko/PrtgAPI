@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
@@ -219,6 +220,58 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             });
 
             Assert.AreEqual(string.Empty, url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_MultiValue_CustomParameter_FormatsCorrectly()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Custom] = new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiValue)
+            });
+
+            Assert.AreEqual("name=first,second", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_MultiParameter_CustomParameter_FormatsCorrectly()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Custom] = new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiParameter)
+            });
+
+            Assert.AreEqual("name=first&name=second", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_MultiValue_CustomParameterList_FormatsCorrectly()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Custom] = new List<CustomParameter>
+                {
+                    new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiValue),
+                    new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiValue)
+                }
+            });
+
+            Assert.AreEqual("name=first,second&name=first,second", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_MultiParameter_CustomParameterList_FormatsCorrectly()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Custom] = new List<CustomParameter>
+                {
+                    new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiParameter),
+                    new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiParameter)
+                }
+            });
+
+            Assert.AreEqual("name=first&name=second&name=first&name=second", url);
         }
 
         [TestMethod]

@@ -5,7 +5,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies how <see cref="Parameter"/> values can be formatted when inserted in a <see cref="PrtgUrl"/>.
     /// </summary>
-    internal enum ParameterType
+    public enum ParameterType
     {
         /// <summary>
         /// <see cref="Parameter"/> is used with a single value under a single parameter instance, i.e. param=value.

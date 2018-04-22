@@ -230,4 +230,52 @@ Describe "Add-Sensor_IT" {
 
         $sensor | Remove-Object -Force
     }
+
+    It "adds a sensor using a hashtable that contain a multi parameter" {
+        $table = @{
+            name_ = "Base Sensor"
+            interfacenumber_ = 1
+            interfacenumber__check = "3:Data and Voice VLAN|(003) Data and Voice VLAN Traffic|Connected|100 MBit/s|Ethernet|1|Data and Voice VLAN|100000000|3|2|"
+            trafficmode_ = "standinfornoselection","errors","discards"
+            monitorstate_ = 2
+            namein_ = "Traffic In"
+            nameout_ = "Traffic Out"
+            namesum_ = "Traffic Total"
+            stack_ = 1
+            sensortype = "snmptraffic"
+        }
+
+        $params = New-SensorParameters $table
+
+        $device = Get-Device -Id (Settings Device)
+
+        $sensor = $device | Add-Sensor $params
+
+        $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
+
+        $sensor | Remove-Object -Force
+    }
+
+    It "adds a sensor from empty parameters that contain a multi parameter" {
+
+        $params = New-SensorParameters -Empty
+        $params.Name = "Base Sensor"
+        $params["interfacenumber_"] = 1
+        $params["interfacenumber__check"] = "3:Data and Voice VLAN|(003) Data and Voice VLAN Traffic|Connected|100 MBit/s|Ethernet|1|Data and Voice VLAN|100000000|3|2|"
+        $params["trafficmode_"] = "standinfornoselection","errors","discards"
+        $params["monitorstate_"] = 2
+        $params["namein_"] = "Traffic In"
+        $params["nameout_"] = "Traffic Out"
+        $params["namesum_"] = "Traffic Total"
+        $params["stack_"] = 1
+        $params.SensorType = "snmptraffic"
+
+        $device = Get-Device -Id (Settings Device)
+
+        $sensor = $device | Add-Sensor $params
+
+        $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
+
+        $sensor | Remove-Object -Force
+    }
 }

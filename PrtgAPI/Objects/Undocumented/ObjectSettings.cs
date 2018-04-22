@@ -103,7 +103,20 @@ namespace PrtgAPI
                 {
                     if (prop.Value.Type == InputType.Checkbox)
                     {
-                        list.Add(new XElement($"{prefix}{prop.Value.Name}", Convert.ToInt32(prop.Value.Checked)));
+                        object val = prop.Value.Value;
+
+                        int intVal;
+
+                        if (int.TryParse(prop.Value.Value, out intVal))
+                            val = Convert.ToInt32(prop.Value.Checked);
+                        else
+                        {
+                            //We have a multi option checkbox but nothing was selected
+                            if (!prop.Value.Checked)
+                                val = string.Empty;
+                        }
+
+                        list.Add(new XElement($"{prefix}{prop.Value.Name}", val));
                     }
                     else
                     {
@@ -281,8 +294,24 @@ namespace PrtgAPI
                 //If our new item has the same as our existing item of the same name
             {
                 if (prop.Checked && !dictionary[prop.Name].Checked)
+                {
                     //If the new one is checked, replace the existing one
                     dictionary[prop.Name] = prop;
+                }
+                else
+                {
+                    if (prop.Checked && dictionary[prop.Name].Checked && !prop.Hidden && !dictionary[prop.Name].Hidden)
+                    {
+                        dictionary[prop.Name] = new Input
+                        {
+                            Name = prop.Name,
+                            Type = prop.Type,
+                            Checked = prop.Checked,
+                            Hidden = prop.Hidden,
+                            Value = $"{dictionary[prop.Name].Value} {prop.Value}"
+                        };
+                    }
+                }
 
                 //if (prop.Hidden && !dictionary[prop.Name].Hidden)
                 //    dictionary[prop.Name] = prop;
@@ -302,7 +331,6 @@ namespace PrtgAPI
                 else
                     throw new NotImplementedException($"Two properties were found with the same name but had different types: '{prop.Type}', '{dictionary[prop.Name]}'");
             }
-                
         }
     }
 }

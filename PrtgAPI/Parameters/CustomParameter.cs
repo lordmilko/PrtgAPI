@@ -1,4 +1,5 @@
-﻿using PrtgAPI.Request;
+﻿using System.Collections;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
@@ -18,6 +19,11 @@ namespace PrtgAPI.Parameters
         public object Value { get; set; }
 
         /// <summary>
+        /// Specifies how the <see cref="Value"/> should be formatted when it contains a value that is <see cref="IEnumerable"/>.
+        /// </summary>
+        public ParameterType ParameterType { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CustomParameter"/> class.
         /// </summary>
         /// <param name="name">The name of the parameter</param>
@@ -26,6 +32,20 @@ namespace PrtgAPI.Parameters
         {
             Name = name;
             Value = value;
+            ParameterType = ParameterType.SingleValue;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomParameter"/> class with a specified parameter type.
+        /// </summary>
+        /// <param name="name">The name of the parameter</param>
+        /// <param name="value">The value of the parameter. The caller is responsible for ensuring the value and type contains the correct capitalization and is formatted corectly when converted <see cref="ToString"/>.</param>
+        /// <param name="parameterType">How the <see cref="value"/> should be formatted if it contains a string.</param>
+        public CustomParameter(string name, object value, ParameterType parameterType)
+        {
+            Name = name;
+            Value = value;
+            ParameterType = parameterType;
         }
 
         /// <summary>

@@ -25,6 +25,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(HtmlFunction.AddSensor4):
                     return new BasicResponse(GetResponseText());
 
+                case nameof(HtmlFunction.ObjectData):
+                    return new BasicResponse(GetResponseText());
+
                 default:
                     throw GetUnknownFunctionException(function);
             }

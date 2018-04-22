@@ -171,6 +171,16 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret -Batch:$false
     }
 
+    It "sets multiple raw properties" {
+        SetMultiTypeResponse
+
+        $device = Get-Device -Count 1
+
+        SetAddressValidatorResponse "editsettings?id=3000&trafficmode_=errors&trafficmode_=discards"
+
+        $device | Set-ObjectProperty -RawProperty trafficmode_ -RawValue errors,discards
+    }
+
     It "removes all but the last instance of a parameter" {
         SetMultiTypeResponse
 

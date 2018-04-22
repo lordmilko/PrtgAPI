@@ -86,11 +86,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string RawProperty { get; set; }
 
         /// <summary>
-        /// <para type="description">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.<para/>
+        /// <para type="description">The one or more values to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.<para/>
         /// WARNING: If an invalid value is set for a property, minor corruption may occur.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
-        public string RawValue { get; set; }
+        public string[] RawValue { get; set; }
 
         /// <summary>
         /// <para type="description">Sets an unsafe object property without prompting for confirmation. WARNING: Setting an invalid value for a property can cause minor corruption. Only use if you know what you are doing.</para>
@@ -172,7 +172,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 ExecuteOperation(() => client.SetObjectProperty(Object.Id, propertyParameters), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting {str}");
             }
             else
-                ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, RawProperty, RawValue), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
+                ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter)), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, propertyParameters), $"Setting {GetMultiTypeListSummary()} setting {str}");
             }
             else
-                ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, RawProperty, RawValue), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
+                ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter)), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
         }
 
         /// <summary>

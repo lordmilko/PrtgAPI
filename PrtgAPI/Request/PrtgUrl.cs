@@ -118,21 +118,26 @@ namespace PrtgAPI.Request
             if (parameter == Parameter.Custom)
                 return ProcessCustomParameter(value);
 
+            var name = parameter.GetDescription();
+
+            return GetUrlComponentInternal(name, value, parameterType);
+        }
+
+        private string GetUrlComponentInternal(string name, object value, ParameterType parameterType)
+        {
             if ((parameterType == ParameterType.MultiParameter || parameterType == ParameterType.MultiValue) && !(value is IEnumerable))
                 value = new[] { value };
 
-            var description = parameter.GetDescription();
-
             if (value is string)
-                return FormatSingleParameterWithValEncode(description, (string)value);
+                return FormatSingleParameterWithValEncode(name, (string)value);
 
             if (value is Enum)
-                return FormatSingleParameterWithValEncode(description, ((Enum)value).GetDescription(), true);
+                return FormatSingleParameterWithValEncode(name, ((Enum)value).GetDescription(), true);
 
             if (value is IEnumerable)
-                return ProcessIEnumerableParameter(parameterType, (IEnumerable)value, description);
+                return ProcessIEnumerableParameter(parameterType, (IEnumerable)value, name);
 
-            return FormatSingleParameterWithValEncode(description, value);
+            return FormatSingleParameterWithValEncode(name, value);
         }
 
         /// <summary>
@@ -155,7 +160,7 @@ namespace PrtgAPI.Request
 
                 for (int i = 0; i < list.Count; i++)
                 {
-                    builder.Append(FormatSingleParameterWithValEncode(list[i].Name, list[i].Value));
+                    builder.Append(GetUrlComponentInternal(list[i].Name, list[i].Value, list[i].ParameterType));
 
                     if (i < list.Count - 1)
                         builder.Append("&");
@@ -167,7 +172,7 @@ namespace PrtgAPI.Request
             var singleParam = value as CustomParameter;
 
             if (singleParam != null)
-                return FormatSingleParameterWithValEncode(singleParam.Name, singleParam.Value);
+                return GetUrlComponentInternal(singleParam.Name, singleParam.Value, singleParam.ParameterType);
 
             throw new ArgumentException($"Expected parameter '{Parameter.Custom}' to contain one or more objects of type '{nameof(CustomParameter)}', however value was of type '{value.GetType()}'", nameof(value));
         }
