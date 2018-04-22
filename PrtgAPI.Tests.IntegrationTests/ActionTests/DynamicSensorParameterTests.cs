@@ -51,12 +51,19 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                     break;
             }
 
-            AssertEx.AreEqual("HTTP", sensor.Name, "Sensor name was not correct");
-            AssertEx.AreEqual(Status.Up, sensor.Status, "Sensor status was not correct");
+            try
+            {
+                AssertEx.AreEqual("HTTP", sensor.Name, "Sensor name was not correct");
+                AssertEx.AreEqual(Status.Up, sensor.Status, "Sensor status was not correct");
 
-            var properties = client.GetSensorProperties(sensor.Id);
+                var properties = client.GetSensorProperties(sensor.Id);
 
-            AssertEx.AreEqual(Settings.ServerWithProto, properties.Url, "URL was not correct");
+                AssertEx.AreEqual(Settings.ServerWithProto, properties.Url, "URL was not correct");
+            }
+            finally
+            {
+                client.RemoveObject(sensor.Id);
+            }
         }
 
         [TestMethod]

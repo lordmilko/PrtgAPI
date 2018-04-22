@@ -80,6 +80,20 @@ Describe "Simulate-ErrorStatus_IT" {
         Sleep 30
 
         $finalSensors = Get-Sensor -Id $ids
+
+        if($finalSensors[0].Status -ne "Up" -or $finalSensors[1].Status -ne "Up")
+        {
+            LogTestDetail "Sleeping for 30 more seconds as object has not refreshed"
+            $finalSensors | Refresh-Object
+            Sleep 10
+            $finalSensors | Refresh-Object
+            Sleep 10
+            $finalSensors | Refresh-Object
+            Sleep 10
+
+            $finalSensors = Get-Sensor -Id $ids
+        }
+
         $finalSensors[0].Status | Should Be Up
         $finalSensors[1].Status | Should Be Up
     }

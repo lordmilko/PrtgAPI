@@ -32,7 +32,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         [TestMethod]
         public void Data_Log_GetLogs_SpecifiesEndDate()
         {
-            var logs = client.GetLogs(null, endDate: DateTime.Now.AddDays(-1), count: 6000);
+            var logs = client.GetLogs(null, endDate: DateTime.Now.AddDays(-1), count: 50000);
 
             var first = logs.First();
             var last = logs.Last();
@@ -45,7 +45,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         public void Data_Log_GetLogs_FiltersByStatus()
         {
             var logs = client.GetLogs(status: LogStatus.Up);
-            
+
             foreach (var log in logs)
             {
                 AssertEx.AreEqual(log.Status, LogStatus.Up, $"Response included an item that was not {LogStatus.Up}");

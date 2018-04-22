@@ -103,12 +103,23 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             WaitForSensors();
             WaitForProbes();
+
+            RepairState();
         }
 
         private void WaitForSensors()
         {
             WaitForSensors(Status.Unknown, Status.None);
-            WaitForSensors(Status.Down);
+
+            try
+            {
+                WaitForSensors(Status.Down);
+            }
+            catch
+            {
+                RepairConfig();
+                WaitForObjects();
+            }
         }
 
         private void WaitForSensors(params Status[] status)
@@ -389,13 +400,19 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             try
             {
+                Logger.Log("Checking probe health");
+                Logger.Log("Validating probe can be retrieved by ID");
+
                 if (Client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
                 {
+                    Logger.Log("Probe name was incorrect. Requires rename");
                     RestoreProbeName();
                 }
                 else
                 {
                     probeNameNeedsRepairing = false;
+
+                    Logger.Log("Validating probe can be retrieved by name");
 
                     if (Client.GetProbes(Property.Name, Settings.ProbeName).Count == 0)
                     {

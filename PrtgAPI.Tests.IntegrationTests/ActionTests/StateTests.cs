@@ -101,7 +101,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                         Thread.Sleep(30000);
                         attempts--;
                     }
-                } while (sensor2.Status == Status.Unknown);
+                } while (sensor2.Status != Status.Up && attempts > 0);
             }
 
             AssertEx.AreEqual(Status.Up, sensor2.Status, "Sensor did not unpause properly");
@@ -122,7 +122,9 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 Logger.LogTestDetail($"Status was still {Status.Up}. Waiting 90 seconds");
 
-                Thread.Sleep(90000);
+                CheckAndSleep(Settings.UpSensor);
+                CheckAndSleep(Settings.UpSensor);
+                CheckAndSleep(Settings.UpSensor);
 
                 sensor1 = GetSensor(Settings.UpSensor);
             }

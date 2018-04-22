@@ -47,18 +47,25 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
             var objectProperties = Enum.GetValues(typeof(ObjectProperty)).Cast<ObjectProperty>().Where(p => !blacklist.Contains(p)).ToList();
 
-            var props = GetPropertiesForAnalysis(client, blacklist);
+            var props = GetPropertiesForAnalysis(blacklist);
 
             Analyze(props, objectProperties);
 
-            if (objectProperties.Count > 0)
+            try
             {
-                SetMissingProperties(client, objectProperties);
+                if (objectProperties.Count > 0)
+                {
+                    SetMissingProperties(objectProperties);
 
-                //Get all properties again, then exclude all properties we processed before
-                var props2 = GetPropertiesForAnalysis(client, blacklist).Where(p => props.All(p2 => p.Item1 != p2.Item1)).ToList();
+                    //Get all properties again, then exclude all properties we processed before
+                    var props2 = GetPropertiesForAnalysis(blacklist).Where(p => props.All(p2 => p.Item1 != p2.Item1)).ToList();
 
-                Analyze(props2, objectProperties);
+                    Analyze(props2, objectProperties);
+                }
+            }
+            finally
+            {
+                client.SetObjectProperty(Settings.Device, ObjectProperty.Host, Settings.Server);
             }
         }
 
@@ -71,9 +78,9 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             );
         }
 
-        private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(PrtgClient client, List<ObjectProperty> blacklist)
+        private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(List<ObjectProperty> blacklist)
         {
-            var list = GetObjectPropertyMaps(client);
+            var list = GetObjectPropertyMaps();
 
             var grouped = list.GroupBy(item => item.Item1).ToList();
 
@@ -90,7 +97,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             return properties;
         }
 
-        private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetObjectPropertyMaps(PrtgClient client)
+        private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetObjectPropertyMaps()
         {
             var list = new List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>>();
 
@@ -136,7 +143,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             }
         }
 
-        private void SetMissingProperties(PrtgClient client, List<ObjectProperty> objectProperties)
+        private void SetMissingProperties(List<ObjectProperty> objectProperties)
         {
             foreach (var prop in objectProperties)
             {

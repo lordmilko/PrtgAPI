@@ -43,6 +43,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             finally
             {
                 ServerManager.RepairConfig();
+                ServerManager.WaitForObjects();
             }
         }
 
@@ -70,6 +71,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             finally
             {
                 ServerManager.RepairConfig();
+                ServerManager.WaitForObjects();
             }
         }
 
