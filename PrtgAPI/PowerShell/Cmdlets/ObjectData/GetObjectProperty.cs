@@ -115,16 +115,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 switch (Object.BaseType)
                 {
                     case BaseType.Sensor:
-                        WriteObjectWithProgress(client.GetSensorProperties(Object.Id));
+                        WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
                         break;
                     case BaseType.Device:
-                        WriteObjectWithProgress(client.GetDeviceProperties(Object.Id));
+                        WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
                         break;
                     case BaseType.Group:
-                        WriteObjectWithProgress(client.GetGroupProperties(Object.Id));
+                        WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
                         break;
                     case BaseType.Probe:
-                        WriteObjectWithProgress(client.GetProbeProperties(Object.Id));
+                        WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
                         break;
                     default:
                         throw new NotImplementedException($"Property handler not specified for base type {Object.BaseType}");
@@ -135,21 +135,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void WriteProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName = null)
         {
             if (properties.Length == 1)
-                WriteObject(getValue(Object.Id, properties[0]), true);
+                WriteObjectWithProgress(() => getValue(Object.Id, properties[0]));
             else
+                WriteObjectWithProgress(() => GetMultipleProperties<TProperty>(properties, getValue, getPropertyName));
+        }
+
+        private PSObject GetMultipleProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName)
+        {
+            var obj = new PSObject();
+
+            foreach (var prop in properties)
             {
-                var obj = new PSObject();
+                var name = getPropertyName != null ? getPropertyName(prop) : prop;
+                var val = getValue(Object.Id, prop);
 
-                foreach (var prop in properties)
-                {
-                    var name = getPropertyName != null ? getPropertyName(prop) : prop;
-                    var val = getValue(Object.Id, prop);
-
-                    obj.Properties.Add(new PSNoteProperty(name.ToString(), val));
-                }
-
-                WriteObject(obj);
+                obj.Properties.Add(new PSNoteProperty(name.ToString(), val));
             }
+
+            return obj;
         }
 
         [ExcludeFromCodeCoverage]

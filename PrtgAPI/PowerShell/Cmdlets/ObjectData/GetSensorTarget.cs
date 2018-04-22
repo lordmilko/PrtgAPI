@@ -72,6 +72,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-SensorType</para>
     /// 
     /// </summary>
+    [OutputType(typeof(SensorTarget<>))]
     [Cmdlet(VerbsCommon.Get, "SensorTarget", DefaultParameterSetName = ParameterSet.Default)]
     public class GetSensorTarget : PrtgProgressCmdlet
     {
@@ -119,7 +120,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetSensorTarget"/> class.
         /// </summary>
-        public GetSensorTarget() : base("Resolve Sensor Targets")
+        public GetSensorTarget() : base("Sensor Target")
         {
         }
 

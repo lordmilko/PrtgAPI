@@ -676,6 +676,7 @@ namespace PrtgAPI
 
             return page;
         }
+
         private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback)
         {
             var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
@@ -718,6 +719,7 @@ namespace PrtgAPI
 
             return page;
         }
+
         //######################################
         // AddObject
         //######################################

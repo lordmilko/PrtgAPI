@@ -6,9 +6,9 @@ using System.Linq;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Represents a resource that can be monitored or used for monitoring by a PRTG Sensor.
+    /// <para type="description">Represents a resource that can be monitored or used for monitoring by a PRTG Sensor.</para>
     /// </summary>
-    /// /// <typeparam name="T">The type of this object.</typeparam>
+    /// <typeparam name="T">The type of this object.</typeparam>
     public abstract class SensorTarget<T> : IFormattable, IEquatable<T> where T : SensorTarget<T>
     {
         /// <summary>

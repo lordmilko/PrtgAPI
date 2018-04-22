@@ -29,5 +29,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             await action(client);
         }
+
+        protected T Execute<T>(Func<PrtgClient, T> action)
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            return action(client);
+        }
     }
 }

@@ -128,7 +128,7 @@ namespace PrtgAPI
                 nameRegex = standardNameRegex;
 
             var ddl = Regex.Matches(response, "<select.+?>.*?<\\/select>", RegexOptions.Singleline);
-            var lists = (ddl.Cast<Match>().Select(match => match.Value)).ToList();
+            var lists = ddl.Cast<Match>().Select(match => match.Value).ToList();
 
             var listObjs = GetLists(lists, nameRegex, nameTransformer);
 

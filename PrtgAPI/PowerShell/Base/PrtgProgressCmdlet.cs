@@ -34,11 +34,11 @@ namespace PrtgAPI.PowerShell.Base
         /// Write a basic PSObject to the pipeline while displaying an appropriate progress message.
         /// </summary>
         /// <param name="obj">The object to write to the pipeline.</param>
-        protected void WriteObjectWithProgress(object obj)
+        protected void WriteObjectWithProgress(Func<object> obj)
         {
             DisplayProgress();
 
-            WriteObject(obj);
+            WriteObject(obj(), true);
 
             PostUpdateProgress();
         }

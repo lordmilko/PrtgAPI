@@ -243,12 +243,27 @@ namespace PrtgAPI
         SensorType,
 
         /// <summary>
+        /// The templates to use for performing an operation.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.MultiValue)]
+        Template,
+
+        /// <summary>
         /// The details of a WMI Service to create.
         /// </summary>
         [Undocumented]
         [LengthLimit(30)]
         [ParameterType(ParameterType.MultiParameter)]
         [Description("service__check")]
-        Service
+        Service,
+
+        /// <summary>
+        /// The templates to use for performing an auto-discovery on a device.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.MultiParameter)]
+        [Description("devicetemplate__check")]
+        DeviceTemplate
     }
 }

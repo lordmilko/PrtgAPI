@@ -34,11 +34,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </example>
     /// <example>
     ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
+    ///     <para>C:\> $params.AutoDiscoveryMode = "AutomaticTemplate"</para>
+    ///     <para>C:\> $params.DeviceTemplates = Get-DeviceTemplate *wmi*</para>
+    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <para>Create a new device named "dc-1" that performs an auto-discovery for WMI sensors only.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
     ///     <para>C:\> Get-Probe contoso | Add-Device $params -PassThru | Set-ObjectProperty Location "23 Fleet Street"</para>
     ///     <para>Create a new device named "dc-1" and then set its location.</para>
     /// </example>
     /// 
     /// <para type="link">Add-Device</para>
+    /// <para type="link">Get-DeviceTemplate</para>
     /// <para type="link">Set-ObjectProperty</para>
     /// 
     /// </summary>

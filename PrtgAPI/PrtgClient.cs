@@ -701,6 +701,23 @@ namespace PrtgAPI
         public IEnumerable<Device> StreamDevices(DeviceParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
 
             #endregion
+
+        /// <summary>
+        /// Retrieves all auto-discovery device templates supported by the specified object.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates.</param>
+        /// <returns>A list of device templates supported by the specified object.</returns>
+        public List<DeviceTemplate> GetDeviceTemplates(int deviceId = 40) =>
+            ResponseParser.GetTemplates(GetObjectPropertiesRawInternal(deviceId, ObjectType.Device));
+
+        /// <summary>
+        /// Asynchronously retrieves all auto-discovery device templates supported by the specified object.
+        /// </summary>
+        /// <param name="deviceId">The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates.</param>
+        /// <returns>A list of device templates supported by the specified object.</returns>
+        public async Task<List<DeviceTemplate>> GetDeviceTemplatesAsync(int deviceId = 40) =>
+            ResponseParser.GetTemplates(await GetObjectPropertiesRawInternalAsync(deviceId, ObjectType.Device).ConfigureAwait(false));
+
         #endregion
         #region Groups
             #region Default
@@ -2263,13 +2280,17 @@ namespace PrtgAPI
         /// Automatically create sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        public void AutoDiscover(int objectId) => requestEngine.ExecuteRequest(CommandFunction.DiscoverNow, new BaseActionParameters(objectId));
+        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
+        public void AutoDiscover(int objectId, params DeviceTemplate[] templates) =>
+            requestEngine.ExecuteRequest(CommandFunction.DiscoverNow, new AutoDiscoverParameters(objectId, templates));
 
         /// <summary>
         /// Asynchronously automatically create sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        public async Task AutoDiscoverAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
+        public async Task AutoDiscoverAsync(int objectId, params DeviceTemplate[] templates) =>
+            await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new AutoDiscoverParameters(objectId, templates)).ConfigureAwait(false);
 
         /// <summary>
         /// Move the position of an object up or down under its parent within the PRTG User Interface.

@@ -11,7 +11,13 @@ namespace PrtgAPI
         LonLat,
 
         [TypeLookup(typeof(DeviceSettings))]
-        IPVersion
+        IPVersion,
+
+        [Description("service")]
+        HasService,
+
+        [DescriptionAttribute("devicetemplate")]
+        HasDeviceTemplate
     }
 
     /// <summary>

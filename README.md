@@ -8,9 +8,7 @@
 
 PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2&username=demo&password=demodemo).
 
-PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) that you can further interface with.
-
-PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
+PrtgAPI implements a collection of types, methods and cmdlets that help create and execute the API requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) containing type safe properties appropriate for the given data type.
 
 Useful things you can do with PrtgAPI:
 * Generate reports based on custom queries
@@ -23,6 +21,8 @@ Useful things you can do with PrtgAPI:
 * Batch do *anything!*
 
 For information on features that are currently in the pipeline, check out the [Roadmap](https://github.com/lordmilko/PrtgAPI/projects/1).
+
+PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
 
 ## Installation
 
@@ -45,7 +45,7 @@ Install-Package PrtgAPI -Source PSGallery
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
-5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell (see below). Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
+5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell via `Import-Module C:\path\to\PrtgAPI`. Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
 
 ## Compilation
 
@@ -200,6 +200,7 @@ Edit-NotificationTriggerProperty
 Enable-PrtgProgress
 Get-Channel
 Get-Device
+Get-DeviceTemplate
 Get-GoPrtgServer
 Get-Group
 Get-ModificationHistory

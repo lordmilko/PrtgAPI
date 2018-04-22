@@ -51,4 +51,24 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
         $device.Id | Should Be 1002
     }
+
+    It "adds a device and auto-discovers with specified templates" {
+        SetAddressValidatorResponse @(
+            "controls/objectdata.htm?id=40&objecttype=device&"
+            "adddevice2.htm?name_=dc-1&host_=dc-1&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&devicetemplate__check=Server+RDP.odt%7cRDP+Server%7c%7c&devicetemplate__check=Windows+Advanced.odt%7cWindows+(Detailed+via+WMI)%7c%7c&devicetemplate__check=Windows+Generic.odt%7cWindows+(via+WMI)%7c%7c&id=2211&"
+        )
+
+        $group = Run Group { Get-Group }
+
+        $group | Add-Device dc-1 -AutoDiscover -Template *wmi*,*rdp* -Resolve:$false
+    }
+
+    It "throws when no valid templates are specified" {
+
+        SetMultiTypeResponse
+
+        $group = Get-Group -Count 1
+
+        { $group | Add-Device dc-1 -AutoDiscover -Template *banana* -Resolve:$false } | Should Throw "No device templates could be found that match the specified template names '*banana*'"
+    }
 }

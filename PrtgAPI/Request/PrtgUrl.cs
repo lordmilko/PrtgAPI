@@ -263,8 +263,22 @@ namespace PrtgAPI.Request
 
             foreach (var obj in enumerable)
             {
-                if(obj != null)
-                    builder.Append(HttpUtility.UrlEncode(obj.GetType().IsEnum ? ((Enum)obj).GetDescription() : Convert.ToString(obj)) + ",");
+                if (obj != null)
+                {
+                    string toEncode;
+
+                    if (obj.GetType().IsEnum)
+                        toEncode = ((Enum) obj).GetDescription();
+                    else
+                    {
+                        if (obj is IFormattable)
+                            toEncode = ((IFormattable) obj).GetSerializedFormat();
+                        else
+                            toEncode = Convert.ToString(obj);
+                    }
+
+                    builder.Append(HttpUtility.UrlEncode(toEncode) + ",");
+                }
             }
 
             if(builder.Length > 0)

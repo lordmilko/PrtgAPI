@@ -261,6 +261,20 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+        #region Device Templates
+
+        internal static List<DeviceTemplate> GetTemplates(string response)
+        {
+            var checkboxes = ObjectSettings.GetInput(response).Where(
+                t => t.Type == Html.InputType.Checkbox && t.Name == Parameter.DeviceTemplate.GetDescription()
+            ).ToList();
+
+            var templates = checkboxes.Select(c => new DeviceTemplate(c.Value)).ToList();
+
+            return templates;
+        }
+
+        #endregion
 
         internal static string ValidateHasContent(HttpResponseMessage message)
         {

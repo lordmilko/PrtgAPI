@@ -283,6 +283,42 @@ namespace PrtgAPI.Parameters
                 InternalParameters[index] = parameter;
         }
 
+        #region RemoveCustomParameter
+
+        /// <summary>
+        /// Removes a parameter from the underlying parameter set.
+        /// </summary>
+        /// <param name="property">The name of the parameter to remove.</param>
+        /// <returns>True if the specified parameter was found and removed. Otherwise, false.</returns>
+        protected bool RemoveCustomParameter(ObjectProperty property) =>
+            RemoveCustomParameterInternal(GetObjectPropertyName(property));
+
+        /// <summary>
+        /// Removes a parameter from the underlying parameter set.
+        /// </summary>
+        /// <param name="property">The name of the parameter to remove.</param>
+        /// <returns>True if the specified parameter was found and removed. Otherwise, false.</returns>
+        internal bool RemoveCustomParameter(ObjectPropertyInternal property) =>
+            RemoveCustomParameterInternal(GetObjectPropertyInternalName(property));
+
+        #endregion
+
+        /// <summary>
+        /// Removes a parameter from the underlying parameter set.
+        /// </summary>
+        /// <param name="name">The name of the parameter to remove.</param>
+        /// <returns>True if the specified parameter was found and removed. Otherwise, false.</returns>
+        protected bool RemoveCustomParameterInternal(string name)
+        {
+            var index = GetCustomParameterIndex(name);
+
+            if (index == -1)
+                return false;
+
+            InternalParameters.RemoveAt(index);
+            return true;
+        }
+
         #region Helpers
 
         private string GetObjectPropertyName(ObjectProperty property)

@@ -20,8 +20,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     }
 
     [TestClass]
-    public class ParameterTests
+    public class ParameterTests : BaseTest
     {
+        #region TableParameters
+
         [TestMethod]
         public void TableParameters_CanSetSortDirection()
         {
@@ -58,6 +60,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve property directly set using string");
         }
 
+        #endregion
+        #region CustomParameters
+
         [TestMethod]
         public void CustomParameter_ToString_FormatsCorrectly()
         {
@@ -65,6 +70,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             Assert.AreEqual("name=val", parameter.ToString());
         }
+
+        #endregion
+        #region SensorParameters
 
         [TestMethod]
         public void SensorParameters_Status_CanBeGetAndSet()
@@ -112,6 +120,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.AreEqual(value, val);
         }
 
+        #endregion
         #region LogParameters
 
         [TestMethod]
@@ -188,6 +197,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region RawSensorParameters
 
         [TestMethod]
         public void RawSensorParameters_Parameters_InitializesIfNull()
@@ -230,6 +240,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             }, "Parameter with name 'customParam_' does not exist.");
         }
 
+        #endregion
+        #region SensorHistoryParameters
+
         [TestMethod]
         public void SensorHistoryParameters_GetsProperties()
         {
@@ -246,6 +259,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null, null), "Average must be greater than or equal to 0");
         }
+
+        #endregion
+        #region NewDeviceParameters
 
         [TestMethod]
         public void NewDeviceParameters_SwapsHostWithIPVersion()
@@ -280,6 +296,53 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             parameters.Host = "dc-3";
             Assert.AreEqual("dc-3", GetCustomParameter(parameters, "hostv6_"));
         }
+
+        [TestMethod]
+        public void NewDeviceParameters_SetsAutomaticTemplate_WhenTemplatesAssigned()
+        {
+            var templates = Execute(c => c.GetDeviceTemplates());
+
+            var parameters = new NewDeviceParameters("dc-1");
+            Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
+
+            parameters.DeviceTemplates = templates;
+            Assert.AreEqual(templates, parameters.DeviceTemplates);
+            Assert.AreEqual(AutoDiscoveryMode.AutomaticTemplate, parameters.AutoDiscoveryMode);
+        }
+
+        [TestMethod]
+        public void NewDeviceParameters_DoesNotChangeAutoDiscoveryMode_WhenNoTemplatesAssigned()
+        {
+            var parameters = new NewDeviceParameters("dc-1");
+            Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
+
+            parameters.DeviceTemplates = null;
+            Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
+
+            parameters.DeviceTemplates = new List<DeviceTemplate>();
+            Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
+        }
+
+        [TestMethod]
+        public void NewDeviceParameters_ClearsTemplates_WhenAutoDiscoveryModeChanged()
+        {
+            var templates = Execute(c => c.GetDeviceTemplates());
+
+            var parameters = new NewDeviceParameters("dc-1");
+            Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
+
+            parameters.DeviceTemplates = templates;
+            Assert.AreEqual(templates, parameters.DeviceTemplates);
+            Assert.AreEqual(AutoDiscoveryMode.AutomaticTemplate, parameters.AutoDiscoveryMode);
+
+            parameters.AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate;
+            Assert.AreEqual(templates, parameters.DeviceTemplates);
+
+            parameters.AutoDiscoveryMode = AutoDiscoveryMode.Automatic;
+            Assert.AreEqual(null, parameters.DeviceTemplates);
+        }
+
+        #endregion
 
         private string GetCustomParameter(Parameters.Parameters parameters, string name)
         {

@@ -47,7 +47,7 @@ namespace PrtgAPI.Parameters
             NotifyStarted = notifyStarted;
             MonitorPerformance = monitorPerformance;
 
-            SetCustomParameterBool("service_", true);
+            SetCustomParameterBool(ObjectPropertyInternal.HasService, true);
         }
 
         /// <summary>

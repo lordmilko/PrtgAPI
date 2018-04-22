@@ -240,6 +240,84 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
+        public void AddDevice_WithTemplates_CanExecute()
+        {
+            var templateClient = Initialize_Client(new MultiTypeResponse());
+            var templates = templateClient.GetDeviceTemplates().Take(2).ToList();
+
+            var builder = new StringBuilder();
+            builder.Append("adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&");
+            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7cADSL%7c%7c&");
+            builder.Append("devicetemplate__check=Cloudwatch.odt%7cAmazon+Cloudwatch%7c%7c&");
+            builder.Append("id=1001");
+
+            var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
+
+            var parameters = new NewDeviceParameters("device", "host")
+            {
+                AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate,
+                DeviceTemplates = templates
+            };
+
+            client.AddDevice(1001, parameters, false);
+        }
+
+        [TestMethod]
+        public void AddDevice_WithTemplates_Throws_WhenNoTemplatesSpecified()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var parameters = new NewDeviceParameters("device", "host")
+            {
+                AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate
+            };
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.AddDevice(1001, parameters, false),
+                "Property 'DeviceTemplates' requires a value when property 'AutoDiscoveryMode' is value 'AutomaticTemplate', however the value was null or empty."
+            );
+        }
+
+        [TestMethod]
+        public async Task AddDevice_WithTemplates_CanExecuteAsync()
+        {
+            var templateClient = Initialize_Client(new MultiTypeResponse());
+            var templates = (await templateClient.GetDeviceTemplatesAsync()).Take(2).ToList();
+
+            var builder = new StringBuilder();
+            builder.Append("adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&");
+            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7cADSL%7c%7c&");
+            builder.Append("devicetemplate__check=Cloudwatch.odt%7cAmazon+Cloudwatch%7c%7c&");
+            builder.Append("id=1001");
+
+            var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
+
+            var parameters = new NewDeviceParameters("device", "host")
+            {
+                AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate,
+                DeviceTemplates = templates
+            };
+
+            await client.AddDeviceAsync(1001, parameters, false);
+        }
+
+        [TestMethod]
+        public async Task AddDevice_WithTemplates_Throws_WhenNoTemplatesSpecifiedAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var parameters = new NewDeviceParameters("device", "host")
+            {
+                AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate
+            };
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.AddDeviceAsync(1001, parameters, false),
+                "Property 'DeviceTemplates' requires a value when property 'AutoDiscoveryMode' is value 'AutomaticTemplate', however the value was null or empty."
+            );
+        }
+
+        [TestMethod]
         public void AddDevice_ResolveScenarios()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));

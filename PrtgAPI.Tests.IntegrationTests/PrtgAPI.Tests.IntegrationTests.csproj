@@ -139,6 +139,7 @@
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Sensor.Tests.ps1" />
     <None Include="PowerShell\ObjectProperty\Set-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Simulate-ErrorStatus.Tests.ps1" />
+    <None Include="PowerShell\Start-AutoDiscovery.Tests.ps1" />
     <None Include="PowerShell\Support\Init.ps1" />
     <None Include="PowerShell\Support\IntegrationTest.ps1" />
     <None Include="PowerShell\Support\IntegrationTestSafe.ps1" />

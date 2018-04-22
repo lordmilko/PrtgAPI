@@ -66,32 +66,50 @@ namespace PrtgAPI.Request
 
             foreach (var property in properties)
             {
-                var attrib = property.GetCustomAttribute<RequireValueAttribute>();
+                var requireValue = property.GetCustomAttribute<RequireValueAttribute>();
 
-                if (attrib != null && attrib.ValueRequired)
-                {
-                    var val = property.GetValue(parameters);
+                if (requireValue != null && requireValue.ValueRequired)
+                    ValidateRequiredValue(property, parameters);
 
-                    if (string.IsNullOrEmpty(val?.ToString()))
-                    {
-                        throw new InvalidOperationException($"Property '{property.Name}' requires a value, however the value was null or empty");
-                    }
+                var dependency = property.GetCustomAttribute<DependentPropertyAttribute>();
 
-                    var list = val as IEnumerable;
-
-                    if (list != null)
-                    {
-                        var casted = list.Cast<object>();
-
-                        if (!casted.Any())
-                            throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty list was specified");
-                    }
-                }
+                if (dependency != null)
+                    ValidateDependentProperty(dependency, property, parameters);
             }
 
             var lengthLimit = parameters.GetParameters().Where(p => p.Key.GetEnumAttribute<LengthLimitAttribute>() != null).ToList();
 
             return lengthLimit;
+        }
+
+        private static void ValidateRequiredValue(PropertyInfo property, NewObjectParameters parameters, DependentPropertyAttribute attrib = null)
+        {
+            var val = property.GetValue(parameters);
+
+            var dependentStr = attrib != null ? $" when property '{attrib.Name}' is value '{attrib.RequiredValue}'" : "";
+
+            if (string.IsNullOrEmpty(val?.ToString()))
+            {
+                throw new InvalidOperationException($"Property '{property.Name}' requires a value{dependentStr}, however the value was null or empty.");
+            }
+
+            var list = val as IEnumerable;
+
+            if (list != null)
+            {
+                var casted = list.Cast<object>();
+
+                if (!casted.Any())
+                    throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty list was specified.");
+            }
+        }
+
+        private static void ValidateDependentProperty(DependentPropertyAttribute attrib, PropertyInfo property, NewObjectParameters parameters)
+        {
+            var target = parameters.GetType().GetProperty(attrib.Name).GetValue(parameters);
+
+            if (target.ToString() == attrib.RequiredValue.ToString())
+                ValidateRequiredValue(property, parameters, attrib);
         }
 
         internal static Parameters.Parameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)

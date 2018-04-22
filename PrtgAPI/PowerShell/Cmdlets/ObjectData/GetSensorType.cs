@@ -9,9 +9,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Retrieves all sensor types supported by a PRTG Server.</para> 
     /// 
     /// <para type="description">The Get-SensorType cmdlet retrieves all sensor types from PRTG that are supported by a specified object, allowing
-    /// you to identify the Type Id to be used with other cmdlets (such as Get-SensorTarget and New-SensorParameters). If no -Object is specified,
+    /// you to identify the Type Id to be used with other cmdlets (such as Get-SensorTarget and New-SensorParameters). If no -<see cref="Object"/> is specified,
     /// by default Get-SensorType will retrieve sensor types supported by the Core Probe (Object ID: 1). Practically speaking, all objects appear to support
-    /// all sensor types; as such, there should generally be no need to specify an - Object.</para>
+    /// all sensor types; as such, there should generally be no need to specify an object.</para>
     /// 
     /// <para type="description">Results returned by Get-SensorType can be filtered by specifying an expression to the -Name parameter. Sensor type
     /// results will be filtered to those that contain the specified expression anywhere in either the Id, Name or Description.</para>

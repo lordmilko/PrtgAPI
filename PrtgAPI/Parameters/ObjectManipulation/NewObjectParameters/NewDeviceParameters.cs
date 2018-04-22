@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
@@ -77,7 +77,16 @@ namespace PrtgAPI.Parameters
         public AutoDiscoveryMode AutoDiscoveryMode
         {
             get { return (AutoDiscoveryMode)GetCustomParameterEnumXml<AutoDiscoveryMode>(ObjectProperty.AutoDiscoveryMode); }
-            set { SetCustomParameterEnumXml(ObjectProperty.AutoDiscoveryMode, value); }
+            set
+            {
+                SetCustomParameterEnumXml(ObjectProperty.AutoDiscoveryMode, value);
+
+                if (value != AutoDiscoveryMode.AutomaticTemplate && DeviceTemplates != null)
+                {
+                    DeviceTemplates = null;
+                    RemoveCustomParameter(ObjectPropertyInternal.HasDeviceTemplate);
+                }
+            }
         }
 
         /// <summary>
@@ -89,19 +98,37 @@ namespace PrtgAPI.Parameters
             set { SetCustomParameterEnumXml(ObjectProperty.AutoDiscoverySchedule, value); }
         }
 
+        /// <summary>
+        /// Device templates to use when performing the auto-discovery. If <see cref="PrtgAPI.AutoDiscoveryMode.Automatic"/> or
+        /// <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticDetailed"/>  is specified, all templates will be used and this parameter will be ignored.<para/>
+        /// If <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticTemplate"/> is specified, at least one template must be specified.
+        /// </summary>
+        [DependentProperty(nameof(AutoDiscoveryMode), AutoDiscoveryMode.AutomaticTemplate)]
+        public List<DeviceTemplate> DeviceTemplates
+        {
+            get { return (List<DeviceTemplate>) this[Parameter.DeviceTemplate]; }
+            set
+            {
+                this[Parameter.DeviceTemplate] = value;
+
+                if (value != null && value.Count > 0)
+                {
+                    AutoDiscoveryMode = AutoDiscoveryMode.AutomaticTemplate;
+                    SetCustomParameterBool(ObjectPropertyInternal.HasDeviceTemplate, true);
+                }
+            }
+        }
+
         #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewDeviceParameters"/> class.
         /// </summary>
         /// <param name="deviceName">The name to use for this device.</param>
-        /// <param name="host">The IP Address or HostName to use to connect to this device.</param>
-        public NewDeviceParameters(string deviceName, string host) : base(deviceName)
+        /// <param name="host">The IP Address or HostName to use to connect to this device. If the host is not specified, the <paramref name="deviceName"/> is used as the host.</param>
+        public NewDeviceParameters(string deviceName, string host = null) : base(deviceName)
         {
-            if (string.IsNullOrEmpty(host))
-                throw new ArgumentException($"{nameof(host)} cannot be null or empty", nameof(host));
-
-            Host = host;
+            Host = host ?? deviceName;
             IPVersion = IPVersion.IPv4;
             AutoDiscoveryMode = AutoDiscoveryMode.Manual;
             AutoDiscoverySchedule = AutoDiscoverySchedule.Once;

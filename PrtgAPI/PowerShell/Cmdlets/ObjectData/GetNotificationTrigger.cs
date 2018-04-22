@@ -99,25 +99,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 base.ProcessRecordEx();
             else
             {
-                var types = client.GetNotificationTriggerTypes(Object.Id);
-
-                var names = Enum.GetValues(typeof (TriggerType)).Cast<TriggerType>().ToList();
-
-                var obj = new PSObject();
-                obj.TypeNames.Insert(0, "PrtgAPI.TriggerTypePSObject");
-
-                obj.Properties.Add(new PSNoteProperty("Name", Object.Name));
-                obj.Properties.Add(new PSNoteProperty("ObjectId", Object.Id));
-
-                foreach (var name in names)
-                {
-                    obj.Properties.Add(new PSNoteProperty(name.ToString(), types.Contains(name)));
-                }
-
                 TypeDescription = "Notification Trigger Type";
-                
-                WriteObjectWithProgress(obj);
+                WriteObjectWithProgress(GetNotificationTriggerTypes);
             }
+        }
+
+        private PSObject GetNotificationTriggerTypes()
+        {
+            var types = client.GetNotificationTriggerTypes(Object.Id);
+
+            var names = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToList();
+
+            var obj = new PSObject();
+            obj.TypeNames.Insert(0, "PrtgAPI.TriggerTypePSObject");
+
+            obj.Properties.Add(new PSNoteProperty("Name", Object.Name));
+            obj.Properties.Add(new PSNoteProperty("ObjectId", Object.Id));
+
+            foreach (var name in names)
+            {
+                obj.Properties.Add(new PSNoteProperty(name.ToString(), types.Contains(name)));
+            }
+
+            return obj;
         }
 
         /// <summary>
