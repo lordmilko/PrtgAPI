@@ -11,8 +11,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">To view all properties that can be filtered on for on objects, see the SYNTAX or PARAMETERS section of this cmdlet's help page.</para> 
     /// 
     /// <example>
-    ///     <code>C:\> New-SearchFilter type contains deprecated | Get-Sensor</code>
-    ///     <para>Get all sensors whose type "deprecated"</para>
+    ///     <code>C:\> flt parentid eq 1001 | Get-Sensor</code>
+    ///     <para>Get all sensors under the object with ID 1001</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>

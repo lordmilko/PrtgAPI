@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// than the total number of objects under the parent object is specified, PRTG will automatically place this object first or last in the list.</para>
     /// 
     /// <example>
-    ///     <code>Get-Sensor -Id 3045 | Set-ObjectPosition 1</code>
+    ///     <code>C:\> Get-Sensor -Id 3045 | Set-ObjectPosition 1</code>
     ///     <para>Move the sensor with ID 3045 to be first in the list under its parent.</para>
     /// </example>
     /// 

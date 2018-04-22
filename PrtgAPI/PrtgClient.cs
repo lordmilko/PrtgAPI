@@ -101,12 +101,17 @@ namespace PrtgAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgClient"/> class.
         /// </summary>
-        public PrtgClient(string server, string username, string pass, AuthMode authMode = AuthMode.Password)
-            : this(server, username, pass, authMode, new PrtgWebClient())
+        /// <param name="server">The server to connect to. If a protocol is not specified, HTTPS will be used.</param>
+        /// <param name="username">The username to authenticate with.</param>
+        /// <param name="password">The password or passhash to authenticate with.</param>
+        /// <param name="authMode">Whether the <paramref name="password"/> refers to a password or passhash. If a password is specified,
+        /// this will automatically be resolved to a passhash.</param>
+        public PrtgClient(string server, string username, string password, AuthMode authMode = AuthMode.Password)
+            : this(server, username, password, authMode, new PrtgWebClient())
         {
         }
 
-        internal PrtgClient(string server, string username, string pass, AuthMode authMode, IWebClient client)
+        internal PrtgClient(string server, string username, string password, AuthMode authMode, IWebClient client)
         {
             if (server == null)
                 throw new ArgumentNullException(nameof(server));
@@ -114,16 +119,16 @@ namespace PrtgAPI
             if (username == null)
                 throw new ArgumentNullException(nameof(username));
 
-            if (pass == null)
-                throw new ArgumentNullException(nameof(pass));
+            if (password == null)
+                throw new ArgumentNullException(nameof(password));
 
             requestEngine = new RequestEngine(this, client);
 
-            connectionDetails = new ConnectionDetails(server, username, pass);
+            connectionDetails = new ConnectionDetails(server, username, password);
             Targets = new PrtgTargetHelper(this);
 
             if (authMode == AuthMode.Password)
-                connectionDetails.PassHash = GetPassHash(pass);
+                connectionDetails.PassHash = GetPassHash(password);
         }
 
 #region Requests

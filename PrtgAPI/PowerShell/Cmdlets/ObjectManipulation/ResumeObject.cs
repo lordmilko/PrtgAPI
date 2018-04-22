@@ -21,7 +21,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// by specifying -Batch:$false.</para>
     /// 
     /// <example>
-    ///     <code>Get-Sensor -Status PausedByUser | Resume-Object</code>
+    ///     <code>C:\> Get-Sensor -Status PausedByUser | Resume-Object</code>
     ///     <para>Resume all sensors that have been paused by the user. Note: if parent object has been manually paused, child objects will appear PausedByUser but will not be able to be unpaused.</para>
     /// </example>
     /// 

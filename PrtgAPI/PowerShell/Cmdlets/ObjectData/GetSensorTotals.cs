@@ -9,7 +9,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-SensorTotals cmdlet retrieves the total number of each type of sensor in a PRTG Server.</para>
     /// 
     /// <example>
-    ///     <code>Get-SensorTotals</code>
+    ///     <code>C:\> Get-SensorTotals</code>
     ///     <para>Count the number of sensors in the system.</para>
     /// </example>
     /// 

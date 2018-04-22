@@ -95,6 +95,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// <para type="link">Get-Channel</para>
     /// <para type="link">New-SearchFilter</para>
+    /// <para type="link">Add-Sensor</para> 
     /// </summary>
     [OutputType(typeof(Sensor))]
     [Cmdlet(VerbsCommon.Get, "Sensor", DefaultParameterSetName = LogicalAndTags)]

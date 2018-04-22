@@ -63,6 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Probe</para>
     /// <para type="link">New-SearchFilter</para>
+    /// <para type="link">Add-Group</para> 
     /// </summary>
     [OutputType(typeof(Group))]
     [Cmdlet(VerbsCommon.Get, "Group", DefaultParameterSetName = LogicalAndTags)]

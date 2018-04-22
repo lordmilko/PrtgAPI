@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -33,7 +32,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Probe -Id 2004 | Restart-Probe -Wait:$false</code>
+    ///     <code>C:\> Get-Probe -Id 2004 | Restart-Probe -Wait:$false</code>
     ///     <para>Restart the probe with ID 2004, without waiting for the probe to restart.</para>
     /// </example>
     /// 

@@ -24,12 +24,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// by specifying -Batch:$false.</para>
     /// 
     /// <example>
-    ///     <code>Get-Sensor -Id 2001 | Refresh-Object</code>
+    ///     <code>C:\> Get-Sensor -Id 2001 | Refresh-Object</code>
     ///     <para>Refresh the sensor with object ID 2001.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Device -Id 2000 | Refresh-Object</code>
+    ///     <code>C:\> Get-Device -Id 2000 | Refresh-Object</code>
     ///     <para>Refresh all sensors under the device with ID 2000.</para>
     /// </example>
     /// 

@@ -14,7 +14,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// object under each probe, as well as the Root group (ID: 0).</para>
     /// 
     /// <example>
-    ///     <code>Get-Device dc-1 | Move-Object 5678</code>
+    ///     <code>C:\> Get-Device dc-1 | Move-Object 5678</code>
     ///     <para>Move all devices named dc-1 to under the object with ID 5678</para>
     /// </example>
     /// 

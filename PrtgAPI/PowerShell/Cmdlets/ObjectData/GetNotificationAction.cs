@@ -30,6 +30,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger *pager*</code>
     ///     <para>Get all notification actions whose name contains "pager"</para>
+    ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger -Id 301,302</code>

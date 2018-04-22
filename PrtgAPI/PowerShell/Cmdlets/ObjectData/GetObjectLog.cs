@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-ObjectLog -Start (Get-Date).AddDays(-3)</code>
     ///     <para>Retrieve all logs from the root node from 3 and 4 days ago.</para>
-    ///     <para></para>
+    ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 2460 | Get-ObjectLog -EndDate (Get-Date).AddDays(-4)</code>

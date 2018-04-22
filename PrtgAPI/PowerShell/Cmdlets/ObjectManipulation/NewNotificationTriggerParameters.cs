@@ -12,20 +12,25 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// a notification trigger. When editing notification triggers, New-NotificationTriggerParameters should only be used when multiple
     /// values require updating. For updating a single notification trigger property Edit-NotificationTriggerProperty should be
     /// used instead.</para>
+    /// 
     /// <para type="description">When creating a new notification trigger, the trigger's parameters can either be imported
     /// from an existing notification trigger's properties and then further modified, or defined manually from scratch.</para>
+    /// 
     /// <para type="description">Based on the type of notification trigger specified, New-NotificationTriggerParameters will
     /// create one of several TriggerParameter type objects, exposing only the parameters relevant to that trigger type.</para>
+    /// 
     /// <para type="description">When working with TriggerParameters objects, all parameter properties support nullable values,
     /// allowing you to clear any properties you wish to remove or undo. The exception to this however is Notification Action
     /// related properties. When a Notification Action is set to null, it will set the property to the "empty" notification
     /// action. This allows you to easily clear unwanted notification actions within the PRTG Interface.</para>
+    /// 
     /// <para type="description">When editing existing notification triggers, all properties on the TriggerParameters object
     /// will be initially set to null. Specifying a value for a property will highlight to PrtgAPI that that property should
     /// be updated when the trigger request is executed. While holding a value of null by default, Notification Actions will
     /// not set themselves with the "empty" notification action unless this value is explicitly specified. Note that
     /// if you wish to undo modifying a notification action property you have set to null, you will be unable to do so
     /// without creating a brand new TriggerParameters object.</para>
+    /// 
     /// <para type="description">For trigger types where the Channel property is supported (Speed, Threshold and Volume)
     /// when defining the trigger on a Probe, Group or Device, enum values "Primary", "Total", "TrafficIn" and "TrafficOut" must be used.
     /// When applied directly to a Sensor, a specific Channel or Channel ID must be used. To safely resolve all channels

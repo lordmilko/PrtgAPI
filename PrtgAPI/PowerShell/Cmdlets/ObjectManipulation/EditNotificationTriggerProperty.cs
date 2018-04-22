@@ -17,7 +17,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// modify a single property of the trigger.</para>
     /// 
     /// <example>
-    ///     <code>Get-Sensor -Id 1044 | Get-Trigger | Edit-TriggerProperty OnNotificationAction $null</code>
+    ///     <code>C:\> Get-Sensor -Id 1044 | Get-Trigger | Edit-TriggerProperty OnNotificationAction $null</code>
     ///     <para>Remove the OnNotificationAction of all triggers defined on the object with ID 1044</para>
     /// </example>
     /// 

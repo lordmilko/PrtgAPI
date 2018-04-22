@@ -17,12 +17,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// to Get-SensorFactorySource that isn't a Sensor Factory, an ParameterBindingException will be thrown.</para>
     /// 
     /// <example>
-    ///     <code>flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource</code>
+    ///     <code>C:\> flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource</code>
     ///     <para>Retrieve all source sensors of a single sensor factory sensor</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource -Channels</code>
+    ///     <code>C:\> flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource -Channels</code>
     ///     <para>Retrieve all source channels of a single sensor factory sensor</para>
     /// </example>
     /// 
