@@ -46,4 +46,10 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
             $probes.Count | Should Be 0
         }
     }
+
+    It "filters by probe status" {
+        WithResponseArgs "AddressValidatorResponse" "filter_condition=2" {
+            Get-Probe -ProbeStatus Connected
+        }
+    }
 }

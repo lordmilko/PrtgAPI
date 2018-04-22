@@ -44,7 +44,7 @@
         public ServerStatusItem(string newMessages = "2890", string newAlarms = "2", string alarms = "42", string partialAlarms = "7",
             string ackAlarms = "6", string unusualSens = "2", string upSens = "388", string warnSens = "6", string pausedSens = "194",
             string unknownSens = "3", string newTickets = "2", string userId = "100", string userTimeZone = "UTC+8:00", string toDos = "",
-            string favs = "7", string clock = "9/11/2017 10:18:02 PM", string version = "14.4.12.3283", string backgroundTasks = "1",
+            string favs = "7", string clock = "9/11/2017 10:18:02 PM", string version = "14.4.12.3283+", string backgroundTasks = "1",
             string correlationTasks = "1", string autoDiscoTasks = "2", string reportTasks = "1", string editionType = "C",
             string prtgUpdateAvailable = "true", string maintExpiryDays = "363", string trialExpiryDays = "3",
             string commercialExpiryDays = "365027", string overloadProtection = "true", string clusterType = "clustermaster",

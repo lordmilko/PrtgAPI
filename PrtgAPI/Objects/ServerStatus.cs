@@ -38,8 +38,13 @@ namespace PrtgAPI
 
         /// <summary>
         /// Version of PRTG Network Monitor used by the server.
-        /// </summary>i
+        /// </summary>
         public Version Version => version ?? (version = Version.Parse(versionStr.Trim('+')));
+
+        /// <summary>
+        /// Whether the PRTG Core is running as 64-bit.
+        /// </summary>
+        public bool Is64Bit => versionStr.EndsWith("+");
 
         /// <summary>
         /// The number of new unread log entries since last logon.

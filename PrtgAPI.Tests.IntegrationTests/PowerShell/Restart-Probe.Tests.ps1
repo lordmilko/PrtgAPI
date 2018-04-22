@@ -8,7 +8,7 @@ Describe "Restart-Probe_IT" {
 
         foreach($probe in $probes)
         {
-            $probe.Condition | Should Be Connected
+            $probe.ProbeStatus | Should Be Connected
         }
     }
 
@@ -19,7 +19,7 @@ Describe "Restart-Probe_IT" {
 
         $newProbe = Get-Probe -Id (Settings Probe)
 
-        $probe.Condition | Should Be Connected
+        $probe.ProbeStatus | Should Be Connected
     }
 
     It "times out restarting a probe" {

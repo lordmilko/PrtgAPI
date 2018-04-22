@@ -383,6 +383,12 @@ namespace PrtgAPI
         Condition,
 
         /// <summary>
+        /// Probe connection status. Equivalent to <see cref="Condition"/>.
+        /// </summary>
+        [Description("condition")]
+        ProbeStatus,
+
+        /// <summary>
         /// Object type (string).
         /// Used in: All Tree Objects
         /// </summary>

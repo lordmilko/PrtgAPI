@@ -191,14 +191,14 @@ namespace PrtgAPI.Request
                 if (!probe.Disconnected)
                 {
                     //If we got a log saying the probe disconnected, or the probe was already disconnected, flag it as having disconnected
-                    if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
+                    if (logs.Any(log => log.Status == LogStatus.Disconnected && log.Id == probe.Id) || probe.InitialStatus == ProbeStatus.Disconnected)
                         probe.Disconnected = true;
                 }
                 if (probe.Disconnected && !probe.Reconnected) //If it's already disconnected and hasn't reconnected, check its status
                 {
                     //If the probe has disconnected and we see it's reconnected, flag it as such. If it was already disconnected though,
                     //it'll never reconnect, so let it through
-                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.InitialCondition == ProbeStatus.Disconnected)
+                    if (logs.Any(log => log.Status == LogStatus.Connected && log.Id == probe.Id) || probe.InitialStatus == ProbeStatus.Disconnected)
                         probe.Reconnected = true;
                 }
             }
@@ -251,12 +251,18 @@ namespace PrtgAPI.Request
             if (p.TargetUrl.StartsWith("addsensorfailed"))
             {
                 var parts = UrlHelpers.CrackUrl(p.TargetUrl);
+
                 var message = parts["errormsg"];
 
-                if (message.StartsWith("Incomplete connection settings"))
-                    throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
+                if (message != null)
+                {
+                    if (message.StartsWith("Incomplete connection settings"))
+                        throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
 
-                throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message}");
+                    throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message}");
+                }
+
+                throw new PrtgRequestException("An unspecified error occurred while trying to resolve sensor targets. Check the Device Host is still valid or try adding targets with the PRTG UI");
             }
         }
 

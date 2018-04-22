@@ -66,6 +66,18 @@ Describe "Get-Probe_IT" {
         $probe.Tags | Should Match (Settings ProbeTag)
     }
 
+    It "can filter by probe status" {
+        $probe = Get-Probe -ProbeStatus Connected
+
+        $probe.Count | Should BeGreaterThan 0
+
+        $probe.ProbeStatus | Should Be "Connected"
+
+        $disconnected = Get-Probe -ProbeStatus Disconnected
+
+        $disconnected | Should BeNullOrEmpty
+    }
+
     It "can pipe from search filters" {
         $probe = New-SearchFilter name equals "Local Probe" | Get-Probe
 

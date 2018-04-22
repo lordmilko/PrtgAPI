@@ -13,7 +13,8 @@ namespace PrtgAPI
         /// Connected status of the probe.
         /// </summary>
         [XmlElement("condition_raw")]
+        [PropertyParameter(nameof(Property.ProbeStatus))]
         [PropertyParameter(nameof(Property.Condition))]
-        public ProbeStatus Condition { get; set; }
+        public ProbeStatus ProbeStatus { get; set; }
     }
 }

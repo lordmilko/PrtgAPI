@@ -19,7 +19,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// <para type="description">Only retrieve objects that match a specific status.</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(Mandatory = false)]
         public Status[] Status { get; set; }
 
         /// <summary>

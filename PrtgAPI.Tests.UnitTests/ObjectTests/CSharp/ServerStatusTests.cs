@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             foreach (var prop in result.GetType().GetProperties())
             {
-                var valu = prop.GetValue(result);
+                var value = prop.GetValue(result);
             }
         }
 

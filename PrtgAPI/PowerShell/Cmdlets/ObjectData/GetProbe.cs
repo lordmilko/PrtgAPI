@@ -11,8 +11,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-Probe cmdlet retrieves probes from a PRTG Server. Probes represent sites where the 
     /// PRTG Probe Service has been installed. Each PRTG Server has a single Core Probe. Additional probes may be installed
     /// with the PRTG Remote Probe installer for monitoring of remote sites. Get-Probe provides a variety of methods of filtering
-    /// the probes requested from PRTG, including by probe name, ID and tags. Multiple filters can be used in conjunction to further
-    /// limit the number of results returned.</para>
+    /// the probes requested from PRTG, including by probe name, probe status (Connected / Disconnected), ID and tags.
+    /// Multiple filters can be used in conjunction to further limit the number of results returned.</para>
     /// 
     /// <para type="description">For scenarios in which you wish to filter on properties not covered by the parameters available
     /// in Get-Probe, a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value
@@ -61,10 +61,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>
     {
         /// <summary>
+        /// <para type="description">Only retrieve probes that match a specified connection state.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public ProbeStatus[] ProbeStatus { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GetProbe"/> class.
         /// </summary>
         public GetProbe() : base(Content.ProbeNode, null)
         {
+        }
+
+        /// <summary>
+        /// Processes additional parameters specific to the current cmdlet.
+        /// </summary>
+        protected override void ProcessAdditionalParameters()
+        {
+            if (ProbeStatus != null)
+                AddPipelineFilter(Property.ProbeStatus, ProbeStatus);
+
+            base.ProcessAdditionalParameters();
         }
 
         /// <summary>

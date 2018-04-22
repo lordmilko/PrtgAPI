@@ -20,7 +20,7 @@
         /// <summary>
         /// The connection status of this probe before an attempt was made to restart it.
         /// </summary>
-        public ProbeStatus InitialCondition => probe.Condition;
+        public ProbeStatus InitialStatus => probe.ProbeStatus;
 
         /// <summary>
         /// Whether the probe has disconnected from PRTG as part of its restart.

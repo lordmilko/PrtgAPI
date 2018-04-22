@@ -93,7 +93,7 @@ namespace PrtgAPI.PowerShell.Base
             Filter = Filter.Select(filter =>
             {
                 //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
-                var property = typeof (TObject).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == filter.Property.ToString());
+                var property = typeof (TObject).GetProperties().FirstOrDefault(p => p.GetCustomAttributes<PropertyParameterAttribute>().Any(a => a.Name == filter.Property.ToString()));
 
                 if (property == null)
                     return filter;
