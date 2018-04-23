@@ -178,7 +178,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         SetAddressValidatorResponse "editsettings?id=3000&trafficmode_=errors&trafficmode_=discards"
 
-        $device | Set-ObjectProperty -RawProperty trafficmode_ -RawValue errors,discards
+        $device | Set-ObjectProperty -RawProperty trafficmode_ -RawValue errors,discards -Force
     }
 
     It "removes all but the last instance of a parameter" {
