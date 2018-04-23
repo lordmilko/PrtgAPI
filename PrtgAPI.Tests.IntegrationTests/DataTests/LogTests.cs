@@ -18,15 +18,13 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         {
             var count = 6000;
 
-            var logs = client.GetLogs(null, DateTime.Now.AddDays(-1), count: count);
-
-            AssertEx.AreEqual(count, logs.Count, "Did not retrieve expected number of logs");
+            var logs = client.GetLogs(null, DateTime.Now.AddDays(-1), DateTime.Now.AddDays(-1).AddHours(-6), count);
 
             var first = logs.First();
             var last = logs.Last();
 
             AssertEx.AreEqual(DateTime.Now.AddDays(-1).Date, first.DateTime.Date, "Start date was incorrect");
-            AssertEx.IsTrue(last.DateTime.Date < DateTime.Now.AddDays(-2), "Logs didn't appear to go back far enough");
+            AssertEx.IsTrue(last.DateTime < DateTime.Now.AddDays(-1).AddHours(-5), "Logs didn't appear to go back far enough");
         }
 
         [TestMethod]

@@ -537,10 +537,12 @@ Describe "New-SensorParameters" {
             $params.exefile[1].ToString() | Should Be "testScript.bat"
         }
 
-        It "throws setting multiple objects that are not sensor targets" {
+        It "sets multiple objects that are not sensor targets" {
             $params = GetDynamicParams
 
-            { $params.environment = 3,4 } | Should Throw "Collections (excluding Sensor Targets) cannot be assigned to dynamic sensor parameters"
+            $params.environment = 3,4
+            $params.environment[0] | Should Be 3
+            $params.environment[1] | Should Be 4
         }
 
         It "locks and unlocks" {

@@ -19,8 +19,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// If -RetryCount is greater than 0, PrtgAPI will send a warning to the pipeline indicating a failure has occurred,
     /// as well as the number of retries remaining before PrtgAPI gives up. Each request invocation uses a separate retry count.</para>
     /// 
-    /// <para>If a protocol is not specified, PrtgAPI will connect with HTTPS. If your PRTG Server is HTTP only, this will cause an exception.
+    /// <para type="description">If a protocol is not specified, PrtgAPI will connect with HTTPS. If your PRTG Server is HTTP only, this will cause an exception.
     /// For HTTP only servers, prefix your URL with http://</para>
+    /// 
     /// <para type="description">When Connect-PrtgServer is run from outside of a script or the PowerShell ISE, PrtgAPI will
     /// display PowerShell progress when piping between PrtgAPI cmdlets or when piping from variables containing PrtgAPI objects.
     /// This default setting can be overridden by specifying a value to the -Progress parameter, or by using the Enable-PrtgProgress

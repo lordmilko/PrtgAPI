@@ -126,9 +126,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
 
-            Assert.IsTrue(parameters["name"] != null);
+            parameters["exeparams"] = new[] {1, 2};
 
-            AssertEx.Throws<ArgumentException>(() => parameters["name"] = new[] {1, 2}, "Collections (excluding Sensor Targets) cannot be assigned to dynamic sensor parameters");
+            var arr = ((int[]) parameters["exeparams"]);
+
+            Assert.AreEqual(1, arr[0]);
+            Assert.AreEqual(2, arr[1]);
         }
 
         [TestMethod]

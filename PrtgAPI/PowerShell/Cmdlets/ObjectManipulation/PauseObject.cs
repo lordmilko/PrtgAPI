@@ -11,10 +11,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Pause-Object cmdlet disables monitoring of an object in PRTG. When an object is paused, all children
     /// of the object are paused as well. Child objects can be independently paused and unpaused while their parent is paused,
     /// however their states will not modify as long as their parent is overriding them.</para>
+    /// 
     /// <para type="description">When pausing an object, you must specify how long to pause the object for. While in a paused state
-    /// PRTG will not attempt to execute any sensor objects covered by the paused object.</para>
-    /// <para>Objects that have not been paused forever will be automatically unpaused when their pause duration expires. For information
-    /// on how to unpause an object manually, see Resume-Object.</para>
+    /// PRTG will not attempt to execute any sensor objects covered by the paused object. Objects that have not been paused forever
+    /// will be automatically unpaused when their pause duration expires. For information on how to unpause an object manually, see Resume-Object.</para>
     /// 
     /// <para type="description">By default, Pause-Object will operate in Batch Mode. In Batch Mode, Pause-Object
     /// will not execute a request for each individual object, but will rather store each item in a queue to pause

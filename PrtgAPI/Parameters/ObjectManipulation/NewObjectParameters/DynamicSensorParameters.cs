@@ -147,9 +147,6 @@ namespace PrtgAPI.Parameters
             }
             else
             {
-                if (value is IEnumerable && !(value is string))
-                    throw new ArgumentException("Collections (excluding Sensor Targets) cannot be assigned to dynamic sensor parameters. Please assign a single object whose string representation is valid for this parameter.");
-
                 SetOrAddCustom(prop, name, value);
             }
         }

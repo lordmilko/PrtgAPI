@@ -11,7 +11,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// refresh according to their Scanning Interval. Refresh-Object allows you to bypass this interval and request
     /// the sensor update immediately. If Refresh-Object is applied to a Device, Group or Probe, all sensors under
     /// that object will be refreshed.</para>
-    /// <para>Sensor Factory sensors do not support being manually refreshed.</para>
+    /// 
+    /// <para type="description">Sensor Factory sensors do not support being manually refreshed.</para>
     /// 
     /// <para type="description">By default, Refresh-Object will operate in Batch Mode. In Batch Mode, Refresh-Object
     /// will not execute a request for each individual object, but will rather store each item in a queue to refresh
