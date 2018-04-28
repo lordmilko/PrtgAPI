@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Objects.Shared
 {
@@ -28,7 +29,7 @@ namespace PrtgAPI.Objects.Shared
         [PropertyParameter(nameof(Property.Name))]
         public string Name { get; set; }
 
-        private string raw;
+        internal readonly string raw;
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -75,5 +76,7 @@ namespace PrtgAPI.Objects.Shared
         {
             return raw ?? ToString();
         }
+        
+        internal T Lazy<T>(Func<T> getValue) => this.Get(getValue);
     }
 }

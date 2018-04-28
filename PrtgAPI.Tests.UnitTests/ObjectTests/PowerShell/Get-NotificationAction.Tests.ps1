@@ -10,7 +10,7 @@ Describe "Get-NotificationAction" -Tag @("PowerShell", "UnitTest") {
     It "can filter by Id" {
 
         $expected = @(
-            "api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_objid=301&",
+            "api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_objid=301&",
             "controls/editnotification.htm?id=300&"
         )
 
@@ -21,7 +21,7 @@ Describe "Get-NotificationAction" -Tag @("PowerShell", "UnitTest") {
 
     It "can filter by name" {
         $expected = @(
-            "api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_name=@sub(admin)&",
+            "api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_name=@sub(admin)&",
             "controls/editnotification.htm?id=300&"
         )
 

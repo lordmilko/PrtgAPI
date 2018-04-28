@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Request;
@@ -12,6 +14,19 @@ namespace PrtgAPI
     /// </summary>
     public class NotificationAction : ObjectTable, IFormattable, ILazy
     {
+        private string url;
+
+        /// <summary>
+        /// URL of this object.
+        /// </summary>
+        [XmlElement("baselink")]
+        [PropertyParameter(nameof(Property.Url))]
+        public string Url
+        {
+            get { return Lazy(() => url); }
+            set { url = value; }
+        }
+
         #region Category Definitions
 
         internal const string CategoryEmail = "category_email";
@@ -34,7 +49,7 @@ namespace PrtgAPI
         /// <summary>
         /// Whether alerts triggered outside of this notification's <see cref="Schedule"/> should be sent out when the scheduled pause ends.
         /// </summary>
-        public bool Postpone => InitializeLazy(() => postpone);
+        public bool Postpone => Lazy(() => postpone);
 
         [XmlElement("injected_comments")]
         internal string comments { get; set; }
@@ -42,7 +57,7 @@ namespace PrtgAPI
         /// <summary>
         /// Comments present on this object.
         /// </summary>
-        public string Comments => InitializeLazy(() => comments);
+        public string Comments => Lazy(() => comments);
 
         [XmlElement("injected_schedule")]
         internal string scheduleStr { get; set; }
@@ -52,7 +67,7 @@ namespace PrtgAPI
         /// <summary>
         /// The schedule during which the notification action is active. When inactive, alerts sent to this notification will be ignored unless <see cref="Postpone"/> is specified.
         /// </summary>
-        public Schedule Schedule => InitializeLazy(() =>
+        public Schedule Schedule => Lazy(() =>
         {
             if (schedule == null)
                 schedule = new LazyValue<Schedule>(scheduleStr, () => new Schedule(scheduleStr));
@@ -69,7 +84,7 @@ namespace PrtgAPI
         /// <summary>
         /// Specifies how PRTG should summarize notifications when multiple alerts occur within quick succession.
         /// </summary>
-        public SummaryMode SummaryMode => InitializeLazy(() => summaryMode);
+        public SummaryMode SummaryMode => Lazy(() => summaryMode);
 
         [XmlElement("injected_summarysubject")]
         internal string summarySubject { get; set; }
@@ -77,7 +92,7 @@ namespace PrtgAPI
         /// <summary>
         /// The subject line to use for summarize notification alerts.
         /// </summary>
-        public string SummarySubject => InitializeLazy(() => summarySubject);
+        public string SummarySubject => Lazy(() => summarySubject);
 
         [XmlElement("injected_summinutes")]
         internal int summaryPeriod { get; set; }
@@ -85,7 +100,7 @@ namespace PrtgAPI
         /// <summary>
         /// The timespan (in seconds) during which PRTG will gather new notifications before sending a summarization alert.
         /// </summary>
-        public int SummaryPeriod => InitializeLazy(() => summaryPeriod);
+        public int SummaryPeriod => Lazy(() => summaryPeriod);
 
         #endregion
         #region Wrappers
@@ -178,32 +193,10 @@ namespace PrtgAPI
         }
 
         object ILazy.LazyLock { get; } = new object();
-        private object LazyLock => ((ILazy) this).LazyLock;
 
         bool ILazy.LazyInitialized { get; set; }
-        private bool LazyInitialized
-        {
-            get { return ((ILazy) this).LazyInitialized; }
-            set { ((ILazy)this).LazyInitialized = value; }
-        }
 
-        T ILazy.InitializeLazy<T>(Func<T> getValue)
-        {
-            lock(LazyLock)
-            {
-                if (LazyInitialized == false)
-                {
-                    if (LazyXml != null)
-                        XmlDeserializer<NotificationAction>.UpdateType(LazyXml.Value, this);
-
-                    LazyInitialized = true;
-                }
-            }
-
-            return getValue();
-        }
-
-        T InitializeLazy<T>(Func<T> getValue) => ((ILazy) this).InitializeLazy(getValue);
+        T ILazy.InitializeLazy<T>(Func<T> getValue) => this.Get(getValue);
 
         #endregion
     }

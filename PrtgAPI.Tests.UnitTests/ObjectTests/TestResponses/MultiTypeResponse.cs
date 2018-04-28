@@ -128,17 +128,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             switch (content)
             {
-                case Content.Sensors:   return new SensorResponse(GetItems(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count));
-                case Content.Devices:   return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count));
-                case Content.Groups:    return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count));
-                case Content.ProbeNode: return new ProbeResponse(GetItems(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count));
-                case Content.Messages:  return new MessageResponse(GetItems(i => new MessageItem($"WMI Remote Ping{i}"), count));
+                case Content.Sensors:   return Sensors(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count);
+                case Content.Devices:   return Devices(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count);
+                case Content.Groups:    return Groups(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count);
+                case Content.ProbeNode: return Probes(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count);
+                case Content.Messages:  return Messages(i => new MessageItem($"WMI Remote Ping{i}"), count);
                 case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
+                case Content.Schedules: return Schedules(i => new ScheduleItem(), count);
                 case Content.Channels:  return new ChannelResponse(new ChannelItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
             }
         }
+
+        private SensorResponse Sensors(Func<int, SensorItem> func, int count) => new SensorResponse(GetItems(func, count));
+        private DeviceResponse Devices(Func<int, DeviceItem> func, int count) => new DeviceResponse(GetItems(func, count));
+        private GroupResponse Groups(Func<int, GroupItem> func, int count) => new GroupResponse(GetItems(func, count));
+        private ProbeResponse Probes(Func<int, ProbeItem> func, int count) => new ProbeResponse(GetItems(func, count));
+        private MessageResponse Messages(Func<int, MessageItem> func, int count) => new MessageResponse(GetItems(func, count));
+        private ScheduleResponse Schedules(Func<int, ScheduleItem> func, int count) => new ScheduleResponse(GetItems(func, count));
 
         private int GetCount(NameValueCollection components, Content? content)
         {

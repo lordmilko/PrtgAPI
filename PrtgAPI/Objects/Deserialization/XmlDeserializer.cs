@@ -40,9 +40,11 @@ namespace PrtgAPI.Objects.Deserialization
             return DeserializeInternal<T>(doc);
         }
 
-        internal static void UpdateType(XDocument doc, T obj)
+        internal static void UpdateType(XDocument doc, object target)
         {
-            DeserializeInternal<T>(doc, obj);
+            var deserializer = new XmlSerializer(target.GetType());
+
+            deserializer.DeserializeExisting(doc, target);
         }
 
 #pragma warning disable 693

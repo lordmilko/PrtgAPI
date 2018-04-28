@@ -44,7 +44,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new AddressValidatorResponse(new[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
             }));
 
@@ -56,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client(new AddressValidatorResponse(new[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
             }));
 

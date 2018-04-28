@@ -26,23 +26,39 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [ExcludeFromCodeCoverage]
-    [Cmdlet(VerbsCommon.Open, "PrtgObject")]
+    [Cmdlet(VerbsCommon.Open, "PrtgObject", DefaultParameterSetName = ParameterSet.Default)]
     public class OpenPrtgObject : PrtgOperationCmdlet
     {
         /// <summary>
-        /// <para type="description">The object to open.</para>
+        /// <para type="description">The sensor, device, group or probe to open.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Notification)]
+        public NotificationAction Notification { get; set; }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            switch (ParameterSetName)
+            {
+                case ParameterSet.Default:
+                    ExecuteOperation(Object, Object.Url);
+                    break;
+                case ParameterSet.Notification:
+                    ExecuteOperation(Notification, Notification.Url);
+                    break;
+            }
+        }
+
+        private void ExecuteOperation(PrtgObject obj, string url)
+        {
             var server = PrtgUrl.AddUrlPrefix(client.Server);
 
-            ExecuteOperation(() => Process.Start($"{server}{Object.Url}"), $"Opening {Object.BaseType.ToString().ToLower()} '{Object.Name}'");
+            ExecuteOperation(() => Process.Start($"{server}{url}"), $"Opening {PrtgProgressCmdlet.GetTypeDescription(obj.GetType())} '{obj.Name}'");
         }
 
         internal override string ProgressActivity => "Opening PRTG Objects";

@@ -123,6 +123,7 @@
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\DictionaryHelpers.cs" />
+    <Compile Include="Helpers\ILazyHelpers.cs" />
     <Compile Include="Helpers\ParameterHelpers.cs" />
     <Compile Include="Helpers\PSObjectHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />

@@ -56,6 +56,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new ChannelResponse(new ChannelItem());
                 case Content.Triggers:
                     return new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger());
+                case Content.Notifications:
+                    return new NotificationActionResponse(new NotificationActionItem("301"));
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(SetNotificationTriggerResponse)}");
             }

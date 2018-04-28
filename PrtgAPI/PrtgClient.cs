@@ -1100,14 +1100,14 @@ namespace PrtgAPI
 
             #endregion
         #endregion
-        #region Notifications
+        #region Notification Actions
 
         /// <summary>
-        /// Retrieve all notification actions on a PRTG Server, optionally filtering for objects by one or more conditions.
+        /// Retrieve notification actions from a PRTG Server.
         /// </summary>
-        /// <returns>All objects that match the specified conditions.</returns>
-        public List<NotificationAction> GetNotificationActions(params SearchFilter[] filters) =>
-            GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
+        /// <returns>A list of all notification actions present on a PRTG Server.</returns>
+        public List<NotificationAction> GetNotificationActions() =>
+            GetNotificationActionsInternal(new NotificationActionParameters());
 
         /// <summary>
         /// Retrieve notification actions from a PRTG Server based on the value of a certain property.
@@ -1119,11 +1119,18 @@ namespace PrtgAPI
             GetNotificationActions(new SearchFilter(property, value));
 
         /// <summary>
-        /// Asynchronously retrieve all notification actions on a PRTG Server, optionally filtering for objects by one or more conditions.
+        /// Retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
         /// <returns>All objects that match the specified conditions.</returns>
-        public async Task<List<NotificationAction>> GetNotificationActionsAsync(params SearchFilter[] filters) =>
-            await GetNotificationActionsInternalAsync(new NotificationActionParameters { SearchFilter = filters }).ConfigureAwait(false);
+        public List<NotificationAction> GetNotificationActions(params SearchFilter[] filters) =>
+            GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve notification actions from a PRTG Server.
+        /// </summary>
+        /// <returns>A list of all notification actions present on a PRTG Server.</returns>
+        public async Task<List<NotificationAction>> GetNotificationActionsAsync() =>
+            await GetNotificationActionsInternalAsync(new NotificationActionParameters()).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieve notification actions from a PRTG Server based on the value of a certain property.
@@ -1133,6 +1140,13 @@ namespace PrtgAPI
         /// <returns>All notification actions whose property matched the specified value.</returns>
         public async Task<List<NotificationAction>> GetNotificationActionsAsync(Property property, object value) =>
             await GetNotificationActionsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
+        /// </summary>
+        /// <returns>All objects that match the specified conditions.</returns>
+        public async Task<List<NotificationAction>> GetNotificationActionsAsync(params SearchFilter[] filters) =>
+            await GetNotificationActionsInternalAsync(new NotificationActionParameters { SearchFilter = filters }).ConfigureAwait(false);
 
         private XElement GetNotificationActionProperties(int id)
         {
@@ -1151,6 +1165,9 @@ namespace PrtgAPI
 
             return xml;
         }
+
+        #endregion
+        #region Notification Triggers
 
         /// <summary>
         /// Retrieve all notification triggers of a PRTG Object.
@@ -1190,9 +1207,16 @@ namespace PrtgAPI
         {
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
+            var parameters = new NotificationActionParameters
+            {
+                SearchFilter = new[] { new SearchFilter(Property.Id, actions.Select(a => a.Key)) }
+            };
+
+            var normal = new Lazy<XDocument>(() => requestEngine.ExecuteRequest(XmlFunction.TableData, parameters));
+
             foreach (var group in actions)
             {
-                var lazy = new Lazy<XDocument>(() => new XDocument(GetNotificationActionProperties(group.First().Id)));
+                var lazy = new Lazy<XDocument>(() => RequestParser.ExtractActionXml(normal.Value, GetNotificationActionProperties(group.Key), @group.Key));
 
                 foreach (var action in group)
                     action.LazyXml = lazy;
@@ -1203,15 +1227,26 @@ namespace PrtgAPI
         {
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
-            var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.First().Id));
+            var parameters = new NotificationActionParameters
+            {
+                SearchFilter = new[] { new SearchFilter(Property.Id, actions.Select(a => a.Key)) }
+            };
+
+            var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.Key));
+            var normal = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+
+            //All the properties of all desired notifications
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
 
+            //For each different notification action
             for (int i = 0; i < actions.Count; i++)
             {
+                var xDoc = RequestParser.ExtractActionXml(normal, results[i], actions[i].Key);
+
+                //Foreach notification action with the same ID
                 foreach (var action in actions[i])
                 {
-                    var i1 = i;
-                    action.LazyXml = new Lazy<XDocument>(() => new XDocument(results[i1]));
+                    action.LazyXml = new Lazy<XDocument>(() => xDoc);
                 }
             }
         }

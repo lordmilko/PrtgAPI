@@ -45,6 +45,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return base.GetResponseText(ref address);
                 case Content.Channels:
                     return new ChannelResponse(channels).GetResponseText(ref address);
+                case Content.Notifications:
+                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302")).GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(NotificationTriggerResponse)}");
             }

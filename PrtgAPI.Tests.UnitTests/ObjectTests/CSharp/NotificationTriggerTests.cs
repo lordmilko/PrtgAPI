@@ -41,8 +41,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
                 if (ready)
                 {
-                    
-
                     Assert.IsTrue(i <= list.Length - 1, $"More requests were received than stored in list. Next record is: {next}");
 
                     var val = list[i];
@@ -197,6 +195,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
 
                 //Second
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/editnotification.htm?id=301&username=username&passhash=12345678",
 
                 //Third
@@ -213,7 +212,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             validator.MoveNext();
             var triggers = client.GetNotificationTriggers(1001);
 
-            validator.MoveNext();
+            validator.MoveNext(2);
             var val = triggers.First().OnNotificationAction.Postpone;
 
             validator.MoveNext();
@@ -231,6 +230,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             {
                 //First
                 "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/editnotification.htm?id=301&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/editnotification.htm?id=302&username=username&passhash=12345678"
             });
@@ -242,7 +242,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Assert.AreEqual(validator.Get(message), message);
             };
 
-            validator.MoveNext(3);
+            validator.MoveNext(4);
             var triggers = await client.GetNotificationTriggersAsync(1001);
 
             var val = triggers.First().OnNotificationAction.Postpone;

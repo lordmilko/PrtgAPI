@@ -26,9 +26,13 @@ namespace PrtgAPI.Objects.Deserialization
 
         public object DeserializeExisting(XDocument doc, object obj)
         {
-            var properties = doc.Elements().First().Elements().Select(s => s.Name.ToString()).ToList();
+            var item = doc.Descendants("item").First();
 
-            return Deserialize(outerType, obj, doc.Elements().First(), properties.ToArray());
+            var properties = item.Elements().Select(
+                s => s.Name.ToString()
+            ).Where(n => n != "objid" && n != "name").ToList();
+
+            return Deserialize(outerType, obj, item, properties.ToArray());
         }
 
         public object Deserialize(XDocument doc, params string[] properties)

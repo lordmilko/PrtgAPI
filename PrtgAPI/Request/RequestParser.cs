@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
@@ -32,6 +33,15 @@ namespace PrtgAPI.Request
             }
 
             return channel;
+        }
+
+        internal static XDocument ExtractActionXml(XDocument normal, XElement properties, int id)
+        {
+            var thisDoc = new XDocument(normal);
+            var items = thisDoc.Descendants("item");
+            items.Where(i => i.Element("objid").Value != id.ToString()).Remove();
+            items.Single().Add(properties.Nodes());
+            return thisDoc;
         }
 
         #endregion

@@ -116,6 +116,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case Content.Sensors: return new SensorResponse(GetItems(i => new SensorItem(name: $"{leading}Volume IO _Total{i}",     objid: (1000 + i).ToString()), count));
                 case Content.Devices: return new DeviceResponse(GetItems(i => new DeviceItem(name: $"Probe Device{i}",         objid: (1000 + i).ToString()), count));
                 case Content.Groups:  return new GroupResponse(GetItems(i => new GroupItem(name: $"Windows Infrastructure{i}", objid: (1000 + i).ToString()), count));
+                case Content.Notifications:
+                    totalRequestCount--;
+                    requestCount--;
+                    return new NotificationActionResponse(new NotificationActionItem("301"));
                 case Content.Triggers:
                     return new NotificationTriggerResponse(
                         GetItems(
