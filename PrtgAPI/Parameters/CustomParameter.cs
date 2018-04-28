@@ -40,7 +40,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="name">The name of the parameter</param>
         /// <param name="value">The value of the parameter. The caller is responsible for ensuring the value and type contains the correct capitalization and is formatted corectly when converted <see cref="ToString"/>.</param>
-        /// <param name="parameterType">How the <see cref="value"/> should be formatted if it contains a string.</param>
+        /// <param name="parameterType">How the <paramref name="value"/> should be formatted if it contains a string.</param>
         public CustomParameter(string name, object value, ParameterType parameterType)
         {
             Name = name;

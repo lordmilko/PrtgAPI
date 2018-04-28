@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -40,13 +41,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Value to filter for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 2)]
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (Value is PSObject)
+                Value = PSObjectHelpers.CleanPSObject(Value);
+
             WriteObject(new SearchFilter(Property, Operator, Value));
         }
     }

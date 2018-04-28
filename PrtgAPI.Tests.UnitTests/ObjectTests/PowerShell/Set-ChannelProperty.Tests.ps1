@@ -151,6 +151,21 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "doesn't specify any dynamic parameters" {
             { $channel | Set-ObjectProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Property"
         }
+
+        It "splats dynamic properties" {
+
+            $channel.Count | Should Be 2
+
+            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&valuelookup_1=test&limitminerror_1=20&limitmode_1=1"
+
+            $splat = @{
+                UpperErrorLimit = 100
+                LowerErrorLimit = 20
+                ValueLookup = "test"
+            }
+
+            $channel | Set-ChannelProperty @splat
+        }
     }
 
     Context "Manual" {
@@ -223,7 +238,6 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "sets multiple properties" {
-            $channel.Count | Should Be 2
 
             SetAddressValidatorResponse "id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1&valuelookup_2=test"
 
@@ -231,7 +245,22 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "doesn't specify any dynamic parameters" {
-            { Set-ChannelProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Property"
+            { Set-ChannelProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Channel Property"
+        }
+
+        It "splats dynamic parameters" {
+
+            SetAddressValidatorResponse "id=1001&limitminerror_2=20&limitmaxerror_2=100&limitmode_2=1&valuelookup_2=test"
+
+            $splat = @{
+                SensorId = 1001
+                ChannelId = 2
+                UpperErrorLimit = 100
+                LowerErrorLimit = 20
+                ValueLookup = "test"
+            }
+
+            Set-ChannelProperty @splat
         }
     }
 }

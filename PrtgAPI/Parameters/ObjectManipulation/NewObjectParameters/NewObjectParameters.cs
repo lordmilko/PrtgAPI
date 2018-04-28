@@ -273,6 +273,8 @@ namespace PrtgAPI.Parameters
         /// <param name="value">The value to store.</param>
         protected void SetCustomParameterInternal(string name, object value)
         {
+            value = PSObjectHelpers.CleanPSObject(value);
+
             var parameter = new CustomParameter(name, value);
 
             var index = GetCustomParameterIndex(name);

@@ -222,6 +222,8 @@ namespace PrtgAPI.Request
         {
             string str = string.Empty;
 
+            val = PSObjectHelpers.CleanPSObject(val);
+
             if (val is string)
                 str = val.ToString();
             else
@@ -266,14 +268,16 @@ namespace PrtgAPI.Request
         {
             var builder = new StringBuilder();
 
-            foreach (var obj in enumerable)
+            foreach (var o in enumerable)
             {
-                if (obj != null)
+                if (o != null)
                 {
+                    var obj = PSObjectHelpers.CleanPSObject(o);
+
                     string toEncode;
 
-                    if (obj.GetType().IsEnum)
-                        toEncode = ((Enum) obj).GetDescription();
+                    if (obj != null && obj.GetType().IsEnum)
+                        toEncode = ((Enum)obj).GetDescription();
                     else
                     {
                         if (obj is IFormattable)
@@ -302,10 +306,12 @@ namespace PrtgAPI.Request
         {
             var builder = new StringBuilder();
 
-            foreach (var val in enumerable)
+            foreach (var e in enumerable)
             {
-                if (val != null)
+                if (e != null)
                 {
+                    var val = PSObjectHelpers.CleanPSObject(e);
+
                     string query;
 
                     if (description == Parameter.FilterXyz.GetDescription())
@@ -314,7 +320,7 @@ namespace PrtgAPI.Request
 
                         query = FormatMultiParameterFilter(filter, filter.Value);
                     }
-                    else if (val.GetType().IsEnum) //If it's an enum other than FilterXyz
+                    else if (val != null && val.GetType().IsEnum) //If it's an enum other than FilterXyz
                     {
                         var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
 
