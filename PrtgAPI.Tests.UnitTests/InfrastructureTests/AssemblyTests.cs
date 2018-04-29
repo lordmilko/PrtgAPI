@@ -68,11 +68,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
-        public void AllTextTemplates_UseSpaces()
+        public void AllTextFiles_UseSpaces()
         {
             var path = GetProjectRoot();
 
-            var files = Directory.GetFiles(path, "*.tt", SearchOption.AllDirectories);
+            var types = new[]
+            {
+                ".tt",
+                ".cs",
+                ".ps1",
+                ".txt",
+                ".md"
+            };
+
+            var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories).Where(f =>
+                types.Any(f.EndsWith)
+            );
 
             foreach (var file in files)
             {
