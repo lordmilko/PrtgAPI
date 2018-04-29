@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Request;
 
@@ -31,6 +32,9 @@ namespace PrtgAPI.Parameters
             get { return base.SearchFilter; }
             set
             {
+                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || item.Value.ToString() != "0")))
+                    throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
+
                 if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value.ToString() == "0"))
                     value = value.Concat(DefaultSearchFilter()).ToArray();
 

@@ -12,6 +12,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
     [TestClass]
     public class ProbeTests : StreamableObjectTests<Probe, ProbeItem, ProbeResponse>
     {
+        protected override SearchFilter[] TestFilters { get; } = {
+            new SearchFilter(Property.ParentId, 0),
+            new SearchFilter(Property.Probe, FilterOperator.Contains, "contoso")
+        };
+
         [TestMethod]
         public void Probe_CanDeserialize() => Object_CanDeserialize();
 

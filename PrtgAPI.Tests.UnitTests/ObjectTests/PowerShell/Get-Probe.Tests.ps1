@@ -52,4 +52,12 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
             Get-Probe -ProbeStatus Connected
         }
     }
+
+    It "allows filtering by ParentId 0" {
+        flt parentid eq 0 | Get-Probe
+    }
+
+    It "throws specifying a ParentId other than 0" {
+        { flt parentid eq -1 | Get-Probe } | Should Throw "Cannot filter for probes based on a ParentId other than 0"
+    }
 }

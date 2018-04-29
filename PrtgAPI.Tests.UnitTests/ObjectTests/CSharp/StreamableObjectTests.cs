@@ -18,8 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         private Property testProperty = Property.Name;
         private FilterOperator testOperator = FilterOperator.Contains;
         private string testValue = "test";
-        private SearchFilter[] testFilters = new[]
-        {
+        protected virtual SearchFilter[] TestFilters { get; } = {
             new SearchFilter(Property.ParentId, 2001),
             new SearchFilter(Property.Probe, FilterOperator.Contains, "contoso")
         };
@@ -111,14 +110,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             CheckResult<T>(f(testProperty, testValue));
             CheckResult<T>(g(testProperty, testOperator, testValue));
-            CheckResult<T>(h(testFilters));
+            CheckResult<T>(h(TestFilters));
         }
 
         private void RunFunctionsAsync<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable
         {
             CheckResult<T>(((Task<List<TObject>>)f(testProperty, testValue)).Result);
             CheckResult<T>(((Task<List<TObject>>)g(testProperty, testOperator, testValue)).Result);
-            CheckResult<T>(((Task<List<TObject>>)h(testFilters)).Result);
+            CheckResult<T>(((Task<List<TObject>>)h(TestFilters)).Result);
         }
 
         protected void CheckResult<T>(object result) where T : IEnumerable
