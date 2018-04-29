@@ -250,6 +250,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
 
+        [TestMethod]
+        public void NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSet()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
+
+            var triggers = client.GetNotificationTriggers(1001);
+            var val = triggers.First().OnNotificationAction;
+
+            AssertEx.AllPropertiesAreNotDefault(val);
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSetAsync()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
+
+            var triggers = await client.GetNotificationTriggersAsync(1001);
+            var val = triggers.First().OnNotificationAction;
+
+            AssertEx.AllPropertiesAreNotDefault(val);
+        }
+
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)
         {
             switch (propertyName)

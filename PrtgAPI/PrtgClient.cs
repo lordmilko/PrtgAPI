@@ -252,6 +252,15 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Get Objects XML
+
+        private XDocument GetObjectsXml(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
+            requestEngine.ExecuteRequest(function, parameters, responseValidator);
+
+        private async Task<XDocument> GetObjectsXmlAsync(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
+            await requestEngine.ExecuteRequestAsync(function, parameters, responseValidator).ConfigureAwait(false);
+
+        #endregion
         #region Stream Objects
 
         private IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters, bool serial)
@@ -1121,6 +1130,7 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
         public List<NotificationAction> GetNotificationActions(params SearchFilter[] filters) =>
             GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
@@ -1144,6 +1154,7 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
         public async Task<List<NotificationAction>> GetNotificationActionsAsync(params SearchFilter[] filters) =>
             await GetNotificationActionsInternalAsync(new NotificationActionParameters { SearchFilter = filters }).ConfigureAwait(false);
@@ -1207,12 +1218,9 @@ namespace PrtgAPI
         {
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
-            var parameters = new NotificationActionParameters
-            {
-                SearchFilter = new[] { new SearchFilter(Property.Id, actions.Select(a => a.Key)) }
-            };
+            var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
 
-            var normal = new Lazy<XDocument>(() => requestEngine.ExecuteRequest(XmlFunction.TableData, parameters));
+            var normal = new Lazy<XDocument>(() => GetObjectsXml(parameters));
 
             foreach (var group in actions)
             {
@@ -1227,13 +1235,10 @@ namespace PrtgAPI
         {
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
-            var parameters = new NotificationActionParameters
-            {
-                SearchFilter = new[] { new SearchFilter(Property.Id, actions.Select(a => a.Key)) }
-            };
+            var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
 
             var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.Key));
-            var normal = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var normal = await GetObjectsXmlAsync(parameters).ConfigureAwait(false);
 
             //All the properties of all desired notifications
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -1282,7 +1287,57 @@ namespace PrtgAPI
             ).ConfigureAwait(false);
 
         #endregion
+        #region Schedules
 
+        /// <summary>
+        /// Retrieve all monitoring schedules from a PRTG Server.
+        /// </summary>
+        /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
+        public List<Schedule> GetSchedules() =>
+            GetObjects<Schedule>(new ScheduleParameters());
+
+        /// <summary>
+        /// Retrieve all monitoring schedules from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>All monitoring schedules whose value matched the specified property.</returns>
+        public List<Schedule> GetSchedules(Property property, object value) =>
+            GetSchedules(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Retrieve all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>A list of schedules that match the specified search criteria.</returns>
+        public List<Schedule> GetSchedules(params SearchFilter[] filters) =>
+            GetObjects<Schedule>(new ScheduleParameters { SearchFilter = filters });
+
+        /// <summary>
+        /// Asynchronously retrieve all monitoring schedules from a PRTG Server.
+        /// </summary>
+        /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
+        public async Task<List<Schedule>> GetSchedulesAsync() =>
+            await GetObjectsAsync<Schedule>(new ScheduleParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieve all monitoring schedules from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>All monitoring schedules whose value matched the specified property.</returns>
+        public async Task<List<Schedule>> GetSchedulesAsync(Property property, object value) =>
+            await GetSchedulesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieve all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>A list of schedules that match the specified search criteria.</returns>
+        public async Task<List<Schedule>> GetSchedulesAsync(params SearchFilter[] filters) =>
+            await GetObjectsAsync<Schedule>(new ScheduleParameters { SearchFilter = filters }).ConfigureAwait(false);
+
+        #endregion
     #endregion
     #region Object Manipulation
         #region Add Objects
@@ -1827,14 +1882,39 @@ namespace PrtgAPI
         {
             var response = GetObjectPropertiesRawInternal(objectId, objectType);
 
-            return ResponseParser.GetObjectProperties<T>(response);
+            var data = ResponseParser.GetObjectProperties<T>(response);
+
+            if (data is TableSettings)
+            {
+                var schedule = ((TableSettings) (object) data).Schedule;
+
+                if (schedule != null)
+                {
+                    schedule.LazyXml = new Lazy<XDocument>(() => GetObjectsXml(new ScheduleParameters(schedule.Id)));
+                }
+            }
+
+            return data;
         }
 
         private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
         {
             var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
 
-            return ResponseParser.GetObjectProperties<T>(response);
+            var data = ResponseParser.GetObjectProperties<T>(response);
+
+            if (data is TableSettings)
+            {
+                var schedule = ((TableSettings)(object)data).Schedule;
+
+                if (schedule != null)
+                {
+                    var xDoc = await GetObjectsXmlAsync(new ScheduleParameters(schedule.Id)).ConfigureAwait(false);
+                    schedule.LazyXml = new Lazy<XDocument>(() => xDoc);
+                }
+            }
+
+            return data;
         }
 
         private string GetObjectPropertiesRawInternal(int objectId, ObjectType objectType) =>

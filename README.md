@@ -210,6 +210,7 @@ Get-ObjectLog
 Get-ObjectProperty
 Get-Probe
 Get-PrtgClient
+Get-PrtgSchedule
 Get-PrtgStatus
 Get-Sensor
 Get-SensorFactorySource

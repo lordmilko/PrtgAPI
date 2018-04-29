@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void DeviceSettings_CanDeserialize()
         {
-            var client = Initialize_Client(new DeviceSettingsResponse());
+            var client = Initialize_Client(new MultiTypeResponse());
 
             var settings = client.GetDeviceProperties(2212);
 
@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task DeviceSettings_CanDeserializeAsync()
         {
-            var client = Initialize_Client(new DeviceSettingsResponse());
+            var client = Initialize_Client(new MultiTypeResponse());
 
             var settings = await client.GetDevicePropertiesAsync(2212);
 

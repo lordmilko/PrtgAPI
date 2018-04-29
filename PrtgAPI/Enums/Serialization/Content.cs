@@ -38,6 +38,11 @@
         Notifications,
 
         /// <summary>
+        /// Schedules that indicate when monitoring should be active.
+        /// </summary>
+        Schedules,
+
+        /// <summary>
         /// All notification triggers defined on an object, including inherited triggers.
         /// </summary>
         Triggers,

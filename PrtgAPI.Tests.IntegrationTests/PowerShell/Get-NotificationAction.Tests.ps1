@@ -8,17 +8,17 @@ Describe "Get-NotificationAction_IT" {
     }
 
     It "can filter by name" {
-        $actions = Get-NotificationAction "Ticket Notification"
+        $actions = Get-NotificationAction (Settings NotificationActionName)
 
         $actions.Count | Should Be 1
     }
 
     It "can filter by Id" {
-        $actions = Get-NotificationAction -Id 301
+        $actions = Get-NotificationAction -Id (Settings NotificationAction)
 
         $actions.Count | Should Be 1
         $actions.Count | Should BeLessThan (Settings NotificationActionsInTestServer)
-        $actions.Name | Should Be "Email to all members of group PRTG Users Group"
+        $actions.Name | Should Be (Settings NotificationActionName)
     }
 
     It "can filter by tags" {

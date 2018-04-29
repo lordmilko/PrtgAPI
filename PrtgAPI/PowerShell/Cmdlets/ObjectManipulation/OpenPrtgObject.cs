@@ -13,7 +13,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Open-PrtgObject cmdlet opens the web page of a PRTG Object in your default browser.
     /// Care should be taken with Open-PrtgObject, as your system may experience performance issues if too many URLs are opened at one time.</para>
     /// 
-    /// <para type="description">Open-PrtgObject is only compatible with objects that contain a URL field; namely Probes, Devices, Groups and Sensors.</para>
+    /// <para type="description">Open-PrtgObject is only compatible with objects that contain a URL field; namely Probes, Devices, Groups Sensors,
+    /// Notification Actions and Schedules.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-Device dc-1 | Get-Sensor ping | Open-PrtgObject</code>
@@ -35,8 +36,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
+        /// <summary>
+        /// <para type="description">The notification action to open.</para>
+        /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Notification)]
         public NotificationAction Notification { get; set; }
+
+        /// <summary>
+        /// <para type="description">The schedule to open.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Schedule)]
+        public Schedule Schedule { get; set; }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
@@ -50,6 +60,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     break;
                 case ParameterSet.Notification:
                     ExecuteOperation(Notification, Notification.Url);
+                    break;
+                case ParameterSet.Schedule:
+                    ExecuteOperation(Schedule, Schedule.Url);
                     break;
             }
         }

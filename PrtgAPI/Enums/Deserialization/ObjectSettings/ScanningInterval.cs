@@ -289,7 +289,7 @@ namespace PrtgAPI
         /// Equal to this. The specified object is equal to this if both
         /// objects are of the same type and have the same <see cref="TimeSpan"/>.
         /// </summary>
-        /// <param name="obj">The object to compare with the current object..</param>
+        /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
@@ -320,7 +320,7 @@ namespace PrtgAPI
         /// Equal to this. The specified object is equal to this if both values have
         /// the same <see cref="TimeSpan"/>.
         /// </summary>
-        /// <param name="other">The object to compare with the current object..</param>
+        /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
         public bool Equals(ScanningInterval other)
         {

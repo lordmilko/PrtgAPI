@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Objects.Shared;
 using PrtgAPI.Request;
@@ -186,6 +186,8 @@ namespace PrtgAPI
         #region ILazy
 
         Lazy<XDocument> ILazy.LazyXml { get; set; }
+
+        [ExcludeFromCodeCoverage]
         internal Lazy<XDocument> LazyXml
         {
             get { return ((ILazy)this).LazyXml;}
@@ -195,8 +197,6 @@ namespace PrtgAPI
         object ILazy.LazyLock { get; } = new object();
 
         bool ILazy.LazyInitialized { get; set; }
-
-        T ILazy.InitializeLazy<T>(Func<T> getValue) => this.Get(getValue);
 
         #endregion
     }

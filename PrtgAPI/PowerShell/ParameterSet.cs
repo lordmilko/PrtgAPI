@@ -59,6 +59,7 @@
         internal const string Device = "DeviceSet";
         internal const string Group = "GroupSet";
         internal const string Notification = "NotificationSet";
+        internal const string Schedule = "ScheduleSet";
 
         internal const string Target = "TargetSet";
 

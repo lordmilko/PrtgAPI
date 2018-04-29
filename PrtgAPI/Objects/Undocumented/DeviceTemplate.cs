@@ -45,7 +45,7 @@ namespace PrtgAPI
         /// Equal to this. The specified object is equal to this if both
         /// objects are of the same type and have the same <see cref="raw"/> value.
         /// </summary>
-        /// <param name="other">The object to compare with the current object..</param>
+        /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
         [ExcludeFromCodeCoverage]
         public override bool Equals(object other)
@@ -67,7 +67,7 @@ namespace PrtgAPI
         /// Equal to this. The specified object is equal to this if both
         /// objects are of the same type and have the same <see cref="raw"/> value.
         /// </summary>
-        /// <param name="other">The object to compare with the current object..</param>
+        /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
         [ExcludeFromCodeCoverage]
         public bool Equals(DeviceTemplate other)
@@ -93,7 +93,11 @@ namespace PrtgAPI
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return raw.GetHashCode();
+            var result = 0;
+
+            result = (result * 397) ^ raw.GetHashCode();
+
+            return result;
         }
 
         private Func<DeviceTemplate, string> serializedFormat;

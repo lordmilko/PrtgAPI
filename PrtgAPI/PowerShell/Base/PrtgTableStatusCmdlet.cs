@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Base
     /// </summary>
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
-    public abstract class PrtgTableStatusCmdlet<TObject, TParam> : PrtgTableFilterCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
+    public abstract class PrtgTableStatusCmdlet<TObject, TParam> : PrtgTableTagCmdlet<TObject, TParam> where TParam : TableParameters<TObject> where TObject : SensorOrDeviceOrGroupOrProbe
     {
         private bool statusProcessed;
 

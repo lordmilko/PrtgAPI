@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\Support\IntegrationTest.ps1
+﻿. $PSScriptRoot\..\Support\ObjectProperty.ps1
 
 function TestScanningInterval($expectedString, $value)
 {
@@ -16,6 +16,105 @@ function TestScanningInterval($expectedString, $value)
 
 Describe "Set-ObjectProperty_IT" {
     
+    Context "TableSettings" {
+        $testCases = @(
+            @{name = "Sensors"; obj = { Get-Sensor -Id (Settings UpSensor) }}
+            @{name = "Devices"; obj = { Get-Device -Id (Settings Device) }}
+            @{name = "Groups";  obj = { Get-Group  -Id (Settings Group)  }}
+            @{name = "Probes";  obj = { Get-Probe  -Id (Settings Probe)  }}
+        )
+
+        It "Scanning Interval" -TestCases $testCases {
+            param($name, $obj)
+
+            $object = (& $obj)
+
+            try
+            {
+                if($name -ne "Probes") {
+                    if($name -ne "Sensors") {
+                        $object | Set-ObjectProperty InheritInterval $false
+                    }
+
+                    SetValue "InheritInterval"   $true
+                    $object | Set-ObjectProperty InheritInterval $true
+                }
+
+                SetChild "Interval"          "00:05:00"         "InheritInterval" $false
+                SetChild "IntervalErrorMode" TwoWarningsThenDown "InheritInterval" $false
+            }
+            finally
+            {
+                $object | Set-ObjectProperty InheritInterval $false
+            }
+        }
+        
+        It "Schedules, Dependencies and Maintenance Window" -TestCases $testCases {
+            param($name, $obj)
+
+            $object = (& $obj)
+
+            if($name -eq "Sensors") {
+                $object = Get-Sensor -Id (Settings PausedByDependencySensor)
+            }
+
+            $dependentId = (Settings DownAcknowledgedSensor)
+            $dependencyType = "Object"
+            $dependencyDelay = 0
+
+            switch($name)
+            {
+                "Devices" {
+                    $dependentId = ($object | Get-Sensor Ping).Id
+                    $dependencyDelay = 60
+                }
+
+                "Groups" {
+                    $dependencyType = "Parent"
+                    $dependentId = 0
+                }
+
+                "Probes" {
+                    $dependencyType = "Parent"
+                    $dependentId = 0
+                }
+            }
+
+            GetValue "Schedule"           "None"
+            GetValue "MaintenanceEnabled" $false
+            GetValue "MaintenanceStart"   (Settings MaintenanceStart)
+            GetValue "MaintenanceEnd"     (Settings MaintenanceStart)
+            GetValue "DependencyType"     $dependencyType
+            GetValue "DependentObjectId"  $dependentId
+            GetValue "DependencyDelay"    $dependencyDelay
+            #SetValue "InheritDependency"  $true
+            #SetChild "Schedule" BLAH #todo - get rid of the getchild "schedule"
+            #SetChild "MaintenanceEnabled" $true
+            #SetGrandChild MaintenanceStart
+            #SetGrandChild MaintenanceEnd
+            #SetChild DependencyType Object #todo: will this not work if i havent also specified the object to use at the same time?
+            #should we maybe create a dependency attribute between the two? and would the same be true vice versa? (so when you set it to master,
+            #the dependencyvalue goes away? check how its meant to work with fiddler)
+            #SetChild Dependency (Settings DownSensor)
+            #SetChild DependencyDelay 3
+        }
+
+        It "Proxy Settings for HTTP Sensors" -TestCases $testCases {
+            param($name, $obj)
+
+            $object = (& $obj)
+
+            if($name -ne "Probes") {
+                SetValue      "InheritProxy"  $false
+            }
+            
+            SetChild      "ProxyAddress"  "https://proxy.example.com"      "InheritProxy" $false
+            SetChild      "ProxyPort"     "3128"                           "InheritProxy" $false
+            SetChild      "ProxyUser"     "newUser"                        "InheritProxy" $false
+            SetWriteChild "ProxyPassword" "newPassword" "HasProxyPassword" "InheritProxy" $false
+        }
+    }
+
     It "sets a raw property" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
@@ -102,20 +201,20 @@ Describe "Set-ObjectProperty_IT" {
         $upSensor.Interval | Should Not Be "00:05:00"
 
         $device = Get-Device -Id (Settings Device)
-        $device.Interval | Should Be "00:01:00"
+        $device.Interval | Should Be "00:05:00"
 
         $objects = $upSensor,$device
 
-        $objects | Set-ObjectProperty Interval "00:05:00"
+        $objects | Set-ObjectProperty Interval "00:10:00"
 
         LogTestDetail "Sleeping for 10 seconds while settings apply"
         Sleep 10
 
         $newUpSensor = Get-Sensor -Id (Settings UpSensor)
-        $newUpSensor.Interval | Should Be "00:05:00"
+        $newUpSensor.Interval | Should Be "00:10:00"
 
         $newDevice = Get-Device -Id (Settings Device)
-        $newDevice.Interval | Should Be "00:05:00"
+        $newDevice.Interval | Should Be "00:10:00"
     }
 
     It "sets multiple with dynamic parameters" {

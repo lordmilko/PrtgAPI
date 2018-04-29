@@ -128,14 +128,17 @@
     <Compile Include="Helpers\PSObjectHelpers.cs" />
     <Compile Include="Helpers\ReflectionHelpers.cs" />
     <Compile Include="Objects\Undocumented\DeviceTemplate.cs" />
+    <Compile Include="Objects\Undocumented\TableSettings.cs" />
     <Compile Include="Parameters\Base\PageableParameters.cs" />
     <Compile Include="Parameters\Base\PropertyParameter.cs" />
     <Compile Include="Parameters\Base\ISourceParameters.cs" />
     <Compile Include="Parameters\ChannelParameter.cs" />
+    <Compile Include="Parameters\ObjectData\ScheduleParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AutoDiscoverParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\HttpSensorParameters.cs" />
     <Compile Include="Parameters\PropertyParameter.cs" />
     <Compile Include="PowerShell\Base\IStreamableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableTagCmdlet.cs" />
     <Compile Include="PowerShell\Base\StreamableCmdletProvider.cs" />
     <Compile Include="PowerShell\ChannelUnitMap.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDeviceTemplate.cs" />
@@ -327,7 +330,7 @@
     <Compile Include="Parameters\ObjectData\NotificationActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\VolumeTriggerParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\CloneObject.cs" />
-    <Compile Include="PowerShell\Cmdlets\Incomplete\GetSchedule.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetPrtgSchedule.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\NewSensorFactoryDefinition.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\EditNotificationTriggerProperty.cs" />

@@ -17,11 +17,39 @@ LONG DESCRIPTION
 
     Yes       : Supported
     No        : Not currently supported
-	Direct    : Supports Get and Set, however can only be Get via direct requests
+    Direct    : Supports Get and Set, however can only be Get via direct requests
     N/A       : Not Applicable
 
-    This help topic describes properties that are supported on Devices, Groups and Probes. For information about
-    properties that are specific to sensors, see about_SensorSettings
+    This help topic describes properties that are supported on Sensors, Devices, Groups and Probes. For information
+    about properties that are specific to sensors only, see about_SensorSettings
+
+    Sensor, Device, Group, Probe Settings
+
+    | Scanning Interval           | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | InheritInterval             |    Yes    | Whether to inherit Scanning Interval                                 |
+    | Interval                    |    Yes    | Interval with which sensor refreshes                                 |
+    | IntervalErrorMode           |    Yes    | How sensor transitions from Up -> Warning -> Error                   |
+
+    | Schedules, Dependencies     | Get | Set | Description                                                          |
+    | and Maintenance Window      |           |                                                                      |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | InheritDependency           | Yes | No  | Whether to inherit Schedules/Dependencies/Maintenance                |
+    | Schedule                    | Yes | No  | Schedule during which this object is active                          |
+    | MaintenanceEnabled          | Yes | No  | Whether a one time maintenance window has been set                   |
+    | MaintenanceStart            | Yes | No  | Maintenance window start, or default start time                      |
+    | MaintenanceEnd              | Yes | No  | Maintenance window end, or default end time                          |
+    | DependencyType              | Yes | No  | The type of object this object uses as its dependency                |
+    | Dependency                  | Yes | No  | The object this object depends on when DependencyType is Object      |
+    | DependencyDelay             | Yes | No  | The delay before resuming when DependencyType is Object (secs)       |
+
+    | Proxy Settings for HTTP     | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | InheritProxy                |    Yes    | Whether to inherit Proxy Settings                                    |
+    | ProxyAddress                |    Yes    | Proxy server address                                                 |
+    | ProxyPort                   |    Yes    | Proxy server port                                                    |
+    | ProxyUser                   |    Yes    | Proxy server username                                                |
+    | ProxyPassword               | No  | Yes | Proxy server password                                                |
 
     Device, Group, Probe Settings
 
@@ -160,7 +188,7 @@ LONG DESCRIPTION
     | --------------------------- | --------- | -------------------------------------------------------------------- |
     | AutoDiscoveryMode           |    Yes    | Specifies how detailed auto-discovery operations should be           |
 
-	| Other                       | Get | Set | Description                                                          |
+    | Other                       | Get | Set | Description                                                          |
     | --------------------------- | --------- | -------------------------------------------------------------------- |
     | InheritTriggers             |   Direct  | Whether to inherit notification triggers.                            |
     | Comments                    |   Direct  | Any comments aplied to this object                                   |

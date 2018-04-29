@@ -115,7 +115,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
             var properties = client.GetSensorProperties(1001);
 
-            Assert.AreEqual("Weekdays Nights (17:00 - 9:00) [GMT+1100]", properties.Schedule.ToString(), "Schedule was not correct");
+            Assert.AreEqual("Weekdays Nights (17:00 - 9:00) [GMT+0800]", properties.Schedule.ToString(), "Schedule was not correct");
         }
 
         [TestMethod]

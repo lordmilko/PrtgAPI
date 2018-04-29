@@ -107,6 +107,7 @@
     <Compile Include="ObjectTests\CSharp\GetObjectPropertyTests.cs" />
     <Compile Include="ObjectTests\CSharp\OrganizationTests.cs" />
     <Compile Include="ObjectTests\CSharp\DeviceSettingsTests.cs" />
+    <Compile Include="ObjectTests\CSharp\ScheduleTests.cs" />
     <Compile Include="ObjectTests\CSharp\SensorHistoryTests.cs" />
     <Compile Include="ObjectTests\CSharp\GroupTests.cs" />
     <Compile Include="ObjectTests\CSharp\LogTests.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="ObjectTests\CSharp\DeviceTests.cs" />
     <Compile Include="ObjectTests\TestItems\BaseItem.cs" />
     <Compile Include="ObjectTests\TestItems\ProbeItem.cs" />
+    <Compile Include="ObjectTests\TestItems\ScheduleItem.cs" />
     <Compile Include="ObjectTests\TestItems\SensorHistoryChannelItem.cs" />
     <Compile Include="ObjectTests\TestItems\SensorHistoryItem.cs" />
     <Compile Include="ObjectTests\TestItems\SensorTotalsItem.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="ObjectTests\TestResponses\DeviceSettingsResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\DiffBasedResolveResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\ExceptionResponse.cs" />
+    <Compile Include="ObjectTests\TestResponses\Objects\ScheduleResponse.cs" />
     <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Device\DeviceDeepNestingScenario.cs" />
     <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Group\GroupDeepNestingScenario.cs" />
     <Compile Include="ObjectTests\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingScenario.cs" />

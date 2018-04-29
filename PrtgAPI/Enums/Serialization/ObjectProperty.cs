@@ -764,7 +764,7 @@ namespace PrtgAPI
         /// Corresponds to Proxy Settings for HTTP Sensors -> Inherit Proxy Settings.
         /// </summary>
         [LiteralValue]
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
         InheritProxy,
 
@@ -772,7 +772,7 @@ namespace PrtgAPI
         /// IP Address/DNS name of the proxy server to use for HTTP/HTTPS requests.<para/>
         /// Corresponds to Proxy Settings for HTTP Sensors -> Name.
         /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [DependentProperty(nameof(InheritProxy), false)]
         [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
         ProxyAddress,
@@ -781,7 +781,7 @@ namespace PrtgAPI
         /// Port to use to connect to the proxy server.<para/>
         /// Corresponds to Proxy Settings for HTTP Sensors -> Port.
         /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [DependentProperty(nameof(InheritProxy), false)]
         [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
         ProxyPort,
@@ -790,7 +790,7 @@ namespace PrtgAPI
         /// Username to use for proxy server authentication.<para/>
         /// Corresponds to Proxy Settings for HTTP Sensors -> User.
         /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [DependentProperty(nameof(InheritProxy), false)]
         [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
         ProxyUser,
@@ -866,7 +866,7 @@ namespace PrtgAPI
         /// Whether to inherit this object's scanning interval settings from its parent.
         /// </summary>
         [LiteralValue]
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
         InheritInterval,
 
@@ -874,7 +874,7 @@ namespace PrtgAPI
         /// The <see cref="PrtgAPI.ScanningInterval"/> with which an object refreshes its data.
         /// </summary>
         [Description("interval")]
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [DependentProperty(nameof(InheritInterval), false)]
         [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
         Interval,
@@ -882,7 +882,7 @@ namespace PrtgAPI
         /// <summary>
         /// The <see cref="PrtgAPI.IntervalErrorMode"/> indicating the number of scanning intervals to wait before setting a sensor to <see cref="Status.Down"/> when an error is reported.
         /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
+        [TypeLookup(typeof(TableSettings))]
         [DependentProperty(nameof(InheritInterval), false)]
         [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
         IntervalErrorMode,
@@ -895,14 +895,14 @@ namespace PrtgAPI
         //todo: also note this on sensorsettings and whatever base class we end up using
 
         //[LiteralValue]
-        //[TypeLookup(typeof(SensorSettings))]
+        //[TypeLookup(typeof(TableSettings))]
         //InheritDependency,
 
         ///// <summary>
         ///// Whether a one-time maintenance window has been defined.<para/>
         ///// Corresponds to Schedules, Dependencies and Maintenance Window -> Maintenance Window.
         ///// </summary>
-        //[TypeLookup(typeof(SensorSettings))]
+        //[TypeLookup(typeof(TableSettings))]
         //MaintenanceEnabled,
 
         #endregion

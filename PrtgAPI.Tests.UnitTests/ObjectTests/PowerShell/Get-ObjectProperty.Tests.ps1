@@ -64,6 +64,6 @@ Describe "Get-ObjectProperty" {
 
         $properties.name | Should Be "Server CPU Usage"
         $properties.interval | Should Be "60|60 seconds"
-        $properties.schedule | Should Be "627|Weekdays Nights (17:00 - 9:00) [GMT+1100]|"
+        $properties.schedule | Should Be "627|Weekdays Nights (17:00 - 9:00) [GMT+0800]|"
     }
 }

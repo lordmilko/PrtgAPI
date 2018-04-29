@@ -10,7 +10,5 @@ namespace PrtgAPI.Request
         bool LazyInitialized { get; set; }
 
         object LazyLock { get; }
-
-        T InitializeLazy<T>(Func<T> getValue);
     }
 }

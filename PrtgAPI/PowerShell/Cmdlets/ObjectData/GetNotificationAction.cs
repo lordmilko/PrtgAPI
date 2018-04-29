@@ -14,13 +14,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="synopsis">Get-NotificationAction supports filtering returned actions by a number of parameters, including by -Name,
     /// -Id, -Tags or a custom SearchFilter. When filtering by tags, the -Tag parameter can be used, performing a logical OR between all
-    /// specified operands. For scenarios in which you wish to filter for devices containing ALL specified tags, the -Tags
+    /// specified operands. For scenarios in which you wish to filter for notification actions containing ALL specified tags, the -Tags
     /// parameter can be used, performing a logical AND between all specified operands.</para>
     /// 
-    /// <para type="description">Get-Device provides two parameter sets for filtering objects by tags. When filtering for devices
-    /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
-    /// For scenarios in which you wish to filter for devices containing ALL specified tags, the -Tags
-    /// parameter can be used, performing a logical AND between all specified operands.</para>
+    /// <para type="description">Get-NotificationAction provides two parameter sets for filtering objects by tags. When filtering for
+    /// notification actions that contain one of several tags, the -Tag parameter can be used, performing a logical OR between
+    /// all specified operands. For scenarios in which you wish to filter for notification actions containing ALL specified tags,
+    /// the -Tags parameter can be used, performing a logical AND between all specified operands.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger</code>
@@ -42,11 +42,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Get all notification actions tagged with "PagerDuty"</para>
     ///     <para/>
     /// </example>
+    /// 
+    /// <para type="link">Get-NotificationTrigger</para>
+    /// <para type="link">New-TriggerParameters</para>
     /// </summary>
     [OutputType(typeof(NotificationAction))]
     [Cmdlet(VerbsCommon.Get, "NotificationAction", DefaultParameterSetName = LogicalAndTags)]
-    public class GetNotificationAction : PrtgTableFilterCmdlet<NotificationAction, NotificationActionParameters>
+    public class GetNotificationAction : PrtgTableTagCmdlet<NotificationAction, NotificationActionParameters>
     {
+        //Notification Actions do not support filtering by tags server side. To account for this, we temporarily
+        //remove all tag filters, execute the request, restore the filters and then filter client side
         private string[] tag;
         private string[] tags;
 

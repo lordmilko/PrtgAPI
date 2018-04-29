@@ -101,5 +101,40 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region Schedule
+
+        [TestMethod]
+        public void Schedule_ReferenceEquals_Schedule()
+        {
+            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
+            Schedule schedule2 = schedule1;
+
+            Assert.IsTrue(schedule1.Equals(schedule2));
+        }
+
+        [TestMethod]
+        public void Schedule_ValueEquals_Schedule()
+        {
+            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
+            Schedule schedule2 = new Schedule("623|Saturdays [GMT+0800]|");
+            Schedule schedule3 = new Schedule("622|Sundays [GMT+0800]|");
+
+            Assert.IsTrue(schedule1.Equals(schedule2));
+            Assert.IsFalse(schedule1.Equals(schedule3));
+        }
+
+        [TestMethod]
+        public void Schedule_HashCodeEquals_Schedule()
+        {
+            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
+            Schedule schedule2 = new Schedule("623|Saturdays [GMT+0800]|");
+
+            var schedule1Hash = schedule1.GetHashCode();
+            var schedule2Hash = schedule2.GetHashCode();
+
+            Assert.AreEqual(schedule1Hash, schedule2Hash);
+        }
+
+        #endregion
     }
 }

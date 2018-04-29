@@ -34,47 +34,6 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         #SetValue "StackUnit" BLAH #how do we get a list of valid units? what happens if you set an invalid one? maybe do channel.unit?
     }
 
-    It "Scanning Interval" {
-
-        $object = Get-Sensor -Id (Settings UpSensor)
-
-        SetValue "InheritInterval"   $true
-
-        try
-        {
-            $object | Set-ObjectProperty InheritInterval $true
-
-            SetChild "Interval"          "00:01:00"         "InheritInterval" $false
-            SetChild "IntervalErrorMode" OneWarningThenDown "InheritInterval" $false
-        }
-        finally
-        {
-            $object | Set-ObjectProperty InheritInterval $false
-        }
-    }
-
-    It "Schedules, Dependencies and Maintenance Window" {
-        $object = Get-Sensor -Id (Settings PausedByDependencySensor)
-
-        GetValue "Schedule"           "None"
-        GetValue "MaintenanceEnabled" $false
-        GetValue "MaintenanceStart"   (Settings MaintenanceStart)
-        GetValue "MaintenanceEnd"     (Settings MaintenanceStart)
-        GetValue "DependencyType"     "Object"
-        GetValue "DependentObjectId"  (Settings DownAcknowledgedSensor)
-        GetValue "DependencyDelay"    0
-        #SetValue "InheritDependency"  $true
-        #SetChild "Schedule" BLAH #todo - get rid of the getchild "schedule"
-        #SetChild "MaintenanceEnabled" $true
-        #SetGrandChild MaintenanceStart
-        #SetGrandChild MaintenanceEnd
-        #SetChild DependencyType Object #todo: will this not work if i havent also specified the object to use at the same time?
-        #should we maybe create a dependency attribute between the two? and would the same be true vice versa? (so when you set it to master,
-        #the dependencyvalue goes away? check how its meant to work with fiddler)
-        #SetChild Dependency (Settings DownSensor)
-        #SetChild DependencyDelay 3
-    }
-
     It "Access Rights" {
         $object = Get-Sensor -Id (Settings UpSensor)
 
@@ -113,16 +72,6 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetGrandChild "PostContentType" "customType" "UseCustomPostContent" $true "HttpRequestMethod" "POST"
         #GetValue "SNI" "blah"
         SetValue "UseSNIFromUrl" $true
-    }
-
-    It "Proxy Settings for HTTP Sensors" {
-        $object = Get-Sensor -Id (Settings UpSensor)
-
-        SetValue      "InheritProxy"  $false
-        SetChild      "ProxyAddress"  "https://proxy.example.com"      "InheritProxy" $false
-        SetChild      "ProxyPort"     "3128"                           "InheritProxy" $false
-        SetChild      "ProxyUser"     "newUser"                        "InheritProxy" $false
-        SetWriteChild "ProxyPassword" "newPassword" "HasProxyPassword" "InheritProxy" $false
     }
 
     It "Sensor Settings (EXE/XML)" {

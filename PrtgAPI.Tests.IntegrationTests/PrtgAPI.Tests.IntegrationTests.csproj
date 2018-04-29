@@ -117,6 +117,7 @@
     <None Include="PowerShell\Get-ObjectLog.Tests.ps1" />
     <None Include="PowerShell\Get-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\Get-Probe.Tests.ps1" />
+    <None Include="PowerShell\Get-PrtgSchedule.Tests.ps1" />
     <None Include="PowerShell\Get-PrtgStatus.Tests.ps1" />
     <None Include="PowerShell\Get-Sensor.Tests.ps1" />
     <None Include="PowerShell\Get-SensorFactorySource.Tests.ps1" />

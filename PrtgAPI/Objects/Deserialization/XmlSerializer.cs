@@ -76,7 +76,7 @@ namespace PrtgAPI.Objects.Deserialization
 
             if (properties != null && properties.Length > 0)
             {
-                mappings = mappings.Where(m => properties.Any(p => p == m.AttributeValue[0])).ToList();
+                mappings = mappings.Where(m => properties.Any(p => m.AttributeValue.Any(v => v == p))).ToList();
             }
 
             foreach (var mapping in mappings)

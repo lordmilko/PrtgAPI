@@ -61,8 +61,13 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string ChannelWarningMessage;
 
         //Notification Actions
+        public static int NotificationAction;
+        public static string NotificationActionName;
         public static string NotificationActionTag1;
         public static string NotificationActionTag2;
+
+        //Schedules
+        public static int Schedule = -1;
 
         //Object Counts
 
@@ -85,6 +90,8 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static int NotificationTiggersOnDevice = -1;
         public static int NotificationActionsInTestServer = -1;
+
+        public static int SchedulesInTestServer = -1;
 
         //Settings
 
