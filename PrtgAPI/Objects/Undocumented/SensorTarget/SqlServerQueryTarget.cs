@@ -35,7 +35,7 @@ namespace PrtgAPI
 
         internal static List<SqlServerQueryTarget> GetQueries(string response)
         {
-            return CreateFromDropDownOptions(response, "sqlquery", o => new SqlServerQueryTarget(o));
+            return CreateFromDropDownOptions(response, ObjectProperty.SqlServerQuery, o => new SqlServerQueryTarget(o));
         }
     }
 }

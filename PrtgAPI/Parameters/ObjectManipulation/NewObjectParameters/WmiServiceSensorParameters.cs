@@ -74,7 +74,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         public bool NotifyStarted
         {
-            get { return (bool)GetCustomParameterBool(ObjectProperty.NotifyStarted); }
+            get { return (bool) GetCustomParameterBool(ObjectProperty.NotifyStarted); }
             set { SetCustomParameterBool(ObjectProperty.NotifyStarted, value); }
         }
 

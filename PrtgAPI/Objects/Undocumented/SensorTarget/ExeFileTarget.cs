@@ -44,7 +44,7 @@ namespace PrtgAPI
 
         internal static List<ExeFileTarget> GetFiles(string response)
         {
-            return CreateFromDropDownOptions(response, "exefile", o => new ExeFileTarget(o));
+            return CreateFromDropDownOptions(response, ObjectProperty.ExeFile, o => new ExeFileTarget(o));
         }
     }
 }

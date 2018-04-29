@@ -6,7 +6,7 @@ using PrtgAPI.Helpers;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Describes a system service on a Microsoft Windows system that can be monitored via WMI.
+    /// Describes a system service on a Microsoft Windows server that can be monitored via WMI.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class WmiServiceTarget : SensorTarget<WmiServiceTarget>
@@ -44,7 +44,7 @@ namespace PrtgAPI
 
         internal static List<WmiServiceTarget> GetServices(string response)
         {
-            return CreateFromCheckbox(response, "service__check", v => new WmiServiceTarget(v));
+            return CreateFromCheckbox(response, Parameter.Service, v => new WmiServiceTarget(v));
         }
     }
 }

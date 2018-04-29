@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI
 {
@@ -64,6 +66,13 @@ namespace PrtgAPI
             throw new InvalidCastException($"Cannot convert '{obj}' of type '{obj.GetType()}' to type '{nameof(T)}'. Value type must be convertable to type {typeof(T).FullName}.");
         }
 
+        internal static List<T> CreateFromDropDownOptions(string response, ObjectProperty name, Func<string, T> createObj)
+        {
+            var val = SetObjectPropertyParameters.GetParameterName(name).TrimEnd('_');
+
+            return CreateFromDropDownOptions(response, val, createObj);
+        }
+
         /// <summary>
         /// Retrieves a list of sensor targets from a list of options on a specified dropdown list.
         /// </summary>
@@ -80,6 +89,13 @@ namespace PrtgAPI
                 .ToList();
 
             return files;
+        }
+
+        internal static List<T> CreateFromCheckbox(string response, Parameter name, Func<string, T> createObj)
+        {
+            var val = name.GetDescription();
+
+            return CreateFromCheckbox(response, val, createObj);
         }
 
         /// <summary>
