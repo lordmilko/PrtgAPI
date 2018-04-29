@@ -108,7 +108,10 @@ namespace PrtgAPI.Request
                 delim = "&";
             }
 
-            urlBuilder.Append(delim + GetUrlComponent(parameter, value));
+            var component = GetUrlComponent(parameter, value);
+
+            if (!string.IsNullOrEmpty(component))
+                urlBuilder.Append(delim + component);
         }
 
         private string GetUrlComponent(Parameter parameter, object value)

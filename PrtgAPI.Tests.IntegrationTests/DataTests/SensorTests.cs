@@ -71,5 +71,57 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
             AssertEx.IsFalse(ascending.SequenceEqual(descending), "Ascending and descending lists were equal");
         }
+
+        [TestMethod]
+        public void Data_GetSensors_FiltersByTimeSpan()
+        {
+            var sensor = client.AddSensor(Settings.Device, new HttpSensorParameters()).Single();
+
+            try
+            {
+                CheckAndSleep(sensor.Id);
+
+                var newSensor = client.GetSensors(
+                    new SearchFilter(Property.UpDuration, FilterOperator.LessThan, TimeSpan.FromMinutes(1)),
+                    new SearchFilter(Property.Id, sensor.Id)
+                );
+
+                Assert.AreEqual(1, newSensor.Count);
+                Assert.AreEqual(sensor.Id, newSensor.Single().Id);
+            }
+            finally
+            {
+                client.RemoveObject(sensor.Id);
+            }
+        }
+
+        [TestMethod]
+        public void Data_GetSensors_FiltersByDateTime()
+        {
+            var sensor = client.AddSensor(Settings.Device, new HttpSensorParameters()).Single();
+
+            try
+            {
+                CheckAndSleep(sensor.Id);
+
+                var check1 = client.GetSensors(Property.Id, sensor.Id).Single();
+
+                if (check1.LastCheck == null)
+                    CheckAndSleep(sensor.Id);
+
+                var check2 = client.GetSensors(Property.Id, sensor.Id).Single();
+
+                var newSensor = client.GetSensors(
+                    new SearchFilter(Property.LastCheck, FilterOperator.GreaterThan, DateTime.Now.AddMinutes(-1)),
+                    new SearchFilter(Property.Id, sensor.Id)
+                );
+
+                Assert.IsTrue(newSensor.Any(s => s.Id == sensor.Id));
+            }
+            finally
+            {
+                client.RemoveObject(sensor.Id);
+            }
+        }
     }
 }

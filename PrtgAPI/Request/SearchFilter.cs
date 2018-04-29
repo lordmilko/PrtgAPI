@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Web;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
@@ -63,6 +64,15 @@ namespace PrtgAPI
 
                 if (attrib != null)
                     val = attrib.Name;
+            }
+            else
+            {
+                if (value is DateTime)
+                {
+                    val = ((DateTime)value).ToUniversalTime().ToOADate().ToString(CultureInfo.InvariantCulture);
+                }
+                else if (value is TimeSpan)
+                    val = ((TimeSpan)value).TotalSeconds.ToString(CultureInfo.InvariantCulture);
             }
 
             if (operatorDescription == null)

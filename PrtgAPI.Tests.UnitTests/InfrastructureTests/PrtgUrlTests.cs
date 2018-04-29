@@ -200,6 +200,28 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
+        public void PrtgUrl_SearchFilter_With_TimeSpan()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.FilterXyz] = new[] {new SearchFilter(Property.UpDuration, new TimeSpan(1, 2, 3))}
+            });
+
+            Assert.AreEqual("filter_uptimesince=3723", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_SearchFilter_With_DateTime()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.FilterXyz] = new[] { new SearchFilter(Property.LastUp, new DateTime(2000, 10, 2, 12, 10, 5)) }
+            });
+
+            Assert.AreEqual("filter_lastup=36801.0903356482", url);
+        }
+
+        [TestMethod]
         public void PrtgUrl_Throws_WhenCustomParameterValueIsWrongType()
         {
             AssertEx.Throws<ArgumentException>(() =>
@@ -217,6 +239,17 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var url = CreateUrl(new Parameters.Parameters
             {
                 [Parameter.Custom] = null
+            });
+
+            Assert.AreEqual(string.Empty, url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsEmptyList()
+        {
+            var url = CreateUrl(new Parameters.Parameters
+            {
+                [Parameter.Custom] = new CustomParameter[] {}
             });
 
             Assert.AreEqual(string.Empty, url);
@@ -312,6 +345,30 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             }, "Parameter 'Name' is of type SingleValue, however a list of elements was specified");
         }
 
+        [TestMethod]
+        public void PrtgUrl_Null_SearchFilter()
+        {
+            var url = CreateUrl(new SensorParameters
+            {
+                SearchFilter = null,
+                Properties = new[] { Property.Name }
+            });
+
+            Assert.AreEqual("content=sensors&columns=name&count=*", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_Empty_SearchFilters()
+        {
+            var url = CreateUrl(new SensorParameters
+            {
+                SearchFilter = new SearchFilter[] { },
+                Properties = new[] { Property.Name }
+            });
+
+            Assert.AreEqual("content=sensors&columns=name&count=*", url);
+        }
+
         public static string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
         {
             var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);
@@ -320,11 +377,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             {
                 var suffix = "https://prtg.example.com/api/table.xml?";
                 var prefix = $"&username=username&passhash=password";
-
-                Assert.IsTrue(url.Url.StartsWith(suffix), "URL did not start with suffix");
+                try
+                {
+                    Assert.IsTrue(url.Url.StartsWith(suffix), "URL did not start with suffix");
+                }
+                catch
+                {
+                    Assert.IsTrue(url.Url.StartsWith(suffix.Substring(0, suffix.Length - 1) + "&"));
+                }
                 Assert.IsTrue(url.Url.EndsWith(prefix), "URL did not end with prefix");
 
-                return url.Url.Substring(suffix.Length, url.Url.Length - (suffix.Length + prefix.Length));
+                var length = url.Url.Length - (suffix.Length + prefix.Length);
+
+                if (length == -1)
+                    return string.Empty;
+
+                return url.Url.Substring(suffix.Length, length);
             }
 
             return url.Url;
