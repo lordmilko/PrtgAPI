@@ -116,5 +116,41 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
             $sensors.Count | Should Be 4
         }
     }
+
+    It "filtering by name only uses equals" {
+
+        SetAddressValidatorResponse "filter_name=ping"
+
+        Get-Sensor ping
+    }
+
+    It "filtering by name and tags uses contains" {
+            
+        SetAddressValidatorResponse "filter_name=@sub(ping)&filter_tags=@sub(wmicpu)"
+
+        Get-Sensor ping -Tags wmicpu*
+    }
+
+    It "filtering by name and devices uses equals" {
+            
+        SetAddressValidatorResponse "filter_name=ping&filter_parentid=40"
+
+        $device = Run Device { Get-Device }
+
+        $device | Get-Sensor ping
+    }
+
+    It "filtering by groups uses contains" {
+            
+        SetAddressValidatorResponse "filter_name=@sub(ping)&filter_group=Windows+Infrastructure"
+
+        $group = Run Group { Get-Group }
+
+        $group | Get-Sensor ping -Recurse:$false
+    }
+
+    It "throws filtering by Status 0" {
+        { Get-Sensor -Status 0 } | Should Throw "is not a member of type PrtgAPI.Status"
+    }
 }
 

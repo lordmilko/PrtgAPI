@@ -33,7 +33,9 @@ namespace PrtgAPI.PowerShell.Base
         public SearchFilter[] Filter { get; set; }
 
         /// <summary>
-        /// <para type="description">Maximum number of results to return.</para>
+        /// <para type="description">Maximum number of results to return. Note: when this parameter is specified wildcard filters
+        /// such as <see cref="Name"/> may behave unexpectedly when wildcard characters are not used and records are being filtered
+        /// by an additional property other than <see cref="Property.ParentId"/>.</para>
         /// </summary>
         [Parameter(Mandatory = false, HelpMessage = "Maxmimum number of results to return.")]
         public int? Count { get; set; }
@@ -185,6 +187,7 @@ namespace PrtgAPI.PowerShell.Base
 
             ProcessNameFilter();
             ProcessAdditionalParameters();
+            ValidateFilters();
             
             if (Filter != null)
                 StreamProvider.StreamResults = false;
@@ -206,6 +209,27 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected virtual void ProcessAdditionalParameters()
         {
+        }
+
+        internal virtual void ValidateFilters()
+        {
+            if (Filter != null)
+            {
+                var filters = Filter.ToList();
+
+                var safeProperties = new[]
+                {
+                    Property.ParentId
+                };
+
+                filters = filters.Where(f => safeProperties.All(p => p != f.Property)).ToList();
+
+                if (filters.Count == 1 && filters.Single().Property == Property.Name && Name != null)
+                {
+                    if (!Name.Any(n => n.Contains("*")))
+                        filters.Single().Operator = FilterOperator.Equals;
+                }
+            }
         }
 
         private void ProcessNameFilter()

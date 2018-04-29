@@ -128,13 +128,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override List<Sensor> GetObjectsInternal(SensorParameters parameters)
         {
-            if (Group != null)
+            if (Group != null && Recurse)
             {
                 var groups = client.GetGroups(Property.Name, Group.Name);
 
                 //If more than 1 group with the specified name exists and we intend on recursing, get the sensors
                 //of each device under the group (which will be identified via the group's ID).
-                if (groups.Count > 1 && Recurse)
+                if (groups.Count > 1)
                 {
                     client.Log($"Parent group name '{Group}' is not unique and -{nameof(Recurse)} was specified; retrieving sensors by child devices");
 
@@ -143,8 +143,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 else
                 {
-                    if (Recurse)
-                        client.Log($"Parent group '{Group}' is unique; retrieving sensors by group name");
+                    client.Log($"Parent group '{Group}' is unique; retrieving sensors by group name");
                 }
             }
 

@@ -186,7 +186,12 @@ namespace PrtgAPI.Helpers
 
         public static TAttribute GetEnumAttribute<TAttribute>(this Enum element, bool mandatory = false) where TAttribute : Attribute
         {
-            var attributes = element.GetType().GetMember(element.ToString()).First().GetCustomAttributes(typeof(TAttribute), false);
+            var member = element.GetType().GetMember(element.ToString()).FirstOrDefault();
+
+            if(member == null)
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}");
+
+            var attributes = member.GetCustomAttributes(typeof(TAttribute), false);
 
             if (attributes.Any())
                 return (TAttribute)attributes.First();
