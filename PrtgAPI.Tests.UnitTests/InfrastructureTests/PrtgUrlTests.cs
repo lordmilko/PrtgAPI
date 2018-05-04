@@ -215,10 +215,10 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var url = CreateUrl(new Parameters.Parameters
             {
-                [Parameter.FilterXyz] = new[] { new SearchFilter(Property.LastUp, new DateTime(2000, 10, 2, 12, 10, 5)) }
+                [Parameter.FilterXyz] = new[] { new SearchFilter(Property.LastUp, new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc)) }
             });
 
-            Assert.AreEqual("filter_lastup=36801.0903356482", url);
+            Assert.AreEqual("filter_lastup=36801.5070023148", url);
         }
 
         [TestMethod]

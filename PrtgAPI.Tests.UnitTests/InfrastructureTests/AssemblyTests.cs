@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -68,7 +70,8 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
-        public void AllTextFiles_UseSpaces()
+        [TestCategory("SkipCI")]
+        public void AllTextFiles_UseSpaces_AndCRLF()
         {
             var path = GetProjectRoot();
 
@@ -78,18 +81,41 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 ".cs",
                 ".ps1",
                 ".txt",
-                ".md"
+                ".md",
+                ".ps1xml"
             };
 
             var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories).Where(f =>
                 types.Any(f.EndsWith)
             );
 
+            var badNewLines = new List<string>();
+
             foreach (var file in files)
             {
-                if (File.ReadAllText(file).Contains("\t"))
+                var text = File.ReadAllText(file);
+
+                if (text.Contains("\t"))
                     throw new Exception($"{file} contains tabs");
+
+                var matches = Regex.Matches(text, "\n");
+
+                foreach (Match match in matches)
+                {
+                    var index = match.Index;
+
+                    var prev = text[index - 1];
+
+                    if (prev != '\r')
+                    {
+                        badNewLines.Add(new FileInfo(file).Name);
+                        break;
+                    }
+                }
             }
+
+            if (badNewLines.Count > 0)
+                throw new Exception($"{string.Join(", ", badNewLines) } are missing CRLF");
         }
 
         [TestMethod]
