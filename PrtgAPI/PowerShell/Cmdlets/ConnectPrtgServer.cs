@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management.Automation;
+using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -29,9 +30,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">Attempting to invoke Connect-PrtgServer after a <see cref="PrtgClient"/> has already been initialized
     /// for the current session will generate an exception. To override the existing <see cref="PrtgClient"/>, specify the -Force
-    /// parameter to Connect-PrtgServer, or invalidate the <see cref="PrtgClient"/> by calling Disconnect-PrtgServer.</para>
+    /// parameter to Connect-PrtgServer, or invalidate the <see cref="PrtgClient"/> by calling Disconnect-PrtgServer. The current <see cref="PrtgClient"/>
+    /// can be retrieved via the Get-PrtgClient cmdlet. This cmdlet can also be used to detect whether a connection is active. If you wish to
+    /// retrieve the <see cref="PrtgClient"/> immediately upon connecting to PRTG, this can be achieved by specifying the -<see cref="PassThru"/>
+    /// parameter to Connect-PrtgServer.</para>
     /// 
-    /// <para type="description">For information on viewing and editing the session's <see cref="PrtgClient"/> settings see Get-PrtgClient.</para> 
+    /// <para type="description">For information on viewing and editing the session's <see cref="PrtgClient"/> settings see Get-Help Get-PrtgClient.</para> 
     /// 
     /// <example>
     ///     <code>C:\> Connect-PrtgServer prtg.example.com</code>
@@ -55,6 +59,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
+    ///     <code>C:\> if(!(Get-PrtgClient))</code>
+    ///     <para>C:\> {</para>
+    ///     <para>C:\>     Connect-PrtgServer prtg.example.com</para>
+    ///     <para>C;\> }</para>
+    ///     <para>Connect to a PRTG Server only if an existing connection is not active.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $client = Connect-PrtgServer prtg.example.com -PassThru</code>
+    ///     <para>Connect to a PRTG Server, storing the PrtgClient for later use.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
     ///     <code>C:\> Connect-PrtgServer prtg.example.com -RetryCount 3 -RetryDelay 5</code>
     ///     <para>Connect to a PRTG Server, indicating that any requests that fail during the use of the PrtgClient should be attempted
     /// at most 3 times, with a delay of 5 seconds between each attempt.</para>
@@ -66,7 +83,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Disable-PrtgProgress</para>
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "PrtgServer")]
-    public class ConnectPrtgServer : PSCmdlet
+    public class ConnectPrtgServer : PSCmdlet, IPrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">Specifies the PRTG Server requests will be made against.</para>
@@ -111,6 +128,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public bool? Progress { get; set; }
 
         /// <summary>
+        /// Specifies whether to return the <see cref="PrtgClient"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter PassThru { get; set; }
+
+        /// <summary>
+        /// Returns the <see cref="PrtgClient"/> that was created by this cmdlet.
+        /// </summary>
+        public object PassThruObject => PrtgSessionState.Client;
+
+        /// <summary>
+        /// Writes the current <see cref="PassThruObject"/> to the pipeline if <see cref="PassThru"/> is specified.
+        /// </summary>
+        public void WritePassThru()
+        {
+            if (PassThru)
+                WriteObject(PassThruObject);
+        }
+
+        /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
@@ -131,6 +168,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     PrtgSessionState.EnableProgress = false;
                 else
                     PrtgSessionState.EnableProgress = true;
+
+                WritePassThru();
             }
             else
             {

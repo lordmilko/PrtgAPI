@@ -61,4 +61,12 @@ Describe "Connect-PrtgServer" {
     It "specifies no progress" {
         Connect-PrtgServer prtg.example.com (New-Credential username 12345678) -PassHash -Progress $false
     }
+
+    It "passes thru a PrtgClient" {
+        $client = Connect-PrtgServer prtg.example.com (New-Credential username 12345678) -PassHash -PassThru -Force
+
+        $realClient = Get-PrtgClient
+
+        $client | Should Be $realClient
+    }
 }
