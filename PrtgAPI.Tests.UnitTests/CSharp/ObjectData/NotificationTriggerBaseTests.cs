@@ -8,7 +8,7 @@ using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
-    public abstract class NotificationTriggerBaseTests : ObjectTests<NotificationTrigger, NotificationTriggerItem, NotificationTriggerResponse>
+    public abstract class NotificationTriggerBaseTests : StandardObjectTests<NotificationTrigger, NotificationTriggerItem, NotificationTriggerResponse>
     {
         protected NotificationAction GetNotificationAction()
         {

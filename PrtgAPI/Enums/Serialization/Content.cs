@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI
+﻿using System.ComponentModel;
+
+namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the type of content to retrieve from a PRTG API Request.
@@ -8,9 +10,16 @@
         //SensorTree,
 
         /// <summary>
+        /// System objects internally used by PRTG.
+        /// </summary>
+        [Description("basenode")]
+        System,
+
+        /// <summary>
         /// Site containing PRTG Network Monitor software used to monitor a network.
         /// </summary>
-        ProbeNode,
+        [Description("probenode")]
+        Probes,
 
         /// <summary>
         /// Groups used to organize devices.
@@ -65,7 +74,28 @@
         /// <summary>
         /// Event logs specific to an object and its children.
         /// </summary>
-        Messages,
+        [Description("messages")]
+        Logs,
+
+        /// <summary>
+        /// A report used to report on the values of sensors.
+        /// </summary>
+        Report,
+
+        /// <summary>
+        /// A library used to organized objects.
+        /// </summary>
+        Library,
+
+        /// <summary>
+        /// Web Server settings.
+        /// </summary>
+        UnifiedOptions,
+
+        /// <summary>
+        /// A dashboard.
+        /// </summary>
+        Map,
 
         /*Tickets,
         TicketData,        
@@ -75,6 +105,16 @@
         /// <summary>
         /// All content types, including those unsupported by PRTG. Note: PRTG does not recognize "objects" as a valid content type, and as such this property should be used with caution.
         /// </summary>
-        Objects
+        Objects,
+
+        /// <summary>
+        /// A user account capable of logging into PRTG.
+        /// </summary>
+        User,
+
+        /// <summary>
+        /// A group used for organizing user accounts.
+        /// </summary>
+        UserGroup
     }
 }

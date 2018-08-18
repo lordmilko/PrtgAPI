@@ -1,89 +1,92 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
-    /*
-     
-    Generating a response item
-    1. replace \r\n\r\n with \r\n
-    2. replace " with \"
-    3. replace (<)(.+?)(>)(.+)(</(?:.(?!/))+$) with
-
-    string $2 = "$4",
-
-    4. replace (<)(.+)(/>) with string $2 = null,
-
-    now create a new constructor for your class, copy and paste all the items in as the arguments
-
-    5. do it again, with the replacement text
-        new XElement("$2", item.$2),
-    6. do 5 again with 4's search value
-     
-    now create a new response class, the xml is var xml = new XElement("item",
-        <your xelements>
-    );
-
-    7. replace 3. with $2 = $2;
-    8. replace 4 with $2 = $2;
-
-        this goes in the body of your response items constructor
-
-    9. replace 3 and 4 with public string $2 { get; set; }
-    */
-
     [TestClass]
-    public abstract class ObjectTests<TObject, TItem, TResponse> : BaseObjectTests<TObject, TItem, TResponse> where TResponse : IWebResponse
+    public class ObjectTests : StreamableObjectTests<PrtgObject, BaseItem, ObjectResponse>
     {
-        protected void Object_CanDeserialize()
+        [TestMethod]
+        public void PrtgObject_CanDeserialize() => Object_CanDeserialize();
+
+        [TestMethod]
+        public async Task PrtgObject_CanDeserializeAsync() => await Object_CanDeserializeAsync();
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        public void PrtgObject_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
+
+        [TestMethod]
+        public void PrtgObject_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
+            (c1, c2) => new List<Func<int, object>> { i => c1.GetObject(i), i => c2.GetObjectAsync(i) },
+            (c1, c2) => new List<Func<Property, object, object>> { c1.GetObjects, c2.GetObjectsAsync },
+            (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetObjects, c2.GetObjectsAsync },
+            (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetObjects, c2.GetObjectsAsync }
+        );
+
+        [TestMethod]
+        public void PrtgObject_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
+            client => client.StreamObjects,
+            client => client.StreamObjects,
+            client => client.StreamObjects,
+            client => client.StreamObjects
+        );
+
+        [TestMethod]
+        public void PrtgObject_StreamSerially() => Object_SerialStreamObjects(
+            c => c.StreamObjects,
+            c => c.StreamObjects,
+            new PrtgObjectParameters()
+        );
+
+        [TestMethod]
+        public void PrtgObject_ResolvesAllTypes()
         {
-            var obj = GetSingleItem();
+            var client = Initialize_Client(new MultiTypeResponse());
 
-            Assert.IsTrue(obj != null, "The result of a deserialization attempt was null");
-
-            //todo - loop over our items xml, ensuring that the corresponding sensor property with an xmlelementattribute isnt null
-            //this is slightly different from the check we did in sensor_allfields_havevalues?
+            Assert.IsTrue(client.GetObject(4000, true) is Sensor);
+            Assert.IsTrue(client.GetObject(3000, true) is Device);
+            Assert.IsTrue(client.GetObject(2000, true) is Group);
+            Assert.IsTrue(client.GetObject(1000, true) is Probe);
+            Assert.IsTrue(client.GetObject(600, true) is Schedule);
+            Assert.IsTrue(client.GetObject(300, true) is NotificationAction);
         }
 
-        protected async Task Object_CanDeserializeAsync()
+        [TestMethod]
+        public async Task PrtgObject_ResolvesAllTypesAsync()
         {
-            var obj = await GetSingleItemAsync();
+            var client = Initialize_Client(new MultiTypeResponse());
 
-            Assert.IsTrue(obj != null, "The result of a deserialization attempt was null");
+            Assert.IsTrue(await client.GetObjectAsync(4000, true) is Sensor);
+            Assert.IsTrue(await client.GetObjectAsync(3000, true) is Device);
+            Assert.IsTrue(await client.GetObjectAsync(2000, true) is Group);
+            Assert.IsTrue(await client.GetObjectAsync(1000, true) is Probe);
+            Assert.IsTrue(await client.GetObjectAsync(600, true) is Schedule);
+            Assert.IsTrue(await client.GetObjectAsync(300, true) is NotificationAction);
         }
 
-        protected void Object_CanDeserialize_Multiple()
-        {
-            var objs = GetMultipleItems();
+        [TestMethod]
+        public void PrtgObject_GetPrtgObject_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetObject(1001));
 
-            Assert.AreEqual(GetItems().Length, objs.Count, "Expected number of results");
-        }
+        [TestMethod]
+        public void PrtgObject_GetPrtgObject_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetObject(1001));
 
-        protected async Task Object_CanDeserializeAsync_Multiple()
-        {
-            var objs = await GetMultipleItemsAsync();
+        [TestMethod]
+        public void PrtgObject_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
-            Assert.AreEqual(GetItems().Length, objs.Count, "Expected number of results");
-        }
+        protected override List<PrtgObject> GetObjects(PrtgClient client) => client.GetObjects();
 
-        protected void Object_AllFields_HaveValues(Func<PropertyInfo, bool> customHandler = null)
-        {
-            var obj = GetSingleItem();
+        protected override async Task<List<PrtgObject>> GetObjectsAsync(PrtgClient client) => await client.GetObjectsAsync();
 
-            AssertEx.AllPropertiesAreNotDefault(obj, customHandler);
-        }
+        protected override IEnumerable<PrtgObject> Stream(PrtgClient client) => client.StreamObjects();
 
-        protected void Object_AllFields_HaveValues_Multiple()
-        {
-            var objs = GetMultipleItems();
+        public override BaseItem GetItem() => new SensorItem();
 
-            foreach (var obj in objs)
-            {
-                AssertEx.AllPropertiesAreNotDefault(obj);
-            }
-        }
+        protected override ObjectResponse GetResponse(BaseItem[] items) => new ObjectResponse(items);
     }
 }

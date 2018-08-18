@@ -656,6 +656,44 @@ for(int i = 0; i < 2; i++)
                 return null;
             }
         }
+
+<#
+}
+#>
+        //######################################
+        // GetObject
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("GetObjectInternal", "PrtgObject", i)#>(int objectId, bool resolve)
+        {
+            var objs = (<#= CallFunction("GetObjects", "Property.Id, objectId", i) #>);
+
+            if (objs.Count != 1)
+                return objs.SingleObject(objectId);
+
+            var obj = objs.Single();
+
+            if (resolve)
+            {
+                switch (obj.Type.Value)
+                {
+                    case ObjectType.Sensor:       return <#= CallFunction("GetSensor", "objectId", i) #>;
+                    case ObjectType.Device:       return <#= CallFunction("GetDevice", "objectId", i) #>;
+                    case ObjectType.Group:        return <#= CallFunction("GetGroup", "objectId", i) #>;
+                    case ObjectType.Probe:        return <#= CallFunction("GetProbe", "objectId", i) #>;
+                    case ObjectType.Notification: return <#= CallFunction("GetNotificationAction", "objectId", i) #>;
+                    case ObjectType.Schedule:     return <#= CallFunction("GetSchedule", "objectId", i) #>;
+                    default:
+                        return obj;
+                }
+            }
+
+            return obj;
+        }
 <#
 if(i == 0)
     WriteLine("");

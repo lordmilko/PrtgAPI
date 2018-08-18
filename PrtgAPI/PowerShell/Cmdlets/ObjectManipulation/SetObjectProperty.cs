@@ -3,7 +3,6 @@ using System.Collections;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
@@ -13,9 +12,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <summary>
     /// <para type="synopsis">Modifies the value of a PRTG object property.</para>
     /// 
-    /// <para type="description">The Set-ObjectProperty cmdlet modifies properties and settings of PRTG Sensors, Devices, Groups and Probes.
-    /// All supported properties that can be modified are typesafe, using the type of the property on the Settings object returned from
-    /// Get-ObjectProperty.</para>
+    /// <para type="description">The Set-ObjectProperty cmdlet modifies properties and settings of PRTG Objects including
+    /// Sensors, Devices, Groups Probes, Notification Actions and Schedules.  All supported properties that can be modified
+    /// are typesafe, using the type of the property on the Settings object returned from Get-ObjectProperty.</para>
     /// 
     /// <para type="description">When a value is specified, Set-ObjectProperty will attempt to parse the value into its expected type. If the
     /// type cannot be parsed, an exception will be thrown indicating the type of the object specified and the type of value that was expected.
@@ -80,6 +79,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Probe</para>
+    /// <para type="link">Get-NotificationAction</para>
+    /// <para type="link">Get-PrtgSchedule</para> 
     /// <para type="link">Set-ChannelProperty</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ObjectProperty", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
@@ -89,7 +90,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The object to modify the properties of.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        public PrtgObject Object { get; set; }
 
         /// <summary>
         /// <para type="description">The property to modify.</para>
@@ -139,12 +140,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private CustomParameter[] parameters;
 
         /// <summary>
-        /// Provides a one-time, preprocessing functionality for the cmdlet.
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void BeginProcessingEx()
         {
-            base.BeginProcessing();
-
             if (ParameterSetName == ParameterSet.Default)
             {
                 //Value is not required, but is required in that we need to explicitly say null
@@ -167,6 +166,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     .Select(k => new CustomParameter(k.ToString(), PSObjectHelpers.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
                     .ToArray();
             }
+
+            base.BeginProcessingEx();
         }
 
         /// <summary>
@@ -213,7 +214,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
                 throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
 
-            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {Object.BaseType.ToString().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
+            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {PrtgProgressCmdlet.GetTypeDescription(Object.GetType()).ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
             {
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {whatIfStr}"))
                     ExecuteOrQueue(Object);
@@ -223,7 +224,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void ParseValue()
         {
             var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
-            Value = ParseValueIfRequired(prop, Value);
+            Value = ParseValueIfRequired(prop.Property, Value);
         }
 
         /// <summary>
@@ -299,7 +300,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object GetDynamicParameters()
         {
             if(dynamicParams == null)
-                dynamicParams = new DynamicParameterSet<ObjectProperty>(ParameterSet.Dynamic, e => BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(e));
+                dynamicParams = new DynamicParameterSet<ObjectProperty>(
+                    ParameterSet.Dynamic,
+                    e => BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(e).Property
+                );
 
             return dynamicParams.Parameters;
         }

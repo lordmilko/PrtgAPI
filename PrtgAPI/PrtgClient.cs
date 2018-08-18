@@ -189,202 +189,174 @@ namespace PrtgAPI
             return response;
         }
 
-        #region Get Objects
-
-        internal List<T> GetObjects<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
-            GetObjectsRaw<T>(parameters, function, responseValidator).Items;
-
-        private XmlDeserializer<T> GetObjectsRaw<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null)
-        {
-            var response = requestEngine.ExecuteRequest(function, parameters, responseValidator);
-
-            return SetVersion(XmlDeserializer<T>.DeserializeList(response));
-        }
-
-        internal async Task<List<T>> GetObjectsAsync<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
-            (await GetObjectsRawAsync<T>(parameters, function, responseValidator).ConfigureAwait(false)).Items;
-
-        private async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null)
-        {
-            var response = await requestEngine.ExecuteRequestAsync(function, parameters, responseValidator).ConfigureAwait(false);
-
-            return SetVersion(XmlDeserializer<T>.DeserializeList(response));
-        }
-
-        private T GetObject<T>(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
-        {
-            var response = requestEngine.ExecuteRequest(function, new Parameters.Parameters(), responseValidator);
-
-            return XmlDeserializer<T>.DeserializeType(response);
-        }
-
-        private async Task<T> GetObjectAsync<T>(XmlFunction function, Parameters.Parameters parameters)
-        {
-            var response = await requestEngine.ExecuteRequestAsync(function, parameters).ConfigureAwait(false);
-
-            return XmlDeserializer<T>.DeserializeType(response);
-        }
-
-        private T GetObject<T>(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
-        {
-            var response = requestEngine.ExecuteRequest(function, parameters, responseParser);
-
-            var data = JsonDeserializer<T>.DeserializeType(response);
-
-            return data;
-        }
-
-        private async Task<T> GetObjectAsync<T>(JsonFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
-        {
-            var response = await requestEngine.ExecuteRequestAsync(function, parameters, responseParser).ConfigureAwait(false);
-
-            var data = JsonDeserializer<T>.DeserializeType(response);
-
-            return data;
-        }
-
-        private XmlDeserializer<T> SetVersion<T>(XmlDeserializer<T> data)
-        {
-            if (version == null)
-                version = Version.Parse(data.Version.Trim('+'));
-
-            return data;
-        }
-
-        #endregion
-        #region Get Objects XML
-
-        private XDocument GetObjectsXml(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
-            requestEngine.ExecuteRequest(function, parameters, responseValidator);
-
-        private async Task<XDocument> GetObjectsXmlAsync(Parameters.Parameters parameters, XmlFunction function = XmlFunction.TableData, Action<string> responseValidator = null) =>
-            await requestEngine.ExecuteRequestAsync(function, parameters, responseValidator).ConfigureAwait(false);
-
-        #endregion
-        #region Stream Objects
-
-        private IEnumerable<T> StreamObjects<T>(ContentParameters<T> parameters, bool serial)
-        {
-            return StreamObjects<T, ContentParameters<T>>(parameters, serial, () => GetTotalObjects(parameters.Content), null, null);
-        }
-
-        private IEnumerable<TObject> StreamObjects<TObject, TParam>(TParam parameters, bool serial, Func<int> getCount,
-            Func<TParam, Task<List<TObject>>> getObjectsAsync,
-            Func<TParam, List<TObject>> getObjects) where TParam : PageableParameters
-        {
-            Log("Preparing to stream objects");
-            Log("Requesting total number of objects");
-
-            var totalObjects = getCount();
-
-            var limit = 20000;
-
-            if (totalObjects > limit || serial)
-            {
-                if(totalObjects > limit)
-                    Log($"Switching to serial stream mode as over {limit} objects were detected");
-
-                return SerialStreamObjectsInternal(parameters, totalObjects, false, getObjects);
-            }
-
-            return StreamObjectsInternal(parameters, totalObjects, false, getObjectsAsync);
-        }
-
-        internal IEnumerable<TObject> StreamObjectsInternal<TObject, TParam>(TParam parameters, int totalObjects, bool directCall,
-            Func<TParam, Task<List<TObject>>> getObjectsAsync = null) where TParam : PageableParameters
-        {
-            if (directCall)
-                Log("Preparing to stream objects");
-
-            if (getObjectsAsync == null)
-                getObjectsAsync = p => GetObjectsAsync<TObject>(p);
-
-            var tasks = new List<Task<List<TObject>>>();
-
-            parameters.Count = 500;
-
-            for (int i = 0; i < totalObjects;)
-            {
-                tasks.Add(getObjectsAsync(parameters));
-
-                i = i + parameters.Count.Value;
-                parameters.Page++;
-
-                if (totalObjects - i < parameters.Count)
-                    parameters.Count = totalObjects - i;
-            }
-
-            Log($"Requesting {totalObjects} objects from PRTG over {tasks.Count} tasks");
-
-            var result = new ParallelObjectGenerator<List<TObject>>(tasks.WhenAnyForAll()).SelectMany(m => m);
-
-            return result;
-        }
-
-        internal IEnumerable<TObject> SerialStreamObjectsInternal<TObject, TParam>(TParam parameters, int totalObjects, bool directCall,
-            Func<TParam, List<TObject>> getObjects = null) where TParam : PageableParameters
-        {
-            if (directCall)
-                Log("Preparing to serially stream objects");
-
-            if (getObjects == null)
-                getObjects = p => GetObjects<TObject>(p);
-
-            parameters.Count = 500;
-
-            for (int i = 0; i < totalObjects;)
-            {
-                var response = getObjects(parameters);
-
-                //Some object types (such as Logs) lie about their total number of objects.
-                //If no objects are returned, we've reached the total number of items
-                if (response.Count == 0)
-                    break;
-
-                foreach (var obj in response)
-                    yield return obj;
-
-                i = i + parameters.Count.Value;
-                parameters.Page++;
-
-                if (totalObjects - i < parameters.Count)
-                    parameters.Count = totalObjects - i;
-            }
-        }
-
-        #endregion
+        #region Objects
+            #region Single
 
         /// <summary>
-        /// Apply a modification function to each element of a response.
+        /// Retrieves an object of an unspecified type based on its object ID. If an object with the specified object ID
+        /// does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> exception is thrown.
         /// </summary>
-        /// <typeparam name="T">The type of objects returned by the response.</typeparam>
-        /// <param name="objects">The collection of objects to amend.</param>
-        /// <param name="action">A modification function to apply to each element of the collection.</param>
-        /// <returns>A collection of modified objects.</returns>
-        internal List<T> Amend<T>(List<T> objects, Action<T> action)
-        {
-            foreach (var obj in objects)
-            {
-                action(obj);
-            }
-
-            return objects;
-        }
+        /// <param name="objectId">The ID of the object to retrieve.</param>
+        /// <param name="resolve">Whether to resolve the resultant object to its most derived <see cref="PrtgObject"/> type. If the object type
+        /// is not supported by PrtgAPI, the original <see cref="PrtgObject"/> is returned.</param>
+        /// <exception cref="InvalidOperationException">The specified object does not exist or multiple objects were resolved with the specified ID.</exception> 
+        /// <returns>If the object with the specified ID.</returns>
+        public PrtgObject GetObject(int objectId, bool resolve = false) =>
+            GetObjectInternal(objectId, resolve);
 
         /// <summary>
-        /// Apply a modification function to the properties of an object.
+        /// Asynchronously retrieves an object of an unspecified type based on its object ID. If an object with the specified object ID
+        /// does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> exception is thrown.
         /// </summary>
-        /// <typeparam name="T">The type of object returned by the response.</typeparam>
-        /// <param name="obj">The object to amend.</param>
-        /// <param name="action">A modification function to apply to the object.</param>
-        /// <returns></returns>
-        [ExcludeFromCodeCoverage]
-        internal T Amend<T>(T obj, Action<T> action)
-        {
-            action(obj);
+        /// <param name="objectId">The ID of the object to retrieve.</param>
+        /// <param name="resolve">Whether to resolve the resultant object to its most derived <see cref="PrtgObject"/> type. If the object type
+        /// is not supported by PrtgAPI, the original <see cref="PrtgObject"/> is returned.</param>
+        /// <exception cref="InvalidOperationException">The specified object does not exist or multiple objects were resolved with the specified ID.</exception> 
+        /// <returns>If the object with the specified ID.</returns>
+        public async Task<PrtgObject> GetObjectAsync(int objectId, bool resolve = false) =>
+            await GetObjectInternalAsync(objectId, resolve).ConfigureAwait(false);
 
-            return obj;
-        }
+            #endregion
+            #region Multiple
+
+        /// <summary>
+        /// Retrieves all uniquely identifiable objects from a PRTG Server.
+        /// </summary>
+        /// <returns>A list of all objects on a PRTG Server.</returns>
+        public List<PrtgObject> GetObjects() => GetObjects(new PrtgObjectParameters());
+
+        /// <summary>
+        /// Asynchronously retrieves all uniquely identifiable objects from a PRTG Server.
+        /// </summary>
+        /// <returns>A list of all objects on a PRTG Server.</returns>
+        public async Task<List<PrtgObject>> GetObjectsAsync() => await GetObjectsAsync(new PrtgObjectParameters()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams all uniquely identifiable objects from a PRTG Server. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<PrtgObject> StreamObjects(bool serial = false) => StreamObjects(new PrtgObjectParameters(), serial);
+
+            #endregion
+            #region Filter (Property, Value)
+
+        /// <summary>
+        /// Retrieves uniquely identifiable objects from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public List<PrtgObject> GetObjects(Property property, object value) =>
+            GetObjects(new SearchFilter(property, value));
+
+        /// <summary>
+        /// Asynchronously retrieves uniquely identifiable objects from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public async Task<List<PrtgObject>> GetObjectsAsync(Property property, object value) =>
+            await GetObjectsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams uniquely identifiable objects from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        public IEnumerable<PrtgObject> StreamObjects(Property property, object value) =>
+            StreamObjects(new SearchFilter(property, value));
+
+            #endregion
+            #region Filter (Property, Operator, Value)
+
+        /// <summary>
+        /// Retrieves uniquely identifiable objects from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public List<PrtgObject> GetObjects(Property property, FilterOperator @operator, object value) =>
+            GetObjects(new SearchFilter(property, @operator, value));
+
+        /// <summary>
+        /// Asynchronously retrieves uniquely identifiable objects from a PRTG Server based on the value of a certain property.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public async Task<List<PrtgObject>> GetObjectsAsync(Property property, FilterOperator @operator, object value) =>
+            await GetObjectsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams uniquely identifiable objects from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="property">Property to search against.</param>
+        /// <param name="operator">Operator to compare value and property value with.</param>
+        /// <param name="value">Value to search for.</param>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        public IEnumerable<PrtgObject> StreamObjects(Property property, FilterOperator @operator, object value) =>
+            StreamObjects(new SearchFilter(property, @operator, value));
+
+            #endregion
+            #region Filter (Array)
+
+        /// <summary>
+        /// Retrieves uniquely identifiable objects from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public List<PrtgObject> GetObjects(params SearchFilter[] filters) =>
+            GetObjects(new PrtgObjectParameters(filters));
+
+        /// <summary>
+        /// Asynchronously retrieves uniquely identifiable objects from a PRTG Server based on the values of multiple properties.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>A list of objects that match the specified search criteria.</returns>
+        public async Task<List<PrtgObject>> GetObjectsAsync(params SearchFilter[] filters) =>
+            await GetObjectsAsync(new PrtgObjectParameters(filters)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams uniquely identifiable objects from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        public IEnumerable<PrtgObject> StreamObjects(params SearchFilter[] filters) =>
+            StreamObjects(new PrtgObjectParameters(filters));
+
+            #endregion
+            #region Parameters
+
+        /// <summary>
+        /// Retrieves uniquely identifiable objects from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG objects.</param>
+        /// <returns>A list of objects that match the specified parameters.</returns>
+        public List<PrtgObject> GetObjects(PrtgObjectParameters parameters) =>
+            ObjectEngine.GetObjects<PrtgObject>(parameters).OrderBy(o => o.Id).ToList();
+
+        /// <summary>
+        /// Asynchronously retrieves uniquely identifiable objects from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG objects.</param>
+        /// <returns>A list of objects that match the specified parameters.</returns>
+        public async Task<List<PrtgObject>> GetObjectsAsync(PrtgObjectParameters parameters) =>
+            (await ObjectEngine.GetObjectsAsync<PrtgObject>(parameters).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
+
+        /// <summary>
+        /// Streams uniquely identifiable objects from a PRTG Server using a custom set of parameters. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG objects.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<PrtgObject> StreamObjects(PrtgObjectParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<PrtgObject, PrtgObjectParameters>(parameters, serial);
+
+            #endregion
+        #endregion
 
         /// <summary>
         /// Apply a modification action to a response, transforming the response to another type.
@@ -1783,18 +1755,52 @@ namespace PrtgAPI
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
         public Dictionary<string, string> GetObjectPropertiesRaw(int objectId, ObjectType objectType) =>
-            ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectId, objectType));
+            GetObjectPropertiesRawDictionary(objectId, objectType);
 
         /// <summary>
-        /// Asynchronously retrieve all raw properties and settings of a PRTG Object. Note: objects may have additional properties
+        /// Retrieves all raw properties and settings of an unsupported object type. Note: objects may have additional properties
+        /// that cannot be retrieved via this method.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectType">The type of object to retrieve settings and properties for.
+        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectId"/>.</param>
+        /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
+        public Dictionary<string, string> GetObjectPropertiesRaw(int objectId, string objectType = null) =>
+            GetObjectPropertiesRawDictionary(objectId, objectType);
+
+        /// <summary>
+        /// Asynchronously retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
         public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, ObjectType objectType) =>
+            await GetObjectPropertiesRawDictionaryAsync(objectId, objectType).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves all raw properties and settings of an unsupported object type. Note: objects may have additional properties
+        /// that cannot be retrieved via this method.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectType">The type of object to retrieve settings and properties for.
+        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectId"/>.</param>
+        /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
+        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, string objectType = null) =>
+            await GetObjectPropertiesRawDictionaryAsync(objectId, objectType).ConfigureAwait(false);
+
+        private Dictionary<string, string> GetObjectPropertiesRawDictionary(int objectId, object objectType) =>
+            ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectId, objectType));
+
+        private async Task<Dictionary<string, string>> GetObjectPropertiesRawDictionaryAsync(int objectId, object objectType) =>
             ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false));
 
+        private string GetObjectPropertiesRawInternal(int objectId, object objectType) =>
+            RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectId, objectType));
+
+        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, object objectType) =>
+            await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
+            
         /// <summary>
         /// Retrieve a type safe property from a PRTG Server.
         /// </summary>

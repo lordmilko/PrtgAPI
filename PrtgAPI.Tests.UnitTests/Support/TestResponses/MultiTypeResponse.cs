@@ -136,6 +136,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
                 case Content.Schedules: return Schedules(i => new ScheduleItem(), count);
                 case Content.Channels:  return new ChannelResponse(new ChannelItem());
+                case Content.Objects:
+                    return Objects(address, function, components);
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
             }
@@ -147,6 +149,62 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         private ProbeResponse Probes(Func<int, ProbeItem> func, int count) => new ProbeResponse(GetItems(func, count));
         private MessageResponse Messages(Func<int, MessageItem> func, int count) => new MessageResponse(GetItems(func, count));
         private ScheduleResponse Schedules(Func<int, ScheduleItem> func, int count) => new ScheduleResponse(GetItems(func, count));
+        private IWebResponse Objects(string address, string function, NameValueCollection components)
+        {
+            var idStr = components["filter_objid"];
+
+            if (idStr != null)
+            {
+                var ids = idStr.Split(',').Select(v => Convert.ToInt32(v));
+
+                var items = ids.SelectMany(id =>
+                {
+                    if (id < 400)
+                        return GetObject("notifications", address, function);
+                    if (id < 700)
+                        return GetObject("schedules", address, function);
+                    if (id < 2000)
+                        return GetObject("probenode", address, function);
+                    if (id < 3000)
+                        return GetObject("groups", address, function);
+                    if (id < 4000)
+                        return GetObject("devices", address, function);
+                    if (id < 5000)
+                        return GetObject("sensors", address, function);
+
+                    var text = new ObjectResponse(new SensorItem()).GetResponseText(ref address);
+
+                    return XDocument.Parse(text).Descendants("item").ToList();
+                }).ToArray();
+
+                var xml = new XElement("objects",
+                    new XAttribute("listend", 1),
+                    new XAttribute("totalcount", items.Length),
+                    new XElement("prtg-version", "1.2.3.4"),
+                    items
+                );
+
+                return new BasicResponse(xml.ToString());
+            }
+
+            return new ObjectResponse(
+                new SensorItem(),
+                new DeviceItem(),
+                new GroupItem(),
+                new ProbeItem(),
+                new ScheduleItem(),
+                new NotificationActionItem()
+            );
+        }
+
+        private List<XElement> GetObject(string newContent, string address, string function)
+        {
+            var r = GetTableResponse(address.Replace("content=objects", $"content={newContent}").Replace("count=*", "count=1"), function, false);
+
+            var text = r.GetResponseText(ref address);
+
+            return XDocument.Parse(text).Descendants("item").ToList();
+        }
 
         private int GetCount(NameValueCollection components, Content? content)
         {

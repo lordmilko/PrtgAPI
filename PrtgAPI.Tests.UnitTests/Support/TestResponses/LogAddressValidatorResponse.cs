@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class LogAddressValidatorResponse : MultiTypeResponse
     {
@@ -26,9 +26,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             {
                 var components = UrlHelpers.CrackUrl(address);
 
-                Content content = components["content"].ToEnum<Content>();
+                Content content = components["content"].DescriptionToEnum<Content>();
 
-                if (content == Content.Messages)
+                if (content == Content.Logs)
                 {
                     if (components["columns"] != "objid,name")
                     {

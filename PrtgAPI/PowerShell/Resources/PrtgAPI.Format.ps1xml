@@ -518,6 +518,33 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
+                <TypeName>PrtgAPI.PrtgObject</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- ObjectId -->
+                    <TableColumnHeader/> <!-- DisplayType -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                            <TableColumnItems><TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Type</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
                 <TypeName>PrtgAPI.Log</TypeName>
             </ViewSelectedBy>
             <TableControl>

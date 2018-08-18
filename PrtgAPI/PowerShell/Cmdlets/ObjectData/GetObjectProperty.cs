@@ -48,7 +48,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Property)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.RawProperty)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Raw)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        public PrtgObject Object { get; set; }
 
         /// <summary>
         /// <para type="description">The name of one or more properties to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
@@ -91,7 +91,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else if (ParameterSetName == ParameterSet.Raw)
             {
-                var dictionary = client.GetObjectPropertiesRaw(Object.Id, TypeFromBase());
+                var type = TypeFromBase();
+
+                var dictionary = type != null
+                    ? client.GetObjectPropertiesRaw(Object.Id, type.Value)
+                    : client.GetObjectPropertiesRaw(Object.Id);
 
                 var obj = new PSObject();
 
@@ -110,24 +114,33 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                TypeDescription = $"{Object.BaseType} Properties";
+                var knownObj = Object as SensorOrDeviceOrGroupOrProbe;
 
-                switch (Object.BaseType)
+                if (knownObj != null)
                 {
-                    case BaseType.Sensor:
-                        WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
-                        break;
-                    case BaseType.Device:
-                        WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
-                        break;
-                    case BaseType.Group:
-                        WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
-                        break;
-                    case BaseType.Probe:
-                        WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
-                        break;
-                    default:
-                        throw new NotImplementedException($"Property handler not specified for base type {Object.BaseType}");
+                    TypeDescription = $"{knownObj.BaseType} Properties";
+
+                    switch (knownObj.BaseType)
+                    {
+                        case BaseType.Sensor:
+                            WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
+                            break;
+                        case BaseType.Device:
+                            WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
+                            break;
+                        case BaseType.Group:
+                            WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
+                            break;
+                        case BaseType.Probe:
+                            WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
+                            break;
+                        default:
+                            throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}");
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}");
                 }
             }
         }
@@ -137,7 +150,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (properties.Length == 1)
                 WriteObjectWithProgress(() => getValue(Object.Id, properties[0]));
             else
-                WriteObjectWithProgress(() => GetMultipleProperties<TProperty>(properties, getValue, getPropertyName));
+                WriteObjectWithProgress(() => GetMultipleProperties(properties, getValue, getPropertyName));
         }
 
         private PSObject GetMultipleProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName)
@@ -156,21 +169,28 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         [ExcludeFromCodeCoverage]
-        private ObjectType TypeFromBase()
+        private ObjectType? TypeFromBase()
         {
-            switch (Object.BaseType)
+            var obj = Object as SensorOrDeviceOrGroupOrProbe;
+
+            if (obj != null)
             {
-                case BaseType.Sensor:
-                    return ObjectType.Sensor;
-                case BaseType.Device:
-                    return ObjectType.Device;
-                case BaseType.Group:
-                    return ObjectType.Group;
-                case BaseType.Probe:
-                    return ObjectType.Probe;
-                default:
-                    throw new NotImplementedException($"Unable to resolve {nameof(ObjectType)} from base type {Object.BaseType}");
+                switch (obj.BaseType)
+                {
+                    case BaseType.Sensor:
+                        return ObjectType.Sensor;
+                    case BaseType.Device:
+                        return ObjectType.Device;
+                    case BaseType.Group:
+                        return ObjectType.Group;
+                    case BaseType.Probe:
+                        return ObjectType.Probe;
+                    default:
+                        throw new NotImplementedException($"Unable to resolve {nameof(ObjectType)} from base type {obj.BaseType}");
+                }
             }
+
+            return null;
         }
     }
 }

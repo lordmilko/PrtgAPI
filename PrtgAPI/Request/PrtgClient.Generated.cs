@@ -1033,5 +1033,63 @@ namespace PrtgAPI
                 return null;
             }
         }
+
+        //######################################
+        // GetObject
+        //######################################
+
+        internal PrtgObject GetObjectInternal(int objectId, bool resolve)
+        {
+            var objs = (GetObjects(Property.Id, objectId));
+
+            if (objs.Count != 1)
+                return objs.SingleObject(objectId);
+
+            var obj = objs.Single();
+
+            if (resolve)
+            {
+                switch (obj.Type.Value)
+                {
+                    case ObjectType.Sensor:       return GetSensor(objectId);
+                    case ObjectType.Device:       return GetDevice(objectId);
+                    case ObjectType.Group:        return GetGroup(objectId);
+                    case ObjectType.Probe:        return GetProbe(objectId);
+                    case ObjectType.Notification: return GetNotificationAction(objectId);
+                    case ObjectType.Schedule:     return GetSchedule(objectId);
+                    default:
+                        return obj;
+                }
+            }
+
+            return obj;
+        }
+
+        internal async Task<PrtgObject> GetObjectInternalAsync(int objectId, bool resolve)
+        {
+            var objs = (await GetObjectsAsync(Property.Id, objectId).ConfigureAwait(false));
+
+            if (objs.Count != 1)
+                return objs.SingleObject(objectId);
+
+            var obj = objs.Single();
+
+            if (resolve)
+            {
+                switch (obj.Type.Value)
+                {
+                    case ObjectType.Sensor:       return await GetSensorAsync(objectId).ConfigureAwait(false);
+                    case ObjectType.Device:       return await GetDeviceAsync(objectId).ConfigureAwait(false);
+                    case ObjectType.Group:        return await GetGroupAsync(objectId).ConfigureAwait(false);
+                    case ObjectType.Probe:        return await GetProbeAsync(objectId).ConfigureAwait(false);
+                    case ObjectType.Notification: return await GetNotificationActionAsync(objectId).ConfigureAwait(false);
+                    case ObjectType.Schedule:     return await GetScheduleAsync(objectId).ConfigureAwait(false);
+                    default:
+                        return obj;
+                }
+            }
+
+            return obj;
+        }
     }
 }

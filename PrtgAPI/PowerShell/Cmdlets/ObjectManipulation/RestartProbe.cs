@@ -48,7 +48,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public Probe Probe { get; set; }
 
         /// <summary>
-        /// <para type="description">Specifies whether to return the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
+        /// <para type="description">Specifies whether to return the original <see cref="IObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter PassThru { get; set; }
@@ -93,7 +93,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Probe == null)
             {
                 var processMessage = "All PRTG Probes";
-                var count = client.GetTotalObjects(Content.ProbeNode);
+                var count = client.GetTotalObjects(Content.Probes);
                 var continueMessage = $"Are you want to restart the PRTG Probe Service on all {count} PRTG Probes?";
 
                 Restart(processMessage, continueMessage, null, null);

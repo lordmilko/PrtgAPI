@@ -7,7 +7,7 @@ using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class ModificationHistoryTests : ObjectTests<ModificationEvent, ModificationHistoryItem, ModificationHistoryResponse>
+    public class ModificationHistoryTests : StandardObjectTests<ModificationEvent, ModificationHistoryItem, ModificationHistoryResponse>
     {
         [TestMethod]
         public void ModificationHistory_CanDeserialize() => Object_CanDeserialize();

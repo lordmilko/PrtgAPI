@@ -374,15 +374,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $percentBar = CreateProgressBar $percent
 
-            $c = $i
-
-            while($c -gt 500)
-            {
-                $c -= 500
-            }
-
             $records += "PRTG Sensor Search`n" +
-                        "    Processing sensor 'Volume IO _Total$($c - 1)' ($i/$total)`n" +
+                        "    Processing sensor 'Volume IO _Total$($i - 1)' ($i/$total)`n" +
                         "    $percentBar`n" +
                         "    Retrieving all channels"
         }
@@ -393,7 +386,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $records
 
-            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (501/501)" 100 "Retrieving all channels")
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total500' (501/501)" 100 "Retrieving all channels")
         ))
     }
     
@@ -443,11 +436,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $nameSuffix = $i - 1
 
-            if($i -ge 501)
-            {
-                $nameSuffix -= 500
-            }
-
             $records += "Pausing PRTG Objects`n" +
                         "    Pausing sensor 'Volume IO _Total$nameSuffix' forever ($i/$total)`n" +
                         "    $percentBar"
@@ -463,7 +451,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $records
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (501/501)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total500' forever (501/501)" 100)
         ))
     }
 
@@ -2740,7 +2728,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "17a: Table -> Where -> Table" {
 
         $counts = @{
-            ProbeNode = 3
+            Probes = 3
         }
 
         RunCustomCount $counts {
@@ -2759,7 +2747,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     
     It "17b: Variable -> Where -> Table" {
         $counts = @{
-            ProbeNode = 3
+            Probes = 3
         }
         
         $probes = RunCustomCount $counts {
@@ -2780,7 +2768,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "17c: Table -> Where -> Action" {
         
         $counts = @{
-            ProbeNode = 3
+            Probes = 3
         }
 
         RunCustomCount $counts {
@@ -2927,7 +2915,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
     It "19a: Table -> Where -> Table -> Table" {
         $counts = @{
-            ProbeNode = 3
+            Probes = 3
         }
         
         RunCustomCount $counts {
@@ -2973,7 +2961,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
     It "19b: Variable -> Where -> Table -> Table" {
         $counts = @{
-            ProbeNode = 3
+            Probes = 3
         }
         
         $probes = RunCustomCount $counts {

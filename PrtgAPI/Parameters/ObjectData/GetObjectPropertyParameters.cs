@@ -3,16 +3,18 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class GetObjectPropertyParameters : BaseActionParameters
+    class GetObjectPropertyParameters : BaseActionParameters, IHtmlParameters
     {
         public GetObjectPropertyParameters(int objectId, ObjectType objectType) : base(objectId)
+        public GetObjectPropertyParameters(int objectId, object objectType) : base(objectId)
         {
-            ObjectType = objectType;
+            if (objectType != null)
+                ObjectType = objectType;
         }
 
-        public ObjectType ObjectType
+        public object ObjectType
         {
-            get { return (ObjectType) this[Parameter.ObjectType]; }
+            get { return this[Parameter.ObjectType]; }
             set { this[Parameter.ObjectType] = value; }
         }
     }

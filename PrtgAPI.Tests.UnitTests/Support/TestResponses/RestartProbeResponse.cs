@@ -29,13 +29,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content content = components["content"].DescriptionToEnum<Content>();
 
             switch (content)
             {
-                case Content.ProbeNode:
+                case Content.Probes:
                     return GetProbeResponse();
-                case Content.Messages:
+                case Content.Logs:
                     return GetMessageResponse();
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(RestartProbeResponse)}");
