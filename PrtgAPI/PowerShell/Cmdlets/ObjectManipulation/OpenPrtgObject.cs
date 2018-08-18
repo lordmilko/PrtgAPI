@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Request;
 

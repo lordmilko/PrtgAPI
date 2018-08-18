@@ -1,5 +1,4 @@
 using System.Xml.Serialization;
-using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {

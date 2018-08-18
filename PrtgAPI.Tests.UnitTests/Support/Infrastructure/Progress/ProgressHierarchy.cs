@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
 {

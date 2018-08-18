@@ -1,5 +1,3 @@
-using System.Xml.Serialization;
-
 namespace PrtgAPI
 {
     /// <summary>
