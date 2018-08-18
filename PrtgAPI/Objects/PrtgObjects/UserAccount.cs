@@ -1,6 +1,4 @@
-﻿using PrtgAPI.Objects.Shared;
-
-namespace PrtgAPI
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Represents a user account capable of logging into PRTG.

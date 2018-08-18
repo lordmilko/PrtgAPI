@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -57,8 +56,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (Sensor.Type != "Sensor Factory")
-                throw new ParameterBindingException($"Cannot bind sensor '{Sensor.Name}' of type '{Sensor.Type}'. Only Sensor Factory objects may be specified.");
+            if (Sensor.Type != "aggregation")
+                throw new ParameterBindingException($"Cannot bind sensor '{Sensor.Name}' of type '{Sensor.DisplayType}'. Only Sensor Factory objects may be specified.");
 
             var description = "Sensor Factory " + (Channels.IsPresent ? "Channel" : "Sensor");
 
@@ -85,21 +84,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return ids;
         }
 
-        List<PrtgObject> GetObjects(List<FactoryIds> ids)
+        List<IObject> GetObjects(List<FactoryIds> ids)
         {
             return Channels.IsPresent ? GetChannels(ids) : GetSensors(ids);
         }
 
-        List<PrtgObject> GetSensors(List<FactoryIds> ids)
+        List<IObject> GetSensors(List<FactoryIds> ids)
         {
-            return client.GetSensors(Property.Id, ids.Select(i => i.SensorId)).Cast<PrtgObject>().ToList();
+            return client.GetSensors(Property.Id, ids.Select(i => i.SensorId)).Cast<IObject>().ToList();
         }
 
-        List<PrtgObject> GetChannels(List<FactoryIds> ids)
+        List<IObject> GetChannels(List<FactoryIds> ids)
         {
             var channels = ids.SelectMany(id => client.GetChannels(id.SensorId).Where(c => c.Id == id.ChannelId)).ToList();
 
-            return channels.Cast<PrtgObject>().ToList();
+            return channels.Cast<IObject>().ToList();
         }
 
         class FactoryIds

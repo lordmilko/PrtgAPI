@@ -1,12 +1,12 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Objects.Shared
+namespace PrtgAPI
 {
     /// <summary>
     /// Base class for Sensors, Devices, Groups, Probes, Logs and Tickets, containing properties that apply to all six object types.
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbeOrLogOrTicket : SensorOrDeviceOrGroupOrProbeOrLogOrTicketOrTicketDataOrHistory
+    public class SensorOrDeviceOrGroupOrProbeOrTicket : SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
     {
         // ################################## Sensors, Devices, Groups, Probes, Messages, Tickets ##################################
 

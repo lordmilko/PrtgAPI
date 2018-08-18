@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
 
-namespace PrtgAPI
+namespace PrtgAPI.NotificationActions
 {
     /// <summary>
     /// Settings that apply to Event Log Notification Actions.

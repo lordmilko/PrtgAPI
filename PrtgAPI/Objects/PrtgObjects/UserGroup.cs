@@ -1,6 +1,4 @@
-﻿using PrtgAPI.Objects.Shared;
-
-namespace PrtgAPI
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Represents a user group used for organizing one or more <see cref="UserAccount"/> objects within PRTG.

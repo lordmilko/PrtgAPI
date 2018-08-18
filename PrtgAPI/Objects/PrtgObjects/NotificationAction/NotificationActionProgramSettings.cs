@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace PrtgAPI
+namespace PrtgAPI.NotificationActions
 {
     /// <summary>
     /// Setings that apply to Program Notification Actions.

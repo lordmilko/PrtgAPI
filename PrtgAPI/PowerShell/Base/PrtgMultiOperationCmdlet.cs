@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -31,9 +30,9 @@ namespace PrtgAPI.PowerShell.Base
 
         internal bool? batch = SwitchParameter.Present;
 
-        internal List<PrtgObject> objects = new List<PrtgObject>();
+        internal List<IObject> objects = new List<IObject>();
 
-        private void QueueObject(PrtgObject obj)
+        private void QueueObject(IObject obj)
         {
             objects.Add(obj);
         }
@@ -42,9 +41,9 @@ namespace PrtgAPI.PowerShell.Base
         /// If <see cref="Batch"/> is true, queues the object for processing after all items have been identified. Otherwise, executes this cmdlet's action immediately. 
         /// </summary>
         /// <param name="obj">The object to process.</param>
-        protected void ExecuteOrQueue(SensorOrDeviceOrGroupOrProbe obj)
+        protected void ExecuteOrQueue(IObject obj)
         {
-            ExecuteOrQueue(obj, $"Queuing {obj.BaseType.ToString().ToLower()} '{obj.Name}'");
+            ExecuteOrQueue(obj, $"Queuing {PrtgProgressCmdlet.GetTypeDescription(obj.GetType()).ToLower()} '{obj.Name}'");
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="obj">The object to process.</param>
         /// <param name="progressMessage">The progress message to display.</param>
-        protected void ExecuteOrQueue(PrtgObject obj, string progressMessage)
+        protected void ExecuteOrQueue(IObject obj, string progressMessage)
         {
             if (Batch.IsPresent)
                 ExecuteQueueOperation(obj, progressMessage);
@@ -65,7 +64,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="obj">The object to queue.</param>
         /// <param name="progressMessage">The progress message to display.</param>
-        private void ExecuteQueueOperation(PrtgObject obj, string progressMessage)
+        private void ExecuteQueueOperation(IObject obj, string progressMessage)
         {
             ExecuteOperation(() => QueueObject(obj), progressMessage);
         }
@@ -114,14 +113,14 @@ namespace PrtgAPI.PowerShell.Base
                 remaining = objects.Count - amount;
             }
 
-            var grouped = toProcess.Cast<SensorOrDeviceOrGroupOrProbe>().GroupBy(t => t.BaseType).ToList();
+            var grouped = toProcess.GroupBy(t => PrtgProgressCmdlet.GetTypeDescription(t.GetType())).ToList();
 
             var builder = new StringBuilder();
 
             for (int i = 0; i < grouped.Count; i++)
             {
                 //Add the BaseType (e.g. sensor(s))
-                builder.Append(grouped[i].Key.ToString().ToLower());
+                builder.Append(grouped[i].Key.ToLower());
 
                 if (grouped[i].Count() > 1)
                     builder.Append("s");
@@ -163,7 +162,7 @@ namespace PrtgAPI.PowerShell.Base
             return builder.ToString();
         }
         
-        internal string GetListSummary(List<PrtgObject> list = null, Func<PrtgObject, string> descriptor = null)
+        internal string GetListSummary(List<IObject> list = null, Func<IObject, string> descriptor = null)
         {
             if (list == null)
                 list = objects;
@@ -171,7 +170,7 @@ namespace PrtgAPI.PowerShell.Base
             if (descriptor == null)
                 descriptor = o => $"'{o.Name}'";
 
-            return GetListSummary<PrtgObject>(list, descriptor);
+            return GetListSummary<IObject>(list, descriptor);
         }
 
         internal string GetListSummary<T>(List<T> list, Func<T, string> descriptor)
@@ -212,7 +211,7 @@ namespace PrtgAPI.PowerShell.Base
 
         internal string GetCommonObjectBaseType()
         {
-            var baseType = objects.Cast<SensorOrDeviceOrGroupOrProbe>().First().BaseType.ToString().ToLower();
+            var baseType = PrtgProgressCmdlet.GetTypeDescription(objects.First().GetType()).ToLower();
 
             if (objects.Count > 1)
                 baseType += "s";
@@ -227,7 +226,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (objects.Count > 0 && Batch.IsPresent)
             {
-                var ids = objects.Select(o => o.Id).ToArray();
+                var ids = objects.Select(o => o.GetId()).ToArray();
 
                 if (ProgressManager.OperationSeemsLikePipeFromVariable && ProgressManager.PreviousRecord == null && ProgressManager.EntirePipeline != null && ProgressManager.CacheManager.GetPreviousPrtgCmdlet() == null)
                 {

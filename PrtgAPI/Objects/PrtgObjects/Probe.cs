@@ -1,6 +1,5 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {

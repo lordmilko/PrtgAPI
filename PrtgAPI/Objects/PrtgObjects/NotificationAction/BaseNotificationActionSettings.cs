@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace PrtgAPI
+namespace PrtgAPI.NotificationActions
 {
     /// <summary>
     /// Base class for notification settings that can be defined on a <see cref="NotificationAction"/>.

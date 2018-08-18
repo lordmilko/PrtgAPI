@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
@@ -9,8 +11,15 @@ namespace PrtgAPI
     /// Represents a modification event of a PRTG Object.
     /// </summary>
     [Description("Modification Event")]
-    public class ModificationEvent
+    public class ModificationEvent : IEventObject
     {
+        [ExcludeFromCodeCoverage]
+        string IObject.Name
+        {
+            get { return Message; }
+            set { Message = value; }
+        }
+
         /// <summary>
         /// The ID of the object the event occurred to.
         /// </summary>
@@ -36,5 +45,14 @@ namespace PrtgAPI
         [XmlElement("message")]
         [PropertyParameter(nameof(Property.Message))]
         public string Message { get; set; }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"{DateTime.ToString(CultureInfo.InvariantCulture)}: {Message}";
+        }
     }
 }

@@ -250,7 +250,7 @@ namespace PrtgAPI
         /// Used in: Sensors, Devices, Groups, Probes
         /// </summary>
         [Description("undefinedsens")]
-        UndefinedSensors,
+        UnknownSensors,
 
         /// <summary>
         /// Number of sensors. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.

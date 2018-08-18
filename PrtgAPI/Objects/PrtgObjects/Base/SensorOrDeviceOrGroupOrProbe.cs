@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
 
-namespace PrtgAPI.Objects.Shared
+namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Base class for Sensors, Devices, Groups and Probes, containing properties that apply to all four object types.</para>
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
+    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrTicket
     {
         // ################################## Sensors, Devices, Groups, Probes, Reports ##################################
         // There is a copy in both SensorOrDeviceOrGroupOrProbe and Report
@@ -34,7 +32,11 @@ namespace PrtgAPI.Objects.Shared
         /// </summary>
         [XmlElement("basetype")]
         [PropertyParameter(nameof(Property.BaseType))]
-        public BaseType BaseType { get; set; }
+        public BaseType BaseType
+        {
+            get { return baseType.Value; }
+            set { baseType = value; }
+        }
 
         /// <summary>
         /// URL of this object.
@@ -53,7 +55,8 @@ namespace PrtgAPI.Objects.Shared
         // ################################## Sensors, Devices, Groups, Probes ##################################
 
         /// <summary>
-        /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.
+        /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.<para/>
+        /// This property does not work in non-English version of PRTG.
         /// </summary>
         [PropertyParameter(nameof(Property.NotificationTypes))]
         public NotificationTypes NotificationTypes => notificationTypes == null ? new NotificationTypes(string.Empty) : new NotificationTypes(notificationTypes); //todo: add custom handling for this
@@ -64,43 +67,17 @@ namespace PrtgAPI.Objects.Shared
         /// <summary>
         /// Scanning interval for this sensor or default scanning interval for sensors under this object.
         /// </summary>
+        [XmlElement("intervalx_raw")]
         [PropertyParameter(nameof(Property.Interval))]
-        public TimeSpan Interval //todo: add custom handling for this
-        {
-            get
-            {
-                //Certain objects (like devices) do not report the intervals that have been defined when interval inheritance has been disabled.
-                //As a workaround, when we can extract the value from their intervalx attributes instead.
-                //If this statement is true, we've confirmed we need to make a last ditch effort to return a value.
-                //Usually however, this expression will return false.
-                if (interval == null)
-                {
-                    if (IntervalInherited == false)
-                        //If IntervalInherited is false, intervalInherited should just contain a number.
-                        return DH.ConvertPrtgTimeSpan(Convert.ToDouble(intervalInherited));
-                    else //
-                    {
-                        var num = Regex.Replace(intervalInherited, "(.+\\()(.+)(\\))", "$2");
-
-                        return DH.ConvertPrtgTimeSpan(Convert.ToDouble(num));
-                    }
-                }
-
-                return DH.ConvertPrtgTimeSpan(interval.Value);
-            }
-        }
-
-        [XmlElement("interval_raw")]
-        internal double? interval { get; set; }
+        public TimeSpan Interval { get; set; }
 
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
         /// </summary>
-        [PropertyParameter(nameof(Property.IntervalInherited))]
-        public bool IntervalInherited => intervalInherited?.Contains("Inherited") ?? false; //todo: add custom handling for this
+        public bool InheritInterval => inheritInterval?.Contains("(") ?? false;
 
         [XmlElement("intervalx")]
-        internal string intervalInherited { get; set; }
+        internal string inheritInterval { get; set; }
 
         /// <summary>
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.
@@ -110,21 +87,18 @@ namespace PrtgAPI.Objects.Shared
         public Access Access { get; set; }
 
         /// <summary>
-        /// Name of the object the monitoring of this object is dependent on. If dependency is on the parent object, value of DependencyName will be "Parent".
+        /// Name of the object the monitoring of this object is dependent on.
         /// </summary>
-        [XmlElement("dependency")]
+        [XmlElement("dependency_raw")]
         [PropertyParameter(nameof(Property.Dependency))]
         public string Dependency { get; set; }
 
         /// <summary>
         /// Position of this object within its parent object.
         /// </summary>
-
-        [PropertyParameter(nameof(Property.Position))]
-        public int Position => position / 10;
-
         [XmlElement("position")]
-        internal int position { get; set; }
+        [PropertyParameter(nameof(Property.Position))]
+        public int Position { get; set; }
 
         /// <summary>
         /// <see cref="PrtgAPI.Status"/> indicating this object's monitoring state.

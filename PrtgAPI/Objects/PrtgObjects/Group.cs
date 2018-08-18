@@ -1,13 +1,12 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">A group used to organize one or more devices.</para>
+    /// <para type="description">A group used to organize one or more groups or devices.</para>
     /// </summary>
-    public class Group : GroupOrProbe
+    public class Group : GroupOrProbe, ISensorOrDeviceOrGroup
     {
         // ################################## Sensors, Devices, Groups ##################################
         //Also in Device because device must be derived from DeviceOrGroupOrProbe

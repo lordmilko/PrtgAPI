@@ -1,20 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
     /// <summary>
-    /// An informational event that has occurred on an object.
+    /// Describes an event that has occurred to a <see cref="PrtgObject"/>.
     /// </summary>
-    public class Log : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
+    [DebuggerDisplay("DateTime = {DateTime}, Name = {Name,nq}")]
+    public class Log : IEventObject, ITableObject
     {
+        /// <summary>
+        /// ID of the <see cref="PrtgObject"/> this event applies to.
+        /// </summary>
+        [XmlElement("objid")]
+        [PropertyParameter(nameof(Property.Id))]
+        public int Id { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        int IEventObject.ObjectId
+        {
+            get { return Id; }
+            set { Id = value; }
+        }
+
+        /// <summary>
+        /// Name of the <see cref="PrtgObject"/> this event applies to.
+        /// </summary>
+        [XmlElement("name")]
+        [PropertyParameter(nameof(Property.Name))]
+        public string Name { get; set; }
+
         /// <summary>
         /// The date and time the event occurred.
         /// </summary>
@@ -64,7 +83,23 @@ namespace PrtgAPI
         [PropertyParameter(nameof(Property.Probe))]
         public string Probe { get; set; }
 
-        internal override string GetMessage()
+        internal string message;
+
+        /// <summary>
+        /// Message or subject displayed on an object.
+        /// </summary>
+        [XmlElement("message_raw")]
+        [PropertyParameter(nameof(Property.Message))]
+        public string Message
+        {
+            get { return GetMessage(); }
+            set { message = value; }
+        }
+
+        [XmlElement("message")]
+        internal string DisplayMessage { get; set; }
+
+        private string GetMessage()
         {
             if (message != null && Regex.Match(message, "#[a-zA-Z].+").Success && DisplayMessage.StartsWith("<div"))
             {
@@ -72,6 +107,68 @@ namespace PrtgAPI
             }                
 
             return message;
+        }
+
+        /// <summary>
+        /// <see cref="Priority"/> of this object.
+        /// </summary>
+        [XmlElement("priority")]
+        [XmlElement("priority_raw")]
+        [PropertyParameter(nameof(Property.Priority))]
+        public Priority Priority { get; set; }
+
+        /// <summary>
+        /// The display type of the object this object pertains to.
+        /// </summary>
+        [XmlElement("type")]
+        public string DisplayType { get; set; }
+
+        /// <summary>
+        /// The raw type name of the object this object pertains to.
+        /// </summary>
+        [XmlElement("type_raw")]
+        internal string type { get; set; }
+
+        private StringEnum<ObjectType> enumType;
+
+        /// <summary>
+        /// The type of this object this object pertains to.
+        /// </summary>
+        [PropertyParameter(nameof(Property.Type))]
+        public StringEnum<ObjectType> Type
+        {
+            get
+            {
+                if (enumType == null && !string.IsNullOrEmpty(type))
+                    enumType = new StringEnum<ObjectType>(type);
+
+                return enumType;
+            }
+            set { enumType = value; }
+        }
+
+        /// <summary>
+        /// Tags contained on the object this event pertains to.
+        /// </summary>
+        [XmlElement("tags")]
+        [SplittableString(' ')]
+        [PropertyParameter(nameof(Property.Tags))]
+        public string[] Tags { get; set; }
+
+        /// <summary>
+        /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
+        /// </summary>
+        [XmlElement("active_raw")]
+        [PropertyParameter(nameof(Property.Active))]
+        public bool Active { get; set; }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"{DateTime}: {Name}";
         }
     }
 }

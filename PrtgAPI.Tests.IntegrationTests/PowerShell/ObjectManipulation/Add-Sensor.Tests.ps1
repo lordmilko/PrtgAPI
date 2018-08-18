@@ -215,7 +215,7 @@ Describe "Add-Sensor_IT" {
 
         $properties = $newSensor | Get-ObjectProperty
 
-        $newSensor.RawType | Should Be "exexml"
+        $newSensor.Type | Should Be "Sensor (exexml)"
         $properties.Name | Should Be "empty sensor"
         $properties.ExeFile.ToString() | Should Be "testScript.bat"
         $properties.Interval.ToString() | Should Be ([TimeSpan]"00:05:00").ToString()
@@ -227,8 +227,8 @@ Describe "Add-Sensor_IT" {
     It "pipes dynamic parameters to Add-Sensor" {
         $sensor = Get-Device -Id (Settings Device) | New-SensorParameters -RawType http | Add-Sensor
 
-        $sensor.Name | Should Be "http"
-        $sensor.RawType | Should Be "http"
+        $sensor.Name | Should Be "HTTP"
+        $sensor.Type | Should Be "Sensor (http)"
 
         $sensor | Remove-Object -Force
     }

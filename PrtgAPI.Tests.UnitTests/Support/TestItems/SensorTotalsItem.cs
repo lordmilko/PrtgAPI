@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
+using DH = PrtgAPI.Request.Serialization.DeserializationHelpers;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestItems
 {

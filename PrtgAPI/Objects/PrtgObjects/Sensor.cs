@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">An object that monitors and collects information according to a defined schedule.</para>
+    /// <para type="description">An object that monitors and collects information according to a defined scanning interval.</para>
     /// </summary>
-    public class Sensor : SensorOrDeviceOrGroupOrProbe
+    public class Sensor : SensorOrDeviceOrGroupOrProbe, ISensorOrDevice
     {
         // ################################## Sensors, Devices, Groups ##################################
         //Also in Group because group must be derived from GroupOrProbe
@@ -41,18 +40,24 @@ namespace PrtgAPI
         // ################################## Sensors, Channel ##################################
         // There is a copy in both Sensor and Channel
 
-        private string lastValue;
+        private string displayLastValue;
 
         /// <summary>
-        /// Last value of this sensor's primary channel. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpaused (otherwise it may just display "No data").
+        /// Last value of this sensor's primary channel with value unit. If this sensor's primary channel has been recently changed, the sensor may need to be paused and unpaused (otherwise it may just display "No data").
         /// </summary>
         [XmlElement("lastvalue")]
-        [PropertyParameter(nameof(Property.LastValue))]
-        public string LastValue
+        public string DisplayLastValue
         {
-            get { return lastValue; }
-            set { lastValue = value == string.Empty || value == "-" ? null : value; }
+            get { return displayLastValue; }
+            set { displayLastValue = value == string.Empty || value == "-" ? null : value; }
         }
+
+        /// <summary>
+        /// The raw last value of this sensor's primary channel.
+        /// </summary>
+        [XmlElement("lastvalue_raw")]
+        [PropertyParameter(nameof(Property.LastValue))]
+        public double? LastValue { get; set; }
 
         // ################################## Sensor Only ##################################
 
@@ -66,19 +71,19 @@ namespace PrtgAPI
         /// <summary>
         /// Percentage indicating overall downtime of this object over its entire lifetime. See also: <see cref="Uptime"/>.
         /// </summary>
-        [XmlElement("downtime")]
+        [XmlElement("downtime_raw")]
         [PropertyParameter(nameof(Property.Downtime))]
-        public string Downtime { get; set; }
+        public double? Downtime { get; set; }
 
         /// <summary>
-        /// Total amount of time sensor has ever been in a down state.
+        /// Total amount of time sensor has ever been in a <see cref="Status.Down"/> or <see cref="Status.DownAcknowledged"/> state.
         /// </summary>
         [XmlElement("downtimetime_raw")]
         [PropertyParameter(nameof(Property.TotalDowntime))]
         public TimeSpan? TotalDowntime { get; set; }
 
         /// <summary>
-        /// Amount of time passed since sensor was last in an up state. If sensor is currently up, this value is null.
+        /// Amount of time passed since this object was last in an <see cref="Status.Up"/> state. If this object is currently <see cref="Status.Up"/>, this value is null.
         /// </summary>
         [XmlElement("downtimesince_raw")]
         [PropertyParameter(nameof(Property.DownDuration))]
@@ -87,19 +92,19 @@ namespace PrtgAPI
         /// <summary>
         /// Percentage indicating overall uptime of this object over its entire lifetime. See also: <see cref="Downtime"/>.
         /// </summary>
-        [XmlElement("uptime")]
+        [XmlElement("uptime_raw")]
         [PropertyParameter(nameof(Property.Uptime))]
-        public string Uptime { get; set; }
+        public double? Uptime { get; set; }
 
         /// <summary>
-        /// Total amount of time sensor has ever been in an up state.
+        /// Total amount of time sensor has ever been in a <see cref="Status.Up"/> state.
         /// </summary>
         [XmlElement("uptimetime_raw")]
         [PropertyParameter(nameof(Property.TotalUptime))]
         public TimeSpan? TotalUptime { get; set; }
 
         /// <summary>
-        /// Amount of time passed since sensor was last in an down state. If sensor is currently down, this value is null.
+        /// Amount of time passed since sensor was last in a <see cref="Status.Down"/> state. If sensor is currently <see cref="Status.Down"/>, this value is null.
         /// </summary>
         [XmlElement("uptimesince_raw")]
         [PropertyParameter(nameof(Property.UpDuration))]
@@ -127,7 +132,7 @@ namespace PrtgAPI
         public DateTime? LastCheck { get; set; }
 
         /// <summary>
-        /// When this object was last in an up state.
+        /// When this object was last in an <see cref="Status.Up"/> state.
         /// </summary>
         [XmlElement("lastup_raw")]
         [PropertyParameter(nameof(Property.LastUp))]

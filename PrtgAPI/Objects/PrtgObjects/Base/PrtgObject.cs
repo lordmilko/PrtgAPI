@@ -4,19 +4,19 @@ using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 
-namespace PrtgAPI.Objects.Shared
+namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">Base class for all PRTG objects.</para>
+    /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
-    public class PrtgObject : IFormattable
+    public class PrtgObject : IPrtgObject, ITableObject, IFormattable
     {
         // ################################## All Object Tables ##################################
 
         //prtg's documentation says these belong under ObjectTable, however i believe they may belong under PrtgObject
 
         /// <summary>
-        /// ID number used to uniquely identify this object within PRTG.
+        /// Unique identifier of this object within PRTG.
         /// </summary>
         [XmlElement("objid")]
         [PropertyParameter(nameof(Property.Id))]
@@ -28,6 +28,84 @@ namespace PrtgAPI.Objects.Shared
         [XmlElement("name")]
         [PropertyParameter(nameof(Property.Name))]
         public string Name { get; set; }
+
+        private string[] tags;
+
+        /// <summary>
+        /// Tags contained on this object.
+        /// </summary>
+        [XmlElement("tags")]
+        [XmlElement("injected_tags")]
+        [SplittableString(' ')]
+        [PropertyParameter(nameof(Property.Tags))]
+        public string[] Tags
+        {
+            get { return Lazy(() => tags); }
+            set { tags = value; }
+        }
+
+        private string displayType;
+
+        /// <summary>
+        /// The display type of this object. Certain objects may simply report their <see cref="BaseType"/>, while others may get more specific (e.g. a sensor of type "Ping").
+        /// </summary>
+        [XmlElement("type")]
+        public string DisplayType
+        {
+            get { return Lazy(() => displayType); }
+            set { displayType = value; }
+        }
+
+        private string internalType;
+
+        [XmlElement("type_raw")]
+        internal string type
+        {
+            get { return Lazy(() => internalType); }
+            set { internalType = value; }
+        }
+
+        private StringEnum<ObjectType> enumType;
+
+        /// <summary>
+        /// The type of this object.
+        /// </summary>
+        [PropertyParameter(nameof(Property.Type))]
+        public StringEnum<ObjectType> Type
+        {
+            get { return Lazy(() =>
+            {
+                if (enumType == null && !string.IsNullOrEmpty(type))
+                {
+                    if (baseType == BaseType.Sensor)
+                        enumType = new StringEnum<ObjectType>(type, ObjectType.Sensor);
+                    else
+                        enumType = new StringEnum<ObjectType>(type);
+                }
+
+                return enumType;
+            }); }
+            set { enumType = value; }
+        }
+
+        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?)EnumHelpers.XmlToEnum<XmlEnumAttribute>(Type.StringValue, typeof(SensorTypeInternal), false);
+
+        private bool active;
+
+        /// <summary>
+        /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
+        /// </summary>
+        [XmlElement("active_raw")]
+        [PropertyParameter(nameof(Property.Active))]
+        public bool Active
+        {
+            get { return Lazy(() => active); }
+            set { active = value; }
+        }
+
+        [XmlElement("basetype")]
+        [PropertyParameter(nameof(Property.BaseType))]
+        internal BaseType? baseType { get; set; }
 
         internal readonly string raw;
 
@@ -51,8 +129,7 @@ namespace PrtgAPI.Objects.Shared
         /// Initializes a new instance of the <see cref="PrtgObject"/> class with the raw representation of an object.
         /// </summary>
         /// <param name="raw">The raw representation of the object, containing the object's ID and Name.</param>
-        /// <param name="callback">A callback used to initialize additional properties of the object.</param>
-        internal PrtgObject(string raw, Action<string[]> callback = null)
+        internal PrtgObject(string raw)
         {
             if (raw == null)
                 throw new ArgumentNullException(nameof(raw));
@@ -69,6 +146,18 @@ namespace PrtgAPI.Objects.Shared
                 Id = Convert.ToInt32(components[0]);
                 Name = components[1];
             }
+        }
+
+        internal static int GetId(string raw)
+        {
+            if (raw == null)
+                throw new ArgumentNullException(nameof(raw));
+
+            if (raw == "-1")
+                return -1;
+
+            var components = raw.Split('|');
+            return Convert.ToInt32(components[0]);
         }
 
         [ExcludeFromCodeCoverage]

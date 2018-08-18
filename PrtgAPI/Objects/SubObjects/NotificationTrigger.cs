@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
@@ -16,10 +17,17 @@ namespace PrtgAPI
     [DataContract]
     [Description("Notification Trigger")]
     [DebuggerDisplay("Type = {Type}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}")]
-    public class NotificationTrigger
+    public class NotificationTrigger : ISubObject
     {
         [DataMember(Name = "type")]
         private string type;
+
+        [ExcludeFromCodeCoverage]
+        string IObject.Name
+        {
+            get { return OnNotificationAction.Name; }
+            set { OnNotificationAction.Name = value; }
+        }
 
         /// <summary>
         /// The Object ID this notification trigger applies to.

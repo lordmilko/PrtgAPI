@@ -1,13 +1,12 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">A computer or piece of equipment containing one or more sensors monitored by PRTG.</para>
     /// </summary>
-    public class Device : DeviceOrGroupOrProbe
+    public class Device : DeviceOrGroupOrProbe, ISensorOrDevice
     {
         /// <summary>
         /// Location of this object.

@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Objects.Shared
+namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Base class for Devices, Groups and Probes, containing properties that apply to all three object types.</para>
@@ -61,8 +61,8 @@ namespace PrtgAPI.Objects.Shared
         /// Number of sensors in <see cref="Status.Unknown"/> state.
         /// </summary>
         [XmlElement("undefinedsens_raw")]
-        [PropertyParameter(nameof(Property.UndefinedSensors))]
-        public int UndefinedSensors { get; set; }
+        [PropertyParameter(nameof(Property.UnknownSensors))]
+        public int UnknownSensors { get; set; }
 
         /// <summary>
         /// Total number of sensors contained under this object in any <see cref="Status"/> state.

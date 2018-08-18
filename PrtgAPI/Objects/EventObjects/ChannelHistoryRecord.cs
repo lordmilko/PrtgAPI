@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace PrtgAPI
@@ -6,12 +7,19 @@ namespace PrtgAPI
     /// <summary>
     /// Represents the value of a channel at a given date and time.
     /// </summary>
-    public class ChannelHistoryRecord
+    public class ChannelHistoryRecord : IEventObject
     {
         /// <summary>
         /// The date and time to which this object's historical values apply.
         /// </summary>
         public DateTime DateTime { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        int IEventObject.ObjectId
+        {
+            get { return SensorId; }
+            set { SensorId = value; }
+        }
 
         /// <summary>
         /// The ID of the sensor to which this history record applies.

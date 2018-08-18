@@ -1038,7 +1038,7 @@ namespace PrtgAPI.PowerShell.Progress
             return true;
         }
 
-        public void UpdateRecordsProcessed(ProgressRecordEx record, PrtgObject obj, bool writeObject = true)
+        public void UpdateRecordsProcessed(ProgressRecordEx record, IObject obj, bool writeObject = true)
         {
             //When a variable to cmdlet chain contains an operation, responsibility for updating the number of records processed
             //"resets", and we become responsible for updating our own count again
@@ -1086,7 +1086,7 @@ namespace PrtgAPI.PowerShell.Progress
         //TODO: need to modify the progress scenario handling for when you use both parameters at once
         //also need to implement handling of -index and -wait
 
-        private void IncrementProgressFromTotalRecords(ProgressRecordEx record, ProgressManager manager, PrtgObject obj, bool writeObject)
+        private void IncrementProgressFromTotalRecords(ProgressRecordEx record, ProgressManager manager, IObject obj, bool writeObject)
         {
             if (manager.TotalRecords > 0)
             {
@@ -1130,7 +1130,7 @@ namespace PrtgAPI.PowerShell.Progress
             return false;
         }
 
-        private void IncrementProgressFromPipeline(ProgressRecordEx record, PrtgObject obj, bool writeObject = true)
+        private void IncrementProgressFromPipeline(ProgressRecordEx record, IObject obj, bool writeObject = true)
         {
             var index = variableProgressDisplayed ? Pipeline.CurrentIndex + 2 : Pipeline.CurrentIndex + 1;
 

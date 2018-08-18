@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Request.Serialization;
 
-namespace PrtgAPI
+namespace PrtgAPI.NotificationActions
 {
     /// <summary>
     /// Settings that apply to Ticket Notification Actions.

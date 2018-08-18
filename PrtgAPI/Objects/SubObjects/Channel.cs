@@ -1,39 +1,60 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">A value within a sensor that contains the results of monitoring operations.</para>
     /// </summary>
-    public class Channel : PrtgObject
+    public class Channel : ISubObject
     {
+        /// <summary>
+        /// Unique identifier of this channel within its parent sensor.
+        /// </summary>
+        [XmlElement("objid")]
+        [PropertyParameter(nameof(Property.Id))]
+        public int Id { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        int ISubObject.SubId
+        {
+            get { return Id; }
+            set { Id = value; }
+        }
+
+        /// <summary>
+        /// Name of this channel.
+        /// </summary>
+        [XmlElement("name")]
+        [PropertyParameter(nameof(Property.Name))]
+        public string Name { get; set; }
+
         // ################################## Sensors, Channel ##################################
         // There is a copy in both Sensor and Channel
 
-        private string lastvalue;
+        private string displayLastvalue;
 
         /// <summary>
         /// Last display value of this channel. If this channel's sensor is currently paused, this may display "No data"
         /// </summary>
         [XmlElement("lastvalue")]
-        [PropertyParameter(nameof(Property.LastValue))]
-        public string LastValue
+        public string DisplayLastValue
         {
-            get { return lastvalue; }
-            set { lastvalue = string.IsNullOrEmpty(value) ? null : value.Trim(); }
+            get { return displayLastvalue; }
+            set { displayLastvalue = string.IsNullOrEmpty(value) ? null : value.Trim(); }
         }
+
+        //todo: update wiki to show displaylastvalue and lastvalue, also update channel formats.ps1xml to use displaylastvalue
 
         /// <summary>
         /// The raw last value of this channel.<para/>
         /// This value is represented in the smallest unit the <see cref="Unit"/> can be divided into (seconds, bits, bytes, etc)
         /// </summary>
-        public double LastValueNumeric => Convert.ToDouble((Convert.ToDecimal(lastValueNumeric) /10).ToString("F"));
-
         [XmlElement("lastvalue_raw")]
-        internal string lastValueNumeric { get; set; }
+        [PropertyParameter(nameof(Property.LastValue))]
+        public double? LastValue { get; set; }
 
         /// <summary>
         /// A value that multiplies the raw value of this channel.
@@ -126,15 +147,16 @@ namespace PrtgAPI
             get { return unit; }
             set
             {
+                //Property will be set to null by deserialization engine
                 if (value != null)
                     unit = value;
                 else
                 {
-                    if (LastValue == null || LastValue == "No data")
+                    if (LastValue == null)
                         unit = null;
                     else
                     {
-                        unit = LastValue?.Substring(LastValue.LastIndexOf(' ') + 1);
+                        unit = DisplayLastValue?.Substring(DisplayLastValue.LastIndexOf(' ') + 1);
                     }
                 }
             }
@@ -148,7 +170,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [PropertyParameter(nameof(ChannelProperty.ValueLookup))]
-        public string ValueLookup => valueLookup?.Substring(valueLookup.IndexOf("|") + 1);
+        public string ValueLookup => valueLookup?.Substring(valueLookup.IndexOf("|", StringComparison.Ordinal) + 1);
 
         /// <summary>
         /// Controls how values are displayed in historic data of a timespan.
@@ -277,5 +299,14 @@ namespace PrtgAPI
         [XmlElement("injected_limitwarningmsg")]
         [PropertyParameter(nameof(ChannelProperty.WarningLimitMessage))]
         public string WarningLimitMessage { get; set; }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

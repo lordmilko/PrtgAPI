@@ -314,7 +314,7 @@
                                 <PropertyName>Id</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>LastValue</PropertyName>
+                                <PropertyName>DisplayLastValue</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>LimitsEnabled</PropertyName>

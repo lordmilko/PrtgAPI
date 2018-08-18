@@ -155,7 +155,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public DeviceOrGroupOrProbe Destination { get; set; }
 
         private SensorOrDeviceOrGroupOrProbe sourceObj;
-        private Func<int, List<PrtgObject>> sourceObjResolver;
+        private Func<int, List<IObject>> sourceObjResolver;
 
         private CloneCmdletConfig config;
 
@@ -340,9 +340,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 WriteObject(obj);
         }
 
-        private Func<int, List<PrtgObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<PrtgObject>().ToList();
-        private Func<int, List<PrtgObject>> GetDevices => id => client.GetDevices(Property.Id, id).Cast<PrtgObject>().ToList();
-        private Func<int, List<PrtgObject>> GetGroups => id => client.GetGroups(Property.Id, id).Cast<PrtgObject>().ToList();
+        private Func<int, List<IObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<IObject>().ToList();
+        private Func<int, List<IObject>> GetDevices => id => client.GetDevices(Property.Id, id).Cast<IObject>().ToList();
+        private Func<int, List<IObject>> GetGroups => id => client.GetGroups(Property.Id, id).Cast<IObject>().ToList();
 
         internal override string ProgressActivity => $"Cloning PRTG {config.TypeDescription}s";
     }

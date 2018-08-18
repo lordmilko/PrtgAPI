@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -11,9 +10,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public string Name { get; set; }
         public string Host { get; set; }
-        public PrtgObject PrtgObject => Object as PrtgObject;
+        public IObject IObject => Object as IObject;
         public object Object { get; set; }
-        public Func<int, List<PrtgObject>> GetObjects { get; set; }
+        public Func<int, List<IObject>> GetObjects { get; set; }
         public Func<PrtgClient, int, int> Cloner { get; set; }
 
         public bool AllowBasic { get; set; }
@@ -27,7 +26,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     return "Trigger";
                 }
 
-                return PrtgObject.GetType().Name;
+                return IObject.GetType().Name;
             }
         }
 
@@ -40,7 +39,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     return ((NotificationTrigger) Object).OnNotificationAction.ToString();
                 }
 
-                return PrtgObject.Name;
+                return IObject.Name;
             }
         }
 
@@ -55,29 +54,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     return $"ID: {trigger.ObjectId}, SubID: {trigger.SubId}";
                 }
 
-                return $"ID: {PrtgObject.Id}";
+                return $"ID: {IObject.GetId()}";
             }
         }
 
-        public CloneCmdletConfig(object obj, string name, Func<int, List<PrtgObject>> getObjects)
+        public CloneCmdletConfig(object obj, string name, Func<int, List<IObject>> getObjects)
         {
             Name = name;
             Object = obj;
             GetObjects = getObjects;
 
-            if(PrtgObject != null)
-                Cloner = (c, d) => c.CloneObject(PrtgObject.Id, Name, d);
+            if (IObject != null)
+                Cloner = (c, d) => c.CloneObject(IObject.GetId(), Name, d);
         }
 
-        public CloneCmdletConfig(object obj, string name, string host, Func<int, List<PrtgObject>> getObjects)
+        public CloneCmdletConfig(object obj, string name, string host, Func<int, List<IObject>> getObjects)
         {
             Name = name;
             Host = host;
             Object = obj;
             GetObjects = getObjects;
 
-            if(PrtgObject != null)
-                Cloner = (c, d) => c.CloneObject(PrtgObject.Id, Name, Host, d);
+            if (IObject != null)
+                Cloner = (c, d) => c.CloneObject(IObject.GetId(), Name, Host, d);
         }
     }
 }

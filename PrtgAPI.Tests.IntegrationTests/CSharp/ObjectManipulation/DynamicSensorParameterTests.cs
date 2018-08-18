@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 {
@@ -92,7 +92,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
             try
             {
                 Assert.AreEqual("ZEN", sensor.Name);
-                Assert.AreEqual(sensor.RawType, "zen");
+                Assert.AreEqual(sensor.Type, "zen");
                 Assert.AreEqual(sensor.NotificationTypes.InheritTriggers, true);
             }
             finally

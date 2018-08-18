@@ -1,4 +1,4 @@
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Request.Serialization
 {
     enum XmlAttributeType
     {

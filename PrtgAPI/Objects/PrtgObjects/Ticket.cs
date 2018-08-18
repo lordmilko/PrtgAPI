@@ -1,10 +1,9 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI
 {
-    class Ticket : SensorOrDeviceOrGroupOrProbeOrLogOrTicket
+    class Ticket : SensorOrDeviceOrGroupOrProbeOrTicket
     {
         /// <summary>
         /// Status of this ticket

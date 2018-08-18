@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Request.Serialization
 {
     class LazyValue<T> : Lazy<T>
     {

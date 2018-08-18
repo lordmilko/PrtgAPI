@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace PrtgAPI
@@ -9,9 +11,21 @@ namespace PrtgAPI
     /// Represents historical monitoring data for a sensor at a specified time period.
     /// </summary>
     [Description("Sensor History")]
-    public class SensorHistoryData
+    public class SensorHistoryData : IEventObject
     {
-        //todo: Downtime property not currently exposed by PRTG API
+        [ExcludeFromCodeCoverage]
+        string IObject.Name
+        {
+            get { return DateTime.ToString(CultureInfo.InvariantCulture); }
+            set { throw new NotSupportedException(); }
+        }
+        
+        [ExcludeFromCodeCoverage]
+        int IEventObject.ObjectId
+        {
+            get { return SensorId; }
+            set { SensorId = value; }
+        }
 
         /// <summary>
         /// The date and time to which this object's historical values apply.
@@ -44,7 +58,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return DateTime.ToString();
+            return DateTime.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

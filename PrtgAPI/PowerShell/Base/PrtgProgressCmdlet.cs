@@ -164,7 +164,7 @@ namespace PrtgAPI.PowerShell.Base
                     ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} Search";
 
                     var obj = ProgressManager.CmdletPipeline.Current;
-                    var prtgObj = obj as PrtgObject;
+                    var prtgObj = obj as IObject;
 
                     if (prtgObj != null)
                         ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj.GetType()).ToLower()}";
@@ -212,7 +212,7 @@ namespace PrtgAPI.PowerShell.Base
             ProgressManager.CurrentState.Add(obj);
             ProgressManager.CurrentState.Current = obj;
 
-            var prtgObj = obj as PrtgObject;
+            var prtgObj = obj as IObject;
 
             switch (GetSwitchScenario())
             {
@@ -290,7 +290,7 @@ namespace PrtgAPI.PowerShell.Base
             return scenario;
         }
 
-        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage, PrtgObject obj)
+        private void UpdateScenarioProgress_MultipleCmdlets(ProgressStage stage, IObject obj)
         {
             if (ProgressManager.ExpectsContainsProgress)
             {
@@ -328,7 +328,7 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage, PrtgObject obj)
+        private void UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage stage, IObject obj)
         {
             if (stage == ProgressStage.PreLoop)
             {

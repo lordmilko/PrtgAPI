@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     class ChannelSettings : ObjectSettings
     {

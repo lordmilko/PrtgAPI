@@ -1,10 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.NotificationActions;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -12,7 +12,8 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">An action to be performed by PRTG when a <see cref="NotificationTrigger"/> activates.</para>
     /// </summary>
-    public class NotificationAction : ObjectTable, IFormattable, ILazy
+    [Description("Notification Action")]
+    public class NotificationAction : PrtgObject, IFormattable, ILazy
     {
         private string url;
 
