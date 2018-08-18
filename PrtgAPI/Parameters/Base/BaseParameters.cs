@@ -8,7 +8,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents parameters used to construct a <see cref="PrtgUrl"/>.
     /// </summary>
-    public class Parameters : IParameters
+    public class BaseParameters : IParameters
     {
         bool IParameters.Cookie
         {
@@ -21,19 +21,19 @@ namespace PrtgAPI.Parameters
         private readonly Dictionary<Parameter, object> parameters = new Dictionary<Parameter, object>();
 
         /// <summary>
-        /// Retrieve the underlying dictionary of parameters.
+        /// Retrieves the underlying dictionary of parameters stored in this object.
         /// </summary>
-        /// <returns></returns>
-        public Dictionary<Parameter, object> GetParameters()
+        /// <returns>The underlying dictionary of parameters.</returns>
+        public IDictionary<Parameter, object> GetParameters()
         {
             return parameters;
         }
 
         /// <summary>
-        /// Add or update a <see cref="Parameter"/> for use in a <see cref="PrtgUrl"/>.
+        /// Gets or sets a <see cref="Parameter"/> for use in a <see cref="PrtgUrl"/>.
         /// </summary>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <param name="parameter">The parameter to retrieve or modify.</param>
+        /// <returns>The value of the specified parameter. If the parameter does not exist, null.</returns>
         public object this[Parameter parameter]
         {
             get

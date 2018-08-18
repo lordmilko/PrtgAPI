@@ -1,10 +1,11 @@
 ﻿using System;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Request.Serialization.ValueConverters;
 
 namespace PrtgAPI.Parameters
 {
-    class SetPositionParameters : BaseActionParameters
+    class SetPositionParameters : BaseActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.SetPosition;
         public SetPositionParameters(int objectId, Position position) : base(objectId)
         {
             Position = position;

@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class SimulateErrorParameters : Parameters
+    class SimulateErrorParameters : BaseParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.Simulate;
+
         public SimulateErrorParameters(int[] sensorIds)
         {
             if (sensorIds == null)

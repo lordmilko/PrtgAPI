@@ -3,8 +3,10 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class NotificationTriggerParameters : Parameters
+    class NotificationTriggerParameters : BaseParameters, IXmlParameters
     {
+        XmlFunction IXmlParameters.Function => XmlFunction.TableData;
+
         public NotificationTriggerParameters(int objectId)
         {
             ObjectId = objectId;

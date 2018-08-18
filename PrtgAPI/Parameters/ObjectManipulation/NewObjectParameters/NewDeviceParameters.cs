@@ -9,10 +9,12 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class NewDeviceParameters : NewObjectParameters
     {
+        internal override CommandFunction Function => CommandFunction.AddDevice2;
+
         #region Device Specific
 
         /// <summary>
-        /// The IP Address or HostName to use to connect to this device.
+        /// Gets or sets the IP Address or HostName to use to connect to this device.
         /// </summary>
         [RequireValue(true)]
         public string Host
@@ -36,7 +38,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The internet protocol version to use to connect to this device.
+        /// Gets or sets the internet protocol version to use to connect to this device.
         /// </summary>
         public IPVersion IPVersion
         {
@@ -72,7 +74,7 @@ namespace PrtgAPI.Parameters
         //todo: device icon
 
         /// <summary>
-        /// How thoroughly PRTG should scan for compatible sensor types when performing an auto-discovery.
+        /// Gets or sets how thoroughly PRTG should scan for compatible sensor types when performing an auto-discovery.
         /// </summary>
         public AutoDiscoveryMode AutoDiscoveryMode
         {
@@ -90,7 +92,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// How often auto-discovery operations should be performed to create new sensors.
+        /// Gets or sets how often auto-discovery operations should be performed to create new sensors.
         /// </summary>
         public AutoDiscoverySchedule AutoDiscoverySchedule
         {
@@ -99,7 +101,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Device templates to use when performing the auto-discovery. If <see cref="PrtgAPI.AutoDiscoveryMode.Automatic"/> or
+        /// Gets or sets the device templates to use when performing an auto-discovery. If <see cref="PrtgAPI.AutoDiscoveryMode.Automatic"/> or
         /// <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticDetailed"/>  is specified, all templates will be used and this parameter will be ignored.<para/>
         /// If <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticTemplate"/> is specified, at least one template must be specified.
         /// </summary>

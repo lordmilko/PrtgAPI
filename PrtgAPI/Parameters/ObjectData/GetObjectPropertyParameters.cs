@@ -5,7 +5,8 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     class GetObjectPropertyParameters : BaseActionParameters, IHtmlParameters
     {
-        public GetObjectPropertyParameters(int objectId, ObjectType objectType) : base(objectId)
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.ObjectData;
+
         public GetObjectPropertyParameters(int objectId, object objectType) : base(objectId)
         {
             if (objectType != null)

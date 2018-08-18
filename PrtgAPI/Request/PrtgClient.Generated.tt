@@ -41,7 +41,7 @@ for(int i = 0; i < 2; i++)
 #>
         internal <#= GetSignature("GetChannelsInternal", "List<Channel>", i) #>(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
-            var response = <#= CallFunction("requestEngine.ExecuteRequest", "XmlFunction.TableData, new ChannelParameters(sensorId)", i) #>;
+            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "XmlFunction.TableData, new ChannelParameters(sensorId)", i) #>;
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -84,7 +84,7 @@ for(int i = 0; i < 2; i++)
 #>
         internal <#= GetSignature("GetNotificationActionsInternal", "List<NotificationAction>", i) #>(NotificationActionParameters parameters)
         {
-            var response = <#= CallFunction("requestEngine.ExecuteRequest", "XmlFunction.TableData, parameters", i) #>;
+            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "XmlFunction.TableData, parameters", i) #>;
 
             var items = response.Descendants("item").ToList();
 
@@ -329,7 +329,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("AddObjectWithExcessiveValue", "void", i) #>(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        private <#= GetSignature("AddObjectWithExcessiveValue", "void", i) #>(List<KeyValuePair<Parameter, object>> lengthLimit, ICommandParameters internalParams)
         {
             var limitParam = lengthLimit.First();
 
@@ -349,11 +349,11 @@ for(int i = 0; i < 2; i++)
 
                         internalParams[limitParam.Key] = thisRequest;
 
-                        <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+                        <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams", i) #>;
                     }
                 }
                 else
-                    <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+                    <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams", i) #>;
             }
             else
                 throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
@@ -416,7 +416,7 @@ for(int i = 0; i < 2; i++)
         {
             <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "ResponseParser.GetSensorTargetTmpId", i) #>;
 
-            var tmpIdStr = <#= CallFunction("requestEngine.ExecuteRequest", "CommandFunction.AddSensor2, parameters, getSensorTargetTmpId", i) #>;
+            var tmpIdStr = <#= CallFunction("RequestEngine.ExecuteRequest", "parameters, getSensorTargetTmpId", i) #>;
 
             int tmpId;
 
@@ -453,7 +453,7 @@ for(int i = 0; i < 2; i++)
 
             do
             {
-                p = <#= CallGenericFunction("GetObject", "SensorTargetProgress", "JsonFunction.GetAddSensorProgress, parameters", i) #>;
+                p = <#= CallGenericFunction("ObjectEngine.GetObject", "SensorTargetProgress", "parameters", i) #>;
 
                 if(progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
@@ -477,7 +477,7 @@ for(int i = 0; i < 2; i++)
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = <#= CallFunction("requestEngine.ExecuteRequest", "HtmlFunction.AddSensor4, parameters", i) #>;
+            var page = <#= CallFunction("RequestEngine.ExecuteRequest", "new SensorTargetCompletedParameters(deviceId, tmpId)", i) #>;
 
             return page;
         }
@@ -493,7 +493,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal <#= GetSignature("AddObject", "List<T>", i) #><T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+        internal <#= GetSignature("AddObject", "List<T>", i) #><T>(int parentId, NewObjectParameters parameters,
             Func<SearchFilter[], <#= GetFuncRet("List<T>", i) #>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
             bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
@@ -501,29 +501,29 @@ for(int i = 0; i < 2; i++)
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
 
-                <#= DeclareAction0("addObjectInternal", "AddObjectInternal", "parentId, parameters, function", i) #>;
+                <#= DeclareAction0("addObjectInternal", "AddObjectInternal", "parentId, parameters", i) #>;
                 <#= DeclareFuncFromVariable0("getObjs", "getObjects", "filters", "List<T>", i) #>;
 
                 return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple", i) #>).OrderBy(o => o.Id).ToList();
             }
             else
             {
-                <#= CallFunction("AddObjectInternal", "parentId, parameters, function", i) #>;
+                <#= CallFunction("AddObjectInternal", "parentId, parameters", i) #>;
 
                 return null;
             }
         }
 
-        private <#= GetSignature("AddObjectInternal", "void", i) #>(int objectId, NewObjectParameters parameters, CommandFunction function)
+        private <#= GetSignature("AddObjectInternal", "void", i) #>(int objectId, NewObjectParameters parameters)
         {
             var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
             var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
-                <#= CallFunction("AddObjectWithExcessiveValue", "lengthLimit, internalParams, function", i) #>;
+                <#= CallFunction("AddObjectWithExcessiveValue", "lengthLimit, internalParams", i) #>;
             else
-                <#= CallFunction("requestEngine.ExecuteRequest", "function, internalParams", i) #>;
+                <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams", i) #>;
         }
 
         private <#= GetSignature("ResolveWithDiff", "List<T>", i) #><T>(<#= GetActionParam0(i) #> createObject, Func<<#= GetFuncRet("List<T>", i) #>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,

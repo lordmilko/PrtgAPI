@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -90,7 +89,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="AddDevice"/> 
         /// </summary>
-        public AddDevice() : base(BaseType.Device, CommandFunction.AddDevice2)
+        public AddDevice() : base(BaseType.Device)
         {
         }
 

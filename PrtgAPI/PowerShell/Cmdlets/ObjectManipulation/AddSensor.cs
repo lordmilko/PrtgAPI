@@ -82,7 +82,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="AddSensor"/> class.
         /// </summary>
-        public AddSensor() : base(BaseType.Sensor, CommandFunction.AddSensor5)
+        public AddSensor() : base(BaseType.Sensor)
         {
         }
 

@@ -16,6 +16,53 @@ namespace PrtgAPI.Request
 {
     static class ResponseParser
     {
+        /// <summary>
+        /// Apply a modification function to each element of a response.
+        /// </summary>
+        /// <typeparam name="T">The type of objects returned by the response.</typeparam>
+        /// <param name="objects">The collection of objects to amend.</param>
+        /// <param name="action">A modification function to apply to each element of the collection.</param>
+        /// <returns>A collection of modified objects.</returns>
+        internal static List<T> Amend<T>(List<T> objects, Action<T> action)
+        {
+            foreach (var obj in objects)
+            {
+                action(obj);
+            }
+
+            return objects;
+        }
+
+        /// <summary>
+        /// Apply a modification function to the properties of an object.
+        /// </summary>
+        /// <typeparam name="T">The type of object returned by the response.</typeparam>
+        /// <param name="obj">The object to amend.</param>
+        /// <param name="action">A modification function to apply to the object.</param>
+        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
+        internal static T Amend<T>(T obj, Action<T> action)
+        {
+            action(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Apply a modification action to a response, transforming the response to another type.
+        /// </summary>
+        /// <typeparam name="TSource">The type of object to transform.</typeparam>
+        /// <typeparam name="TRet">The type of object to return.</typeparam>
+        /// <param name="obj">The object to transform.</param>
+        /// <param name="action">A modification function that transforms the response from one type to another.</param>
+        /// <returns></returns>
+        internal static TRet Amend<TSource, TRet>(TSource obj, Func<TSource, TRet> action)
+        {
+            var val = action(obj);
+
+            return val;
+        }
+
         #region Notifications
 
         internal static XElement GroupNotificationActionProperties(XElement xml)
@@ -289,6 +336,17 @@ namespace PrtgAPI.Request
                 return new List<SensorTypeDescriptor>();
 
             return types.GroupBy(t => t.Id).Select(g => g.First()).ToList();
+        }
+
+        #endregion
+        #region Resolve Address
+
+        internal static string ResolveParser(HttpResponseMessage message)
+        {
+            if (message.Content.Headers.ContentType.MediaType == "image/png" || message.StatusCode.ToString() == "530")
+                throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available");
+
+            return null;
         }
 
         #endregion

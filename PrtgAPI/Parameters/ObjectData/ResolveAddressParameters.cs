@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class ResolveAddressParameters : Parameters
+    class ResolveAddressParameters : BaseParameters, IJsonParameters
     {
+        JsonFunction IJsonParameters.Function => JsonFunction.GeoLocator;
+
         public ResolveAddressParameters(string address)
         {
             this[Parameter.Custom] = new List<CustomParameter>

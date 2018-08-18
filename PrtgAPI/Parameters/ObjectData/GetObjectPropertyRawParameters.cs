@@ -4,9 +4,20 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class GetObjectPropertyRawParameters : BaseActionParameters
+    class GetObjectPropertyRawParameters : BaseActionParameters, IXmlParameters
     {
-        public GetObjectPropertyRawParameters(int objectId, string name) : base(objectId)
+        private static readonly string[] alternate = {"comments"};
+
+        XmlFunction IXmlParameters.Function
+        {
+            get
+            {
+                if (IsAlternate(Name))
+                    return XmlFunction.GetObjectStatus;
+
+                return XmlFunction.GetObjectProperty;
+            }
+        }
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("name cannot be null or empty", nameof(name));

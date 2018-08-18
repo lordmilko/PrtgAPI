@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -31,14 +27,11 @@ namespace PrtgAPI.PowerShell.Base
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         public TParams Parameters { get; set; }
 
-        private CommandFunction function;
-
         private BaseType type;
 
-        internal AddObject(BaseType type, CommandFunction function)
+        internal AddObject(BaseType type)
         {
             this.type = type;
-            this.function = function;
         }
 
         /// <summary>
@@ -57,7 +50,7 @@ namespace PrtgAPI.PowerShell.Base
                 {
                     if (Resolve)
                     {
-                        var obj = AddAndResolveObject(destination.Id, Parameters, function, GetObjects);
+                        var obj = AddAndResolveObject(destination.Id, Parameters, GetObjects);
 
                         foreach (var o in obj)
                         {
@@ -72,7 +65,7 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.RecordsProcessed = -1;
                     }
                     else
-                        client.AddObject(destination.Id, Parameters, function, GetObjects, false);
+                        client.AddObject(destination.Id, Parameters, GetObjects, false);
 
                 }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }

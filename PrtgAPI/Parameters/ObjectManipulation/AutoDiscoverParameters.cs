@@ -2,8 +2,10 @@
 
 namespace PrtgAPI.Parameters
 {
-    class AutoDiscoverParameters : BaseActionParameters
+    class AutoDiscoverParameters : BaseActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.DiscoverNow;
+
         public AutoDiscoverParameters(int objectId, DeviceTemplate[] templates) : base(objectId)
         {
             if (templates != null && templates.Length > 0)

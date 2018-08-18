@@ -31,16 +31,16 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SpecifiedNoPass_Yields_PassHash()
         {
-            var url = CreateUrl(new Parameters.Parameters(), false);
+            var url = CreateUrl(new BaseParameters(), false);
 
-            Assert.IsTrue(url.Contains("passhash=password"));
-            Assert.IsFalse(url.Contains("password=password"));
+            Assert.IsTrue(url.Contains("passhash=12345678"));
+            Assert.IsFalse(url.Contains("password=12345678"));
         }
 
         [TestMethod]
         public void PrtgUrl_SpecifiedPassHash_Yields_PassHash()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.PassHash] = "password"
             }, false);
@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SpecifiedPassword_Yields_Password()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Password] = "password"
             }, false);
@@ -64,12 +64,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
-            var urlWithoutArray = CreateUrl(new Parameters.Parameters
+            var urlWithoutArray = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new SearchFilter(Property.Name, "dc1")
             });
 
-            var urlWithArray = CreateUrl(new Parameters.Parameters
+            var urlWithArray = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new[] {new SearchFilter(Property.Name, "dc1")}
             });
@@ -82,12 +82,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiValue_WithoutIEnumerable_Equals_WithIEnumerable()
         {
-            var urlWithoutArray = CreateUrl(new Parameters.Parameters
+            var urlWithoutArray = CreateUrl(new BaseParameters
             {
                 [Parameter.Columns] = Property.Id
             });
 
-            var urlWithArray = CreateUrl(new Parameters.Parameters
+            var urlWithArray = CreateUrl(new BaseParameters
             {
                 [Parameter.Columns] = new[] {Property.Id }
             });
@@ -100,12 +100,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_CustomParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
-            var urlWithoutArray = CreateUrl(new Parameters.Parameters
+            var urlWithoutArray = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new CustomParameter("foo", "bar")
             });
 
-            var urlWithArray = CreateUrl(new Parameters.Parameters
+            var urlWithArray = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new[] { new CustomParameter("foo", "bar") }
             });
@@ -155,12 +155,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             //Specifying FilterXyz doesn't actually make sense here (we should be using a SearchFilter) however
             //the point of the test is to validate flag parsing
 
-            var flagsUrl = CreateUrl(new Parameters.Parameters
+            var flagsUrl = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new SearchFilter(Property.Status, Status.Paused)
             });
 
-            var manualUrl = CreateUrl(new Parameters.Parameters
+            var manualUrl = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] =
                     new[]
@@ -178,12 +178,12 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SearchFilter_With_EnumFlags()
         {
-            var flagsUrl = CreateUrl(new Parameters.Parameters
+            var flagsUrl = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new SearchFilter(Property.Status, new[] { Status.Paused })
             });
 
-            var manualUrl = CreateUrl(new Parameters.Parameters
+            var manualUrl = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new SearchFilter(Property.Status,
                     new[]
@@ -202,7 +202,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SearchFilter_With_TimeSpan()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new[] {new SearchFilter(Property.UpDuration, new TimeSpan(1, 2, 3))}
             });
@@ -213,7 +213,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_SearchFilter_With_DateTime()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.FilterXyz] = new[] { new SearchFilter(Property.LastUp, new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc)) }
             });
@@ -226,7 +226,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             AssertEx.Throws<ArgumentException>(() =>
             {
-                var url = CreateUrl(new Parameters.Parameters
+                var url = CreateUrl(new BaseParameters
                 {
                     [Parameter.Custom] = 3
                 });
@@ -236,7 +236,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsNull()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = null
             });
@@ -247,7 +247,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsEmptyList()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new CustomParameter[] {}
             });
@@ -258,7 +258,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiValue_CustomParameter_FormatsCorrectly()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiValue)
             });
@@ -269,7 +269,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiParameter_CustomParameter_FormatsCorrectly()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new CustomParameter("name", new[] { "first", "second" }, ParameterType.MultiParameter)
             });
@@ -280,7 +280,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiValue_CustomParameterList_FormatsCorrectly()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new List<CustomParameter>
                 {
@@ -295,7 +295,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiParameter_CustomParameterList_FormatsCorrectly()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Custom] = new List<CustomParameter>
                 {
@@ -310,7 +310,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiParameter_With_Enum()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Service] = Status.Up
             });
@@ -323,7 +323,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void PrtgUrl_MultiParameter_With_EnumFlags()
         {
-            var url = CreateUrl(new Parameters.Parameters
+            var url = CreateUrl(new BaseParameters
             {
                 [Parameter.Service] = Status.Paused
             });
@@ -338,7 +338,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             AssertEx.Throws<ArgumentException>(() =>
             {
-                var url = CreateUrl(new Parameters.Parameters
+                var url = CreateUrl(new BaseParameters
                 {
                     [Parameter.Name] = new[] {1, 2}
                 });
@@ -369,14 +369,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             Assert.AreEqual("content=sensors&columns=name&count=*", url);
         }
 
-        public static string CreateUrl(Parameters.Parameters parameters, bool truncate = true)
+        public static string CreateUrl(IParameters parameters, bool truncate = true)
         {
-            var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "password"), XmlFunction.TableData, parameters);
+            var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "12345678"), XmlFunction.TableData, parameters);
 
             if (truncate)
             {
                 var suffix = "https://prtg.example.com/api/table.xml?";
-                var prefix = $"&username=username&passhash=password";
+                var prefix = $"&username=username&passhash=12345678";
                 try
                 {
                     Assert.IsTrue(url.Url.StartsWith(suffix), "URL did not start with suffix");
@@ -400,7 +400,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
         private void Server_Prefix(string server, string prefixedServer)
         {
-            var url = new PrtgUrl(new ConnectionDetails(server, "username", "password"), XmlFunction.TableData, new Parameters.Parameters());
+            var url = new PrtgUrl(new ConnectionDetails(server, "username", "password"), XmlFunction.TableData, new BaseParameters());
 
             Assert.IsTrue(url.Url.StartsWith(prefixedServer));
         }

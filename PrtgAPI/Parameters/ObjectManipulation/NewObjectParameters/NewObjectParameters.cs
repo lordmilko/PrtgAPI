@@ -9,10 +9,14 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Base class for all parameters that create new table objects.
     /// </summary>
-    public abstract class NewObjectParameters : Parameters
+    public abstract class NewObjectParameters : BaseParameters, ICommandParameters
     {
+        internal abstract CommandFunction Function { get; }
+
+        CommandFunction ICommandParameters.Function => Function;
+
         /// <summary>
-        /// The name to use for this object.
+        /// Gets or sets the name to use for this object.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(ObjectProperty.Name))]
@@ -23,7 +27,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
+        /// Gets or sets the tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.Tags))]
         public string[] Tags
@@ -43,7 +47,7 @@ namespace PrtgAPI.Parameters
         #region GetCustomParameter
 
         /// <summary>
-        /// Retrieve the value of a property from the underlying parameter set.
+        /// Retrieves the value of a property from the underlying parameter set.
         /// </summary>
         /// <param name="property">The property whose value should be retrieved</param>
         /// <returns>The original unserialized value.</returns>
@@ -58,7 +62,7 @@ namespace PrtgAPI.Parameters
         #region GetCustomParameterEnumXml
 
         /// <summary>
-        /// Retrieve the original value of a serialized enum property from the underlying parameter set.
+        /// Retrieves the original value of a serialized enum property from the underlying parameter set.
         /// </summary>
         /// <typeparam name="T">The type of enum to retrieve.</typeparam>
         /// <param name="property">The property whose value should be retrieved.</param>
@@ -71,7 +75,7 @@ namespace PrtgAPI.Parameters
             GetCustomParameterEnumXml<T>(GetObjectPropertyInternalName(property));
 
         /// <summary>
-        /// Retrieve the original value of a serialized enum property from the underlying parameter set, using its raw serialized name.
+        /// Retrieves the original value of a serialized enum property from the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <typeparam name="T">The type of enum to retrieve.</typeparam>
         /// <param name="name">The raw name of the parameter</param>
@@ -90,7 +94,7 @@ namespace PrtgAPI.Parameters
         #region GetCustomParameterBool
 
         /// <summary>
-        /// Retrieve the original value of a serialized boolean property from the underlying parameter set.
+        /// Retrieves the original value of a serialized boolean property from the underlying parameter set.
         /// </summary>
         /// <param name="property">The property whose value should be retrieved.</param>
         /// <returns>The original unserialized value.</returns>
@@ -102,7 +106,7 @@ namespace PrtgAPI.Parameters
             GetCustomParameterBool(GetObjectPropertyInternalName(property));
 
         /// <summary>
-        /// Retrieve the original value of a serialized boolean property from the underlying parameter set, using its raw serialized name.
+        /// Retrieves the original value of a serialized boolean property from the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter</param>
         /// <returns>The original unserialized value.</returns>
@@ -120,7 +124,7 @@ namespace PrtgAPI.Parameters
         #region GetCustomParameterArray
 
         /// <summary>
-        /// Retrieve the original value of a serialized array property from the underlying parameter set.
+        /// Retrieves the original value of a serialized array property from the underlying parameter set.
         /// </summary>
         /// <param name="property">The parameter to retrieve</param>
         /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(ObjectProperty, string[], char)"/> </param>
@@ -133,7 +137,7 @@ namespace PrtgAPI.Parameters
             GetCustomParameterArray(GetObjectPropertyInternalName(property), delim);
 
         /// <summary>
-        /// Retrieve the original value of a serialized array property from the underlying parameter set, using its raw serialized name.
+        /// Retrieves the original value of a serialized array property from the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter</param>
         /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(string, string[], char)"/> </param>
@@ -150,7 +154,7 @@ namespace PrtgAPI.Parameters
         #endregion
 
         /// <summary>
-        /// Retrieve a parameter from the underlying parameter set using its raw, serialized name. If set does not contain a value for the specified parameter, null will be returned.
+        /// Retrieves a parameter from the underlying parameter set using its raw, serialized name. If set does not contain a value for the specified parameter, null will be returned.
         /// </summary>
         /// <param name="name">The raw name of the parameter</param>
         /// <returns>The parameter's corresponding value. If the parameter was not found in the set, this value is null</returns>
@@ -167,7 +171,7 @@ namespace PrtgAPI.Parameters
         #region SetCustomParameter
 
         /// <summary>
-        /// Store the value of a property in the underlying parameter set.
+        /// Stores the value of a property in the underlying parameter set.
         /// </summary>
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The value to serialize.</param>
@@ -182,7 +186,7 @@ namespace PrtgAPI.Parameters
         #region SetCustomParameterEnumXml
 
         /// <summary>
-        /// Store the serialized value of an enum property in the underlying parameter set.
+        /// Stores the serialized value of an enum property in the underlying parameter set.
         /// </summary>
         /// <typeparam name="T">The type of enum to serialize.</typeparam>
         /// <param name="property">The property whose value should be stored.</param>
@@ -195,7 +199,7 @@ namespace PrtgAPI.Parameters
             SetCustomParameterEnumXml(GetObjectPropertyInternalName(property), @enum);
 
         /// <summary>
-        /// Store the serialized value of an enum property in the underlying parameter set, using its raw serialized name.
+        /// Stores the serialized value of an enum property in the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <typeparam name="T">The type of enum to serialize.</typeparam>
         /// <param name="name">The raw name of the parameter.</param>
@@ -216,7 +220,7 @@ namespace PrtgAPI.Parameters
         #region SetCustomParameterBool
 
         /// <summary>
-        /// Store the serialized value of a boolean property in the underlying parameter set.
+        /// Stores the serialized value of a boolean property in the underlying parameter set.
         /// </summary>
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The bool to serialize.</param>
@@ -228,7 +232,7 @@ namespace PrtgAPI.Parameters
             SetCustomParameterBool(GetObjectPropertyInternalName(property), value);
 
         /// <summary>
-        /// Store the serialized value of a boolean property in the underlying parameter set, using its raw serialized name.
+        /// Stores the serialized value of a boolean property in the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="value">The bool to serialize.</param>
@@ -239,7 +243,7 @@ namespace PrtgAPI.Parameters
         #region SetCustomParameterArray
 
         /// <summary>
-        /// Store the serialized value of an array property in the underlying parameter set.
+        /// Stores the serialized value of an array property in the underlying parameter set.
         /// </summary>
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The array to serialize.</param>
@@ -252,7 +256,7 @@ namespace PrtgAPI.Parameters
             SetCustomParameterArray(GetObjectPropertyInternalName(property), value, delim);
 
         /// <summary>
-        /// Store the serialized value of an array property in the underlying parameter set, using its raw serialized name.
+        /// Stores the serialized value of an array property in the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="value">The array to serialize.</param>
@@ -267,7 +271,7 @@ namespace PrtgAPI.Parameters
         #endregion
 
         /// <summary>
-        /// Store the value of a property in the underlying set, using its raw serialized name.
+        /// Stores the value of a property in the underlying set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="value">The value to store.</param>

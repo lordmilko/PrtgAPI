@@ -2,8 +2,10 @@
 
 namespace PrtgAPI.Parameters
 {
-    class SensorTargetParameters : BaseActionParameters
+    class SensorTargetParameters : BaseActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.AddSensor2;
+
         public SensorTargetParameters(int deviceId, SensorType type) : base(deviceId)
         {
             SensorType = type;

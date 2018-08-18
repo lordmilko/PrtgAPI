@@ -7,6 +7,8 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class NewGroupParameters : NewObjectParameters
     {
+        internal override CommandFunction Function => CommandFunction.AddGroup2;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NewGroupParameters"/> class.
         /// </summary>

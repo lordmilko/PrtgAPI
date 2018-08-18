@@ -3,8 +3,10 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class AcknowledgeSensorParameters : BaseMultiActionParameters
+    class AcknowledgeSensorParameters : BaseMultiActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.AcknowledgeAlarm;
+
         public AcknowledgeSensorParameters(int[] objectIds, int? duration, string message) : base(objectIds)
         {
             if (message != null)

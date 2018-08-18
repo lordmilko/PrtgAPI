@@ -7,7 +7,7 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -127,24 +127,17 @@ namespace PrtgAPI.Tests.IntegrationTests
             var localClient = new PrtgClient(server, Settings.UserName, client.PassHash, AuthMode.PassHash);
 
             //Get the method
-            var engine = localClient.GetInternalField("requestEngine");
+            var engine = localClient.GetInternalProperty("RequestEngine");
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var methods = engine.GetType().GetMethods(flags).Where(m => m.Name == "ExecuteRequestAsync").ToList();
-            var method = methods.First(m => m.GetParameters().Any(p => p.ParameterType.Name == "JsonFunction"));
-
-            //Get the enum
-            var jsonFunctionEnum = typeof(PrtgClient).Assembly.GetType("PrtgAPI.JsonFunction");
-            var getPassHash = Enum.Parse(jsonFunctionEnum, "GetPassHash");
+            var method = methods.First(m => m.GetParameters().Any(p => p.ParameterType.Name == "IJsonParameters"));
 
             //Construct the parameters
-            var parameters = new Parameters.Parameters
-            {
-                [Parameter.Password] = Settings.Password
-            };
+            var parameters = PrtgAPIHelpers.GetPassHashParameters(Settings.Password);
 
             try
             {
-                await (Task<string>)method.Invoke(engine, new[] {getPassHash, parameters, null});
+                await (Task<string>)method.Invoke(engine, new object[] {parameters, null});
             }
             catch (WebException ex)
             {
@@ -189,7 +182,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         private PrtgClient GetTimeoutClient()
         {
             var localClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            var engine = localClient.GetInternalField("requestEngine");
+            var engine = localClient.GetInternalProperty("RequestEngine");
             var webInterface = engine.GetInternalField("webClient");
 
             var httpClient = new HttpClient
@@ -253,6 +246,8 @@ namespace PrtgAPI.Tests.IntegrationTests
                     Logger.LogTestDetail("Refreshing and sleeping for 20 seconds");
                     localClient.RefreshObject(Settings.Device);
                     Thread.Sleep(20000);
+
+                    ServerManager.WaitForObjects();
                 }
 
                 AssertEx.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");

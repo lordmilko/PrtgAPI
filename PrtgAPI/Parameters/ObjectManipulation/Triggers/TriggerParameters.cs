@@ -9,8 +9,10 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="NotificationTrigger"/> objects.</para>
     /// </summary>
-    public abstract class TriggerParameters : Parameters
+    public abstract class TriggerParameters : BaseParameters, IHtmlParameters
     {
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
+
         /// <summary>
         /// The ID of the object this trigger will apply to.
         /// </summary>

@@ -1,10 +1,10 @@
 ﻿namespace PrtgAPI.Parameters
 {
-    class SensorTargetProgressParameters : BaseActionParameters, IJsonParameters
+    class SensorTargetCompletedParameters : BaseActionParameters, IHtmlParameters
     {
-        JsonFunction IJsonParameters.Function => JsonFunction.GetAddSensorProgress;
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.AddSensor4;
 
-        public SensorTargetProgressParameters(int deviceId, int tmpId) : base(deviceId)
+        public SensorTargetCompletedParameters(int deviceId, int tmpId) : base(deviceId)
         {
             this[Parameter.Custom] = new CustomParameter("tmpid", tmpId);
 

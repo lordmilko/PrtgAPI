@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {
@@ -78,15 +78,9 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         private void AddInvalidTrigger()
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-
-            var htmlFunction = client.GetType().Assembly.GetType("PrtgAPI.HtmlFunction");
-            var editSettings = htmlFunction.GetField("EditSettings").GetValue(null);
-
-            var requestEngine = client.GetType().GetField("requestEngine", bindingFlags).GetValue(client);
-
-            var args = new[] { htmlFunction, typeof(Parameters.Parameters), typeof(Func<HttpResponseMessage, string>) };
-
-            var method = requestEngine.GetType().GetMethod("ExecuteRequest", bindingFlags, null, args, null);
+            var engine = client.GetInternalProperty("RequestEngine");
+            var methods = engine.GetType().GetMethods(bindingFlags).Where(m => m.Name == "ExecuteRequest").ToList();
+            var method = methods.First(m => m.GetParameters().Any(p => p.ParameterType.Name == "IHtmlParameters"));
 
             var channel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
 
@@ -95,7 +89,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 Channel = channel
             };
 
-            method.Invoke(requestEngine, new[] { editSettings, param, null });
+            method.Invoke(engine, new object[] { param, null });
         }
     }
 }

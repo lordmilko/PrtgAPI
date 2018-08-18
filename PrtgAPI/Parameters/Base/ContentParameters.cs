@@ -9,10 +9,12 @@ namespace PrtgAPI.Parameters
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving data with a known <see cref="Content"/> type.
     /// </summary>
     /// <typeparam name="T">The type of PRTG Object to retrieve.</typeparam>
-    public class ContentParameters<T> : PageableParameters
+    public class ContentParameters<T> : PageableParameters, IXmlParameters
+        where T : IObject
     {
         private static Property[] defaultProperties = GetDefaultProperties();
 
+        XmlFunction IXmlParameters.Function => XmlFunction.TableData;
         /// <summary>
         /// The type of content this request will retrieve.
         /// </summary>
@@ -24,7 +26,7 @@ namespace PrtgAPI.Parameters
         public Property[] Properties
         {
             get { return (Property[])this[Parameter.Columns]; }
-            set { this[Parameter.Columns] = value; }
+            internal set { this[Parameter.Columns] = value; }
         }
 
         /// <summary>

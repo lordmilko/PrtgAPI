@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class RenameParameters : BaseMultiActionParameters
+    class RenameParameters : BaseMultiActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.Rename;
+
         public RenameParameters(int[] objectIds, string name) : base(objectIds)
         {
             if (string.IsNullOrEmpty(name))

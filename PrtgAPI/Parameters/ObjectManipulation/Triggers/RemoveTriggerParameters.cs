@@ -4,8 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class RemoveTriggerParameters : BaseActionParameters
+    class RemoveTriggerParameters : BaseActionParameters, IHtmlParameters
     {
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.RemoveSubObject;
+
         public RemoveTriggerParameters(NotificationTrigger trigger) : base(ValidateTrigger(trigger))
         {
             TriggerId = trigger.SubId;

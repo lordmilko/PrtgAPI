@@ -122,9 +122,9 @@ namespace PrtgAPI.Request
                 ValidateRequiredValue(property, parameters, attrib);
         }
 
-        internal static Parameters.Parameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
+        internal static ICommandParameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
         {
-            var newParams = new Parameters.Parameters();
+            var newParams = new CommandFunctionParameters(parameters.Function);
 
             foreach (var param in parameters.GetParameters())
             {
@@ -137,29 +137,7 @@ namespace PrtgAPI.Request
         }
 
         #endregion
-        #region Get Object Properties
-
-        internal static XmlFunction GetGetObjectPropertyFunction(string property)
-        {
-            if (property.TrimEnd('_').ToLower() == "comments")
-                return XmlFunction.GetObjectStatus;
-
-            return XmlFunction.GetObjectProperty;
-        }
-
-        #endregion
         #region System Administration
-
-        [ExcludeFromCodeCoverage]
-        internal static CommandFunction GetClearSystemCacheFunction(SystemCacheType cache)
-        {
-            if (cache == SystemCacheType.General)
-                return CommandFunction.ClearCache;
-            if (cache == SystemCacheType.GraphData)
-                return CommandFunction.RecalcCache;
-
-            throw new NotImplementedException($"Don't know how to handle cache type '{cache}'");
-        }
 
         [ExcludeFromCodeCoverage]
         internal static CommandFunction GetLoadSystemFilesFunction(ConfigFileType fileType)

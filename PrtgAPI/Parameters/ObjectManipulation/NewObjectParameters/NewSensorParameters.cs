@@ -9,8 +9,10 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public abstract class NewSensorParameters : NewObjectParameters
     {
+        internal override CommandFunction Function => CommandFunction.AddSensor5;
+
         /// <summary>
-        /// The priority of the sensor, controlling how the sensor is displayed in table lists.
+        /// Gets or sets the priority of the sensor, controlling how the sensor is displayed in table lists.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.Priority))]
         public Priority? Priority
@@ -20,7 +22,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether to inherit notification triggers from the parent object.
+        /// Gets or sets whether to inherit notification triggers from the parent object.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.InheritTriggers))]
         public bool? InheritTriggers
@@ -30,7 +32,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether this sensor's scanning interval settings are inherited from its parent.
+        /// Gets or sets whether this sensor's scanning interval settings are inherited from its parent.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.InheritInterval))]
         public bool? InheritInterval
@@ -40,7 +42,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
+        /// Gets or sets the scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.Interval))]
         public ScanningInterval Interval
@@ -50,7 +52,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
+        /// Gets or sets the number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
         /// </summary>
         [PropertyParameter(nameof(ObjectProperty.IntervalErrorMode))]
         public IntervalErrorMode? IntervalErrorMode

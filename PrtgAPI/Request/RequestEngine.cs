@@ -12,6 +12,9 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
+    /// <summary>
+    /// Handles constructing requests from parameter objects and executing them against a HTTP Client.
+    /// </summary>
     class RequestEngine
     {
         private IWebClient webClient;
@@ -27,18 +30,18 @@ namespace PrtgAPI.Request
 
         #region JSON + Response Parser
 
-        internal string ExecuteRequest(JsonFunction function, IParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(JsonFunction function, IParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
@@ -46,24 +49,24 @@ namespace PrtgAPI.Request
         }
 
         #endregion
-        #region XML + Response Validator
+        #region XML + Response Validator / Response Parser
 
-        internal XDocument ExecuteRequest(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
+        internal XDocument ExecuteRequest(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, string> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
-            var response = ExecuteRequest(url);
+            var response = ExecuteRequest(url, responseParser);
 
             responseValidator?.Invoke(response);
 
             return XDocumentHelpers.SanitizeXml(response);
         }
 
-        internal async Task<XDocument> ExecuteRequestAsync(XmlFunction function, Parameters.Parameters parameters, Action<string> responseValidator = null)
+        internal async Task<XDocument> ExecuteRequestAsync(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
-            var response = await ExecuteRequestAsync(url).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
             responseValidator?.Invoke(response);
 
@@ -73,24 +76,24 @@ namespace PrtgAPI.Request
         #endregion
         #region Command + Response Parser
 
-        internal string ExecuteRequest(CommandFunction function, IParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(ICommandParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
             if (parameters is IMultiTargetParameters)
-                return ExecuteMultiRequest(p => GetPrtgUrl(function, p), (IMultiTargetParameters)parameters, responseParser);
+                return ExecuteMultiRequest(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, responseParser);
 
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(CommandFunction function, IParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(ICommandParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             if (parameters is IMultiTargetParameters)
-                return await ExecuteMultiRequestAsync(p => GetPrtgUrl(function, p), (IMultiTargetParameters)parameters, responseParser).ConfigureAwait(false);
+                return await ExecuteMultiRequestAsync(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, responseParser).ConfigureAwait(false);
 
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
@@ -100,40 +103,39 @@ namespace PrtgAPI.Request
         #endregion
         #region HTML
 
-        internal string ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(IHtmlParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = ExecuteRequest(url, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(IHtmlParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            var url = GetPrtgUrl(function, parameters);
+            var url = GetPrtgUrl(parameters);
 
             var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
 
             return response;
         }
 
-        internal XElement ExecuteRequest(HtmlFunction function, Parameters.Parameters parameters, Func<string, XElement> xmlParser)
+        internal XElement ExecuteRequest(IHtmlParameters parameters, Func<string, XElement> xmlParser)
         {
-            var response = ExecuteRequest(function, parameters);
+            var response = ExecuteRequest(parameters);
 
             return xmlParser(response);
         }
 
-        internal async Task<XElement> ExecuteRequestAsync(HtmlFunction function, Parameters.Parameters parameters, Func<string, XElement> xmlParser)
+        internal async Task<XElement> ExecuteRequestAsync(IHtmlParameters parameters, Func<string, XElement> xmlParser)
         {
-            var response = await ExecuteRequestAsync(function, parameters).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(parameters).ConfigureAwait(false);
 
             return xmlParser(response);
         }
 
         #endregion
-
 
         private string ExecuteMultiRequest(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
         {
@@ -363,17 +365,17 @@ namespace PrtgAPI.Request
             }
         }
 
-        private PrtgUrl GetPrtgUrl(CommandFunction function, IParameters parameters) =>
-            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
+        private PrtgUrl GetPrtgUrl(ICommandParameters parameters) =>
+            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(HtmlFunction function, IParameters parameters) =>
-            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
+        private PrtgUrl GetPrtgUrl(IHtmlParameters parameters) =>
+            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(JsonFunction function, IParameters parameters) =>
-            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
+        private PrtgUrl GetPrtgUrl(IJsonParameters parameters) =>
+            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(XmlFunction function, IParameters parameters) =>
-            new PrtgUrl(prtgClient.connectionDetails, function, parameters);
+        private PrtgUrl GetPrtgUrl(IXmlParameters parameters) =>
+            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
         internal static void SetErrorUrlAsRequestUri(HttpResponseMessage response)
         {

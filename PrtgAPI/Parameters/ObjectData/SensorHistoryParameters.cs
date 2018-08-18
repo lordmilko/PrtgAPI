@@ -4,8 +4,10 @@ using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Parameters
 {
-    class SensorHistoryParameters : PageableParameters
+    class SensorHistoryParameters : PageableParameters, IShallowCloneable<SensorHistoryParameters>, IXmlParameters
     {
+        XmlFunction IXmlParameters.Function => XmlFunction.HistoricData;
+
         public SensorHistoryParameters(int sensorId, int average, DateTime? startDate, DateTime? endDate, int? count)
         {
             if(average < 0)

@@ -19,8 +19,9 @@ namespace PrtgAPI.Parameters
     {
     }
 
-    abstract class BaseSetObjectPropertyParameters<TObjectProperty> : Parameters, IMultiTargetParameters
+    abstract class BaseSetObjectPropertyParameters<TObjectProperty> : BaseParameters, IMultiTargetParameters, IHtmlParameters
     {
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
         private bool paramsInitialized;
 
         public List<CustomParameter> CustomParameters

@@ -34,7 +34,7 @@ namespace PrtgAPI
 
         internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
-            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
+            var response = RequestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -66,7 +66,7 @@ namespace PrtgAPI
 
         internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
+            var response = await RequestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -102,7 +102,7 @@ namespace PrtgAPI
 
         internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters)
         {
-            var response = requestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
+            var response = RequestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
 
             var items = response.Descendants("item").ToList();
 
@@ -120,7 +120,7 @@ namespace PrtgAPI
 
         internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters)
         {
-            var response = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var response = await RequestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
 
             var items = response.Descendants("item").ToList();
 
@@ -468,7 +468,7 @@ namespace PrtgAPI
         // AddObjectWithExcessiveValue
         //######################################
 
-        private void AddObjectWithExcessiveValue(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        private void AddObjectWithExcessiveValue(List<KeyValuePair<Parameter, object>> lengthLimit, ICommandParameters internalParams)
         {
             var limitParam = lengthLimit.First();
 
@@ -488,17 +488,17 @@ namespace PrtgAPI
 
                         internalParams[limitParam.Key] = thisRequest;
 
-                        requestEngine.ExecuteRequest(function, internalParams);
+                        RequestEngine.ExecuteRequest(internalParams);
                     }
                 }
                 else
-                    requestEngine.ExecuteRequest(function, internalParams);
+                    RequestEngine.ExecuteRequest(internalParams);
             }
             else
                 throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
         }
 
-        private async Task AddObjectWithExcessiveValueAsync(List<KeyValuePair<Parameter, object>> lengthLimit, Parameters.Parameters internalParams, CommandFunction function)
+        private async Task AddObjectWithExcessiveValueAsync(List<KeyValuePair<Parameter, object>> lengthLimit, ICommandParameters internalParams)
         {
             var limitParam = lengthLimit.First();
 
@@ -518,11 +518,11 @@ namespace PrtgAPI
 
                         internalParams[limitParam.Key] = thisRequest;
 
-                        await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+                        await RequestEngine.ExecuteRequestAsync(internalParams).ConfigureAwait(false);
                     }
                 }
                 else
-                    await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+                    await RequestEngine.ExecuteRequestAsync(internalParams).ConfigureAwait(false);
             }
             else
                 throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
@@ -595,7 +595,7 @@ namespace PrtgAPI
         {
             Func<HttpResponseMessage, string> getSensorTargetTmpId = ResponseParser.GetSensorTargetTmpId;
 
-            var tmpIdStr = requestEngine.ExecuteRequest(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId);
+            var tmpIdStr = RequestEngine.ExecuteRequest(parameters, getSensorTargetTmpId);
 
             int tmpId;
 
@@ -618,7 +618,7 @@ namespace PrtgAPI
         {
             Func<HttpResponseMessage, Task<string>> getSensorTargetTmpId = o => Task.FromResult(ResponseParser.GetSensorTargetTmpId(o));
 
-            var tmpIdStr = await requestEngine.ExecuteRequestAsync(CommandFunction.AddSensor2, parameters, getSensorTargetTmpId).ConfigureAwait(false);
+            var tmpIdStr = await RequestEngine.ExecuteRequestAsync(parameters, getSensorTargetTmpId).ConfigureAwait(false);
 
             int tmpId;
 
@@ -648,7 +648,7 @@ namespace PrtgAPI
 
             do
             {
-                p = GetObject<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters);
+                p = ObjectEngine.GetObject<SensorTargetProgress>(parameters);
 
                 if(progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
@@ -672,7 +672,7 @@ namespace PrtgAPI
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = requestEngine.ExecuteRequest(HtmlFunction.AddSensor4, parameters);
+            var page = RequestEngine.ExecuteRequest(new SensorTargetCompletedParameters(deviceId, tmpId));
 
             return page;
         }
@@ -691,7 +691,7 @@ namespace PrtgAPI
 
             do
             {
-                p = await GetObjectAsync<SensorTargetProgress>(JsonFunction.GetAddSensorProgress, parameters).ConfigureAwait(false);
+                p = await ObjectEngine.GetObjectAsync<SensorTargetProgress>(parameters).ConfigureAwait(false);
 
                 if(progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
@@ -715,7 +715,7 @@ namespace PrtgAPI
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = await requestEngine.ExecuteRequestAsync(HtmlFunction.AddSensor4, parameters).ConfigureAwait(false);
+            var page = await RequestEngine.ExecuteRequestAsync(new SensorTargetCompletedParameters(deviceId, tmpId)).ConfigureAwait(false);
 
             return page;
         }
@@ -724,7 +724,7 @@ namespace PrtgAPI
         // AddObject
         //######################################
 
-        internal List<T> AddObject<T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+        internal List<T> AddObject<T>(int parentId, NewObjectParameters parameters,
             Func<SearchFilter[], List<T>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
             bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
@@ -732,29 +732,29 @@ namespace PrtgAPI
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
 
-                Action addObjectInternal = () => AddObjectInternal(parentId, parameters, function);
+                Action addObjectInternal = () => AddObjectInternal(parentId, parameters);
                 Func<List<T>> getObjs = () => getObjects(filters);
 
                 return (ResolveWithDiff(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
             }
             else
             {
-                AddObjectInternal(parentId, parameters, function);
+                AddObjectInternal(parentId, parameters);
 
                 return null;
             }
         }
 
-        private void AddObjectInternal(int objectId, NewObjectParameters parameters, CommandFunction function)
+        private void AddObjectInternal(int objectId, NewObjectParameters parameters)
         {
             var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
             var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
-                AddObjectWithExcessiveValue(lengthLimit, internalParams, function);
+                AddObjectWithExcessiveValue(lengthLimit, internalParams);
             else
-                requestEngine.ExecuteRequest(function, internalParams);
+                RequestEngine.ExecuteRequest(internalParams);
         }
 
         private List<T> ResolveWithDiff<T>(Action createObject, Func<List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
@@ -857,7 +857,7 @@ namespace PrtgAPI
             return newObjects;
         }
 
-        internal async Task<List<T>> AddObjectAsync<T>(int parentId, NewObjectParameters parameters, CommandFunction function,
+        internal async Task<List<T>> AddObjectAsync<T>(int parentId, NewObjectParameters parameters,
             Func<SearchFilter[], Task<List<T>>> getObjects, bool resolve, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null,
             bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
@@ -865,29 +865,29 @@ namespace PrtgAPI
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
 
-                Func<Task> addObjectInternal = async () => await AddObjectInternalAsync(parentId, parameters, function).ConfigureAwait(false);
+                Func<Task> addObjectInternal = async () => await AddObjectInternalAsync(parentId, parameters).ConfigureAwait(false);
                 Func<Task<List<T>>> getObjs = async () => await getObjects(filters).ConfigureAwait(false);
 
                 return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
             }
             else
             {
-                await AddObjectInternalAsync(parentId, parameters, function).ConfigureAwait(false);
+                await AddObjectInternalAsync(parentId, parameters).ConfigureAwait(false);
 
                 return null;
             }
         }
 
-        private async Task AddObjectInternalAsync(int objectId, NewObjectParameters parameters, CommandFunction function)
+        private async Task AddObjectInternalAsync(int objectId, NewObjectParameters parameters)
         {
             var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
             var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
 
             if (lengthLimit.Count > 0)
-                await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, function).ConfigureAwait(false);
+                await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams).ConfigureAwait(false);
             else
-                await requestEngine.ExecuteRequestAsync(function, internalParams).ConfigureAwait(false);
+                await RequestEngine.ExecuteRequestAsync(internalParams).ConfigureAwait(false);
         }
 
         private async Task<List<T>> ResolveWithDiffAsync<T>(Func<Task> createObject, Func<Task<List<T>>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,

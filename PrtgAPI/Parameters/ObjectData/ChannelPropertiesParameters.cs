@@ -3,8 +3,10 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class ChannelPropertiesParameters : Parameters
+    class ChannelPropertiesParameters : BaseParameters, IHtmlParameters
     {
+        HtmlFunction IHtmlParameters.Function => HtmlFunction.ChannelEdit;
+
         public ChannelPropertiesParameters(int sensorId, int channelId)
         {
             SensorId = sensorId;

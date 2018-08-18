@@ -25,27 +25,37 @@ namespace PrtgAPI
         /// <summary>
         /// Stores server and authentication details required to connect to a PRTG Server.
         /// </summary>
-        internal readonly ConnectionDetails connectionDetails;
+        internal readonly ConnectionDetails ConnectionDetails;
+
+        /// <summary>
+        /// Provides access to methods used for executing web requests against a PRTG Server.
+        /// </summary>
+        private RequestEngine RequestEngine { get; }
+
+        /// <summary>
+        /// Provides access to methods used for requesting and deserializing objects from a PRTG Server.
+        /// </summary>
+        internal ObjectEngine ObjectEngine { get; }
 
         /// <summary>
         /// Provides methods for retrieving dynamic sensor targets used for creating and modifying sensors.
         /// </summary>
-        public PrtgTargetHelper Targets { get; private set; }
+        public PrtgTargetHelper Targets { get; }
 
         /// <summary>
         /// The PRTG server API requests will be made against.
         /// </summary>
-        public string Server => connectionDetails.Server;
+        public string Server => ConnectionDetails.Server;
 
         /// <summary>
         /// The Username that will be used to authenticate against PRTG.
         /// </summary>
-        public string UserName => connectionDetails.UserName;
+        public string UserName => ConnectionDetails.UserName;
 
         /// <summary>
         /// The PassHash that will be used to authenticate with, in place of a password.
         /// </summary>
-        public string PassHash => connectionDetails.PassHash;
+        public string PassHash => ConnectionDetails.PassHash;
 
         /// <summary>
         /// The number of times to retry a request that times out while communicating with PRTG.
@@ -84,7 +94,7 @@ namespace PrtgAPI
         /// </summary>
         public Version Version => version ?? (version = GetStatus().Version);
 
-        private Version version;
+        internal Version version;
 
         internal void Log(string message)
         {
@@ -95,8 +105,6 @@ namespace PrtgAPI
         {
             handler?.Invoke(this, args);
         }
-
-        private RequestEngine requestEngine;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgClient"/> class.
@@ -122,13 +130,15 @@ namespace PrtgAPI
             if (password == null)
                 throw new ArgumentNullException(nameof(password));
 
-            requestEngine = new RequestEngine(this, client);
+            RequestEngine = new RequestEngine(this, client);
 
-            connectionDetails = new ConnectionDetails(server, username, password);
+            ConnectionDetails = new ConnectionDetails(server, username, password);
             Targets = new PrtgTargetHelper(this);
 
             if (authMode == AuthMode.Password)
-                connectionDetails.PassHash = GetPassHash(password);
+                ConnectionDetails.PassHash = GetPassHash(password);
+
+            ObjectEngine = new ObjectEngine(this, RequestEngine);
         }
 
 #region Requests
@@ -176,12 +186,7 @@ namespace PrtgAPI
 
         private string GetPassHash(string password)
         {
-            var parameters = new Parameters.Parameters()
-            {
-                [Parameter.Password] = password
-            };
-
-            var response = requestEngine.ExecuteRequest(JsonFunction.GetPassHash, parameters);
+            var response = RequestEngine.ExecuteRequest(new PassHashParameters(password));
 
             if(!Regex.Match(response, "^[0-9]+$").Success)
                 throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
@@ -361,17 +366,7 @@ namespace PrtgAPI
         /// <summary>
         /// Apply a modification action to a response, transforming the response to another type.
         /// </summary>
-        /// <typeparam name="TSource">The type of object to transform.</typeparam>
-        /// <typeparam name="TRet">The type of object to return.</typeparam>
-        /// <param name="obj">The object to transform.</param>
-        /// <param name="action">A modification function that transforms the response from one type to another.</param>
-        /// <returns></returns>
-        internal TRet Amend<TSource, TRet>(TSource obj, Func<TSource, TRet> action)
-        {
-            var val = action(obj);
 
-            return val;
-        }
 
         #region Sensors
             #region Default
@@ -507,22 +502,25 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
-        public List<Sensor> GetSensors(SensorParameters parameters) => GetObjects<Sensor>(parameters);
+        public List<Sensor> GetSensors(SensorParameters parameters) =>
+            ObjectEngine.GetObjects<Sensor>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve sensors from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
-        public async Task<List<Sensor>> GetSensorsAsync(SensorParameters parameters) => await GetObjectsAsync<Sensor>(parameters).ConfigureAwait(false);
+        public async Task<List<Sensor>> GetSensorsAsync(SensorParameters parameters) =>
+            await ObjectEngine.GetObjectsAsync<Sensor>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream sensors from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
-        /// <returns>A list of sensors that match the specified parameters.</returns>
-        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<Sensor> StreamSensors(SensorParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<Sensor, SensorParameters>(parameters, serial);
 
             #endregion
 
@@ -533,7 +531,7 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
         public List<SensorTypeDescriptor> GetSensorTypes(int objectId = 1) =>
-            ResponseParser.ParseSensorTypes(GetObject<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContent).Types);
+            ResponseParser.ParseSensorTypes(ObjectEngine.GetObject<SensorTypeDescriptorInternal>(new SensorTypeParameters(objectId), ResponseParser.ValidateHasContent).Types);
 
         /// <summary>
         /// Asynchronously retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.<para/>
@@ -542,21 +540,21 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
         public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = 1) =>
-            ResponseParser.ParseSensorTypes((await GetObjectAsync<SensorTypeDescriptorInternal>(JsonFunction.SensorTypes, new BaseActionParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types);
+            ResponseParser.ParseSensorTypes((await ObjectEngine.GetObjectAsync<SensorTypeDescriptorInternal>(new SensorTypeParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types);
 
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
         /// </summary>
         /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public SensorTotals GetSensorTotals() =>
-            GetObject<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters());
+            ObjectEngine.GetObject<SensorTotals>(new XmlFunctionParameters(XmlFunction.GetTreeNodeStats));
 
         /// <summary>
         /// Asynchronously retrieve the number of sensors of each sensor type in the system.
         /// </summary>
         /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public async Task<SensorTotals> GetSensorTotalsAsync() =>
-            await GetObjectAsync<SensorTotals>(XmlFunction.GetTreeNodeStats, new Parameters.Parameters()).ConfigureAwait(false);
+            await ObjectEngine.GetObjectAsync<SensorTotals>(new XmlFunctionParameters(XmlFunction.GetTreeNodeStats)).ConfigureAwait(false);
 
         #endregion
         #region Devices
@@ -669,22 +667,25 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <returns>A list of devices that match the specified parameters.</returns>
-        public List<Device> GetDevices(DeviceParameters parameters) => GetObjects<Device>(parameters);
+        public List<Device> GetDevices(DeviceParameters parameters) =>
+            ObjectEngine.GetObjects<Device>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <returns>A list of devices that match the specified parameters.</returns>
-        public async Task<List<Device>> GetDevicesAsync(DeviceParameters parameters) => await GetObjectsAsync<Device>(parameters).ConfigureAwait(false);
+        public async Task<List<Device>> GetDevicesAsync(DeviceParameters parameters) =>
+            await ObjectEngine.GetObjectsAsync<Device>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream devices from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Device> StreamDevices(DeviceParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<Device> StreamDevices(DeviceParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<Device, DeviceParameters>(parameters, serial);
 
             #endregion
 
@@ -815,19 +816,23 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Groups.</param>
         /// <returns>A list of groups that match the specified parameters.</returns>
-        public List<Group> GetGroups(GroupParameters parameters) => GetObjects<Group>(parameters);
+        public List<Group> GetGroups(GroupParameters parameters) =>
+            ObjectEngine.GetObjects<Group>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve groups from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <returns>A list of groups that match the specified parameters.</returns>
-        public async Task<List<Group>> GetGroupsAsync(GroupParameters parameters) => await GetObjectsAsync<Group>(parameters).ConfigureAwait(false);
+        public async Task<List<Group>> GetGroupsAsync(GroupParameters parameters) =>
+            await ObjectEngine.GetObjectsAsync<Group>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream groups from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Group> StreamGroups(GroupParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<Group> StreamGroups(GroupParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<Group, GroupParameters>(parameters, serial);
 
             #endregion
         #endregion
@@ -941,14 +946,16 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <returns>A list of probes that match the specified parameters.</returns>
-        public List<Probe> GetProbes(ProbeParameters parameters) => GetObjects<Probe>(parameters);
+        public List<Probe> GetProbes(ProbeParameters parameters) =>
+            ObjectEngine.GetObjects<Probe>(parameters);
 
         /// <summary>
         /// Asynchronously retrieve probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <returns>A list of probes that match the specified parameters.</returns>
-        public async Task<List<Probe>> GetProbesAsync(ProbeParameters parameters) => await GetObjectsAsync<Probe>(parameters).ConfigureAwait(false);
+        public async Task<List<Probe>> GetProbesAsync(ProbeParameters parameters) =>
+            await ObjectEngine.GetObjectsAsync<Probe>(parameters).ConfigureAwait(false);
 
         /// <summary>
         /// Stream probes from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -956,7 +963,9 @@ namespace PrtgAPI
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Probe> StreamProbes(ProbeParameters parameters, bool serial = false) => StreamObjects(parameters, serial);
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
+        public IEnumerable<Probe> StreamProbes(ProbeParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<Probe, ProbeParameters>(parameters, serial);
 
             #endregion
         #endregion
@@ -996,14 +1005,14 @@ namespace PrtgAPI
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            return requestEngine.ExecuteRequest(HtmlFunction.ChannelEdit, parameters, r => ChannelSettings.GetChannelXml(r, channelId));
+            return RequestEngine.ExecuteRequest(parameters, r => ChannelSettings.GetChannelXml(r, channelId));
         }
 
         private async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            return await requestEngine.ExecuteRequestAsync(HtmlFunction.ChannelEdit, parameters, r => ChannelSettings.GetChannelXml(r, channelId)).ConfigureAwait(false);
+            return await RequestEngine.ExecuteRequestAsync(parameters, r => ChannelSettings.GetChannelXml(r, channelId)).ConfigureAwait(false);
         }
 
         #endregion
@@ -1132,11 +1141,11 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
         public async Task<List<NotificationAction>> GetNotificationActionsAsync(params SearchFilter[] filters) =>
-            await GetNotificationActionsInternalAsync(new NotificationActionParameters { SearchFilter = filters }).ConfigureAwait(false);
+            await GetNotificationActionsInternalAsync(new NotificationActionParameters(filters)).ConfigureAwait(false);
 
         private XElement GetNotificationActionProperties(int id)
         {
-            var xml = requestEngine.ExecuteRequest(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml);
+            var xml = RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(id, ObjectType.Notification), ObjectSettings.GetXml);
 
             xml = ResponseParser.GroupNotificationActionProperties(xml);
 
@@ -1145,7 +1154,7 @@ namespace PrtgAPI
 
         private async Task<XElement> GetNotificationActionPropertiesAsync(int id)
         {
-            var xml = await requestEngine.ExecuteRequestAsync(HtmlFunction.EditNotification, new BaseActionParameters(id), ObjectSettings.GetXml).ConfigureAwait(false);
+            var xml = await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(id, ObjectType.Notification), ObjectSettings.GetXml).ConfigureAwait(false);
 
             xml = ResponseParser.GroupNotificationActionProperties(xml);
 
@@ -1162,7 +1171,7 @@ namespace PrtgAPI
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public List<NotificationTrigger> GetNotificationTriggers(int objectId)
         {
-            var xmlResponse = requestEngine.ExecuteRequest(XmlFunction.TableData, new NotificationTriggerParameters(objectId));
+            var xmlResponse = RequestEngine.ExecuteRequest(new NotificationTriggerParameters(objectId));
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -1179,7 +1188,7 @@ namespace PrtgAPI
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
         public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId)
         {
-            var xmlResponse = await requestEngine.ExecuteRequestAsync(XmlFunction.TableData, new NotificationTriggerParameters(objectId)).ConfigureAwait(false);
+            var xmlResponse = await RequestEngine.ExecuteRequestAsync(new NotificationTriggerParameters(objectId)).ConfigureAwait(false);
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -1213,7 +1222,7 @@ namespace PrtgAPI
             var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
 
             var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.Key));
-            var normal = await GetObjectsXmlAsync(parameters).ConfigureAwait(false);
+            var normal = await ObjectEngine.GetObjectsXmlAsync(parameters).ConfigureAwait(false);
 
             //All the properties of all desired notifications
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -1248,16 +1257,14 @@ namespace PrtgAPI
             (await GetNotificationTriggerDataAsync(objectId).ConfigureAwait(false)).SupportedTypes.ToList();
 
         private NotificationTriggerData GetNotificationTriggerData(int objectId) =>
-            GetObject<NotificationTriggerData>(
-                JsonFunction.Triggers,
-                new BaseActionParameters(objectId),
+            ObjectEngine.GetObject<NotificationTriggerData>(
+                new NotificationTriggerDataParameters(objectId),
                 ParseNotificationTriggerTypes
             );
 
         private async Task<NotificationTriggerData> GetNotificationTriggerDataAsync(int objectId) =>
-            await GetObjectAsync<NotificationTriggerData>(
-                JsonFunction.Triggers,
-                new BaseActionParameters(objectId),
+            await ObjectEngine.GetObjectAsync<NotificationTriggerData>(
+                new NotificationTriggerDataParameters(objectId),
                 ParseNotificationTriggerTypesAsync
             ).ConfigureAwait(false);
 
@@ -1327,7 +1334,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
         public List<Sensor> AddSensor(int deviceId, NewSensorParameters parameters, bool resolve = true) =>
-            AddObject(deviceId, parameters, CommandFunction.AddSensor5, GetSensors, resolve, allowMultiple: true);
+            AddObject(deviceId, parameters, GetSensors, resolve, allowMultiple: true);
 
         /// <summary>
         /// Asynchronously add a new sensor to a PRTG device.
@@ -1339,7 +1346,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
         public async Task<List<Sensor>> AddSensorAsync(int deviceId, NewSensorParameters parameters, bool resolve = true) =>
-            await AddObjectAsync(deviceId, parameters, CommandFunction.AddSensor5, GetSensorsAsync, resolve, allowMultiple: true).ConfigureAwait(false);
+            await AddObjectAsync(deviceId, parameters, GetSensorsAsync, resolve, allowMultiple: true).ConfigureAwait(false);
 
         /// <summary>
         /// Add a new device to a PRTG group or probe.
@@ -1363,7 +1370,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
         public Device AddDevice(int parentId, NewDeviceParameters parameters, bool resolve = true) =>
-            AddObject(parentId, parameters, CommandFunction.AddDevice2, GetDevices, resolve)?.Single();
+            AddObject(parentId, parameters, GetDevices, resolve)?.Single();
 
         /// <summary>
         /// Asynchronously add a new device to a PRTG group or probe.
@@ -1387,7 +1394,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
         public async Task<Device> AddDeviceAsync(int parentId, NewDeviceParameters parameters, bool resolve = true) =>
-            (await AddObjectAsync(parentId, parameters, CommandFunction.AddDevice2, GetDevicesAsync, resolve).ConfigureAwait(false))?.Single();
+            (await AddObjectAsync(parentId, parameters, GetDevicesAsync, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
         /// Add a new group to a PRTG group or probe.
@@ -1409,7 +1416,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
         public Group AddGroup(int parentId, NewGroupParameters parameters, bool resolve = true) =>
-            AddObject(parentId, parameters, CommandFunction.AddGroup2, GetGroups, resolve)?.Single();
+            AddObject(parentId, parameters, GetGroups, resolve)?.Single();
 
         /// <summary>
         /// Asynchronously add a new group to a PRTG group or probe.
@@ -1431,7 +1438,7 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
         public async Task<Group> AddGroupAsync(int parentId, NewGroupParameters parameters, bool resolve = true) =>
-            (await AddObjectAsync(parentId, parameters, CommandFunction.AddGroup2, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
+            (await AddObjectAsync(parentId, parameters, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
         /// Create a set of dynamic sensor parameters for creating a new sensor of a specified type.
@@ -1476,7 +1483,7 @@ namespace PrtgAPI
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensors.</param>
         public void AcknowledgeSensor(int[] objectIds, int? duration = null, string message = null) =>
-            requestEngine.ExecuteRequest(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectIds, duration, message));
+            RequestEngine.ExecuteRequest(new AcknowledgeSensorParameters(objectIds, duration, message));
 
         /// <summary>
         /// Asynchronously mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
@@ -1494,7 +1501,7 @@ namespace PrtgAPI
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensors.</param>
         public async Task AcknowledgeSensorAsync(int[] objectIds, int? duration = null, string message = null) =>
-            await requestEngine.ExecuteRequestAsync(CommandFunction.AcknowledgeAlarm, new AcknowledgeSensorParameters(objectIds, duration, message)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new AcknowledgeSensorParameters(objectIds, duration, message)).ConfigureAwait(false);
 
         /// <summary>
         /// Pause a PRTG Object.
@@ -1511,12 +1518,8 @@ namespace PrtgAPI
         /// <param name="objectIds">IDs of the objects to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused objects.</param>
-        public void PauseObject(int[] objectIds, int? durationMinutes = null, string pauseMessage = null)
-        {
-            var parameters = new PauseRequestParameters(objectIds, durationMinutes, pauseMessage);
-
-            requestEngine.ExecuteRequest(parameters.Function, parameters.Parameters);
-        }
+        public void PauseObject(int[] objectIds, int? durationMinutes = null, string pauseMessage = null) =>
+            RequestEngine.ExecuteRequest(new PauseParameters(objectIds, durationMinutes, pauseMessage));
 
         /// <summary>
         /// Asynchronously pause a PRTG Object.
@@ -1533,38 +1536,35 @@ namespace PrtgAPI
         /// <param name="objectIds">IDs of the objects to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="pauseMessage">Message to display on the paused objects.</param>
-        public async Task PauseObjectAsync(int[] objectIds, int? durationMinutes = null, string pauseMessage = null)
-        {
-            var parameters = new PauseRequestParameters(objectIds, durationMinutes, pauseMessage);
+        public async Task PauseObjectAsync(int[] objectIds, int? durationMinutes = null, string pauseMessage = null) =>
+            await RequestEngine.ExecuteRequestAsync(new PauseParameters(objectIds, durationMinutes, pauseMessage)).ConfigureAwait(false);
 
-            await requestEngine.ExecuteRequestAsync(parameters.Function, parameters.Parameters).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// Resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">IDs of the objects to resume.</param>
         public void ResumeObject(params int[] objectId) =>
-            requestEngine.ExecuteRequest(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume));
+            RequestEngine.ExecuteRequest(new PauseParameters(objectId, PauseAction.Resume));
 
         /// <summary>
         /// Asynchronously resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
         public async Task ResumeObjectAsync(params int[] objectId) =>
-            await requestEngine.ExecuteRequestAsync(CommandFunction.Pause, new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
 
         /// <summary>
         /// Simulate a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
         /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
-        public void SimulateError(params int[] sensorIds) => requestEngine.ExecuteRequest(CommandFunction.Simulate, new SimulateErrorParameters(sensorIds));
+        public void SimulateError(params int[] sensorIds) => RequestEngine.ExecuteRequest(new SimulateErrorParameters(sensorIds));
 
         /// <summary>
         /// Asynchronously simulate a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
         /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
-        public async Task SimulateErrorAsync(params int[] sensorIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.Simulate, new SimulateErrorParameters(sensorIds)).ConfigureAwait(false);
+        public async Task SimulateErrorAsync(params int[] sensorIds) => await RequestEngine.ExecuteRequestAsync(new SimulateErrorParameters(sensorIds)).ConfigureAwait(false);
 
         #endregion
         #region Notifications
@@ -1597,7 +1597,7 @@ namespace PrtgAPI
         {
             ValidateTriggerParameters(parameters);
 
-            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters);
+            RequestEngine.ExecuteRequest(parameters);
         }
 
         /// <summary>
@@ -1608,7 +1608,7 @@ namespace PrtgAPI
         {
             await ValidateTriggerParametersAsync(parameters).ConfigureAwait(false);
 
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(parameters).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1616,14 +1616,14 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
         public void RemoveNotificationTrigger(NotificationTrigger trigger) =>
-            requestEngine.ExecuteRequest(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger));
+            RequestEngine.ExecuteRequest(new RemoveTriggerParameters(trigger));
 
         /// <summary>
         /// Asynchronously remove a notification trigger from an object.
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
         public async Task RemoveNotificationTriggerAsync(NotificationTrigger trigger) =>
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.RemoveSubObject, new RemoveTriggerParameters(trigger)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new RemoveTriggerParameters(trigger)).ConfigureAwait(false);
 
         #endregion
         #region Clone Object
@@ -1636,7 +1636,7 @@ namespace PrtgAPI
         /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
         /// <returns>The ID of the object that was created</returns>
         public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
-            CloneObject(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId));
+            CloneObject(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId));
 
         /// <summary>
         /// Clone a device to another group or probe.
@@ -1646,10 +1646,10 @@ namespace PrtgAPI
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
         /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
         public int CloneObject(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
-            CloneObject(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host));
+            CloneObject(new CloneParameters(deviceId, cloneName, targetLocationObjectId, host));
 
-        private int CloneObject(CloneSensorOrGroupParameters parameters) =>
-            Amend(requestEngine.ExecuteRequest(CommandFunction.DuplicateObject, parameters, ResponseParser.CloneRequestParser), ResponseParser.CloneResponseParser);
+        private int CloneObject(CloneParameters parameters) =>
+            ResponseParser.Amend(RequestEngine.ExecuteRequest(parameters, ResponseParser.CloneRequestParser), ResponseParser.CloneResponseParser);
 
         /// <summary>
         /// Asynchronously clone a sensor or group to another device or group.
@@ -1659,7 +1659,7 @@ namespace PrtgAPI
         /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
         /// <returns>The ID of the object that was created</returns>
         public async Task<int> CloneObjectAsync(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
-            await CloneObjectAsync(new CloneSensorOrGroupParameters(sourceObjectId, cloneName, targetLocationObjectId)).ConfigureAwait(false);
+            await CloneObjectAsync(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId)).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clone a device to another group or probe.
@@ -1669,12 +1669,11 @@ namespace PrtgAPI
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
         /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
         public async Task<int> CloneObjectAsync(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
-            await CloneObjectAsync(new CloneDeviceParameters(deviceId, cloneName, targetLocationObjectId, host)).ConfigureAwait(false);
+            await CloneObjectAsync(new CloneParameters(deviceId, cloneName, targetLocationObjectId, host)).ConfigureAwait(false);
 
-        private async Task<int> CloneObjectAsync(CloneSensorOrGroupParameters parameters) =>
-            Amend(
-                await requestEngine.ExecuteRequestAsync(
-                    CommandFunction.DuplicateObject,
+        private async Task<int> CloneObjectAsync(CloneParameters parameters) =>
+            ResponseParser.Amend(
+                await RequestEngine.ExecuteRequestAsync(
                     parameters,
                     async r => await Task.FromResult(ResponseParser.CloneRequestParser(r)).ConfigureAwait(false)
                 ).ConfigureAwait(false), ResponseParser.CloneResponseParser
@@ -2186,10 +2185,10 @@ namespace PrtgAPI
             #endregion
 
         internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            requestEngine.ExecuteRequest(HtmlFunction.EditSettings, parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
+            RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
 
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.EditSettings, parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
         {
@@ -2265,7 +2264,7 @@ namespace PrtgAPI
         /// By default, configuration backups are stored under C:\ProgramData\Paessler\PRTG Network Monitor\Configuration Auto-Backups.
         /// </summary>
         public void BackupConfigDatabase() =>
-            requestEngine.ExecuteRequest(CommandFunction.SaveNow, new Parameters.Parameters());
+            RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.SaveNow));
 
         /// <summary>
         /// Asynchronously request PRTG generate a backup of the PRTG Configuration Database.<para/>
@@ -2276,7 +2275,7 @@ namespace PrtgAPI
         /// By default, configuration backups are stored under C:\ProgramData\Paessler\PRTG Network Monitor\Configuration Auto-Backups.
         /// </summary>
         public async Task BackupConfigDatabaseAsync() =>
-            await requestEngine.ExecuteRequestAsync(CommandFunction.SaveNow, new Parameters.Parameters()).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.SaveNow)).ConfigureAwait(false);
 
         /// <summary>
         /// Clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
@@ -2284,8 +2283,8 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
-        public void ClearSystemCache(SystemCacheType cache) =>
-            requestEngine.ExecuteRequest(RequestParser.GetClearSystemCacheFunction(cache), new Parameters.Parameters());
+        public void ClearSystemCache(SystemCacheType cacheType) =>
+            RequestEngine.ExecuteRequest(new ClearSystemCacheParameters(cacheType));
 
         /// <summary>
         /// Asynchronously clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
@@ -2293,22 +2292,22 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
-        public async Task ClearSystemCacheAsync(SystemCacheType cache) =>
-            await requestEngine.ExecuteRequestAsync(RequestParser.GetClearSystemCacheFunction(cache), new Parameters.Parameters()).ConfigureAwait(false);
+        public async Task ClearSystemCacheAsync(SystemCacheType cacheType) =>
+            await RequestEngine.ExecuteRequestAsync(new ClearSystemCacheParameters(cacheType)).ConfigureAwait(false);
         
         /// <summary>
         /// Reload config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public void LoadConfigFiles(ConfigFileType fileType) =>
-            requestEngine.ExecuteRequest(RequestParser.GetLoadSystemFilesFunction(fileType), new Parameters.Parameters());
+            RequestEngine.ExecuteRequest(new LoadConfigFilesParameters(fileType));
 
         /// <summary>
         /// Asymchronously reload config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public async Task LoadConfigFilesAsync(ConfigFileType fileType) =>
-            await requestEngine.ExecuteRequestAsync(RequestParser.GetLoadSystemFilesFunction(fileType), new Parameters.Parameters()).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new LoadConfigFilesParameters(fileType)).ConfigureAwait(false);
 
         /// <summary>
         /// Restarts the PRTG Probe Service of a specified PRTG Probe. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.<para/>
@@ -2323,7 +2322,7 @@ namespace PrtgAPI
         {
             var restartTime = DateTime.Now;
 
-            requestEngine.ExecuteRequest(CommandFunction.RestartProbes, new RestartProbeParameters(probeId));
+            RequestEngine.ExecuteRequest(new RestartProbeParameters(probeId));
 
             if (waitForRestart)
             {
@@ -2345,7 +2344,7 @@ namespace PrtgAPI
         {
             var restartTime = DateTime.Now;
 
-            await requestEngine.ExecuteRequestAsync(CommandFunction.RestartProbes, new RestartProbeParameters(probeId)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new RestartProbeParameters(probeId)).ConfigureAwait(false);
 
             if (waitForRestart)
             {
@@ -2367,7 +2366,7 @@ namespace PrtgAPI
         {
             DateTime restartTime = DateTime.Now;
 
-            requestEngine.ExecuteRequest(CommandFunction.RestartServer, new Parameters.Parameters());
+            RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.RestartServer));
 
             if (waitForRestart)
                 WaitForCoreRestart(restartTime, progressCallback);
@@ -2384,7 +2383,7 @@ namespace PrtgAPI
         {
             DateTime restartTime = DateTime.Now;
 
-            await requestEngine.ExecuteRequestAsync(CommandFunction.RestartServer, new Parameters.Parameters()).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.RestartServer)).ConfigureAwait(false);
 
             if (waitForRestart)
                 await WaitForCoreRestartAsync(restartTime, progressCallback).ConfigureAwait(false);
@@ -2394,126 +2393,126 @@ namespace PrtgAPI
         #region Miscellaneous
 
         /// <summary>
-        /// Request an object or any children of an one or more objects refresh themselves immediately.
+        /// Requests an object or any children of an one or more objects refresh themselves immediately.
         /// </summary>
         /// <param name="objectIds">The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed.</param>
-        public void RefreshObject(params int[] objectIds) => requestEngine.ExecuteRequest(CommandFunction.ScanNow, new BaseMultiActionParameters(objectIds));
+        public void RefreshObject(params int[] objectIds) => RequestEngine.ExecuteRequest(new RefreshObjectParameters(objectIds));
 
         /// <summary>
-        /// Asynchronously request an object or any children of one or more objects refresh themselves immediately.
+        /// Asynchronously requests an object or any children of one or more objects refresh themselves immediately.
         /// </summary>
         /// <param name="objectIds">The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed.</param>
-        public async Task RefreshObjectAsync(params int[] objectIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.ScanNow, new BaseMultiActionParameters(objectIds)).ConfigureAwait(false);
+        public async Task RefreshObjectAsync(params int[] objectIds) => await RequestEngine.ExecuteRequestAsync(new RefreshObjectParameters(objectIds)).ConfigureAwait(false);
 
         /// <summary>
-        /// Automatically create sensors under an object based on the object's (or it's children's) device type.
+        /// Automatically creates sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
         /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
         public void AutoDiscover(int objectId, params DeviceTemplate[] templates) =>
-            requestEngine.ExecuteRequest(CommandFunction.DiscoverNow, new AutoDiscoverParameters(objectId, templates));
+            RequestEngine.ExecuteRequest(new AutoDiscoverParameters(objectId, templates));
 
         /// <summary>
-        /// Asynchronously automatically create sensors under an object based on the object's (or it's children's) device type.
+        /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
         /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
         /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
         public async Task AutoDiscoverAsync(int objectId, params DeviceTemplate[] templates) =>
-            await requestEngine.ExecuteRequestAsync(CommandFunction.DiscoverNow, new AutoDiscoverParameters(objectId, templates)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new AutoDiscoverParameters(objectId, templates)).ConfigureAwait(false);
 
         /// <summary>
-        /// Move the position of an object up or down under its parent within the PRTG User Interface.
+        /// Moves the position of an object up or down under its parent within the PRTG User Interface.
         /// </summary>
         /// <param name="objectId">The object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
-        public void SetPosition(int objectId, Position position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(objectId, position));
+        public void SetPosition(int objectId, Position position) => RequestEngine.ExecuteRequest(new SetPositionParameters(objectId, position));
 
         /// <summary>
-        /// Set the absolute position of an object under its parent within the PRTG User Interface
+        /// Sets the absolute position of an object under its parent within the PRTG User Interface
         /// </summary>
         /// <param name="obj">The object to reposition.</param>
         /// <param name="position">The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position.</param>
-        public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => requestEngine.ExecuteRequest(CommandFunction.SetPosition, new SetPositionParameters(obj, position));
+        public void SetPosition(SensorOrDeviceOrGroupOrProbe obj, int position) => RequestEngine.ExecuteRequest(new SetPositionParameters(obj, position));
 
         /// <summary>
-        /// Asynchronously move the position of an object up or down under its parent within the PRTG User Interface.
+        /// Asynchronously moves the position of an object up or down under its parent within the PRTG User Interface.
         /// </summary>
         /// <param name="objectId">The object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
-        public async Task SetPositionAsync(int objectId, Position position) => await requestEngine.ExecuteRequestAsync(CommandFunction.SetPosition, new SetPositionParameters(objectId, position)).ConfigureAwait(false);
+        public async Task SetPositionAsync(int objectId, Position position) => await RequestEngine.ExecuteRequestAsync(new SetPositionParameters(objectId, position)).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously set the absolute position of an object under its parent within the PRTG User Interface
+        /// Asynchronously sets the absolute position of an object under its parent within the PRTG User Interface
         /// </summary>
         /// <param name="obj">The object to reposition.</param>
         /// <param name="position">The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position.</param>
-        public async Task SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position) => await requestEngine.ExecuteRequestAsync(CommandFunction.SetPosition, new SetPositionParameters(obj, position)).ConfigureAwait(false);
+        public async Task SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position) => await RequestEngine.ExecuteRequestAsync(new SetPositionParameters(obj, position)).ConfigureAwait(false);
 
         /// <summary>
-        /// Move a device or group (excluding the root group) to another group or probe within PRTG.
+        /// Moves a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
         /// <param name="objectId">The ID of a device or group to move.</param>
         /// <param name="destinationId">The group or probe to move the object to.</param>
-        public void MoveObject(int objectId, int destinationId) => requestEngine.ExecuteRequest(CommandFunction.MoveObjectNow, new MoveObjectParameters(objectId, destinationId));
+        public void MoveObject(int objectId, int destinationId) => RequestEngine.ExecuteRequest(new MoveObjectParameters(objectId, destinationId));
 
         /// <summary>
-        /// Asynchronously Move a device or group (excluding the root group) to another group or probe within PRTG.
+        /// Asynchronously moves a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
         /// <param name="objectId">The ID of a device or group to move.</param>
         /// <param name="destinationId">The group or probe to move the object to.</param>
-        public async Task MoveObjectAsync(int objectId, int destinationId) => await requestEngine.ExecuteRequestAsync(CommandFunction.MoveObjectNow, new MoveObjectParameters(objectId, destinationId)).ConfigureAwait(false);
+        public async Task MoveObjectAsync(int objectId, int destinationId) => await RequestEngine.ExecuteRequestAsync(new MoveObjectParameters(objectId, destinationId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Sort the children of a device, group or probe alphabetically.
+        /// Sorts the children of a device, group or probe alphabetically.
         /// </summary>
         /// <param name="objectId">The object to sort.</param>
-        public void SortAlphabetically(int objectId) => requestEngine.ExecuteRequest(CommandFunction.SortSubObjects, new BaseActionParameters(objectId));
+        public void SortAlphabetically(int objectId) => RequestEngine.ExecuteRequest(new SortAlphabeticallyParameters(objectId));
 
         /// <summary>
-        /// Asynchronously sort the children of a device, group or probe alphabetically.
+        /// Asynchronously sorts the children of a device, group or probe alphabetically.
         /// </summary>
         /// <param name="objectId">The object to sort.</param>
-        public async Task SortAlphabeticallyAsync(int objectId) => await requestEngine.ExecuteRequestAsync(CommandFunction.SortSubObjects, new BaseActionParameters(objectId)).ConfigureAwait(false);
+        public async Task SortAlphabeticallyAsync(int objectId) => await RequestEngine.ExecuteRequestAsync(new SortAlphabeticallyParameters(objectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Permanently remove one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
+        /// Permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to remove.</param>
-        public void RemoveObject(params int[] objectIds) => requestEngine.ExecuteRequest(CommandFunction.DeleteObject, new DeleteParameters(objectIds));
+        public void RemoveObject(params int[] objectIds) => RequestEngine.ExecuteRequest(new DeleteParameters(objectIds));
 
         /// <summary>
-        /// Asynchronously permanently remove one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
+        /// Asynchronously permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to remove.</param>
-        public async Task RemoveObjectAsync(params int[] objectIds) => await requestEngine.ExecuteRequestAsync(CommandFunction.DeleteObject, new DeleteParameters(objectIds)).ConfigureAwait(false);
+        public async Task RemoveObjectAsync(params int[] objectIds) => await RequestEngine.ExecuteRequestAsync(new DeleteParameters(objectIds)).ConfigureAwait(false);
 
         /// <summary>
-        /// Rename a Sensor, Device, Group or Probe within PRTG.
+        /// Renames a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
         public void RenameObject(int objectId, string name) => RenameObject(new[] {objectId}, name);
 
         /// <summary>
-        /// Rename one or more Sensors, Devices, Groups or Probe within PRTG.
+        /// Renames one or more Sensors, Devices, Groups or Probe within PRTG.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to rename.</param>
         /// <param name="name">New name to give the objects.</param>
-        public void RenameObject(int[] objectIds, string name) => requestEngine.ExecuteRequest(CommandFunction.Rename, new RenameParameters(objectIds, name));
+        public void RenameObject(int[] objectIds, string name) => RequestEngine.ExecuteRequest(new RenameParameters(objectIds, name));
 
         /// <summary>
-        /// Asynchronously rename a Sensor, Device, Group or Probe within PRTG.
+        /// Asynchronously renames a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
         /// <param name="objectId">ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
         public async Task RenameObjectAsync(int objectId, string name) => await RenameObjectAsync(new[] {objectId}, name).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously rename one or more Sensors, Devices, Groups or Probes within PRTG.
+        /// Asynchronously renames one or more Sensors, Devices, Groups or Probes within PRTG.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to rename.</param>
         /// <param name="name">New name to give the objects.</param>
-        public async Task RenameObjectAsync(int[] objectIds, string name) => await requestEngine.ExecuteRequestAsync(CommandFunction.Rename, new RenameParameters(objectIds, name)).ConfigureAwait(false);
+        public async Task RenameObjectAsync(int[] objectIds, string name) => await RequestEngine.ExecuteRequestAsync(new RenameParameters(objectIds, name)).ConfigureAwait(false);
 
         #endregion
     #endregion
@@ -2522,35 +2521,57 @@ namespace PrtgAPI
 #region Unsorted
 
         /// <summary>
-        /// Calcualte the total number of objects of a given type present on a PRTG Server.
+        /// Calculates the total number of objects of a given type present on a PRTG Server.
         /// </summary>
         /// <param name="content">The type of object to total.</param>
         /// <returns>The total number of objects of the given type.</returns>
-        public int GetTotalObjects(Content content) => Convert.ToInt32(GetObjectsRaw<PrtgObject>(new TotalObjectsParameters(content)).TotalCount);
+        public int GetTotalObjects(Content content) =>
+            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content)).TotalCount;
 
         /// <summary>
-        /// Asynchronously calcualte the total number of objects of a given type present on a PRTG Server.
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server.
         /// </summary>
         /// <param name="content">The type of object to total.</param>
         /// <returns>The total number of objects of the given type.</returns>
-        public async Task<int> GetTotalObjectsAsync(Content content) => Convert.ToInt32((await GetObjectsRawAsync<PrtgObject>(new TotalObjectsParameters(content)).ConfigureAwait(false)).TotalCount);
+        public async Task<int> GetTotalObjectsAsync(Content content) =>
+            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content)).ConfigureAwait(false)).TotalCount;
 
         /// <summary>
-        /// Retrieve the setting/state modification history of a PRTG Object.
+        /// Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public int GetTotalObjects(Content content, params SearchFilter[] filters) =>
+            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content, filters)).TotalCount;
+
+        /// <summary>
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content, params SearchFilter[] filters) =>
+            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content, filters)).ConfigureAwait(false)).TotalCount;
+
+        /// <summary>
+        /// Retrieves the setting/state modification history of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public List<ModificationEvent> GetModificationHistory(int objectId) => Amend(GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
+        public List<ModificationEvent> GetModificationHistory(int objectId) =>
+            ResponseParser.Amend(ObjectEngine.GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
 
         /// <summary>
-        /// Asynchronously retrieve the setting/state modification history of a PRTG Object.
+        /// Asynchronously retrieves the setting/state modification history of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) => Amend(await GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId)).ConfigureAwait(false), e => e.ObjectId = objectId);
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) =>
+            ResponseParser.Amend(await ObjectEngine.GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId)).ConfigureAwait(false), e => e.ObjectId = objectId);
 
         /// <summary>
-        /// Retrieve the historical values of a sensor's channels from within a specified time period.
+        /// Retrieves the historical values of a sensor's channels from within a specified time period.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
@@ -2596,7 +2617,7 @@ namespace PrtgAPI
 
         internal async Task<List<SensorHistoryData>> GetSensorHistoryAsyncInternal(SensorHistoryParameters parameters)
         {
-            var items = await GetObjectsAsync<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
+            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
 
             return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
@@ -2622,7 +2643,7 @@ namespace PrtgAPI
 
         private IEnumerable<SensorHistoryData> StreamSensorHistoryInternal(SensorHistoryParameters parameters, bool serial)
         {
-            return StreamObjects(
+            return ObjectEngine.StreamObjects(
                 parameters,
                 serial,
                 () => GetSensorHistoryTotals(parameters),
@@ -2635,7 +2656,7 @@ namespace PrtgAPI
         {
             parameters.Count = 0;
 
-            var data = GetObjectsRaw<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse);
+            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse);
 
             parameters.GetParameters().Remove(Parameter.Count);
 
@@ -2648,13 +2669,15 @@ namespace PrtgAPI
         /// Retrieve configuration, status and version details from a PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
-        public ServerStatus GetStatus() => GetObject<ServerStatus>(JsonFunction.GetStatus, new BaseActionParameters(0));
+        public ServerStatus GetStatus() =>
+            ObjectEngine.GetObject<ServerStatus>(new ServerStatusParameters());
 
         /// <summary>
         /// Asynchronously etrieve configuration, status and version details from a PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
-        public async Task<ServerStatus> GetStatusAsync() => await GetObjectAsync<ServerStatus>(JsonFunction.GetStatus, new BaseActionParameters(0)).ConfigureAwait(false);
+        public async Task<ServerStatus> GetStatusAsync() =>
+            await ObjectEngine.GetObjectAsync<ServerStatus>(new ServerStatusParameters()).ConfigureAwait(false);
 
         /// <summary>
         /// Resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
@@ -2662,7 +2685,7 @@ namespace PrtgAPI
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
         internal List<Location> ResolveAddress(string address) =>
-            GetObject<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address), ResolveParser).Results.ToList();
+            ObjectEngine.GetObject<GeoResult>(new ResolveAddressParameters(address), ResponseParser.ResolveParser).Results.ToList();
 
         /// <summary>
         /// Asynchronously resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
@@ -2670,15 +2693,8 @@ namespace PrtgAPI
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
         internal async Task<List<Location>> ResolveAddressAsync(string address) =>
-            (await GetObjectAsync<GeoResult>(JsonFunction.GeoLocator, new ResolveAddressParameters(address), m => Task.FromResult(ResolveParser(m))).ConfigureAwait(false)).Results.ToList();
+            (await ObjectEngine.GetObjectAsync<GeoResult>(new ResolveAddressParameters(address), m => Task.FromResult(ResponseParser.ResolveParser(m))).ConfigureAwait(false)).Results.ToList();
 
-        string ResolveParser(HttpResponseMessage message)
-        {
-            if (message.Content.Headers.ContentType.MediaType == "image/png" || message.StatusCode.ToString() == "530")
-                throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available");
-
-            return null;
-        }
 
 #endregion
 #if DEBUG

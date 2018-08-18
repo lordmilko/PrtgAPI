@@ -106,7 +106,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             SetAndGet(parameters, nameof(HttpSensorParameters.UseSNIFromUrl), true);
         }
 
-        private void SetAndGet(Parameters.Parameters parameters, string property, object value)
+        private void SetAndGet(IParameters parameters, string property, object value)
         {
             var prop = parameters.GetType().GetProperty(property);
 
@@ -356,7 +356,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void Parameters_ReplacesCounterpart()
         {
-            var parameters = new Parameters.Parameters
+            var parameters = new BaseParameters
             {
                 [Parameter.Password] = "password",
                 [Parameter.PassHash] = "passhash"

@@ -3,8 +3,10 @@
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class MoveObjectParameters : BaseActionParameters
+    class MoveObjectParameters : BaseActionParameters, ICommandParameters
     {
+        CommandFunction ICommandParameters.Function => CommandFunction.MoveObjectNow;
+
         public MoveObjectParameters(int objectId, int targetId) : base(objectId)
         {
             TargetId = targetId;

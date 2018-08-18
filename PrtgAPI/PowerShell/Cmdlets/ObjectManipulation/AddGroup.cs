@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -63,7 +62,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Initializes a new instance of the <see cref="AddGroup"/> class.</para>
         /// </summary>
-        public AddGroup() : base(BaseType.Group, CommandFunction.AddGroup2)
+        public AddGroup() : base(BaseType.Group)
         {
         }
 

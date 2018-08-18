@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -26,14 +25,13 @@ namespace PrtgAPI.PowerShell.Base
 
         internal bool ShouldStop() => Stopping;
         
-        internal List<T> AddAndResolveObject<T>(int destinationId, NewObjectParameters parameters, CommandFunction function,
+        internal List<T> AddAndResolveObject<T>(int destinationId, NewObjectParameters parameters,
             Func<SearchFilter[], List<T>> getObjects) where T : SensorOrDeviceOrGroupOrProbe
         {
             return AddAndResolveRunner(
                 () => client.AddObject(
                     destinationId,
                     parameters,
-                    function,
                     getObjects,
                     true,
                     DisplayResolutionError,
