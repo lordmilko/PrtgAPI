@@ -123,10 +123,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public GetSensorHistory()
         {
-            ((IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>)this).StreamProvider = new StreamableCmdletProvider<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>(this, 500, false);
+            ((IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>)this).StreamProvider = new StreamableCmdletProvider<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>(this, true);
 
             TypeDescription = "Sensor History";
-            OperationTypeDescription = "sensor histories";
+            OperationTypeDescription = "sensor history results";
         }
 
         /// <summary>
@@ -180,11 +180,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             IEnumerable<SensorHistoryData> records;
 
             if (EndDate == null)
-                records = client.GetSensorHistoryInternal(parameters);
+                records = client.GetSensorHistoryInternal(parameters).Item1;
             else
             {
-                StreamProvider.StreamSerial = true;
-
                 records = StreamProvider.StreamRecords<SensorHistoryData>(parameters, null);
             }
 
@@ -205,7 +203,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         #region IStreamableCmdlet
 
-        List<SensorHistoryData> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjects(SensorHistoryParameters parameters) =>
+        Tuple<List<SensorHistoryData>, int> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjects(SensorHistoryParameters parameters) =>
             client.GetSensorHistoryInternal(parameters);
 
         async Task<List<SensorHistoryData>> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjectsAsync(SensorHistoryParameters parameters) =>

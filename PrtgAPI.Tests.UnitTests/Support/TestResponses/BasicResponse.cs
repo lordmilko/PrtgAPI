@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    public class BasicResponse : IWebResponse
+    public class BasicResponse : IWebStreamResponse
     {
         private string responseText;
 
@@ -16,6 +15,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         public string GetResponseText(ref string address)
         {
             return responseText;
+        }
+
+        public Task<string> GetResponseTextStream(string address)
+        {
+            return Task.FromResult(responseText);
         }
     }
 }

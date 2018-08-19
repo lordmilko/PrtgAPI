@@ -13,7 +13,8 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
     public abstract class PrtgTableTagCmdlet<TObject, TParam> : PrtgTableFilterCmdlet<TObject, TParam>
-        where TParam : TableParameters<TObject> where TObject : ObjectTable
+        where TObject : ITableObject, IObject
+        where TParam : TableParameters<TObject>
     {
         internal const string LogicalAndTags = "Tags";
         internal const string LogicalOrTags = "Tag";
@@ -34,8 +35,8 @@ namespace PrtgAPI.PowerShell.Base
         /// Initializes a new instance of the <see cref="PrtgTableTagCmdlet{TObject,TParam}"/> class. 
         /// </summary>
         /// <param name="content">The type of content this cmdlet will retrieve.</param>
-        /// <param name="progressThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
-        public PrtgTableTagCmdlet(Content content, int? progressThreshold) : base(content, progressThreshold)
+        /// <param name="shouldStream">Whether this cmdlet should have streaming enabled.</param>
+        public PrtgTableTagCmdlet(Content content, bool? shouldStream) : base(content, shouldStream)
         {
         }
 

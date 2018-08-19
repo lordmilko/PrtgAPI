@@ -8,8 +8,8 @@ Describe "Restart-PrtgCore" -Tag @("PowerShell", "UnitTest") {
         SetAddressValidatorResponse @(
             "api/restartserver.htm?"
             "api/table.xml?content=messages&" +
-                "columns=datetime,parent,status,sensor,device,group,probe,priority,message,type,tags,active,objid,name&" +
-                "count=500&filter_status=1&filter_dstart=$startDate&"
+                "columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&" +
+                "count=500&start=1&filter_status=1&filter_dstart=$startDate&"
         )
 
         Restart-PrtgCore -Force -Wait -Timeout 3600

@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using System.Xml.Linq;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    public class MultiTypeResponse : IWebResponse
+    public class MultiTypeResponse : IWebStreamResponse
     {
         private SensorType? newSensorType;
 
@@ -20,11 +24,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         public MultiTypeResponse(Dictionary<Content, int> countOverride)
         {
-            this.countOverride = countOverride;
+            CountOverride = countOverride;
         }
 
-        protected Dictionary<Content, int> countOverride;
+        public MultiTypeResponse(Dictionary<Content, BaseItem[]> items)
+        {
+            ItemOverride = items;
+        }
+
+        public Dictionary<Content, int> CountOverride { get; set; }
+        public Dictionary<Content, Action<BaseItem>> PropertyManipulator { get; set; }
+        public Dictionary<Content, BaseItem[]> ItemOverride { get; set; }
         private Dictionary<string, int> hitCount = new Dictionary<string, int>();
+
+        public int? FixedCountOverride { get; set; }
 
         public string GetResponseText(ref string address)
         {
@@ -38,18 +51,34 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return GetResponse(ref address, function).GetResponseText(ref address);
         }
 
+        public async Task<string> GetResponseTextStream(string address)
+        {
+            var function = GetFunction(address);
+
+            if (hitCount.ContainsKey(function))
+                hitCount[function]++;
+            else
+                hitCount.Add(function, 1);
+
+            return await GetResponseStream(address, function).GetResponseTextStream(address);
+        }
+
         protected virtual IWebResponse GetResponse(ref string address, string function)
         {
             switch (function)
             {
                 case nameof(XmlFunction.TableData):
                 case nameof(XmlFunction.HistoricData):
-                    return GetTableResponse(ref address, function);
+                    return GetTableResponse(address, function, false);
                 case nameof(CommandFunction.Pause):
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
                 case nameof(HtmlFunction.ChannelEdit):
-                    return new ChannelResponse(new ChannelItem());
+                    var components = UrlHelpers.CrackUrl(address);
+
+                    if(components["channel"] != "99")
+                        return new ChannelResponse(new ChannelItem());
+                    return new BasicResponse(string.Empty);
                 case nameof(CommandFunction.DuplicateObject):
                     address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
                     return new BasicResponse(string.Empty);
@@ -104,20 +133,36 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
         }
 
-        private IWebResponse GetTableResponse(ref string address, string function)
+        protected virtual IWebStreamResponse GetResponseStream(string address, string function)
+        {
+            switch (function)
+            {
+                case nameof(XmlFunction.TableData):
+                    return (IWebStreamResponse)GetTableResponse(address, function, true);
+                default:
+                    throw GetUnknownFunctionException(function, true);
+            }
+        }
+
+        private IWebResponse GetTableResponse(string address, string function, bool async)
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content c;
-            Content? content = null;
+            Content? content;
 
-            if (Enum.TryParse(components["content"], true, out c))
-                content = c;
+            try
+            {
+                content = components["content"].DescriptionToEnum<Content>();
+            }
+            catch
+            {
+                content = null;
+            }
 
             var count = GetCount(components, content);
 
             //Hack to make test "forces streaming with a date filter and returns no results" work
-            if (content == Content.Messages && count == 0 && components["columns"] == "objid,name")
+            if (content == Content.Logs && count == 0 && components["columns"] == "objid,name")
             {
                 count = 501;
                 address = address.Replace("count=1", "count=501");
@@ -126,16 +171,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             if (function == nameof(XmlFunction.HistoricData))
                 return new SensorHistoryResponse(GetItems(i => new SensorHistoryItem(), count));
 
+            var columns = components["columns"]?.Split(',');
+
             switch (content)
             {
-                case Content.Sensors:   return Sensors(i => new SensorItem(name: $"Volume IO _Total{i}", type: "Sensor Factory", objid: (4000 + i).ToString()), count);
-                case Content.Devices:   return Devices(i => new DeviceItem(name: $"Probe Device{i}", objid: (3000 + i).ToString()), count);
-                case Content.Groups:    return Groups(i => new GroupItem(name: $"Windows Infrastructure{i}", totalsens: "2", groupnum: "0", objid: (2000 + i).ToString()), count);
-                case Content.ProbeNode: return Probes(i => new ProbeItem(name: $"127.0.0.1{i}", objid: (1000 + i).ToString()), count);
-                case Content.Messages:  return Messages(i => new MessageItem($"WMI Remote Ping{i}"), count);
-                case Content.Notifications: return new NotificationActionResponse(new NotificationActionItem());
-                case Content.Schedules: return Schedules(i => new ScheduleItem(), count);
-                case Content.Channels:  return new ChannelResponse(new ChannelItem());
+                case Content.Sensors: return Sensors(CreateSensor, count, columns, address, async);
+                case Content.Devices: return Devices(CreateDevice, count, columns, address, async);
+                case Content.Groups:  return Groups(CreateGroup,   count, columns, address, async);
+                case Content.Probes: return Probes(CreateProbe,    count, columns, address, async);
+                case Content.Logs:
+                    if (IsGetTotalLogs(address))
+                        return TotalLogsResponse();
+
+                    return Messages(i => new MessageItem($"WMI Remote Ping{i}"), count);
+                case Content.History: return new ModificationHistoryResponse(new ModificationHistoryItem());
+                case Content.Notifications: return Notifications(CreateNotification, count);
+                case Content.Schedules: return Schedules(CreateSchedule, count);
+                case Content.Channels: return new ChannelResponse(GetItems(Content.Channels, i => new ChannelItem(), 1));
                 case Content.Objects:
                     return Objects(address, function, components);
                 default:
@@ -143,12 +195,113 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
         }
 
-        private SensorResponse Sensors(Func<int, SensorItem> func, int count) => new SensorResponse(GetItems(func, count));
-        private DeviceResponse Devices(Func<int, DeviceItem> func, int count) => new DeviceResponse(GetItems(func, count));
-        private GroupResponse Groups(Func<int, GroupItem> func, int count) => new GroupResponse(GetItems(func, count));
-        private ProbeResponse Probes(Func<int, ProbeItem> func, int count) => new ProbeResponse(GetItems(func, count));
-        private MessageResponse Messages(Func<int, MessageItem> func, int count) => new MessageResponse(GetItems(func, count));
-        private ScheduleResponse Schedules(Func<int, ScheduleItem> func, int count) => new ScheduleResponse(GetItems(func, count));
+        private IWebStreamResponse Sensors(Func<int, SensorItem> func, int count, string[] columns, string address, bool async) => FilterColumns<Sensor>(new SensorResponse(GetItems(Content.Sensors, func, count)), columns, address, async);
+        private IWebStreamResponse Devices(Func<int, DeviceItem> func, int count, string[] columns, string address, bool async) => FilterColumns<Device>(new DeviceResponse(GetItems(Content.Devices, func, count)), columns, address, async);
+        private IWebStreamResponse Groups(Func<int, GroupItem> func, int count, string[] columns, string address, bool async) => FilterColumns<Group>(new GroupResponse(GetItems(Content.Groups, func, count)), columns, address, async);
+        private IWebStreamResponse Probes(Func<int, ProbeItem> func, int count, string[] columns, string address, bool async) => FilterColumns<Probe>(new ProbeResponse(GetItems(Content.Probes, func, count)), columns, address, async);
+        private IWebResponse Messages(Func<int, MessageItem> func, int count) => new MessageResponse(GetItems(func, count));
+        private IWebResponse Notifications(Func<int, NotificationActionItem> func, int count) => new NotificationActionResponse(GetItems(func, count));
+        private IWebResponse Schedules(Func<int, ScheduleItem> func, int count) => new ScheduleResponse(GetItems(func, count));
+
+        private bool IsGetTotalLogs(string address)
+        {
+            if (address.Contains("content=messages&count=1&columns=objid,name"))
+                return true;
+
+            return false;
+        }
+
+        private IWebResponse TotalLogsResponse()
+        {
+            int count;
+
+            if (!(CountOverride != null && CountOverride.TryGetValue(Content.Logs, out count)))
+                count = 1000000;
+
+            return new BasicResponse(new XElement("messages",
+                new XAttribute("listend", 1),
+                new XAttribute("totalcount", count),
+                new XElement("prtg-version", "1.2.3.4"),
+                null
+            ).ToString());
+        }
+
+        private SensorItem CreateSensor(int i)
+        {
+            var item = new SensorItem(
+                name: $"Volume IO _Total{i}",
+                typeRaw: "aggregation",
+                objid: (4000 + i).ToString(),
+                downtimeTimeRaw: (1220 + i).ToString(),
+                messageRaw: "OK1" + i,
+                lastUpRaw: new DateTime(2000, 10, 1, 4, 2, 1, DateTimeKind.Utc).AddDays(i).ToUniversalTime().ToOADate().ToString(CultureInfo.InvariantCulture)
+            );
+
+            return AdjustProperties(item, Content.Sensors);
+        }
+
+        private DeviceItem CreateDevice(int i)
+        {
+            var item = new DeviceItem(
+                name: $"Probe Device{i}",
+                objid: (3000 + i).ToString(),
+                messageRaw: "OK1" + i
+            );
+
+            return AdjustProperties(item, Content.Devices);
+        }
+
+        private GroupItem CreateGroup(int i)
+        {
+            var item = new GroupItem(
+                name: $"Windows Infrastructure{i}",
+                totalsens: "2",
+                groupnum: "0",
+                objid: (2000 + i).ToString(),
+                messageRaw: "OK1" + i
+            );
+
+            return AdjustProperties(item, Content.Groups);
+        }
+
+        private ProbeItem CreateProbe(int i)
+        {
+            var item = new ProbeItem(
+                name: $"127.0.0.1{i}",
+                objid: (1000 + i).ToString(),
+                messageRaw: "OK" + i
+            );
+
+            return AdjustProperties(item, Content.Probes);
+        }
+
+        private NotificationActionItem CreateNotification(int i)
+        {
+            var item = new NotificationActionItem();
+
+            return AdjustProperties(item, Content.Notifications);
+        }
+
+        private ScheduleItem CreateSchedule(int i)
+        {
+            var item = new ScheduleItem();
+
+            return AdjustProperties(item, Content.Schedules);
+        }
+
+        private TItem AdjustProperties<TItem>(TItem item, Content content) where TItem : BaseItem
+        {
+            if (PropertyManipulator != null)
+            {
+                Action<BaseItem> action;
+
+                if (PropertyManipulator.TryGetValue(content, out action))
+                    action(item);
+            }
+
+            return item;
+        }
+
         private IWebResponse Objects(string address, string function, NameValueCollection components)
         {
             var idStr = components["filter_objid"];
@@ -206,11 +359,71 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return XDocument.Parse(text).Descendants("item").ToList();
         }
 
+        private T[] GetItems<T>(Content content, Func<int, T> func, int count) where T : BaseItem
+        {
+            BaseItem[] items;
+            T[] typedItems;
+
+            if (ItemOverride != null && ItemOverride.TryGetValue(content, out items))
+                typedItems = items.Cast<T>().ToArray();
+            else
+                typedItems = GetItems(func, count);
+
+            return typedItems;
+        }
+
+        private IWebStreamResponse FilterColumns<T>(IWebStreamResponse response, string[] columns, string address, bool async) where T : PrtgObject
+        {
+            if (columns != null)
+            {
+                var defaultProperties = ContentParameters<T>.GetDefaultProperties();
+
+                var defaultPropertiesStr = defaultProperties.Select(p => p.GetDescription().ToLower()).ToList();
+
+                var missing = defaultPropertiesStr.Where(p => !columns.Contains(p)).ToList();
+
+                if (missing.Count > 0)
+                {
+                    string responseStr;
+
+                    if (async)
+                        responseStr = response.GetResponseTextStream(address).Result;
+                    else
+                        responseStr = response.GetResponseText(ref address);
+
+                    var xDoc = XDocument.Parse(responseStr);
+
+                    var toRemove = xDoc.Descendants("item").Descendants().Where(
+                        e =>
+                        {
+                            var str = e.Name.ToString();
+
+                            if (str.EndsWith("_raw"))
+                                str = str.Substring(0, str.Length - "_raw".Length);
+
+                            return missing.Contains(str);
+                        }).ToList();
+
+                    foreach (var elm in toRemove)
+                    {
+                        elm.Remove();
+                    }
+
+                    return new BasicResponse(xDoc.ToString());
+                }
+            }
+
+            return response;
+        }
+
         private int GetCount(NameValueCollection components, Content? content)
         {
             var count = 2;
 
-            if (countOverride == null) //question: will this cause issues with streaming cos the second page have the wrong count
+            if (FixedCountOverride != null)
+                return FixedCountOverride.Value;
+
+            if (CountOverride == null) //question: will this cause issues with streaming cos the second page have the wrong count
             {
                 var countStr = components["count"];
 
@@ -245,8 +458,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             }
             else
             {
-                if (content != null && countOverride.ContainsKey(content.Value))
-                    count = countOverride[content.Value];
+                if (content != null && CountOverride.ContainsKey(content.Value))
+                    count = CountOverride[content.Value];
             }
 
             return count;
@@ -264,6 +477,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return new SensorSettingsResponse();
                 case ObjectType.Device:
                     return new DeviceSettingsResponse();
+                case ObjectType.Notification:
+                    return new NotificationActionResponse(new NotificationActionItem());
+                case ObjectType.Schedule:
+                    return new ScheduleResponse();
                 default:
                     throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }
@@ -275,6 +492,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             if (components["name"] == "name")
                 return new RawPropertyResponse("testName");
+
+            if (components["name"] == "active")
+                return new RawPropertyResponse("1");
 
             if (components["name"] == "tags")
                 return new RawPropertyResponse("tag1 tag2");
@@ -317,7 +537,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content content = components["content"].DescriptionToEnum<Content>();
 
             return content;
         }
@@ -393,9 +613,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             return false;
         }
 
-        protected Exception GetUnknownFunctionException(string function)
+        protected Exception GetUnknownFunctionException(string function, bool async = false)
         {
-            return new NotImplementedException($"Unknown function '{function}' passed to {GetType().Name}");
+            return new NotImplementedException($"Unknown {(async ? "async " : "")}function '{function}' passed to {GetType().Name}");
         }
     }
 }

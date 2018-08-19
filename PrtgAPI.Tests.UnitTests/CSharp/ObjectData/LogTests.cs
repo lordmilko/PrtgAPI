@@ -42,6 +42,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var logsTimeSpan = client.GetLogs();
             var logsTimeSpanAsync = client.GetLogsAsync().Result;
             var logsTimeSpanStream = client.StreamLogs().ToList();
+        [TestMethod]
+        public void Log_Stream_WithCorrectPageSize()
+        {
+            var urls = new[]
+            {
+                TestHelpers.RequestLog("count=500&start=1&filter_drel=7days", UrlFlag.Columns),
+                TestHelpers.RequestLog("count=500&start=501&filter_drel=7days", UrlFlag.Columns),
+                TestHelpers.RequestLog("count=500&start=1001&filter_drel=7days", UrlFlag.Columns),
+                TestHelpers.RequestLog("count=100&start=1501&filter_drel=7days", UrlFlag.Columns)
+            };
+
+            var client = Initialize_Client(new AddressValidatorResponse(urls)
+            {
+                CountOverride = new Dictionary<Content, int>
+                {
+                    [Content.Logs] = 1600
+                }
+            });
+
+            var items = client.StreamLogs(serial: true).ToList();
+
+            Assert.AreEqual(1600, items.Count);
         }
 
         [TestMethod]

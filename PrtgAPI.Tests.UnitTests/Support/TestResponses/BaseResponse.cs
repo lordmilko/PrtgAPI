@@ -6,45 +6,55 @@ using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public abstract class BaseResponse<T> : IWebStreamResponse
     {
-        protected List<T> items;
+        protected internal List<T> Items;
         private string rootName;
 
         protected BaseResponse(string rootName, T[] items)
         {
             this.rootName = rootName;
-            this.items = items.ToList();
+            Items = items.ToList();
         }
 
         public virtual string GetResponseText(ref string address)
         {
-            return GetResponseText(ref address, items);
+            return GetResponseText(ref address, Items);
         }
 
         private string GetResponseText(ref string address, List<T> list)
         {
             var queries = UrlHelpers.CrackUrl(address);
 
-            List<XElement> xmlList = null;
+            List<XElement> xmlList;
             var count = list.Count;
 
             if (queries["count"] != null && queries["count"] != "*")
             {
                 var c = Convert.ToInt32(queries["count"]);
 
-                if (c < list.Count && c > 0 || c == 0)
+                var streaming = queries["start"] != null && Convert.ToInt32(queries["start"]) % 500 == 0 || IsStreaming();
+                var streamingLogs = queries["start"] != null && queries["content"] == "messages" && Convert.ToInt32(queries["start"]) % 500 == 1 || IsStreaming();
+
+                if ((c < list.Count && c > 0 || c == 0 || !streaming && !streamingLogs) && !(queries["content"] == "messages" && c == 1) || IsStreaming())
                 {
                     count = c;
 
-                    xmlList = list.Take(count).Select(GetItem).ToList();
+                    var skip = 0;
 
-                    if (c == 0)
-                        count = list.Count;
+                    if (queries["start"] != null)
+                    {
+                        skip = Convert.ToInt32(queries["start"]);
+
+                        if (queries["content"] == "messages")
+                            skip--;
+                    }
+
+                    xmlList = list.Skip(skip).Take(count).Select(GetItem).ToList();
                 }
                 else
                 {
@@ -56,7 +66,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
             var xml = new XElement(rootName,
                 new XAttribute("listend", 1),
-                new XAttribute("totalcount", count),
+                new XAttribute("totalcount", list.Count),
                 new XElement("prtg-version", "1.2.3.4"),
                 xmlList
             );
@@ -67,9 +77,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         public virtual async Task<string> GetResponseTextStream(string address)
         {
             var page = GetPageNumber(address);
-            var delay = (items.Count / 500) + 1 - page;
+            var delay = (Items.Count / 500) + 1 - page;
 
-            var list = items.Skip((page - 1)*500).Take(500).ToList();
+            var list = Items.Skip((page - 1)*500).Take(500).ToList();
             list.ForEach(i => ((BaseItem)(object)i).ObjId = page.ToString());
 
             await Task.Delay(delay * 600);
@@ -87,7 +97,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             if (queries["start"] == "0" || queries["start"] == null)
                 return 1;
             else
-                return Convert.ToInt32(queries["start"])/Convert.ToInt32(queries["count"]) + 1;
+                return Convert.ToInt32(queries["start"])/500 + 1;
+        }
+
+        protected virtual bool IsStreaming()
+        {
+            return false;
         }
 
         public abstract XElement GetItem(T item);

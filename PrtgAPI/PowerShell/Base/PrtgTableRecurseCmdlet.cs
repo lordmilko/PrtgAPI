@@ -26,8 +26,8 @@ namespace PrtgAPI.PowerShell.Base
         /// Initializes a new instance of the <see cref="PrtgTableRecurseCmdlet{TObject,TParam}"/> class. 
         /// </summary>
         /// <param name="content">The type of content this cmdlet will retrieve.</param>
-        /// <param name="progressThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
-        public PrtgTableRecurseCmdlet(Content content, int? progressThreshold) : base(content, progressThreshold)
+        /// <param name="shouldStream">Whether this cmdlet should have streaming enabled.</param>
+        public PrtgTableRecurseCmdlet(Content content, bool? shouldStream) : base(content, shouldStream)
         {
         }
 

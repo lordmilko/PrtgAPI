@@ -343,6 +343,73 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region PageableParameters
+
+        [TestMethod]
+        public void PageableParameters_IncreasesPage_StartAtZero()
+        {
+            var parameters = new SensorParameters();
+
+            //No initial value
+            Assert.AreEqual(null, parameters.Start, "Initial start was incorrect");
+            Assert.AreEqual(null, parameters.Count, "Initial count was incorrect");
+            Assert.AreEqual(1, parameters.Page);
+
+            //Increasing the page when we have no count does nothing
+            parameters.Page++;
+            Assert.AreEqual(null, parameters.Start, "Start was affected after increasing page with no count");
+            Assert.AreEqual(1, parameters.Page, "Page was affected after increasing page with no count");
+
+            //Increasing the page when we have a count works
+            parameters.Count = 500;
+            parameters.Page++;
+            Assert.AreEqual(500, parameters.Start, "Start after increasing page with count was incorrect");
+            Assert.AreEqual(2, parameters.Page, "Page after increasing page with count was incorrect");
+
+            //Decreasing the page sets the start to 0
+            parameters.Page--;
+            Assert.AreEqual(0, parameters.Start, "Start after decreasing page with count was incorrect");
+            Assert.AreEqual(1, parameters.Page, "Page after decreasing page with count was incorrect");
+
+            //Manually specifying the page number works
+            parameters.Page = 3;
+            Assert.AreEqual(1000, parameters.Start);
+            Assert.AreEqual(3, parameters.Page);
+        }
+
+        [TestMethod]
+        public void PageableParameters_IncreasesPage_StartAtOne()
+        {
+            var parameters = new LogParameters(null);
+
+            //No initial value
+            Assert.AreEqual(1, parameters.Start, "Initial start was incorrect");
+            Assert.AreEqual(null, parameters.Count, "Initial count was incorrect");
+            Assert.AreEqual(1, parameters.Page);
+
+            //Increasing the page when we have no count does nothing
+            parameters.Page++;
+            Assert.AreEqual(1, parameters.Start, "Start was affected after increasing page with no count");
+            Assert.AreEqual(1, parameters.Page, "Page was affected after increasing page with no count");
+
+            //Increasing the page when we have a count works
+            parameters.Count = 500;
+            parameters.Page++;
+            Assert.AreEqual(501, parameters.Start, "Start after increasing page with count was incorrect");
+            Assert.AreEqual(2, parameters.Page, "Page after increasing page with count was incorrect");
+
+            //Decreasing the page sets the start to our initial start
+            parameters.Page--;
+            Assert.AreEqual(1, parameters.Start, "Start after decreasing page with count was incorrect");
+            Assert.AreEqual(1, parameters.Page, "Page after decreasing page with count was incorrect");
+
+            //Manually specifying the page number works
+            parameters.Page = 3;
+            Assert.AreEqual(1001, parameters.Start);
+            Assert.AreEqual(3, parameters.Page);
+        }
+
+        #endregion
 
         private string GetCustomParameter(Parameters.Parameters parameters, string name)
         {

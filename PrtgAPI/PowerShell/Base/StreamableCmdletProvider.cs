@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Progress;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.PowerShell.Base
 {
     class StreamableCmdletProvider<TCmdlet, TObject, TParam>
         where TCmdlet : PrtgProgressCmdlet, IStreamableCmdlet<TCmdlet, TObject, TParam>
-        where TParam : PageableParameters
+        where TParam : PageableParameters, IXmlParameters
     {
         public bool StreamResults { get; set; }
-
-        public bool StreamSerial { get; set; }
 
         /// <summary>
         /// Indicates that current cmdlet should stream, regardless of whether it determines this is required.
@@ -20,20 +19,32 @@ namespace PrtgAPI.PowerShell.Base
 
         public int? StreamCount { get; set; }
 
+        private int? totalExist;
+
+        public int GetTotalExist(TParam parameters)
+        {
+            if (totalExist == null)
+                totalExist = cmdlet.GetStreamTotalObjects(parameters);
+
+            return totalExist.Value;
+        }
+
+        public void SetTotalExist(int value)
+        {
+            totalExist = value;
+        }
+
         private TCmdlet cmdlet;
 
         private int? streamThreshold;
 
-        public StreamableCmdletProvider(TCmdlet cmdlet, int? streamThreshold, bool streamSerial)
+        public StreamableCmdletProvider(TCmdlet cmdlet, bool? shouldStream)
         {
             this.cmdlet = cmdlet;
-            this.streamThreshold = streamThreshold;
+            streamThreshold = PageableParameters.DefaultPageSize;
 
-            if (streamThreshold != null)
-            {
+            if (shouldStream == true)
                 StreamResults = true;
-                StreamSerial = streamSerial;
-            }
         }
 
         public IEnumerable<TRet> StreamResultsWithProgress<TRet>(TParam parameters, int? count, Func<IEnumerable<TRet>> getFiltered = null)
@@ -43,6 +54,7 @@ namespace PrtgAPI.PowerShell.Base
             cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
 
             StreamCount = cmdlet.GetStreamTotalObjects(parameters);
+            SetTotalExist(StreamCount.Value);
 
             IEnumerable<TRet> records;
 
@@ -72,31 +84,54 @@ namespace PrtgAPI.PowerShell.Base
             return records;
         }
 
-        public IEnumerable<TRet> StreamRecords<TRet>(TParam parameters, int? count)
+        public IEnumerable<TRet> StreamRecords<TRet>(TParam parameters, int? countToRetrieve, Func<int> totalExist = null)
         {
-            //Depending on the number of items we're streaming, we may have made so many requests to PRTG that it can't possibly
-            //respond to any cmdlets further downstream until all of the streaming requests have been completed
+            if (StreamCount != null)
+                SetTotalExist(StreamCount.Value);
 
+            SetStreamCount(parameters, countToRetrieve);
+
+            if(totalExist == null)
+            {
+                //If TotalExist was known, we set it upon entering StreamRecords.
+                //Otherwise, we set it upon entering SetStreamCount
+                totalExist = () => GetTotalExist(parameters);
+            }
+
+            var manager = new StreamManager<TObject, TParam>(
+                PrtgSessionState.Client.ObjectEngine, //Object Engine
+                parameters,                           //Parameters
+                totalExist,                           //Get Count (Total Exist)
+                true,                                 //Serial
+                true,                                 //Direct Call
+                cmdlet.GetStreamObjects               //Get Objects
+            );
+
+            return (IEnumerable<TRet>)PrtgSessionState.Client.ObjectEngine.SerialStreamObjectsInternal(manager);
+        }
+
+        public void SetStreamCount(TParam parameters, int? count)
+        {
             //If we're forcing a stream, we may have actually specified the Count parameter. As such, override the
             //number of results to retrieve
             if (ForceStream && count != null)
-                StreamCount = count.Value;
+            {
+                //Need to know the total number of objects that exist to prevent overlapping with Start offset.
+                //In a sense, this is actually unnecessary - StreamManager will request the total number of objects
+                //if it needs to know it. Instead, we ensure we know the total number of objects, and then
+                //give the StreamManager a Func that simply returns our cached TotalExist value
+                StreamCount = Math.Min(count.Value, GetTotalExist(parameters));
+            }
 
             //We went down an alternate code path that doesn't retrieve the total number of needed objects
             if (StreamCount == null)
             {
                 if (ForceStream)
+                {
                     StreamCount = cmdlet.GetStreamTotalObjects(parameters);
-                else
-                    throw new NotImplementedException("Attempted to stream without specifying a stream count. This indicates a bug");
+                    SetTotalExist(StreamCount.Value);
+                }
             }
-
-            //As such, if there are no other PRTG cmdlets after us, stream as normal. Otherwise, only request a couple at a time
-            //so the PRTG will be able to handle the next cmdlet's request
-            if (!StreamSerial && cmdlet.ProgressManager.Scenario == ProgressScenario.StreamProgress && !cmdlet.ProgressManager.CacheManager.PipelineRemainingHasCmdlet<PrtgCmdlet>() && cmdlet.ProgressManager.ProgressPipelinesCount == 1) //There are no other cmdlets after us
-                return (IEnumerable<TRet>)PrtgSessionState.Client.StreamObjectsInternal(parameters, StreamCount.Value, true, cmdlet.GetStreamObjectsAsync);
-
-            return (IEnumerable<TRet>)PrtgSessionState.Client.SerialStreamObjectsInternal(parameters, StreamCount.Value, true, cmdlet.GetStreamObjects); //There are other cmdlets after us; do one request at a time
         }
     }
 }

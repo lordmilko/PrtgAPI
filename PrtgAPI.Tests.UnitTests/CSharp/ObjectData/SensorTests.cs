@@ -61,7 +61,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             client => CheckResult<IEnumerable<Sensor>>(client.StreamSensors(Status.Down, Status.DownAcknowledged))
         );
 
-
         [TestMethod]
         public void Sensor_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamSensors,
@@ -87,6 +86,30 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
                 return false;
             });
+        }
+
+        [TestMethod]
+        public void Sensor_Stream_WithCorrectPageSize()
+        {
+            var urls = new object[]
+            {
+                TestHelpers.RequestSensor("count=500", UrlFlag.Columns),
+                TestHelpers.RequestSensor("count=500&start=500", UrlFlag.Columns),
+                TestHelpers.RequestSensor("count=500&start=1000", UrlFlag.Columns),
+                TestHelpers.RequestSensor("count=100&start=1500", UrlFlag.Columns),
+            };
+
+            var client = Initialize_Client(new AddressValidatorResponse(urls)
+            {
+                CountOverride = new Dictionary<Content, int>
+                {
+                    [Content.Sensors] = 1600
+                }
+            });
+
+            var items = client.StreamSensors(true).ToList();
+
+            Assert.AreEqual(1600, items.Count);
         }
 
         protected override List<Sensor> GetObjects(PrtgClient client) => client.GetSensors();

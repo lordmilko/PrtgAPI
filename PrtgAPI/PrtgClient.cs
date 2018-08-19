@@ -3081,14 +3081,16 @@ namespace PrtgAPI
         {
             var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
 
-            return GetSensorHistoryInternal(parameters);
+            return GetSensorHistoryInternal(parameters).Item1;
         }
 
-        internal List<SensorHistoryData> GetSensorHistoryInternal(SensorHistoryParameters parameters)
+        internal Tuple<List<SensorHistoryData>, int> GetSensorHistoryInternal(SensorHistoryParameters parameters)
         {
-            var items = GetObjects<SensorHistoryData>(parameters, XmlFunction.HistoricData, ResponseParser.ValidateSensorHistoryResponse);
+            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse);
 
-            return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
+            var data = ResponseParser.ParseSensorHistoryResponse(raw.Items, parameters.SensorId);
+
+            return Tuple.Create(data, raw.TotalCount);
         }
 
         /// <summary>

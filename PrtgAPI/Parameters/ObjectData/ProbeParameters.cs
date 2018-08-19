@@ -9,7 +9,7 @@ namespace PrtgAPI.Parameters
     /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Probe"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class ProbeParameters : TableParameters<Probe>
+    public class ProbeParameters : TableParameters<Probe>, IShallowCloneable<ProbeParameters>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeParameters"/> class.
@@ -38,8 +38,17 @@ namespace PrtgAPI.Parameters
                 if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value.ToString() == "0"))
                     value = value.Concat(DefaultSearchFilter()).ToArray();
 
+        ProbeParameters IShallowCloneable<ProbeParameters>.ShallowClone()
+        {
+            var newParameters = new ProbeParameters();
+
+            ShallowClone(newParameters);
+
+            return newParameters;
                 base.SearchFilter = value;
             }
         }
+
+        object IShallowCloneable.ShallowClone() => ((IShallowCloneable<ProbeParameters>)this).ShallowClone();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
@@ -20,7 +21,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         public void Data_Sensor_GetSensors_WithFilters_ResultsMatch()
         {
             var str = "disk";
-
+            
             var sensors = client.GetSensors(Property.Name, FilterOperator.Contains, str);
 
             AssertEx.IsTrue(sensors.TrueForAll(s => s.Name.IndexOf(str, StringComparison.OrdinalIgnoreCase) >= 0), $"One or more object names did not include the substring '{str}'");
@@ -149,6 +150,77 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             {
                 client.ResumeObject(Settings.UpSensor);
             }
+        }
+
+        [TestMethod]
+        public void Data_StreamSensors_StartOffset_CorrectCount()
+        {
+            var count = 15;
+
+            var parameters = new SensorParameters
+            {
+                Count = count,
+                Start = 3,
+                PageSize = 5
+            };
+
+            var sensors = client.StreamSensors(parameters).ToList();
+
+            Assert.AreEqual(count, sensors.Count);
+        }
+
+        [TestMethod]
+        public void Data_StreamSensors_WithCorrectPageSize()
+        {
+            LogTests.Stream_WithCorrectPageSize(
+                () => client.GetSensors(new SensorParameters
+                {
+                    Count = 15
+                }),
+                () => client.StreamSensors(new SensorParameters
+                {
+                    Count = 15
+                }, true),
+                p => client.GetSensors(p),
+                new PrtgObjectComparer(),
+                new SensorParameters
+                {
+                    Count = 5
+                },
+                null
+            );
+        }
+
+        [TestMethod]
+        public void Data_StreamSensors_WithIncorrectPageSize()
+        {
+            var normalParameters = new SensorParameters { Count = 15 };
+            var manualParameters = new SensorParameters { Start = 1, Count = 5 };
+            Assert.AreEqual(1, manualParameters.Start);
+
+            var normalSensors = client.GetSensors(normalParameters);
+            var streamedSensors = client.StreamSensors(normalParameters).ToList();
+
+            var firstParamSensors = client.GetSensors(manualParameters);
+            manualParameters.Page++;
+            var secondParamSensors = client.GetSensors(manualParameters);
+            manualParameters.Page++;
+            var thirdParamSensors = client.GetSensors(manualParameters);
+
+            var manualSensors = new List<Sensor>();
+            manualSensors.AddRange(firstParamSensors);
+            manualSensors.AddRange(secondParamSensors);
+            manualSensors.AddRange(thirdParamSensors);
+
+            AssertEx.AreEqualLists(normalSensors, streamedSensors, new PrtgObjectComparer(), "Normal and streamed sensors were not equal");
+
+            AssertEx.IsFalse(manualSensors.Contains(normalSensors.First()), "The first normal sensor was contained in manual sensors, however it shouldn't have been");
+            AssertEx.IsFalse(normalSensors.Contains(manualSensors.Last()), "The last manual sensor was contained in normal sensors, however it shouldn't have been");
+
+            var middleNormalSensors = normalSensors.Skip(1).ToList();
+            var middleManualSensors = manualSensors.Take(manualSensors.Count - 1).ToList();
+
+            AssertEx.AreEqualLists(middleNormalSensors, middleManualSensors, new PrtgObjectComparer(), "The middle of the normal and manual lists were not equal");
         }
     }
 }

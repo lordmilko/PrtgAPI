@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
@@ -60,5 +61,16 @@ namespace PrtgAPI.Parameters
         {
             return ParameterHelpers.StringToDate(this[parameter].ToString());
         }
+
+        SensorHistoryParameters IShallowCloneable<SensorHistoryParameters>.ShallowClone()
+        {
+            var newParameters = new SensorHistoryParameters(SensorId, Average, StartDate, EndDate, Count);
+
+            ShallowClone(newParameters);
+
+            return newParameters;
+        }
+
+        object IShallowCloneable.ShallowClone() => ((IShallowCloneable<SensorHistoryParameters>)this).ShallowClone();
     }
 }

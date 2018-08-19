@@ -17,8 +17,8 @@ namespace PrtgAPI.PowerShell.Base
     /// <typeparam name="TObject">The type of objects that will be retrieved.</typeparam>
     /// <typeparam name="TParam">The type of parameters to use to retrieve objects</typeparam>
     public abstract class PrtgTableCmdlet<TObject, TParam> : PrtgObjectCmdlet<TObject>, IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>
+        where TObject : ITableObject, IObject
         where TParam : TableParameters<TObject>
-        where TObject : ObjectTable
     {
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain name. Can include wildcards.</para>

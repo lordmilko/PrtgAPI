@@ -136,6 +136,170 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region IShallowCloneable
+
+        [TestMethod]
+        public void IShallowCloneable_PrtgObjectParameters_CloneFully()
+        {
+            CloneTable<PrtgObject, PrtgObjectParameters>(new PrtgObjectParameters(), i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_SensorParameters_CloneFully()
+        {
+            CloneTable<Sensor, SensorParameters>(new SensorParameters
+            {
+                Status = new[] {Status.Up}
+            }, i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_DeviceParameters_CloneFully()
+        {
+            CloneTable<Device, DeviceParameters>(new DeviceParameters(), i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_GroupParameters_CloneFully()
+        {
+            CloneTable<Group, GroupParameters>(new GroupParameters(), i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_ProbeParameters_CloneFully()
+        {
+            CloneTable<Probe, ProbeParameters>(new ProbeParameters(), i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                if (i.Name == "Content")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_LogParameters_CloneFully()
+        {
+            CloneTable<Log, LogParameters>(new LogParameters(3000)
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddHours(-1),
+                RecordAge = RecordAge.LastMonth
+            });
+        }
+
+        [TestMethod]
+        public void IShallowCloneable_SensorHistoryParameters_CloneFully()
+        {
+            Clone(new SensorHistoryParameters(1001, 30, DateTime.Now, DateTime.Now.AddHours(-1), 300)
+            {
+                Page = 2,
+                PageSize = 250,
+                Cookie = true
+            }, i =>
+            {
+                if (i.Name == "StartOffset")
+                    return true;
+
+                return false;
+            });
+        }
+
+        private void CloneTable<TObject, TParam>(TParam parameters, Func<MemberInfo, bool> customHandler = null)
+            where TObject : ITableObject, IObject
+            where TParam : TableParameters<TObject>, IShallowCloneable<TParam>
+        {
+            if (parameters.SearchFilters != null)
+            {
+                var old = parameters.SearchFilters.ToList();
+
+                old.Add(new SearchFilter(Property.Id, 3000));
+
+                parameters.SearchFilters = old.ToList();
+            }
+            else
+                parameters.SearchFilters = new List<SearchFilter> {new SearchFilter(Property.Id, 3000)};
+
+            parameters.Count = 15;
+            parameters.Page = 2;
+            parameters.PageSize = 250;
+            parameters.SortBy = Property.Id;
+            parameters.SortDirection = SortDirection.Descending;
+            parameters.Cookie = true;
+
+            Clone(parameters, customHandler);
+        }
+
+        private void Clone<TParam>(TParam parameters, Func<MemberInfo, bool> customHandler = null) where TParam : IShallowCloneable<TParam>
+        {
+            AssertEx.AllPropertiesAndFieldsAreNotDefault(parameters, i =>
+            {
+                if (i.Name == "PageSize" && i.GetValue(parameters).Equals(500))
+                    Assert.Fail("Property 'PageSize' did not have a value.");
+
+                if (customHandler != null)
+                    return customHandler(i);
+
+                return false;
+            });
+
+            try
+            {
+                AssertEx.AllPropertiesAndFieldsAreEqual(parameters, parameters);
+            }
+            catch (AssertFailedException ex)
+            {
+                throw new AssertFailedException($"Source object was not self equatable: {ex.Message}", ex);
+            }
+
+            var clone = ((IShallowCloneable<TParam>)parameters).ShallowClone();
+
+            AssertEx.AllPropertiesAndFieldsAreEqual(parameters, clone);
+        }
+
+        [TestMethod]
+        public void All_IShallowCloneable_Types_HaveTests()
+        {
+            var types = typeof(IShallowCloneable).Assembly.GetTypes().Where(t => typeof(IShallowCloneable).IsAssignableFrom(t) && !t.IsInterface).ToList();
+
+            var expected = types.Select(t => $"IShallowCloneable_{t.Name}_CloneFully").ToList();
+
+            var actual = GetType().GetMethods().Where(m => m.GetCustomAttribute<TestMethodAttribute>() != null).ToList();
+
+            var missing = expected.Where(e => actual.All(m => m.Name != e)).OrderBy(m => m).ToList();
+
+            if (missing.Count > 0)
+                Assert.Fail($"{missing.Count} tests are missing: " + string.Join(", ", missing));
+        }
+
+        #endregion
         [TestMethod]
         public void AllString_FilterProperties_HaveStringFilterHandler()
         {

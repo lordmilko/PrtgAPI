@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.Helpers
 {
@@ -16,10 +14,10 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
             }
         }
 
-        public static bool IsDefaultValue(PropertyInfo prop, object obj)
+        public static bool IsDefaultValue(MemberInfo info, object obj)
         {
-            var val = prop.GetValue(obj, null);
-            var @default = GetDefault(prop.PropertyType);
+            var val = info.GetValue(obj);
+            var @default = GetDefault(GetType(info));
 
             if (val is IComparable)
             {
@@ -39,6 +37,17 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
             return null;
         }
 
+        private static Type GetType(MemberInfo info)
+        {
+            if (info is PropertyInfo)
+                return ((PropertyInfo) info).PropertyType;
+
+            if (info is FieldInfo)
+                return ((FieldInfo) info).FieldType;
+
+            throw new NotImplementedException();
+        }
+
         public static object GetDefaultUnderlying(Type type, Func<object> @override = null)
         {
             var underlying = Nullable.GetUnderlyingType(type);
@@ -51,6 +60,7 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
 
             if (type.IsValueType || type.IsClass)
                 return Activator.CreateInstance(type, true);
+
             return null;
         }
 
