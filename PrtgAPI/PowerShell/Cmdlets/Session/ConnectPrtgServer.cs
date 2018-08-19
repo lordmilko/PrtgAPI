@@ -122,6 +122,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int? RetryDelay { get; set; } = 3;
 
         /// <summary>
+        /// <para type="description">The type of events to log when -Verbose is specified.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public LogLevel[] LogLevel { get; set; }
+
         /// <para type="description">Enable or disable PowerShell Progress when piping between cmdlets. By default, if Connect-PrtgServer is being called from within a script or the PowerShell ISE this value is false. Otherwise, true.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
@@ -164,6 +169,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (RetryDelay != null)
                     PrtgSessionState.Client.RetryDelay = RetryDelay.Value;
 
+                if (LogLevel != null)
+                {
+                    LogLevel level = PrtgAPI.LogLevel.None;
+
+                    foreach (var l in LogLevel)
+                        level |= l;
+
+                    PrtgSessionState.Client.LogLevel = level;
+                }
                 if (Progress == false || (!string.IsNullOrEmpty(MyInvocation.ScriptName) && !GoPrtgScript()) || GetVariableValue("global:psISE") != null)
                     PrtgSessionState.EnableProgress = false;
                 else

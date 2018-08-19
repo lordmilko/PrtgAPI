@@ -1,8 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "Connect-PrtgServer" {
-
-    InitializeUnitTestModules
+Describe "Connect-PrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     It "utilizes a password" {
         Disconnect-PrtgServer
@@ -59,7 +57,7 @@ Describe "Connect-PrtgServer" {
     }
 
     It "specifies no progress" {
-        Connect-PrtgServer prtg.example.com (New-Credential username 12345678) -PassHash -Progress $false
+        Connect-PrtgServer prtg.example.com (New-Credential username 12345678) -PassHash -Progress:$false
     }
 
     It "passes thru a PrtgClient" {
@@ -68,5 +66,12 @@ Describe "Connect-PrtgServer" {
         $realClient = Get-PrtgClient
 
         $client | Should Be $realClient
+    }
+
+    It "specifies a log level" {
+
+        $client = Connect-PrtgServer prtg.example.com (New-Credential username 12345678) -Passhash -PassThru -Force -LogLevel Trace,Response
+
+        $client.LogLevel | Should Be "Trace, Response"
     }
 }

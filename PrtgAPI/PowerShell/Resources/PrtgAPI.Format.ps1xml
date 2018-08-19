@@ -762,6 +762,9 @@
                             <ListItem>
                                 <PropertyName>RetryDelay</PropertyName>
                             </ListItem>
+                            <ListItem>
+                                <PropertyName>LogLevel</PropertyName>
+                            </ListItem>
                         </ListItems>
                     </ListEntry>
                 </ListEntries>

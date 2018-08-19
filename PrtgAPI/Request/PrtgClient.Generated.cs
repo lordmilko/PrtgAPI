@@ -268,7 +268,7 @@ namespace PrtgAPI
             {
                 if (trigger.SetEnumChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
+                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
                     try
                     {
                         trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName)).First();
@@ -290,7 +290,7 @@ namespace PrtgAPI
             {
                 if (trigger.SetEnumChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
+                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
                     try
                     {
                         trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();

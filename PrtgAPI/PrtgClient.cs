@@ -90,7 +90,10 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Specifies the version of the PRTG Server this client is connected to.
+        /// Specifies the types of events that should be logged by <see cref="LogVerbose"/>.
+        /// </summary>
+        public LogLevel LogLevel { get; set; } = LogLevel.Trace | LogLevel.Request;
+
         /// <summary>
         /// Gets the version of PRTG Network Monitor this client is connected to.
         /// </summary>
@@ -98,9 +101,10 @@ namespace PrtgAPI
 
         internal Version version;
 
-        internal void Log(string message)
+        internal void Log(string message, LogLevel logLevel)
         {
-            HandleEvent(logVerbose, new LogVerboseEventArgs(message));
+            if((LogLevel & logLevel) == logLevel)
+                HandleEvent(logVerbose, new LogVerboseEventArgs(message, logLevel));
         }
 
         internal void HandleEvent<T>(EventHandler<T> handler, T args)

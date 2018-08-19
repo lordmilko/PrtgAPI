@@ -182,7 +182,7 @@ namespace PrtgAPI.Request
 
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
-            prtgClient.Log($"Synchronously executing request {url.Url}");
+            prtgClient.Log($"Synchronously executing request {url.Url}", LogLevel.Request);
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -199,6 +199,8 @@ namespace PrtgAPI.Request
 
                     if (responseText == null)
                         responseText = response.Content.ReadAsStringAsync().Result;
+
+                    prtgClient.Log(responseText, LogLevel.Response);
 
                     ValidateHttpResponse(response, responseText);
 
@@ -225,7 +227,7 @@ namespace PrtgAPI.Request
 
         private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
-            prtgClient.Log($"Asynchronously executing request {url.Url}");
+            prtgClient.Log($"Asynchronously executing request {url.Url}", LogLevel.Request);
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -242,6 +244,8 @@ namespace PrtgAPI.Request
 
                     if (responseText == null)
                         responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                    prtgClient.Log(responseText, LogLevel.Response);
 
                     ValidateHttpResponse(response, responseText);
 

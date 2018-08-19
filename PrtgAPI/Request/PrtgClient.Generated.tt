@@ -196,7 +196,7 @@ for(int i = 0; i < 2; i++)
             {
                 if (trigger.SetEnumChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}");
+                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
                     try
                     {
                         trigger.channelObj = (<#= CallFunction("GetChannelsInternal", "trigger.ObjectId, n => n == trigger.channelName", i) #>).First();
