@@ -31,6 +31,14 @@ namespace PrtgAPI.PowerShell.Base
         {
         }
 
+        internal IEnumerable<TObject> GetAdditionalGroupRecords(NameOrObject<Group> group, Func<Group, int> objsOfTypeInGroup, TParam parameters)
+        {
+            if (group != null && group.IsObject)
+                return GetAdditionalGroupRecords(group.Object, objsOfTypeInGroup, parameters);
+
+            return new List<TObject>();
+        }
+
         /// <summary>
         /// Traverses the child groups of a specified parent group retrieving additional objects of a specified type until all objects of that type have been found.
         /// </summary>

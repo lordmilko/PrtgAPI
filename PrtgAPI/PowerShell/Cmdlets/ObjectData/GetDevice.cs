@@ -96,13 +96,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The group to retrieve devices for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Group Group { get; set; }
+        public NameOrObject<Group> Group { get; set; }
 
         /// <summary>
         /// <para type="description">The probe to retrieve devices for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Probe Probe { get; set; }
+        public NameOrObject<Probe> Probe { get; set; }
+
         /// <summary>
         /// <para type="description">Filter the response to devices with a certain HostName/IP Address. Can include wildcards.</para>
         /// </summary>
@@ -131,10 +132,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessAdditionalParameters()
         {
             if (Probe != null)
-                AddPipelineFilter(Property.Probe, Probe.Name);
+                AddNameOrObjectFilter(Property.Probe, Probe, p => p.Name);
             else if (Group != null)
-                AddPipelineFilter(Property.ParentId, Group.Id);
+                AddNameOrObjectFilter(Property.ParentId, Group, g => g.Id, Property.Group);
 
+            ProcessWildcardArrayFilter(Property.Host, Host);
             base.ProcessAdditionalParameters();
         }
 
@@ -146,6 +148,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override IEnumerable<Device> PostProcessAdditionalFilters(IEnumerable<Device> records)
         {
             records = FilterResponseRecordsByWildcardArray(Host, d => d.Host, records);
+
+            records = FilterResponseRecordsByNameOrObjectName(Group, r => r.Group, records);
+            records = FilterResponseRecordsByNameOrObjectName(Probe, r => r.Probe, records);
+
             return base.PostProcessAdditionalFilters(records);
         }
 

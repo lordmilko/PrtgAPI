@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class SensorFactorySourceResponse : MultiTypeResponse
     {
@@ -42,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content content = components["content"].DescriptionToEnum<Content>();
 
             var count = 1;
 
@@ -54,7 +51,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             switch (content)
             {
                 case Content.Sensors:
-                    return new SensorResponse(Enumerable.Range(0, count).Select(i => new SensorItem()).ToArray());
+                    var type = components["filter_type"] ?? "aggregation";
+
+                    if (type.StartsWith("@sub("))
+                        type = type.Substring(5, type.Length - 6);
+
+                    return new SensorResponse(Enumerable.Range(0, count).Select(i => new SensorItem(typeRaw: type)).ToArray());
                 case Content.Channels:
                     return new ChannelResponse(new ChannelItem());
                 default:

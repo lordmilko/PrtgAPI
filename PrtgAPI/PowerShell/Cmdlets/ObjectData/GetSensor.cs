@@ -107,22 +107,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>, IDynamicParameters
     {
         /// <summary>
-        /// <para type="description">The device to retrieve sensors for.</para>
+        /// <para type="description">The parent <see cref="Device"/> to retrieve sensors for, or a wildcard expression
+        /// specifying the names of the devices to retrieve sensors for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Device Device { get; set; }
+        public NameOrObject<Device> Device { get; set; }
 
         /// <summary>
-        /// <para type="description">The probe to retrieve sensors for.</para>
+        /// <para type="description">The <see cref="Probe"/> to retrieve sensors for, or a wildcard expression
+        /// specifying the names of the probes to retrieve sensors for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Probe Probe { get; set; }
+        public NameOrObject<Probe> Probe { get; set; }
 
         /// <summary>
         /// <para type="description">The group to retrieve sensors for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Group Group { get; set; }
+        public NameOrObject<Group> Group { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetSensor"/> class.
@@ -133,9 +135,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override List<Sensor> GetObjectsInternal(SensorParameters parameters)
         {
-            if (Group != null && Recurse)
+            if (Group != null && Group.IsObject && Recurse)
             {
-                var groups = client.GetGroups(Property.Name, Group.Name);
+                var groups = client.GetGroups(Property.Name, Group.Object.Name);
 
                 //If more than 1 group with the specified name exists and we intend on recursing, get the sensors
                 //of each device under the group (which will be identified via the group's ID).
@@ -144,7 +146,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     client.Log($"Parent group name '{Group}' is not unique and -{nameof(Recurse)} was specified; retrieving sensors by child devices", LogLevel.Trace);
 
                     //Get the sensors under the parent group. We'll process all the child groups in GetAdditionalGroupRecords
-                    return GetSensorsFromGroupNameFilter(Group, true, parameters);
+                    return GetSensorsFromGroupNameFilter(Group.Object, true, parameters);
                 }
                 else
                 {
@@ -174,15 +176,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessAdditionalParameters()
         {
             if (Device != null)
-                AddPipelineFilter(Property.ParentId, Device.Id);
+                AddNameOrObjectFilter(Property.ParentId, Device, d => d.Id, Property.Device);
             if (Group != null)
-                AddPipelineFilter(Property.Group, Group.Name);
+                AddNameOrObjectFilter(Property.Group, Group, g => g.Name);
             if (Probe != null)
-                AddPipelineFilter(Property.Probe, Probe.Name);
+                AddNameOrObjectFilter(Property.Probe, Probe, p => p.Name);
 
             ProcessStatusFilter();
 
             base.ProcessAdditionalParameters();
+        }
+
+        /// <summary>
+        /// Process any post retrieval filters specific to the current cmdlet.
+        /// </summary>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>The filtered records.</returns>
+        protected override IEnumerable<Sensor> PostProcessAdditionalFilters(IEnumerable<Sensor> records)
+        {
+            records = FilterResponseRecordsByNameOrObjectName(Device, r => r.Device, records);
+            records = FilterResponseRecordsByNameOrObjectName(Group, r => r.Group, records);
+            records = FilterResponseRecordsByNameOrObjectName(Probe, r => r.Probe, records);
+
+            return base.PostProcessAdditionalFilters(records);
         }
 
         /// <summary>

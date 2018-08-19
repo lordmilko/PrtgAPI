@@ -281,6 +281,44 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         $groups | Get-Sensor -Filter (flt name eq ping) -Recurse:$false
     }
 
+    It "filters by device name" {
+
+        SetAddressValidatorResponse "filter_device=@sub(c)"
+
+        $sensors = Get-Sensor -Device c*
+        $sensors.Count | Should Be 0
+
+        SetAddressValidatorResponse "filter_device=@sub(d)"
+
+        $sensors = Get-Sensor -Device d*
+        $sensors.Count | Should Be 2
+    }
+
+    It "filters by group name" {
+
+        SetAddressValidatorResponse "filter_group=@sub(e)"
+
+        $sensors = Get-Sensor -Group e*
+        $sensors.Count | Should Be 0
+
+        SetAddressValidatorResponse "filter_group=@sub(s)"
+
+        $sensors = Get-Sensor -Group s*
+        $sensors.Count | Should Be 2
+    }
+
+    It "filters by probe name" {
+        SetAddressValidatorResponse "filter_probe=@sub(h)"
+
+        $sensors = Get-Sensor -Probe h*
+        $sensors.Count | Should Be 0
+
+        SetAddressValidatorResponse "filter_probe=@sub(c)"
+
+        $sensors = Get-Sensor -Probe c*
+        $sensors.Count | Should Be 2
+    }
+    
     Context "Dynamic" {
         It "uses dynamic parameters" {
             SetAddressValidatorResponse "filter_position=0000000030"

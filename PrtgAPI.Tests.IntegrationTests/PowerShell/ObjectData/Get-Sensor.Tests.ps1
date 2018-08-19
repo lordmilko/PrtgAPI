@@ -222,6 +222,25 @@ Describe "Get-Sensor_IT" {
         $multiple[3].Name | Should Be "Ping"
         
     }
+
+    It "filters by device name" {
+        $sensors = Get-Sensor -Device (Settings DeviceName)
+
+        $sensors.Count | Should Be (Settings SensorsInTestDevice)
+    }
+
+    It "filters by group name" {
+        $sensors = Get-Sensor -Group (Settings GroupName)
+
+        $sensors.Count | Should Be (Settings SensorsInTestGroup)
+    }
+
+    It "filters by probe name" {
+        $sensors = Get-Sensor -Probe (Settings ProbeName)
+
+        $sensors.Count | Should Be (Settings SensorsInTestProbe)
+    }
+
     It "filters by internal sensor types" {
         $sensors = Get-Sensor -Type sensorfactory
 

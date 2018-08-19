@@ -126,4 +126,10 @@ Describe "Get-Group_IT" {
             $group.Message | Should BeLike "*o*"
         }
     }
+
+    It "filters by probe name" {
+        $groups = Get-Group -Probe (Settings ProbeName)
+
+        $groups.Count | Should Be (Settings GroupsInTestProbe)
+    }
 }

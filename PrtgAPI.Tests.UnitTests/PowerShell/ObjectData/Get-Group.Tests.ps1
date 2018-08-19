@@ -47,6 +47,18 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    It "filters by probe name" {
+        SetAddressValidatorResponse "filter_probe=@sub(2)"
+
+        $sensors = Get-Group -Probe 2*
+        $sensors.Count | Should Be 0
+
+        SetAddressValidatorResponse "filter_probe=@sub(1)"
+
+        $sensors = Get-Group -Probe 1*
+        $sensors.Count | Should Be 2
+    }
+
     Context "Group Recursion" {
         It "retrieves groups from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupUniqueGroup"

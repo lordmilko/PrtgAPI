@@ -102,7 +102,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The probe to retrieve groups for.</para>
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public Probe Probe { get; set; }
+        public NameOrObject<Probe> Probe { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetGroup"/> class.
@@ -135,11 +135,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessAdditionalParameters()
         {
             if (Probe != null)
-                AddPipelineFilter(Property.Probe, Probe.Name);
+                AddNameOrObjectFilter(Property.Probe, Probe, p => p.Name);
             else if (Group != null)
                 AddPipelineFilter(Property.ParentId, Group.Id);
 
             base.ProcessAdditionalParameters();
+        }
+
+        /// <summary>
+        /// Process any post retrieval filters specific to the current cmdlet.
+        /// </summary>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>The filtered records.</returns>
+        protected override IEnumerable<Group> PostProcessAdditionalFilters(IEnumerable<Group> records)
+        {
+            records = FilterResponseRecordsByNameOrObjectName(Probe, r => r.Probe, records);
+
+            return base.PostProcessAdditionalFilters(records);
         }
 
         /// <summary>

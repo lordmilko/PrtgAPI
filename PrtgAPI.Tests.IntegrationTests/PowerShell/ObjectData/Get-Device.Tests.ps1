@@ -139,4 +139,16 @@ Describe "Get-Device_IT" {
         }
     }
 
+    It "filters by group name" {
+
+        $devices = Get-Device -Group (Settings GroupName)
+
+        $devices.Count | Should Be (Settings DevicesInTestGroup)
+    }
+
+    It "filters by probe name" {
+        $devices = Get-Device -Probe (Settings ProbeName)
+
+        $devices.Count | Should Be (Settings DevicesInTestProbe)
+    }
 }
