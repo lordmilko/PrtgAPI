@@ -27,6 +27,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="link">Connect-PrtgServer</para>
     /// <para type="link">Disconnect-PrtgServer</para>
+    /// <para type="link">Set-PrtgClient</para>
     /// </summary>
     [OutputType(typeof(PrtgClient))]
     [Cmdlet(VerbsCommon.Get, "PrtgClient")]

@@ -78,9 +78,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </example>
     /// 
     /// <para type="link">Get-PrtgClient</para>
+    /// <para type="link">Set-PrtgClient</para>
     /// <para type="link">Disconnect-PrtgServer</para>
     /// <para type="link">Enable-PrtgProgress</para>
     /// <para type="link">Disable-PrtgProgress</para>
+    /// <para type="link">Install-GoPrtgServer</para>
+    /// <para type="link">Connect-GoPrtgServer</para>
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "PrtgServer")]
     public class ConnectPrtgServer : PSCmdlet, IPrtgPassThruCmdlet
@@ -127,19 +130,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false)]
         public LogLevel[] LogLevel { get; set; }
 
+        /// <summary>
         /// <para type="description">Enable or disable PowerShell Progress when piping between cmdlets. By default, if Connect-PrtgServer is being called from within a script or the PowerShell ISE this value is false. Otherwise, true.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public bool? Progress { get; set; }
+        public SwitchParameter Progress { get; set; }
 
         /// <summary>
-        /// Specifies whether to return the <see cref="PrtgClient"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
+        /// <para type="description">Specifies whether to return the <see cref="PrtgClient"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// Returns the <see cref="PrtgClient"/> that was created by this cmdlet.
+        /// <summary>
+        /// <para type="description">Returns the <see cref="PrtgClient"/> that was created by this cmdlet.</para>
         /// </summary>
         public object PassThruObject => PrtgSessionState.Client;
 
@@ -152,6 +158,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 WriteObject(PassThruObject);
         }
 
+        private bool ProgressSpecified => MyInvocation.BoundParameters.ContainsKey(nameof(Progress));
+
+        private bool ProgressFalse => ProgressSpecified && Progress == false;
+
+        private bool IsScript => !string.IsNullOrEmpty(MyInvocation.ScriptName) && !GoPrtgScript();
+
+        private bool IsISE => GetVariableValue("global:psISE") != null;
+
+        private bool ProgressTrue => ProgressSpecified && Progress;
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
@@ -178,7 +193,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                     PrtgSessionState.Client.LogLevel = level;
                 }
-                if (Progress == false || (!string.IsNullOrEmpty(MyInvocation.ScriptName) && !GoPrtgScript()) || GetVariableValue("global:psISE") != null)
+
+                if (!ProgressTrue && (ProgressFalse || IsScript || IsISE))
                     PrtgSessionState.EnableProgress = false;
                 else
                     PrtgSessionState.EnableProgress = true;
@@ -187,10 +203,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                throw new Exception($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
+                throw new InvalidOperationException($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private bool GoPrtgScript()
         {
             var script = MyInvocation.ScriptName;
