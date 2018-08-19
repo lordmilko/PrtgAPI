@@ -14,7 +14,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         public SetNotificationTriggerResponse(Dictionary<Content, int> countOverride)
         {
-            this.countOverride = countOverride;
+            CountOverride = countOverride;
         }
 
         protected override IWebResponse GetResponse(ref string address, string function)
@@ -32,7 +32,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(HtmlFunction.RemoveSubObject):
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditNotification):
-                    return new NotificationActionResponse(new NotificationActionItem());
+                case nameof(HtmlFunction.ObjectData):
+                    return GetObjectDataResponse(address);
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -42,14 +43,14 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content content = components["content"].DescriptionToEnum<Content>();
 
             switch (content)
             {
                 case Content.Sensors:
                     if (components["filter_objid"] == "1")
                         return new SensorResponse();
-                    if (countOverride != null && countOverride[Content.Sensors] == 0)
+                    if (CountOverride != null && CountOverride[Content.Sensors] == 0)
                         return new SensorResponse();
                     return new SensorResponse(new SensorItem());
                 case Content.Channels:
@@ -58,8 +59,27 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger());
                 case Content.Notifications:
                     return new NotificationActionResponse(new NotificationActionItem("301"));
+                case Content.Schedules:
+                    return new ScheduleResponse(new ScheduleItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(SetNotificationTriggerResponse)}");
+            }
+        }
+
+        private IWebResponse GetObjectDataResponse(string address)
+        {
+            var components = UrlHelpers.CrackUrl(address);
+
+            var objectType = components["objecttype"].ToEnum<ObjectType>();
+
+            switch (objectType)
+            {
+                case ObjectType.Notification:
+                    return new NotificationActionResponse(new NotificationActionItem());
+                case ObjectType.Schedule:
+                    return new ScheduleResponse();
+                default:
+                    throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }
         }
 

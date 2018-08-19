@@ -16,6 +16,7 @@ namespace PrtgAPI
         internal static string prefix = "injected_";
 
         internal static string basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
+        internal static string backwardsMatchRegex = "<input.+?value=\".*?\".+?name=\".*?\".*?>";
         internal static string standardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
 
         internal static XElement GetXml(string response)

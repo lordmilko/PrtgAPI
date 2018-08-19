@@ -63,18 +63,14 @@ namespace PrtgAPI
         [XmlElement("injected_schedule")]
         internal string scheduleStr { get; set; }
 
-        private Lazy<Schedule> schedule;
+        internal string lazyScheduleStr => Lazy(() => scheduleStr);
+
+        internal Lazy<Schedule> schedule;
 
         /// <summary>
         /// The schedule during which the notification action is active. When inactive, alerts sent to this notification will be ignored unless <see cref="Postpone"/> is specified.
         /// </summary>
-        public Schedule Schedule => Lazy(() =>
-        {
-            if (schedule == null)
-                schedule = new LazyValue<Schedule>(scheduleStr, () => new Schedule(scheduleStr));
-
-            return schedule.Value;
-        });
+        public Schedule Schedule => Lazy(() => schedule?.Value); //Set via UpdateTriggerActions, UpdateActionSchedules
 
         #endregion
         #region Notification Summarization

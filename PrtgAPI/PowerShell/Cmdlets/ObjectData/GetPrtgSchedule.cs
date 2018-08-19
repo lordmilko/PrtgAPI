@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Collections.Generic;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -39,6 +40,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         public GetPrtgSchedule() : base(Content.Schedules, null)
         {
+        }
+
+        internal override List<Schedule> GetObjectsInternal(ScheduleParameters parameters)
+        {
+            return client.GetSchedulesInternal(parameters);
         }
 
         /// <summary>

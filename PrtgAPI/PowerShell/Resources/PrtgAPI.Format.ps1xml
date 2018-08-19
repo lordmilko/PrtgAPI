@@ -456,7 +456,8 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader/> <!-- Name -->                    
-                    <TableColumnHeader/> <!-- Id -->                    
+                    <TableColumnHeader/> <!-- Id -->
+                    <TableColumnHeader/> <!-- TimeTable -->
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
@@ -466,6 +467,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>TimeTable</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
@@ -676,6 +680,54 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Properties</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.Schedules.TimeSlotRow</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Time</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Monday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Tuesday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Wednesday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Thursday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Friday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Saturday</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Sunday</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>

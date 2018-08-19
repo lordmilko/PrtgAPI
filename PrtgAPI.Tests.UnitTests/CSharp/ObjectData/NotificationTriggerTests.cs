@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -107,7 +107,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = GetResolvesASensorChannelResponseClient();
 
-            var triggers = client.GetNotificationTriggers(1001).First();
+            var triggers = client.GetNotificationTriggers(4001).First();
 
             Assert.AreEqual(triggers.Channel.channel.GetType(), typeof (Channel));
         }
@@ -117,7 +117,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = GetResolvesASensorChannelResponseClient();
 
-            var triggers = (await client.GetNotificationTriggersAsync(1001)).First();
+            var triggers = (await client.GetNotificationTriggersAsync(4001)).First();
 
             Assert.AreEqual(triggers.Channel.channel.GetType(), typeof(Channel));
         }
@@ -146,7 +146,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task NotificationTrigger_Throws_WhenChannelCantBeResolvedAsync()
         {
-            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")));
+            var client = Initialize_Client(
+                new NotificationTriggerResponse(
+                    NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")
+                )
+            );
 
             await AssertEx.ThrowsAsync<InvalidStateException>(
                 async () => (await client.GetNotificationTriggersAsync(1001)).First(),
@@ -191,15 +195,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             var validator = new EventValidator<string>(new[]
             {
-                //First
+                //First - get all triggers
                 "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
 
-                //Second
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/editnotification.htm?id=301&username=username&passhash=12345678",
+                //Second - touch a trigger's action's unsupported property
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
 
-                //Third
-                "https://prtg.example.com/controls/editnotification.htm?id=302&username=username&passhash=12345678"
+                //Third - touch an unsupported property of another action
+                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678"
             });
 
             client.LogVerbose += (s, e) =>
@@ -222,17 +226,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         [TestMethod]
-        public async Task NotificationTrigger_LoadsAction_Efficiently()
+        public async Task NotificationTrigger_LoadsAction_Efficiently_WhenAsync()
         {
-            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
+            var client = Initialize_Client(new NotificationTriggerResponse(
+                NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")
+            ) {HasSchedule = new[] {302}});
 
             var validator = new EventValidator<string>(new[]
             {
                 //First
                 "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/editnotification.htm?id=301&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/editnotification.htm?id=302&username=username&passhash=12345678"
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678"
             });
 
             client.LogVerbose += (s, e) =>
@@ -242,10 +250,126 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Assert.AreEqual(validator.Get(message), message);
             };
 
-            validator.MoveNext(4);
+            validator.MoveNext(6);
             var triggers = await client.GetNotificationTriggersAsync(1001);
 
             var val = triggers.First().OnNotificationAction.Postpone;
+
+            Assert.AreEqual("Weekdays [GMT+0800]", triggers.First().OffNotificationAction.Schedule.Name);
+
+            Assert.IsTrue(validator.Finished, "Did not process all requests");
+        }
+
+        [TestMethod]
+        public void NotificationTrigger_LoadsSchedule_Lazy()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(
+                NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator"),
+                NotificationTriggerItem.ChangeTrigger("303|Ticket Notification"))
+            { HasSchedule = new[] {301, 302, 303}}
+            );
+
+            var validator = new EventValidator<string>(new[]
+            {
+                //First - get all triggers
+                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+
+                //Second - touch a trigger's action's schedule
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&filter_objid=303&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+
+                //Third - touch the same schedule on another action
+                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+
+                //Fourth - touch a different schedule on another action
+                "https://prtg.example.com/controls/objectdata.htm?id=303&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678"
+            });
+
+            client.LogVerbose += (s, e) =>
+            {
+                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
+
+                Assert.AreEqual(validator.Get(message), message);
+            };
+
+            validator.MoveNext();
+            var triggers = client.GetNotificationTriggers(1001);
+
+            validator.MoveNext(4);
+            var val = triggers.First().OnNotificationAction.Schedule;
+
+            validator.MoveNext(3);
+            var val2 = triggers.First().OffNotificationAction.Schedule;
+
+            var val3 = triggers.First().EscalationNotificationAction.Schedule; //should be action "None"
+            Assert.AreEqual(null, val3);
+
+            validator.MoveNext(3);
+            var trueVal3 = triggers.Skip(1).First().OnNotificationAction.Schedule;
+
+            var firstAgain = triggers.First().OnNotificationAction.Schedule;
+            var secondAgain = triggers.First().OffNotificationAction.Schedule;
+            var thirdFakeAgain = triggers.First().EscalationNotificationAction.Schedule;
+            var thirdRealAgain = triggers.Skip(1).First().OnNotificationAction.Schedule;
+
+            Assert.IsTrue(validator.Finished, "Did not process all requests");
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_LoadsSchedule_LazyAsync()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(
+                NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator"),
+                NotificationTriggerItem.ChangeTrigger("303|Ticket Notification"))
+            { HasSchedule = new[] { 301, 302, 303 } }
+            );
+
+            var validator = new EventValidator<string>(new[]
+            {
+                //First - get all triggers. Automatically retrieves all notifications, and their properties.
+                //All of the schedules of the notifications are retrieved, as well as each schedule's properties
+                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&filter_objid=303&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=303&objecttype=notification&username=username&passhash=12345678",
+
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+            });
+
+            client.LogVerbose += (s, e) =>
+            {
+                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
+
+                Assert.AreEqual(validator.Get(message), message);
+            };
+
+            validator.MoveNext(7);
+            var triggers = await client.GetNotificationTriggersAsync(1001);
+
+            var val = triggers.First().OnNotificationAction.Schedule;
+
+            var val2 = triggers.First().OffNotificationAction.Schedule;
+
+            var val3 = triggers.First().EscalationNotificationAction.Schedule; //should be action "None"
+            Assert.AreEqual(null, val3);
+
+            var trueVal3 = triggers.Skip(1).First().OnNotificationAction.Schedule;
+
+            var firstAgain = triggers.First().OnNotificationAction.Schedule;
+            var secondAgain = triggers.First().OffNotificationAction.Schedule;
+            var thirdFakeAgain = triggers.First().EscalationNotificationAction.Schedule;
+            var thirdRealAgain = triggers.Skip(1).First().OnNotificationAction.Schedule;
+
+            Assert.IsTrue(validator.Finished, "Did not process all requests");
 
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
@@ -270,6 +394,48 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var val = triggers.First().OnNotificationAction;
 
             AssertEx.AllPropertiesAreNotDefault(val);
+        }
+
+        [TestMethod]
+        public void NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSet()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(
+                    NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator"))
+                { HasSchedule = new[] { 301 } }
+            );
+
+            var triggers = client.GetNotificationTriggers(1001);
+            var action = triggers.First().OnNotificationAction;
+            var schedule = action.Schedule;
+
+            AssertEx.AllPropertiesAreNotDefault(schedule, p =>
+            {
+                if (p.Name == "Tags")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSetAsync()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(
+                    NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator"))
+                { HasSchedule = new[] { 301 } }
+            );
+
+            var triggers = await client.GetNotificationTriggersAsync(1001);
+            var action = triggers.First().OnNotificationAction;
+            var schedule = action.Schedule;
+
+            AssertEx.AllPropertiesAreNotDefault(schedule, p =>
+            {
+                if (p.Name == "Tags")
+                    return true;
+
+                return false;
+            });
         }
 
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)

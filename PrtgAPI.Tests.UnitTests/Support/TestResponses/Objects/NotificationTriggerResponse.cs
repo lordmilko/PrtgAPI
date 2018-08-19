@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Xml.Linq;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Helpers;
+using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class NotificationTriggerResponse : BaseResponse<NotificationTriggerItem>
     {
         private ChannelItem[] channels;
+
+        private int notificationActionId = 300;
+
+        public int[] HasSchedule { get; set; }
 
         internal NotificationTriggerResponse(params NotificationTriggerItem[] triggers) : base("triggers", triggers)
         {
@@ -29,7 +35,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case nameof(HtmlFunction.ChannelEdit):
                     return new ChannelResponse(channels).GetResponseText(ref address);
                 case nameof(HtmlFunction.EditNotification):
-                    return new NotificationActionResponse(new NotificationActionItem()).GetResponseText(ref address);
+                case nameof(HtmlFunction.ObjectData):
+                    return GetObjectDataResponse(address).GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(NotificationTriggerResponse)}");
             }
@@ -37,6 +44,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private string GetTableText(string address)
         {
+            var components = UrlHelpers.CrackUrl(address);
+
             var content = MultiTypeResponse.GetContent(address);
 
             switch (content)
@@ -44,11 +53,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case Content.Triggers:
                     return base.GetResponseText(ref address);
                 case Content.Channels:
-                    return new ChannelResponse(channels).GetResponseText(ref address);
+
+                    if(Convert.ToInt32(components["id"]) >= 4000)
+                        return new ChannelResponse(channels).GetResponseText(ref address);
+                    return new ChannelResponse().GetResponseText(ref address);
                 case Content.Notifications:
-                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302")).GetResponseText(ref address);
+                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302"), new NotificationActionItem("303")).GetResponseText(ref address);
+                case Content.Schedules:
+                    return new ScheduleResponse(new ScheduleItem()).GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(NotificationTriggerResponse)}");
+            }
+        }
+
+        private IWebResponse GetObjectDataResponse(string address)
+        {
+            var components = UrlHelpers.CrackUrl(address);
+
+            var objectType = components["objecttype"].ToEnum<ObjectType>();
+
+            switch (objectType)
+            {
+                case ObjectType.Notification:
+                    notificationActionId++;
+
+                    return new NotificationActionResponse(new NotificationActionItem(notificationActionId.ToString()))
+                    {
+                        HasSchedule = HasSchedule
+                    };
+                case ObjectType.Schedule:
+                    return new ScheduleResponse();
+                default:
+                    throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }
         }
 

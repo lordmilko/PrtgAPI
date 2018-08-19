@@ -2,10 +2,10 @@
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 {
@@ -109,13 +109,13 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void Object_DeserializesSchedule()
         {
-            var webClient = new MockWebClient(new SensorSettingsResponse());
+            var webClient = new MockWebClient(new MultiTypeResponse());
 
             var client = new PrtgClient("server", "username", "1234567890", AuthMode.PassHash, webClient);
 
             var properties = client.GetSensorProperties(1001);
 
-            Assert.AreEqual("Weekdays Nights (17:00 - 9:00) [GMT+0800]", properties.Schedule.ToString(), "Schedule was not correct");
+            Assert.AreEqual("Weekdays [GMT+0800]", properties.Schedule.ToString(), "Schedule was not correct");
         }
 
         [TestMethod]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -51,7 +50,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 var commands = runtimePipelineProcessor.Value.GetInternalProperty("Commands");
 
-                return ((IEnumerable)commands).Cast<object>().ToList();
+                return commands.ToIEnumerable().ToList();
             });
             runtimePipelineProcessorCommandProcessorCommands = new Lazy<List<object>>(() => runtimePipelineProcessorCommandProcessors.Value.Select(c => c.GetInternalProperty("Command")).ToList());
 
@@ -442,7 +441,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             var currentPS = (PSObject)cmdlet.GetInternalProperty("CurrentPipelineObject");
 
-            var current = currentPS?.ToString() == string.Empty || currentPS == null ? null : currentPS.BaseObject;
+            var current = PSObjectToString(currentPS) == string.Empty || currentPS == null ? null : currentPS.BaseObject;
 
             if (enumerator == null) //Piping from a cmdlet
             {
@@ -462,6 +461,19 @@ namespace PrtgAPI.PowerShell.Progress
                 }).Cast<PSObject>();
 
                 return new Pipeline(current, array.Select(e => e.BaseObject).ToList());
+            }
+        }
+
+        private static string PSObjectToString(PSObject obj)
+        {
+            try
+            {
+                return obj?.ToString();
+            }
+            catch(ExtendedTypeSystemException)
+            {
+                //Calling ToString on the upstream object (such as an illegal SearchFilter) may throw
+                return string.Empty;
             }
         }
 

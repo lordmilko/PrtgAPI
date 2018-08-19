@@ -84,7 +84,7 @@ for(int i = 0; i < 2; i++)
 #>
         internal <#= GetSignature("GetNotificationActionsInternal", "List<NotificationAction>", i) #>(NotificationActionParameters parameters)
         {
-            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "XmlFunction.TableData, parameters", i) #>;
+            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "parameters", i) #>;
 
             var items = response.Descendants("item").ToList();
 
@@ -96,8 +96,37 @@ for(int i = 0; i < 2; i++)
 
                 item.Add(properties.Nodes());
             }
+            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
 
-            return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
+
+            <#= CallFunction("UpdateActionSchedules", "actionsWithSchedules", i) #>;
+
+            return actions;
+        }
+
+<#
+}
+#>
+        //######################################
+        // GetSchedulesInternal
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("GetSchedulesInternal", "List<Schedule>", i) #>(ScheduleParameters parameters)
+        {
+            var schedules = <#= CallGenericFunction("ObjectEngine.GetObjects", "Schedule", "parameters", i) #>;
+
+            <#= StartLoopOrTask("schedule", "schedules", i) #>
+            {
+                var response = <#= CallFunction("GetObjectPropertiesRawInternal", "schedule.Id, ObjectType.Schedule", i) #>;
+                ResponseParser.LoadTimeTable(schedule, response);
+            }<#= EndLoopOrTask(i) #>
+
+            return schedules;
         }
 
 <#

@@ -131,6 +131,33 @@ namespace PrtgAPI.Request
             return actions;
         }
 
+        internal static IEnumerable<IGrouping<int, NotificationAction>> GroupActionSchedules(List<NotificationAction> actions)
+        {
+            var actionsWithSchedules = actions
+                .GroupBy(a => PrtgObject.GetId(a.lazyScheduleStr)).ToList();
+
+            foreach (var group in actionsWithSchedules)
+            {
+                if (group.Key == -1)
+                {
+                    foreach (var action in group)
+                        action.schedule = new LazyValue<Schedule>(action.lazyScheduleStr, () => new Schedule(action.lazyScheduleStr));
+                }
+                else
+                    yield return group;
+            }
+        }
+
+        #endregion
+        #region Schedules
+
+        internal static void LoadTimeTable(Schedule schedule, string response)
+        {
+            var input = ObjectSettings.GetInput(response, ObjectSettings.backwardsMatchRegex).Where(i => i.Name == "timetable").ToList();
+
+            schedule.TimeTable = new TimeTable(input);
+        }
+
         #endregion
         #region Add Objects
 

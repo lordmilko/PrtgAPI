@@ -1,22 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    static class PrtgClientExtensions
-    {
-        public static Group AddGroup(this PrtgClient client, int parentId, string name)
-        {
-            client.AddGroup(parentId, name);
-            return client.GetGroups(new SearchFilter(Property.ParentId, parentId), new SearchFilter(Property.Name, name)).First();
-        }
-    }
-
     public class NotificationActionResponse : BaseResponse<NotificationActionItem>
     {
+        public int[] HasSchedule { get; set; }
+
         internal NotificationActionResponse(params NotificationActionItem[] notifications) : base("notifications", notifications)
         {
         }
@@ -25,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            var item = items.FirstOrDefault(i => i.ObjId == components["id"]);
+            var item = Items.FirstOrDefault(i => i.ObjId == components["id"]);
 
             var builder = new StringBuilder();
             
@@ -59,8 +53,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             builder.Append("<label class=\"control-label has_help \" for=\"schedule_\">Schedule</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Use schedules to only activate notifications within specific time spans (days, hours) throughout the week. You can edit schedules in the account settings.<p><a class='morehelp nohjax' target='_blank' href='/help/notifications_settings.htm#basic'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"schedule_\" id=\"schedule_\" >\n");
-            builder.Append("<option value=\"-1|None|\" selected=\"selected\" >None</option>\n");
-            builder.Append("<option value=\"623|Saturdays [GMT+0800]|\">Saturdays [GMT+0800]</option>\n");
+
+            if (HasSchedule != null && item != null && HasSchedule.Contains(Convert.ToInt32(item.ObjId)))
+            {
+                builder.Append("<option value=\"-1|None|\">None</option>\n");
+                builder.Append("<option value=\"623|Saturdays [GMT+0800]|\" selected=\"selected\" >Saturdays [GMT+0800]</option>\n");
+            }
+            else
+            {
+                builder.Append("<option value=\"-1|None|\" selected=\"selected\" >None</option>\n");
+                builder.Append("<option value=\"623|Saturdays [GMT+0800]|\">Saturdays [GMT+0800]</option>\n");
+            }
+            
             builder.Append("<option value=\"622|Sundays [GMT+0800]|\">Sundays [GMT+0800]</option>\n");
             builder.Append("<option value=\"620|Weekdays [GMT+0800]|\">Weekdays [GMT+0800]</option>\n");
             builder.Append("<option value=\"625|Weekdays Eight-To-Eight (8:00 - 20:00) [GMT+0800]|\">Weekdays Eight-To-Eight (8:00 - 20:00) [GMT+0800]</option>\n");
@@ -599,7 +603,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         public override string GetResponseText(ref string address)
         {
-            if (address.Contains(HtmlFunction.EditNotification.GetDescription()))
+            if (address.Contains("content=schedules") || address.Contains("objecttype=schedule"))
+                return new ScheduleResponse(new ScheduleItem()).GetResponseText(ref address);
+
+            if (address.Contains(HtmlFunction.ObjectData.GetDescription()))
             {
                 return GetSettingsResponseText(address);
             }

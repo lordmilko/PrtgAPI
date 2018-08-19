@@ -1,11 +1,10 @@
 ﻿using System;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Helpers
 {
-    static class ILazyHelpers
+    static class ILazyExtensions
     {
         internal static TProperty Get<TProperty>(this PrtgObject obj, Func<TProperty> getValue)
         {

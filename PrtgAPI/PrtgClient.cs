@@ -1526,6 +1526,34 @@ namespace PrtgAPI
             return xml;
         }
 
+        private void UpdateActionSchedules(List<IGrouping<int, NotificationAction>> actions)
+        {
+            if (actions.Count > 0)
+            {
+                var schedules = new Lazy<List<Schedule>>(() => GetSchedules(Property.Id, actions.Select(a => a.Key)));
+
+                foreach (var group in actions)
+                {
+                    foreach (var action in group)
+                        action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key));
+                }
+            }
+        }
+
+        private async Task UpdateActionSchedulesAsync(List<IGrouping<int, NotificationAction>> actions)
+        {
+            if (actions.Count > 0)
+            {
+                var schedules = await GetSchedulesAsync(Property.Id, actions.Select(a => a.Key)).ConfigureAwait(false);
+
+                foreach (var group in actions)
+                {
+                    foreach (var action in group)
+                        action.schedule = new Lazy<Schedule>(() => schedules.First(s => s.Id == group.Key));
+                }
+            }
+        }
+
         #endregion
         #region Notification Triggers
 
@@ -1565,18 +1593,42 @@ namespace PrtgAPI
 
         private void UpdateTriggerActions(List<NotificationTrigger> triggers)
         {
+            //Group all actions from all triggers together based on their object ID
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
-            var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
-
-            var normal = new Lazy<XDocument>(() => GetObjectsXml(parameters));
+            //Retrieve the XML required to construct "proper" notification actions for all unique actions
+            //specified in the triggers
+            var actionParameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
+            var normalActions = new Lazy<XDocument>(() => ObjectEngine.GetObjectsXml(actionParameters));
 
             foreach (var group in actions)
             {
-                var lazy = new Lazy<XDocument>(() => RequestParser.ExtractActionXml(normal.Value, GetNotificationActionProperties(group.Key), @group.Key));
+                //As soon as a notification with a specified ID is accessed on any one of the triggers, retrieve
+                //the "supported" properties of ALL of the notification actions, and then retrieve the "unsupported"
+                //properties of JUST the notification action object ID that was accessed.
+                var lazyAction = new Lazy<XDocument>(() => RequestParser.ExtractActionXml(normalActions.Value, GetNotificationActionProperties(group.Key), @group.Key));
+
+                Logger.Log("Setting lazy action to retrieve notification actions");
 
                 foreach (var action in group)
-                    action.LazyXml = lazy;
+                {
+                    action.LazyXml = lazyAction;
+
+                    Logger.Log("Setting lazy action to retrieve notification schedule");
+
+                    action.schedule = new Lazy<Schedule>(
+                        () =>
+                        {
+                            if (action.lazyScheduleStr != null && PrtgObject.GetId(action.lazyScheduleStr) != -1)
+                            {
+                                Logger.Log($"Resolving schedule {action.lazyScheduleStr} to schedule");
+
+                                return GetSchedule(new Schedule(action.lazyScheduleStr).Id);
+                            }
+
+                            return new Schedule(action.lazyScheduleStr);
+                        });
+                }
             }
         }
 
@@ -1601,6 +1653,31 @@ namespace PrtgAPI
                 foreach (var action in actions[i])
                 {
                     action.LazyXml = new Lazy<XDocument>(() => xDoc);
+                }
+            }
+
+            var list = ResponseParser.GroupActionSchedules(actions.SelectMany(g => g).ToList()).ToList();
+
+            List<Schedule> schedules = new List<Schedule>();
+
+            if(list.Count > 0)
+                schedules = await GetSchedulesAsync(Property.Id, list.Select(l => l.Key).ToArray()).ConfigureAwait(false);
+
+            foreach (var group in actions)
+            {
+                foreach (var action in group)
+                {
+                    if (action.lazyScheduleStr != null)
+                    {
+                        var id = PrtgObject.GetId(action.lazyScheduleStr);
+
+                        if (id != -1)
+                            action.schedule = new Lazy<Schedule>(() => schedules.First(s => s.Id == id));
+                        else
+                            action.schedule = new Lazy<Schedule>(() => new Schedule(action.lazyScheduleStr));
+                    }
+                    else
+                        action.schedule = new Lazy<Schedule>(() => new Schedule(action.lazyScheduleStr));
                 }
             }
         }
@@ -1672,8 +1749,7 @@ namespace PrtgAPI
         /// Retrieves all monitoring schedules from a PRTG Server.
         /// </summary>
         /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
-        public List<Schedule> GetSchedules() =>
-            GetObjects<Schedule>(new ScheduleParameters());
+        public List<Schedule> GetSchedules() => GetSchedulesInternal(new ScheduleParameters());
 
         /// <summary>
         /// Retrieves all monitoring schedules from a PRTG Server based on the value of a certain property.
@@ -1690,14 +1766,14 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of schedules that match the specified search criteria.</returns>
         public List<Schedule> GetSchedules(params SearchFilter[] filters) =>
-            GetObjects<Schedule>(new ScheduleParameters { SearchFilter = filters });
+            GetSchedulesInternal(new ScheduleParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves all monitoring schedules from a PRTG Server.
         /// </summary>
         /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
         public async Task<List<Schedule>> GetSchedulesAsync() =>
-            await GetObjectsAsync<Schedule>(new ScheduleParameters()).ConfigureAwait(false);
+            await GetSchedulesInternalAsync(new ScheduleParameters()).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all monitoring schedules from a PRTG Server based on the value of a certain property.
@@ -1714,7 +1790,7 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of schedules that match the specified search criteria.</returns>
         public async Task<List<Schedule>> GetSchedulesAsync(params SearchFilter[] filters) =>
-            await GetObjectsAsync<Schedule>(new ScheduleParameters { SearchFilter = filters }).ConfigureAwait(false);
+            await GetSchedulesInternalAsync(new ScheduleParameters(filters)).ConfigureAwait(false);
 
         #endregion
     #endregion
@@ -2156,6 +2232,56 @@ namespace PrtgAPI
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
             await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe).ConfigureAwait(false);
 
+        private T GetObjectProperties<T>(int objectId, ObjectType objectType)
+        {
+            var response = GetObjectPropertiesRawInternal(objectId, objectType);
+
+            var data = ResponseParser.GetObjectProperties<T>(response);
+
+            if (data is TableSettings)
+            {
+                var table = (TableSettings) (object) data;
+
+                if (table.scheduleStr == null || PrtgObject.GetId(table.scheduleStr) == -1)
+                    table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => new Schedule(table.scheduleStr));
+                else
+                {
+                    table.schedule = new LazyValue<Schedule>(
+                        table.scheduleStr,
+                        () => GetSchedule(PrtgObject.GetId(table.scheduleStr))
+                    );
+                }
+            }
+
+            return data;
+        }
+
+        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
+        {
+            var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
+
+            var data = ResponseParser.GetObjectProperties<T>(response);
+
+            if (data is TableSettings)
+            {
+                var table = (TableSettings)(object)data;
+
+                if (table.scheduleStr == null || PrtgObject.GetId(table.scheduleStr) == -1)
+                    table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => new Schedule(table.scheduleStr));
+                else
+                {
+                    var schedule = await GetScheduleAsync(PrtgObject.GetId(table.scheduleStr)).ConfigureAwait(false);
+
+                    table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => schedule);
+                }
+            }
+
+            return data;
+        }
+
+            #endregion
+            #region Get Multiple Raw Properties
+
         /// <summary>
         /// Retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
@@ -2264,8 +2390,8 @@ namespace PrtgAPI
         public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property) =>
             ResponseParser.GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property).ConfigureAwait(false));
 
-        #endregion
-        #region Get Single Raw Property
+            #endregion
+            #region Get Single Raw Property
 
         /// <summary>
         /// Retrieves unsupported properties and settings of a PRTG Object.
@@ -2299,51 +2425,7 @@ namespace PrtgAPI
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
 
-        private T GetObjectProperties<T>(int objectId, ObjectType objectType)
-        {
-            var response = GetObjectPropertiesRawInternal(objectId, objectType);
-
-            var data = ResponseParser.GetObjectProperties<T>(response);
-
-            if (data is TableSettings)
-            {
-                var schedule = ((TableSettings) (object) data).Schedule;
-
-                if (schedule != null)
-                {
-                    schedule.LazyXml = new Lazy<XDocument>(() => GetObjectsXml(new ScheduleParameters(schedule.Id)));
-                }
-            }
-
-            return data;
-        }
-
-        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
-        {
-            var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
-
-            var data = ResponseParser.GetObjectProperties<T>(response);
-
-            if (data is TableSettings)
-            {
-                var schedule = ((TableSettings)(object)data).Schedule;
-
-                if (schedule != null)
-                {
-                    var xDoc = await GetObjectsXmlAsync(new ScheduleParameters(schedule.Id)).ConfigureAwait(false);
-                    schedule.LazyXml = new Lazy<XDocument>(() => xDoc);
-                }
-            }
-
-            return data;
-        }
-
-        private string GetObjectPropertiesRawInternal(int objectId, ObjectType objectType) =>
-            requestEngine.ExecuteRequest(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType));
-
-        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, ObjectType objectType) =>
-            await requestEngine.ExecuteRequestAsync(HtmlFunction.ObjectData, new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
-
+            #endregion
         #endregion
         #region Set Object Properties
             #region Normal

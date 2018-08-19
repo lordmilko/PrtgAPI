@@ -13,8 +13,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
         public string ActiveRaw { get; set; }
         public string Name { get; set; }
 
-        internal ScheduleItem(string baseLink = "/editschedule.htm?id=620", string baseLinkRaw = "620", string type = "Schedule", string typeRaw = "schedule",
-            string active = "True", string activeRaw = "-1", string name = "Weekdays [GMT+0800]", string objid = "620")
+        internal ScheduleItem(string baseLink = "/editschedule.htm?id=623", string baseLinkRaw = "623", string type = "Schedule", string typeRaw = "schedule",
+            string active = "True", string activeRaw = "-1", string name = "Weekdays [GMT+0800]", string objid = "623")
         {
             BaseLink = baseLink;
             BaseLinkRaw = baseLinkRaw;

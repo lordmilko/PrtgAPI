@@ -100,22 +100,14 @@ namespace PrtgAPI
         [XmlElement("injected_schedule")]
         internal string scheduleStr { get; set; }
 
-        private LazyValue<Schedule> schedule;
+        internal LazyValue<Schedule> schedule;
 
         /// <summary>
         /// The schedule during which monitoring is active. If the schedule is not active, sensors will be <see cref="Status.PausedBySchedule"/>.<para/>
+        /// If <see cref="InheritDependency"/> is set to True, this value will be lost.<para/>
         /// Corresponds to Schedules, Dependencies and Maintenance Window -> Schedule.
         /// </summary>
-        public Schedule Schedule
-        {
-            get
-            {
-                if (schedule == null)
-                    schedule = new LazyValue<Schedule>(scheduleStr, () => new Schedule(scheduleStr));
-
-                return schedule.Value;
-            }
-        }
+        public Schedule Schedule => schedule?.Value;
 
         /// <summary>
         /// Whether a one-time maintenance window has been defined.<para/>

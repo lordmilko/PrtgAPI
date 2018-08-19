@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using Microsoft.PowerShell.Commands;
+using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
@@ -31,7 +33,7 @@ namespace PrtgAPI.PowerShell.Base
         protected override void BeginProcessing()
         {
             if (PrtgSessionState.Client == null)
-                throw new Exception("You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.");
+                throw new InvalidOperationException("You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.");
 
             BeginProcessingEx();
         }
@@ -149,7 +151,12 @@ namespace PrtgAPI.PowerShell.Base
 
         private void OnLogVerbose(object sender, LogVerboseEventArgs args)
         {
-            WriteVerbose($"{MyInvocation.MyCommand}: {args.Message}");
+            //Lazy values will execute in the context of the previous command when retrieved from the next cmdlet
+            //(such as Select-Object)
+            if(CommandRuntime.GetInternalProperty("PipelineProcessor").GetInternalField("_permittedToWrite") == this)
+                WriteVerbose($"{MyInvocation.MyCommand}: {args.Message}");
+
+            Debug.WriteLine($"{MyInvocation.MyCommand}: {args.Message}");
         }
 
         #endregion

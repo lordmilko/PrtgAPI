@@ -2,9 +2,9 @@
 using System.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class DiffBasedResolveResponse : MultiTypeResponse
     {
@@ -56,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var components = UrlHelpers.CrackUrl(address);
 
-            Content content = components["content"].ToEnum<Content>();
+            Content content = components["content"].DescriptionToEnum<Content>();
 
             totalRequestCount++;
 
@@ -127,6 +127,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                             count
                         )
                     );
+                case Content.Schedules:
+                    totalRequestCount--;
+                    requestCount--;
+                    return new ScheduleResponse(new ScheduleItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(DiffBasedResolveResponse)}");
             }

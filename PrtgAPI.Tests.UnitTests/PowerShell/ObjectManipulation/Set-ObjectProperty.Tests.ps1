@@ -66,6 +66,16 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $sensor | Set-ObjectProperty Priority 2
         }
 
+        it "sets a schedule property" {
+            SetMultiTypeResponse
+
+            $schedule = Get-PrtgSchedule -Count 1
+
+            SetAddressValidatorResponse "editsettings?id=623&name_=New+Schedule"
+
+            $schedule | Set-ObjectProperty Name "New Schedule"
+        }
+
         It "executes a supported property with -WhatIf" {
             $sensor | Set-ObjectProperty InheritAccess $true -WhatIf
         }
@@ -166,7 +176,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $devices = Get-Device -Count 2
             $schedule = Get-PrtgSchedule | Select -First 1
 
-            SetAddressValidatorResponse "id=3000,3001&scheduledependency=0&schedule_=620%7cWeekdays+%5bGMT%2b0800%5d%7c"
+            SetAddressValidatorResponse "id=3000,3001&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c"
 
             $table = @{
                 scheduledependency = 0

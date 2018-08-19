@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Shared;
-using PrtgAPI.Request;
+using PrtgAPI.Schedules;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Represents a schedule used to indicate when monitoring should be active on an object.</para>
     /// </summary>
-    public class Schedule : ObjectTable, IEquatable<Schedule>, IFormattable, ILazy
+    public class Schedule : PrtgObject, IEquatable<Schedule>, IFormattable
     {
         private string url;
 
@@ -28,9 +25,20 @@ namespace PrtgAPI
         }
 
         /// <summary>
+        /// Specifies the times monitoring is active.
+        /// </summary>
+        public TimeTable TimeTable { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Schedule"/> class.
         /// </summary>
-        public Schedule()
+        /// <param name="id">The ID of the schedule.</param>
+        /// <param name="name">The name of the schedule.</param>
+        public Schedule(int id, string name) : this($"{id}|{name}|")
+        {
+        }
+
+        internal Schedule()
         {
         }
 
@@ -45,7 +53,6 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-        [ExcludeFromCodeCoverage]
         public override bool Equals(object other)
         {
             if (ReferenceEquals(null, other))
@@ -63,11 +70,10 @@ namespace PrtgAPI
         /// <summary>
         /// Returns a boolean indicating if the passed in object obj is
         /// Equal to this. The specified object is equal to this if both
-        /// objects same raw value.
+        /// objects have the same raw value.
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-        [ExcludeFromCodeCoverage]
         public bool Equals(Schedule other)
         {
             if (ReferenceEquals(null, other))
@@ -81,7 +87,7 @@ namespace PrtgAPI
 
         private bool IsEqual(Schedule other)
         {
-            return raw == other.raw;
+            return ((IFormattable)this).GetSerializedFormat() == ((IFormattable)other).GetSerializedFormat();
         }
 
         /// <summary>
@@ -95,7 +101,7 @@ namespace PrtgAPI
             {
                 var result = 0;
 
-                result = (result * 401) ^ raw.GetHashCode();
+                result = (result * 401) ^ ((IFormattable)this).GetSerializedFormat().GetHashCode();
 
                 return result;
             }
@@ -106,22 +112,5 @@ namespace PrtgAPI
         {
             return $"{Id}|{Name}|";
         }
-
-        #region ILazy
-
-        Lazy<XDocument> ILazy.LazyXml { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        internal Lazy<XDocument> LazyXml
-        {
-            get { return ((ILazy)this).LazyXml; }
-            set { ((ILazy)this).LazyXml = value; }
-        }
-
-        object ILazy.LazyLock { get; } = new object();
-
-        bool ILazy.LazyInitialized { get; set; }
-
-        #endregion
     }
 }

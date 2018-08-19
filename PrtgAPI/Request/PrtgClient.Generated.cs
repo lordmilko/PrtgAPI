@@ -102,7 +102,7 @@ namespace PrtgAPI
 
         internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters)
         {
-            var response = RequestEngine.ExecuteRequest(XmlFunction.TableData, parameters);
+            var response = RequestEngine.ExecuteRequest(parameters);
 
             var items = response.Descendants("item").ToList();
 
@@ -115,12 +115,18 @@ namespace PrtgAPI
                 item.Add(properties.Nodes());
             }
 
-            return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+
+            var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
+
+            UpdateActionSchedules(actionsWithSchedules);
+
+            return actions;
         }
 
         internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters)
         {
-            var response = await RequestEngine.ExecuteRequestAsync(XmlFunction.TableData, parameters).ConfigureAwait(false);
+            var response = await RequestEngine.ExecuteRequestAsync(parameters).ConfigureAwait(false);
 
             var items = response.Descendants("item").ToList();
 
@@ -131,9 +137,43 @@ namespace PrtgAPI
                 var properties = await GetNotificationActionPropertiesAsync(id).ConfigureAwait(false);
 
                 item.Add(properties.Nodes());
+            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+
+            var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
+
+            await UpdateActionSchedulesAsync(actionsWithSchedules).ConfigureAwait(false);
+
+            return actions;
+        }
+
+        //######################################
+        // GetSchedulesInternal
+        //######################################
+
+        internal List<Schedule> GetSchedulesInternal(ScheduleParameters parameters)
+        {
+            var schedules = ObjectEngine.GetObjects<Schedule>(parameters);
+
+            foreach (var schedule in schedules)
+            {
+                var response = GetObjectPropertiesRawInternal(schedule.Id, ObjectType.Schedule);
+                ResponseParser.LoadTimeTable(schedule, response);
             }
 
-            return XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            return schedules;
+        }
+
+        internal async Task<List<Schedule>> GetSchedulesInternalAsync(ScheduleParameters parameters)
+        {
+            var schedules = await ObjectEngine.GetObjectsAsync<Schedule>(parameters).ConfigureAwait(false);
+
+            await Task.WhenAll(schedules.Select(async schedule =>
+            {
+                var response = await GetObjectPropertiesRawInternalAsync(schedule.Id, ObjectType.Schedule).ConfigureAwait(false);
+                ResponseParser.LoadTimeTable(schedule, response);
+            })).ConfigureAwait(false);
+
+            return schedules;
         }
 
         //######################################

@@ -63,11 +63,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public void NotificationAction_FiltersByProperty()
         {
-            var client = Initialize_Client(new AddressValidatorResponse(new[]
+            var client = Initialize_Client(new AddressValidatorResponse(new object[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
-            }));
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=300&objecttype=notification&username=username&passhash=12345678"
+            })
+            {
+                CountOverride = new Dictionary<Content, int>
+                {
+                    [Content.Notifications] = 1
+                }
+            });
 
             client.GetNotificationActions(Property.Name, "ticket");
         }
@@ -75,15 +81,64 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         [TestMethod]
         public async Task NotificationAction_FiltersByPropertyAsync()
         {
-            var client = Initialize_Client(new AddressValidatorResponse(new[]
+            var client = Initialize_Client(new AddressValidatorResponse(new object[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=baselink,type,tags,active,objid,name&count=*&filter_name=ticket&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/editnotification.htm?id=300&username=username&passhash=12345678"
-            }));
+                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_name=ticket&username=username&passhash=12345678",
+                "https://prtg.example.com/controls/objectdata.htm?id=300&objecttype=notification&username=username&passhash=12345678",
+                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&username=username&passhash=12345678"
+            })
+            {
+                CountOverride = new Dictionary<Content, int>
+                {
+                    [Content.Notifications] = 1,
+                    [Content.Schedules] = 1
+                }
+            });
 
             await client.GetNotificationActionsAsync(Property.Name, "ticket");
         }
         
+        [TestMethod]
+        public void NotificationAction_LoadsSchedule_Lazy_AllPropertiesSet()
+        {
+            var client = Initialize_Client(new NotificationActionResponse(
+                new NotificationActionItem()) { HasSchedule = new[] {300}}
+            );
+
+            var action = client.GetNotificationAction(300);
+
+            var schedule = action.Schedule;
+
+            AssertEx.AllPropertiesAreNotDefault(schedule, p =>
+            {
+                if (p.Name == "Tags")
+                    return true;
+
+                return false;
+            });
+        }
+
+        [TestMethod]
+        public async Task NotificationAction_LoadsSchedule_Lazy_AllPropertiesSetAsync()
+        {
+            var client = Initialize_Client(new NotificationActionResponse(
+                    new NotificationActionItem())
+                { HasSchedule = new[] { 300 } }
+            );
+
+            var action = await client.GetNotificationActionAsync(300);
+
+            var schedule = action.Schedule;
+
+            AssertEx.AllPropertiesAreNotDefault(schedule, p =>
+            {
+                if (p.Name == "Tags")
+                    return true;
+
+                return false;
+            });
+        }
+
         [TestMethod]
         public void NotificationAction_Types_ToString()
         {

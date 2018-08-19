@@ -80,6 +80,8 @@ Describe "Set-ObjectProperty_IT" {
                 }
             }
 
+            #$schedule = Get-PrtgSchedule -Id (Settings Schedule)
+            
             GetValue "Schedule"           "None"
             GetValue "MaintenanceEnabled" $false
             GetValue "MaintenanceStart"   (Settings MaintenanceStart)
@@ -87,8 +89,12 @@ Describe "Set-ObjectProperty_IT" {
             GetValue "DependencyType"     $dependencyType
             GetValue "DependentObjectId"  $dependentId
             GetValue "DependencyDelay"    $dependencyDelay
-            #SetValue "InheritDependency"  $true
-            #SetChild "Schedule" BLAH #todo - get rid of the getchild "schedule"
+
+            #todo: group and probe need these flipped
+            #SetValue "InheritDependency"  $true $true
+            #SetChild "Schedule"           $schedule "InheritDependency" $false
+            
+            #
             #SetChild "MaintenanceEnabled" $true
             #SetGrandChild MaintenanceStart
             #SetGrandChild MaintenanceEnd
@@ -113,6 +119,22 @@ Describe "Set-ObjectProperty_IT" {
             SetChild      "ProxyUser"     "newUser"                        "InheritProxy" $false
             SetWriteChild "ProxyPassword" "newPassword" "HasProxyPassword" "InheritProxy" $false
         }
+    }
+
+    It "sets a schedule property" {
+        $schedule = Get-PrtgSchedule -Id (Settings Schedule)
+        $newName = "New Schedule"
+
+        $schedule.Name | Should Not Be $newName        
+
+        $schedule | Set-ObjectProperty Name $newName
+        $newSchedule = Get-PrtgSchedule -Id (Settings Schedule)
+        $newSchedule.Name | Should Be $newName
+
+        $newSchedule | Set-ObjectProperty Name $schedule.Name
+
+        $finalSchedule = Get-PrtgSchedule -Id (Settings Schedule)
+        $finalSchedule.Name | Should Be $schedule.Name
     }
 
     It "sets a raw property" {
