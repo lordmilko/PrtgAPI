@@ -51,6 +51,16 @@ LONG DESCRIPTION
     | ProxyUser                   |    Yes    | Proxy server username                                                |
     | ProxyPassword               | No  | Yes | Proxy server password                                                |
 
+    | Channel Unit Configuration  | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | InheritChannelUnit          |    Yes    | Whether to inherit Channel Unit Configuration Settings               |
+    | BandwidthVolumeUnit         |    Yes    | Unit to use for bandwidth volume sensor channels                     |
+    | BandwidthSpeedUnit          |    Yes    | Unit to use for bandwidth speed sensor channels                      |
+    | BandwidthTimeUnit           |    Yes    | Time unit to use for bandwidth speed sensor channels                 |
+    | MemoryUsageUnit             |    Yes    | Unit to use for memory sensor channels                               |
+    | DiskSizeUnit                |    Yes    | Unit to use for disk size sensor channels                            |
+    | FileSizeUnit                |    Yes    | Unit to use for file size sensor channels                            |
+
     Device, Group, Probe Settings
 
     | Basic Settings              | Get | Set | Devices | Groups | Probes | Description                              |

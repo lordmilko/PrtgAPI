@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
-using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI
 {
@@ -176,6 +176,58 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("injected_depdelay")]
         public int? DependencyDelay { get; set; }
+
+        #endregion
+        #region Channel Unit Configuration
+
+        /// <summary>
+        /// Whether to inherit Channel Unit Configuration settings from the parent object.<para/>
+        /// Corresponds to Channel Unit Configuration -> Inherit Channel Unit.
+        /// </summary>
+        [XmlElement("injected_unitconfiggroup")]
+        public bool? InheritChannelUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for traffic volume sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesBandwidth_volume")]
+        public DataVolumeUnit? BandwidthVolumeUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for traffic speed sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesBandwidth_speed")]
+        public DataUnit? BandwidthSpeedUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for rate in traffic speed sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesBandwidth_time")]
+        public TimeUnit? BandwidthTimeUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for memory usage in memory usage sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (Memory).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesMemory_volume")]
+        public DataVolumeUnit? MemoryUsageUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for disk usage in disk usage sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (Disk).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesDisk_volume")]
+        public DataVolumeUnit? DiskSizeUnit { get; set; }
+
+        /// <summary>
+        /// Unit to use for file size in file size sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (File).
+        /// </summary>
+        [XmlElement("injected_unitconfig__oukBytesFile_volume")]
+        public DataVolumeUnit? FileSizeUnit { get; set; }
 
         #endregion
     }

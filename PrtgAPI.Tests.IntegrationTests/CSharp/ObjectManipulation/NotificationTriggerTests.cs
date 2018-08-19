@@ -107,7 +107,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                 OnNotificationAction = actions.First(),
                 Channel = TriggerChannel.Total,
                 Period = TriggerPeriod.Month,
-                UnitSize = TriggerVolumeUnitSize.GByte,
+                UnitSize = DataVolumeUnit.GByte,
             };
 
             AddRemoveTrigger(parameters, false);
@@ -127,8 +127,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                 Latency = 100,
                 Condition = TriggerCondition.NotEquals,
                 Threshold = 3,
-                UnitTime = TriggerUnitTime.Min,
-                UnitSize = TriggerUnitSize.Gbit
+                UnitTime = TimeUnit.Min,
+                UnitSize = DataUnit.Gbit
             };
 
             AddRemoveTrigger(parameters, false);

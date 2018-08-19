@@ -3,9 +3,9 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies unit sizes to be used in <see cref="TriggerType.Volume"/> notification triggers.
+    /// Specifies data unit sizes that measure data volume.
     /// </summary>
-    public enum TriggerVolumeUnitSize
+    public enum DataVolumeUnit
     {
         /// <summary>
         /// Bytes

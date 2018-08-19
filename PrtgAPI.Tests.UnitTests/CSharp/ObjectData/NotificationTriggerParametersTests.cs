@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Helpers;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -92,7 +91,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_Edit_CanSetUnsetValue(TriggerParameters parameters)
         {
-            var properties = parameters.GetType().GetNormalProperties();
+            var properties = PrtgAPIHelpers.GetNormalProperties(parameters.GetType());
 
             foreach (var prop in properties)
             {
@@ -119,7 +118,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private void TriggerParameters_MandatoryFields_CannotBeNull(TriggerParameters parameters)
         {
-            foreach (var prop in parameters.GetType().GetNormalProperties())
+            foreach (var prop in PrtgAPIHelpers.GetNormalProperties(parameters.GetType()))
             {
                 var attr = prop.GetCustomAttribute<RequireValueAttribute>();
                 var valRequired = attr?.ValueRequired ?? false;
@@ -199,7 +198,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             if (additionalChecks == null)
                 additionalChecks = p => false;
 
-            foreach (var prop in parameters.GetType().GetNormalProperties())
+            foreach (var prop in PrtgAPIHelpers.GetNormalProperties(parameters.GetType()))
             {
                 var val = prop.GetValue(parameters);
 
@@ -269,7 +268,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 Channel = TriggerChannel.Primary,
                 OnNotificationAction = base.GetNotificationAction(),
                 Period = TriggerPeriod.Day,
-                UnitSize = TriggerVolumeUnitSize.GByte
+                UnitSize = DataVolumeUnit.GByte
             };
 
             TriggerParameters_AllProperties_HaveValues(parameters);
@@ -287,8 +286,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
                 OnNotificationAction = base.GetNotificationAction(),
                 OffNotificationAction = base.GetNotificationAction(),
                 Threshold = 4,
-                UnitSize = TriggerUnitSize.Kbit,
-                UnitTime = TriggerUnitTime.Hour
+                UnitSize = DataUnit.Kbit,
+                UnitTime = TimeUnit.Hour
             };
 
             TriggerParameters_AllProperties_HaveValues(parameters);
@@ -316,7 +315,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             if (additionalChecks == null)
                 additionalChecks = p => false;
 
-            foreach (var prop in parameters.GetType().GetNormalProperties())
+            foreach (var prop in PrtgAPIHelpers.GetNormalProperties(parameters.GetType()))
             {
                 var val = prop.GetValue(parameters);
 
@@ -412,7 +411,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             //then, we need to make sure we can clone a trigger into some new parameters and add them successfully
             //and THEN, we need to write some tests for that
 
-            foreach (var paramProp in parameters.GetType().GetNormalProperties())
+            foreach (var paramProp in PrtgAPIHelpers.GetNormalProperties(parameters.GetType()))
             {
                 bool found = false;
 

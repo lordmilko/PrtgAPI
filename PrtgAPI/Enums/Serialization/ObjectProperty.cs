@@ -1,7 +1,5 @@
 ﻿using PrtgAPI.Attributes;
 using PrtgAPI.Internal;
-using PrtgAPI.Objects.Shared;
-using PrtgAPI.Objects.Undocumented;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 namespace PrtgAPI
@@ -16,8 +14,11 @@ namespace PrtgAPI
         [Description("service")]
         HasService,
 
-        [DescriptionAttribute("devicetemplate")]
-        HasDeviceTemplate
+        [Description("devicetemplate")]
+        HasDeviceTemplate,
+
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        ChannelUnit
     }
 
     /// <summary>
@@ -646,8 +647,86 @@ namespace PrtgAPI
         SNMPInterfaceEndIndex,
 
         #endregion
-    #endregion
-    #region Sensors
+        #region Channel Unit Configuration
+
+        /// <summary>
+        /// Whether to inherit Channel Unit Configuration settings from the parent object.<para/>
+        /// Corresponds to Channel Unit Configuration -> Inherit Channel Unit.
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        InheritChannelUnit,
+
+        /// <summary>
+        /// Unit to use for traffic volume sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        BandwidthVolumeUnit,
+
+        /// <summary>
+        /// Unit to use for traffic speed sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        BandwidthSpeedUnit,
+
+        /// <summary>
+        /// Unit to use for rate in traffic speed sensor channels.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bandwidth (Bytes).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        BandwidthTimeUnit,
+
+        /// <summary>
+        /// Unit to use for memory usage in memory usage sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (Memory).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        MemoryUsageUnit,
+
+        /// <summary>
+        /// Unit to use for disk usage in disk usage sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (Disk).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        DiskSizeUnit,
+        
+        /// <summary>
+        /// Unit to use for file size in file size sensors.<para/>
+        /// Corresponds to Channel Unit Configuration -> Bytes (File).
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritChannelUnit), false)]
+        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
+        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        FileSizeUnit,
+
+        #endregion
+        #endregion
+        #region Sensors
         #region Access Rights
 
         /// <summary>
@@ -890,13 +969,35 @@ namespace PrtgAPI
         #endregion
         #region Schedules, Dependencies and Maintenance Window
 
-        //todo: make a note that if you set this WITHOUT setting another property, it does nothing. as such, maybe
-        //we need to make this a dependent property. note that it would work on devices, just not sensors
-        //todo: also note this on sensorsettings and whatever base class we end up using
+        //todo: make a note that if you set ANY PROPERTY IN THIS CATEGORY WITHOUT INCLUDING THE OTHERS, the others will be CLEARED
+        //need to document this on all of the properties in this group as well as on the corresponding properties in tablesettings
+        //will also need some ability to set schedule to null - maybe some sort of null handler attribte. maybe
+        //have a static "none" schedule we can compare against generally/retrieve. this null handler needs to be called
+        //in the dynamicpropertytypeparser.parsevalue REGARDLESS of whether we have a typeattribute or not (which schedule does)
+        //note: need to be careful when doing batch processing, since all the other properties we'd need to include
+        //need to specific to THAT INDIVIDUAL object, so would maybe need to group together like setchannelproperty does
 
-        //[LiteralValue]
-        //[TypeLookup(typeof(TableSettings))]
-        //InheritDependency,
+        /*/// <summary>
+        /// Whether to inherit Schedules, Dependencies and Maintenance Window settings from the parent object.<para/>
+        /// Setting this value to False without specifying a Schedule, Dependency or Maintenance Window has no effect.<para/>
+        /// Corresponds to Schedules, Dependencies and Maintenance Window -> Inherit Settings.
+        /// </summary>
+        [LiteralValue]
+        [TypeLookup(typeof(TableSettings))]
+        [Category(nameof(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance))]
+        InheritDependency,
+
+        /// <summary>
+        /// The schedule during which monitoring is active. If the schedule is not active, sensors will be <see cref="Status.PausedBySchedule"/>.<para/>
+        /// If <see cref="InheritDependency"/> is set to True, this value will be lost.<para/>
+        /// Corresponds to Schedules, Dependencies and Maintenance Window -> Schedule.
+        /// </summary>
+        [Description("schedule")]
+        [Type(typeof(Schedule))]
+        [TypeLookup(typeof(TableSettings))]
+        [DependentProperty(nameof(InheritDependency), false)]
+        [Category(nameof(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance))]
+        Schedule,*/
 
         ///// <summary>
         ///// Whether a one-time maintenance window has been defined.<para/>
@@ -1169,8 +1270,8 @@ namespace PrtgAPI
         [Category(nameof(ObjectPropertyCategory.Special))]
         Comments,
 
-    #endregion
-    #region Devices
+        #endregion
+        #region Devices
 
         /// <summary>
         /// The IPv4 Address or HostName to use to connect to a device. The same as <see cref="Hostv4"/>.<para/>

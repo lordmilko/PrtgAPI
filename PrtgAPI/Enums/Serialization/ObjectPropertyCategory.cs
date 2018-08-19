@@ -57,6 +57,11 @@
         /// </summary>
         SNMPCompatibility,
 
+        /// <summary>
+        /// Properties found under the Channel Unit Configuration section of an object.
+        /// </summary>
+        ChannelUnit,
+
         #endregion
         #region Sensors
 

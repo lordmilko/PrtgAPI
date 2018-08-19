@@ -10,7 +10,7 @@ namespace PrtgAPI.Parameters
     public class SpeedTriggerParameters : TriggerParameters
     {
         /// <summary>
-        /// The <see cref="NotificationAction"/> to execute when the trigger's active state clears.
+        /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger's active state clears.
         /// </summary>
         [RequireValue(false)]
         [PropertyParameter(nameof(TriggerProperty.OffNotificationAction))]
@@ -21,7 +21,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The channel of the sensor this trigger should apply to.
+        /// Gets or sets the channel of the sensor this trigger should apply to.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Channel))]
@@ -32,7 +32,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
+        /// Gets or sets the delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Latency))]
         public int? Latency
@@ -42,7 +42,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The condition that controls when the <see cref="Threshold"/> is activated.
+        /// Gets or sets the condition that controls when the <see cref="Threshold"/> is activated.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Condition))]
@@ -53,7 +53,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
+        /// Gets or sets the value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Threshold))]
         public int? Threshold
@@ -63,24 +63,24 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The time component of the data rate that causes this trigger to activate.
+        /// Gets or sets the time component of the data rate that causes this trigger to activate.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.UnitTime))]
-        public TriggerUnitTime? UnitTime
+        public TimeUnit? UnitTime
         {
-            get { return (TriggerUnitTime?) GetCustomParameterEnumXml<TriggerUnitTime>(TriggerProperty.UnitTime); }
+            get { return (TimeUnit?) GetCustomParameterEnumXml<TimeUnit>(TriggerProperty.UnitTime); }
             set { UpdateCustomParameter(TriggerProperty.UnitTime, value?.EnumToXml(), true); }
         }
 
         /// <summary>
-        /// The unit component of the data rate that causes this trigger to activate.
+        /// Gets or sets the unit component of the data rate that causes this trigger to activate.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.UnitSize))]
-        public TriggerUnitSize? UnitSize
+        public DataUnit? UnitSize
         {
-            get { return (TriggerUnitSize?) GetCustomParameterEnumXml<TriggerUnitSize>(TriggerProperty.UnitSize); }
+            get { return (DataUnit?) GetCustomParameterEnumXml<DataUnit>(TriggerProperty.UnitSize); }
             set { UpdateCustomParameter(TriggerProperty.UnitSize, value?.EnumToXml(), true); }
         }
 
@@ -93,8 +93,8 @@ namespace PrtgAPI.Parameters
             OffNotificationAction = null;
             Channel = TriggerChannel.Primary;
             Condition = TriggerCondition.Above;
-            UnitSize = TriggerUnitSize.Byte;
-            UnitTime = TriggerUnitTime.Hour;
+            UnitSize = DataUnit.Byte;
+            UnitTime = TimeUnit.Hour;
             Threshold = 0;
             Latency = 60;
         }

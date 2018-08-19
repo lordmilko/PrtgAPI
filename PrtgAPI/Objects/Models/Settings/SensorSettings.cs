@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI
 {
@@ -51,19 +52,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("injected_priority")]
         public Priority? Priority { get; set; }
-
-        #endregion
-        #region Channel Unit Configuration
-
-        //todo: what it corresponds to
-        /// <summary>
-        /// Whether to inherit the Channel Unit Configuration settings from this sensor's parent object.<para/>
-        /// Corresponds to Channel Unit Configuration -> Inherit Channel Unit.
-        /// </summary>
-        [XmlElement("injected_unitconfiggroup")]
-        public bool? InheritChannelUnit { get; set; }
-
-        //todo: the actual unit
 
         #endregion
         #region Debug Options

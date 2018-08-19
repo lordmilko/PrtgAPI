@@ -4,9 +4,9 @@ using System.Xml.Serialization;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies unit sizes to be used in notification triggers.
+    /// Specifies data unit sizes that measure speed or volume.
     /// </summary>
-    public enum TriggerUnitSize
+    public enum DataUnit
     {
         /// <summary>
         /// Bits

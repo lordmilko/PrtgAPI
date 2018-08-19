@@ -119,6 +119,35 @@ Describe "Set-ObjectProperty_IT" {
             SetChild      "ProxyUser"     "newUser"                        "InheritProxy" $false
             SetWriteChild "ProxyPassword" "newPassword" "HasProxyPassword" "InheritProxy" $false
         }
+
+        It "Channel Unit Configuration" -TestCases $testCases {
+            param($name, $obj)
+
+            $object = (& $obj)
+            
+            if($name -eq "Sensors") {
+                $object = Get-Sensor -Tags wmiband* | Select -First 1
+            }
+
+            SetValue "InheritChannelUnit" $false
+            SetChild "BandwidthVolumeUnit" "TByte" "InheritChannelUnit" $false
+            SetChild "BandwidthSpeedUnit"  "Tbit"  "InheritChannelUnit" $false
+            SetChild "BandwidthTimeUnit"   "Day"   "InheritChannelUnit" $false
+
+            if($name -eq "Sensors") {
+                $object = Get-Sensor -Id (Settings DownSensor)
+            }
+            SetChild "MemoryUsageUnit"     "TByte" "InheritChannelUnit" $false
+
+            if($name -eq "Sensors") {
+                $object = Get-Sensor -Id (Settings PausedSensor)
+            }
+            SetChild "DiskSizeUnit"        "TByte" "InheritChannelUnit" $false
+
+            if($name -ne "Sensors") {
+                SetChild "FileSizeUnit"    "TByte" "InheritChannelUnit" $false
+            }
+        }
     }
 
     It "sets a schedule property" {

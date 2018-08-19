@@ -127,12 +127,12 @@ namespace PrtgAPI
         [DataMember(Name = "unitsize")]
         private string unitSizeStr; //volume, speed
 
-        internal TriggerUnitSize? UnitSize => unitSizeStr?.DescriptionToEnum<TriggerUnitSize>();
+        internal DataUnit? UnitSize => unitSizeStr?.DescriptionToEnum<DataUnit>();
 
         [DataMember(Name = "unittime")]
         private string unitTimeStr; //speed
 
-        internal TriggerUnitTime? UnitTime => unitTimeStr?.DescriptionToEnum<TriggerUnitTime>();
+        internal TimeUnit? UnitTime => unitTimeStr?.DescriptionToEnum<TimeUnit>();
 
         [DataMember(Name = "period")]
         private string periodStr; //volume

@@ -42,7 +42,13 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 ObjectProperty.SqlServerQuery,
                 ObjectProperty.SqlProcessingMode,
                 ObjectProperty.InheritTriggers,
-                ObjectProperty.Comments
+                ObjectProperty.Comments,
+                ObjectProperty.BandwidthVolumeUnit,
+                ObjectProperty.BandwidthSpeedUnit,
+                ObjectProperty.BandwidthTimeUnit,
+                ObjectProperty.MemoryUsageUnit,
+                ObjectProperty.DiskSizeUnit,
+                ObjectProperty.FileSizeUnit
             }.ToList();
 
             var objectProperties = Enum.GetValues(typeof(ObjectProperty)).Cast<ObjectProperty>().Where(p => !blacklist.Contains(p)).ToList();

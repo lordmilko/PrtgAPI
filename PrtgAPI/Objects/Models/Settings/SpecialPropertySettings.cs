@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
+using PrtgAPI.Targets;
 
-namespace PrtgAPI.Objects.Undocumented
+namespace PrtgAPI
 {
     [ExcludeFromCodeCoverage]
     internal class SpecialPropertySettings
@@ -39,5 +40,8 @@ namespace PrtgAPI.Objects.Undocumented
 
         [XmlElement("injected_executionmode")]
         public SqlProcessingMode SqlProcessingMode { get; set; }
+
+        [XmlElement("injected_unitconfig")]
+        public string ChannelUnit { get; set; }
     }
 }

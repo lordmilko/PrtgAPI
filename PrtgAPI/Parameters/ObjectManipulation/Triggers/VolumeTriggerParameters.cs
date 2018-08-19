@@ -10,7 +10,7 @@ namespace PrtgAPI.Parameters
     public class VolumeTriggerParameters : TriggerParameters
     {
         /// <summary>
-        /// The channel of the sensor this trigger should apply to.
+        /// Gets or sets the channel of the sensor this trigger should apply to.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Channel))]
@@ -21,7 +21,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The value which, once reached, will cause this trigger will activate.
+        /// Gets or sets the value which, once reached, will cause this trigger will activate.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Threshold))]
         public int? Threshold
@@ -31,7 +31,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The time component of the volume limit that causes this trigger to activate.
+        /// Gets or sets the time component of the volume limit that causes this trigger to activate.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Period))]
         public TriggerPeriod? Period
@@ -41,12 +41,12 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The unit component of the volume limit that causes this trigger to activate.
+        /// Gets or sets the unit component of the volume limit that causes this trigger to activate.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.UnitSize))]
-        public TriggerVolumeUnitSize? UnitSize
+        public DataVolumeUnit? UnitSize
         {
-            get { return (TriggerVolumeUnitSize?) GetCustomParameterEnumXml<TriggerVolumeUnitSize>(TriggerProperty.UnitSize); }
+            get { return (DataVolumeUnit?) GetCustomParameterEnumXml<DataVolumeUnit>(TriggerProperty.UnitSize); }
             set { UpdateCustomParameter(TriggerProperty.UnitSize, value?.EnumToXml()); }
         }
 
@@ -57,7 +57,7 @@ namespace PrtgAPI.Parameters
         public VolumeTriggerParameters(int objectId) : base(TriggerType.Volume, objectId, (int?)null, ModifyAction.Add)
         {
             Channel = TriggerChannel.Primary;
-            UnitSize = TriggerVolumeUnitSize.Byte;
+            UnitSize = DataVolumeUnit.Byte;
             Period = TriggerPeriod.Hour;
             Threshold = 0;
         }
@@ -84,7 +84,7 @@ namespace PrtgAPI.Parameters
             if (sourceTrigger.UnitSize == null)
                 UnitSize = null;
             else
-                UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<TriggerVolumeUnitSize>();
+                UnitSize = sourceTrigger.UnitSize.ToString().ToEnum<DataVolumeUnit>();
 
             Threshold = sourceTrigger.ThresholdInternal;
         }
