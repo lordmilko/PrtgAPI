@@ -3190,8 +3190,10 @@ namespace PrtgAPI
         internal async Task<List<Location>> ResolveAddressAsync(string address) =>
             (await ObjectEngine.GetObjectAsync<GeoResult>(new ResolveAddressParameters(address), m => Task.FromResult(ResponseParser.ResolveParser(m))).ConfigureAwait(false)).Results.ToList();
 
+        internal void FoldObject(int objectId, bool fold) =>
+            RequestEngine.ExecuteRequest(new FoldParameters(objectId, fold));
 
-#endregion
+        #endregion
 #if DEBUG
 #pragma warning disable 1591
         [ExcludeFromCodeCoverage]

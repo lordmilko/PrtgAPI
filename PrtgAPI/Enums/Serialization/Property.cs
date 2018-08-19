@@ -1,266 +1,257 @@
-﻿using System.ComponentModel;
+﻿using PrtgAPI.Attributes;
+using PrtgAPI.Request.Serialization.FilterHandlers;
+using PrtgAPI.Request.Serialization.ValueConverters;
+using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">Specifies properties (referred to by PRTG as "columns") that can be retrieved for a PRTG Object.</para>
+    /// <para type="description">Specifies properties that can be retrieved for and filtered by on PRTG Objects.</para>
     /// </summary>
     public enum Property
     {
         /// <summary>
-        /// ID of the current object.
-        /// Used in: All Object Tables
+        /// Unique identifier of the object.
         /// </summary>
         [Description("objid")]
         Id,
 
         /// <summary>
-        /// Displays the object type (group, device, report etc.) or, in case of sensors, the sensor type (ping, http, etc.).
-        /// Used in: All Object Tables
+        /// <see cref="ObjectType"/> of the object. When filtering for sensors, specific sensor types must be specified.
         /// </summary>
+        [FilterHandler(typeof(TypeFilterHandler))]
         Type,
 
         /// <summary>
-        /// The name of the object or channel, or in case of log messages the name of the associated object, or in case of stored reports the name of the report file.
-        /// Used in: All Object Tables
+        /// Name of the object or the object an <see cref="IEventObject"/> applies to.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Name,
 
         /// <summary>
-        /// List of all tags. This includes tags from the object itself plus those inherited from parent objects.
-        /// Used in: All Object Tables
+        /// Tags defined on the object or inherited from all parent objects.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Tags,
 
         /// <summary>
-        /// Displays true/false depending whether an object is set to paused by a user (for tickets: related object). For notifications which are paused by schedule, it also displays the end of the schedule.
-        /// Used in: All Object Tables
+        /// Whether an object is currently active or has been <see cref="PrtgAPI.Status.Paused"/>.
         /// </summary>
+        [XmlBool(false)]
         Active,
 
         /// <summary>
-        /// Cumulated downtime of a sensor (displayed as percentage of uptime+downtime).
-        /// Used in: Sensors
+        /// Percentage of time an object has been in a down state.
         /// </summary>
+        [ValueConverter(typeof(UpDownTimeConverter))]
         Downtime,
 
         /// <summary>
-        /// Cumulated downtime of a sensor (in minutes/hours).
-        /// Used in: Sensors
+        /// Total amount of time an object has been in a down state.
         /// </summary>
         [Description("downtimetime")]
+        [ValueConverter(typeof(TimeSpanConverter))]
         TotalDowntime,
 
         /// <summary>
-        /// Elapsed time since last UP of a sensor.
-        /// Used in: Sensors
+        /// Total amount of time an object has been down since it was last up.
         /// </summary>
         [Description("downtimesince")]
+        [ValueConverter(typeof(TimeSpanConverter))]
         DownDuration,
 
         /// <summary>
-        /// Cumulated uptime of a sensor (displayed as percentage of uptime+downtime).
-        /// Used in: Sensors
+        /// Percentage of time an object has been in an up state.
         /// </summary>
+        [ValueConverter(typeof(UpDownTimeConverter))]
         Uptime,
 
         /// <summary>
-        /// Cumulated uptime of a sensor (in minutes/hours).
-        /// Used in: Sensors
+        /// Total amount of time an object has been in an up state.
         /// </summary>
         [Description("uptimetime")]
+        [ValueConverter(typeof(TimeSpanConverter))]
         TotalUptime,
 
         /// <summary>
-        /// Elapsed time since last DOWN of a sensor.
-        /// Used in: Sensors
+        /// Total amount of time an object has been up since it was last down.
         /// </summary>
         [Description("uptimesince")]
+        [ValueConverter(typeof(TimeSpanConverter))]
         UpDuration,
 
         /// <summary>
-        /// Sum of cumulated uptime and downtime of a sensor.
-        /// Used in: Sensors
+        /// Total amount of time an object has been monitored.
         /// </summary>
         [Description("knowntime")]
+        [ValueConverter(typeof(TimeSpanConverter))]
         TotalMonitorTime,
 
         /// <summary>
-        /// Timestamp when accumulation of uptimes/downtimes began.
-        /// Used in: Sensors
+        /// Datetime when object first received data.
         /// </summary>
         [Description("cumsince")]
+        [ValueConverter(typeof(DateTimeConverter))]
         DataCollectedSince,
 
         /// <summary>
         /// Name of the sensor.
-        /// Used in: Sensors, TopLists
         /// </summary>
         Sensor,
 
         /// <summary>
-        /// This displays the effective interval setting for a sensor.
-        /// Used in: Sensors
+        /// Monitoring interval of an object.
         /// </summary>
+        [Description("intervalx")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         Interval,
 
         /// <summary>
-        /// Timestamp of the last sensor result.
-        /// Used in: Sensors
+        /// Date/time object last refreshed results.
         /// </summary>
+        [ValueConverter(typeof(DateTimeConverter))]
         LastCheck,
 
         /// <summary>
-        /// Timestamp of the most recent UP status.
-        /// Used in: Sensors
+        /// Date/time object was last in an up status.
         /// </summary>
+        [ValueConverter(typeof(DateTimeConverter))]
         LastUp,
 
         /// <summary>
-        /// Timestamp of the most recent DOWN status.
-        /// Used in: Sensors
+        /// Date/time object was last in a down status.
         /// </summary>
+        [ValueConverter(typeof(DateTimeConverter))]
         LastDown,
 
         /// <summary>
-        /// Name of the associated device.
-        /// Used in: Sensors, Devices
+        /// Name of the parent device.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Device,
 
         /// <summary>
-        /// Name of the associated group.
-        /// Used in: Sensors, Devices, Groups
+        /// Name of the parent group.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Group,
 
         /// <summary>
-        /// Name of the associated probe.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Name of the parent probe.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Probe,
 
         /// <summary>
-        /// Name of associated device and group seperated by slash.
-        /// Used in: Sensors, Devices
+        /// Name of parent device and group seperated by slash.
         /// </summary>
         GrpDev,
 
         /// <summary>
-        /// Number of each trigger type defined for this sensor tree object.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of each trigger type defined for an object.
         /// </summary>
         [Description("notifiesx")]
+        [FilterHandler(typeof(NotificationTypesHandler))]
         NotificationTypes,
 
         /// <summary>
-        /// Displays either 'inherited' or the current interval setting of that object.
-        /// Used in: Sensors, Devices, Groups, Probes
-        /// </summary>
-        [Description("intervalx")]
-        IntervalInherited,
-
-        /// <summary>
-        /// Displays the access rights of the current user for a sensor tree object.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Access rights for the current user on an object.
         /// </summary>
         Access,
 
         /// <summary>
-        /// Displays the name of an associated dependency or 'parent'.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Displays the name the object this object is dependent on.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Dependency,
 
         /// <summary>
-        /// For sensor tree objects: <see cref="PrtgAPI.Status"/> of the object; For messages: category of the log message.
-        /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets
+        /// <see cref="PrtgAPI.Status"/> or <see cref="LogStatus"/> of the object.
         /// </summary>
         Status,
 
         /// <summary>
-        /// Detailed message of a sensor tree object (i.e. last error of a sensor) or a history, log, ticket subject.
-        /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets, TicketData, History
+        /// Message (such as "OK") displayed on an object.
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Message,
 
         /// <summary>
-        /// Displays the priority setting of a sensor tree object or the priority of a log entry/ticket.
-        /// Used  in: Sensors, Devices, Groups, Probes, Messages, Tickets
+        /// Priority of the object.
         /// </summary>
         Priority,
 
         /// <summary>
-        /// Last sensor result value or channel values. When used with channels the 'lastvalue_' has to be used to automatically display volumes and speed.
-        /// Used in: Sensors, Channels
+        /// Last value of a sensor's primary channel.
         /// </summary>
+        [ValueConverter(typeof(LastValueConverter))]
         LastValue,
 
         /// <summary>
-        /// Number of sensors currently in an <see cref="PrtgAPI.Status.Up"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in an <see cref="PrtgAPI.Status.Up"/> state.
         /// </summary>
         [Description("upsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         UpSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Down"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Down"/> state.
         /// </summary>
         [Description("downsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         DownSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownAcknowledged"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownAcknowledged"/> state.
         /// </summary>
         [Description("downacksens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         DownAcknowledgedSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownPartial"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.DownPartial"/> state.
         /// </summary>
         [Description("partialdownsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         PartialDownSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Warning"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Warning"/> state.
         /// </summary>
         [Description("warnsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         WarningSensors,
 
         /// <summary>
-        /// Number of sensors currently in a PAUSED state. This includes all PAUSED states (i.e. <see cref="PrtgAPI.Status.PausedByUser"/>, <see cref="PrtgAPI.Status.PausedByDependency"/>, <see cref="PrtgAPI.Status.PausedBySchedule"/> etc.).
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in any <see cref="PrtgAPI.Status.Paused"/> state.
         /// </summary>
         [Description("pausedsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         PausedSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unusual"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unusual"/> state.
         /// </summary>
         [Description("unusualsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         UnusualSensors,
 
         /// <summary>
-        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unknown"/> state. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors currently in a <see cref="PrtgAPI.Status.Unknown"/> state.
         /// </summary>
         [Description("undefinedsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         UnknownSensors,
 
         /// <summary>
-        /// Number of sensors. Only the sensor itself or sensors in the hierarchy below the displayed object are counted.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Number of sensors present under an object (including all child objects).
         /// </summary>
         [Description("totalsens")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         TotalSensors,
 
         /// <summary>
-        /// Should only be used as 'value_', because then it will be expanded for all visible channels/toplist columns. Displays a channel value or a toplist value.
+        /// Value of an object.
         /// Used in: Values, TopData
         /// </summary>
         [Description("value_")]
@@ -273,9 +264,11 @@ namespace PrtgAPI
         Coverage,
 
         /// <summary>
-        /// Displays an exclamation mark when the sensor tree object is marked as favorite.
-        /// Used in: Sensors, Devices, Groups, Probes
+        /// Displays an exclamation mark when the sensor tree object is marked as favorite.<para/>
+        /// Note: when filtering by this property, objects will not have a Favorite of False unless they were previously set to True.
         /// </summary>
+        [XmlBool]
+        [FilterHandler(typeof(FavoriteFilterHandler))]
         Favorite,
 
         /// <summary>
@@ -291,10 +284,10 @@ namespace PrtgAPI
         /// </summary>
         Parent,
 
+        //todo: what is topidx?------------------------------------------------------------------------------
         /// <summary>
         /// Timestamp or timespan of an object (for tickets: last modification).
         /// Used in: Messages, Tickets, TicketData, Values, History, StoredReports, TopIDX
-        /// todo: what is topidx?------------------------------------------------------------------------------
         /// </summary>
         DateTime,
 
@@ -314,6 +307,7 @@ namespace PrtgAPI
         /// For sensor tree objects this displays the name of an associated schedule, for reports this displays the report generation schedule.
         /// Used in: Sensors, Devices, Groups, Probes, Reports
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Schedule,
 
         /// <summary>
@@ -356,6 +350,7 @@ namespace PrtgAPI
         /// Numerical data for minigraphs. Numbers are 5 minute averages for the last 24 hours (must be scaled to the maximum of the series). There are two datasets: "|" separates measured value series and error series.
         /// Used in: Sensors
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         MiniGraph,
 
         /// <summary>
@@ -368,18 +363,21 @@ namespace PrtgAPI
         /// Object comments (for tickets: related object).
         /// Used in: All Objects
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Comments,
 
         /// <summary>
         /// Hostname or IP address.
         /// Used in: Devices
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Host,
 
         /// <summary>
         /// Probe status for probes, auto discovery status for groups.
         /// Used in: Groups, Probes
         /// </summary>
+        [FilterHandler(typeof(StringOrNumericFilterHandler))]
         Condition,
 
         /// <summary>
@@ -392,6 +390,7 @@ namespace PrtgAPI
         /// Object type (string).
         /// Used in: All Tree Objects
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         BaseType,
 
         /// <summary>
@@ -399,6 +398,7 @@ namespace PrtgAPI
         /// Used in: All Tree Objects
         /// </summary>
         [Description("baselink")]
+        [ValueConverter(typeof(UrlConverter))]
         Url,
 
         /// <summary>
@@ -417,12 +417,14 @@ namespace PrtgAPI
         /// Location property (used in Geo Maps).
         /// Used in: Groups, Devices
         /// </summary>
+        [FilterHandler(typeof(StringFilterHandler))]
         Location,
 
         /// <summary>
         /// Subobjects are folded up (true) or down (false); tickets: user (or user group) to which ticket is assinged read it since last change.
         /// Used in: Groups, Probes, Tickets
         /// </summary>
+        [XmlBool(false)]
         [Description("fold")]
         Collapsed,
 
@@ -431,6 +433,7 @@ namespace PrtgAPI
         /// Used in: Groups, Probes
         /// </summary>
         [Description("groupnum")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         TotalGroups,
 
         /// <summary>
@@ -438,6 +441,7 @@ namespace PrtgAPI
         /// Used in: Groups, Probes
         /// </summary>
         [Description("devicenum")]
+        [ValueConverter(typeof(ZeroPaddingConverter))]
         TotalDevices,
 
         /// <summary>
@@ -467,6 +471,7 @@ namespace PrtgAPI
         /// <summary>
         /// Position of the object in PRTG Tables. Internally, this value is represented as position = pos * 10
         /// </summary>
+        [ValueConverter(typeof(PositionConverter))]
         Position,
 
         /// <summary>
@@ -477,7 +482,7 @@ namespace PrtgAPI
         StartDate,
 
         /// <summary>
-        /// End date to retrieve records from. This is the point in time closest to now.
+        /// End date to retrieve records to. This is the point in time closest to now.
         /// Used in: Messages (Logs)
         /// </summary>
         [Description("dend")]

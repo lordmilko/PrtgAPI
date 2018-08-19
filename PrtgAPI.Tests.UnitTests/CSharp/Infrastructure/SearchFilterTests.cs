@@ -7,6 +7,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
     public class SearchFilterTests
     {
         [TestMethod]
+        public void SearchFilter_OperatorEquals_EmptyString()
+        {
+            AssertEx.Throws<ArgumentException>(() => new SearchFilter(Property.Name, string.Empty), "Search Filter value cannot be an empty string.");
+
+            var filter = new SearchFilter(Property.Name, FilterOperator.Equals, string.Empty, FilterMode.Illegal);
+        }
+
+        [TestMethod]
         public void SearchFilter_OperatorEquals_ToString_CorrectFormat()
         {
             Operator_ToString_CorrectFormat(FilterOperator.Equals, s => s);
@@ -21,19 +29,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestMethod]
         public void SearchFilter_OperatorNotEquals_ToString_CorrectFormat()
         {
-            Operator_ToString_CorrectFormat(FilterOperator.NotEquals, s => $"@neq({s})");
+            AssertEx.Throws<NotSupportedException>(
+                () => Operator_ToString_CorrectFormat(FilterOperator.NotEquals, s => $"@neq({s})"),
+                "Cannot filter where property 'Name' notequals 'test'"
+            );
         }
 
         [TestMethod]
         public void SearchFilter_OperatorGreaterThan_ToString_CorrectFormat()
         {
-            Operator_ToString_CorrectFormat(FilterOperator.GreaterThan, s => $"@above({s})");
+            Operator_ToString_CorrectFormat(FilterOperator.GreaterThan, s => $"@above({s})", FilterMode.Illegal);
         }
 
         [TestMethod]
         public void SearchFilter_OperatorLessThan_ToString_CorrectFormat()
         {
-            Operator_ToString_CorrectFormat(FilterOperator.LessThan, s => $"@below({s})");
+            Operator_ToString_CorrectFormat(FilterOperator.LessThan, s => $"@below({s})", FilterMode.Illegal);
         }
 
         [TestMethod]
@@ -44,14 +55,14 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
         //Helpers
 
-        private void Operator_ToString_CorrectFormat(FilterOperator op, Func<string,string> formatted)
+        private void Operator_ToString_CorrectFormat(FilterOperator op, Func<string,string> formatted, FilterMode filterMode = FilterMode.Normal)
         {
-            ToString_CorrectFormat(Property.Name, op, "test", "name", formatted("test"));
+            ToString_CorrectFormat(Property.Name, op, "test", "name", formatted("test"), filterMode);
         }
 
-        private void ToString_CorrectFormat(Property property, FilterOperator op, object value, string filterName, string filterValue)
+        private void ToString_CorrectFormat(Property property, FilterOperator op, object value, string filterName, string filterValue, FilterMode filterMode = FilterMode.Normal)
         {
-            var filter = new SearchFilter(property, op, value);
+            var filter = new SearchFilter(property, op, value, filterMode);
 
             var str = filter.ToString();
 

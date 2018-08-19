@@ -44,6 +44,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object Value { get; set; }
 
         /// <summary>
+        /// <para type="description">Permits constructing search expressions believed to be incompatible
+        /// with all versions of PRTG.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Illegal { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specifies to avoid performing formatting the serialized filter value based on
+        /// the required format of the specified filter property.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Raw { get; set; }
+
+        /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
@@ -51,7 +65,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Value is PSObject)
                 Value = PSObjectHelpers.CleanPSObject(Value);
 
-            WriteObject(new SearchFilter(Property, Operator, Value));
+            FilterMode filterMode = FilterMode.Normal;
+
+            if (Raw)
+                filterMode = FilterMode.Raw;
+            else
+            {
+                if (Illegal)
+                    filterMode = FilterMode.Illegal;
+            }
+
+            WriteObject(new SearchFilter(Property, Operator, Value, filterMode));
         }
     }
 }

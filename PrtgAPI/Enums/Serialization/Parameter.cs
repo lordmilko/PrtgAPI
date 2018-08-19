@@ -250,6 +250,13 @@ namespace PrtgAPI
         Template,
 
         /// <summary>
+        /// Whether to collapse or show an item.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        Fold,
+
+        /// <summary>
         /// The details of a WMI Service to create.
         /// </summary>
         [Undocumented]

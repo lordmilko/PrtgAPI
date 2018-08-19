@@ -123,5 +123,32 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 client.RemoveObject(sensor.Id);
             }
         }
+
+        [TestMethod]
+        public void Data_GetSensors_FiltersByBool()
+        {
+            var sensor = client.GetSensor(Settings.UpSensor);
+            
+            AssertEx.IsTrue(sensor.Active, "Up sensor was not active");
+
+            var activeSensors = client.GetSensors(Property.Active, false);
+
+            client.PauseObject(Settings.UpSensor);
+
+            CheckAndSleep(Settings.UpSensor);
+
+            try
+            {
+                var newSensor = client.GetSensor(Settings.UpSensor);
+                var newActiveSensors = client.GetSensors(Property.Active, false);
+
+                Assert.IsFalse(newSensor.Active);
+                Assert.IsTrue(newActiveSensors.Count > activeSensors.Count);
+            }
+            finally
+            {
+                client.ResumeObject(Settings.UpSensor);
+            }
+        }
     }
 }

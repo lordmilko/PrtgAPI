@@ -262,10 +262,16 @@ namespace PrtgAPI.Request.Serialization
 
         private object GetValue(Type type, object value, XElement elm)
         {
+            var final = mandatory == null ? null : GetValueInternal(propertyCache.Property.PropertyType, value, elm);
+
+            var attrib = propertyCache.GetAttribute<PropertyParameterAttribute>();
+
+            if (attrib != null)
             if (type.IsPrimitive)
                 return GetPrimitiveValue(type, value);
             else if (Nullable.GetUnderlyingType(type) != null) //if we're nullable, id say call the getvalue method again on the underlying type
             {
+                Enum prop;
                 var t = Nullable.GetUnderlyingType(type);
                 return GetValue(t, value, elm);
             }
@@ -277,8 +283,16 @@ namespace PrtgAPI.Request.Serialization
             {
                 var e = EnumHelpers.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
 
+                if (ReflectionCacheManager.GetEnumName(typeof(Property)).Cache.NameCache.TryGetValue(attrib.Name, out prop))
                 if (e == null)
                 {
+                    var converter = prop.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
+
+                    if (converter != null)
+                    {
+                        return converter.Converter.Deserialize(final);
+                    }
+                }
                     var badXml = elm.ToString();
 
                     var name = elm.Name.ToString();

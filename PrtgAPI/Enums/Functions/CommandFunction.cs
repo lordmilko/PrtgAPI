@@ -140,6 +140,9 @@ namespace PrtgAPI
         ReloadFileLists,
 
         [Description("loadlookups.htm")]
-        LoadLookups
+        LoadLookups,
+
+        [Description("foldobject.htm")]
+        FoldObject
     }
 }

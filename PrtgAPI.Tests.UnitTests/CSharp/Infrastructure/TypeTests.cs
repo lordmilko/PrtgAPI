@@ -136,5 +136,88 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        [TestMethod]
+        public void AllString_FilterProperties_HaveStringFilterHandler()
+        {
+            AllPropertiesOfTypeHaveFilterHandler<StringFilterHandler>(
+                p => p.PropertyType == typeof(string) || p.PropertyType == typeof(string[]),
+                v => v != Property.Url && v != Property.Condition
+            );
+        }
+
+        [TestMethod]
+        public void AllTimeSpan_FilterProperties_HaveTimeSpanValueConverter()
+        {
+            var exclusions = new[]
+            {
+                Property.Interval //Only requires padding to 10 spaces. Covered by ZeroPaddingConverter
+            };
+
+            AllPropertiesOfTypeHaveValueConverter<TimeSpanConverter>(p => p.PropertyType == typeof(TimeSpan) || p.PropertyType == typeof(TimeSpan?), exclusions);
+        }
+
+        [TestMethod]
+        public void AllDateTime_FilterProperties_HaveDateTimeValueConverter()
+        {
+            AllPropertiesOfTypeHaveValueConverter<DateTimeConverter>(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
+        }
+
+        private void AllPropertiesOfTypeHaveFilterHandler<THandler>(Func<PropertyInfo, bool> typeFilter, Func<Property, bool> exclusions)
+        {
+            var values = GetFilterPropertiesForPrtgObjectProperties(typeFilter).
+                Where(exclusions).ToList();
+
+            foreach (var value in values)
+            {
+                var handler = value.GetEnumAttribute<FilterHandlerAttribute>();
+
+                Assert.IsNotNull(handler, $"Property '{value}' does not have a {typeof(THandler).Name}");
+                
+                Assert.IsTrue(handler.Handler is THandler, $"Filter handler on property {value} was a {handler.Handler.GetType().Name} instead of a {typeof(THandler).Name}");
+            }
+        }
+
+        private void AllPropertiesOfTypeHaveValueConverter<TConverter>(Func<PropertyInfo, bool> typeFilter, params Property[] exclusions)
+        {
+            var values = GetFilterPropertiesForPrtgObjectProperties(typeFilter).
+                Where(v => v != Property.Url && !exclusions.Contains(v)).ToList();
+
+            foreach (var value in values)
+            {
+                var converter = value.GetEnumAttribute<ValueConverterAttribute>();
+
+                Assert.IsNotNull(converter, $"Property '{value}' does not have a {typeof(TConverter).Name}");
+
+                Assert.IsTrue(converter.Converter is TConverter, $"Filter handler on property {value} was a {converter.Converter.GetType().Name} instead of a {typeof(TConverter).Name}");
+            }
+        }
+
+        private List<Property> GetFilterPropertiesForPrtgObjectProperties(Func<PropertyInfo, bool> typeFilter)
+        {
+            var types = typeof(PrtgObject).Assembly.GetTypes().Where(t => typeof(PrtgObject).IsAssignableFrom(t)).ToList();
+
+            var properties = types.SelectMany(t => t.GetProperties().Where(typeFilter)).ToList();
+
+            var validProperties = properties.Where(p => p.GetCustomAttributes(typeof(PropertyParameterAttribute), false).Length > 0).ToList();
+
+            var values = validProperties
+                .Select(p => p.GetCustomAttributes(typeof(PropertyParameterAttribute), false).First())
+                .Cast<PropertyParameterAttribute>()
+                .Select(a =>
+                {
+                    Property prop;
+
+                    if (Enum.TryParse(a.Name, true, out prop))
+                        return (Property?)prop;
+
+                    return null;
+                })
+                .Where(e => e != null)
+                .Cast<Property>()
+                .Distinct()
+                .ToList();
+
+            return values;
+        }
     }
 }

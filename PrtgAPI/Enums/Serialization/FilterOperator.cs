@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -10,6 +11,7 @@ namespace PrtgAPI
         /// <summary>
         /// Return results equal to a specified value.
         /// </summary>
+        [AlternateDescription("txt")]
         Equals,
 
         /// <summary>

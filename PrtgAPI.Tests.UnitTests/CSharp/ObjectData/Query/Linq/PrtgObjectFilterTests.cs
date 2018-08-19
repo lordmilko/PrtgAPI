@@ -658,6 +658,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
             TestZeroPadding<TimeSpanConverter>(Property.UpDuration, 120, "120", false);
 
         [TestMethod]
+        public void ZeroPadding_DateTimeConverter_Pads_True() =>
+            TestZeroPadding<DateTimeConverter>(Property.LastUp, "42972.6522125", "42972.6522125000", true);
+
+        [TestMethod]
+        public void ZeroPadding_DateTimeConverter_Pads_False() =>
+            TestZeroPadding<DateTimeConverter>(Property.LastUp, "42972.6522125", "42972.6522125", false);
+
+        [TestMethod]
         public void ZeroPadding_UpDownTimeConverter_Pads_True() =>
             TestZeroPadding<UpDownTimeConverter>(Property.Uptime, 90.9, "000000000909000", true);
 

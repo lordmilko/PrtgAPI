@@ -6,6 +6,7 @@ namespace PrtgAPI.Parameters
     class SetPositionParameters : BaseActionParameters, ICommandParameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.SetPosition;
+
         public SetPositionParameters(int objectId, Position position) : base(objectId)
         {
             Position = position;
@@ -13,7 +14,7 @@ namespace PrtgAPI.Parameters
 
         public SetPositionParameters(SensorOrDeviceOrGroupOrProbe obj, int position) : base(ValidateObject(obj))
         {
-            var newPos = position * 10 + (position > obj.Position ? 1 : -1);
+            var newPos = new PositionConverter().SerializeT(position) + (position > obj.Position ? 1 : -1);
 
             Position = newPos;
         }

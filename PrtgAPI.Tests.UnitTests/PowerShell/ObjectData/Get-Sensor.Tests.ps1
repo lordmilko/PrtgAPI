@@ -152,5 +152,14 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
     It "throws filtering by Status 0" {
         { Get-Sensor -Status 0 } | Should Throw "is not a member of type PrtgAPI.Status"
     }
-}
 
+    It "throws specifying an illegal string filter" {
+        { flt name notequals ping | Get-Sensor } | Should Throw "Cannot filter where property 'Name' notequals 'ping'"
+    }
+
+    It "doesn't throw specifying -Illegal with an illegal string filter" {
+
+        SetAddressValidatorResponse "filter_name=@neq(ping)"
+
+        flt name notequals ping -Illegal | Get-Sensor
+    }
