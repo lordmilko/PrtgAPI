@@ -1,49 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
 
-namespace PrtgAPI.Objects.Deserialization.Cache
+namespace PrtgAPI.Request.Serialization.Cache
 {
-    class PropertyCache
+    class PropertyCache : AttributeCache
     {
         public PropertyInfo Property { get; set; }
 
-        private Dictionary<Type, List<Attribute>> attributes;
-
-        public Dictionary<Type, List<Attribute>> Attributes
-        {
-            get
-            {
-                if (attributes == null)
-                {
-                    attributes = new Dictionary<Type, List<Attribute>>();
-
-                    var attribs = Property.GetCustomAttributes(true).Cast<Attribute>();
-
-                    var groups = attribs.GroupBy(a => a.GetType());
-
-                    foreach (var group in groups)
-                    {
-                        attributes[group.Key] = group.ToList();
-                    }
-                }
-
-                return attributes;
-            }
-        }
-
-        public List<Attribute> GetAttributes(Type type)
-        {
-            if (Attributes.ContainsKey(type))
-                return Attributes[type];
-
-            return new List<Attribute>();
-        }
+        private Lazy<Action<object, object>> setValue;
 
         public PropertyCache(PropertyInfo property)
         {
             Property = property;
+
+            setValue = new Lazy<Action<object, object>>(CreateSetValue);
         }
+
+        private Action<object, object> CreateSetValue()
+        {
+            var @this = Expression.Parameter(typeof(object), "obj");
+            var val = Expression.Parameter(typeof(object), "val");
+
+            var thisCast = Expression.Convert(@this, Property.DeclaringType);
+            var valCast = Expression.Convert(val, Property.PropertyType);
+
+            var access = Expression.MakeMemberAccess(thisCast, Property);
+            var assignment = Expression.Assign(access, valCast);
+
+            var lambda = Expression.Lambda<Action<object, object>>(
+                assignment,
+                @this,
+                val
+            );
+
+            return lambda.Compile();
+        }
+
+        public void SetValue(object obj, object value)
+        {
+            setValue.Value(obj, value);
+        }
+
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            return Property.ToString();
+        }
+
+        protected override MemberInfo attributeSource => Property;
     }
 }

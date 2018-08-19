@@ -15,13 +15,14 @@ namespace PrtgAPI.Parameters
         private static Property[] defaultProperties = GetDefaultProperties();
 
         XmlFunction IXmlParameters.Function => XmlFunction.TableData;
+
         /// <summary>
-        /// The type of content this request will retrieve.
+        /// Gets the type of content this request will retrieve.
         /// </summary>
         public Content Content => (Content)this[Parameter.Content];
 
         /// <summary>
-        /// Properties that will be retrieved for each PRTG Object.
+        /// Gets the properties that will be retrieved for the objects returned from this request.
         /// </summary>
         public Property[] Properties
         {
@@ -39,13 +40,14 @@ namespace PrtgAPI.Parameters
             Count = null;
         }
 
-        static Property[] GetDefaultProperties()
+        internal static Property[] GetDefaultProperties()
         {
-            return typeof(T).GetProperties()
-                .Where(e => e.GetCustomAttributes(typeof(UndocumentedAttribute), false).Length == 0)
-                .Select(e => e.GetCustomAttributes(typeof(PropertyParameterAttribute), false))
-                .Where(el => el.Length > 0)
-                .Select(elm => ((PropertyParameterAttribute)elm.First()).Name.ToEnum<Property>())
+            var properties = typeof(T).GetTypeCache().Cache.Properties
+                .Where(p => p.GetAttribute<UndocumentedAttribute>() == null)
+                .Select(e => e.GetAttribute<PropertyParameterAttribute>())
+                .Where(p => p != null)
+                .Select(e => e.Name.ToEnum<Property>())
+                .Distinct()
             .ToArray();
         }
     }

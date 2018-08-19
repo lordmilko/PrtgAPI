@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.Parameters.Helpers;
 
 namespace PrtgAPI.Parameters
@@ -22,6 +22,7 @@ namespace PrtgAPI.Parameters
     abstract class BaseSetObjectPropertyParameters<TObjectProperty> : BaseParameters, IMultiTargetParameters, IHtmlParameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
+
         private bool paramsInitialized;
 
         public List<CustomParameter> CustomParameters
@@ -38,9 +39,9 @@ namespace PrtgAPI.Parameters
                 paramsInitialized = true;
             }
 
-            var info = GetPropertyInfo(property);
+            var cache = GetPropertyCache(property);
 
-            var parser = new DynamicPropertyTypeParser(property, info, value);
+            var parser = new DynamicPropertyTypeParser(property, cache, value);
 
             AddValue(parser);
             AddDependents(parser, disableDependentsOnNotReqiuiredValue);
@@ -50,7 +51,7 @@ namespace PrtgAPI.Parameters
         {
             var val = parser.ParseValue();
 
-            AddParameter(parser.Property, parser.Info, val);
+            AddParameter(parser.Property, parser.Cache, val);
 
             var secondaryPropertyAttrib = parser.Property.GetEnumAttribute<SecondaryPropertyAttribute>();
 
@@ -81,44 +82,47 @@ namespace PrtgAPI.Parameters
 
         internal void AddDependentProperty(object val, Enum parent)
         {
-            var info = GetPropertyInfo(parent);
+            var cache = GetPropertyCache(parent);
 
-            var dependencyParser = new DynamicPropertyTypeParser(parent, info, val);
-            AddParameter(parent, info, dependencyParser.ParseValue());
+            var dependencyParser = new DynamicPropertyTypeParser(parent, cache, val);
+            AddParameter(parent, cache, dependencyParser.ParseValue());
         }
 
         private void AddDependentPropertyRecursiveUp(Enum property)
         {
             //Given a property, get that objects parent, and then that objects parent, and so on
 
-            var parentOfChild = property.GetEnumAttribute<DependentPropertyAttribute>();
+            var parentOfChild = property.GetEnumAttributes<DependentPropertyAttribute>();
 
             bool isChild = parentOfChild != null;
 
             if (isChild)
             {
-                Enum parent;
-
-                try
+                foreach (var attrib in parentOfChild)
                 {
-                    parent = (Enum)(object)parentOfChild.Name.ToEnum<TObjectProperty>();
-                }
-                catch (ArgumentException)
-                {
-                    var @interface = GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IObjectInternalProperty<>));
+                    Enum parent;
 
-                    if (@interface != null)
+                    try
                     {
-                        var internalType = @interface.GetGenericArguments().First();
-
-                        parent = (Enum) Enum.Parse(internalType, parentOfChild.Name, true);
+                        parent = (Enum)(object)attrib.Name.ToEnum<TObjectProperty>();
                     }
-                    else
-                        throw;
+                    catch (ArgumentException)
+                    {
+                        var @interface = GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IObjectInternalProperty<>));
+
+                        if (@interface != null)
+                        {
+                            var internalType = @interface.GetGenericArguments().First();
+
+                            parent = (Enum)Enum.Parse(internalType, attrib.Name, true);
+                        }
+                        else
+                            throw;
+                    }
+
+                    AddDependentProperty(attrib.RequiredValue, parent);
+                    AddDependentPropertyRecursiveUp(parent);
                 }
-                
-                AddDependentProperty(parentOfChild.RequiredValue, parent);
-                AddDependentPropertyRecursiveUp(parent);
             }
         }
 
@@ -150,7 +154,7 @@ namespace PrtgAPI.Parameters
                     //Then we should include those children, where they will be set to empty causing PRTG to throw an exception
                     if (attrib.ReverseDependency)
                     {
-                        AddParameter(child, GetPropertyInfo(child), string.Empty);
+                        AddParameter(child, GetPropertyCache(child), string.Empty);
                         var newChildren = child.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
                         TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
                     }
@@ -160,7 +164,7 @@ namespace PrtgAPI.Parameters
                     //If we wish to disable dependents when their parent value does not match their required value, add and assign them an empty value
                     if (disableDependentsOnNotReqiuiredValue)
                     {
-                        AddParameter(child, GetPropertyInfo(child), string.Empty);
+                        AddParameter(child, GetPropertyCache(child), string.Empty);
                         var newChildren = child.GetDependentProperties<TObjectProperty>().Cast<Enum>().ToList();
                         TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
                     }
@@ -176,22 +180,22 @@ namespace PrtgAPI.Parameters
 
                 if (attrib.ReverseDependency)
                 {
-                    AddParameter(child, GetPropertyInfo(child), string.Empty);
+                    AddParameter(child, GetPropertyCache(child), string.Empty);
                 }
             }
         }
 
-        void AddParameter(Enum property, PropertyInfo info, object value)
+        void AddParameter(Enum property, PropertyCache cache, object value)
         {
-            CustomParameters.Add(new CustomParameter(GetParameterName(property, info), value?.ToString()));
+            CustomParameters.Add(new CustomParameter(GetParameterName(property, cache), value?.ToString()));
         }
 
-        protected abstract PropertyInfo GetPropertyInfo(Enum property);
+        protected abstract PropertyCache GetPropertyCache(Enum property);
 
-        internal static PropertyInfo GetPropertyInfoViaTypeLookup(Enum property)
+        internal static PropertyCache GetPropertyInfoViaTypeLookup(Enum property)
         {
             var attr = property.GetEnumAttribute<TypeLookupAttribute>(true);
-            var prop = attr.Class.GetProperties().FirstOrDefault(p => p.Name == property.ToString());
+            var prop = attr.Class.GetTypeCache().Cache.Properties.FirstOrDefault(p => p.Property.Name == property.ToString());
 
             if (prop == null)
                 throw new MissingMemberException($"Property {property} cannot be found on type {attr.Class} pointed to by {nameof(TypeLookupAttribute)}");
@@ -199,9 +203,9 @@ namespace PrtgAPI.Parameters
             return prop;
         }
 
-        internal static PropertyInfo GetPropertyInfoViaPropertyParameter<T>(Enum property)
+        internal static PropertyCache GetPropertyInfoViaPropertyParameter<T>(Enum property)
         {
-            var prop = typeof(T).GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
+            var prop = typeof(T).GetTypeCache().Cache.Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
 
             if (prop == null)
                 throw new MissingAttributeException(typeof(T), property.ToString(), typeof(PropertyParameterAttribute));
@@ -209,21 +213,21 @@ namespace PrtgAPI.Parameters
             return prop;
         }
 
-        protected virtual string GetParameterName(Enum property, PropertyInfo info)
+        protected virtual string GetParameterName(Enum property, PropertyCache cache)
         {
-            return GetParameterNameStatic(property, info);
+            return GetParameterNameStatic(property, cache);
         }
 
         internal static string GetParameterName(ObjectProperty property)
         {
-            var info = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
 
-            return GetParameterNameStatic(property, info);
+            return GetParameterNameStatic(property, cache);
         }
 
-        internal static string GetParameterNameStatic(Enum property, PropertyInfo info)
+        internal static string GetParameterNameStatic(Enum property, PropertyCache cache)
         {
-            var attribute = info.GetCustomAttribute<XmlElementAttribute>();
+            var attribute = cache.GetAttribute<XmlElementAttribute>();
             string name;
 
             if (attribute == null)

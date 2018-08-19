@@ -6,9 +6,11 @@ using System.Management.Automation;
 using System.Reflection;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Request.Serialization;
+using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Parameters
 {
@@ -25,8 +27,8 @@ namespace PrtgAPI.Parameters
 
         private bool trimName;
 
-        internal readonly Dictionary<string, Tuple<ObjectProperty, PropertyInfo>> TypedProperties = GetTypedProperties();
-        internal readonly Dictionary<string, Tuple<Parameter, PropertyInfo>> TypedParameters = GetTypedParameters();
+        internal Dictionary<string, Tuple<ObjectProperty, PropertyInfo>> TypedProperties { get; } = GetTypedProperties();
+        internal Dictionary<string, Tuple<Parameter, PropertyInfo>> TypedParameters { get; } = GetTypedParameters();
 
         internal bool ContainsInternal(string name, bool ignoreUnderscore) => InternalParameters.Any(p => HasName(p, name, ignoreUnderscore));
 
@@ -60,7 +62,7 @@ namespace PrtgAPI.Parameters
 
         private static Dictionary<string, Tuple<TEnum, PropertyInfo>> GetPropertyDictionary<TEnum>(Func<TEnum, string> getName) where TEnum : struct
         {
-            var ps = typeof(DynamicSensorParameters).GetProperties();
+            var ps = typeof(DynamicSensorParameters).GetTypeCache().Cache.Properties;
 
             var dict = ps.Select(GetTuple<TEnum>).Where(t => t != null).ToDictionary(
                 t => getName(t.Item2),
@@ -70,9 +72,9 @@ namespace PrtgAPI.Parameters
             return dict;
         }
 
-        private static Tuple<PropertyInfo, TEnum, PropertyParameterAttribute> GetTuple<TEnum>(PropertyInfo info) where TEnum : struct
+        private static Tuple<PropertyInfo, TEnum, PropertyParameterAttribute> GetTuple<TEnum>(PropertyCache cache) where TEnum : struct
         {
-            var attr = info.GetCustomAttribute<PropertyParameterAttribute>();
+            var attr = cache.GetAttribute<PropertyParameterAttribute>();
 
             if (attr == null)
                 return null;
@@ -80,7 +82,7 @@ namespace PrtgAPI.Parameters
             TEnum prop;
 
             if (Enum.TryParse(attr.Name, out prop))
-                return Tuple.Create(info, prop, attr);
+                return Tuple.Create(cache.Property, prop, attr);
 
             return null;
         }
@@ -98,7 +100,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The type of sensor these parameters will create.
+        /// Gets or sets the type of sensor these parameters will create.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(Parameter.SensorType))]

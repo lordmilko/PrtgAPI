@@ -1,18 +1,18 @@
 using System;
-using System.Reflection;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     class FakeSetObjectPropertyParameters : BaseSetObjectPropertyParameters<FakeObjectProperty>
     {
-        private Func<Enum, PropertyInfo> getPropertyInfo;
+        private Func<Enum, PropertyCache> getPropertyCache;
 
         protected override int[] ObjectIdsInternal { get; set; }
 
-        public FakeSetObjectPropertyParameters(Func<Enum, PropertyInfo> getPropertyInfo)
+        public FakeSetObjectPropertyParameters(Func<Enum, PropertyCache> getPropertyCache)
         {
-            this.getPropertyInfo = getPropertyInfo;
+            this.getPropertyCache = getPropertyCache;
         }
 
         public void AddValue(Enum property, object value, bool disableDependentsOnNotReqiuiredValue)
@@ -20,9 +20,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             AddTypeSafeValue(property, value, disableDependentsOnNotReqiuiredValue);
         }
 
-        protected override PropertyInfo GetPropertyInfo(Enum property)
+        protected override PropertyCache GetPropertyCache(Enum property)
         {
-            return getPropertyInfo(property);
+            return getPropertyCache(property);
         }
     }
 }

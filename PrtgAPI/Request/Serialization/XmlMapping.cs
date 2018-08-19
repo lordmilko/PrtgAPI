@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using PrtgAPI.Objects.Deserialization.Cache;
+using PrtgAPI.Request.Serialization.Cache;
 
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Request.Serialization
 {
     [ExcludeFromCodeCoverage]
     [DebuggerDisplay("{AttributeValue[0],nq}")]
@@ -31,14 +31,36 @@ namespace PrtgAPI.Objects.Deserialization
 
         public XElement GetSingleXElementAttributeValue(XElement elm)
         {
-            var value = AttributeValue.Select(a => elm.Element(a)).Where(x => x != null).FirstOrDefault(x => !string.IsNullOrEmpty(x.Value));
-            
+            XElement value = null;
+
+            for (var i = 0; i < AttributeValue.Length; i++)
+            {
+                var x = elm.Element(AttributeValue[i]);
+
+                if (!string.IsNullOrEmpty(x?.Value))
+                {
+                    value = x;
+                    break;
+                }
+            }
+
             return value;
         }
 
         public XAttribute GetSingleXAttributeAttributeValue(XElement elm)
         {
-            var value = AttributeValue.Select(a => elm.Attribute(a)).Where(x => x != null).FirstOrDefault(x => !string.IsNullOrEmpty(x.Value));
+            XAttribute value = null;
+
+            for (var i = 0; i < AttributeValue.Length; i++)
+            {
+                var x = elm.Attribute(AttributeValue[i]);
+
+                if (!string.IsNullOrEmpty(x?.Value))
+                {
+                    value = x;
+                    break;
+                }
+            }
 
             return value;
         }
@@ -64,9 +86,9 @@ namespace PrtgAPI.Objects.Deserialization
 
         private static bool FindXmlAttribute<TAttribute>(PropertyCache propertyCache, List<XmlMapping> mappings, Type type, Func<TAttribute, string> name, XmlAttributeType enumType) where TAttribute : Attribute
         {
-            var attributes = propertyCache.GetAttributes(typeof(TAttribute));
+            var attributes = propertyCache.GetAttributes<TAttribute>();
 
-            if (attributes.Count > 0)
+            if (attributes.Length > 0)
             {
                 var attribs = attributes.Cast<TAttribute>();
 

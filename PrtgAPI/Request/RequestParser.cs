@@ -35,6 +35,13 @@ namespace PrtgAPI.Request
             return channel;
         }
 
+        /// <summary>
+        /// Extracts the XML of a single notification action from an XML document containing many notification actions.
+        /// </summary>
+        /// <param name="normal">The XML to extract the notification action from</param>
+        /// <param name="properties">The properties to extract</param>
+        /// <param name="id">The ID of the notification action to extract the properties for.</param>
+        /// <returns>A XML document containing the specified properties of the specified object.</returns>
         internal static XDocument ExtractActionXml(XDocument normal, XElement properties, int id)
         {
             var thisDoc = new XDocument(normal);
@@ -72,19 +79,19 @@ namespace PrtgAPI.Request
 
         internal static List<KeyValuePair<Parameter, object>> ValidateObjectParameters(NewObjectParameters parameters)
         {
-            var properties = parameters.GetType().GetNormalProperties().ToList();
+            var propertyCaches = parameters.GetType().GetNormalProperties().ToList();
 
-            foreach (var property in properties)
+            foreach (var cache in propertyCaches)
             {
-                var requireValue = property.GetCustomAttribute<RequireValueAttribute>();
+                var requireValue = cache.GetAttribute<RequireValueAttribute>();
 
                 if (requireValue != null && requireValue.ValueRequired)
-                    ValidateRequiredValue(property, parameters);
+                    ValidateRequiredValue(cache.Property, parameters);
 
-                var dependency = property.GetCustomAttribute<DependentPropertyAttribute>();
+                var dependency = cache.GetAttribute<DependentPropertyAttribute>();
 
                 if (dependency != null)
-                    ValidateDependentProperty(dependency, property, parameters);
+                    ValidateDependentProperty(dependency, cache.Property, parameters);
             }
 
             var lengthLimit = parameters.GetParameters().Where(p => p.Key.GetEnumAttribute<LengthLimitAttribute>() != null).ToList();
@@ -105,7 +112,7 @@ namespace PrtgAPI.Request
 
             var list = val as IEnumerable;
 
-            if (list != null)
+            if (list != null && !(val is string))
             {
                 var casted = list.Cast<object>();
 

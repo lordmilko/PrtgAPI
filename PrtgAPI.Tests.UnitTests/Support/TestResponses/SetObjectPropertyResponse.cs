@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class SetObjectPropertyResponse<TObjectProperty> : MultiTypeResponse
     {
@@ -41,20 +39,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             var queries = UrlHelpers.CrackUrl(address);
 
-            PropertyInfo info;
+            PropertyCache cache;
 
             if (typeof(TObjectProperty) == typeof(ObjectProperty))
             {
-                info = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaTypeLookup((Enum) (object) property);
+                cache = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaTypeLookup((Enum) (object) property);
             }
             else if (typeof (TObjectProperty) == typeof (ChannelProperty))
             {
-                info = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaPropertyParameter<Channel>((Enum) (object) property);
+                cache = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaPropertyParameter<Channel>((Enum) (object) property);
             }
             else
                 throw new NotImplementedException($"Handler for object property type {nameof(TObjectProperty)} is not implemented");
 
-            var queryName = BaseSetObjectPropertyParameters<TObjectProperty>.GetParameterNameStatic((Enum) (object) property, info);
+            var queryName = BaseSetObjectPropertyParameters<TObjectProperty>.GetParameterNameStatic((Enum) (object) property, cache);
 
             if (typeof (TObjectProperty) == typeof (ChannelProperty))
                 queryName += "1"; //Channel ID used for tests

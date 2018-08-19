@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Parameters.Helpers
 {
@@ -16,22 +16,22 @@ namespace PrtgAPI.Parameters.Helpers
         public Type ValueType { get; set; }
 
         public object Value { get; }
-        public PropertyInfo Info { get; }
+        public PropertyCache Cache { get; }
 
         public TypeCategory? Type { get; private set; }
 
-        public DynamicPropertyTypeParser(Enum property, PropertyInfo info, object value)
+        public DynamicPropertyTypeParser(Enum property, PropertyCache cache, object value)
         {
             Property = property;
             Value = value;
-            Info = info;
+            Cache = cache;
 
             GetParameterTypes();
         }
 
         private void GetParameterTypes()
         {
-            PropertyType = Info.PropertyType;
+            PropertyType = Cache.Property.PropertyType;
             ValueType = Value?.GetType();
 
             var propertyTypeUnderlying = Nullable.GetUnderlyingType(PropertyType);
@@ -91,7 +91,7 @@ namespace PrtgAPI.Parameters.Helpers
 
                     isArray = true;
 
-                    splittableStringChar = Info.GetCustomAttribute<SplittableStringAttribute>()?.Character.ToString();
+                    splittableStringChar = Cache.GetAttribute<SplittableStringAttribute>()?.Character.ToString();
 
                     if(splittableStringChar == null)
                         throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}");
@@ -130,7 +130,7 @@ namespace PrtgAPI.Parameters.Helpers
             else
             {
                 if (Value == null)
-                    throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Info.Name}' of type '{Info.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
+                    throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{Cache.Property.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
 
                 if (isArray)
                     throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
@@ -140,7 +140,7 @@ namespace PrtgAPI.Parameters.Helpers
                     val = ParseBoolValue();
                 else if (PropertyType.IsEnum)
                 {
-                    var useAlternateXml = Info.GetCustomAttribute<TypeLookupAttribute>()?.Class == typeof(XmlEnumAlternateName);
+                    var useAlternateXml = Cache.GetAttribute<TypeLookupAttribute>()?.Class == typeof(XmlEnumAlternateName);
 
                     if (useAlternateXml)
                         val = ParseEnumValue<XmlEnumAlternateName>();
@@ -156,7 +156,7 @@ namespace PrtgAPI.Parameters.Helpers
                     val = ParseOtherValue();
 
                 if (val == null)
-                    throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
+                    throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Cache.Property.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
             }
 
             return val;
@@ -197,7 +197,7 @@ namespace PrtgAPI.Parameters.Helpers
 
                 //If we still don't have a value, since we already verified our value is not null or empty we must have a value of an invalid type
                 if (val == null)
-                    throw new InvalidTypeException($"Value '{Value}' could not be assigned to property '{Info.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
+                    throw new InvalidTypeException($"Value '{Value}' could not be assigned to property '{Cache.Property.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
             }
 
             return val;
@@ -220,7 +220,7 @@ namespace PrtgAPI.Parameters.Helpers
                     //If the enum represents a set of numeric values and our value was an integer,
                     int result;
 
-                    if (PropertyType.GetCustomAttribute<NumericEnumAttribute>() != null && int.TryParse(Value.ToString(), out result))
+                    if (PropertyType.GetTypeCache().Cache.GetAttribute<NumericEnumAttribute>() != null && int.TryParse(Value.ToString(), out result))
                     {
                         var enumVal = Enum.Parse(PropertyType, Value.ToString());
 

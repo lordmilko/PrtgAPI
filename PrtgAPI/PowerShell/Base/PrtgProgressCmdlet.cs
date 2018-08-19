@@ -404,7 +404,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>The type's name or description.</returns>
         internal static string GetTypeDescription(Type type)
         {
-            var attribute = type.GetCustomAttribute<DescriptionAttribute>();
+            var attribute = type.GetTypeCache().Cache.GetAttribute<DescriptionAttribute>();
 
             if (attribute != null)
                 return attribute.Description;

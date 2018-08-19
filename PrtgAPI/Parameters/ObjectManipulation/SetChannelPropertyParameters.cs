@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Parameters
 {
@@ -7,12 +8,14 @@ namespace PrtgAPI.Parameters
     {
         private int channelId;
 
+        [ExcludeFromCodeCoverage]
         public int[] SensorIds
         {
             get { return (int[])this[Parameter.Id]; }
             set { this[Parameter.Id] = value; }
         }
 
+        [ExcludeFromCodeCoverage]
         protected override int[] ObjectIdsInternal
         {
             get { return SensorIds; }
@@ -25,13 +28,13 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentNullException(nameof(sensorIds));
 
             if (sensorIds.Length == 0)
-                throw new ArgumentException("At least one Sensor ID must be specified", nameof(sensorIds));
+                throw new ArgumentException("At least one Sensor ID must be specified.", nameof(sensorIds));
 
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
             if (parameters.Length == 0)
-                throw new ArgumentException("At least one parameter must be specified", nameof(parameters));
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
 
             SensorIds = sensorIds;
             this.channelId = channelId;
@@ -47,15 +50,15 @@ namespace PrtgAPI.Parameters
             RemoveDuplicateParameters();
         }
 
-        protected override PropertyInfo GetPropertyInfo(Enum property)
+        protected override PropertyCache GetPropertyCache(Enum property)
         {
             return GetPropertyInfoViaPropertyParameter<Channel>(property);
         }
 
-        protected override string GetParameterName(Enum property, PropertyInfo info)
+        protected override string GetParameterName(Enum property, PropertyCache cache)
         {
             //Underscore between property name and channelId is inserted by GetParameterNameStatic
-            return $"{GetParameterNameStatic(property, info)}{channelId}";
+            return $"{GetParameterNameStatic(property, cache)}{channelId}";
         }
     }
 }

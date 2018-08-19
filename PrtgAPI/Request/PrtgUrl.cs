@@ -384,7 +384,7 @@ namespace PrtgAPI.Request
         {
             string query = null;
 
-            if (e.GetType().GetCustomAttributes<FlagsAttribute>().Any())
+            if (e.GetEnumTypeCache().GetAttributes<FlagsAttribute>().Length > 0)
             {
                 var flags = e.GetUnderlyingFlags().ToList();
 

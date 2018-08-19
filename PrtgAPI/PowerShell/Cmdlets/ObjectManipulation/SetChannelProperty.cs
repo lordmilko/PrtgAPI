@@ -252,7 +252,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object GetDynamicParameters()
         {
             if (dynamicParams == null)
-                dynamicParams = new DynamicParameterSet<ChannelProperty>(new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual }, e => BaseSetObjectPropertyParameters<ChannelProperty>.GetPropertyInfoViaPropertyParameter<Channel>(e));
+                dynamicParams = new DynamicParameterSet<ChannelProperty>(
+                    new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual },
+                    e => BaseSetObjectPropertyParameters<ChannelProperty>.GetPropertyInfoViaPropertyParameter<Channel>(e).Property
+                );
 
             return dynamicParams.Parameters;
         }

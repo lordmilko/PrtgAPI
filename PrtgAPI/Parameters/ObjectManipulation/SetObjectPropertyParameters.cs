@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Parameters
 {
@@ -61,7 +61,7 @@ namespace PrtgAPI.Parameters
             this[Parameter.Custom] = parameters;
         }
 
-        protected override PropertyInfo GetPropertyInfo(Enum property)
+        protected override PropertyCache GetPropertyCache(Enum property)
         {
             return GetPropertyInfoViaTypeLookup(property);
         }

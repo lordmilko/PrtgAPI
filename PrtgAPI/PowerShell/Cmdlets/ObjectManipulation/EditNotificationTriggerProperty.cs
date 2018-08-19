@@ -3,8 +3,8 @@ using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
-using System.Reflection;
 using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -79,14 +79,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void SetProperty(TriggerParameters parameters)
         {
             //Get the TriggerParameters PropertyInfo that corresponds to the specified TriggerProperty
-            var property = parameters.GetType().GetProperties().FirstOrDefault(p => p.GetCustomAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
+            var property = parameters.GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
 
             if (property == null)
                 throw new InvalidOperationException($"Property '{Property}' does not exist on triggers of type '{parameters.Type}'");
 
-            Value = ParseValueIfRequired(property, Value);
+            Value = ParseValueIfRequired(property.Property, Value);
 
-            property.SetValue(parameters, Value);
+            property.Property.SetValue(parameters, Value);
 
             if (ShouldProcess($"{Trigger.OnNotificationAction} (Object ID: {Trigger.ObjectId})", $"Edit-NotificationTriggerProperty {Property} = '{Value}'"))
             {

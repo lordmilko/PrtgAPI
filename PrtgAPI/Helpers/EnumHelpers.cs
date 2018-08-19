@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
-using PrtgAPI.Objects.Deserialization.Cache;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Helpers
 {
@@ -56,19 +56,21 @@ namespace PrtgAPI.Helpers
 
         public static TEnum DescriptionToEnum<TEnum>(this string value, bool toStringFallback = true)
         {
-            foreach (var field in typeof (TEnum).GetFields())
+            var cache = typeof(TEnum).GetTypeCache();
+
+            foreach (var field in cache.Cache.Fields)
             {
-                var attribute = Attribute.GetCustomAttribute(field, typeof (DescriptionAttribute)) as DescriptionAttribute;
+                var attribute = field.GetAttribute<DescriptionAttribute>();
 
                 if (attribute != null)
                 {
                     if (attribute.Description == value)
-                        return (TEnum) field.GetValue(null);
+                        return (TEnum) field.Field.GetValue(null);
                 }
                 else
                 {
-                    if (field.Name == value)
-                        return (TEnum) field.GetValue(null);
+                    if (field.Field.Name == value)
+                        return (TEnum) field.Field.GetValue(null);
                 }
             }
 
@@ -116,11 +118,12 @@ namespace PrtgAPI.Helpers
 
         internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
         {
-            var val = ReflectionCacheManager.GetEnumXml(type).GetValue(value, attribType);
+            var enumXmlCache = ReflectionCacheManager.GetEnumXml(type);
+
+            var val = enumXmlCache.Cache.GetValue(value, attribType);
 
             if (val != null)
                 return val;
-
 
             if (!allowParse)
                 return null;
@@ -131,6 +134,8 @@ namespace PrtgAPI.Helpers
 
                 if (underlying != null)
                     type = underlying;
+
+                //todo: make this a tryparse, and then reparse and throw if we failed to parse
 
                 var e = Enum.Parse(type, value, true);
 
@@ -161,20 +166,13 @@ namespace PrtgAPI.Helpers
 
         public static string GetDescription(this Enum element, bool toStringFallback = true)
         {
-            var memberInfo = element.GetType().GetMember(element.ToString());
+            var description = element.GetEnumFieldCache().GetAttribute<DescriptionAttribute>();
 
-            if (memberInfo.Length > 0)
-            {
-                var attributes = memberInfo.First().GetCustomAttributes(typeof (DescriptionAttribute), false);
+            if (description != null)
+                return description.Description;
 
-                if (attributes.Length > 0)
-                {
-                    return ((DescriptionAttribute) attributes.First()).Description;
-                }
-
-                if (!toStringFallback)
-                    return null;
-            }
+            if (!toStringFallback)
+                return null;
 
             return element.ToString();
         }
@@ -184,44 +182,63 @@ namespace PrtgAPI.Helpers
             return element.GetEnumAttribute<UndocumentedAttribute>() != null;
         }
 
-        public static TAttribute GetEnumAttribute<TAttribute>(this Enum element, bool mandatory = false) where TAttribute : Attribute
+        public static TAttribute[] GetEnumAttributes<TAttribute>(this Enum element, bool mandatory = false)
+            where TAttribute : Attribute
         {
-            var member = element.GetType().GetMember(element.ToString()).FirstOrDefault();
+            var cache = element.GetEnumFieldCache();
 
-            if(member == null)
+            if (cache == null)
                 throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}");
 
-            var attributes = member.GetCustomAttributes(typeof(TAttribute), false);
+            var attribute = cache.GetAttributes<TAttribute>();
 
-            if (attributes.Any())
-                return (TAttribute)attributes.First();
+            if (attribute.Length > 0)
+                return attribute;
 
             if (!mandatory)
                 return null;
             else
-                throw new MissingAttributeException(element.GetType(), element.ToString(), typeof (TAttribute));
+                throw new MissingAttributeException(element.GetType(), element.ToString(), typeof(TAttribute));
+        }
+
+        public static TAttribute GetEnumAttribute<TAttribute>(this Enum element, bool mandatory = false) where TAttribute : Attribute
+        {
+            var cache = element.GetEnumFieldCache();
+            
+            if(cache == null)
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}");
+
+            var attribute = cache.GetAttribute<TAttribute>();
+
+            if (attribute != null)
+                return attribute;
+
+            if (!mandatory)
+                return null;
+
+            throw new MissingAttributeException(element.GetType(), element.ToString(), typeof (TAttribute));
         }
 
         public static ParameterType GetParameterType(this Parameter element)
         {
-            var attributes = element.GetType().GetMember(element.ToString()).First().GetCustomAttributes(typeof (ParameterTypeAttribute), false);
+            var attribute = element.GetEnumFieldCache().GetAttribute<ParameterTypeAttribute>();
 
-            if (attributes.Length > 0)
-            {
-                return ((ParameterTypeAttribute) attributes.First()).Type;
-            }
+            if (attribute != null)
+                return attribute.Type;
 
             throw new MissingParameterTypeException(element);
         }
 
         public static T[] GetDependentProperties<T>(this Enum element)
         {
-            var elms = element.GetType().GetMembers()
-                .Where(m => m.GetCustomAttributes(typeof(DependentPropertyAttribute), false)
-                .Cast<DependentPropertyAttribute>()
-                .Any(a => a.Name == element.ToString()))
-                .Select(e => e.Name.ToEnum<T>())
-                .OrderBy(e => e).ToArray();
+            var elms = element.GetEnumTypeCache().ValueCache
+                .Where(e =>
+                    e.Value.GetAttribute<DependentPropertyAttribute>()?.Name == element.ToString()
+                )
+                .Select(e => e.Key)
+                .Cast<T>()
+                .OrderBy(e => e)
+                .ToArray();
 
             return elms;
         }

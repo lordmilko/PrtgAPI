@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Helpers
 {
@@ -10,9 +11,43 @@ namespace PrtgAPI.Helpers
     /// Defines helper extension methods used for performing reflection.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public static class ReflectionHelpers
+    static class ReflectionHelpers
     {
         private static BindingFlags internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+        public static CacheValue<TypeCache> GetTypeCache(this Type type) => ReflectionCacheManager.GetTypeCache(type);
+
+        public static TypeCache GetTypeCache(this object obj) => ReflectionCacheManager.Get(obj.GetType());
+
+        public static EnumCache GetEnumTypeCache(this Enum value) => (EnumCache) ReflectionCacheManager.Get(value.GetType());
+
+        public static FieldCache GetEnumFieldCache(this Enum value) => ReflectionCacheManager.GetEnumFieldCache(value);
+
+        public static TAttribute GetAttribute<TAttribute>(this PropertyInfo info) where TAttribute : Attribute =>
+            ReflectionCacheManager.Get(info.ReflectedType).Properties.First(p => p.Property == info).GetAttribute<TAttribute>();
+
+        public static TAttribute[] GetAttributes<TAttribute>(this PropertyInfo info) where TAttribute : Attribute =>
+            ReflectionCacheManager.Get(info.ReflectedType).Properties.First(p => p.Property == info).GetAttributes<TAttribute>();
+
+        /// <summary>
+        /// Returns the underlying type of this type is <see cref="Nullable"/>; otherwise, returns this type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Type GetUnderlyingType(this Type type)
+        {
+            var underlying = type.GetTypeCache().Underlying;
+
+            if (underlying != null)
+                return underlying;
+
+            return type;
+        }
+
+        public static bool IsNullable(this Type type)
+        {
+            return type.GetTypeCache().Underlying != null;
+        }
 
         /// <summary>
         /// Retrieve the value of an internal property of an object.
@@ -72,6 +107,18 @@ namespace PrtgAPI.Helpers
             return field;
         }
 
+        public static FieldInfo GetInternalFieldInfo(this Type type, string name)
+        {
+            return type.GetField(name, internalFlags);
+        }
+
+        public static FieldInfo GetInternalStaticField(this object obj, string name)
+        {
+            var field = obj.GetType().GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+
+            return field;
+        }
+
         /// <summary>
         /// Retrieve an internal method from an object.
         /// </summary>
@@ -91,9 +138,9 @@ namespace PrtgAPI.Helpers
         /// </summary>
         /// <param name="type">The type to retrieve properties for.</param>
         /// <returns></returns>
-        public static IEnumerable<PropertyInfo> GetNormalProperties(this Type type)
+        public static IEnumerable<PropertyCache> GetNormalProperties(this Type type)
         {
-            return type.GetProperties().Where(p => !p.GetIndexParameters().Any() && p.CanWrite);
+            return type.GetTypeCache().Cache.Properties.Where(p => !p.Property.GetIndexParameters().Any() && p.Property.CanWrite);
         }
 
         //https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class

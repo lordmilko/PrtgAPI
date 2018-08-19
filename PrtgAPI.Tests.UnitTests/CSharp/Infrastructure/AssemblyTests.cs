@@ -119,16 +119,89 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         }
 
         [TestMethod]
+        public void AllReflection_UsesCacheManagers()
+        {
+            WithTree((file, tree, model) =>
+            {
+                foreach (var item in tree.GetRoot().DescendantNodesAndTokens())
+                {
+                    if (item.IsKind(SyntaxKind.InvocationExpression))
+                        InspectMethodCall(item, model);
+                }
+            });
+        }
+
+        private SyntaxToken GetMethodName(InvocationExpressionSyntax invocationNode)
+        {
+            var expression = invocationNode.Expression;
+
+            switch (expression.Kind())
+            {
+                case SyntaxKind.SimpleMemberAccessExpression:
+                    return ((MemberAccessExpressionSyntax) expression).Name.Identifier;
+                case SyntaxKind.IdentifierName:
+                    return ((IdentifierNameSyntax) expression).Identifier;
+                case SyntaxKind.GenericName:
+                    return ((GenericNameSyntax) expression).Identifier;
+                case SyntaxKind.MemberBindingExpression:
+                    return ((MemberBindingExpressionSyntax) expression).Name.Identifier;
+                case SyntaxKind.ParenthesizedExpression:
+                    return default(SyntaxToken);
+                default:
+                    throw new NotImplementedException($"Unknown expression kind {invocationNode.Expression.GetType()}");
+            }
+        }
+
+        private void InspectMethodCall(SyntaxNodeOrToken item, SemanticModel model)
+        {
+            var reflectionMethods = new[]
+            {
+                "GetCustomAttribute",
+                "GetProperties",
+                "GetField"
+            };
+
+            var cacheClasses = new[]
+            {
+                "AttributeCache",
+                "ReflectionHelpers",
+                "TypeCache"
+            };
+
+            var invocationNode = (InvocationExpressionSyntax)item.AsNode();
+
+            var methodName = GetMethodName(invocationNode).Text;
+
+            var reflectionCall = reflectionMethods.FirstOrDefault(f => methodName.StartsWith(f));
+
+            if (reflectionCall != null)
+            {
+                var myClass = invocationNode.FirstAncestorOrSelf<ClassDeclarationSyntax>(t => true);
+
+                var className = myClass.Identifier.Text;
+
+                if (!cacheClasses.Contains(className))
+                {
+                    var invocation = invocationNode.FirstAncestorOrSelf<InvocationExpressionSyntax>(t => true);
+
+                    var symbol = model.GetSymbolInfo(invocation);
+
+                    var sym = symbol.Symbol ?? symbol.CandidateSymbols.FirstOrDefault();
+
+                    if (sym == null)
+                        throw new Exception($"Encountered a suspicious use of '{reflectionCall}' at {className} {invocationNode.GetLocation().GetLineSpan()}");
+
+                    if (!sym.ContainingAssembly.Name.Contains("MyCompilation"))
+                        throw new Exception($"Class '{className}' contains calls to reflection method '{reflectionCall}' at {invocationNode.GetLocation().GetLineSpan()}");
+                }
+            }
+        }
+
+        [TestMethod]
         public void AllAwaits_Call_ConfigureAwaitFalse()
         {
-            var path = GetProjectRoot();
-
-            var files = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
-
-            foreach (var file in files)
+            WithTree((file, tree, model) =>
             {
-                var tree = CSharpSyntaxTree.ParseText(File.ReadAllText(file));
-
                 foreach (var item in tree.GetRoot().DescendantNodesAndTokens())
                 {
                     if (item.IsKind(SyntaxKind.AwaitExpression))
@@ -165,6 +238,25 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                         }
                     }
                 }
+            });
+        }
+
+        private void WithTree(Action<string, SyntaxTree, SemanticModel> action)
+        {
+            var path = GetProjectRoot();
+
+            var files = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
+
+            foreach (var file in files)
+            {
+                var tree = CSharpSyntaxTree.ParseText(File.ReadAllText(file));
+
+                var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+                var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
+
+                var model = compilation.GetSemanticModel(tree);
+
+                action(file, tree, model);
             }
         }
 

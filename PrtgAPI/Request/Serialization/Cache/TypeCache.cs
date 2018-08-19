@@ -3,47 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace PrtgAPI.Objects.Deserialization.Cache
+namespace PrtgAPI.Request.Serialization.Cache
 {
-    class TypeCache
+    class TypeCache : AttributeCache
     {
         public Type Type { get; set; }
 
-        private List<PropertyCache> properties;
+        private Lazy<List<PropertyCache>> properties;
 
-        public List<PropertyCache> Properties
-        {
-            get
-            {
-                if (properties == null)
-                {
-                    var props = Type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        public List<PropertyCache> Properties => properties.Value;
 
-                    properties = props.Select(p => new PropertyCache(p)).ToList();
-                }
+        private Lazy<List<FieldCache>> fields;
 
-                return properties;
-            }
-        }
-
-        private List<FieldCache> fields;
-
-        public List<FieldCache> Fields
-        {
-            get
-            {
-                if (fields == null)
-                {
-                    fields = Type.GetFields().Select(f => new FieldCache(f)).ToList();
-                }
-
-                return fields;
-            }
-        }
+        public List<FieldCache> Fields => fields.Value;
 
         public TypeCache(Type type)
         {
             Type = type;
+
+            properties = new Lazy<List<PropertyCache>>(GetProperties);
+            fields = new Lazy<List<FieldCache>>(GetFields);
         }
+
+        private List<PropertyCache> GetProperties()
+        {
+            var props = Type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            return props.Select(p => new PropertyCache(p)).ToList();
+        }
+
+        private List<FieldCache> GetFields()
+        {
+            return Type.GetFields().Select(f => new FieldCache(f)).ToList();
+        }
+
+        protected override MemberInfo attributeSource => Type;
     }
 }

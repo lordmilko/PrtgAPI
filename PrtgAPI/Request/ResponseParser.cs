@@ -125,7 +125,7 @@ namespace PrtgAPI.Request
         internal static List<IGrouping<int, NotificationAction>> GroupTriggerActions(List<NotificationTrigger> triggers)
         {
             var actions = triggers.SelectMany(
-                t => t.GetType().GetProperties().Where(p => p.PropertyType == typeof(NotificationAction)).Select(p => (NotificationAction)p.GetValue(t)
+                t => t.GetTypeCache().Properties.Where(p => p.Property.PropertyType == typeof(NotificationAction)).Select(p => (NotificationAction)p.Property.GetValue(t)
             ).Where(a => a != null && a.Id != -1)).GroupBy(a => a.Id).ToList();
 
             return actions;

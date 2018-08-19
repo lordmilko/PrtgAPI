@@ -68,7 +68,7 @@ namespace PrtgAPI.Request.Serialization
 
             var settings = deserializer.Deserialize(xml, elementName, null);
 
-            var value = settings.GetType().GetProperties().First(p => p.Name == property.ToString()).GetValue(settings);
+            var value = settings.GetTypeCache().Properties.First(p => p.Property.Name == property.ToString()).Property.GetValue(settings);
 
             if (value == null && rawValue != string.Empty)
                 return rawValue;
@@ -78,7 +78,7 @@ namespace PrtgAPI.Request.Serialization
 
         private object Deserialize(Type type, object obj, XElement elm, params string[] properties)
         {
-            var mappings = ReflectionCacheManager.Map(type);
+            var mappings = ReflectionCacheManager.Map(type).Cache;
 
             if (properties != null && properties.Length > 0)
             {
@@ -87,7 +87,6 @@ namespace PrtgAPI.Request.Serialization
 
             foreach (var mapping in mappings)
             {
-
                 try
                 {
                     switch (mapping.AttributeType)
@@ -125,7 +124,7 @@ namespace PrtgAPI.Request.Serialization
             }
             else
             {
-                if (mapping.PropertyCache.Property.PropertyType.GetCustomAttribute<XmlRootAttribute>() != null)
+                if (mapping.PropertyCache.Property.PropertyType.GetTypeCache().Cache.GetAttribute<XmlRootAttribute>() != null)
                 {
                     var elms = mapping.AttributeValue.Select(a => elm.Elements(a)).First(x => x != null).FirstOrDefault();
 
@@ -171,14 +170,11 @@ namespace PrtgAPI.Request.Serialization
 
         private void ProcessNonListEnumerableXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var attribute = mapping.PropertyCache.GetAttributes(typeof (SplittableStringAttribute));
+            var attribute = mapping.PropertyCache.GetAttribute<SplittableStringAttribute>();
 
-            if (attribute.Count > 0)
+            if (attribute != null)
             {
                 var value = mapping.AttributeValue.Select(a => elm.Element(a)).FirstOrDefault(x => x != null);
-
-                var str = value != null ? $"\"{value.Value}\"" : "null";
-                Logger.Debug($"XElement contained {str}");
 
                 value = NullifyMissingValue(value);
 
@@ -186,7 +182,7 @@ namespace PrtgAPI.Request.Serialization
 
                 if (value != null)
                 {
-                    finalVal = value.Value.Trim().Split(((SplittableStringAttribute) attribute[0]).Character);
+                    finalVal = value.Value.Trim().Split(attribute.Character);
                 }
 
                 mapping.PropertyCache.Property.SetValue(obj, finalVal);
@@ -197,7 +193,6 @@ namespace PrtgAPI.Request.Serialization
 
         private void ProcessSingleXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var type = mapping.PropertyCache.Property.PropertyType;
             var value = mapping.GetSingleXElementAttributeValue(elm);
 
             //priority is priority_raw on the root group, priority everywhere else. we need an alt xmlelement
@@ -215,7 +210,7 @@ namespace PrtgAPI.Request.Serialization
 
         private XElement NullifyMissingValue(XElement value)
         {
-            if (string.IsNullOrEmpty(value?.ToString()) || string.IsNullOrEmpty(value.Value))
+            if (string.IsNullOrEmpty(value?.Value))
             {
                 return null;
             }
@@ -239,11 +234,10 @@ namespace PrtgAPI.Request.Serialization
         {
             var value = mapping.GetSingleXAttributeAttributeValue(elm);
 
-
             value = NullifyMissingValue(value);
-            var finalValue = value == null ? null : GetValue(mapping.PropertyCache.Property.PropertyType, value.Value, elm);
+            var finalValue = GetValue(value, mapping.PropertyCache, value?.Value, elm);
 
-            mapping.PropertyCache.Property.SetValue(obj, finalValue);
+            mapping.PropertyCache.SetValue(obj, finalValue);
         }
 
         private void ProcessXmlText(object obj, XmlMapping mapping, XElement elm)
@@ -252,39 +246,30 @@ namespace PrtgAPI.Request.Serialization
 
             elm = NullifyMissingValue(elm);
 
-            var finalValue = elm == null ? null : GetValue(type, elm.Value, elm);
+            var finalValue = GetValue(elm, mapping.PropertyCache, elm?.Value, elm);
 
             if (type.IsValueType && Nullable.GetUnderlyingType(type) == null && finalValue == null)
-                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.PropertyCache.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
+            {
+                if (!deserializeAll)
+                    return;
 
-            mapping.PropertyCache.Property.SetValue(obj, finalValue);
+                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.PropertyCache.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
+            }
+
+            mapping.PropertyCache.SetValue(obj, finalValue);
         }
 
-        private object GetValue(Type type, object value, XElement elm)
+        private object GetValue(XObject mandatory, PropertyCache propertyCache, object value, XElement elm)
         {
             var final = mandatory == null ? null : GetValueInternal(propertyCache.Property.PropertyType, value, elm);
 
             var attrib = propertyCache.GetAttribute<PropertyParameterAttribute>();
 
             if (attrib != null)
-            if (type.IsPrimitive)
-                return GetPrimitiveValue(type, value);
-            else if (Nullable.GetUnderlyingType(type) != null) //if we're nullable, id say call the getvalue method again on the underlying type
             {
                 Enum prop;
-                var t = Nullable.GetUnderlyingType(type);
-                return GetValue(t, value, elm);
-            }
-            else if (type == typeof (string))
-            {
-                return value.ToString();
-            }
-            else if (type.IsEnum)
-            {
-                var e = EnumHelpers.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
 
                 if (ReflectionCacheManager.GetEnumName(typeof(Property)).Cache.NameCache.TryGetValue(attrib.Name, out prop))
-                if (e == null)
                 {
                     var converter = prop.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
 
@@ -293,41 +278,33 @@ namespace PrtgAPI.Request.Serialization
                         return converter.Converter.Deserialize(final);
                     }
                 }
-                    var badXml = elm.ToString();
-
-                    var name = elm.Name.ToString();
-
-                    var index = name.LastIndexOf("_raw");
-
-                    if (index != -1)
-                    {
-                        //We are the raw element, so get the normal element and add it
-                        name = name.Substring(0, index);
-
-                        var normalElm = elm.Parent?.Element(name);
-
-                        if (normalElm != null)
-                            badXml = normalElm + badXml;
-                    }
-
-                    var msg = elm.Parent?.Element("message");
-
-                    if (msg != null)
-                        badXml = badXml + msg.ToString().Replace("&lt;", "<").Replace("&gt;", ">");
-
-                    throw new XmlDeserializationException($"Could not deserialize value '{value}' as it is not a valid member of type '{type}'. Could not process XML '{badXml}'");
-                }
-
-                return e;
             }
-            else if (type == typeof (DateTime))
-            {
-                return DeserializationHelpers.ConvertPrtgDateTime(XmlConvert.ToDouble(value.ToString()));
-            }
-            else if (type == typeof (TimeSpan))
-            {
-                return DeserializationHelpers.ConvertPrtgTimeSpan(XmlConvert.ToDouble(value.ToString()));
-            }
+
+            return final;
+        }
+
+        private object GetValueInternal(Type type, object value, XElement elm)
+        {
+            if (type.IsPrimitive)
+                return GetPrimitiveValue(type, value);
+
+            if (type == typeof (string))
+                return value.ToString();
+
+            if (type.IsEnum)
+                return GetEnumValue(type, value, elm);
+
+            if (type == typeof (DateTime))
+                return DeserializationHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(value.ToString()));
+
+            if (type == typeof (TimeSpan))
+                return DeserializationHelpers.ConvertFromPrtgTimeSpan(XmlConvert.ToDouble(value.ToString()));
+
+            var underlying = type.GetTypeCache().Underlying;
+
+            if (underlying != null)
+                return GetValueInternal(underlying, value, elm);
+
             return null;
         }
 
@@ -368,7 +345,41 @@ namespace PrtgAPI.Request.Serialization
             throw new NotSupportedException(); //TODO - say the type is not deserializable
         }
 
-        public static Boolean ToBoolean(string s)
+        private object GetEnumValue(Type type, object value, XElement elm)
+        {
+            var e = EnumHelpers.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
+
+            if (e == null)
+            {
+                var badXml = elm.ToString();
+
+                var name = elm.Name.ToString();
+
+                var index = name.LastIndexOf("_raw");
+
+                if (index != -1)
+                {
+                    //We are the raw element, so get the normal element and add it
+                    name = name.Substring(0, index);
+
+                    var normalElm = elm.Parent?.Element(name);
+
+                    if (normalElm != null)
+                        badXml = normalElm + badXml;
+                }
+
+                var msg = elm.Parent?.Element("message");
+
+                if (msg != null)
+                    badXml = badXml + msg.ToString().Replace("&lt;", "<").Replace("&gt;", ">");
+
+                throw new XmlDeserializationException($"Could not deserialize value '{value}' as it is not a valid member of type '{type}'. Could not process XML '{badXml}'");
+            }
+
+            return e;
+        }
+
+        private static bool ToBoolean(string s)
         {
             s = TrimString(s);
 
@@ -378,16 +389,16 @@ namespace PrtgAPI.Request.Serialization
             return XmlConvert.ToBoolean(s);
         }
 
-        internal static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
+        private static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
 
         // Trim a string using XML whitespace characters 
-        internal static string TrimString(string value)
+        private static string TrimString(string value)
         {
             return value.Trim(WhitespaceChars);
         }
 
         //Custom ToDouble with culture specific formatting (for values retrieved from scraping HTML)
-        public static double ToDouble(string s)
+        private static double ToDouble(string s)
         {
             s = TrimString(s);
             if (s == "-INF")

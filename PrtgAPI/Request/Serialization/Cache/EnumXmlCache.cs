@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Objects.Deserialization.Cache
+namespace PrtgAPI.Request.Serialization.Cache
 {
     class EnumValue
     {
