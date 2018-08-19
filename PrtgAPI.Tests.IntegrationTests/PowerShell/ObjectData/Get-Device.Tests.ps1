@@ -94,6 +94,25 @@ Describe "Get-Device_IT" {
 
         ($devices.Count) | Should Be $count
     }
+
+    It "can recursively retrieve devices from a group when specifying -Count" {
+
+        $group = Get-Group -Id (Settings Group)
+
+        $devices = $group | Get-Device -Count 1
+        $devices.Count | Should Be 1
+
+        $nonrecurseDevices = $group | Get-Device -Recurse:$false
+        $allDevices = $group | Get-Device
+
+        $nonrecurseDevices.Count | Should Be (Settings DevicesInTestGroup)
+        $allDevices.Count | Should BeGreaterThan $nonrecurseDevices.Count
+
+        $allDevicesViaCount = $group | Get-Device -Count $group.TotalDevices
+
+        $allDevicesViaCount.Count | Should Be $group.TotalDevices
+    }
+
     It "uses dynamic parameters" {
         $devices = Get-Device -Position 1
 

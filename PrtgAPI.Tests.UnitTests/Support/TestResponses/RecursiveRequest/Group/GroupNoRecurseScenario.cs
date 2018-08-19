@@ -1,7 +1,8 @@
-﻿using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
+﻿using System.Linq;
+using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class GroupNoRecurseScenario : GroupUniqueGroupScenario
     {
@@ -36,8 +37,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             switch (requestNum)
             {
-                default:
+                case 1: //Get the parent group "Servers"
                     return base.GetResponse(address, content);
+                case 2: //Execute a normal request including all search filters
+                    AssertGroupRequest(address, content, "filter_name=@sub()&filter_parentid=2000");
+
+                    return GetGroupResponse(probe.Groups.First().Groups);
+                default:
+                    throw UnknownRequest(address);
             }
         }
     }

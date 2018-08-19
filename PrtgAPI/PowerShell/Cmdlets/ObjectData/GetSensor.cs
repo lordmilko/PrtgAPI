@@ -129,8 +129,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetSensor"/> class.
         /// </summary>
-        public GetSensor() : base(Content.Sensors, 500)
+        public GetSensor() : base(Content.Sensors, true)
         {
+        }
+
+        internal override bool StreamCount()
+        {
+            return !(Group != null && Recurse);
         }
 
         internal override List<Sensor> GetObjectsInternal(SensorParameters parameters)
@@ -158,14 +163,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
             //we can use the default implementation, as referring to the group by name will be unambiguous. If
             //we are recursing, we're retrieving the parent group's records; our children's records will be
             //retrieved in GetAdditionalRecords
-            return base.GetObjectsInternal(parameters);
+            var sensors = base.GetObjectsInternal(parameters);
+
+            if(Group != null && Recurse)
+                client.Log($"Found {sensors.Count} {"sensor".Plural(sensors)} in group {Group}", LogLevel.Trace);
+
+            return sensors;
         }
 
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override List<Sensor> GetAdditionalRecords(SensorParameters parameters)
+        protected override IEnumerable<Sensor> GetAdditionalRecords(SensorParameters parameters)
         {
             return GetAdditionalGroupRecords(Group, g => g.TotalSensors, parameters);
         }

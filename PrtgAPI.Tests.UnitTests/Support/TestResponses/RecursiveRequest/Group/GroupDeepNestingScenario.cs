@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class GroupDeepNestingScenario : GroupScenario
     {
@@ -68,19 +68,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             );
         }
 
-        private GroupNode Servers => probe.Groups.First(g => g.Name == "Servers");
+        protected GroupNode Servers => probe.Groups.First(g => g.Name == "Servers");
 
-        private List<GroupNode> WindowsServers => Servers.Groups;
+        protected List<GroupNode> WindowsServers => Servers.Groups;
 
-        private List<GroupNode> DomainExchangeSqlServers => Servers.Groups.SelectMany(g => g.Groups).ToList();
+        protected List<GroupNode> DomainExchangeSqlServers => Servers.Groups.SelectMany(g => g.Groups).ToList();
 
         #region Domain Controllers
 
-        private List<GroupNode> DomainControllerDCs => DomainExchangeSqlServers.First(g => g.Name == "Domain Controllers").Groups;
+        protected List<GroupNode> DomainControllerDCs => DomainExchangeSqlServers.First(g => g.Name == "Domain Controllers").Groups;
 
-        private List<GroupNode> Server2003DCs => DomainControllerDCs.First(g => g.Name == "Server 2003 DCs").Groups;
+        protected List<GroupNode> Server2003DCs => DomainControllerDCs.First(g => g.Name == "Server 2003 DCs").Groups;
 
-        private List<GroupNode> Active2003DCs => Server2003DCs.First(g => g.Name == "Active 2003 DCs").Groups;
+        protected List<GroupNode> Active2003DCs => Server2003DCs.First(g => g.Name == "Active 2003 DCs").Groups;
 
         private List<GroupNode> Server2008DCs => DomainControllerDCs.First(g => g.Name == "Server 2008 DCs").Groups;
 
@@ -140,7 +140,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     return GetChildren(Server2008DCs, 2007, address);
 
                 case 8: //Get all groups under "Server 2012 DCs"
-                    return GetChildren(Server2008DCs, 2008, address);
+                    return GetChildren(Server2012DCs, 2008, address);
 
                 #endregion
                 #region Exchange Servers
@@ -181,7 +181,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
 
         private GroupResponse GetChildren(List<GroupNode> groupChildren, int parentId, string address)
         {
-            Assert.IsTrue(address.Contains($"filter_name=@sub()&filter_parentid={parentId}"));
+            Assert.AreEqual(TestHelpers.RequestGroup($"count=*&filter_parentid={parentId}", UrlFlag.Columns), address);
             return new GroupResponse(groupChildren.Select(g => g.GetTestItem()).ToArray());
         }
     }

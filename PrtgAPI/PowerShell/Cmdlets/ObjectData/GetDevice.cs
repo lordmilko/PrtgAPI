@@ -113,15 +113,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetDevice"/> class.
         /// </summary>
-        public GetDevice() : base(Content.Devices, null)
+        public GetDevice() : base(Content.Devices, false)
         {
+        }
+
+        internal override bool StreamCount()
+        {
+            return !(Group != null && Recurse);
         }
 
         /// <summary>
         /// Retrieves additional records not included in the initial request.
         /// </summary>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override List<Device> GetAdditionalRecords(DeviceParameters parameters)
+        protected override IEnumerable<Device> GetAdditionalRecords(DeviceParameters parameters)
         {
             return GetAdditionalGroupRecords(Group, g => g.TotalDevices, parameters);
         }

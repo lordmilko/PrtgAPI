@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class GroupUniqueGroupScenario : GroupScenario
     {
@@ -34,15 +33,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             switch (requestNum)
             {
-                case 1: //Get all groups. We say there is only one group, named "Servers"
-                    Assert.AreEqual(Content.Groups, content);
-                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").GetTestItem());
+                case 1: //Get the "Servers" group
+                    AssertGroupRequest(address, content, "filter_name=Servers");
 
-                case 2: //Get all groups under the parent group that match the initial filter
-                    Assert.AreEqual(Content.Groups, content);
-                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=2000"));
-                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.Select(g => g.GetTestItem()).ToArray());
+                    return new GroupResponse(probe.Groups.First().GetTestItem());
 
+                case 2: //Get all groups under the "Servers" group
+                    AssertGroupRequest(address, content, "filter_parentid=2000");
+
+                    return GetGroupResponse(probe.Groups.First().Groups);
                 default:
                     throw UnknownRequest(address);
             }

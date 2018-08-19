@@ -107,6 +107,105 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
 
             $groups.Count | Should Be 33
         }
+        It "retrieves a single object while recursing" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupRecurseAvailableSingleCount"
+
+            $group = @(Get-Group Windows* | Get-Group -Count 1)
+
+            $group.Count | Should Be 1
+
+            $group[0].Name | Should Be "Domain Controllers"
+        }
+
+        It "retrieves a specified count while recursing" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupRecurseAvailableCount"
+
+            $groups = Get-Group Windows* | Get-Group -Count 2
+
+            $groups.Count | Should Be 2
+
+            $groups[0].Name | Should Be "Domain Controllers"
+            $groups[1].Name | Should Be "Server 2003 DCs"
+        }
+
+        It "retrieves the maximum amount of records with a -Count that is too high" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupRecurseUnavailableCount"
+
+            $groups = Get-Group Windows* | Get-Group -Count 9999
+
+            $groups.Count | Should Be 32
+
+            $groups[0].Name | Should Be "Domain Controllers"
+
+            $groups[1].Name | Should Be "Server 2003 DCs"
+            $groups[2].Name | Should Be "Active 2003 DCs"
+            $groups[3].Name | Should Be "Fully Active 2003 DCs"
+            $groups[4].Name | Should Be "Partially Active 2003 DCs"
+            $groups[5].Name | Should Be "Inactive 2003 DCs"
+
+            $groups[6].Name | Should Be "Server 2008 DCs"
+            $groups[7].Name | Should Be "Active 2008 DCs"
+            $groups[8].Name | Should Be "Inactive 2008 DCs"
+
+            $groups[9].Name | Should Be "Server 2012 DCs"
+            $groups[10].Name | Should Be "Active 2012 DCs"
+            $groups[11].Name | Should Be "Inactive 2012 DCs"
+
+            $groups[12].Name | Should Be "Exchange Servers"
+            $groups[13].Name | Should Be "Server 2003 Exchanges"
+            $groups[14].Name | Should Be "Active 2003 Exchanges"
+            $groups[15].Name | Should Be "Inactive 2003 Exchanges"
+
+            $groups[16].Name | Should Be "Server 2008 Exchanges"
+            $groups[17].Name | Should Be "Active 2008 Exchanges"
+            $groups[18].Name | Should Be "Inactive 2008 Exchanges"
+
+            $groups[19].Name | Should Be "Server 2012 Exchanges"
+            $groups[20].Name | Should Be "Active 2012 Exchanges"
+            $groups[21].Name | Should Be "Inactive 2012 Exchanges"
+
+            $groups[22].Name | Should Be "SQL Servers"
+            $groups[23].Name | Should Be "Server 2003 SQLs"
+            $groups[24].Name | Should Be "Active 2003 SQLs"
+            $groups[25].Name | Should Be "Inactive 2003 SQLs"
+
+            $groups[26].Name | Should Be "Server 2008 SQLs"
+            $groups[27].Name | Should Be "Active 2008 SQLs"
+            $groups[28].Name | Should Be "Inactive 2008 SQLs"
+
+            $groups[29].Name | Should Be "Server 2012 SQLs"
+            $groups[30].Name | Should Be "Active 2012 SQLs"
+            $groups[31].Name | Should Be "Inactive 2012 SQLs"
+        }
+
+        It "retrieves the specified number of records with -Recurse:`$false" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupNoRecurseAvailableCount"
+
+            $groups = Get-Group Windows* | Get-Group -Count 2 -Recurse:$false
+
+            $groups.Count | Should Be 2
+
+            $groups[0].Name | Should Be "Domain Controllers"
+            $groups[1].Name | Should Be "Exchange Servers"
+        }
+
+        It "retrieves the maximum number of records with a -Count that is too high with -Recurse:`$false" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupNoRecurseUnavailableCount"
+
+            $groups = Get-Group Windows* | Get-Group -Count 9999 -Recurse:$false
+
+            $groups.Count | Should Be 3
+
+            $groups[0].Name | Should Be "Domain Controllers"
+            $groups[1].Name | Should Be "Exchange Servers"
+            $groups[2].Name | Should Be "SQL Servers"
+        }
+    }
+
     Context "Dynamic" {
         It "uses dynamic parameters" {
             SetAddressValidatorResponse "filter_position=0000000030"

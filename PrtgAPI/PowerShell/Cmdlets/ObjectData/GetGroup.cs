@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
@@ -107,8 +109,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetGroup"/> class.
         /// </summary>
-        public GetGroup() : base(Content.Groups, null)
+        public GetGroup() : base(Content.Groups, false)
         {
+        }
+
+        internal override bool StreamCount()
+        {
+            return !(Group != null && Recurse);
         }
 
         internal override List<Group> GetObjectsInternal(GroupParameters parameters)
@@ -124,9 +131,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Retrieves additional records not included in the initial request.
         /// </summary>
         /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected override List<Group> GetAdditionalRecords(GroupParameters parameters)
+        protected override IEnumerable<Group> GetAdditionalRecords(GroupParameters parameters)
         {
-            return GetAdditionalGroupRecords(Group, g => g.TotalGroups, parameters);
+            //If recursing, get all groups under the parent group without filtering by any
+            //specified filters such as Name, etc
+            var records = GetAdditionalGroupRecords(Group, g => g.TotalGroups, parameters);
+            return records;
         }
 
         /// <summary>

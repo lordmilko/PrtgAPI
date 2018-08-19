@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class GroupUniqueChildGroupScenario : GroupUniqueGroupScenario
     {
@@ -39,16 +38,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case 1: //Get all groups. We say there is only one group, named "Servers"
                     return base.GetResponse(address, content);
 
-                case 2: //Get all groups under the parent group that match the initial filter (returns "Windows Servers")
-                    Assert.AreEqual(Content.Groups, content);
-                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=2000"));
-                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.Select(g => g.GetTestItem()).ToArray());
+                case 2: //Get all groups under the parent group (returns "Windows Servers")
+                    AssertGroupRequest(address, content, "filter_parentid=2000");
 
-                case 3: //Get all groups under the child group that match the initial filter (returns "Domain Controllers")
-                    Assert.AreEqual(Content.Groups, content);
-                    Assert.IsTrue(address.Contains("filter_name=@sub()&filter_parentid=2002"));
-                    return new GroupResponse(probe.Groups.First(g => g.Name == "Servers").Groups.First(g => g.Id == 2002).Groups.Select(g => g.GetTestItem()).ToArray());
+                    return GetGroupResponse(probe.Groups.First().Groups);
+                case 3: //Get all groups under the child group (returns "Domain Controllers")
+                    AssertGroupRequest(address, content, "filter_parentid=2002");
 
+                    return GetGroupResponse(probe.Groups.First().Groups.First().Groups);
                 default:
                     throw UnknownRequest(address);
             }

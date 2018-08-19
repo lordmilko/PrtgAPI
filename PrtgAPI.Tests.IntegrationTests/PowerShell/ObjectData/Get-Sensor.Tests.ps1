@@ -158,6 +158,37 @@ Describe "Get-Sensor_IT" {
 
         ($sensors.Count) | Should Be $count
     }
+
+    It "can recursively retrieve sensors from a group when specifying -Count" {
+
+        $group = Get-Group -Id (Settings Group)
+
+        $sensors = $group | Get-Sensor -Count 3
+
+        $sensors.Count | Should Be 3
+
+        $nonrecurseSensors = $group | Get-Sensor -Recurse:$false
+        $allSensors = $group | Get-Sensor
+
+        $nonrecurseSensors.Count | Should Be (Settings SensorsInTestGroup)
+        $allSensors.Count | Should BeGreaterThan $nonrecurseSensors.Count
+
+        $allSensorsViaCount = $group | Get-Sensor -Count $group.TotalSensors
+
+        $allSensorsViaCount.Count | Should Be $group.TotalSensors
+    }
+
+    It "asks for more -Count than exist" {
+
+        $sensors = Get-Sensor
+
+        ($sensors | where name -EQ "Ping").Count | Should Be 2
+
+        $pingSensors = Get-Sensor ping -Count 3
+
+        $pingSensors.Count | Should Be 2
+    }
+
     It "uses dynamic parameters" {
 
         $sensors = Get-Sensor -Position 1

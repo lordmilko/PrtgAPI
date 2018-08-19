@@ -1,7 +1,7 @@
 ﻿using System;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class RecursiveRequestResponse : MultiTypeResponse
     {
@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         {
             switch (scenario)
             {
-            #region Sensor
+                #region Sensor
                 case RecursiveRequestScenario.SensorUniqueGroup:
                     this.scenario = new SensorUniqueGroupScenario();
                     break;
@@ -29,6 +29,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                     break;
                 case RecursiveRequestScenario.SensorDeepNesting:
                     this.scenario = new SensorDeepNestingScenario();
+                    break;
+                case RecursiveRequestScenario.SensorDeepNestingChild:
+                    this.scenario = new SensorDeepNestingChildScenario();
+                    break;
+                case RecursiveRequestScenario.SensorDeepNestingGrandChild:
+                    this.scenario = new SensorDeepNestingGrandChildScenario();
+                    break;
+                case RecursiveRequestScenario.SensorDeepNestingGreatGrandChild:
+                    this.scenario = new SensorDeepNestingGreatGrandChildScenario();
                     break;
                 #endregion
                 #region Device
@@ -50,6 +59,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case RecursiveRequestScenario.DeviceDeepNesting:
                     this.scenario = new DeviceDeepNestingScenario();
                     break;
+                case RecursiveRequestScenario.DeviceDeepNestingChild:
+                    this.scenario = new DeviceDeepNestingChildScenario();
+                    break;
+                case RecursiveRequestScenario.DeviceDeepNestingGrandChild:
+                    this.scenario = new DeviceDeepNestingGrandChildScenario();
+                    break;
+                case RecursiveRequestScenario.DeviceDeepNestingGreatGrandChild:
+                    this.scenario = new DeviceDeepNestingGreatGrandChildScenario();
+                    break;
                 #endregion
                 #region Group
                 case RecursiveRequestScenario.GroupUniqueGroup:
@@ -70,6 +88,34 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
                 case RecursiveRequestScenario.GroupDeepNesting:
                     this.scenario = new GroupDeepNestingScenario();
                     break;
+                case RecursiveRequestScenario.GroupDeepNestingChild:
+                    this.scenario = new GroupDeepNestingChildScenario();
+                    break;
+                case RecursiveRequestScenario.GroupDeepNestingGrandChild:
+                    this.scenario = new GroupDeepNestingGrandChildScenario();
+                    break;
+                case RecursiveRequestScenario.GroupDeepNestingGreatGrandChild:
+                    this.scenario = new GroupDeepNestingGreatGrandChildScenario();
+                    break;
+                #endregion
+                #region Count
+
+                case RecursiveRequestScenario.GroupRecurseAvailableCount:
+                    this.scenario = new GroupRecurseAvailableCount();
+                    break;
+                case RecursiveRequestScenario.GroupRecurseUnavailableCount:
+                    this.scenario = new GroupRecurseUnavailableCount();
+                    break;
+                case RecursiveRequestScenario.GroupRecurseAvailableSingleCount:
+                    this.scenario = new GroupRecurseAvailableSingleCount();
+                    break;
+                case RecursiveRequestScenario.GroupNoRecurseAvailableCount:
+                    this.scenario = new GroupNoRecurseAvailableCount();
+                    break;
+                case RecursiveRequestScenario.GroupNoRecurseUnavailableCount:
+                    this.scenario = new GroupNoRecurseUnavailableCount();
+                    break;
+
                 #endregion
 
                 default:

@@ -93,6 +93,25 @@ Describe "Get-Group_IT" {
 
         ($groups.Count) | Should Be $count
     }
+
+    It "can recursively retrieve groups from a group when specifying -Count" {
+
+        $group = Get-Group -Id (Settings Group)
+
+        $groups = $group | Get-Group -Count 1
+
+        $groups.Count | Should Be 1
+
+        $nonrecurseGroups = $group | Get-Group -Recurse:$false
+        $allGroups = $group | Get-Group
+
+        $nonrecurseGroups.Count | Should Be (Settings GroupsInTestGroup)
+        $allGroups.Count | Should BeGreaterThan $nonrecurseSensors.Count
+
+        $allGroupsViaCount = $group | Get-Group -Count $group.TotalGroups
+
+        $allGroupsViaCount.Count | Should Be $group.TotalGroups
+    }
     It "uses dynamic parameters" {
         $groups = Get-Group -Position 2
 

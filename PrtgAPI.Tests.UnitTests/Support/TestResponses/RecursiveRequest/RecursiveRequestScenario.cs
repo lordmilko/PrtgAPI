@@ -1,4 +1,4 @@
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public enum RecursiveRequestScenario
     {
@@ -8,6 +8,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         SensorDuplicateChildGroup,
         SensorNoRecurse,
         SensorDeepNesting,
+        SensorDeepNestingChild,
+        SensorDeepNestingGrandChild,
+        SensorDeepNestingGreatGrandChild,
 
         DeviceUniqueGroup,
         DeviceDuplicateGroup,
@@ -15,12 +18,24 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
         DeviceDuplicateChildGroup,
         DeviceNoRecurse,
         DeviceDeepNesting,
+        DeviceDeepNestingChild,
+        DeviceDeepNestingGrandChild,
+        DeviceDeepNestingGreatGrandChild,
 
         GroupUniqueGroup,
         GroupDuplicateGroup,
         GroupUniqueChildGroup,
         GroupDuplicateChildGroup,
         GroupNoRecurse,
-        GroupDeepNesting
+        GroupDeepNesting,
+        GroupDeepNestingChild,
+        GroupDeepNestingGrandChild,
+        GroupDeepNestingGreatGrandChild,
+
+        GroupRecurseAvailableCount,
+        GroupRecurseUnavailableCount,
+        GroupRecurseAvailableSingleCount,
+        GroupNoRecurseAvailableCount,
+        GroupNoRecurseUnavailableCount,
     }
 }
