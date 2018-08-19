@@ -56,6 +56,25 @@ namespace PrtgAPI.Request.Serialization.Cache
             return GetValue(lockEnumCache, type, enumCache, t => new EnumCache(t));
         }
 
+        public static PropertyInfo GetArrayPropertyInfo(Type type)
+        {
+            if (type == null)
+                return null;
+
+            return GetValue(lockArrayPropertyCache, type, arrayPropertyCache, t =>
+            {
+                if (t.IsArray)
+                    return GetArrayPropertyInfo(t.GetElementType());
+
+                var underlying = Nullable.GetUnderlyingType(t);
+
+                if (underlying != null)
+                    return GetArrayPropertyInfo(underlying);
+
+                var arrayProperties = Get(typeof(DynamicParameterPropertyTypes)).Properties;
+
+                return arrayProperties.FirstOrDefault(p => p.Property.PropertyType.GetElementType().Name == t.Name)?.Property;
+            }).Cache;
         }
 
         public static CacheValue<EnumXmlCache> GetEnumXml(Type type)

@@ -95,5 +95,40 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
 
             $groups.Count | Should Be 33
         }
+    Context "Dynamic" {
+        It "uses dynamic parameters" {
+            SetAddressValidatorResponse "filter_position=0000000030"
+
+            Get-Group -Position 3
+        }
+
+        It "throws using a dynamic parameter not supported by this type" {
+            { Get-Group -Host dc-1 } | Should Throw "A parameter cannot be found that matches parameter name 'Host'"
+        }
+
+        It "uses dynamic parameters in conjunction with regular parameters" {
+
+            SetAddressValidatorResponse "filter_name=@sub(servers)&filter_objid=3&filter_parentid=30"
+
+            Get-Group *servers* -Id 3 -ParentId 30
+        }
+
+        It "uses wildcards with a dynamic parameter" {
+            
+            SetAddressValidatorResponse "filter_message=@sub(1)"
+
+            $group = @(Get-Group -Count 3 -Message "*1")
+
+            $group.Count | Should Be 1
+
+            $group.Name | Should Be "Windows Infrastructure1"
+        }
+
+        It "uses a bool with a dynamic parameter" {
+
+            SetAddressValidatorResponse "filter_active=-1"
+
+            Get-Group -Active $true
+        }
     }
 }

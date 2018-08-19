@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -10,9 +11,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Get-Device cmdlet retrieves devices from a PRTG Server. Devices hold sensors used to monitor a particular system.
     /// Get-Device provides a variety of methods of filtering the devices requested from PRTG, including by device name, ID and tags, as well as parent probe/group.
-    /// Multiple filters can be used in conjunction to futher limit the number of results returned.</para>
+    /// Multiple filters can be used in conjunction to futher limit the number of results returned. Device properties that do not contain explicitly defined
+    /// parameters on Get-Device can be specified as dynamic parameters, allowing one or more values to be specified of the specified type. All string parameters
+    /// support the use of wildcards.</para>
     /// 
-    /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Device, a custom <see cref="SearchFilter"/>
+    /// <para type="description">For scenarios in which you wish to exert finer grained control over search filters, a custom <see cref="SearchFilter"/>
     /// object can be created by specifying the field name, condition and value to filter upon. For information on properties that can be filtered upon,
     /// see New-SearchFilter.</para>
     /// 
@@ -65,8 +68,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
+    ///     <code>C:\> Get-Device -Location "*new york*"</code>
+    ///     <para>Get all devices whose location contains "new york" using a dynamic parameter.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
     ///     <code>C:\> flt location contains "new york" | Get-Device</code>
-    ///     <para>Get all devices whose location contains "new york"</para>
+    ///     <para>Get all devices whose location contains "new york" using a SearchFilter.</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -82,7 +90,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Device))]
     [Cmdlet(VerbsCommon.Get, "Device", DefaultParameterSetName = LogicalAndTags)]
-    public class GetDevice : PrtgTableRecurseCmdlet<Device, DeviceParameters>
+    public class GetDevice : PrtgTableRecurseCmdlet<Device, DeviceParameters>, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">The group to retrieve devices for.</para>
@@ -95,6 +103,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public Probe Probe { get; set; }
+        /// <summary>
+        /// <para type="description">Filter the response to devices with a certain HostName/IP Address. Can include wildcards.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public new string[] Host { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetDevice"/> class.
@@ -123,6 +136,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 AddPipelineFilter(Property.ParentId, Group.Id);
 
             base.ProcessAdditionalParameters();
+        }
+
+        /// <summary>
+        /// Process any post retrieval filters specific to the current cmdlet.
+        /// </summary>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>The filtered records.</returns>
+        protected override IEnumerable<Device> PostProcessAdditionalFilters(IEnumerable<Device> records)
+        {
+            records = FilterResponseRecordsByWildcardArray(Host, d => d.Host, records);
+            return base.PostProcessAdditionalFilters(records);
         }
 
         /// <summary>

@@ -71,5 +71,44 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
 
             $devices.Count | Should Be 2
         }
+    Context "Dynamic" {
+        It "uses dynamic parameters" {
+            SetAddressValidatorResponse "filter_position=0000000030"
+
+            Get-Device -Position 3
+        }
+
+        It "throws using a dynamic parameter not supported by this type" {
+            { Get-Device -LastValue 3 } | Should Throw "A parameter cannot be found that matches parameter name 'LastValue'"
+        }
+
+        It "uses dynamic parameters in conjunction with regular parameters" {
+
+            SetAddressValidatorResponse "filter_name=@sub(dc)&filter_objid=3&filter_parentid=30"
+
+            Get-Device *dc* -Id 3 -ParentId 30
+        }
+
+        It "uses wildcards with a dynamic parameter" {
+            
+            SetAddressValidatorResponse "filter_message=@sub(1)"
+
+            $device = @(Get-Device -Count 3 -Message "*1")
+
+            $device.Count | Should Be 1
+
+            $device.Name | Should Be "Probe Device1"
+        }
+
+        It "uses a bool with a dynamic parameter" {
+
+            SetAddressValidatorResponse "filter_favorite=1"
+
+            Get-Device -Favorite $true
+        }
+
+        It "throws using unsupported filters in dynamic parameters" {
+            { Get-Device -Favorite $false } | Should Throw "Cannot filter where property 'Favorite' equals '0'."
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -10,12 +11,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Get-Probe cmdlet retrieves probes from a PRTG Server. Probes represent sites where the 
     /// PRTG Probe Service has been installed. Each PRTG Server has a single Core Probe. Additional probes may be installed
-    /// with the PRTG Remote Probe installer for monitoring of remote sites. Get-Probe provides a variety of methods of filtering
-    /// the probes requested from PRTG, including by probe name, probe status (Connected / Disconnected), ID and tags.
-    /// Multiple filters can be used in conjunction to further limit the number of results returned.</para>
+    /// with the PRTG Remote Probe installer for monitoring of remote sites.</para>
     /// 
-    /// <para type="description">For scenarios in which you wish to filter on properties not covered by the parameters available
-    /// in Get-Probe, a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value
+    /// <para type="description">Get-Probe provides a variety of methods of filtering the probes requested from PRTG,
+    /// including by probe name, probe status (Connected / Disconnected), ID and tags.
+    /// Multiple filters can be used in conjunction to further limit the number of results returned. Probe properties that do
+    /// not contain explicitly defined parameters on Get-Group can be specified as dynamic parameters, allowing one or more
+    /// values to be specified of the specified type. All string parameters support the use of wildcards.</para>
+    /// 
+    /// <para type="description">For scenarios in which you wish to exert finer grained control over search filters,
+    /// a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value
     /// to filter upon. For information on properties that can be filtered upon, see New-SearchFilter</para>
     /// 
     /// <para type="description">Get-Probe provides two parameter sets for filtering objects by tags. When filtering for probes
@@ -43,6 +48,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
+    ///     <code>C:\> Get-Probe -TotalGroups 10</code>
+    ///     <para>Get all probes that contain exactly 10 child groups using dynamic parameters.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> flt totalgroups eq 10 | Get-Probe</code>
+    ///     <para>Get all probes that contain exactly 10 child groups using a SearchFilter.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
     ///     <code>C:\> Get-Probe -Count 1</code>
     ///     <para>Get only 1 probe from PRTG.</para>
     ///     <para/>
@@ -58,7 +73,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SearchFilter</para>
     [OutputType(typeof(Probe))]
     [Cmdlet(VerbsCommon.Get, "Probe", DefaultParameterSetName = LogicalAndTags)]
-    public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>
+    public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">Only retrieve probes that match a specified connection state.</para>

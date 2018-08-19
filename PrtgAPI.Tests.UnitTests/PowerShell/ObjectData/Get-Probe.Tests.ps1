@@ -57,6 +57,43 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
         flt parentid eq 0 | Get-Probe
     }
 
+    Context "Dynamic" {
+        It "uses dynamic parameters" {
+            SetAddressValidatorResponse "filter_position=0000000030"
+
+            Get-Probe -Position 3
+        }
+
+        It "throws using a dynamic parameter not supported by this type" {
+            { Get-Probe -Host dc-1 } | Should Throw "A parameter cannot be found that matches parameter name 'Host'"
+        }
+
+        It "uses dynamic parameters in conjunction with regular parameters" {
+
+            SetAddressValidatorResponse "filter_name=@sub(probe)&filter_objid=3&filter_parentid=0"
+
+            Get-Probe *probe* -Id 3 -ParentId 0
+        }
+
+        It "uses wildcards with a dynamic parameter" {
+            
+            SetAddressValidatorResponse "filter_message=@sub(1)"
+
+            $sensor = @(Get-Probe -Count 3 -Message "*1")
+
+            $sensor.Count | Should Be 1
+
+            $sensor.Name | Should Be "127.0.0.11"
+        }
+
+        It "uses a bool with a dynamic parameter" {
+
+            SetAddressValidatorResponse "filter_active=-1"
+
+            Get-Probe -Active $true
+        }
+    }
+
     It "throws specifying a ParentId other than 0" {
         { flt parentid eq -1 | Get-Probe } | Should Throw "Cannot filter for probes based on a ParentId other than 0"
     }

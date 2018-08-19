@@ -93,4 +93,37 @@ Describe "Get-Group_IT" {
 
         ($groups.Count) | Should Be $count
     }
+    It "uses dynamic parameters" {
+        $groups = Get-Group -Position 2
+
+        $groups.Count | Should BeGreaterThan 0
+
+        foreach($group in $groups)
+        {
+            $group.Position | Should Be 2
+        }
+    }
+
+    It "uses dynamic parameters in conjunction with regular parameters" {
+        $groups = @(Get-Group (Settings GroupName) -Position 2)
+
+        $groups.Count | Should BeGreaterThan 0
+
+        foreach($group in $groups)
+        {
+            $group.Name | Should Be (Settings GroupName)
+            $group.Position | Should Be 2
+        }
+    }
+
+    It "uses wildcards with dynamic parameters" {
+        $groups = Get-Group -Message *o*
+
+        $groups.Count | Should BeGreaterThan 0
+
+        foreach($group in $groups)
+        {
+            $group.Message | Should BeLike "*o*"
+        }
+    }
 }

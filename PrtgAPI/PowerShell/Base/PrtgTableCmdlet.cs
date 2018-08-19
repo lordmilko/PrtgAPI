@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PrtgAPI.Attributes;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Helpers;
+using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request.Serialization.Cache;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -46,15 +51,61 @@ namespace PrtgAPI.PowerShell.Base
         protected Content content;
 
         /// <summary>
+        /// The search filters that were specified via dynamic parameters.
+        /// </summary>
+        private List<SearchFilter> dynamicParameters;
+        private DynamicParameterSet<Property> dynamicParameterSet;
+
+        private List<SearchFilter> filters;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PrtgTableCmdlet{TObject,TParam}"/> class. 
         /// </summary>
         /// <param name="content">The type of content this cmdlet will retrieve.</param>
-        /// <param name="streamThreshold">The numeric threshold at which this cmdlet should show a progress bar when retrieving results.</param>
-        /// <param name="streamSerial">Indicates that if the current cmdlet streams, it should do so one at a time instead of all at once.</param>
-        protected PrtgTableCmdlet(Content content, int? streamThreshold, bool streamSerial = false)
+        /// <param name="shouldStream">Whether this cmdlet should have streaming enabled.</param>
+        protected PrtgTableCmdlet(Content content, bool? shouldStream)
         {
-            ((IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>)this).StreamProvider = new StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>(this, streamThreshold, streamSerial);
+            ((IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>)this).StreamProvider = new StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>(this, shouldStream);
             this.content = content;
+        }
+
+        /// <summary>
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
+        /// </summary>
+        protected override void BeginProcessingEx()
+        {
+            if (this is IDynamicParameters && dynamicParameterSet != null)
+            {
+                dynamicParameters = dynamicParameterSet.GetBoundParameters(this, (p, v) =>
+                {
+                    var cleaned = PSObjectHelpers.CleanPSObject(v);
+
+                    if (cleaned == null)
+                        return new List<SearchFilter>();
+
+                    var underlying = cleaned.GetType().GetElementType() ?? cleaned.GetType();
+
+                    if (underlying == typeof(object))
+                    {
+                        if (cleaned.IsIEnumerable())
+                        {
+                            var first = cleaned.ToIEnumerable().FirstOrDefault();
+
+                            if (first != null)
+                                underlying = first.GetType();
+                        }
+                    }
+
+                    if(underlying == typeof(string))
+                        return GetWildcardFilters(p, cleaned, val => val.ToString());
+                    if(typeof(IStringEnum).IsAssignableFrom(underlying))
+                        return GetWildcardFilters(p, cleaned, val => ((IStringEnum)val).StringValue);
+
+                    return new[] {GetPipelineFilter(p, cleaned)};
+                });
+            }
+
+            base.BeginProcessingEx();
         }
 
         /// <summary>
@@ -62,21 +113,53 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            ValidateParameters();
-
             var parameters = ProcessParameters();
             var records = GetRecordsInternal(parameters);
 
             WriteList(records);
-
-            //Clear the filters for the next element on the pipeline, which will simply reuse the existing PrtgTableCmdlet object
-            Filter = null;
         }
 
-        private void ValidateParameters()
+        #region Core
+
+        private IEnumerable<TObject> GetRecordsInternal(TParam parameters)
         {
-            if (MyInvocation.BoundParameters.ContainsKey("Id") && MyInvocation.BoundParameters["Id"] == null)
-                throw new ParameterBindingException("The -Id parameter was specified however the parameter value was null.");
+            IEnumerable<TObject> records;
+
+            if (ProgressManager.GetRecordsWithVariableProgress)
+                records = GetResultsWithVariableProgress(() => GetObjects(parameters));
+            else if (ProgressManager.GetResultsWithProgress)
+                records = GetResultsWithProgress(() => GetObjects(parameters));
+            else
+            {
+                if (StreamProvider.StreamResults || StreamProvider.ForceStream)
+                    records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetObjects(parameters));
+                else
+                    records = GetObjects(parameters);
+            }
+
+            records = PostProcessRecords(records);
+            records = SortReturnedRecordsRunner(records);
+
+            return records;
+        }
+
+        /// <summary>
+        /// Retrieves all records of a specified type from a PRTG Server using the types default parameters.
+        /// This method should never be executed.
+        /// </summary>
+        /// <returns></returns>
+        [ExcludeFromCodeCoverage]
+        protected override IEnumerable<TObject> GetRecords()
+        {
+            return GetObjects(CreateParameters());
+        }
+
+        private IEnumerable<TObject> GetObjects(TParam parameters)
+        {
+            if (StreamProvider.StreamResults || StreamProvider.ForceStream)
+                return GetObjectsWhenStreaming(parameters);
+
+            return GetObjectsWhenNotStreaming(parameters);
         }
 
         private IEnumerable<TObject> GetObjectsWhenStreaming(TParam parameters)
@@ -107,11 +190,21 @@ namespace PrtgAPI.PowerShell.Base
 
                 return iterator;
             }
-                
-            return GetObjects(parameters);
+
+            return StreamProvider.StreamRecords<TObject>(parameters, Count);
         }
 
-        private void PreProcessFilter()
+        private IEnumerable<TObject> GetObjectsWhenNotStreaming(TParam parameters)
+        {
+            if (Count != null && filters != null)
+                return StreamObjectsWhenNotStreaming(parameters);
+
+            //Not streaming and don't need to. Just execute a normal request
+            var objs = GetObjectsAndAdditionalRecords(parameters);
+
+            return objs;
+        }
+
         private IEnumerable<TObject> StreamObjectsWhenNotStreaming(TParam parameters)
         {
             var streamCount = StreamCount();
@@ -133,6 +226,7 @@ namespace PrtgAPI.PowerShell.Base
 
             return iterator;
         }
+
         private Func<TParam, Func<int>, IEnumerable<TObject>> GetNotStreamingStreamer(bool streamCount)
         {
             Func<TParam, Func<int>, IEnumerable<TObject>> streamer;
@@ -154,33 +248,89 @@ namespace PrtgAPI.PowerShell.Base
             return streamer;
         }
 
-                var cleanValue = Regex.Replace(filter.Value.ToString(), "[^a-zA-Z0-9_]", string.Empty);
+        internal virtual List<TObject> GetObjectsInternal(TParam parameters) =>
+            client.ObjectEngine.GetObjects<TObject>(parameters);
 
-                var result = ParseEnumFilter(property, filter, cleanValue);
+        internal virtual bool StreamCount()
+        {
+            return false;
+        }
 
-                if (result != null)
-                    return result;
+        /// <summary>
+        /// Retrieves additional records not included in the initial request.
+        /// </summary>
+        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
+        protected virtual IEnumerable<TObject> GetAdditionalRecords(TParam parameters) => new List<TObject>();
 
-                //Filter value could in fact be the display value of a raw type. See whether any internal properties starting with
-                //the expected property name exist also ending with "raw". If so, if that property is an enum, strip all
-                //invalid characters from the value and try and lookup an enum member with that name
-                var propertyRaw = typeof (TObject).GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(p => p.Name.ToLower() == (property.Name + "raw").ToLower());
+        private IEnumerable<TObject> GetObjectsAndAdditionalRecords(TParam parameters)
+        {
+            var objs = GetObjectsInternal(parameters);
 
-                if (propertyRaw == null)
-                    return filter;
+            return objs.Union(GetAdditionalRecords(parameters));
+        }
 
-                result = ParseEnumFilter(propertyRaw, filter, cleanValue);
+        internal object GetDynamicParameters(params string[] parameterSets)
+        {
+            if (parameterSets.Length == 0)
+                parameterSets = new[] { ParameterSet.Dynamic };
 
-                if (result != null)
-                    return result;
+            if (dynamicParameterSet == null)
+            {
+                var properties = ReflectionCacheManager.Get(typeof(TObject)).Properties.
+                    Where(p => p.GetAttribute<PropertyParameterAttribute>() != null).
+                    Select(p => Tuple.Create(p.GetAttribute<PropertyParameterAttribute>().Name.ToEnum<Property>(), p)).ToList();
 
+                dynamicParameterSet = new DynamicParameterSet<Property>(
+                    parameterSets,
+                    e => ReflectionCacheManager.GetArrayPropertyInfo(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
+                    this
+                );
+            }
+
+            return dynamicParameterSet.Parameters;
+        }
+
+        private void PreProcessFilter()
+        {
+            filters = filters.Select(PreProcessFilterInternal).ToList();
+        }
+
+        private SearchFilter PreProcessFilterInternal(SearchFilter filter)
+        {
+            var typeProperties = typeof(TObject).GetTypeCache().Cache.Properties;
+
+            //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
+            var property = typeProperties.FirstOrDefault(p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Name == filter.Property.ToString()));
+
+            if (property == null)
                 return filter;
-            }).ToArray();
+
+            var cleanValue = Regex.Replace(filter.Value.ToString(), "[^a-zA-Z0-9_]", string.Empty);
+
+            var result = ParseEnumFilter(property.Property, filter, cleanValue);
+
+            if (result != null)
+                return result;
+
+            //Filter value could in fact be the display value of a raw type. See whether any internal properties starting with
+            //the expected property name exist also ending with "raw". If so, if that property is an enum, strip all
+            //invalid characters from the value and try and lookup an enum member with that name
+            var propertyRaw = typeProperties.Where(p => p.Property.GetSetMethod() == null).FirstOrDefault(p => p.Property.Name.ToLower() == (property.Property.Name + "raw").ToLower());
+
+            if (propertyRaw == null)
+                return filter;
+
+            result = ParseEnumFilter(propertyRaw.Property, filter, cleanValue);
+
+            if (result != null)
+                return result;
+
+            return filter;
         }
 
         private SearchFilter ParseEnumFilter(PropertyInfo property, SearchFilter filter, string cleanValue)
         {
-            var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+            var type = property.PropertyType.GetUnderlyingType();
 
             if (type.IsEnum)
             {
@@ -195,107 +345,8 @@ namespace PrtgAPI.PowerShell.Base
             return null;
         }
 
-        private IEnumerable<TObject> GetRecordsInternal(TParam parameters)
-        {
-            IEnumerable<TObject> records;
-
-            if (ProgressManager.GetRecordsWithVariableProgress)
-                records = GetResultsWithVariableProgress(() => GetFilteredObjects(parameters));
-            else if (ProgressManager.GetResultsWithProgress)
-                records = GetResultsWithProgress(() => GetFilteredObjects(parameters));
-            else
-            {
-                if (StreamProvider.StreamResults || StreamProvider.ForceStream)
-                    records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetFilteredObjects(parameters));
-                else
-                    records = GetFilteredObjects(parameters);
-            }
-
-            records = PostProcessRecords(records);
-
-            return records;
-        }
-
-        private IEnumerable<TObject> PostProcessRecords(IEnumerable<TObject> records)
-        {
-            records = FilterResponseRecordsByName(records);
-
-            records = PostProcessAdditionalFilters(records);
-
-            return records;
-        }
-
-        /// <summary>
-        /// Process any post retrieval filters specific to the current cmdlet.
-        /// </summary>
-        /// <param name="records">The records to filter.</param>
-        /// <returns>The filtered records.</returns>
-        protected virtual IEnumerable<TObject> PostProcessAdditionalFilters(IEnumerable<TObject> records)
-        {
-            return records;
-        }
-
-        private TParam ProcessParameters()
-        {
-            var parameters = CreateParameters();
-
-            ProcessNameFilter();
-            ProcessAdditionalParameters();
-            ValidateFilters();
-            
-            if (Filter != null)
-                StreamProvider.StreamResults = false;
-
-            if (Count != null)
-            {
-                parameters.Count = Count.Value;
-                StreamProvider.StreamResults = false;
-            }
-
-            if (StreamProvider.StreamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
-                StreamProvider.StreamResults = false;
-
-            return parameters;
-        }
-
-        /// <summary>
-        /// Processes additional parameters specific to the current cmdlet.
-        /// </summary>
-        protected virtual void ProcessAdditionalParameters()
-        {
-        }
-
-        internal virtual void ValidateFilters()
-        {
-            if (Filter != null)
-            {
-                var filters = Filter.ToList();
-
-                var safeProperties = new[]
-                {
-                    Property.ParentId
-                };
-
-                filters = filters.Where(f => safeProperties.All(p => p != f.Property)).ToList();
-
-                if (filters.Count == 1 && filters.Single().Property == Property.Name && Name != null)
-                {
-                    if (!Name.Any(n => n.Contains("*")))
-                        filters.Single().Operator = FilterOperator.Equals;
-                }
-            }
-        }
-
-        private void ProcessNameFilter()
-        {
-            if (Name != null)
-            {
-                foreach (var value in Name)
-                {
-                    AddWildcardFilter(Property.Name, value);
-                }
-            }
-        }
+        #endregion
+        #region Progress
 
         /// <summary>
         /// Display the initial progress message for the first cmdlet in a chain.<para/>
@@ -329,17 +380,122 @@ namespace PrtgAPI.PowerShell.Base
                 return base.GetCount(PostProcessRecords(records), ref count);
         }
 
-        private IEnumerable<TObject> FilterResponseRecordsByName(IEnumerable<TObject> records)
+        #endregion
+        #region Pre-Process
+
+        private TParam ProcessParameters()
         {
-            if (Name != null)
+            //Clear out any filters that may have been set for the previous pipeline object
+            filters = null;
+
+            if (Filter != null && Filter.Length > 0)
             {
-                records = records.Where(record => Name
-                    .Select(name => new WildcardPattern(name, WildcardOptions.IgnoreCase))
-                    .Any(filter => filter.IsMatch(record.Name))
-                );
+                foreach (var f in Filter)
+                    AddToFilter(f);
             }
 
-            return records;
+            var parameters = CreateParameters();
+
+            ProcessNameFilter();
+            ProcessAdditionalParameters();
+            ProcessDynamicParameters();
+            ValidateFilters();
+
+            if (filters != null)
+            {
+                PreProcessFilter();
+                parameters.SearchFilters = filters;
+
+                StreamProvider.StreamResults = false;
+            }
+
+            if (Count != null)
+            {
+                //Count is ignored to an extent due to the use of the TakeIterator.
+                //However, as recurse cmdlets do not stream, specifying a Count is useful in
+                //limiting the number of records returned per child level. e.g. if we specified
+                //-Count 6, if we ask for 6 from everyone we'll eventually get the total amount
+                //we need.
+                parameters.Count = Count.Value;
+                StreamProvider.StreamResults = false;
+            }
+
+            if (StreamProvider.StreamResults && ProgressManager.PartOfChain && !ProgressManager.FirstInChain)
+                StreamProvider.StreamResults = false;
+
+            return parameters;
+        }
+
+        private void ProcessNameFilter()
+        {
+            ProcessWildcardArrayFilter(Property.Name, Name);
+        }
+
+        private void ProcessDynamicParameters()
+        {
+            if (dynamicParameters != null)
+            {
+                foreach (var filter in dynamicParameters)
+                    AddToFilter(filter);
+            }
+        }
+
+        /// <summary>
+        /// Processes additional parameters specific to the current cmdlet.
+        /// </summary>
+        protected virtual void ProcessAdditionalParameters()
+        {
+        }
+
+        internal virtual void ValidateFilters()
+        {
+            if (filters != null)
+            {
+                var safeProperties = new[]
+                {
+                    Property.ParentId
+                };
+
+                var fs = filters.Where(f => safeProperties.All(p => p != f.Property)).ToList();
+
+                if (fs.Count == 1 && fs.Single().Property == Property.Name && Name != null)
+                {
+                    if (!Name.Any(n => n.Contains("*")))
+                        fs.Single().Operator = FilterOperator.Equals;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add an array of filter values that may contain wildcard values.
+        /// </summary>
+        /// <param name="property">The property to filter for.</param>
+        /// <param name="arr">The array of wildcards.</param>
+        protected void ProcessWildcardArrayFilter(Property property, string[] arr)
+        {
+            if (arr != null)
+            {
+                foreach (var value in arr)
+                {
+                    AddWildcardFilter(property, value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a filter for the value contained in a <see cref="NameOrObject{T}"/> object.
+        /// </summary>
+        /// <typeparam name="T">The type of <see cref="PrtgObject"/> possibly contained in <paramref name="obj"/>.</typeparam>
+        /// <param name="objectProperty">The property to filter on if <paramref name="obj"/> contains an object.</param>
+        /// <param name="obj">The object that either contains a <see cref="PrtgObject"/> or a wildcard expression specifying the object name to filter by.</param>
+        /// <param name="getValue">A function that retrieves the property to filter by from the <see cref="PrtgObject"/> when <paramref name="obj"/> contains an object.</param>
+        /// <param name="nameProperty">The property to filter by when <paramref name="obj"/> does not contain an object. If this value is null, <paramref name="objectProperty"/> will be used as the filter property.</param>
+        protected void AddNameOrObjectFilter<T>(Property objectProperty, NameOrObject<T> obj, Func<T, object> getValue, Property? nameProperty = null) where T : PrtgObject
+        {
+            if (obj.IsObject)
+                AddPipelineFilter(objectProperty, getValue(obj.Object));
+            else
+                AddWildcardFilter(nameProperty ?? objectProperty, obj.Name);
         }
 
         /// <summary>
@@ -350,9 +506,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="invalidatesStream">Whether adding this filter precludes the current cmdlet from streaming.</param>
         protected void AddPipelineFilter(Property property, object value, bool invalidatesStream = true)
         {
-            var filter = new SearchFilter(property, FilterOperator.Equals, value);
-
-            AddToFilter(filter, invalidatesStream);
+            AddToFilter(GetPipelineFilter(property, value), invalidatesStream);
         }
 
         /// <summary>
@@ -362,6 +516,11 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="value">The value to filter for.</param>
         protected void AddWildcardFilter(Property property, string value)
         {
+            AddToFilter(GetWildcardFilter(property, value));
+        }
+
+        private SearchFilter GetWildcardFilter(Property property, string value)
+        {
             var parts = CleanWildcard(value);
 
             var trimmed = string.Join(",", parts);
@@ -370,20 +529,39 @@ namespace PrtgAPI.PowerShell.Base
             //what we really wanted once the response is returned
             var filter = new SearchFilter(property, FilterOperator.Contains, trimmed);
 
-            AddToFilter(filter);
+            return filter;
         }
 
-        internal List<string> CleanWildcard(string str)
+        private IEnumerable<SearchFilter> GetWildcardFilters(Property property, object value, Func<object, string> getString)
         {
-            return str.Split('*').Where(p => p != string.Empty).ToList();
+            if (value is IEnumerable && !(value is string))
+            {
+                foreach (var v in (IEnumerable)value)
+                {
+                    yield return GetWildcardFilter(property, getString(v));
+                }
+            }
+            else
+                yield return GetWildcardFilter(property, getString(value));
         }
+
+        private SearchFilter GetPipelineFilter(Property property, object value) =>
+            new SearchFilter(property, FilterOperator.Equals, value);
 
         private void AddToFilter(SearchFilter filter, bool invalidatesStream = true)
         {
             if (invalidatesStream)
                 StreamProvider.StreamResults = false;
 
-            Filter = Filter?.Concat(new[] {filter}).ToArray() ?? new[] {filter};
+            if (filters == null)
+                filters = new List<SearchFilter>();
+
+            filters.Add(filter);
+        }
+
+        internal List<string> CleanWildcard(string str)
+        {
+            return str.Split('*').Where(p => p != string.Empty).ToList();
         }
 
         /// <summary>
@@ -392,49 +570,174 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>The default set of parameters.</returns>
         protected abstract TParam CreateParameters();
 
-        /// <summary>
-        /// Retrieves all records of a specified type from a PRTG Server using the types default parameters.
-        /// </summary>
-        /// <returns></returns>
-        protected override IEnumerable<TObject> GetRecords()
+        #endregion
+        #region Post-Process
+
+        private IEnumerable<TObject> PostProcessRecords(IEnumerable<TObject> records)
         {
-            return GetObjects(CreateParameters());
+            records = FilterResponseRecordsByName(records);
+
+            records = FilterResponseRecordsByDynamic(records);
+
+            records = PostProcessAdditionalFilters(records);
+
+            return records;
         }
 
-        private IEnumerable<TObject> GetObjects(TParam parameters)
+        private IEnumerable<TObject> FilterResponseRecordsByName(IEnumerable<TObject> records)
         {
-            if (StreamProvider.StreamResults || StreamProvider.ForceStream)
-            {
-                return StreamProvider.StreamRecords<TObject>(parameters, Count);
-            }
-            else
-            {
-                var objs = GetObjectsInternal(parameters);
-
-                objs.AddRange(GetAdditionalRecords(parameters));
-
-                return objs;
-            }
+            return FilterResponseRecordsByWildcardArray(Name, s => ((ITableObject)s).Name, records);
         }
 
-        internal virtual List<TObject> GetObjectsInternal(TParam parameters) => client.GetObjects<TObject>(parameters);
+        private IEnumerable<TObject> FilterResponseRecordsByDynamic(IEnumerable<TObject> records)
+        {
+            if (dynamicParameters != null)
+            {
+                //Create a list of mappings between each Property and its associated value
+                var parameters = dynamicParameterSet.GetBoundParameters(this, Tuple.Create).Where(IsStringLike).ToList();
+
+                foreach (var filter in parameters)
+                    records = FilterResponseRecordsByDynamicInternal(filter, records);
+            }
+
+            return records;
+        }
+
+        private bool IsStringLike(Tuple<Property, object> val)
+        {
+            if (val.Item2 == null)
+                return false;
+
+            Type underlying = val.Item2.GetType();
+
+            if (underlying.IsArray)
+                underlying = underlying.GetElementType();
+
+            return underlying == typeof(string) || typeof(IStringEnum).IsAssignableFrom(underlying);
+        }
+
+        private IEnumerable<TObject> FilterResponseRecordsByDynamicInternal(Tuple<Property, object> filter, IEnumerable<TObject> records)
+        {
+            //Get the PropertyInfo the filter Property corresponds to.
+            var property = ReflectionCacheManager.Get(typeof(TObject))
+                .Properties
+                .First(
+                    p => p.GetAttribute<PropertyParameterAttribute>()?.Name.ToEnum<Property>() == filter.Item1
+                );
+
+            if (property.Property.PropertyType.IsArray)
+                throw new NotImplementedException("Cannot filter array properties dynamically");
+
+            //Was the value that was specified enumerable? The answer should always be yes, as
+            //DynamicParameterPropertyTypes only defines array types
+            if (filter.Item2.IsIEnumerable())
+            {
+                //Get the values that were specified
+                var values = GetDynamicWildcardFilterValues(filter);
+
+                return FilterResponseRecordsByWildcardArray(values, r =>
+                {
+                    if (typeof(IStringEnum).IsAssignableFrom(property.Property.PropertyType))
+                    {
+                        return ((IStringEnum) property.Property.GetValue(r)).StringValue;
+                    }
+
+                    return property.Property.GetValue(r).ToString();
+                }, records);
+            }
+
+            throw new NotImplementedException($"All PropertyInfo values should be array types, however type {filter.Item2.GetType().FullName} was not");
+        }
+
+        private string[] GetDynamicWildcardFilterValues(Tuple<Property, object> filter)
+        {
+            var values = filter.Item2.ToIEnumerable().Select(v =>
+            {
+                if (v is IStringEnum)
+                {
+                    var str = ((IStringEnum)v).StringValue;
+
+                    if (!str.Contains("*"))
+                    {
+                        var originalFilter = new SearchFilter(filter.Item1, str);
+
+                        var newFilter = PreProcessFilterInternal(originalFilter);
+
+                        if (newFilter.Value != originalFilter.Value)
+                        {
+                            return ((SensorTypeInternal)newFilter.Value).EnumToXml();
+                        }
+                    }
+
+                    return str;
+                }
+
+                return v.ToString();
+            }).ToArray();
+
+            return values;
+        }
 
         /// <summary>
-        /// Retrieves additional records not included in the initial request.
+        /// Process any post retrieval filters specific to the current cmdlet.
         /// </summary>
-        /// <param name="parameters">The parameters that were used to perform the initial request.</param>
-        protected virtual List<TObject> GetAdditionalRecords(TParam parameters) => new List<TObject>();
+        /// <param name="records">The records to filter.</param>
+        /// <returns>The filtered records.</returns>
+        protected virtual IEnumerable<TObject> PostProcessAdditionalFilters(IEnumerable<TObject> records)
+        {
+            return records;
+        }
 
+        /// <summary>
+        /// Filter a response with a wildcard expression contained in a <see cref="NameOrObject{T}"/> value.
+        /// </summary>
+        /// <typeparam name="T">The type of <see cref="PrtgObject"/> possibly contained in <paramref name="obj"/>.</typeparam>
+        /// <param name="obj">The object that possibly contains a wildcard expression.</param>
+        /// <param name="getProperty">A function that retrieves the property to filter by from each record.</param>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>If <paramref name="obj"/> contains a wildcard expression, the filtered collection. Otherwise, the original collection.</returns>
+        protected IEnumerable<TObject> FilterResponseRecordsByNameOrObjectName<T>(NameOrObject<T> obj, Func<TObject, string> getProperty, IEnumerable<TObject> records) where T : PrtgObject
+        {
+            if (obj != null && !obj.IsObject)
+                return FilterResponseRecords(records, obj.Name, getProperty);
+
+            return records;
+        }
+
+        private IEnumerable<TObject> SortReturnedRecordsRunner(IEnumerable<TObject> records)
+        {
+            if (!StreamProvider.StreamResults && !StreamProvider.ForceStream)
+                return SortReturnedRecords(records);
+
+            return records;
+        }
+
+        /// <summary>
+        /// Specifies how the records returned from this cmdlet should be sorted. By default, no sorting is performed.
+        /// </summary>
+        /// <param name="records">The records to sort.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> representing the sorted collection.</returns>
+        protected virtual IEnumerable<TObject> SortReturnedRecords(IEnumerable<TObject> records)
+        {
+            return records;
+        }
+
+        #endregion       
         #region IStreamableCmdlet
 
-        List<TObject> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjects(TParam parameters) =>
-            client.GetObjects<TObject>(parameters);
+        Tuple<List<TObject>, int> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjects(
+            TParam parameters)
+        {
+            var raw = client.ObjectEngine.GetObjectsRaw<TObject>(parameters);
+
+            return Tuple.Create(raw.Items, raw.TotalCount);
+        }
 
         async Task<List<TObject>> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjectsAsync(TParam parameters) =>
-            await client.GetObjectsAsync<TObject>(parameters).ConfigureAwait(false);
+            await client.ObjectEngine.GetObjectsAsync<TObject>(parameters).ConfigureAwait(false);
 
         int IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamTotalObjects(TParam parameters) =>
-            client.GetTotalObjects(content);
+            client.GetTotalObjects(content, parameters.SearchFilters?.ToArray());
 
         StreamableCmdletProvider<PrtgTableCmdlet<TObject, TParam>, TObject, TParam> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.StreamProvider { get; set; }
 

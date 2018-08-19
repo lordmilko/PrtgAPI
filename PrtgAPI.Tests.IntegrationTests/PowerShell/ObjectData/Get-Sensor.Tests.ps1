@@ -158,4 +158,75 @@ Describe "Get-Sensor_IT" {
 
         ($sensors.Count) | Should Be $count
     }
+    It "uses dynamic parameters" {
+
+        $sensors = Get-Sensor -Position 1
+
+        $sensors.Count | Should BeGreaterThan 0
+
+        foreach($sensor in $sensors)
+        {
+            $sensor.Position | Should Be 1
+        }
+    }
+
+    It "uses dynamic parameters in conjunction with regular parameters" {
+        $sensors = @(Get-Sensor ping -Position 1)
+
+        $sensors.Count | Should BeGreaterThan 0
+
+        foreach($sensor in $sensors)
+        {
+            $sensor.Name | Should Be "ping"
+            $sensor.Position | Should Be 1
+        }
+    }
+
+    It "uses wildcards with dynamic parameters" {
+        $sensors = Get-Sensor -Message *o*
+
+        $sensors.Count | Should BeGreaterThan 0
+
+        foreach($sensor in $sensors)
+        {
+            $sensor.Message | Should BeLike "*o*"
+        }
+    }
+
+    It "can filter by interval" {
+        $sensors = Get-Sensor -Interval 00:00:30
+
+        $sensors.Count | Should BeGreaterThan 0
+
+        foreach($sensor in $sensors)
+        {
+            $sensor.Interval | Should Be "00:00:30"
+        }
+    }
+    
+    It "can filter by types" {
+        { Get-Sensor -Type *sensor* } | Should Throw "Cannot filter where property 'Type' contains 'sensor'"
+
+        $ping = Get-Sensor -Type ping
+
+        $ping.Count | Should Be 3
+        $ping[0].Name | Should Be "Ping"
+        $ping[1].Name | Should Be "Ping (Acknowledged Sensor)"
+        $ping[2].Name | Should Be "Ping"
+
+        $multiple = Get-Sensor -Type ping,*page*
+        $multiple.Count | Should Be 4
+        $multiple[0].Name | Should Be "Ping"
+        $multiple[1].Name | Should Be "Pagefile Usage (Dependency Sensor)"
+        $multiple[2].Name | Should Be "Ping (Acknowledged Sensor)"
+        $multiple[3].Name | Should Be "Ping"
+        
+    }
+    It "filters by internal sensor types" {
+        $sensors = Get-Sensor -Type sensorfactory
+
+        $sensors | Should Not BeNullOrEmpty
+
+        $sensors.Id | Should Be (Settings SensorFactory)
+    }
 }

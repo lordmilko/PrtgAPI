@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -50,13 +49,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private void ProcessLogicalOrTagsFilter()
         {
-            if (Tag != null)
-            {
-                foreach (var value in Tag)
-                {
-                    AddWildcardFilter(Property.Tags, value);
-                }
-            }
+            ProcessWildcardArrayFilter(Property.Tags, Tag);
         }
 
         /// <summary>
@@ -126,5 +119,11 @@ namespace PrtgAPI.PowerShell.Base
 
             return record.Tags.Any(recordTag => wildcard.IsMatch(recordTag));
         }
+
+        /// <summary>
+        /// Retrieves an object that defines the dynamic parameters of this cmdlet.
+        /// </summary>
+        /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
+        public virtual object GetDynamicParameters() => GetDynamicParameters("Tag", "Tags");
     }
 }

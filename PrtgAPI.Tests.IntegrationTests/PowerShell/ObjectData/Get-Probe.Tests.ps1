@@ -85,4 +85,38 @@ Describe "Get-Probe_IT" {
 
         $probe.Name | Should Be "Local Probe"
     }
+
+    It "uses dynamic parameters" {
+        $probes = Get-Probe -Position 1
+
+        $probes.Count | Should BeGreaterThan 0
+
+        foreach($probe in $probes)
+        {
+            $probe.Position | Should Be 1
+        }
+    }
+
+    It "uses dynamic parameters in conjunction with regular parameters" {
+        $probes = @(Get-Probe (Settings ProbeName) -Position 1)
+
+        $probes.Count | Should BeGreaterThan 0
+
+        foreach($probe in $probes)
+        {
+            $probe.Name | Should Be (Settings ProbeName)
+            $probe.Position | Should Be 1
+        }
+    }
+
+    It "uses wildcards with dynamic parameters" {
+        $probes = Get-Probe -Message *o*
+
+        $probes.Count | Should BeGreaterThan 0
+
+        foreach($probe in $probes)
+        {
+            $probe.Message | Should BeLike "*o*"
+        }
+    }
 }

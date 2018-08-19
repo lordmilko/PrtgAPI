@@ -43,10 +43,6 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
-    It "throws when -Id is $null" {
-        { Get-Sensor -Id $null } | Should Throw "The -Id parameter was specified however the parameter value was null"
-    }
-
     It "can process several IDs" {
         Get-Sensor -Id 1001,1002
     }
@@ -238,21 +234,21 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         }
     }
     
-    It "filtering by name only uses equals" {
+    It "filters by name only using equals" {
 
         SetAddressValidatorResponse "filter_name=ping"
 
         Get-Sensor ping
     }
 
-    It "filtering by name and tags uses contains" {
+    It "filters by name and tags using contains" {
             
         SetAddressValidatorResponse "filter_name=@sub(ping)&filter_tags=@sub(wmicpu)"
 
         Get-Sensor ping -Tags wmicpu*
     }
 
-    It "filtering by name and devices uses equals" {
+    It "filters by name and devices using equals" {
             
         SetAddressValidatorResponse "filter_name=ping&filter_parentid=40"
 
@@ -261,13 +257,115 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         $device | Get-Sensor ping
     }
 
-    It "filtering by groups uses contains" {
+    It "filters by groups using contains" {
             
         SetAddressValidatorResponse "filter_name=@sub(ping)&filter_group=Windows+Infrastructure"
 
         $group = Run Group { Get-Group }
 
         $group | Get-Sensor ping -Recurse:$false
+    }
+
+    It "pipes and specifies a -Filter" {
+
+        SetMultiTypeResponse
+
+        $groups = Get-Group
+        $groups.Count | Should Be 2
+
+        SetAddressValidatorResponse @(
+            "api/table.xml?content=sensors&columns=objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active&count=*&filter_name=ping&filter_group=Windows+Infrastructure0&"
+            "api/table.xml?content=sensors&columns=objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active&count=*&filter_name=ping&filter_group=Windows+Infrastructure1&"
+        )
+
+        $groups | Get-Sensor -Filter (flt name eq ping) -Recurse:$false
+    }
+
+    Context "Dynamic" {
+        It "uses dynamic parameters" {
+            SetAddressValidatorResponse "filter_position=0000000030"
+
+            Get-Sensor -Position 3
+        }
+
+        It "throws using a dynamic parameter not supported by this type" {
+            { Get-Sensor -Host dc-1 } | Should Throw "A parameter cannot be found that matches parameter name 'Host'"
+        }
+
+        It "uses dynamic parameters in conjunction with regular parameters" {
+
+            SetAddressValidatorResponse "filter_name=@sub(ping)&filter_objid=3&filter_parentid=30"
+
+            Get-Sensor *ping* -Id 3 -ParentId 30
+        }
+
+        It "uses wildcards with a dynamic parameter" {
+            
+            SetAddressValidatorResponse "filter_message=@sub(1)"
+
+            $sensor = @(Get-Sensor -Count 3 -Message "*1")
+
+            $sensor.Count | Should Be 1
+
+            $sensor.Name | Should Be "Volume IO _Total1"
+        }
+
+        $date1 = (New-Object DateTime @(2000, 10, 2, 12, 10, 5, [DateTimeKind]::Utc))
+        $date2 = (New-Object DateTime @(2000, 10, 3, 12, 10, 5, [DateTimeKind]::Utc))
+
+        $singleCases = @(
+            @{name = "bool";       expr = { Get-Sensor -Favorite $true };     expected = "filter_favorite=1"}
+            @{name = "DateTime";   expr = { Get-Sensor -LastUp $date1 };      expected = "filter_lastup=36801.5070023148"}
+            @{name = "integer";    expr = { Get-Sensor -ParentId 10 };        expected = "filter_parentid=10"}
+            @{name = "StringEnum"; expr = { Get-Sensor -Type aggregation };   expected = "filter_type=@sub(aggregation)"}
+            @{name = "TimeSpan";   expr = { Get-Sensor -UpDuration 00:01:00}; expected = "filter_uptimesince=000000000000060"}
+        )
+
+        $multipleCases = @(
+            @{name = "DateTime";   expr = { Get-Sensor -LastUp $date1,$date2 };      expected = "filter_lastup=36801.5070023148&filter_lastup=36802.5070023148"}
+            @{name = "integer";    expr = { Get-Sensor -ParentId 1,2 }; expected = "filter_parentid=1&filter_parentid=2"}
+            @{name = "StringEnum"; expr = { Get-Sensor -Type aggregation,ping };   expected = "filter_type=@sub(aggregation)&filter_type=@sub(ping)"}
+            @{name = "TimeSpan";   expr = { Get-Sensor -UpDuration 00:01:00,00:02:00}; expected = "filter_uptimesince=000000000000060&filter_uptimesince=000000000000120"}
+        )
+
+        It "uses a <name> with a dynamic parameter" -TestCases $singleCases {
+
+            param($expr, $expected)
+
+            SetAddressValidatorResponse $expected
+
+            & $expr
+        }
+
+        It "uses multiple <name>s with a dynamic parameter" -TestCases $multipleCases {
+            param($expr, $expected)
+
+            SetAddressValidatorResponse $expected
+
+            & $expr
+        }
+
+        It "specifies multiple dynamic parameters" {
+            SetAddressValidatorResponse "filter_position=0000000040&filter_parentid=2"
+
+            Get-Sensor -Position 4 -ParentId 2
+        }
+
+        It "uses a wildcard with a dynamic parameter" {
+            SetAddressValidatorResponse "filter_comments=@sub(hello)"
+
+            Get-Sensor -Comments hello*
+        }
+
+        It "specifies null to a a dynamic parameter" {
+            SetAddressValidatorResponse "active&count=2&username"
+
+            Get-Sensor -Comments $null -Count 2
+        }
+
+        It "throws using unsupported filters in dynamic parameters" {
+            { Get-Sensor -Favorite $false } | Should Throw "Cannot filter where property 'Favorite' equals '0'."
+        }
     }
 
     It "throws filtering by Status 0" {
@@ -284,3 +382,18 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         flt name notequals ping -Illegal | Get-Sensor
     }
+
+    It "filters by an internal sensor type" {
+
+        SetAddressValidatorResponse "filter_type=@sub(aggregation)&filter_type=@sub(ping)"
+
+        Get-Sensor -Type sensorfactory,ping
+
+        SetResponseAndClient "SensorFactorySourceResponse"
+
+        $sensors = Get-Sensor -Type sensorfactory
+
+        $sensors.Count | Should Be 1
+        $sensors.Type.StringValue | Should Be "aggregation"
+    }
+}

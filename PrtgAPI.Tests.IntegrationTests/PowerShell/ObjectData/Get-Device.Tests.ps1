@@ -94,4 +94,49 @@ Describe "Get-Device_IT" {
 
         ($devices.Count) | Should Be $count
     }
+    It "uses dynamic parameters" {
+        $devices = Get-Device -Position 1
+
+        $devices.Count | Should BeGreaterThan 0
+
+        foreach($device in $devices)
+        {
+            $device.Position | Should Be 1
+        }
+    }
+
+    It "uses dynamic parameters in conjunction with regular parameters" {
+        $devices = @(Get-Device (Settings DeviceName) -Position 1)
+
+        $devices.Count | Should BeGreaterThan 0
+
+        foreach($device in $devices)
+        {
+            $device.Name | Should Be (Settings DeviceName)
+            $device.Position | Should Be 1
+        }
+    }
+
+    It "uses wildcards with dynamic parameters" {
+        $devices = Get-Device -Message *o*
+
+        $devices.Count | Should BeGreaterThan 0
+
+        foreach($device in $devices)
+        {
+            $device.Message | Should BeLike "*o*"
+        }
+    }
+
+    It "can filter by interval" {
+        $devices = Get-Device -Interval 00:01:00
+
+        $devices.Count | Should BeGreaterThan 0
+
+        foreach($device in $devices)
+        {
+            $device.Interval | Should Be "00:01:00"
+        }
+    }
+
 }

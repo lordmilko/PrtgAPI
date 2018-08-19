@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -11,21 +12,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-Sensor cmdlet retrieves sensors from a PRTG Server. Sensors are the fundamental unit of monitoring
     /// in PRTG, and the most populous type of object in the system by far. Get-Sensor provides a variety of methods of filtering the sensors
     /// requested from PRTG, including by sensor name, ID, status and tags as well as parent probe/group/device. Multiple filters
-    /// can be used in conjunction to further limit the number of results returned.</para>
+    /// can be used in conjunction to further limit the number of results returned. Sensor properties that do not contain explicitly defined
+    /// parameters on Get-Sensor can be specified as dynamic parameters, allowing one or more values to be specified of the specified type. All string parameters
+    /// support the use of wildcards.</para>
     /// 
-    /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Sensor,
+    /// <para type="description">For scenarios in which you wish to exert finer grained control over search filters,
     /// a custom <see cref="SearchFilter"/> object can be created specifying the field name, condition and value to filter upon. For information
     /// on properties that can be filtered on, see New-SearchFilter. When searching for Sensor Factory objects, please note that these
     /// objects do not respond to server side filters by "type". To filter for Sensor Factory sensors, filter by the tag "factorysensor".</para>
     /// 
     /// <para type="description">When invoked with no arguments, Get-Sensor will query the number of sensors present on your PRTG Server.
     /// If PrtgAPI detects the number is about a specified threshold, PrtgAPI will split the request up into several smaller requests
-    /// which will each be invoked in parallel. Results will then be "streamed" to the pipeline in the order they arrive. A progress
+    /// which will each be invoked one after the other. Results will then be "streamed" to the pipeline as each smaller request completes. A progress
     /// bar will also be visible up the top indicating the total number of sensors retrieved/remaining.</para>
     /// 
-    /// <para type="description">If you attempt to cancel a large request (Ctrl+C) and immediately issue another request (of any size),
-    /// PRTG may fail to immediately respond until it has finished processing the request you initially issued. Please keep this in mind
-    /// when dealing with systems with an extreme number of sensors (>10,000).</para>
     /// 
     /// <para type="description">Get-Sensor provides two parameter sets for filtering objects by tags. When filtering for sensors
     /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.
@@ -81,8 +81,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> flt type contains deprecated | Get-Sensor</code>
-    ///     <para>Get all deprecated sensors.</para>
+    ///     <code>C:\> Get-Sensor -Type *snmp*</code>
+    ///     <para>Get all SNMP sensors using a dynamic parameter.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> flt type contains snmp | Get-Sensor</code>
+    ///     <para>Get all SNMP sensors using a SearchFilter.</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -99,7 +104,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Sensor))]
     [Cmdlet(VerbsCommon.Get, "Sensor", DefaultParameterSetName = LogicalAndTags)]
-    public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>
+    public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">The device to retrieve sensors for.</para>

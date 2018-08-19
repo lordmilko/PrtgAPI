@@ -20,7 +20,8 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
-        /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a <see cref="PrtgClient"/> based on the type they wish to retrieve.
+        /// Retrieves all records of a specified type from a PRTG Server. Implementors can call different methods of a
+        /// <see cref="PrtgClient"/> based on the type of object they wish to retrieve.
         /// </summary>
         /// <returns>A list of records relevant to the caller.</returns>
         protected abstract IEnumerable<T> GetRecords();
@@ -105,7 +106,8 @@ namespace PrtgAPI.PowerShell.Base
 
         /// <summary>
         /// Display the initial progress message for the first cmdlet in the chain.<para/>
-        /// Returns an integer so that overridden instances of this method may support progress scenarios such as streaming (where a "detecting total number of items" message is displayed before requesting the object totals.
+        /// Returns an integer so that overridden instances of this method may support progress scenarios such as streaming
+        /// (where a "detecting total number of items" message is displayed before requesting the object totals.
         /// </summary>
         /// <returns>-1. Override this method in a derived class to optionally return the total number of objects that will be retrieved.</returns>
         protected virtual int DisplayFirstInChainMessage()
@@ -140,7 +142,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="records">The records to filter.</param>
         /// <param name="pattern">The wildcard expression to filter with.</param>
-        /// <param name="getProperty">A function that yields the property to filter on.</param>
+        /// <param name="getProperty">A function that yields the property to filter by.</param>
         /// <returns>A list of records that match the specified filter.</returns>
         protected IEnumerable<T> FilterResponseRecords(IEnumerable<T> records, string pattern, Func<T, string> getProperty)
         {
@@ -148,6 +150,28 @@ namespace PrtgAPI.PowerShell.Base
             {
                 var filter = new WildcardPattern(pattern.ToLower());
                 records = records.Where(r => filter.IsMatch(getProperty(r).ToLower()));
+            }
+
+            return records;
+        }
+
+        /// <summary>
+        /// Filter records returned from PRTG by one or more wildcards.
+        /// </summary>
+        /// <param name="arr">The array of wildcards to filter against.</param>
+        /// <param name="getProperty">A function that yields the property to filter by.</param>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>A collection of filtered records.</returns>
+        protected IEnumerable<T> FilterResponseRecordsByWildcardArray(string[] arr, Func<T, string> getProperty, IEnumerable<T> records)
+        {
+            if (arr != null)
+            {
+                records = records.Where(
+                    record => arr
+                        .Select(a => new WildcardPattern(a, WildcardOptions.IgnoreCase))
+                        .Any(filter => filter.IsMatch(getProperty(record))
+                    )
+                );
             }
 
             return records;

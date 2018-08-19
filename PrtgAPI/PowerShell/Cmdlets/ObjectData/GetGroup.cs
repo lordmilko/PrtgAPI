@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -11,9 +12,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-Group cmdlet retrieves groups from a PRTG Server. Groups allow you to organize devices and other groups together.
     /// In addition, the root node of PRTG containing all probes in the system is marked as a group. Get-Group provides a variety of methods of
     /// filtering the groups requested from PRTG, including by group name, ID and tags, as well as by parent probe/group. Multiple filters can be
-    /// used in conjunction to further limit the number of results returned.</para>
+    /// used in conjunction to further limit the number of results returned. Group properties that do not contain explicitly defined
+    /// parameters on Get-Group can be specified as dynamic parameters, allowing one or more values to be specified of the specified type. All string parameters
+    /// support the use of wildcards.</para>
     /// 
-    /// <para type="description">For scenarios in which you wish to filter on properties not covered by parameters available in Get-Device,
+    /// <para type="description">For scenarios in which you wish to exert finer grained control over search filters,
     /// a custom <see cref="SearchFilter"/> object can be created by specifying the field name, condition and value to filter upon.
     /// For more information on properties that can be filtered upon, see New-SearchFilter.</para>
     /// 
@@ -51,12 +54,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
+    ///     <code>C:\> Get-Group -Tag ny,ca</code>
+    ///     <para>Get all devices that have the tag "ny" or "ca"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Group -Tags ny,south</code>
+    ///     <para>Get all groups in South New York</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Group -ParentId 3045</code>
+    ///     <para>Get all groups directly under the object with ID 3045 using a dynamic parameter.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> flt parentid eq 3045 | Get-Group</code>
+    ///     <para>Get all groups directly under the object with ID 3045 using a SearchFilter.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
     ///     <code>C:\> Get-Group -Count 1</code>
     ///     <para>Get only 1 group from PRTG.</para>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-Group -Id 2001 | Get-Group -Recurse:$false</code>
-    ///     <para>Get all groups directly under the specified group, ignoring all grandchildren.</para>
+    ///     <para>Get all groups directly under the group with ID 2001, ignoring all grandchildren.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -67,7 +90,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(Group))]
     [Cmdlet(VerbsCommon.Get, "Group", DefaultParameterSetName = LogicalAndTags)]
-    public class GetGroup : PrtgTableRecurseCmdlet<Group, GroupParameters>
+    public class GetGroup : PrtgTableRecurseCmdlet<Group, GroupParameters>, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">The parent group to retrieve groups for.</para>
