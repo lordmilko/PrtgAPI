@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -55,9 +54,17 @@ namespace PrtgAPI.PowerShell.Base
         {
             records = FilterResponseRecordsByStatus(records);
 
-            records = records.OrderBy(r => r.Position);
-
             return base.PostProcessAdditionalFilters(records);
+        }
+
+        /// <summary>
+        /// Specifies how the records returned from this cmdlet should be sorted.
+        /// </summary>
+        /// <param name="records">The records to sort.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> representing the sorted collection.</returns>
+        protected override IEnumerable<TObject> SortReturnedRecords(IEnumerable<TObject> records)
+        {
+            return records.OrderBy(r => r.Position);
         }
 
         private IEnumerable<TObject> FilterResponseRecordsByStatus(IEnumerable<TObject> records)

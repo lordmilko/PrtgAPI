@@ -79,26 +79,80 @@ namespace PrtgAPI.PowerShell.Base
                 throw new ParameterBindingException("The -Id parameter was specified however the parameter value was null.");
         }
 
-        private IEnumerable<TObject> GetFilteredObjects(TParam parameters)
+        private IEnumerable<TObject> GetObjectsWhenStreaming(TParam parameters)
         {
-            if (Filter != null)
+            if (Count != null && filters != null)
             {
-                PreProcessFilter();
-                parameters.SearchFilter = Filter;
+                int previousCount;
+                Func<int> getCount;
+
+                if (StreamProvider.StreamCount != null)
+                {
+                    previousCount = StreamProvider.StreamCount.Value;
+                    getCount = () => previousCount;
+                }
+                else
+                    getCount = () => ((IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>)this).GetStreamTotalObjects(parameters);
+
+                StreamProvider.SetStreamCount(parameters, Count);
+
+                var iterator = new TakeIterator<TObject, TParam>(
+                    StreamProvider.StreamCount.Value,
+                    parameters,
+                    (p, c) => StreamProvider.StreamRecords<TObject>(p, Count, c),
+                    getCount,
+                    PostProcessRecords,
+                    SortReturnedRecordsRunner
+                );
+
+                return iterator;
             }
                 
             return GetObjects(parameters);
         }
 
         private void PreProcessFilter()
+        private IEnumerable<TObject> StreamObjectsWhenNotStreaming(TParam parameters)
         {
-            Filter = Filter.Select(filter =>
-            {
-                //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
-                var property = typeof (TObject).GetProperties().FirstOrDefault(p => p.GetCustomAttributes<PropertyParameterAttribute>().Any(a => a.Name == filter.Property.ToString()));
+            var streamCount = StreamCount();
 
-                if (property == null)
-                    return filter;
+            //If we're piping from groups, don't specify a count so that we may retrieve all records and retrieve the
+            //correct amount that match the criteria
+            if (!streamCount)
+                parameters.Count = null;
+
+            var iterator = new TakeIterator<TObject, TParam>(
+                Count.Value,
+                parameters,
+                GetNotStreamingStreamer(streamCount),
+                () => StreamProvider.GetTotalExist(parameters),
+                PostProcessRecords,
+                SortReturnedRecordsRunner,
+                streamCount
+            );
+
+            return iterator;
+        }
+        private Func<TParam, Func<int>, IEnumerable<TObject>> GetNotStreamingStreamer(bool streamCount)
+        {
+            Func<TParam, Func<int>, IEnumerable<TObject>> streamer;
+
+            if (streamCount)
+            {
+                //If streamCount == true (e.g. we just did Get-Sensor ping -count 2) we need to keep
+                //track of our Start offset as we keep trying to find records; as such, use the regular stream method
+                streamer = (p, c) => StreamProvider.StreamRecords<TObject>(p, Count, c);
+            }
+            else
+            {
+                //If streamCount == false, we are recursing from groups. We want to get ALL CHILDREN
+                //and then filter for the specified count CLIENT SIDE. As such, there is no fiddling with Start offsets,
+                //and the fact getCount was not passed to GetObjectsAndAdditionalRecords doesn't matter.
+                streamer = (p, c) => GetObjectsAndAdditionalRecords(p);
+            }
+
+            return streamer;
+        }
 
                 var cleanValue = Regex.Replace(filter.Value.ToString(), "[^a-zA-Z0-9_]", string.Empty);
 

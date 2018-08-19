@@ -1,10 +1,12 @@
 ﻿using System.Xml.Linq;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class MessageResponse : BaseResponse<MessageItem>
     {
+        public bool Stream { get; set; }
+
         internal MessageResponse(params MessageItem[] messages) : base("messages", messages)
         {
         }
@@ -34,6 +36,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             );
 
             return xml;
+        }
+
+        protected override bool IsStreaming()
+        {
+            return Stream;
         }
     }
 }

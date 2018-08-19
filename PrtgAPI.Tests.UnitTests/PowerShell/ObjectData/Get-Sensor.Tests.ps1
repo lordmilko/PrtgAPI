@@ -116,7 +116,128 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
             $sensors.Count | Should Be 4
         }
     }
+    Context "Take Iterator" {
+        It "specifies a count without piping from groups" {
 
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "Sensors"
+
+            $sensors = Get-Sensor -Count 2
+
+            $sensors.Count | Should Be 2
+        }
+
+        It "specifies a count and a filter without piping from groups" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilter"
+
+            $sensors = Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 2
+        }
+
+        It "specifies a count greater than the number that are available without piping from groups" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsInsufficient"
+
+            $sensors = Get-Sensor -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "specifies a count when piping from groups" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsFromGroup"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor -Count 2
+
+            $sensors.Count | Should Be 2
+        }
+
+        It "specifies a count and a filter when piping from groups" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterFromGroup"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 2
+        }
+
+        It "requests a full page after repeatedly failing to retrieve all required items" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterInsufficient"
+
+            $sensors = Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there is only 1 record left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterInsufficientOneLeft"
+
+            $sensors = Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there are no records left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterInsufficientNoneLeft"
+
+            $sensors = Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there are negative records left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterInsufficientNegativeLeft"
+
+            $sensors = Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "doesn't care after repeatedly failing to retrieve all required items when piping from groups" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterFromGroupInsufficient"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "specifies a count and a filter when piping from a duplicate group" {
+
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterFromDuplicateGroup"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "doesn't care after repeatedly failing to retrieve all required items from a duplicate group" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterFromDuplicateGroupInsufficient"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor ping -Count 2
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "specifies a count when piping from groups with -Recurse:`$false" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsFromGroupNoRecurse"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor -Count 2 -Recurse:$false
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "specifies a count and a filter when piping from groups with -Recurse:`$false" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "SensorsWithFilterFromGroupNoRecurse"
+
+            $sensors = Get-Group -Count 1 | Get-Sensor ping -Count 2 -Recurse:$false
+
+            $sensors.Count | Should Be 2
+        }
+    }
+    
     It "filtering by name only uses equals" {
 
         SetAddressValidatorResponse "filter_name=ping"

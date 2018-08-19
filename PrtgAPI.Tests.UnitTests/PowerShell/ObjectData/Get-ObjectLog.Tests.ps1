@@ -135,4 +135,101 @@ Describe "Get-ObjectLog" {
 
         $logs.Count | Should Be 20500
     }
+    Context "Take Iterator" {
+        It "specifies a count" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "Logs"
+
+            $logs = Get-ObjectLog -Count 2
+
+            $logs.Count | Should Be 2
+        }
+
+        It "specifies a count greater than the number that are available" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsInsufficient"
+
+            $logs = Get-ObjectLog -Count 2
+
+            $logs.Count | Should Be 1
+        }
+
+        It "specifies a count and a filter" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilter"
+
+            $logs = Get-ObjectLog ping -Count 2
+
+            $logs.Count | Should Be 2
+        }
+
+        It "specifies a count and forces streaming"  {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsForceStream"
+
+            $logs = Get-ObjectLog -Count 2 -Period All
+
+            $logs.Count | Should Be 2
+        }
+
+        It "specifies a count and a filter and forces streaming"  {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterForceStream"
+
+            $logs = Get-ObjectLog ping -Count 2 -Period All
+
+            $logs.Count | Should Be 2
+        }
+
+        It "requests a full page after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficient"
+
+            $logs = Get-ObjectLog ping -Count 2
+
+            $logs.Count | Should Be 1
+        }
+
+        It "forces streaming and requests a full page after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientForceStream"
+
+            $logs = Get-ObjectLog ping -Count 2 -Period All
+
+            $logs.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there is only 1 record left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientOneLeft"
+
+            $logs = Get-ObjectLog ping -Count 2
+
+            $logs.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there are no records left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientNoneLeft"
+
+            $logs = Get-ObjectLog ping -Count 2
+
+            $logs.Count | Should Be 1
+        }
+
+        It "tries to request a full page but there are negative records left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientNegativeLeft"
+
+            $logs = Get-ObjectLog ping -Count 2
+
+            $logs.Count | Should Be 1
+        }
+
+        It "forces streaming and tries to request a full page but there is only 1 record left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientOneLeftForceStream"
+
+            $logs = Get-ObjectLog ping -Count 2 -Period All
+
+            $logs.Count | Should Be 1
+        }
+
+        It "forces streaming and tries to request a full page but there are no records left after repeatedly failing to retrieve all required items" {
+            SetResponseAndClientWithArguments "TakeIteratorResponse" "LogsWithFilterInsufficientNoneLeftForceStream"
+
+            $logs = Get-ObjectLog ping -Count 2 -Period All
+
+            $logs.Count | Should Be 0
+        }
+    }
 }
