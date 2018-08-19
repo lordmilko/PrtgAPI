@@ -63,7 +63,7 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves groups from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupUniqueGroup"
 
-            $groups = Get-Group | Get-Group *
+            $groups = Get-Group Servers | Get-Group *
 
             $groups.Count | Should Be 1
         }
@@ -71,7 +71,7 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves groups from a group with a duplicated name" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDuplicateGroup"
 
-            $groups = Get-Group | Get-Group *
+            $groups = Get-Group Servers | Get-Group *
 
             $groups.Count | Should Be 1
         }
@@ -79,7 +79,7 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves groups from a uniquely named group containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupUniqueChildGroup"
 
-            $groups = Get-Group | Get-Group *
+            $groups = Get-Group Servers | Get-Group *
 
             $groups.Count | Should Be 2
         }
@@ -87,7 +87,7 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves groups from a group with a duplicated name containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDuplicateChildGroup"
 
-            $groups = Get-Group | Get-Group *
+            $groups = Get-Group Servers | Get-Group *
 
             $groups.Count | Should Be 2
         }
@@ -95,7 +95,7 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves only one level of groups with -Recurse:`$false" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupNoRecurse"
 
-            $groups = Get-Group | Get-Group * -Recurse:$false
+            $groups = Get-Group Servers | Get-Group * -Recurse:$false
 
             $groups.Count | Should Be 1
         }
@@ -103,10 +103,36 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
         It "retrieves groups from a hierarchy 6 levels deep" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDeepNesting"
 
-            $groups = Get-Group | Get-Group *
+            $groups = Get-Group Servers | Get-Group *
 
             $groups.Count | Should Be 33
         }
+
+        It "retrieves groups from a child group with a name filter" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDeepNestingChild"
+
+            $groups = Get-Group Servers | Get-Group Domain*
+
+            $groups.Count | Should Be 1
+        }
+
+        It "retrieves groups from a grandchild group with a name filter" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDeepNestingGrandChild"
+
+            $groups = Get-Group Servers | Get-Group "Server 2003*"
+
+            $groups.Count | Should Be 1
+        }
+
+        It "retrieves groups from a great-grandchild group with a name filter" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupDeepNestingGreatGrandChild"
+
+            $groups = Get-Group Servers | Get-Group "Active 2003*"
+
+            $groups.Count | Should Be 1
+        }
+
         It "retrieves a single object while recursing" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "GroupRecurseAvailableSingleCount"
 

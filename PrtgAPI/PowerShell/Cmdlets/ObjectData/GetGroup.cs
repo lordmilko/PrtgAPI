@@ -136,6 +136,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
             //If recursing, get all groups under the parent group without filtering by any
             //specified filters such as Name, etc
             var records = GetAdditionalGroupRecords(Group, g => g.TotalGroups, parameters);
+
+            //Then, if any search filters were specified, translate the specified filters into an Expression
+            //used to generate a lambda function capable of filtering the returned records side
+            if (parameters.SearchFilters != null)
+            {
+                var validFilters = parameters.SearchFilters.Where(f => f.Property != Property.ParentId).ToArray();
+
+                var filter = SearchFilterToExpression.Parse<Group>(validFilters);
+
+                return records.Where(filter);
+            }
+
             return records;
         }
 

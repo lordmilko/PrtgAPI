@@ -112,6 +112,16 @@ Describe "Get-Group_IT" {
 
         $allGroupsViaCount.Count | Should Be $group.TotalGroups
     }
+
+    It "can recursively retrieve a grandchild group when filtering by name" {
+
+        $group = Get-Group -Id (Settings Group)
+
+        $grandChild = $group | Get-Group "NestedGroup"
+
+        $grandChild.Name | Should Be "NestedGroup"
+    }
+
     It "uses dynamic parameters" {
         $groups = Get-Group -Position 2
 

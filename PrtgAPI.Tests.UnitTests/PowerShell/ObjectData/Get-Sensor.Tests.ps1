@@ -67,7 +67,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorUniqueGroup"
 
-            $sensors = Get-Group | Get-Sensor *
+            $sensors = Get-Group Servers | Get-Sensor *
 
             $sensors.Count | Should Be 4
         }
@@ -75,7 +75,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from a group with a duplicated name" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDuplicateGroup"
 
-            $sensors = Get-Group | Get-Sensor *
+            $sensors = Get-Group Servers | Get-Sensor *
 
             $sensors.Count | Should Be 4
         }
@@ -83,7 +83,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from a uniquely named group containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorUniqueChildGroup"
 
-            $sensors = Get-Group | Get-Sensor *
+            $sensors = Get-Group Servers | Get-Sensor *
 
             $sensors.Count | Should Be 6
         }
@@ -91,7 +91,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from a group with a duplicated name containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDuplicateChildGroup"
 
-            $sensors = Get-Group | Get-Sensor *
+            $sensors = Get-Group Servers | Get-Sensor *
 
             $sensors.Count | Should Be 8
         }
@@ -99,7 +99,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from all groups with a duplicated name with -Recurse:`$false" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorNoRecurse"
 
-            $sensors = Get-Group | Get-Sensor * -Recurse:$false
+            $sensors = Get-Group Servers | Get-Sensor * -Recurse:$false
 
             $sensors.Count | Should Be 5
         }
@@ -107,11 +107,38 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "retrieves sensors from a group hierarchy with no devices in the parent group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDeepNesting"
 
-            $sensors = Get-Group | Get-Sensor *
+            $sensors = Get-Group Servers | Get-Sensor *
 
-            $sensors.Count | Should Be 4
+            $sensors.Count | Should Be 6
+        }
+
+        It "retrieves sensors from a child group with a name filter" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDeepNestingChild"
+
+            $sensors = Get-Group Servers | Get-Sensor Ping
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "retrieves sensors from a grandchild group with a name filter" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDeepNestingGrandChild"
+
+            $sensors = Get-Group Servers | Get-Sensor Uptime
+
+            $sensors.Count | Should Be 1
+        }
+
+        It "retrieves sensors from a great-grandchild group with a name filter" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorDeepNestingGreatGrandChild"
+
+            $sensors = Get-Group Servers | Get-Sensor Uptime
+
+            $sensors.Count | Should Be 1
         }
     }
+    
     Context "Take Iterator" {
         It "specifies a count without piping from groups" {
 

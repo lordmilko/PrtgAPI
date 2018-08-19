@@ -51,7 +51,7 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from a uniquely named group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceUniqueGroup"
 
-            $devices = Get-Group | Get-Device *
+            $devices = Get-Group Servers | Get-Device *
 
             $devices.Count | Should Be 2
         }
@@ -59,7 +59,7 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from a group with a duplicated name" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDuplicateGroup"
 
-            $devices = Get-Group | Get-Device *
+            $devices = Get-Group Servers | Get-Device *
 
             $devices.Count | Should Be 2
         }
@@ -67,7 +67,7 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from a uniquely named group containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceUniqueChildGroup"
 
-            $devices = Get-Group | Get-Device *
+            $devices = Get-Group Servers | Get-Device *
 
             $devices.Count | Should Be 3
         }
@@ -75,7 +75,7 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from a group with a duplicated name containing child groups" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDuplicateChildGroup"
 
-            $devices = Get-Group | Get-Device *
+            $devices = Get-Group Servers | Get-Device *
 
             $devices.Count | Should Be 3
         }
@@ -83,7 +83,7 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from all groups with a duplicated name with -Recurse:`$false" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceNoRecurse"
 
-            $devices = Get-Group | Get-Device * -Recurse:$false
+            $devices = Get-Group Servers | Get-Device * -Recurse:$false
 
             $devices.Count | Should Be 2
         }
@@ -91,10 +91,37 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
         It "retrieves devices from a group hierarchy with no devices in the parent group" {
             SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDeepNesting"
 
-            $devices = Get-Group | Get-Device *
+            $devices = Get-Group Servers | Get-Device *
+
+            $devices.Count | Should Be 4
+        }
+
+        It "retrieves devices from a child group with a name filter" {
+
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDeepNestingChild"
+
+            $devices = Get-Group Servers | Get-Device dc*
 
             $devices.Count | Should Be 2
         }
+
+        It "retrieves devices from a grandchild group with a name filter" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDeepNestingGrandChild"
+
+            $devices = Get-Group Servers | Get-Device old-arch-1
+
+            $devices.Count | Should Be 1
+        }
+
+        It "retrieves devices from a great-grandchild group with a name filter" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "DeviceDeepNestingGreatGrandChild"
+
+            $devices = Get-Group Servers | Get-Device old-arch-2
+
+            $devices.Count | Should Be 1
+        }
+    }
+
     Context "Dynamic" {
         It "uses dynamic parameters" {
             SetAddressValidatorResponse "filter_position=0000000030"
