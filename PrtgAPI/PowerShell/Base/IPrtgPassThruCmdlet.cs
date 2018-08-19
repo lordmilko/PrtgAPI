@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -9,7 +8,7 @@ namespace PrtgAPI.PowerShell.Base
     public interface IPrtgPassThruCmdlet
     {
         /// <summary>
-        /// Specifies whether to return the original <see cref="PrtgObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
+        /// Specifies whether to return the original <see cref="IObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.
         /// </summary>
         SwitchParameter PassThru { get; set; }
 

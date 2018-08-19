@@ -18,7 +18,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">Provides methods for generating API requests against a PRTG Network Monitor server.</para>
+    /// <para type="description">Provides methods for generating API requests against PRTG Network Monitor.</para>
     /// </summary>
     public partial class PrtgClient
     {
@@ -43,34 +43,34 @@ namespace PrtgAPI
         public PrtgTargetHelper Targets { get; }
 
         /// <summary>
-        /// The PRTG server API requests will be made against.
+        /// Gets the PRTG server API requests will be made against.
         /// </summary>
         public string Server => ConnectionDetails.Server;
 
         /// <summary>
-        /// The Username that will be used to authenticate against PRTG.
+        /// Gets the username that will be used for authenticating API requests.
         /// </summary>
         public string UserName => ConnectionDetails.UserName;
 
         /// <summary>
-        /// The PassHash that will be used to authenticate with, in place of a password.
+        /// Gets the passhash that will be used for authenticating API requests, in place of a password.
         /// </summary>
         public string PassHash => ConnectionDetails.PassHash;
 
         /// <summary>
-        /// The number of times to retry a request that times out while communicating with PRTG.
+        /// Gets or sets the number of times to retry a request that times out while communicating with the server.
         /// </summary>
         public int RetryCount { get; set; }
 
         /// <summary>
-        /// The base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.
+        /// Gets or sets the base delay (in seconds) between retrying a timed out request. Each successive failure of a given request will wait an additional multiple of this value.
         /// </summary>
         public int RetryDelay { get; set; }
 
         internal EventHandler<RetryRequestEventArgs> retryRequest;
 
         /// <summary>
-        /// Occurs when a request times out while communicating with PRTG.
+        /// Occurs when a request times out while communicating with the server.
         /// </summary>
         public event EventHandler<RetryRequestEventArgs> RetryRequest
         {
@@ -91,6 +91,8 @@ namespace PrtgAPI
 
         /// <summary>
         /// Specifies the version of the PRTG Server this client is connected to.
+        /// <summary>
+        /// Gets the version of PRTG Network Monitor this client is connected to.
         /// </summary>
         public Version Version => version ?? (version = GetStatus().Version);
 
@@ -385,42 +387,43 @@ namespace PrtgAPI
             #region Multiple
 
         /// <summary>
-        /// Retrieve all sensors from a PRTG Server.
+        /// Retrieves all sensors from a PRTG Server.
         /// </summary>
         /// <returns>A list of all sensors on a PRTG Server.</returns>
         public List<Sensor> GetSensors() => GetSensors(new SensorParameters());
 
         /// <summary>
-        /// Asynchronously retrieve all sensors from a PRTG Server.
+        /// Asynchronously retrieves all sensors from a PRTG Server.
         /// </summary>
         /// <returns>A task that returns a list of all sensors on a PRTG Server.</returns>
         public async Task<List<Sensor>> GetSensorsAsync() => await GetSensorsAsync(new SensorParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream all sensors from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.<para/>
+        /// Streams all sensors from a PRTG Server. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Sensor> StreamSensors(bool serial = false) => StreamSensors(new SensorParameters(), serial);
 
             #endregion
             #region Sensor Status
    
         /// <summary>
-        /// Retrieve sensors from a PRTG Server of one or more statuses.
+        /// Retrieves sensors from a PRTG Server of one or more statuses.
         /// </summary>
         /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
         public List<Sensor> GetSensors(params Status[] statuses) => GetSensors(new SensorParameters { Status = statuses });
 
         /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server of one or more statuses.
+        /// Asynchronously retrieves sensors from a PRTG Server of one or more statuses.
         /// </summary>
         /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
         public async Task<List<Sensor>> GetSensorsAsync(params Status[] statuses) => await GetSensorsAsync(new SensorParameters { Status = statuses }).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream sensors from a PRTG Server of one or more statuses. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams sensors from a PRTG Server of one or more statuses. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="statuses">A list of sensor statuses to filter for.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
@@ -430,7 +433,7 @@ namespace PrtgAPI
             #region Filter (Property, Value)
 
         /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// Retrieves sensors from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -438,7 +441,7 @@ namespace PrtgAPI
         public List<Sensor> GetSensors(Property property, object value) => GetSensors(new SearchFilter(property, value));
 
         /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves sensors from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -446,7 +449,7 @@ namespace PrtgAPI
         public async Task<List<Sensor>> GetSensorsAsync(Property property, object value) => await GetSensorsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -457,7 +460,7 @@ namespace PrtgAPI
             #region Filter (Property, Operator, Value)
 
         /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// Retrieves sensors from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -466,7 +469,7 @@ namespace PrtgAPI
         public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value) => GetSensors(new SearchFilter(property, @operator, value));
 
         /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves sensors from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -475,7 +478,7 @@ namespace PrtgAPI
         public async Task<List<Sensor>> GetSensorsAsync(Property property, FilterOperator @operator, object value) => await GetSensorsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -487,25 +490,26 @@ namespace PrtgAPI
             #region Filter (Array)
 
         /// <summary>
-        /// Retrieve sensors from a PRTG Server based on the values of multiple properties.
+        /// Retrieves sensors from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
         public List<Sensor> GetSensors(params SearchFilter[] filters) => GetSensors(new SensorParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server based on the values of multiple properties.
+        /// Asynchronously retrieves sensors from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
         public async Task<List<Sensor>> GetSensorsAsync(params SearchFilter[] filters) => await GetSensorsAsync(new SensorParameters { SearchFilter = filters }).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream sensors from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams sensors from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<Sensor> StreamSensors(params SearchFilter[] filters) => StreamSensors(new SensorParameters { SearchFilter = filters });
+            #endregion
             #region Query
 
         /// <summary>
@@ -550,7 +554,7 @@ namespace PrtgAPI
             #region Parameters
 
         /// <summary>
-        /// Retrieve sensors from a PRTG Server using a custom set of parameters.
+        /// Retrieves sensors from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
@@ -558,7 +562,7 @@ namespace PrtgAPI
             ObjectEngine.GetObjects<Sensor>(parameters);
 
         /// <summary>
-        /// Asynchronously retrieve sensors from a PRTG Server using a custom set of parameters.
+        /// Asynchronously retrieves sensors from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <returns>A list of sensors that match the specified parameters.</returns>
@@ -566,7 +570,7 @@ namespace PrtgAPI
             await ObjectEngine.GetObjectsAsync<Sensor>(parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream sensors from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams sensors from a PRTG Server using a custom set of parameters. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Sensors.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
@@ -599,14 +603,14 @@ namespace PrtgAPI
             #region Totals
 
         /// <summary>
-        /// Retrieve the number of sensors of each sensor type in the system.
+        /// Retrieves the number of sensors of each sensor type in the system.
         /// </summary>
         /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public SensorTotals GetSensorTotals() =>
             ObjectEngine.GetObject<SensorTotals>(new XmlFunctionParameters(XmlFunction.GetTreeNodeStats));
 
         /// <summary>
-        /// Asynchronously retrieve the number of sensors of each sensor type in the system.
+        /// Asynchronously retrieves the number of sensors of each sensor type in the system.
         /// </summary>
         /// <returns>The total number of sensors of each <see cref="Status"/> type.</returns>
         public async Task<SensorTotals> GetSensorTotalsAsync() =>
@@ -637,28 +641,29 @@ namespace PrtgAPI
             #region Multiple
 
         /// <summary>
-        /// Retrieve all devices from a PRTG Server.
+        /// Retrieves all devices from a PRTG Server.
         /// </summary>
         /// <returns>A list of all devices on a PRTG Server.</returns>
         public List<Device> GetDevices() => GetDevices(new DeviceParameters());
 
         /// <summary>
-        /// Asynchronously retrieve all devices from a PRTG Server.
+        /// Asynchronously retrieves all devices from a PRTG Server.
         /// </summary>
         /// <returns>A list of all devices on a PRTG Server.</returns>
         public async Task<List<Device>> GetDevicesAsync() => await GetDevicesAsync(new DeviceParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream all devices from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams all devices from a PRTG Server. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Device> StreamDevices(bool serial = false) => StreamDevices(new DeviceParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
 
         /// <summary>
-        /// Retrieve devices from a PRTG Server based on the value of a certain property.
+        /// Retrieves devices from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -666,7 +671,7 @@ namespace PrtgAPI
         public List<Device> GetDevices(Property property, object value) => GetDevices(new SearchFilter(property, value));
 
         /// <summary>
-        /// Asynchronously retrieve devices from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves devices from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -674,7 +679,7 @@ namespace PrtgAPI
         public async Task<List<Device>> GetDevicesAsync(Property property, object value) => await GetDevicesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -685,7 +690,7 @@ namespace PrtgAPI
             #region Filter (Property, Operator, Value)
 
         /// <summary>
-        /// Retrieve devices from a PRTG Server based on the value of a certain property.
+        /// Retrieves devices from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -694,7 +699,7 @@ namespace PrtgAPI
         public List<Device> GetDevices(Property property, FilterOperator @operator, string value) => GetDevices(new SearchFilter(property, @operator, value));
 
         /// <summary>
-        /// Asynchronously retrieve devices from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves devices from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -703,7 +708,7 @@ namespace PrtgAPI
         public async Task<List<Device>> GetDevicesAsync(Property property, FilterOperator @operator, string value) => await GetDevicesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -715,21 +720,21 @@ namespace PrtgAPI
             #region Filter (Array)
 
         /// <summary>
-        /// Retrieve devices from a PRTG Server based on the values of multiple properties.
+        /// Retrieves devices from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
         public List<Device> GetDevices(params SearchFilter[] filters) => GetDevices(new DeviceParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve devices from a PRTG Server based on the values of multiple properties.
+        /// Asynchronously retrieves devices from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
         public async Task<List<Device>> GetDevicesAsync(params SearchFilter[] filters) => await GetDevicesAsync(new DeviceParameters { SearchFilter = filters }).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream devices from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams devices from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
@@ -779,7 +784,7 @@ namespace PrtgAPI
             #region Parameters
 
         /// <summary>
-        /// Retrieve devices from a PRTG Server using a custom set of parameters.
+        /// Retrieves devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <returns>A list of devices that match the specified parameters.</returns>
@@ -787,7 +792,7 @@ namespace PrtgAPI
             ObjectEngine.GetObjects<Device>(parameters);
 
         /// <summary>
-        /// Asynchronously retrieve devices from a PRTG Server using a custom set of parameters.
+        /// Asynchronously retrieves devices from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <returns>A list of devices that match the specified parameters.</returns>
@@ -795,7 +800,7 @@ namespace PrtgAPI
             await ObjectEngine.GetObjectsAsync<Device>(parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream devices from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams devices from a PRTG Server using a custom set of parameters. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Devices.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
@@ -843,27 +848,31 @@ namespace PrtgAPI
 
             #endregion
             #region Multiple
+
+        /// <summary>
+        /// Retrieves all groups from a PRTG Server.
         /// </summary>
         /// <returns>A list of all groups on a PRTG Server.</returns>
         public List<Group> GetGroups() => GetGroups(new GroupParameters());
 
         /// <summary>
-        /// Asynchronously retrieve all groups from a PRTG Server.
+        /// Asynchronously retrieves all groups from a PRTG Server.
         /// </summary>
         /// <returns>A list of all groups on a PRTG Server.</returns>
         public async Task<List<Group>> GetGroupsAsync() => await GetGroupsAsync(new GroupParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream all groups from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams all groups from a PRTG Server. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Group> StreamGroups(bool serial = false) => StreamGroups(new GroupParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
 
         /// <summary>
-        /// Retrieve groups from a PRTG Server based on the value of a certain property.
+        /// Retrieves groups from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -871,7 +880,7 @@ namespace PrtgAPI
         public List<Group> GetGroups(Property property, object value) => GetGroups(new SearchFilter(property, value));
 
         /// <summary>
-        /// Asynchronously retrieve groups from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves groups from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -879,7 +888,7 @@ namespace PrtgAPI
         public async Task<List<Group>> GetGroupsAsync(Property property, object value) => await GetGroupsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -890,7 +899,7 @@ namespace PrtgAPI
             #region Filter (Property, Operator, Group)
 
         /// <summary>
-        /// Retrieve groups from a PRTG Server based on the value of a certain property.
+        /// Retrieves groups from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -899,7 +908,7 @@ namespace PrtgAPI
         public List<Group> GetGroups(Property property, FilterOperator @operator, string value) => GetGroups(new SearchFilter(property, @operator, value));
 
         /// <summary>
-        /// Asynchronously retrieve groups from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves groups from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -908,7 +917,7 @@ namespace PrtgAPI
         public async Task<List<Group>> GetGroupsAsync(Property property, FilterOperator @operator, string value) => await GetGroupsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -920,21 +929,21 @@ namespace PrtgAPI
             #region Filter (Array)
 
         /// <summary>
-        /// Retrieve groups from a PRTG Server based on the values of multiple properties.
+        /// Retrieves groups from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
         public List<Group> GetGroups(params SearchFilter[] filters) => GetGroups(new GroupParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve groups from a PRTG Server based on the values of multiple properties.
+        /// Asynchronously retrieves groups from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
         public async Task<List<Group>> GetGroupsAsync(params SearchFilter[] filters) => await GetGroupsAsync(new GroupParameters { SearchFilter = filters }).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream groups from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams groups from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
@@ -986,7 +995,7 @@ namespace PrtgAPI
             #region Parameters
 
         /// <summary>
-        /// Retrieve groups from a PRTG Server using a custom set of parameters.
+        /// Retrieves groups from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Groups.</param>
         /// <returns>A list of groups that match the specified parameters.</returns>
@@ -994,16 +1003,15 @@ namespace PrtgAPI
             ObjectEngine.GetObjects<Group>(parameters);
 
         /// <summary>
-        /// Asynchronously retrieve groups from a PRTG Server using a custom set of parameters.
+        /// Asynchronously retrieves groups from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <returns>A list of groups that match the specified parameters.</returns>
         public async Task<List<Group>> GetGroupsAsync(GroupParameters parameters) =>
             await ObjectEngine.GetObjectsAsync<Group>(parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream groups from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams groups from a PRTG Server using a custom set of parameters. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Group> StreamGroups(GroupParameters parameters, bool serial = false) =>
             ObjectEngine.StreamObjects<Group, GroupParameters>(parameters, serial);
@@ -1031,27 +1039,31 @@ namespace PrtgAPI
 
             #endregion
             #region Multiple
+
+        /// <summary>
+        /// Retrieves all probes from a PRTG Server.
         /// </summary>
         /// <returns>A list of all probes on a PRTG Server.</returns>
         public List<Probe> GetProbes() => GetProbes(new ProbeParameters());
 
         /// <summary>
-        /// Asynchronously retrieve all probes from a PRTG Server.
+        /// Asynchronously retrieves all probes from a PRTG Server.
         /// </summary>
         /// <returns>A list of all probes on a PRTG Server.</returns>
         public async Task<List<Probe>> GetProbesAsync() => await GetProbesAsync(new ProbeParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream all probes from a PRTG Server. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams all probes from a PRTG Server. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Probe> StreamProbes(bool serial = false) => StreamProbes(new ProbeParameters(), serial);
 
             #endregion
             #region Filter (Property, Value)
 
         /// <summary>
-        /// Retrieve probes from a PRTG Server based on the value of a certain property.
+        /// Retrieves probes from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1059,7 +1071,7 @@ namespace PrtgAPI
         public List<Probe> GetProbes(Property property, object value) => GetProbes(new SearchFilter(property, value));
 
         /// <summary>
-        /// Asynchronously retrieve probes from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves probes from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1067,7 +1079,7 @@ namespace PrtgAPI
         public async Task<List<Probe>> GetProbesAsync(Property property, object value) => await GetProbesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1078,7 +1090,7 @@ namespace PrtgAPI
             #region Filter (Property, Operator, Value)
 
         /// <summary>
-        /// Retrieve probes from a PRTG Server based on the value of a certain property.
+        /// Retrieves probes from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -1087,7 +1099,7 @@ namespace PrtgAPI
         public List<Probe> GetProbes(Property property, FilterOperator @operator, string value) => GetProbes(new SearchFilter(property, @operator, value));
 
         /// <summary>
-        /// Asynchronously retrieve probes from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves probes from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -1096,7 +1108,7 @@ namespace PrtgAPI
         public async Task<List<Probe>> GetProbesAsync(Property property, FilterOperator @operator, string value) => await GetProbesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="operator">Operator to compare value and property value with.</param>
@@ -1108,21 +1120,21 @@ namespace PrtgAPI
             #region Filter (Array)
 
         /// <summary>
-        /// Retrieve probes from a PRTG Server based on the values of multiple properties.
+        /// Retrieves probes from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
         public List<Probe> GetProbes(params SearchFilter[] filters) => GetProbes(new ProbeParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve probes from a PRTG Server based on the values of multiple properties.
+        /// Asynchronously retrieves probes from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
         public async Task<List<Probe>> GetProbesAsync(params SearchFilter[] filters) => await GetProbesAsync(new ProbeParameters { SearchFilter = filters }).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream probes from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams probes from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
@@ -1173,7 +1185,7 @@ namespace PrtgAPI
             #region Parameters
 
         /// <summary>
-        /// Retrieve probes from a PRTG Server using a custom set of parameters.
+        /// Retrieves probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <returns>A list of probes that match the specified parameters.</returns>
@@ -1181,7 +1193,7 @@ namespace PrtgAPI
             ObjectEngine.GetObjects<Probe>(parameters);
 
         /// <summary>
-        /// Asynchronously retrieve probes from a PRTG Server using a custom set of parameters.
+        /// Asynchronously retrieves probes from a PRTG Server using a custom set of parameters.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <returns>A list of probes that match the specified parameters.</returns>
@@ -1189,11 +1201,10 @@ namespace PrtgAPI
             await ObjectEngine.GetObjectsAsync<Probe>(parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream probes from a PRTG Server using a custom set of parameters. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        /// Streams probes from a PRTG Server using a custom set of parameters. If <paramref name="serial"/> is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="parameters">A custom set of parameters used to retrieve PRTG Probes.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
-        /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         /// <returns>If <paramref name="serial"/> is false, a generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</returns>
         public IEnumerable<Probe> StreamProbes(ProbeParameters parameters, bool serial = false) =>
             ObjectEngine.StreamObjects<Probe, ProbeParameters>(parameters, serial);
@@ -1240,13 +1251,16 @@ namespace PrtgAPI
         public async Task<Channel> GetChannelAsync(int sensorId, string name) => (await GetChannelsInternalAsync(sensorId, n => n == name).ConfigureAwait(false)).SingleObject(name, "Name");
 
             #endregion
+
+        /// <summary>
+        /// Retrieves all channels of a sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
         public List<Channel> GetChannels(int sensorId) => GetChannelsInternal(sensorId);
 
         /// <summary>
-        /// Retrieve all channels of a sensor that match the specified name.
+        /// Retrieves all channels of a sensor that match the specified name.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <param name="channelName">The name of the channel to retrieve.</param>
@@ -1254,14 +1268,14 @@ namespace PrtgAPI
         public List<Channel> GetChannels(int sensorId, string channelName) => GetChannelsInternal(sensorId, name => name == channelName);
 
         /// <summary>
-        /// Asynchronously retrieve all channels of a sensor.
+        /// Asynchronously retrieves all channels of a sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
         public async Task<List<Channel>> GetChannelsAsync(int sensorId) => await GetChannelsInternalAsync(sensorId).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieve all channels of a sensor that match the specified name.
+        /// Asynchronously retrieves all channels of a sensor that match the specified name.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <param name="channelName">The name of the channel to retrieve.</param>
@@ -1445,13 +1459,16 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified name.</exception> 
         /// <returns>The notification action with the specified name.</returns>
         public async Task<NotificationAction> GetNotificationActionAsync(string name) => (await GetNotificationActionsAsync(Property.Name, "name").ConfigureAwait(false)).SingleObject(name, "Name");
+
+        /// <summary>
+        /// Retrieves notification actions from a PRTG Server.
         /// </summary>
         /// <returns>A list of all notification actions present on a PRTG Server.</returns>
         public List<NotificationAction> GetNotificationActions() =>
             GetNotificationActionsInternal(new NotificationActionParameters());
 
         /// <summary>
-        /// Retrieve notification actions from a PRTG Server based on the value of a certain property.
+        /// Retrieves notification actions from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1460,7 +1477,7 @@ namespace PrtgAPI
             GetNotificationActions(new SearchFilter(property, value));
 
         /// <summary>
-        /// Retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
+        /// Retrieves all notification actions on a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
@@ -1468,14 +1485,14 @@ namespace PrtgAPI
             GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve notification actions from a PRTG Server.
+        /// Asynchronously retrieves notification actions from a PRTG Server.
         /// </summary>
         /// <returns>A list of all notification actions present on a PRTG Server.</returns>
         public async Task<List<NotificationAction>> GetNotificationActionsAsync() =>
             await GetNotificationActionsInternalAsync(new NotificationActionParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieve notification actions from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves notification actions from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1484,7 +1501,7 @@ namespace PrtgAPI
             await GetNotificationActionsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieve all notification actions on a PRTG Server, filtering for objects by one or more conditions.
+        /// Asynchronously retrieves all notification actions on a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
@@ -1513,7 +1530,7 @@ namespace PrtgAPI
         #region Notification Triggers
 
         /// <summary>
-        /// Retrieve all notification triggers of a PRTG Object.
+        /// Retrieves all notification triggers of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve triggers for.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
@@ -1530,7 +1547,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Asynchronously retrieve all notification triggers of a PRTG Object.
+        /// Asynchronously retrieves all notification triggers of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve triggers for.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
@@ -1589,7 +1606,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Retrieve all notification trigger types supported by a PRTG Object.
+        /// Retrieves all notification trigger types supported by a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve supported trigger types for.</param>
         /// <returns>The trigger types supported by the object.</returns>
@@ -1597,7 +1614,7 @@ namespace PrtgAPI
             GetNotificationTriggerData(objectId).SupportedTypes.ToList();
 
         /// <summary>
-        /// Asynchronously retrieve all notification trigger types supported by a PRTG Object.
+        /// Asynchronously retrieves all notification trigger types supported by a PRTG Object.
         /// </summary>
         /// <param name="objectId">The object to retrieve supported trigger types for.</param>
         /// <returns>The trigger types supported by the object.</returns>
@@ -1650,13 +1667,16 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified name.</exception> 
         /// <returns>The schedule with the specified name.</returns>
         public async Task<Schedule> GetScheduleAsync(string name) => (await GetSchedulesAsync(Property.Name, name).ConfigureAwait(false)).SingleObject(name, "Name");
+
+        /// <summary>
+        /// Retrieves all monitoring schedules from a PRTG Server.
         /// </summary>
         /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
         public List<Schedule> GetSchedules() =>
             GetObjects<Schedule>(new ScheduleParameters());
 
         /// <summary>
-        /// Retrieve all monitoring schedules from a PRTG Server based on the value of a certain property.
+        /// Retrieves all monitoring schedules from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1665,7 +1685,7 @@ namespace PrtgAPI
             GetSchedules(new SearchFilter(property, value));
 
         /// <summary>
-        /// Retrieve all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
+        /// Retrieves all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of schedules that match the specified search criteria.</returns>
@@ -1673,14 +1693,14 @@ namespace PrtgAPI
             GetObjects<Schedule>(new ScheduleParameters { SearchFilter = filters });
 
         /// <summary>
-        /// Asynchronously retrieve all monitoring schedules from a PRTG Server.
+        /// Asynchronously retrieves all monitoring schedules from a PRTG Server.
         /// </summary>
         /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
         public async Task<List<Schedule>> GetSchedulesAsync() =>
             await GetObjectsAsync<Schedule>(new ScheduleParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieve all monitoring schedules from a PRTG Server based on the value of a certain property.
+        /// Asynchronously retrieves all monitoring schedules from a PRTG Server based on the value of a certain property.
         /// </summary>
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
@@ -1689,7 +1709,7 @@ namespace PrtgAPI
             await GetSchedulesAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieve all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
+        /// Asynchronously retrieves all monitoring schedules from a PRTG Server, filtering for objects by one or more conditions.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of schedules that match the specified search criteria.</returns>
@@ -1702,7 +1722,7 @@ namespace PrtgAPI
         #region Add Objects
 
         /// <summary>
-        /// Add a new sensor to a PRTG device.
+        /// Adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
@@ -1714,7 +1734,7 @@ namespace PrtgAPI
             AddObject(deviceId, parameters, GetSensors, resolve, allowMultiple: true);
 
         /// <summary>
-        /// Asynchronously add a new sensor to a PRTG device.
+        /// Asynchronously adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.
         /// </summary>
         /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
@@ -1726,7 +1746,7 @@ namespace PrtgAPI
             await AddObjectAsync(deviceId, parameters, GetSensorsAsync, resolve, allowMultiple: true).ConfigureAwait(false);
 
         /// <summary>
-        /// Add a new device to a PRTG group or probe.
+        /// Adds a new device to a PRTG group or probe.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
@@ -1739,7 +1759,7 @@ namespace PrtgAPI
                 AddDevice(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve);
 
         /// <summary>
-        /// Add a new device to a PRTG group or probe with a complex set of parameters.
+        /// Adds a new device to a PRTG group or probe with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
@@ -1750,7 +1770,7 @@ namespace PrtgAPI
             AddObject(parentId, parameters, GetDevices, resolve)?.Single();
 
         /// <summary>
-        /// Asynchronously add a new device to a PRTG group or probe.
+        /// Asynchronously adds a new device to a PRTG group or probe.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
@@ -1763,7 +1783,7 @@ namespace PrtgAPI
                 await AddDeviceAsync(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously add a new device to a PRTG group or probe with a complex set of parameters.
+        /// Asynchronously adds a new device to a PRTG group or probe with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or device the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
@@ -1774,7 +1794,7 @@ namespace PrtgAPI
             (await AddObjectAsync(parentId, parameters, GetDevicesAsync, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
-        /// Add a new group to a PRTG group or probe.
+        /// Adds a new group to a PRTG group or probe.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
@@ -1785,7 +1805,7 @@ namespace PrtgAPI
             AddGroup(parentId, new NewGroupParameters(name), resolve);
 
         /// <summary>
-        /// Add a new group to a PRTG group or probe with a complex set of parameters.
+        /// Adds a new group to a PRTG group or probe with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
@@ -1796,7 +1816,7 @@ namespace PrtgAPI
             AddObject(parentId, parameters, GetGroups, resolve)?.Single();
 
         /// <summary>
-        /// Asynchronously add a new group to a PRTG group or probe.
+        /// Asynchronously adds a new group to a PRTG group or probe.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
@@ -1807,7 +1827,7 @@ namespace PrtgAPI
             await AddGroupAsync(parentId, new NewGroupParameters(name), resolve).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously add a new group to a PRTG group or probe with a complex set of parameters.
+        /// Asynchronously adds a new group to a PRTG group or probe with a complex set of parameters.
         /// </summary>
         /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
@@ -1818,7 +1838,7 @@ namespace PrtgAPI
             (await AddObjectAsync(parentId, parameters, GetGroupsAsync, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
-        /// Create a set of dynamic sensor parameters for creating a new sensor of a specified type.
+        /// Creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
         /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
         /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
@@ -1830,7 +1850,7 @@ namespace PrtgAPI
             new DynamicSensorParameters(GetSensorTargetsResponse(deviceId, sensorType, progressCallback), sensorType);
 
         /// <summary>
-        /// Asynchronously create a set of dynamic sensor parameters for creating a new sensor of a specified type.
+        /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
         /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
         /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
@@ -1843,9 +1863,10 @@ namespace PrtgAPI
 
         #endregion
         #region Sensor State
+            #region Acknowledge
 
         /// <summary>
-        /// Mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// Marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
@@ -1854,7 +1875,7 @@ namespace PrtgAPI
             AcknowledgeSensor(new[] {objectId}, duration, message);
 
         /// <summary>
-        /// Mark one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// Marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
@@ -1863,7 +1884,7 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(new AcknowledgeSensorParameters(objectIds, duration, message));
 
         /// <summary>
-        /// Asynchronously mark a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// Asynchronously marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be paused indefinitely.</param>
@@ -1872,7 +1893,7 @@ namespace PrtgAPI
             await AcknowledgeSensorAsync(new[] {objectId}, duration, message).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously mark one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
+        /// Asynchronously marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
         /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
@@ -1880,8 +1901,11 @@ namespace PrtgAPI
         public async Task AcknowledgeSensorAsync(int[] objectIds, int? duration = null, string message = null) =>
             await RequestEngine.ExecuteRequestAsync(new AcknowledgeSensorParameters(objectIds, duration, message)).ConfigureAwait(false);
 
+            #endregion
+            #region Pause
+
         /// <summary>
-        /// Pause a PRTG Object.
+        /// Pauses monitoring on a PRTG Object and all child objects.
         /// </summary>
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
@@ -1890,7 +1914,7 @@ namespace PrtgAPI
             PauseObject(new[] {objectId}, durationMinutes, pauseMessage);
 
         /// <summary>
-        /// Pause one or more PRTG Objects.
+        /// Pauses monitoring on one or more PRTG Objects and all child objects.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
@@ -1899,7 +1923,7 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(new PauseParameters(objectIds, durationMinutes, pauseMessage));
 
         /// <summary>
-        /// Asynchronously pause a PRTG Object.
+        /// Asynchronously pauses monitoring on a PRTG Object and all child objects.
         /// </summary>
         /// <param name="objectId">ID of the object to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
@@ -1908,7 +1932,7 @@ namespace PrtgAPI
             await PauseObjectAsync(new[] {objectId}, durationMinutes, pauseMessage).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously pause one or more PRTG Objects.
+        /// Asynchronously pauses monitoring on one or more PRTG Objects and all child objects.
         /// </summary>
         /// <param name="objectIds">IDs of the objects to pause.</param>
         /// <param name="durationMinutes">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
@@ -1916,38 +1940,44 @@ namespace PrtgAPI
         public async Task PauseObjectAsync(int[] objectIds, int? durationMinutes = null, string pauseMessage = null) =>
             await RequestEngine.ExecuteRequestAsync(new PauseParameters(objectIds, durationMinutes, pauseMessage)).ConfigureAwait(false);
 
+            #endregion
+            #region Resume
 
         /// <summary>
-        /// Resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
+        /// Resumes monitoring on one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">IDs of the objects to resume.</param>
         public void ResumeObject(params int[] objectId) =>
             RequestEngine.ExecuteRequest(new PauseParameters(objectId, PauseAction.Resume));
 
         /// <summary>
-        /// Asynchronously resume one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
+        /// Asynchronously resumes monitoring on one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.
         /// </summary>
         /// <param name="objectId">ID of the object to resume.</param>
         public async Task ResumeObjectAsync(params int[] objectId) =>
             await RequestEngine.ExecuteRequestAsync(new PauseParameters(objectId, PauseAction.Resume)).ConfigureAwait(false);
 
+            #endregion
+            #region Resume
+
         /// <summary>
-        /// Simulate a <see cref="Status.Down"/> state for one or more sensors.
+        /// Simulates a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
         /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
         public void SimulateError(params int[] sensorIds) => RequestEngine.ExecuteRequest(new SimulateErrorParameters(sensorIds));
 
         /// <summary>
-        /// Asynchronously simulate a <see cref="Status.Down"/> state for one or more sensors.
+        /// Asynchronously simulates a <see cref="Status.Down"/> state for one or more sensors.
         /// </summary>
         /// <param name="sensorIds">IDs of the sensors to simulate an error for.</param>
         public async Task SimulateErrorAsync(params int[] sensorIds) => await RequestEngine.ExecuteRequestAsync(new SimulateErrorParameters(sensorIds)).ConfigureAwait(false);
 
+            #endregion
         #endregion
         #region Notifications
 
         /// <summary>
-        /// Add a notification trigger to a PRTG Server.
+        /// Adds a notification trigger to an object specified by a set of trigger parameters.
         /// </summary>
         /// <param name="parameters">A set of parameters describing the type of notification trigger to create and the object to apply it to.</param>
         /// <param name="resolve">Whether to resolve the new trigger to its resultant <see cref="NotificationTrigger"/> object.
@@ -1957,7 +1987,7 @@ namespace PrtgAPI
             AddNotificationTriggerInternal(parameters, resolve)?.Single();
 
         /// <summary>
-        /// Asynchronously add a notification trigger to a PRTG Server.
+        /// Asynchronously adds a notification trigger to an object specified by a set of trigger parameters.
         /// </summary>
         /// <param name="parameters">A set of parameters describing the type of notification trigger to create and the object to apply it to.</param>
         /// <param name="resolve">Whether to resolve the new trigger to its resultant <see cref="NotificationTrigger"/> object.
@@ -1967,7 +1997,7 @@ namespace PrtgAPI
             (await AddNotificationTriggerInternalAsync(parameters, resolve).ConfigureAwait(false))?.Single();
 
         /// <summary>
-        /// Add or edit a notification trigger on a PRTG Server.
+        /// Adds or edits a notification trigger on an object specified by a set of trigger parameters.
         /// </summary>
         /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
         public void SetNotificationTrigger(TriggerParameters parameters)
@@ -1978,7 +2008,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Asynchronously add or edit a notification trigger on a PRTG Server.
+        /// Asynchronously adds or edits a notification trigger on an object specified by a set of trigger parameters.
         /// </summary>
         /// <param name="parameters">A set of parameters describing the type of notification trigger and how to manipulate it.</param>
         public async Task SetNotificationTriggerAsync(TriggerParameters parameters)
@@ -1989,16 +2019,18 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Remove a notification trigger from an object.
+        /// Removes a notification trigger from an object. Triggers can only be removed from their parent objects, and cannot be removed from objects that have inherited them.
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
+        /// <exception cref="InvalidOperationException">The <paramref name="trigger"/> was inherited from another object.</exception>
         public void RemoveNotificationTrigger(NotificationTrigger trigger) =>
             RequestEngine.ExecuteRequest(new RemoveTriggerParameters(trigger));
 
         /// <summary>
-        /// Asynchronously remove a notification trigger from an object.
+        /// Asynchronously removes a notification trigger from an object. Triggers can only be removed from their parent objects, and cannot be removed from objects that have inherited them.
         /// </summary>
         /// <param name="trigger">The notification trigger to remove.</param>
+        /// <exception cref="InvalidOperationException">The <paramref name="trigger"/> was inherited from another object.</exception>
         public async Task RemoveNotificationTriggerAsync(NotificationTrigger trigger) =>
             await RequestEngine.ExecuteRequestAsync(new RemoveTriggerParameters(trigger)).ConfigureAwait(false);
 
@@ -2006,7 +2038,7 @@ namespace PrtgAPI
         #region Clone Object
 
         /// <summary>
-        /// Clone a sensor or group to another device or group.
+        /// Clones a sensor or group to another device or group.
         /// </summary>
         /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
@@ -2016,7 +2048,7 @@ namespace PrtgAPI
             CloneObject(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId));
 
         /// <summary>
-        /// Clone a device to another group or probe.
+        /// Clones a device to another group or probe.
         /// </summary>
         /// <param name="deviceId">The ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
@@ -2029,7 +2061,7 @@ namespace PrtgAPI
             ResponseParser.Amend(RequestEngine.ExecuteRequest(parameters, ResponseParser.CloneRequestParser), ResponseParser.CloneResponseParser);
 
         /// <summary>
-        /// Asynchronously clone a sensor or group to another device or group.
+        /// Asynchronously clones a sensor or group to another device or group.
         /// </summary>
         /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
@@ -2039,7 +2071,7 @@ namespace PrtgAPI
             await CloneObjectAsync(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId)).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously clone a device to another group or probe.
+        /// Asynchronously clones a device to another group or probe.
         /// </summary>
         /// <param name="deviceId">The ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
@@ -2058,9 +2090,10 @@ namespace PrtgAPI
 
         #endregion
         #region Get Object Properties
+            #region Get Typed Properties
 
         /// <summary>
-        /// Retrieve properties and settings of a PRTG Sensor.
+        /// Retrieves properties and settings of a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <returns>All settings of the specified sensor.</returns>
@@ -2068,7 +2101,7 @@ namespace PrtgAPI
             GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor);
 
         /// <summary>
-        /// Asynchronously retrieve properties and settings of a PRTG Sensor.
+        /// Asynchronously retrieves properties and settings of a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <returns>All settings of the specified sensor.</returns>
@@ -2076,7 +2109,7 @@ namespace PrtgAPI
             await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor).ConfigureAwait(false);
 
         /// <summary>
-        /// Retrieve properties and settings of a PRTG Device.
+        /// Retrieves properties and settings of a PRTG Device.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <returns>All settings of the specified device.</returns>
@@ -2084,7 +2117,7 @@ namespace PrtgAPI
             GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device);
 
         /// <summary>
-        /// Asynchronously retrieve properties and settings of a PRTG Device.
+        /// Asynchronously retrieves properties and settings of a PRTG Device.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <returns>All settings of the specified device.</returns>
@@ -2092,7 +2125,7 @@ namespace PrtgAPI
             await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device).ConfigureAwait(false);
 
         /// <summary>
-        /// Retrieve properties and settings of a PRTG Group.
+        /// Retrieves properties and settings of a PRTG Group.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <returns>All settings of the specified group.</returns>
@@ -2100,7 +2133,7 @@ namespace PrtgAPI
             GetObjectProperties<GroupSettings>(groupId, ObjectType.Group);
 
         /// <summary>
-        /// Asynchronously retrieve properties and settings of a PRTG Group.
+        /// Asynchronously retrieves properties and settings of a PRTG Group.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <returns>All settings of the specified group.</returns>
@@ -2108,7 +2141,7 @@ namespace PrtgAPI
             await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group).ConfigureAwait(false);
 
         /// <summary>
-        /// Retrieve properties and settings of a PRTG Probe.
+        /// Retrieves properties and settings of a PRTG Probe.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
@@ -2116,7 +2149,7 @@ namespace PrtgAPI
             GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe);
 
         /// <summary>
-        /// Asynchronously retrieve properties and settings of a PRTG Probe.
+        /// Asynchronously retrieves properties and settings of a PRTG Probe.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <returns>All settings of the specified probe.</returns>
@@ -2124,7 +2157,7 @@ namespace PrtgAPI
             await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe).ConfigureAwait(false);
 
         /// <summary>
-        /// Retrieve all raw properties and settings of a PRTG Object. Note: objects may have additional properties
+        /// Retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
@@ -2178,7 +2211,7 @@ namespace PrtgAPI
             await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
             
         /// <summary>
-        /// Retrieve a type safe property from a PRTG Server.
+        /// Retrieves a type safe property from a PRTG Server.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
@@ -2193,7 +2226,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Asynchronously retrieve a type safe property from a PRTG Server.
+        /// Asynchronously retrieves a type safe property from a PRTG Server.
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
@@ -2208,7 +2241,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Retrieve a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// Retrieves a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
@@ -2220,7 +2253,7 @@ namespace PrtgAPI
             ResponseParser.GetTypedProperty<T>(GetObjectProperty(objectId, property));
 
         /// <summary>
-        /// Asynchronously retrieve a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// Asynchronously retrieves a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
@@ -2231,8 +2264,11 @@ namespace PrtgAPI
         public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property) =>
             ResponseParser.GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property).ConfigureAwait(false));
 
+        #endregion
+        #region Get Single Raw Property
+
         /// <summary>
-        /// Retrieve unsupported properties and settings of a PRTG Object.
+        /// Retrieves unsupported properties and settings of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2248,7 +2284,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Asynchronously retrieve unsupported properties and settings of a PRTG Object.
+        /// Asynchronously retrieves unsupported properties and settings of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2313,7 +2349,7 @@ namespace PrtgAPI
             #region Normal
 
         /// <summary>
-        /// Modify properties and settings of a PRTG Object.<para/>
+        /// Modifies properties and settings of a PRTG Object.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2324,7 +2360,7 @@ namespace PrtgAPI
             SetObjectProperty(new[] {objectId}, property, value);  
 
         /// <summary>
-        /// Modify properties and settings of one or more PRTG Objects.<para/>
+        /// Modifies properties and settings of one or more PRTG Objects.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2335,7 +2371,7 @@ namespace PrtgAPI
             SetObjectProperty(objectIds, new PropertyParameter(property, value));
 
         /// <summary>
-        /// Asynchronously modify properties and settings of a PRTG Object.<para/>
+        /// Asynchronously modifies properties and settings of a PRTG Object.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2346,7 +2382,7 @@ namespace PrtgAPI
             await SetObjectPropertyAsync(new[] {objectId}, property, value).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously odify properties and settings of one or more PRTG Objects.<para/>
+        /// Asynchronously modifies properties and settings of one or more PRTG Objects.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2360,7 +2396,7 @@ namespace PrtgAPI
             #region Normal (Multiple
 
         /// <summary>
-        /// Modify multiple properties of a PRTG Object.<para/>
+        /// Modifies multiple properties of a PRTG Object.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2370,7 +2406,7 @@ namespace PrtgAPI
             SetObjectProperty(new[] {objectId}, parameters);
 
         /// <summary>
-        /// Modify multiple properties of one or more PRTG Objects.<para/>
+        /// Modifies multiple properties of one or more PRTG Objects.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2380,7 +2416,7 @@ namespace PrtgAPI
             SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
 
         /// <summary>
-        /// Asynchronously modify multiple properties of a PRTG Object.<para/>
+        /// Asynchronously modifies multiple properties of a PRTG Object.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2390,7 +2426,7 @@ namespace PrtgAPI
             await SetObjectPropertyAsync(new[] { objectId }, parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously modify multiple properties of one or more PRTG Objects.<para/>
+        /// Asynchronously modifies multiple properties of one or more PRTG Objects.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
@@ -2403,7 +2439,7 @@ namespace PrtgAPI
             #region Channel
 
         /// <summary>
-        /// Modify channel properties for a PRTG Sensor.
+        /// Modifies channel properties for a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
@@ -2413,7 +2449,7 @@ namespace PrtgAPI
             SetObjectProperty(new[] {sensorId}, channelId, property, value);
 
         /// <summary>
-        /// Modify channel properties for one or more PRTG Sensors.
+        /// Modifies channel properties for one or more PRTG Sensors.
         /// </summary>
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
@@ -2423,7 +2459,7 @@ namespace PrtgAPI
             SetObjectProperty(sensorIds, channelId, new ChannelParameter(property, value));
         
         /// <summary>
-        /// Asynchronously modify channel properties for a PRTG Sensor.
+        /// Asynchronously modifies channel properties for a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
@@ -2433,7 +2469,7 @@ namespace PrtgAPI
             await SetObjectPropertyAsync(new[] {sensorId}, channelId, property, value).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously modify channel properties for one or more PRTG Sensors.
+        /// Asynchronously modifies channel properties for one or more PRTG Sensors.
         /// </summary>
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
@@ -2446,7 +2482,7 @@ namespace PrtgAPI
             #region Channel (Multiple)
 
         /// <summary>
-        /// Modify multiple channel properties for a PRTG Sensor.
+        /// Modifies multiple channel properties for a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
@@ -2455,7 +2491,7 @@ namespace PrtgAPI
             SetObjectProperty(new[] { sensorId }, channelId, parameters);
 
         /// <summary>
-        /// Modify multiple channel properties for one or more PRTG Sensors.
+        /// Modifies multiple channel properties for one or more PRTG Sensors.
         /// </summary>
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
@@ -2464,7 +2500,7 @@ namespace PrtgAPI
             GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList()).SetChannelProperty(sensorIds, channelId, null, parameters);
 
         /// <summary>
-        /// Asynchronously modify multiple channel properties for a PRTG Sensor.
+        /// Asynchronously modifies multiple channel properties for a PRTG Sensor.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
@@ -2473,7 +2509,7 @@ namespace PrtgAPI
             await SetObjectPropertyAsync(new[] { sensorId }, channelId, parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously modify multiple channel properties for one or more PRTG Sensors.
+        /// Asynchronously modifies multiple channel properties for one or more PRTG Sensors.
         /// </summary>
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
@@ -2485,7 +2521,7 @@ namespace PrtgAPI
             #region Custom
 
         /// <summary>
-        /// Modify unsupported properties and settings of a PRTG Object.
+        /// Modifies unsupported properties and settings of an object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2495,7 +2531,7 @@ namespace PrtgAPI
             SetObjectPropertyRaw(new[] {objectId}, property, value);
 
         /// <summary>
-        /// Modify unsupported properties and settings of one or more PRTG Objects.
+        /// Modifies unsupported properties and settings of one or more PRTG Objects.
         /// </summary>
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="property">The property of each object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2505,7 +2541,7 @@ namespace PrtgAPI
             SetObjectPropertyRaw(objectIds, new CustomParameter(property, value));
 
         /// <summary>
-        /// Asynchronously modify unsupported properties and settings of a PRTG Object.
+        /// Asynchronously modifies unsupported properties and settings of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2515,7 +2551,7 @@ namespace PrtgAPI
             await SetObjectPropertyRawAsync(new[] {objectId}, property, value).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously modify unsupported properties and settings of one or more PRTG Objects.
+        /// Asynchronously modifies unsupported properties and settings of one or more PRTG Objects.
         /// </summary>
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="property">The property of each object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -2528,7 +2564,7 @@ namespace PrtgAPI
             #region Custom (Multiple)
 
         /// <summary>
-        /// Modify multiple unsupported properties of a PRTG Object.
+        /// Modifies multiple unsupported properties of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
@@ -2536,7 +2572,7 @@ namespace PrtgAPI
             SetObjectPropertyRaw(new[] { objectId }, parameters);
 
         /// <summary>
-        /// Modify multiple unsupported properties of one or more PRTG Objects.
+        /// Modifies multiple unsupported properties of one or more PRTG Objects.
         /// </summary>
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
@@ -2544,7 +2580,7 @@ namespace PrtgAPI
             SetObjectProperty(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
 
         /// <summary>
-        /// Asynchronously modify multiple unsupported properties of a PRTG Object.
+        /// Asynchronously modifies multiple unsupported properties of a PRTG Object.
         /// </summary>
         /// <param name="objectId">The ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
@@ -2552,7 +2588,7 @@ namespace PrtgAPI
             await SetObjectPropertyRawAsync(new[] { objectId }, parameters).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously modify multiple unsupported properties of one or more PRTG Objects.
+        /// Asynchronously modifies multiple unsupported properties of one or more PRTG Objects.
         /// </summary>
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
@@ -2633,7 +2669,7 @@ namespace PrtgAPI
         #region System Administration
 
         /// <summary>
-        /// Request PRTG generate a backup of the PRTG Configuration Database.<para/>
+        /// Requests PRTG generate a backup of the PRTG Configuration Database.<para/>
         /// When executed, this method will request PRTG store a backup of its configuration database under
         /// the Configuration Auto-Backups folder after first writing the current running configuration to disk.<para/>
         /// Depending on the size of your database, this may take several seconds to complete. Note that PRTG always creates
@@ -2644,7 +2680,7 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.SaveNow));
 
         /// <summary>
-        /// Asynchronously request PRTG generate a backup of the PRTG Configuration Database.<para/>
+        /// Asynchronously requests PRTG generate a backup of the PRTG Configuration Database.<para/>
         /// When executed, this method will request PRTG store a backup of its configuration database under
         /// the Configuration Auto-Backups folder after first writing the current running configuration to disk.<para/>
         /// Depending on the size of your database, this may take several seconds to complete. Note that PRTG always creates
@@ -2655,32 +2691,32 @@ namespace PrtgAPI
             await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.SaveNow)).ConfigureAwait(false);
 
         /// <summary>
-        /// Clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// Clears cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.
         /// </summary>
-        /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// <param name="cacheType">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
         public void ClearSystemCache(SystemCacheType cacheType) =>
             RequestEngine.ExecuteRequest(new ClearSystemCacheParameters(cacheType));
 
         /// <summary>
-        /// Asynchronously clear cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// Asynchronously clears cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.
         /// </summary>
-        /// <param name="cache">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
+        /// <param name="cacheType">The type of cache to clear. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
         /// See each cache type for further details.</param>
         public async Task ClearSystemCacheAsync(SystemCacheType cacheType) =>
             await RequestEngine.ExecuteRequestAsync(new ClearSystemCacheParameters(cacheType)).ConfigureAwait(false);
         
         /// <summary>
-        /// Reload config files including sensor lookups, device icons and report templates used by PRTG.
+        /// Reloads config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public void LoadConfigFiles(ConfigFileType fileType) =>
             RequestEngine.ExecuteRequest(new LoadConfigFilesParameters(fileType));
 
         /// <summary>
-        /// Asymchronously reload config files including sensor lookups, device icons and report templates used by PRTG.
+        /// Asymchronously reloads config files including sensor lookups, device icons and report templates used by PRTG.
         /// </summary>
         /// <param name="fileType">The type of files to reload.</param>
         public async Task LoadConfigFilesAsync(ConfigFileType fileType) =>
@@ -2974,7 +3010,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Asynchronously retrieve the historical values of a sensor's channels from within a specified time period.
+        /// Asynchronously retrieves the historical values of a sensor's channels from within a specified time period.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
@@ -3000,7 +3036,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Stream historical values of a sensors channels from within a specified time period. When this method's response is enumerated,
+        /// Streams historical values of a sensors channels from within a specified time period. When this method's response is enumerated,
         /// requests will be sent to PRTG as required in order to retrieve additional items.
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
@@ -3043,21 +3079,21 @@ namespace PrtgAPI
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
         /// <summary>
-        /// Retrieve configuration, status and version details from a PRTG Server.
+        /// Retrieves configuration, status and version details from a PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
         public ServerStatus GetStatus() =>
             ObjectEngine.GetObject<ServerStatus>(new ServerStatusParameters());
 
         /// <summary>
-        /// Asynchronously etrieve configuration, status and version details from a PRTG Server.
+        /// Asynchronously retrieves configuration, status and version details from a PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
         public async Task<ServerStatus> GetStatusAsync() =>
             await ObjectEngine.GetObjectAsync<ServerStatus>(new ServerStatusParameters()).ConfigureAwait(false);
 
         /// <summary>
-        /// Resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
+        /// Resolves an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>
@@ -3065,7 +3101,7 @@ namespace PrtgAPI
             ObjectEngine.GetObject<GeoResult>(new ResolveAddressParameters(address), ResponseParser.ResolveParser).Results.ToList();
 
         /// <summary>
-        /// Asynchronously resolve an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
+        /// Asynchronously resolves an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <returns></returns>

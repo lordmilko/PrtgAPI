@@ -1,6 +1,7 @@
 ﻿using System;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Parameters
 {
@@ -52,7 +53,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The EXE or Script file to execute on each scan.
+        /// Gets or sets the EXE or Script file to execute on each scan.
         /// </summary>
         [RequireValue(true)]
         public ExeFileTarget ExeFile
@@ -62,7 +63,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Parameters to pass to the <see cref="ExeFile"/> on each scan.
+        /// Gets or sets parameters to pass to the <see cref="ExeFile"/> on each scan.
         /// </summary>
         public string ExeParameters
         {
@@ -71,7 +72,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether PRTG Environment Variables (%host, %windowsusername, etc) will be available as System Environment Variables inside the EXE/Script.
+        /// Gets or sets whether PRTG Environment Variables (%host, %windowsusername, etc) will be available as System Environment Variables inside the EXE/Script.
         /// </summary>
         public bool? SetExeEnvironmentVariables
         {
@@ -80,7 +81,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether to use the Windows Credentials of the parent device to execute the specified EXE/Script file. If custom credentials are not used, the file will be executed under the credentials of the PRTG Probe Service.
+        /// Gets or sets whether to use the Windows Credentials of the parent device to execute the specified EXE/Script file. If custom credentials are not used, the file will be executed under the credentials of the PRTG Probe Service.
         /// </summary>
         public bool? UseWindowsAuthentication
         {
@@ -89,7 +90,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The mutex name to use. All sensors with the same mutex name will be executed sequentially, reducing resource utilization.
+        /// Gets or sets the mutex name to use. All sensors with the same mutex name will be executed sequentially, reducing resource utilization.
         /// </summary>
         public string Mutex
         {
@@ -98,7 +99,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.
+        /// Gets or sets the duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.
         /// </summary>
         public int Timeout
         {
@@ -116,7 +117,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Indicates whether to store raw EXE/Script XML/JSON output for debugging purposes.
+        /// Gets or sets whether to store raw EXE/Script XML/JSON output for debugging purposes.
         /// </summary>
         public DebugMode DebugMode
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Parameters
 {
@@ -51,7 +52,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// A list of services to create sensors for.
+        /// Gets or sets a list of services to create sensors for.
         /// </summary>
         [RequireValue(true)]
         public List<WmiServiceTarget> Services
@@ -61,7 +62,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether PRTG should automatically restart the services in the event they are stopped.
+        /// Gets or sets whether PRTG should automatically restart the services in the event they are stopped.
         /// </summary>
         public bool StartStopped
         {
@@ -70,7 +71,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.
+        /// Gets or sets whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.
         /// </summary>
         public bool NotifyStarted
         {
@@ -79,7 +80,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether to collect performance metrics for each service.
+        /// Gets or sets whether to collect performance metrics for each service.
         /// </summary>
         public bool MonitorPerformance
         {

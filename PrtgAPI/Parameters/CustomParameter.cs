@@ -9,17 +9,17 @@ namespace PrtgAPI.Parameters
     public class CustomParameter
     {
         /// <summary>
-        /// The name of the parameter.
+        /// Gets or sets the name of the parameter.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The value of the parameter.
+        /// Gets or sets the value of the parameter.
         /// </summary>
         public object Value { get; set; }
 
         /// <summary>
-        /// Specifies how the <see cref="Value"/> should be formatted when it contains a value that is <see cref="IEnumerable"/>.
+        /// Gets or sets how the <see cref="Value"/> should be formatted when it contains a value that is <see cref="IEnumerable"/>.
         /// </summary>
         public ParameterType ParameterType { get; set; }
 
@@ -49,7 +49,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Format this parameter for use in a <see cref="PrtgUrl"/>.
+        /// Returns a string representation of the current object based on how it will be likely formatted when used in a <see cref="PrtgUrl"/>.
         /// </summary>
         /// <returns>The formatted representation of this parameter.</returns>
         public override string ToString()

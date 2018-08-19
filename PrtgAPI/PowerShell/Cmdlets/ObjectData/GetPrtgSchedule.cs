@@ -35,7 +35,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetPrtgSchedule : PrtgTableFilterCmdlet<Schedule, ScheduleParameters>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetPrtgSchedule"/> schedule.
+        /// Initializes a new instance of the <see cref="GetPrtgSchedule"/> class.
         /// </summary>
         public GetPrtgSchedule() : base(Content.Schedules, null)
         {

@@ -33,7 +33,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Provides access to the underlying custom parameters of this object.
+        /// Gets the underlying custom parameters of this object.
         /// </summary>
         [Hidden]
         public List<CustomParameter> Parameters

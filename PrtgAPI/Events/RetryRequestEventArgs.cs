@@ -10,17 +10,17 @@ namespace PrtgAPI
     public class RetryRequestEventArgs : EventArgs
     {
         /// <summary>
-        /// The exception that caused the request to fail.
+        /// Gets or sets the exception that caused the request to fail.
         /// </summary>
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// The URL of the request that failed.
+        /// Gets or sets the URL of the request that failed.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// The number of retries remaining for the current request.
+        /// Gets or sets the number of retries remaining for the current request.
         /// </summary>
         public int RetriesRemaining { get; set; }
 

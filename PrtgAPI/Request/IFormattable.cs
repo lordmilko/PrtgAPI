@@ -6,7 +6,7 @@
     internal interface IFormattable
     {
         /// <summary>
-        /// Get the string format of this type for use in serialization requests.
+        /// Gets the string format of this type for use in serialization requests.
         /// </summary>
         /// <returns></returns>
         string GetSerializedFormat();

@@ -14,29 +14,29 @@ namespace PrtgAPI.Parameters
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
 
         /// <summary>
-        /// The ID of the object this trigger will apply to.
+        /// Gets the ID of the object this trigger applies to.
         /// </summary>
         public int ObjectId { get; private set; }
 
         /// <summary>
-        /// If this trigger is being edited, the trigger's sub ID. If the trigger is being added, this value is null.
+        /// Gets the sub ID of the trigger these parameters apply to. If these parameters are being used to create a new trigger, this value is null.
         /// </summary>
         public string SubId => subId == "new" ? null : subId;
 
         private string subId;
 
         /// <summary>
-        /// Whether to add a new trigger or modify an existing one.
+        /// Gets whether these parameters will create a new trigger or modify an existing one.
         /// </summary>
         public ModifyAction Action { get; }
 
         /// <summary>
-        /// The type of notification trigger this object will manipulate.
+        /// Gets the type of notification trigger these triggers will manipulate.
         /// </summary>
         public TriggerType Type { get; }
 
         /// <summary>
-        /// The <see cref="NotificationAction"/> to execute when the trigger activates.
+        /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger activates.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.OnNotificationAction))]
         public NotificationAction OnNotificationAction
@@ -116,7 +116,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Retrieve a <see cref="NotificationAction"/> from this object's <see cref="Parameters"/>. If the specified action type does not exist, an empty notification action is returned.
+        /// Retrieves a <see cref="NotificationAction"/> from this object's <see cref="Parameters"/>. If the specified action type does not exist, an empty notification action is returned.
         /// </summary>
         /// <param name="actionType">The type of notification action to retrieve.</param>
         /// <returns>If the notification action exists, the notification action. Otherwise, an empty notification action.</returns>
@@ -155,7 +155,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Retrieve the value of a trigger property from this object's <see cref="Parameters"/>.
+        /// Retrieves the value of a trigger property from this object's <see cref="Parameters"/>.
         /// </summary>
         /// <param name="property">The property to retrieve.</param>
         /// <returns>The value of this property. If the property does not exist, this method returns null.</returns>
@@ -211,7 +211,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Retrieve the enum value of a trigger property from this object's <see cref="Parameters"/> that has been stored using its XML representation.
+        /// Retrieves the enum value of a trigger property from this object's <see cref="Parameters"/> that has been stored using its XML representation.
         /// </summary>
         /// <typeparam name="T">The type of enum stored in the property</typeparam>
         /// <param name="property">The property to retrieve.</param>
@@ -227,11 +227,11 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Retrieve the enum value of a trigger property from this object's <see cref="Parameters"/> that has been stored as an integer.
+        /// Retrieves the enum value of a trigger property from this object's <see cref="Parameters"/> that has been stored as an integer.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="property"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of enum to retrieve.</typeparam>
+        /// <param name="property">The trigger property whose value should be retrieved.</param>
+        /// <returns>If the trigger property has a value, a value of type T. Otherwise, a null value of type T?</returns>
         protected object GetCustomParameterEnumInt<T>(TriggerProperty property) where T : struct
         {
             var value = GetCustomParameterValue(property);

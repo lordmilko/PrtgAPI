@@ -10,7 +10,7 @@ namespace PrtgAPI
     public class LogVerboseEventArgs : EventArgs
     {
         /// <summary>
-        /// The description of the event.
+        /// Gets or sets the description of the event.
         /// </summary>
         public string Message { get; set; }
 

@@ -37,7 +37,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.
+        /// Gets or sets the duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.
         /// </summary>
         public int Timeout
         {
@@ -55,7 +55,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The URL to monitor. If a protocol is not specified, HTTP is used.
+        /// Gets or sets the URL to monitor. If a protocol is not specified, HTTP is used.
         /// </summary>
         public string Url
         {
@@ -64,7 +64,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The HTTP Request Method to use for requesting the <see cref="Url"/>.
+        /// Gets or sets the HTTP Request Method to use for requesting the <see cref="Url"/>.
         /// </summary>
         public HttpRequestMethod HttpRequestMethod
         {
@@ -73,7 +73,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Data to include in POST requests. Applies when <see cref="HttpRequestMethod"/> is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.
+        /// Gets or sets the data to include in POST requests. Applies when <see cref="HttpRequestMethod"/> is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.
         /// </summary>
         public string PostData
         {
@@ -82,7 +82,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether POST requests should use a custom content type. If false, content type "application/x-www-form-urlencoded" will be used.
+        /// Gets or sets whether POST requests should use a custom content type. If false, content type "application/x-www-form-urlencoded" will be used.
         /// </summary>
         public bool? UseCustomPostContent
         {
@@ -91,7 +91,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Custom content type to use for POST requests.
+        /// Gets or sets a custom content type to use for POST requests.
         /// </summary>
         public string PostContentType
         {
@@ -100,7 +100,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Whether the Server Name Indication is inherited from the parent device, or derived from the specified <see cref="Url"/>.
+        /// Gets or sets whether the Server Name Indication is inherited from the parent device, or derived from the specified <see cref="Url"/>.
         /// </summary>
         public bool? UseSNIFromUrl
         {

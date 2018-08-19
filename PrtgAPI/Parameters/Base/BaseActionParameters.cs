@@ -6,7 +6,7 @@ namespace PrtgAPI.Parameters
     /// Base class for all parameters that perform an action against a PRTG server pertaining to a specific object.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    class BaseActionParameters : Parameters
+    class BaseActionParameters : BaseParameters
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseActionParameters"/> class.
@@ -18,7 +18,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The ID of the object these parameters should apply to.
+        /// Gets or sets the ID of the object these parameters should apply to.
         /// </summary>
         public int ObjectId
         {

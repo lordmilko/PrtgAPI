@@ -11,7 +11,7 @@ namespace PrtgAPI.Attributes
     public sealed class CategoryAttribute : Attribute
     {
         /// <summary>
-        /// The name of the category this attribute's associated field belongs to.
+        /// Gets the name of the category this attribute's associated field belongs to.
         /// </summary>
         public string Name { get; private set; }
 

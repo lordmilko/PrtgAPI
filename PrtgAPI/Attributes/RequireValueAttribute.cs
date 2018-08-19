@@ -9,7 +9,7 @@ namespace PrtgAPI.Attributes
     public sealed class RequireValueAttribute : Attribute
     {
         /// <summary>
-        /// Whether the associated property requires a value.
+        /// Gets whether the associated property requires a value.
         /// </summary>
         public bool ValueRequired { get; private set; }
 

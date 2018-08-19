@@ -7,12 +7,12 @@
     public abstract class PropertyParameter<T>
     {
         /// <summary>
-        /// The property to process.
+        /// Gets the property to process.
         /// </summary>
         public T Property { get; set; }
 
         /// <summary>
-        /// The value to set the <see cref="Property"/> to.
+        /// Gets the value to set the <see cref="Property"/> to.
         /// </summary>
         public object Value { get; set; }
 

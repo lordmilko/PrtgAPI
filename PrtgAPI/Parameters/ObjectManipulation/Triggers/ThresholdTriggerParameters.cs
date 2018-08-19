@@ -10,7 +10,7 @@ namespace PrtgAPI.Parameters
     public class ThresholdTriggerParameters : TriggerParameters
     {
         /// <summary>
-        /// The <see cref="NotificationAction"/> to execute when the trigger's active state clears.
+        /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger's active state clears.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.OffNotificationAction))]
         public NotificationAction OffNotificationAction
@@ -20,7 +20,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
+        /// Gets or sets the delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Latency))]
         public int? Latency
@@ -34,7 +34,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
+        /// Gets or sets the value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
         /// </summary>
         [PropertyParameter(nameof(TriggerProperty.Threshold))]
         public int? Threshold
@@ -44,7 +44,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The condition that controls when the <see cref="Threshold"/> is activated.
+        /// Gets or sets the condition that controls when the <see cref="Threshold"/> is activated.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Condition))]
@@ -55,7 +55,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The channel of the sensor this trigger should apply to.
+        /// Gets or sets the channel of the sensor this trigger should apply to.
         /// </summary>
         [RequireValue(true)]
         [PropertyParameter(nameof(TriggerProperty.Channel))]

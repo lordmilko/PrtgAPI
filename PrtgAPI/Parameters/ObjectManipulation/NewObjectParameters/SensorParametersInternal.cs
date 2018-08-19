@@ -12,7 +12,7 @@ namespace PrtgAPI.Parameters
     public abstract class SensorParametersInternal : NewSensorParameters, ISourceParameters<Device>
     {
         /// <summary>
-        /// Source device these parameters were derived from. If these parameters were not derived from a specific device this value is null.
+        /// Gets the source device these parameters were derived from. If these parameters were not derived from a specific device this value is null.
         /// </summary>
         public Device Source { get; internal set; }
 
@@ -27,7 +27,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// The type of sensor these parameters will create.
+        /// Gets or sets the type of sensor these parameters will create.
         /// </summary>
         [RequireValue(true)]
         public SensorType SensorType
