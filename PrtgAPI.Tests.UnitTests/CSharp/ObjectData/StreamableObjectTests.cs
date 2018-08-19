@@ -4,16 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public abstract class StreamableObjectTests<TObject, TItem, TResponse> : ObjectTests<TObject, TItem, TResponse>
+    public abstract class StreamableObjectTests<TObject, TItem, TResponse> : StandardObjectTests<TObject, TItem, TResponse>
         where TResponse : IWebResponse
-        where TObject : ObjectTable
+        where TObject : ITableObject, IObject
     {
         private Property testProperty = Property.Name;
         private FilterOperator testOperator = FilterOperator.Contains;
@@ -43,6 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         protected void Object_GetObjectsOverloads_CanExecute(
+            Func<PrtgClient, PrtgClient, List<Func<int, object>>> singularObject,
             Func<PrtgClient, PrtgClient, List<Func<Property, object, object>>> propertyValue,
             Func<PrtgClient, PrtgClient, List<Func<Property, FilterOperator, string, object>>> propertyOperatorValue,
             Func<PrtgClient, PrtgClient, List<Func<SearchFilter[], object>>> searchFilters,
@@ -51,7 +51,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var synchronousClient = Initialize_Client_WithItems(GetItem());
             var asynchronousClient = Initialize_Client_WithItems(GetItem());
-            
+
+            var singularObjectFunctions = singularObject(synchronousClient, asynchronousClient);
             var propertyValueFunctions = propertyValue(synchronousClient, asynchronousClient);
             var propertyOperatorValueFunctions = propertyOperatorValue(synchronousClient, asynchronousClient);
             var searchFilterFunctions = searchFilters(synchronousClient, asynchronousClient);
@@ -63,8 +64,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             if (searchFilterFunctions.Count != 2)
                 throw new NotImplementedException();
 
-            RunFunctions<List<TObject>>(propertyValueFunctions[0], propertyOperatorValueFunctions[0], searchFilterFunctions[0]);
-            RunFunctionsAsync<List<TObject>>(propertyValueFunctions[1], propertyOperatorValueFunctions[1], searchFilterFunctions[1]);
+            RunFunctions<List<TObject>, TObject>(singularObjectFunctions[0], propertyValueFunctions[0], propertyOperatorValueFunctions[0], searchFilterFunctions[0]);
+            RunFunctionsAsync<List<TObject>, TObject>(singularObjectFunctions[1], propertyValueFunctions[1], propertyOperatorValueFunctions[1], searchFilterFunctions[1]);
 
             other?.Invoke(synchronousClient, asynchronousClient);
         }
@@ -88,12 +89,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             var searchFilterFunction = searchFilter(streamClient);
 
             CheckResult<IEnumerable<TObject>>(regularFunction(false));
-            RunFunctions<IEnumerable<TObject>>(propertyValueFunction, propertyOperatorValueFunction, searchFilterFunction);
+            RunFunctions<IEnumerable<TObject>, TObject>(null, propertyValueFunction, propertyOperatorValueFunction, searchFilterFunction);
 
             other?.Invoke(streamClient);
         }
 
-        protected void Object_SerialStreamObjects<TParam>(Func<PrtgClient, Func<bool, IEnumerable<TObject>>> getObjects1, Func<PrtgClient, Func<TParam, bool, IEnumerable<TObject>>> getObjects2, TParam parameters) where TParam : TableParameters<TObject>
+        protected void Object_SerialStreamObjects<TParam>(Func<PrtgClient, Func<bool, IEnumerable<TObject>>> getObjects1, Func<PrtgClient, Func<TParam, bool, IEnumerable<TObject>>> getObjects2, TParam parameters)
+            where TParam : TableParameters<TObject>
         {
             var count = 755;
 
@@ -106,18 +108,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             Assert.AreEqual(count, items2.Count);
         }
 
-        private void RunFunctions<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable
+        protected void Object_GetSingle_Throws_WhenNoObjectReturned(Func<PrtgClient, TObject> getObject)
         {
-            CheckResult<T>(f(testProperty, testValue));
-            CheckResult<T>(g(testProperty, testOperator, testValue));
-            CheckResult<T>(h(TestFilters));
+            var client = Initialize_Client(GetResponse(new TItem[] { }));
+
+            AssertEx.Throws<InvalidOperationException>(() => getObject(client), "Object does not exist");
         }
 
-        private void RunFunctionsAsync<T>(Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where T : IEnumerable
+        protected void Object_GetSingle_Throws_WhenMultipleObjectsReturned(Func<PrtgClient, TObject> getObject)
         {
-            CheckResult<T>(((Task<List<TObject>>)f(testProperty, testValue)).Result);
-            CheckResult<T>(((Task<List<TObject>>)g(testProperty, testOperator, testValue)).Result);
-            CheckResult<T>(((Task<List<TObject>>)h(TestFilters)).Result);
+            var client = Initialize_Client(GetResponse(new[] { GetItem(), GetItem() }));
+
+            AssertEx.Throws<InvalidOperationException>(() => getObject(client), "Multiple objects were returned");
+        }
+
+        private void RunFunctions<TList, TSingle>(Func<int, object> i, Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where TList : IEnumerable
+        {
+            if(i != null)
+                Assert.IsTrue((TSingle) i(3002) != null);
+            CheckResult<TList>(f(testProperty, testValue));
+            CheckResult<TList>(g(testProperty, testOperator, testValue));
+            CheckResult<TList>(h(TestFilters));
+        }
+
+        private void RunFunctionsAsync<TList, TSingle>(Func<int, object> i, Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where TList : IEnumerable
+        {
+            Assert.IsTrue(((Task<TSingle>)i(3002)).Result != null);
+            CheckResult<TList>(((Task<List<TObject>>)f(testProperty, testValue)).Result);
+            CheckResult<TList>(((Task<List<TObject>>)g(testProperty, testOperator, testValue)).Result);
+            CheckResult<TList>(((Task<List<TObject>>)h(TestFilters)).Result);
         }
 
         protected void CheckResult<T>(object result) where T : IEnumerable

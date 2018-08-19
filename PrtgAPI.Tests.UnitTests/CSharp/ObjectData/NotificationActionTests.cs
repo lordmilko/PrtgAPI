@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class NotificationActionTests : ObjectTests<NotificationAction, NotificationActionItem, NotificationActionResponse>
+    public class NotificationActionTests : StandardObjectTests<NotificationAction, NotificationActionItem, NotificationActionResponse>
     {
         [TestMethod]
         public void NotificationAction_CanDeserialize() => Object_CanDeserialize();
@@ -18,6 +18,27 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         public void NotificationAction_AllFields_HaveValues() => Object_AllFields_HaveValues();
+
+        [TestMethod]
+        public void NotificationAction_GetObjectsOverloads_CanExecute()
+        {
+            var client = Initialize_Client_WithItems(GetItem());
+
+            Assert.IsTrue(client.GetNotificationActions().Any());
+            Assert.IsTrue(client.GetNotificationActionsAsync().Result.Any());
+
+            Assert.IsTrue(client.GetNotificationActions(Property.Id, 300).Any());
+            Assert.IsTrue(client.GetNotificationActionsAsync(Property.Id, 300).Result.Any());
+
+            Assert.IsTrue(client.GetNotificationActions(new SearchFilter(Property.Id, 300)).Any());
+            Assert.IsTrue(client.GetNotificationActionsAsync(new SearchFilter(Property.Id, 300)).Result.Any());
+
+            Assert.IsTrue(client.GetNotificationAction(620) != null);
+            Assert.IsTrue(client.GetNotificationActionAsync(300).Result != null);
+
+            Assert.IsTrue(client.GetNotificationAction("test") != null);
+            Assert.IsTrue(client.GetNotificationActionAsync("test").Result != null);
+        }
 
         [TestMethod]
         public void NotificationAction_NotificationTypes_AllFields_HaveValues()

@@ -362,14 +362,27 @@ namespace PrtgAPI
 
             #endregion
         #endregion
+        #region Sensors
+            #region Single
 
         /// <summary>
-        /// Apply a modification action to a response, transforming the response to another type.
+        /// Retrieves a sensor with a specified ID from a PRTG Server. If the sensor does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
+        /// <param name="id">The ID of the sensor to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified sensor does not exist or multiple sensors were resolved with the specified ID.</exception> 
+        /// <returns>The sensor with the specified ID.</returns>
+        public Sensor GetSensor(int id) => GetSensors(Property.Id, id).SingleObject(id);
 
+        /// <summary>
+        /// Asynchronously retrieves a sensor with a specified ID from a PRTG Server. If the sensor does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the sensor to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified sensor does not exist or multiple sensors were resolved with the specified ID.</exception> 
+        /// <returns>The sensor with the specified ID.</returns>
+        public async Task<Sensor> GetSensorAsync(int id) => (await GetSensorsAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
 
-        #region Sensors
-            #region Default
+            #endregion
+            #region Multiple
 
         /// <summary>
         /// Retrieve all sensors from a PRTG Server.
@@ -558,7 +571,26 @@ namespace PrtgAPI
 
         #endregion
         #region Devices
-            #region Default
+            #region Single
+
+        /// <summary>
+        /// Retrieves a device with a specified ID from a PRTG Server. If the device does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the device to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified device does not exist or multiple devices were resolved with the specified ID.</exception> 
+        /// <returns>The device with the specified ID.</returns>
+        public Device GetDevice(int id) => GetDevices(Property.Id, id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a device with a specified ID from a PRTG Server. If the device does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the device to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified device does not exist or multiple devices were resolved with the specified ID.</exception> 
+        /// <returns>The device with the specified ID.</returns>
+        public async Task<Device> GetDeviceAsync(int id) => (await GetDevicesAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
+
+            #endregion
+            #region Multiple
 
         /// <summary>
         /// Retrieve all devices from a PRTG Server.
@@ -707,10 +739,26 @@ namespace PrtgAPI
 
         #endregion
         #region Groups
-            #region Default
+            #region Single
 
         /// <summary>
-        /// Retrieve all groups from a PRTG Server.
+        /// Retrieves a group with a specified ID from a PRTG Server. If the group does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the group to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified group does not exist or multiple groups were resolved with the specified ID.</exception> 
+        /// <returns>The group with the specified ID.</returns>
+        public Group GetGroup(int id) => GetGroups(Property.Id, id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a group with a specified ID from a PRTG Server. If the group does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the group to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified group does not exist or multiple groups were resolved with the specified ID.</exception> 
+        /// <returns>The group with the specified ID.</returns>
+        public async Task<Group> GetGroupAsync(int id) => (await GetGroupsAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
+
+            #endregion
+            #region Multiple
         /// </summary>
         /// <returns>A list of all groups on a PRTG Server.</returns>
         public List<Group> GetGroups() => GetGroups(new GroupParameters());
@@ -837,10 +885,26 @@ namespace PrtgAPI
             #endregion
         #endregion
         #region Probes
-            #region Default
+            #region Single
 
         /// <summary>
-        /// Retrieve all probes from a PRTG Server.
+        /// Retrieves a probe with a specified ID from a PRTG Server. If the probe does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the probe to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified probe does not exist or multiple probes were resolved with the specified ID.</exception> 
+        /// <returns>The probe with the specified ID.</returns>
+        public Probe GetProbe(int id) => GetProbes(Property.Id, id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a probe with a specified ID from a PRTG Server. If the probe does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the probe to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified probe does not exist or multiple probes were resolved with the specified ID.</exception> 
+        /// <returns>The probe with the specified ID.</returns>
+        public async Task<Probe> GetProbeAsync(int id) => (await GetProbesAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
+
+            #endregion
+            #region Multiple
         /// </summary>
         /// <returns>A list of all probes on a PRTG Server.</returns>
         public List<Probe> GetProbes() => GetProbes(new ProbeParameters());
@@ -970,9 +1034,45 @@ namespace PrtgAPI
             #endregion
         #endregion
         #region Channel
+            #region Single
 
         /// <summary>
-        /// Retrieve all channels of a sensor.
+        /// Retrieves a channel with a specified ID from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="id">The ID of the channel to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified ID.</exception> 
+        /// <returns>The channel with the specified ID.</returns>
+        public Channel GetChannel(int sensorId, int id) => GetChannelsInternal(sensorId, null, i => i == id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a channel with a specified ID from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="id">The ID of the channel to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified object does not exist or multiple objects were resolved with the specified ID.</exception> 
+        /// <returns>The channel with the specified ID.</returns>
+        public async Task<Channel> GetChannelAsync(int sensorId, int id) => (await GetChannelsInternalAsync(sensorId, null, i => i == id).ConfigureAwait(false)).SingleObject(id);
+
+        /// <summary>
+        /// Retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="name">The name of the channel to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception> 
+        /// <returns>The channel with the specified name.</returns>
+        public Channel GetChannel(int sensorId, string name) => GetChannelsInternal(sensorId, n => n == name).SingleObject(name, "Name");
+
+        /// <summary>
+        /// Asynchronously retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="name">The name of the channel to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception> 
+        /// <returns>The channel with the specified name.</returns>
+        public async Task<Channel> GetChannelAsync(int sensorId, string name) => (await GetChannelsInternalAsync(sensorId, n => n == name).ConfigureAwait(false)).SingleObject(name, "Name");
+
+            #endregion
         /// </summary>
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <returns></returns>
@@ -1096,7 +1196,36 @@ namespace PrtgAPI
         #region Notification Actions
 
         /// <summary>
-        /// Retrieve notification actions from a PRTG Server.
+        /// Retrieves a notification action with a specified ID from a PRTG Server. If the notification action does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the notification action to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified ID.</exception> 
+        /// <returns>The notification action with the specified ID.</returns>
+        public NotificationAction GetNotificationAction(int id) => GetNotificationActions(Property.Id, id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a notification action with a specified ID from a PRTG Server. If the notification action does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the notification action to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified ID.</exception> 
+        /// <returns>The notification action with the specified ID.</returns>
+        public async Task<NotificationAction> GetNotificationActionAsync(int id) => (await GetNotificationActionsAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
+
+        /// <summary>
+        /// Retrieves a notification action with a specified name from a PRTG Server. If the notification action does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="name">The name of the notification action to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified name.</exception> 
+        /// <returns>The notification action with the specified name.</returns>
+        public NotificationAction GetNotificationAction(string name) => GetNotificationActions(Property.Name, name).SingleObject(name, "Name");
+
+        /// <summary>
+        /// Asynchronously retrieves a notification action with a specified name from a PRTG Server. If the notification action does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="name">The name of the notification action to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified name.</exception> 
+        /// <returns>The notification action with the specified name.</returns>
+        public async Task<NotificationAction> GetNotificationActionAsync(string name) => (await GetNotificationActionsAsync(Property.Name, "name").ConfigureAwait(false)).SingleObject(name, "Name");
         /// </summary>
         /// <returns>A list of all notification actions present on a PRTG Server.</returns>
         public List<NotificationAction> GetNotificationActions() =>
@@ -1272,7 +1401,36 @@ namespace PrtgAPI
         #region Schedules
 
         /// <summary>
-        /// Retrieve all monitoring schedules from a PRTG Server.
+        /// Retrieves a monitoring schedule with a specified ID from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the schedule to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified ID.</exception> 
+        /// <returns>The schedule with the specified ID.</returns>
+        public Schedule GetSchedule(int id) => GetSchedules(Property.Id, id).SingleObject(id);
+
+        /// <summary>
+        /// Asynchronously retrieves a monitoring schedule with a specified ID from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="id">The ID of the schedule to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedulea were resolved with the specified ID.</exception> 
+        /// <returns>The schedule with the specified ID.</returns>
+        public async Task<Schedule> GetScheduleAsync(int id) => (await GetSchedulesAsync(Property.Id, id).ConfigureAwait(false)).SingleObject(id);
+
+        /// <summary>
+        /// Retrieves a monitoring schedule with a specified name from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="name">The name of the schedule to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified name.</exception> 
+        /// <returns>The schedule with the specified name.</returns>
+        public Schedule GetSchedule(string name) => GetSchedules(Property.Name, name).SingleObject(name, "Name");
+
+        /// <summary>
+        /// Asynchronously retrieves a monitoring schedule with a specified name from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="name">The name of the schedule to retrieve.</param>
+        /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified name.</exception> 
+        /// <returns>The schedule with the specified name.</returns>
+        public async Task<Schedule> GetScheduleAsync(string name) => (await GetSchedulesAsync(Property.Name, name).ConfigureAwait(false)).SingleObject(name, "Name");
         /// </summary>
         /// <returns>A list of monitoring schedules supported by a PRTG Server.</returns>
         public List<Schedule> GetSchedules() =>

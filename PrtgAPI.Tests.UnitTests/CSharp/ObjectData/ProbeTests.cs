@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class ProbeTests : StreamableObjectTests<Probe, ProbeItem, ProbeResponse>
+    public class ProbeTests : QueryableObjectTests<Probe, ProbeItem, ProbeResponse>
     {
         protected override SearchFilter[] TestFilters { get; } = {
             new SearchFilter(Property.ParentId, 0),
@@ -29,9 +28,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         public void Probe_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
-            (c1, c2) => new List<Func<Property, object, object>> { c1.GetProbes, c2.GetProbesAsync },
+            (c1, c2) => new List<Func<int, object>>                              { c1.GetProbe, c2.GetProbeAsync },
+            (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetProbes, c2.GetProbesAsync },
             (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetProbes, c2.GetProbesAsync },
-            (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetProbes, c2.GetProbesAsync }
+            (c1, c2) => new List<Func<SearchFilter[], object>>                   { c1.GetProbes, c2.GetProbesAsync }
         );
 
         [TestMethod]
@@ -48,6 +48,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             c => c.StreamProbes,
             new ProbeParameters()
         );
+
+        [TestMethod]
+        [TestMethod]
+        public void Probe_GetProbe_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetProbe(1001));
+
+        [TestMethod]
+        public void Probe_GetProbe_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetProbe(1001));
 
         [TestMethod]
         public void Probe_AllFields_HaveValues()

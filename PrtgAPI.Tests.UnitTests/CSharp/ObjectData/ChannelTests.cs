@@ -3,16 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class ChannelTests : ObjectTests<Channel, ChannelItem, ChannelResponse>
+    public class ChannelTests : StandardObjectTests<Channel, ChannelItem, ChannelResponse>
     {
         [TestMethod]
         public void Channel_CanDeserialize() => Object_CanDeserialize();
+
+        [TestMethod]
+        public void Channel_GetObjectsOverloads_CanExecute()
+        {
+            var client = Initialize_Client_WithItems(GetItem());
+
+            Assert.IsTrue(client.GetChannels(1001).Any());
+            Assert.IsTrue(client.GetChannelsAsync(1001).Result.Any());
+
+            Assert.IsTrue(client.GetChannels(1001, "Percent Available Memory").Any());
+            Assert.IsTrue(client.GetChannelsAsync(1001, "Percent Available Memory").Result.Any());
+
+            Assert.IsTrue(client.GetChannel(1001, 1) != null);
+            Assert.IsTrue(client.GetChannelAsync(1001, 1).Result != null);
+
+            Assert.IsTrue(client.GetChannel(1001, "Percent Available Memory") != null);
+            Assert.IsTrue(client.GetChannelAsync(1001, "Percent Available Memory").Result != null);
+        }
 
         [TestMethod]
         public async Task Channel_CanDeserializeAsync() => await Object_CanDeserializeAsync();

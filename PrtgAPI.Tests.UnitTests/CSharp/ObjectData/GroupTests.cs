@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class GroupTests : StreamableObjectTests<Group, GroupItem, GroupResponse>
+    public class GroupTests : QueryableObjectTests<Group, GroupItem, GroupResponse>
     {
         [TestMethod]
         public void Group_CanDeserialize() => Object_CanDeserialize();
@@ -23,9 +23,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         public void Group_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
-            (c1, c2) => new List<Func<Property, object, object>> { c1.GetGroups, c2.GetGroupsAsync },
+            (c1, c2) => new List<Func<int, object>>                              { c1.GetGroup, c2.GetGroupAsync },
+            (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetGroups, c2.GetGroupsAsync },
             (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetGroups, c2.GetGroupsAsync },
-            (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetGroups, c2.GetGroupsAsync }
+            (c1, c2) => new List<Func<SearchFilter[], object>>                   { c1.GetGroups, c2.GetGroupsAsync }
         );
 
         [TestMethod]
@@ -42,6 +43,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             c => c.StreamGroups,
             new GroupParameters()
         );
+
+        [TestMethod]
+        [TestMethod]
+        public void Group_GetGroup_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetGroup(1001));
+
+        [TestMethod]
+        public void Group_GetGroup_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetGroup(1001));
 
         [TestMethod]
         public void Group_AllFields_HaveValues() => Object_AllFields_HaveValues();

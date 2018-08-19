@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
     [TestClass]
-    public class DeviceTests : StreamableObjectTests<Device, DeviceItem, DeviceResponse>
+    public class DeviceTests : QueryableObjectTests<Device, DeviceItem, DeviceResponse>
     {
         [TestMethod]
         public void Device_CanDeserialize() => Object_CanDeserialize();
@@ -23,6 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         [TestMethod]
         public void Device_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
+            (c1, c2) => new List<Func<int, object>>                              { c1.GetDevice, c2.GetDeviceAsync },
             (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetDevices, c2.GetDevicesAsync },
             (c1, c2) => new List<Func<Property, FilterOperator, string, object>> { c1.GetDevices, c2.GetDevicesAsync },
             (c1, c2) => new List<Func<SearchFilter[], object>>                   { c1.GetDevices, c2.GetDevicesAsync }
@@ -42,6 +43,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             c => c.StreamDevices,
             new DeviceParameters()
         );
+
+        [TestMethod]
+        [TestMethod]
+        public void Device_GetDevice_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetDevice(1001));
+
+        [TestMethod]
+        public void Device_GetDevice_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetDevice(1001));
 
         [TestMethod]
         public void Device_AllFields_HaveValues() => Object_AllFields_HaveValues();
