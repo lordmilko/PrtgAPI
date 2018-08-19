@@ -50,6 +50,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
+        public void Probe_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
+            client => client.QueryProbes,
+            client => client.QueryProbes,
+            client => client.QueryProbes,
+            client => client.QueryProbes
+        );
+
         [TestMethod]
         public void Probe_GetProbe_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetProbe(1001));
 

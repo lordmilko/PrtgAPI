@@ -45,6 +45,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
+        public void Group_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
+            client => client.QueryGroups,
+            client => client.QueryGroups,
+            client => client.QueryGroups,
+            client => client.QueryGroups
+        );
+
         [TestMethod]
         public void Group_GetGroup_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetGroup(1001));
 

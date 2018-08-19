@@ -70,6 +70,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
+        public void Sensor_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
+            client => client.QuerySensors,
+            client => client.QuerySensors,
+            client => client.QuerySensors,
+            client => client.QuerySensors
+        );
+
+        [TestMethod]
         public void Sensor_AllFields_HaveValues()
         {
             Object_AllFields_HaveValues(prop =>

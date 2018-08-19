@@ -506,6 +506,45 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<Sensor> StreamSensors(params SearchFilter[] filters) => StreamSensors(new SensorParameters { SearchFilter = filters });
+            #region Query
+
+        /// <summary>
+        /// Retrieves sensors from a PRTG Server based on one or more <see cref="Queryable"/> expressions.
+        /// </summary>
+        /// <returns>An <see cref="IQueryable{Sensor}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Sensor> QuerySensors() => QuerySensors(null);
+
+        /// <summary>
+        /// Retrieves sensors from a PRTG Server based on one or more <see cref="Queryable"/> expressions, specifying whether to use strict parsing semantics.
+        /// </summary>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Device}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Sensor> QuerySensors(bool strict) => QuerySensors(null, strict);
+
+        /// <summary>
+        /// Retrieves sensors from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter sensors according to a specified predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter sensors by.</param>
+        /// <returns>An <see cref="IQueryable{Sensor}"/> representing the result of filtering the sensors.</returns>
+        public IQueryable<Sensor> QuerySensors(Expression<Func<Sensor, bool>> predicate) => QuerySensors(predicate, false);
+
+        /// <summary>
+        /// Retrieves sensors from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter sensors according to a specified predicate and specifying whether
+        /// to use strict parsing semantics.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter sensors by.</param>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Sensor}"/> representing the result of filtering the sensors.</returns>
+        public IQueryable<Sensor> QuerySensors(Expression<Func<Sensor, bool>> predicate, bool strict) =>
+            ObjectEngine.QueryObjects(predicate, strict, () => new SensorParameters());
 
             #endregion
             #region Parameters
@@ -536,6 +575,7 @@ namespace PrtgAPI
             ObjectEngine.StreamObjects<Sensor, SensorParameters>(parameters, serial);
 
             #endregion
+            #region Types
 
         /// <summary>
         /// Retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.<para/>
@@ -555,6 +595,9 @@ namespace PrtgAPI
         public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = 1) =>
             ResponseParser.ParseSensorTypes((await ObjectEngine.GetObjectAsync<SensorTypeDescriptorInternal>(new SensorTypeParameters(objectId), ResponseParser.ValidateHasContentAsync).ConfigureAwait(false)).Types);
 
+            #endregion
+            #region Totals
+
         /// <summary>
         /// Retrieve the number of sensors of each sensor type in the system.
         /// </summary>
@@ -569,6 +612,7 @@ namespace PrtgAPI
         public async Task<SensorTotals> GetSensorTotalsAsync() =>
             await ObjectEngine.GetObjectAsync<SensorTotals>(new XmlFunctionParameters(XmlFunction.GetTreeNodeStats)).ConfigureAwait(false);
 
+            #endregion
         #endregion
         #region Devices
             #region Single
@@ -690,6 +734,46 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<Device> StreamDevices(params SearchFilter[] filters) => StreamDevices(new DeviceParameters { SearchFilter = filters });
+            #endregion
+            #region Query
+
+        /// <summary>
+        /// Retrieves devices from a PRTG Server based on one or more <see cref="Queryable"/> expressions.
+        /// </summary>
+        /// <returns>An <see cref="IQueryable{Device}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Device> QueryDevices() => QueryDevices(null);
+
+        /// <summary>
+        /// Retrieves devices from a PRTG Server based on one or more <see cref="Queryable"/> expressions, specifying whether to use strict parsing semantics.
+        /// </summary>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Device}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Device> QueryDevices(bool strict) => QueryDevices(null, strict);
+
+        /// <summary>
+        /// Retrieves devices from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter devices according to a specified predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter devices by.</param>
+        /// <returns>An <see cref="IQueryable{Device}"/> representing the result of filtering the devices.</returns>
+        public IQueryable<Device> QueryDevices(Expression<Func<Device, bool>> predicate) => QueryDevices(predicate, false);
+
+        /// <summary>
+        /// Retrieves devices from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter devices according to a specified predicate and specifying whether
+        /// to use strict parsing semantics.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter devices by.</param>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Device}"/> representing the result of filtering the devices.</returns>
+        public IQueryable<Device> QueryDevices(Expression<Func<Device, bool>> predicate, bool strict) =>
+            ObjectEngine.QueryObjects(predicate, strict, () => new DeviceParameters());
 
             #endregion
             #region Parameters
@@ -857,6 +941,48 @@ namespace PrtgAPI
         public IEnumerable<Group> StreamGroups(params SearchFilter[] filters) => StreamGroups(new GroupParameters { SearchFilter = filters });
 
             #endregion
+            #region Query
+
+        /// <summary>
+        /// Retrieves groups from a PRTG Server based on one or more <see cref="Queryable"/> expressions.
+        /// </summary>
+        /// <returns>An <see cref="IQueryable{Group}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Group> QueryGroups() => QueryGroups(null);
+
+        /// <summary>
+        /// Retrieves groups from a PRTG Server based on one or more <see cref="Queryable"/> expressions, specifying whether to use strict parsing semantics.
+        /// </summary>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Group}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Group> QueryGroups(bool strict) => QueryGroups(null, strict);
+
+        /// <summary>
+        /// Retrieves groups from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter groups according to a specified predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter groups by.</param>
+        /// <returns>An <see cref="IQueryable{Group}"/> representing the result of filtering the groups.</returns>
+        public IQueryable<Group> QueryGroups(Expression<Func<Group, bool>> predicate) =>
+            QueryGroups(predicate, false);
+
+        /// <summary>
+        /// Retrieves groups from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter groups according to a specified predicate and specifying whether
+        /// to use strict parsing semantics.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter groups by.</param>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Group}"/> representing the result of filtering the groups.</returns>
+        public IQueryable<Group> QueryGroups(Expression<Func<Group, bool>> predicate, bool strict) =>
+            ObjectEngine.QueryObjects(predicate, strict, () => new GroupParameters());
+
+            #endregion
             #region Parameters
 
         /// <summary>
@@ -1001,6 +1127,47 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<Probe> StreamProbes(params SearchFilter[] filters) => StreamProbes(new ProbeParameters { SearchFilter = filters });
+
+            #endregion
+            #region Query
+
+        /// <summary>
+        /// Retrieves probes from a PRTG Server based on one or more <see cref="Queryable"/> expressions.
+        /// </summary>
+        /// <returns>An <see cref="IQueryable{Probe}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Probe> QueryProbes() => QueryProbes(null);
+
+        /// <summary>
+        /// Retrieves probes from a PRTG Server based on one or more <see cref="Queryable"/> expressions, specifying whether to use strict parsing semantics.
+        /// </summary>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Probe}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Probe> QueryProbes(bool strict) => QueryProbes(null, strict);
+
+        /// <summary>
+        /// Retrieves probes from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter probes according to a specified predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter probes by.</param>
+        /// <returns>An <see cref="IQueryable{Probe}"/> representing the result of filtering the probes.</returns>
+        public IQueryable<Probe> QueryProbes(Expression<Func<Probe, bool>> predicate) => QueryProbes(predicate, false);
+
+        /// <summary>
+        /// Retrieves probes from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter probes according to a specified predicate and specifying whether
+        /// to use strict parsing semantics.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter probes by.</param>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was encountered that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Probe}"/> representing the result of filtering the probes.</returns>
+        public IQueryable<Probe> QueryProbes(Expression<Func<Probe, bool>> predicate, bool strict) =>
+            ObjectEngine.QueryObjects(predicate, strict, () => new ProbeParameters());
 
             #endregion
             #region Parameters
@@ -1190,6 +1357,58 @@ namespace PrtgAPI
         /// <returns>All logs that meet the specified criteria.</returns>
         public IEnumerable<Log> StreamLogs(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, bool serial = false, params LogStatus[] status) =>
             StreamObjects(new LogParameters(objectId, timeSpan, status: status), serial);
+            #endregion
+            #region Query
+
+        /// <summary>
+        /// Retrieves logs from a PRTG Server based on one or more <see cref="Queryable"/> expressions.<para/>
+        /// If a lower date range is not specified, logs will be retrieved between the upper range and the beginning of all logs.
+        /// If an upper range is not specified, logs will be retrieved from the current date and time. If an Id is not specified,
+        /// logs will be retrieved for all objects.
+        /// </summary>
+        /// <returns>An <see cref="IQueryable{Log}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Log> QueryLogs() => QueryLogs(null);
+
+        /// <summary>
+        /// Retrieves logs from a PRTG Server based on one or more <see cref="Queryable"/> expressions using strict parsing semantics.<para/>
+        /// If a lower date range is not specified, logs will be retrieved between the upper range and the beginning of all logs.
+        /// If an upper range is not specified, logs will be retrieved from the current date and time. If an Id is not specified,
+        /// logs will be retrieved for all objects.<para/>
+        /// </summary>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was specified that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Log}"/> to be wrapped by <see cref="Queryable"/> LINQ Expressions.</returns>
+        public IQueryable<Log> QueryLogs(bool strict) => QueryLogs(null, strict);
+
+        /// <summary>
+        /// Retrieves logs from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter logs according to a specified predicate.<para/>
+        /// If a lower date range is not specified in any predicate, logs will be retrieved between the upper range and the beginning of all logs.
+        /// If an upper range is not specified, logs will be retrieved from the current date and time. If an Id is not specified,
+        /// logs will be retrieved for all objects.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter logs by.</param>
+        /// <returns>An <see cref="IQueryable{Probe}"/> representing the result of filtering the logs.</returns>
+        public IQueryable<Log> QueryLogs(Expression<Func<Log, bool>> predicate) => QueryLogs(predicate, false);
+
+        /// <summary>
+        /// Retrieves logs from a PRTG Server based on one or more <see cref="Queryable"/> expressions,
+        /// starting with an expression to filter logs according to a specified predicate and specifying
+        /// whether to use strict parsing semantics.<para/>
+        /// If a lower date range is not specified in any predicate, logs will be retrieved between the upper range and the beginning of all logs.
+        /// If an upper range is not specified, logs will be retrieved from the current date and time. If an Id is not specified,
+        /// logs will be retrieved for all objects.
+        /// </summary>
+        /// <param name="predicate">The predicate to initially filter logs by.</param>
+        /// <param name="strict">Whether to use strict evaluation. If true, a <see cref="NotSupportedException"/> will be thrown
+        /// if an expression is encountered that cannot be evaluated server side.<para/>If <paramref name="strict"/> is false,
+        /// the maximal supported expression will be executed server side, with any remaining expressions executed client side.</param>
+        /// <exception cref="NotSupportedException">An expression was specified that cannot be evaluated server side.</exception>
+        /// <returns>An <see cref="IQueryable{Probe}"/> representing the result of filtering the logs.</returns>
+        public IQueryable<Log> QueryLogs(Expression<Func<Log, bool>> predicate, bool strict) =>
+            ObjectEngine.QueryObjects(predicate, strict, () => new LogParameters(null), new QueryLogHelper(strict));
 
             #endregion
         #endregion

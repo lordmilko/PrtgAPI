@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization.Cache;
+using PrtgAPI.Request.Serialization.Cache;
 
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Request.Serialization
 {
     [ExcludeFromCodeCoverage]
     class XmlSerializer
     {
         private Type outerType;
+        private bool deserializeAll = true;
 
         public XmlSerializer(Type type)
         {
@@ -35,7 +35,13 @@ namespace PrtgAPI.Objects.Deserialization
             return Deserialize(outerType, obj, item, properties.ToArray());
         }
 
-        public object Deserialize(XDocument doc, params string[] properties)
+        public object Deserialize(XDocument doc, string[] properties, bool deserializeAll)
+        {
+            this.deserializeAll = deserializeAll;
+            return Deserialize(doc, properties);
+        }
+
+        private object Deserialize(XDocument doc, params string[] properties)
         {
             return Deserialize(outerType, doc.Elements().First(), properties);
         }
@@ -60,7 +66,7 @@ namespace PrtgAPI.Objects.Deserialization
                 )
             );
 
-            var settings = deserializer.Deserialize(xml, elementName);
+            var settings = deserializer.Deserialize(xml, elementName, null);
 
             var value = settings.GetType().GetProperties().First(p => p.Name == property.ToString()).GetValue(settings);
 
@@ -81,7 +87,6 @@ namespace PrtgAPI.Objects.Deserialization
 
             foreach (var mapping in mappings)
             {
-                Logger.Debug($"\nDeserialize property {mapping.PropertyCache.Property.Name}: ");
 
                 try
                 {
@@ -105,10 +110,7 @@ namespace PrtgAPI.Objects.Deserialization
                     //throw new Exception("An error occurred while trying to deserialize property " + mapping.Property.Name);
                     throw;
                 }
-
             }
-
-            Logger.Debug("\n");
 
             return obj;
         }
@@ -158,8 +160,6 @@ namespace PrtgAPI.Objects.Deserialization
             var list = Activator.CreateInstance(type);
 
             var elms = mapping.AttributeValue.Select(a => elm.Elements(a)).First(x => x != null).ToList();
-
-            Logger.Debug($"XElement contained {elms.Count} element(s)");
 
             foreach (var e in elms)
             {
@@ -239,8 +239,6 @@ namespace PrtgAPI.Objects.Deserialization
         {
             var value = mapping.GetSingleXAttributeAttributeValue(elm);
 
-            var str = value != null ? $"\"{value.Value}\"" : "null";
-            Logger.Debug($"XAttribute contained {str}");
 
             value = NullifyMissingValue(value);
             var finalValue = value == null ? null : GetValue(mapping.PropertyCache.Property.PropertyType, value.Value, elm);
@@ -251,9 +249,6 @@ namespace PrtgAPI.Objects.Deserialization
         private void ProcessXmlText(object obj, XmlMapping mapping, XElement elm)
         {
             var type = mapping.PropertyCache.Property.PropertyType;
-
-            var str = elm != null ? $"\"{elm.Value}\"" : "null";
-            Logger.Debug($"XElement contained {str}");
 
             elm = NullifyMissingValue(elm);
 

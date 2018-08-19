@@ -8,8 +8,8 @@ using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestItems;
-using PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 {
@@ -115,6 +115,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
             var skipStartsWith = new List<string>
             {
                 "Stream",
+                "Query",
                 "get_",
                 "set_",
                 "add_",

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -38,7 +39,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             await ExecuteAssertAsync(async () => await UnitTests.AssertEx.ThrowsAsync<T>(action, message), "AssertEx.Throws");
         }
 
-        private static void ExecuteAssert(Action assert, string assertName)
+        private static void ExecuteAssert(Action assert, string assertName, bool retry = false)
         {
             try
             {
@@ -49,8 +50,16 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 HadFailure = true;
 
-                var text = $"{assertName} failed. ";
-                Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
+                if(!retry)
+                {
+                    var text = $"{assertName} failed. ";
+
+                    if(ex.Message.StartsWith(text))
+                        Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
+                    else
+                        Logger.LogTestDetail(ex.Message, true);
+                }
+
                 throw;
             }
         }
@@ -92,5 +101,12 @@ namespace PrtgAPI.Tests.IntegrationTests
                 throw;
             }
         }
+
+        public static void AreEqualLists<T>(List<T> first, List<T> second, IEqualityComparer<T> comparer, string message, bool retry = false) =>
+            ExecuteAssert(() => UnitTests.AssertEx.AreEqualLists(first, second, comparer, message), "AssertEx.AreEqualLists", retry);
+
+        public static void AreEqualLists<T>(List<T> first, List<T> second, string message) => AreEqualLists(first, second, null, message);
+
+        public static void AllListElementsUnique<T>(List<T> list, IEqualityComparer<T> comparer) => ExecuteAssert(() => UnitTests.AssertEx.AllListElementsUnique(list, comparer), "AssertEx.AllListElementsUnique");
     }
 }

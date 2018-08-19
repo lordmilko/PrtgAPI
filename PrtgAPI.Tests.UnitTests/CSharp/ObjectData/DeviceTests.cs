@@ -45,6 +45,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         );
 
         [TestMethod]
+        public void Device_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
+            client => client.QueryDevices,
+            client => client.QueryDevices,
+            client => client.QueryDevices,
+            client => client.QueryDevices
+        );
+
         [TestMethod]
         public void Device_GetDevice_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetDevice(1001));
 
