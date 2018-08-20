@@ -1,4 +1,5 @@
-﻿using PrtgAPI.Request;
+﻿using System.Linq;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
@@ -15,7 +16,16 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Filter PRTG Results according to one or more sensor statuses.
+        /// Initializes a new instance of the <see cref="SensorParameters"/> class with one or more conditions to filter results by.
+        /// </summary>
+        /// <param name="filters">A list of conditions to filter results by.</param>
+        public SensorParameters(params SearchFilter[] filters) : this()
+        {
+            SearchFilters = filters.ToList();
+        }
+
+        /// <summary>
+        /// Gets or sets a collection of search filters used to limit results according to one or more sensor statuses.
         /// </summary>
         public Status[] Status
         {

@@ -1,4 +1,5 @@
-﻿using PrtgAPI.Request;
+﻿using System.Linq;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
@@ -13,6 +14,16 @@ namespace PrtgAPI.Parameters
         public DeviceParameters() : base(Content.Devices)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeviceParameters"/> class with one or more conditions to filter results by.
+        /// </summary>
+        /// <param name="filters">A list of conditions to filter results by.</param>
+        public DeviceParameters(params SearchFilter[] filters) : this()
+        {
+            SearchFilters = filters.ToList();
+        }
+
         DeviceParameters IShallowCloneable<DeviceParameters>.ShallowClone()
         {
             var newParameters = new DeviceParameters();

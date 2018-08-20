@@ -1,4 +1,5 @@
-﻿using PrtgAPI.Request;
+﻿using System.Linq;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
@@ -13,6 +14,16 @@ namespace PrtgAPI.Parameters
         public GroupParameters() : base(Content.Groups)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupParameters"/> class with one or more conditions to filter results by.
+        /// </summary>
+        /// <param name="filters">A list of conditions to filter results by.</param>
+        public GroupParameters(params SearchFilter[] filters) : this()
+        {
+            SearchFilters = filters.ToList();
+        }
+
         GroupParameters IShallowCloneable<GroupParameters>.ShallowClone()
         {
             var newParameters = new GroupParameters();

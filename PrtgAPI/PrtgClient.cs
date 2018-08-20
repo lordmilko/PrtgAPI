@@ -442,7 +442,8 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public List<Sensor> GetSensors(Property property, object value) => GetSensors(new SearchFilter(property, value));
+        public List<Sensor> GetSensors(Property property, object value) =>
+            GetSensors(new SearchFilter(property, value));
 
         /// <summary>
         /// Asynchronously retrieves sensors from a PRTG Server based on the value of a certain property.
@@ -450,7 +451,8 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public async Task<List<Sensor>> GetSensorsAsync(Property property, object value) => await GetSensorsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
+        public async Task<List<Sensor>> GetSensorsAsync(Property property, object value) =>
+            await GetSensorsAsync(new SearchFilter(property, value)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -458,7 +460,8 @@ namespace PrtgAPI
         /// <param name="property">Property to search against.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Sensor> StreamSensors(Property property, object value) => StreamSensors(new SearchFilter(property, value));
+        public IEnumerable<Sensor> StreamSensors(Property property, object value) =>
+            StreamSensors(new SearchFilter(property, value));
 
             #endregion
             #region Filter (Property, Operator, Value)
@@ -470,7 +473,8 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value) => GetSensors(new SearchFilter(property, @operator, value));
+        public List<Sensor> GetSensors(Property property, FilterOperator @operator, object value) =>
+            GetSensors(new SearchFilter(property, @operator, value));
 
         /// <summary>
         /// Asynchronously retrieves sensors from a PRTG Server based on the value of a certain property.
@@ -479,7 +483,8 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public async Task<List<Sensor>> GetSensorsAsync(Property property, FilterOperator @operator, object value) => await GetSensorsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+        public async Task<List<Sensor>> GetSensorsAsync(Property property, FilterOperator @operator, object value) =>
+            await GetSensorsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams sensors from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -498,21 +503,22 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public List<Sensor> GetSensors(params SearchFilter[] filters) => GetSensors(new SensorParameters { SearchFilter = filters });
+        public List<Sensor> GetSensors(params SearchFilter[] filters) => GetSensors(new SensorParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves sensors from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of sensors that match the specified search criteria.</returns>
-        public async Task<List<Sensor>> GetSensorsAsync(params SearchFilter[] filters) => await GetSensorsAsync(new SensorParameters { SearchFilter = filters }).ConfigureAwait(false);
+        public async Task<List<Sensor>> GetSensorsAsync(params SearchFilter[] filters) => await GetSensorsAsync(new SensorParameters(filters)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams sensors from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Sensor> StreamSensors(params SearchFilter[] filters) => StreamSensors(new SensorParameters { SearchFilter = filters });
+        public IEnumerable<Sensor> StreamSensors(params SearchFilter[] filters) => StreamSensors(new SensorParameters(filters));
+
             #endregion
             #region Query
 
@@ -728,21 +734,22 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
-        public List<Device> GetDevices(params SearchFilter[] filters) => GetDevices(new DeviceParameters { SearchFilter = filters });
+        public List<Device> GetDevices(params SearchFilter[] filters) => GetDevices(new DeviceParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves devices from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
-        public async Task<List<Device>> GetDevicesAsync(params SearchFilter[] filters) => await GetDevicesAsync(new DeviceParameters { SearchFilter = filters }).ConfigureAwait(false);
+        public async Task<List<Device>> GetDevicesAsync(params SearchFilter[] filters) => await GetDevicesAsync(new DeviceParameters(filters)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams devices from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Device> StreamDevices(params SearchFilter[] filters) => StreamDevices(new DeviceParameters { SearchFilter = filters });
+        public IEnumerable<Device> StreamDevices(params SearchFilter[] filters) => StreamDevices(new DeviceParameters(filters));
+
             #endregion
             #region Query
 
@@ -937,21 +944,21 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
-        public List<Group> GetGroups(params SearchFilter[] filters) => GetGroups(new GroupParameters { SearchFilter = filters });
+        public List<Group> GetGroups(params SearchFilter[] filters) => GetGroups(new GroupParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves groups from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
-        public async Task<List<Group>> GetGroupsAsync(params SearchFilter[] filters) => await GetGroupsAsync(new GroupParameters { SearchFilter = filters }).ConfigureAwait(false);
+        public async Task<List<Group>> GetGroupsAsync(params SearchFilter[] filters) => await GetGroupsAsync(new GroupParameters(filters)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams groups from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Group> StreamGroups(params SearchFilter[] filters) => StreamGroups(new GroupParameters { SearchFilter = filters });
+        public IEnumerable<Group> StreamGroups(params SearchFilter[] filters) => StreamGroups(new GroupParameters(filters));
 
             #endregion
             #region Query
@@ -1128,21 +1135,21 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
-        public List<Probe> GetProbes(params SearchFilter[] filters) => GetProbes(new ProbeParameters { SearchFilter = filters });
+        public List<Probe> GetProbes(params SearchFilter[] filters) => GetProbes(new ProbeParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves probes from a PRTG Server based on the values of multiple properties.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
-        public async Task<List<Probe>> GetProbesAsync(params SearchFilter[] filters) => await GetProbesAsync(new ProbeParameters { SearchFilter = filters }).ConfigureAwait(false);
+        public async Task<List<Probe>> GetProbesAsync(params SearchFilter[] filters) => await GetProbesAsync(new ProbeParameters(filters)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams probes from a PRTG Server based on the values of multiple properties. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
         /// </summary>
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Probe> StreamProbes(params SearchFilter[] filters) => StreamProbes(new ProbeParameters { SearchFilter = filters });
+        public IEnumerable<Probe> StreamProbes(params SearchFilter[] filters) => StreamProbes(new ProbeParameters(filters));
 
             #endregion
             #region Query
@@ -1486,7 +1493,7 @@ namespace PrtgAPI
         /// <param name="filters">One or more filters used to limit search results.</param>
         /// <returns>All objects that match the specified conditions.</returns>
         public List<NotificationAction> GetNotificationActions(params SearchFilter[] filters) =>
-            GetNotificationActionsInternal(new NotificationActionParameters { SearchFilter = filters });
+            GetNotificationActionsInternal(new NotificationActionParameters(filters));
 
         /// <summary>
         /// Asynchronously retrieves notification actions from a PRTG Server.

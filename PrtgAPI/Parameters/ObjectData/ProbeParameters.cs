@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -14,29 +16,43 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeParameters"/> class.
         /// </summary>
-        public ProbeParameters() : base(Content.ProbeNode)
+        public ProbeParameters() : base(Content.Probes)
         {
-            base.SearchFilter = DefaultSearchFilter();
-        }
-
-        private SearchFilter[] DefaultSearchFilter()
-        {
-            return new[] {new SearchFilter(Property.ParentId, "0")};
+            SearchFilters = DefaultSearchFilter();
         }
 
         /// <summary>
-        /// Filter objects to those with a <see cref="Property"/> of a certain value. Specify multiple filters to limit results further.
+        /// Initializes a new instance of the <see cref="ProbeParameters"/> class with one or more conditions to filter results by.
         /// </summary>
-        public override SearchFilter[] SearchFilter
+        /// <param name="filters">A list of conditions to filter results by.</param>
+        public ProbeParameters(params SearchFilter[] filters) : this()
         {
-            get { return base.SearchFilter; }
-            set
-            {
-                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || item.Value.ToString() != "0")))
-                    throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
+            SearchFilters = filters.ToList();
+        }
 
-                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && item.Value.ToString() == "0"))
-                    value = value.Concat(DefaultSearchFilter()).ToArray();
+        private List<SearchFilter> DefaultSearchFilter()
+        {
+            return new List<SearchFilter> {new SearchFilter(Property.ParentId, "0")};
+        }
+
+        internal override void SetSearchFilter(List<SearchFilter> value)
+        {
+            if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, "0", (a, b) => a != b))))
+                throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
+
+            if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, "0", (a, b) => a == b)))
+                value = value.Union(DefaultSearchFilter()).ToList();
+
+            base.SetSearchFilter(value);
+        }
+
+        private bool ValueEquals(SearchFilter filter, string value, Func<string, string, bool> func)
+        {
+            if (filter.Value.IsIEnumerable())
+                return filter.Value.ToIEnumerable().Any(v => func(v.ToString(), value));
+
+            return func(filter.Value.ToString(), value);
+        }
 
         ProbeParameters IShallowCloneable<ProbeParameters>.ShallowClone()
         {
@@ -45,8 +61,6 @@ namespace PrtgAPI.Parameters
             ShallowClone(newParameters);
 
             return newParameters;
-                base.SearchFilter = value;
-            }
         }
 
         object IShallowCloneable.ShallowClone() => ((IShallowCloneable<ProbeParameters>)this).ShallowClone();

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -16,9 +17,18 @@ namespace PrtgAPI.Parameters
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationActionParameters"/> class with one or more conditions to filter results by.
+        /// </summary>
+        /// <param name="filters">A list of conditions to filter results by.</param>
+        public NotificationActionParameters(params SearchFilter[] filters) : this()
+        {
+            SearchFilters = filters.ToList();
+        }
+
         internal NotificationActionParameters(int[] objectIds) : base(Content.Notifications)
         {
-            SearchFilter = new[] {new SearchFilter(Property.Id, objectIds)};
+            AddFilters(new SearchFilter(Property.Id, objectIds));
         }
     }
 }

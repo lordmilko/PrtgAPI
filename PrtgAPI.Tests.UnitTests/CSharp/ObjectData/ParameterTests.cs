@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.InfrastructureTests;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
@@ -58,6 +60,103 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
             parameters[Parameter.SortBy] = "name";
             Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve property directly set using string");
+        }
+
+        [TestMethod]
+        public void TableParameters_AddsAndRemovesFilters()
+        {
+            var parameters = new SensorParameters();
+            Assert.AreEqual(false, parameters.RemoveFilters(new SearchFilter(Property.Comments, "hello")));
+            var filter1 = new SearchFilter(Property.Id, 1234);
+
+            parameters.AddFilters(filter1);
+            Assert.AreEqual(1, parameters.SearchFilters.Count);
+
+            var filters2_3 = new[] {new SearchFilter(Property.Id, 4567), new SearchFilter(Property.Type, "ping")};
+            parameters.AddFilters(filters2_3);
+            Assert.AreEqual(3, parameters.SearchFilters.Count);
+
+            parameters.RemoveFilters(filters2_3);
+            Assert.AreEqual(1, parameters.SearchFilters.Count);
+            Assert.AreEqual(filter1, parameters.SearchFilters.Single());
+        }
+
+        [TestMethod]
+        public void TableParameters_AddRemoveFilters_ThrowsSpecifyingNull()
+        {
+            var parameters = new SensorParameters();
+
+            AssertEx.Throws<ArgumentNullException>(() => parameters.AddFilters(null), "Value cannot be null.\r\nParameter name: filters");
+            AssertEx.Throws<ArgumentNullException>(() => parameters.RemoveFilters(null), "Value cannot be null.\r\nParameter name: filters");
+        }
+
+        [TestMethod]
+        public void TableParameters_AddFilters_ToSearchFiltersProperty()
+        {
+            var parameters = new SensorParameters();
+            Assert.IsNotNull(parameters.SearchFilters);
+            Assert.AreEqual(0, parameters.SearchFilters.Count);
+
+            var list = parameters.SearchFilters;
+            list.Add(new SearchFilter(Property.Name, "name"));
+            Assert.AreEqual(1, parameters.SearchFilters.Count);
+
+            parameters.SearchFilters = null;
+            Assert.IsNotNull(parameters.SearchFilters);
+            Assert.AreEqual(0, parameters.SearchFilters.Count);
+        }
+
+        [TestMethod]
+        public void TableParameters_MergesMultiParameterFilterValues_SameProperty()
+        {
+            var sensor = new SensorParameters
+            {
+                Status = new[] {Status.Up, Status.Paused}
+            };
+
+            sensor.SearchFilters.Add(new SearchFilter(Property.Status, new[] {Status.Down, Status.Warning}));
+
+            var statuses = sensor.Status;
+
+            AssertEx.AreEqualLists(
+                statuses.ToList(),
+                new List<Status> {Status.Up, Status.Paused, Status.Down, Status.Warning},
+                "Lists were not equal"
+            );
+        }
+
+        [TestMethod]
+        public void TableParameters_MergesMultiParameterFilterValues_IgnoresDifferentProperty()
+        {
+            var sensor = new SensorParameters
+            {
+                Status = new[] { Status.Up, Status.Paused }
+            };
+
+            sensor.SearchFilters.Add(new SearchFilter(Property.Name, "blah"));
+            Assert.AreEqual(3, sensor.SearchFilters.Count);
+
+            AssertEx.AreEqualLists(
+                sensor.Status.ToList(),
+                new List<Status> { Status.Up, Status.Paused },
+                "Lists were not equal"
+            );
+        }
+
+        [TestMethod]
+        public void TableParameters_MergesMultipleParameterFilterValues_AddsInvalidValue()
+        {
+            var sensor = new SensorParameters
+            {
+                Status = new[] { Status.Up, Status.Paused },
+                SearchFilters = { new SearchFilter(Property.Status, "blah") }
+            };
+
+            AssertEx.AreEqualLists(
+                sensor.Status.ToList(),
+                new List<Status> { Status.Up, Status.Paused },
+                "Lists were not equal"
+            );
         }
 
         #endregion
@@ -410,8 +509,65 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region ProbeParameters
 
-        private string GetCustomParameter(Parameters.Parameters parameters, string name)
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_Equals_0()
+        {
+            var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, 0));
+
+            var url = PrtgUrlTests.CreateUrl(parameters, false);
+
+            Assert.AreEqual(TestHelpers.RequestProbe("count=*&filter_parentid=0", UrlFlag.Columns), url);
+        }
+
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_NotEquals_0()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, FilterOperator.NotEquals, 0)),
+                "Cannot filter for probes based on a ParentId other than 0."
+            );
+        }
+
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_Equals_1()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, 1)),
+                "Cannot filter for probes based on a ParentId other than 0."
+            );
+        }
+
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0()
+        {
+            var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, new[] {0}));
+
+            var url = PrtgUrlTests.CreateUrl(parameters, false);
+
+            Assert.AreEqual(TestHelpers.RequestProbe("count=*&filter_parentid=0", UrlFlag.Columns), url);
+        }
+
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWithout_0()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, new[] {1})),
+                "Cannot filter for probes based on a ParentId other than 0."
+            );
+        }
+
+        [TestMethod]
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0_AndSomethingElse()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, new[] { 0, 1 })),
+                "Cannot filter for probes based on a ParentId other than 0."
+            );
+        }
+
+        #endregion
         {
             var customParameters = ((List<CustomParameter>) parameters.GetParameters()[Parameter.Custom]);
 
