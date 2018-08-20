@@ -6,12 +6,16 @@ Describe "New-NotificationTriggerParameters" -Tag @("PowerShell", "UnitTest") {
     $triggers = Run NotificationTrigger { $device | Get-NotificationTrigger -Type State }
 
     It "can create Add parameter set" {
+        $parameters = $device | New-TriggerParameters State
+    }
+
+    It "can create AddManual parameter set" {
         $triggers.Count | Should Be 1
 
         $parameters = New-TriggerParameters $device.Id State
     }
 
-    It "can create Edit parameter set" {
+    It "can create EditManual parameter set" {
         $triggers.Count | Should Be 1
 
         $parameters = New-TriggerParameters $device.Id $triggers.SubId State

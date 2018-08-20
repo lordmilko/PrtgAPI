@@ -69,7 +69,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> $sensor = Get-Sensor -Id 1001</code>
     ///     <para>C:\> $channel = $sensor | Get-Channel "Available Memory"</para>
-    ///     <para>C:\> $params = New-TriggerParameters $sensor.Id Threshold</para>
+    ///     <para>C:\> $params = $sensor | New-TriggerParameters Threshold</para>
     ///     <para>C:\> $params.Channel = $channel</para>
     ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Create a new notification trigger on the sensor with ID 1001 that alerts based on the value of its "Available Memory" channel.</para>
@@ -95,10 +95,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class NewNotificationTriggerParameters : PSCmdlet
     {
         /// <summary>
-        /// <para type="description">The ID of the object the notification trigger will be created for.</para>
+        /// <para type="description">The object a trigger should be created for.</para>
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
-        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, ValueFromPipeline = true)]
+        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the object the notification trigger will be created for or the ID of the object whose triggers should be modified.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = ParameterSet.AddManual, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
+        [Parameter(ParameterSetName = ParameterSet.EditManual, Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         [Parameter(ParameterSetName = ParameterSet.AddFrom, Mandatory = true, Position = 0, HelpMessage = "The ID of the object the notification trigger will be created for.")]
         public int? Id { get; set; }
 
@@ -112,14 +118,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The Sub ID of the trigger to manipulate.</para>
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
+        [Parameter(ParameterSetName = ParameterSet.EditManual, Mandatory = true, Position = 1, HelpMessage = "The sub ID of the notification trigger to edit.")]
         public int? TriggerId { get; set; }
 
         /// <summary>
         /// <para type="description">The type of notification trigger to manipulate.</para>
         /// </summary>
-        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
-        [Parameter(ParameterSetName = ParameterSet.Edit, Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]
+        [Parameter(ParameterSetName = ParameterSet.Add, Mandatory = true, Position = 0, HelpMessage = "The type of notification trigger to create.")]
+        [Parameter(ParameterSetName = ParameterSet.AddManual, Mandatory = true, Position = 1, HelpMessage = "The type of notification trigger to create.")]
+        [Parameter(ParameterSetName = ParameterSet.EditManual, Mandatory = true, Position = 2, HelpMessage = "The type of notification trigger to edit.")]
         public TriggerType? Type { get; set; }
 
         /// <summary>
@@ -156,6 +163,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             try
             {
+                if (Object != null)
+                    Id = Object.Id;
+
                 if (Source != null)
                 {
                     if (Id != null)
