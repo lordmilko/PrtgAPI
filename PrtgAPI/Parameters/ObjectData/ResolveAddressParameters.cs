@@ -14,7 +14,8 @@ namespace PrtgAPI.Parameters
             {
                 new CustomParameter("cache", 0),
                 new CustomParameter("dom", 0),
-                new CustomParameter("path", address)
+                //Replace spaces with + so they will be encoded into %2B to prevent issues with PRTG 18.2.41+
+                new CustomParameter("path", address.Replace(" ", "+"))
             };
         }
     }
