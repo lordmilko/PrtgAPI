@@ -1,11 +1,11 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-function SetAddressValidatorResponse($str)
+function SetLogAddressValidatorResponse($str)
 {
     SetResponseAndClientWithArguments "LogAddressValidatorResponse" $str
 }
 
-function SetAddressValidatorResponseWithCount($str, $hashtable)
+function SetLogAddressValidatorResponseWithCount($str, $hashtable)
 {
     $dictionary = GetCustomCountDictionary $hashtable
 
@@ -13,20 +13,21 @@ function SetAddressValidatorResponseWithCount($str, $hashtable)
 }
 
 Describe "Get-ObjectLog" {
+
     It "retrieves logs from an unspecified object" {
-        SetAddressValidatorResponse "count=500&filter_drel=today"
+        SetLogAddressValidatorResponse "count=500&filter_drel=today"
 
         (Get-ObjectLog).Count | Should Be 2
     }
 
     It "streams from an unspecified object" {
-        SetAddressValidatorResponse "count=500&filter_drel=today"
+        SetLogAddressValidatorResponse "count=500&filter_drel=today"
 
         Get-ObjectLog
     }
 
     It "streams from the root object" {
-        SetAddressValidatorResponse "count=500&id=0&filter_drel=today"
+        SetLogAddressValidatorResponse "count=500&id=0&filter_drel=today"
 
         $group = Get-Group -count 1
         $group.Id = 0
@@ -35,7 +36,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "streams when only a status is specified" {
-        SetAddressValidatorResponse "count=500&id=0&filter_status=607&filter_drel=today"
+        SetLogAddressValidatorResponse "count=500&id=0&filter_status=607&filter_drel=today"
 
         $group = Get-Group -Count 1
         $group.Id = 0
@@ -44,25 +45,25 @@ Describe "Get-ObjectLog" {
     }
 
     It "streams when piped from a probe" {
-        SetAddressValidatorResponse "count=500&id=1000&filter_drel=today"
+        SetLogAddressValidatorResponse "count=500&id=1000&filter_drel=today"
 
         Get-Probe -Count 1 | Get-ObjectLog
     }
 
     It "doesn't stream when piped from a normal object" {
-        SetAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
 
         Get-Device -Count 1 | Get-ObjectLog
     }
 
     It "doesn't stream when a count is specified" {
-        SetAddressValidatorResponse "count=5000"
+        SetLogAddressValidatorResponse "count=5000"
 
         Get-ObjectLog -Count 5000
     }
 
     It "retrieves from the last week when a timespan isn't specified" {
-        SetAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
 
         Get-Device -Count 1 | Get-ObjectLog
     }
@@ -74,7 +75,7 @@ Describe "Get-ObjectLog" {
         $start = $end.AddDays(-7)
         $startStr = $start.ToString("yyyy-MM-dd-HH-mm-ss")
         
-        SetAddressValidatorResponse "count=*&id=3000&filter_dend=$endStr&filter_dstart=$startStr"        
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_dend=$endStr&filter_dstart=$startStr"        
 
         Get-Device -Count 1 | Get-ObjectLog -StartDate $end
     }
@@ -83,14 +84,41 @@ Describe "Get-ObjectLog" {
         $start = (get-date).AddDays(-14)
         $startStr = $start.ToString("yyyy-MM-dd-HH-mm-ss")
 
-        SetAddressValidatorResponse "count=500&filter_dstart=$startStr"
+        SetLogAddressValidatorResponse "count=500&filter_dstart=$startStr"
 
         Get-ObjectLog -EndDate $start
     }
 
+    It "retrieves logs for the specified time period when a -Period is specified" {
+
+        SetLogAddressValidatorResponse "count=500&filter_drel=7days"
+
+        Get-ObjectLog -Period LastWeek
+    }
+
+    It "retrieves all logs when -Period All is specified" {
+        
+        SetLogAddressValidatorResponse "count=500"
+
+        Get-ObjectLog -Period All
+    }
+
+    It "only retrieves a days worth of logs from a probe or the root node when no range specified" {
+
+        $start = (Get-Date)
+        $startStr = $start.ToString("yyyy-MM-dd-HH-mm-ss")
+
+        $end = $start.AddDays(-1)
+        $endStr = $end.ToString("yyyy-MM-dd-HH-mm-ss")
+
+        SetLogAddressValidatorResponse "count=500&id=0&filter_dend=$startStr&filter_dstart=$endStr"
+
+        Get-ObjectLog -Id 0 -StartDate $start
+    }
+
     It "forces streaming with a date filter and returns no results" {
-        SetAddressValidatorResponseWithCount "count=500&filter_drel=today" @{
-            messages = 0
+        SetLogAddressValidatorResponseWithCount "count=500&filter_drel=today" @{
+            logs = 0
         }
 
         $logs = Get-ObjectLog
@@ -99,8 +127,8 @@ Describe "Get-ObjectLog" {
     }
 
     It "forces streaming with a date piped from a variable and returns no results" {
-        SetAddressValidatorResponseWithCount "count=500&id=0&filter_drel=today" @{
-            messages = 0
+        SetLogAddressValidatorResponseWithCount "count=500&id=0&filter_drel=today" @{
+            logs = 0
         }
         
         $groups = Get-Group
@@ -116,7 +144,7 @@ Describe "Get-ObjectLog" {
     }
 
     It "filters by name" {
-        SetAddressValidatorResponse "count=*&id=3000&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_name=@sub(WMI Remote Ping1)&filter_drel=7days"
 
         $logs = Get-Device -Count 1 | Get-ObjectLog "WMI Remote Ping1"
 
@@ -127,14 +155,47 @@ Describe "Get-ObjectLog" {
 
     It "streams when requesting more than 20000 items" {
 
-        SetAddressValidatorResponseWithCount "count=500" @{
-            messages = 500
+        SetLogAddressValidatorResponseWithCount "count=500" @{
+            logs = 30000
         }
 
         $logs = Get-ObjectLog -Count 20500
 
         $logs.Count | Should Be 20500
     }
+
+    It "retrieves logs by Id" {
+
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_drel=7days"
+
+        $logs = Get-ObjectLog -Id 3000
+
+        $logs.Count | Should BeGreaterThan 0
+    }
+
+    It "retrieves logs by Id with an EndDate" {
+        SetLogAddressValidatorResponse "count=*&id=3000&filter_dstart=2000-10-02-12-10-05"
+
+        $date = New-Object DateTime -ArgumentList @(2000, 10, 2, 12, 10, 5, [DateTimeKind]::Utc)
+
+        $logs = Get-ObjectLog -Id 3000 -EndDate $date
+
+        $logs.Count | Should BeGreaterThan 0
+    }
+
+    It "filters by name specifying a count" {
+
+        SetAddressValidatorResponse @(
+            "api/table.xml?content=messages&columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&count=3&start=1&filter_name=WMI+Remote+Ping0&"
+            "api/table.xml?content=messages&count=1&columns=objid,name&filter_name=WMI+Remote+Ping0&"
+            "api/table.xml?content=messages&columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&count=2&start=4&filter_name=WMI+Remote+Ping0&"
+        )
+
+        $logs = Get-ObjectLog "WMI Remote Ping0" -Count 3
+
+        $logs.Count | Should Be 1
+    }
+
     Context "Take Iterator" {
         It "specifies a count" {
             SetResponseAndClientWithArguments "TakeIteratorResponse" "Logs"

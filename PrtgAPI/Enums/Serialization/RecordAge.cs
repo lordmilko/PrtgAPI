@@ -44,8 +44,8 @@ namespace PrtgAPI
         LastYear,
 
         /// <summary>
-        /// All records present in the PRTG Server.
+        /// All records present in the PRTG Server. By default, PRTG only stores 30 days.
         /// </summary>
-        AllTime
+        All
     }
 }

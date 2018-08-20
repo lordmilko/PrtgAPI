@@ -35,13 +35,27 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var client = Initialize_Client_WithItems(GetItem());
 
-            var logsDate = client.GetLogs(null, DateTime.Now);
-            var logsDateAsync = client.GetLogsAsync(null, DateTime.Now).Result;
-            var logsDateStream = client.StreamLogs(null, DateTime.Now).ToList();
+            var logs = client.GetLogs();
+            var logsAsync = client.GetLogsAsync();
+            var logsStream = client.StreamLogs();
 
-            var logsTimeSpan = client.GetLogs();
-            var logsTimeSpanAsync = client.GetLogsAsync().Result;
-            var logsTimeSpanStream = client.StreamLogs().ToList();
+            var logsDate = client.GetLogs(DateTime.Now);
+            var logsDateAsync = client.GetLogsAsync(DateTime.Now).Result;
+            var logsDateStream = client.StreamLogs(DateTime.Now).ToList();
+
+            var logsDateObject = client.GetLogs(1001, DateTime.Now);
+            var logsDateObjectAsync = client.GetLogsAsync(1001, DateTime.Now).Result;
+            var logsDateObjectStream = client.StreamLogs(1001, DateTime.Now).ToList();
+
+            var logsTimeSpan = client.GetLogs(RecordAge.LastMonth);
+            var logsTimeSpanAsync = client.GetLogsAsync(RecordAge.LastMonth).Result;
+            var logsTimeSpanStream = client.StreamLogs(RecordAge.LastMonth).ToList();
+
+            var logsTimeSpanObject = client.GetLogs(1001, RecordAge.LastMonth);
+            var logsTimeSpanObjectAsync = client.GetLogsAsync(1001, RecordAge.LastMonth).Result;
+            var logsTimeSpanObjectStream = client.StreamLogs(1001, RecordAge.LastMonth).ToList();
+        }
+
         [TestMethod]
         public void Log_Stream_WithCorrectPageSize()
         {

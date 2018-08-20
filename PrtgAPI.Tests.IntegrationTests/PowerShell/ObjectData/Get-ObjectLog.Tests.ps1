@@ -3,7 +3,7 @@
 Describe "Get-ObjectLog_IT" {
     
     It "retrieves all logs from an unspecified object" {
-        Get-ObjectLog -Since All
+        Get-ObjectLog -Period All
     }
 
     It "retrieves a specified number of logs" {
@@ -100,7 +100,7 @@ Describe "Get-ObjectLog_IT" {
 
         $lastMonth = (get-date).adddays(-30)
 
-        $logs = Get-ObjectLog -Since LastMonth
+        $logs = Get-ObjectLog -Period LastMonth
 
         $last = $logs | select -Last 1
 
@@ -116,10 +116,42 @@ Describe "Get-ObjectLog_IT" {
     }
 
     It "filters by name" {
-        $log = Get-ObjectLog "System Health" -Since AllTime | select -First 1
+        $log = Get-ObjectLog "System Health" -Period All | select -First 1
 
         $log.Count | Should Be 1
 
         $log.Name | Should Be "System Health"
+    }
+
+    It "retrieves logs by Id" {
+
+        $idLogs = Get-ObjectLog -Id (Settings UpSensor)
+        $sensorLogs = Get-Sensor -Id (Settings UpSensor) | Get-ObjectLog
+
+        $idLogs.Count | Should Be $sensorLogs.Count
+    }
+
+    It "retrieves logs by Id with an EndDate" {
+
+        $date = (Get-Date).AddHours(-12)
+
+        $idLogs = Get-ObjectLog -Id (Settings Device) -EndDate $date
+        $deviceLogs = Get-Device -Id (Settings Device) | Get-ObjectLog -EndDate $date
+
+        $idLogs.Count | Should Be $deviceLogs.Count
+    }
+
+    It "filters by name specifying a count" {
+        $logs = Get-ObjectLog ping -Count 3
+
+        $logs.Count | Should Be 3
+
+        $logs[0].Name | Should Be "Ping"
+        $logs[1].Name | Should Be "Ping"
+        $logs[2].Name | Should Be "Ping"
+    }
+
+    It "throws retrieving a nonexistant object by ID" {
+        { Get-ObjectLog -Id -9999 } | Should Throw "Sorry, there is no object with the specified id"
     }
 }

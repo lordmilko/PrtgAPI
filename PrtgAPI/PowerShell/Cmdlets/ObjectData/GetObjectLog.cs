@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Management.Automation;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -12,7 +12,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Get-ObjectLog cmdlet retrieves event logs from a PRTG Server. If no object is specified,
     /// Get-ObjectLog will retrieve results from the Root PRTG Group (ID: 0). Logs are ordered from newest to oldest. When retrieving logs from an object, all logs
-    /// on child objects are also included.</para>
+    /// on child objects are also included. By default, PRTG only stores 30 days worth of logs.</para>
     /// 
     /// <para type="description">If no date range or count is specified, by default Get-ObjectLog will retrieve all logs defined on
     /// the specified object for the last 7 days unless the specified object is the root group (ID: 0) or a probe, in which cause
@@ -67,13 +67,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-ObjectLog -Status ProbeDisconnected -Count 3</code>
+    ///     <code>C:\> Get-ObjectLog -Status Disconnected -Count 3</code>
     ///     <para>Retrieve the last 3 times a probe disconnected.</para>
     ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-Device exch-1 | Get-ObjectLog ping | select -First 4</code>
     ///     <para>Retrieve the last 4 events that occurred to the sensor named "ping" on the device named "exch-1".</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-ObjectLog -Id 1001 -EndDate $null</code>
+    ///     <para>Retrieve all logs from the object with ID 1001.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -81,32 +86,41 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = ParameterSet.RecordAge)]
+    [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = ParameterSet.DateTime)]
     public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>
     {
         /// <summary>
         /// <para type="description">Object to retrieve logs for. If no object is specified, defaults to the root object (group ID: 0)</para>
         /// </summary>
-        [Parameter(Mandatory = false, ValueFromPipeline = true)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        [Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ParameterSet.DateTime)]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ParameterSet.RecordAge)]
+        public PrtgObject Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object to retrieve logs for.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
+        public int Id { get; set; }
 
         /// <summary>
         /// <para type="description">Start time to retrieve logs from. If no value is specified, defaults to the current date and time.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTime)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
         public DateTime? StartDate { get; set; }
 
         /// <summary>
         /// <para type="description">End time to retrieve logs until. If no value is specified, defaults to 7 prior from the <see cref="StartDate"/>.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTime)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
         public DateTime? EndDate { get; set; }
 
         /// <summary>
         /// <para type="description">Time period to retrieve logs from. If no value is specified, retrieves logs from 7 days ago to the current date and time.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RecordAge)]
-        public RecordAge? Since { get; set; }
+        public RecordAge? Period { get; set; } //todo: document change on wiki
 
         /// <summary>
         /// <para type="description">Only retrieve objects that match a specific status.</para>
@@ -117,8 +131,28 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="GetObjectLog"/> class.
         /// </summary>
-        public GetObjectLog() : base(Content.Messages, 500, true)
+        public GetObjectLog() : base(Content.Logs, true)
         {
+        }
+
+        int? id;
+        
+        internal override bool StreamCount()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Performs enhanced record-by-record processing functionality for the cmdlet.
+        /// </summary>
+        protected override void ProcessRecordEx()
+        {
+            if (ParameterSetName == ParameterSet.DateTimeManual)
+                id = Id;
+            else
+                id = Object?.Id;
+
+            base.ProcessRecordEx();
         }
 
         /// <summary>
@@ -155,12 +189,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ProcessRecordAgeFilter()
         {
-            if (Since != null && Since != RecordAge.AllTime)
-            {
-                AddPipelineFilter(Property.RecordAge, Since, false);
-            }
+            //"All" is not a valid RecordAge. If "All" is specified, we don't want to limit
+            if (Period != null && Period != RecordAge.All)
+                AddPipelineFilter(Property.RecordAge, Period, false);
 
-            if (Since == RecordAge.AllTime)
+            if (Period == RecordAge.All)
                 StreamProvider.ForceStream = true;
         }
 
@@ -168,9 +201,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             //If a start date, time period and a count haven't been specified, for performance with
             //larger installs limit the records to those in the past 7 days
-            if (EndDate == null && Since == null && Count == null)
+            if (Unspecified(nameof(EndDate)) && Unspecified(nameof(Period)) && Unspecified(nameof(Count)))
             {
-                if (StartDate == null)
+                if (Unspecified(nameof(StartDate)))
                 {
                     //Retrieve records for the last week. If this is the root node however, only retrieve
                     //records for the past day.
@@ -197,21 +230,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                if ((Count == null && RequiresStreaming()) || Count > 20000)
+                if (Count == null && RequiresStreaming() || Count > ObjectEngine.SerialStreamThreshold)
                 {
                     StreamProvider.ForceStream = true;
                 }
             }
         }
 
+        private bool Unspecified(string name)
+        {
+            return !MyInvocation.BoundParameters.ContainsKey(name);
+        }
+
         private bool RequiresStreaming()
         {
-            return ContainsRootNode() || Object.BaseType == BaseType.Probe;
+            return ContainsRootNode() || Object?.baseType == BaseType.Probe;
         }
 
         private bool ContainsRootNode()
         {
-            if (Object == null || Object.Id == 0)
+            if (id == null || id == 0)
                 return true;
 
             return false;
@@ -221,6 +259,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Creates a new parameter object to be used for retrieving logs from a PRTG Server.
         /// </summary>
         /// <returns>The default set of parameters.</returns>
-        protected override LogParameters CreateParameters() => new LogParameters(Object?.Id);
+        protected override LogParameters CreateParameters() => new LogParameters(id);
     }
 }

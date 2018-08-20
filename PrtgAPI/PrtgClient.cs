@@ -1310,79 +1310,153 @@ namespace PrtgAPI
 
         #endregion
         #region Logs
-            #region DateTime
+            #region DateTime Root
 
         /// <summary>
-        /// Retrieve logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Retrieves logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
         /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public List<Log> GetLogs(int? objectId, DateTime? startDate = null, DateTime? endDate = null, int count = 500, params LogStatus[] status) =>
-            GetObjects<Log>(new LogParameters(objectId, startDate, endDate, count, status));
+        public List<Log> GetLogs(DateTime? startDate, DateTime? endDate = null, int? count = 500, params LogStatus[] status) =>
+            GetLogs(new LogParameters(null, startDate, endDate, count, status));
 
         /// <summary>
-        /// Asynchronously retrieve logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Asynchronously retrieves logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
         /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public async Task<List<Log>> GetLogsAsync(int? objectId, DateTime? startDate = null, DateTime? endDate = null, int count = 500, params LogStatus[] status) =>
-            await GetObjectsAsync<Log>(new LogParameters(objectId, startDate, endDate, count, status)).ConfigureAwait(false);
+        public async Task<List<Log>> GetLogsAsync(DateTime? startDate, DateTime? endDate = null, int? count = 500, params LogStatus[] status) =>
+            await GetLogsAsync(new LogParameters(null, startDate, endDate, count, status)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Streams logs between two time periods from a PRTG Server. If <paramref name="serial"/> is true, logs are guaranteed to be ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
         /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
+        /// <param name="count">Number of logs to retrieve. If this value is null, all logs will be retrieved within the specified timespan.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public IEnumerable<Log> StreamLogs(int? objectId, DateTime? startDate = null, DateTime? endDate = null, bool serial = false, params LogStatus[] status) =>
-            StreamObjects(new LogParameters(objectId, startDate, endDate, status: status), serial);
+        public IEnumerable<Log> StreamLogs(DateTime? startDate, DateTime? endDate = null, int? count = null, bool serial = false, params LogStatus[] status) =>
+            StreamLogs(new LogParameters(null, startDate, endDate, count, status), serial);
 
             #endregion
-            #region RecordAge
-        
+            #region DateTime Object
+
         /// <summary>
-        /// Retrieve logs from a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Retrieves logs between two time periods from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="timeSpan">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value is 0, logs will be retrieved from the root group.</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
+        /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public List<Log> GetLogs(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, int count = 500, params LogStatus[] status) =>
-            GetObjects<Log>(new LogParameters(objectId, timeSpan, count, status));
+        public List<Log> GetLogs(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = 500, params LogStatus[] status) =>
+            GetLogs(new LogParameters(objectId, startDate, endDate, count, status));
 
         /// <summary>
-        /// Asynchronously retrieve logs from a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Asynchronously retrieves logs between two time periods from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="timeSpan">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value 0, logs will be retrieved from the root group.</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
+        /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public async Task<List<Log>> GetLogsAsync(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, int count = 500, params LogStatus[] status) =>
-            await GetObjectsAsync<Log>(new LogParameters(objectId, timeSpan, count, status)).ConfigureAwait(false);
+        public async Task<List<Log>> GetLogsAsync(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = 500, params LogStatus[] status) =>
+            await GetLogsAsync(new LogParameters(objectId, startDate, endDate, count, status)).ConfigureAwait(false);
 
         /// <summary>
-        /// Stream logs from a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
+        /// Streams logs between two time periods from a PRTG Server for a specified object. If <paramref name="serial"/> is true, logs are guaranteed to be ordered from newest to oldest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="timeSpan">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value is 0, logs will be retrieved from the root group.</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
+        /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
+        /// <param name="count">Number of logs to retrieve. If this value is null, all logs will be retrieved within the specified timespan.</param>
         /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <returns>All logs that meet the specified criteria.</returns>
-        public IEnumerable<Log> StreamLogs(int? objectId = null, RecordAge timeSpan = RecordAge.LastWeek, bool serial = false, params LogStatus[] status) =>
-            StreamObjects(new LogParameters(objectId, timeSpan, status: status), serial);
+        public IEnumerable<Log> StreamLogs(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = null, bool serial = false, params LogStatus[] status) =>
+            StreamLogs(new LogParameters(objectId, startDate, endDate, count, status), serial);
+
+            #endregion
+            #region RecordAge Root
+
+        /// <summary>
+        /// Retrieves logs for a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
+        /// </summary>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public List<Log> GetLogs(RecordAge recordAge = RecordAge.LastWeek, int? count = 500, params LogStatus[] status) =>
+            GetLogs(new LogParameters(null, recordAge, count, status));
+
+        /// <summary>
+        /// Asynchronously retrieves logs for a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
+        /// </summary>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public async Task<List<Log>> GetLogsAsync(RecordAge recordAge = RecordAge.LastWeek, int? count = 500, params LogStatus[] status) =>
+            await GetLogsAsync(new LogParameters(null, recordAge, count, status)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams logs for a standard time period from a PRTG Server. If <paramref name="serial"/> is true, logs are guaranteed to be ordered from newest to oldest.
+        /// </summary>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. If this value is null, all logs will be retrieved within the specified timespan.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public IEnumerable<Log> StreamLogs(RecordAge recordAge = RecordAge.LastWeek, int? count = null, bool serial = false, params LogStatus[] status) =>
+            StreamLogs(new LogParameters(null, recordAge, count, status), serial);
+
+            #endregion
+            #region RecordAge Object
+
+        /// <summary>
+        /// Retrieves logs from a standard time period from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
+        /// </summary>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public List<Log> GetLogs(int objectId, RecordAge recordAge, int? count = 500, params LogStatus[] status) =>
+            GetLogs(new LogParameters(objectId, recordAge, count, status));
+
+        /// <summary>
+        /// Asynchronously retrieves logs from a standard time period from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
+        /// </summary>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public async Task<List<Log>> GetLogsAsync(int objectId, RecordAge recordAge, int? count = 500, params LogStatus[] status) =>
+            await GetLogsAsync(new LogParameters(objectId, recordAge, count, status)).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams logs from a standard time period from a PRTG Server for a specified object. If <paramref name="serial"/> is true, logs are guaranteed to be ordered from newest to oldest.
+        /// </summary>
+        /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
+        /// <param name="recordAge">Time period to retrieve logs from. Logs will be retrieved from the beginning of this period until the current date and time, ordered newest to oldest.</param>
+        /// <param name="count">Number of logs to retrieve. If this value is null, all logs will be retrieved within the specified timespan.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <returns>All logs that meet the specified criteria.</returns>
+        public IEnumerable<Log> StreamLogs(int objectId, RecordAge recordAge, int? count = null, bool serial = false, params LogStatus[] status) =>
+            StreamLogs(new LogParameters(objectId, recordAge, count, status), serial);
+
             #endregion
             #region Query
 
@@ -1435,6 +1509,34 @@ namespace PrtgAPI
         /// <returns>An <see cref="IQueryable{Probe}"/> representing the result of filtering the logs.</returns>
         public IQueryable<Log> QueryLogs(Expression<Func<Log, bool>> predicate, bool strict) =>
             ObjectEngine.QueryObjects(predicate, strict, () => new LogParameters(null), new QueryLogHelper(strict));
+
+            #endregion
+            #region Parameters
+
+        /// <summary>
+        /// Retrieves logs from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Logs.</param>
+        /// <returns>A list of logs that match the specified parameters.</returns>
+        public List<Log> GetLogs(LogParameters parameters) =>
+            ObjectEngine.GetObjects<Log>(parameters);
+
+        /// <summary>
+        /// Asynchronously retrieves logs from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Logs.</param>
+        /// <returns>A list of logs that match the specified parameters.</returns>
+        public async Task<List<Log>> GetLogsAsync(LogParameters parameters) =>
+            await ObjectEngine.GetObjectsAsync<Log>(parameters).ConfigureAwait(false);
+
+        /// <summary>
+        /// Streams logs from a PRTG Server using a custom set of parameters.
+        /// </summary>
+        /// <param name="parameters">A custom set of parameters used to retrieve PRTG Logs.</param>
+        /// <param name="serial">Specifies whether PrtgAPI should execute all requests one at a time rather than all at once.</param>
+        /// <returns>A list of logs that match the specified parameters.</returns>
+        public IEnumerable<Log> StreamLogs(LogParameters parameters, bool serial = false) =>
+            ObjectEngine.StreamObjects<Log, LogParameters>(parameters, serial);
 
             #endregion
         #endregion
