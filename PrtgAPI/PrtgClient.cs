@@ -2458,9 +2458,10 @@ namespace PrtgAPI
         /// <returns>A type safe representation of the specified object.</returns>
         public object GetObjectProperty(int objectId, ObjectProperty property)
         {
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterName(property);
+            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
 
-            var rawValue = GetObjectPropertyRaw(objectId, rawName);
+            var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
 
             return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
         }
@@ -2473,9 +2474,10 @@ namespace PrtgAPI
         /// <returns>A type safe representation of the specified property.</returns>
         public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property)
         {
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterName(property);
+            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
 
-            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName).ConfigureAwait(false);
+            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string)).ConfigureAwait(false);
 
             return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
         }
@@ -2513,12 +2515,19 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <returns>The raw value of the object's property.</returns>
-        public string GetObjectPropertyRaw(int objectId, string property)
+        public string GetObjectPropertyRaw(int objectId, string property, bool text = false)
         {
-            var parameters = new GetObjectPropertyRawParameters(objectId, property);
+            var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
 
-            var response = requestEngine.ExecuteRequest(RequestParser.GetGetObjectPropertyFunction(property), parameters);
+            var response = RequestEngine.ExecuteRequest(
+                parameters,
+                responseParser: m => ResponseParser.ParseGetObjectPropertyResponse(
+                    m.Content.ReadAsStringAsync().Result,
+                    property
+                )
+            );
 
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
@@ -2529,12 +2538,19 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
+        /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <returns>The raw value of the object's property.</returns>
-        public async Task<string> GetObjectPropertyRawAsync(int objectId, string property)
+        public async Task<string> GetObjectPropertyRawAsync(int objectId, string property, bool text = false)
         {
-            var parameters = new GetObjectPropertyRawParameters(objectId, property);
+            var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
 
-            var response = await requestEngine.ExecuteRequestAsync(RequestParser.GetGetObjectPropertyFunction(property), parameters).ConfigureAwait(false);
+            var response = await RequestEngine.ExecuteRequestAsync(
+                parameters,
+                responseParser: async m => ResponseParser.ParseGetObjectPropertyResponse(
+                    await m.Content.ReadAsStringAsync().ConfigureAwait(false),
+                    property
+                )
+            ).ConfigureAwait(false);
 
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }

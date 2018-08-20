@@ -76,7 +76,7 @@ namespace PrtgAPI
         SortBy,
 
         /// <summary>
-        /// A <see cref="CustomNumberFormat"/> specifying how values should be displayed.
+        /// A <see cref="CustomValueFormat"/> specifying how values should be displayed.
         /// </summary>
         [ParameterType(ParameterType.SingleValue)]
         Show,

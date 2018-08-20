@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
+using System.Xml;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -12,11 +12,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Get-ObjectProperty cmdlet retrieves properties and settings of a PRTG Object, as found on the "Settings"
     /// tab within the PRTG UI. Properties retrieved by Get-ObjectProperty may not necessarily be active depending on the value
     /// of their dependent property (e.g. the Interval will not take effect if InheritInterval is $true).</para>
+    /// 
     /// <para type="description">Properties that are not currently supported by Get-ObjectProperty can be retrieved by specifying
     /// the -RawProperty parameter. Raw property names can be found by inspecting the "name" attribute of  the &lt;input/&gt; tag
     /// under the object's Settings page in the PRTG UI. Unlike Set-ObjectProperty, raw property names do not need to include
     /// their trailing underscores when used with Get-ObjectProperty. If a trailing underscore is used, PrtgAPI will automatically truncate it.
     /// When retrieving raw properties please note that PRTG does not support the retrieval of Inheritance related properties via raw lookups.</para>
+    /// 
+    /// <para type="description">By default raw properties will display their values in their "raw" format, i.e. their literal string
+    /// value or numeric representation (such as 0 or 1 for an "option" setting). If you attempt to retrieve a raw string property
+    /// containing an illegal XML character (&lt;, &gt;, &amp; or &apos;) you will receive an <see cref="XmlException"/> complaining
+    /// that the response could not be parsed. This can be rectified by specifying the -<see cref="Text"/> parameter, which
+    /// will cause PRTG to correctly escape any invalid characters before returning the response. If -<see cref="Text"/> is
+    /// specified when retrieving an "option" property, the property's "label" in the PRTG UI will be returned instead of its numeric
+    /// representation.</para> 
+    /// 
     /// <para type="description">In order to provide type safety when modifying properties, all properties supported by Set-ObjectProperty
     /// perform a lookup against their corresponding property in Get-ObjectProperty. If the type of value passed to Set-ObjectProperty
     /// does not match the property's expected type, PrtgAPI will attempt to parse the value into the expected type. For more information,
@@ -30,6 +40,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Device -Id 1001 | Get-ObjectProperty -RawProperty name_</code>
     ///     <para>Retrieve the value of raw property "name"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device -Id 1001 | Get-ObjectProperty -RawProperty query_ -Text</code>
+    ///     <para>Retrieve the "query" field of a REST Custom sensor.</para>
     /// </example>
     /// 
     /// <para type="link">Set-ObjectProperty</para>
@@ -72,6 +87,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SwitchParameter Raw { get; set; }
 
         /// <summary>
+        /// <para type="description">Specifies whether to display option properties using their label names instead their internal numeric values.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawProperty)]
+        public SwitchParameter Text { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GetObjectProperty"/> class.
         /// </summary>
         public GetObjectProperty() : base("Object Properties")
@@ -108,9 +129,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else if (ParameterSetName == ParameterSet.RawProperty)
             {
-                WriteProperties(RawProperty, client.GetObjectPropertyRaw, p => p.ToLower().Replace("_", ""));
-
-                //todo: unit/integration test this
+                WriteProperties(RawProperty, (i, v) => client.GetObjectPropertyRaw(i, v, Text), p => p.ToLower().Replace("_", ""));
             }
             else
             {

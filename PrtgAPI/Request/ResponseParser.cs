@@ -201,6 +201,36 @@ namespace PrtgAPI.Request
         #endregion
         #region Get Object Properties
 
+        internal static string ParseGetObjectPropertyResponse(string response, string property)
+        {
+            //Responses may contain invalid XML characters if show=text was not specified. Abstract
+            //away this behavior by reconstructing the XML (XElement will automatically escape invalid
+            //characters)
+
+            var versionRegex = "<version>(.+)<\\/version>";
+            var resultRegex = "<result>(.+)<\\/result>";
+
+            var versionMatch = Regex.Match(response, versionRegex);
+            var resultMatch = Regex.Match(response, resultRegex);
+
+            if (versionMatch.Success && resultMatch.Success)
+            {
+                var version = Regex.Replace(versionMatch.Value, versionRegex, "$1", RegexOptions.Multiline);
+                var result = Regex.Replace(resultMatch.Value, resultRegex, "$1", RegexOptions.Multiline);
+
+                var newResult = result.Replace("&apos;", "'").Replace("&quot;", "\"").Replace("&gt;", ">").Replace("&lt;", "<").Replace("&amp;", "&");
+
+                var xml = new XElement("prtg",
+                    new XElement("version", version),
+                    new XElement("result", newResult)
+                );
+
+                return xml.ToString();
+            }
+
+            return null;
+        }
+
         internal static T GetTypedProperty<T>(object val)
         {
             if (val is T)

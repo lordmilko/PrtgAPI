@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Objects.Shared;
-using PrtgAPI.Tests.IntegrationTests.Support;
 using PrtgAPI.Attributes;
 using PrtgAPI.Internal;
+using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests.DataTests
 {
@@ -71,7 +70,8 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             }
             finally
             {
-                client.SetObjectProperty(Settings.Device, ObjectProperty.Host, Settings.Server);
+                ServerManager.RepairConfig();
+                ServerManager.WaitForObjects();
             }
         }
 
@@ -82,6 +82,73 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 () => client.GetObjectPropertyRaw(Settings.UpSensor, "banana"),
                 "A value for property 'banana' could not be found"
             );
+        }
+
+        [TestMethod]
+        public void Data_GetObjectProperties_IllegalCharacter_NormalEndpoint()
+        {
+            TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Name, s => s.Name);
+        }
+
+        [TestMethod]
+        public void Data_GetObjectProperties_IllegalCharacter_AlternateEndpoint()
+        {
+            TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Comments, s => s.Comments);
+        }
+
+        [TestMethod]
+        public void Data_GetObjectProperties_IllegalCharacter_RawProperty()
+        {
+            var originalProperty = client.GetObjectPropertyRaw(Settings.UpSensor, "name_");
+            var originalValue = client.GetSensor(Settings.UpSensor).Name;
+
+            AssertEx.AreEqual(originalValue, originalProperty, "Original value did not match original property value");
+
+            var str = "first & second";
+
+            try
+            {
+                client.SetObjectPropertyRaw(Settings.UpSensor, "name_", str);
+
+                var newProperty = client.GetObjectPropertyRaw(Settings.UpSensor, "name_");
+                var newValue = client.GetSensor(Settings.UpSensor).Name;
+
+                Assert.AreNotEqual(originalProperty, newProperty);
+                Assert.AreNotEqual(newValue, originalValue);
+
+                Assert.AreEqual(newProperty, newValue);
+            }
+            finally
+            {
+                client.SetObjectPropertyRaw(Settings.UpSensor, "name_", originalValue);
+            }
+        }
+
+        private void TestIllegalCharacter(int objectId, ObjectProperty property, Func<Sensor, string> getValue)
+        {
+            var originalProperty = client.GetObjectProperty<string>(objectId, property);
+            var originalValue = getValue(client.GetSensor(objectId));
+
+            AssertEx.AreEqual(originalValue, originalProperty, "Original value did not match original property value");
+
+            var str = "first & second";
+
+            try
+            {
+                client.SetObjectProperty(objectId, property, str);
+
+                var newProperty = client.GetObjectProperty<string>(objectId, property);
+                var newValue = getValue(client.GetSensor(objectId));
+
+                Assert.AreNotEqual(originalProperty, newProperty);
+                Assert.AreNotEqual(newValue, originalValue);
+
+                Assert.AreEqual(newProperty, newValue);
+            }
+            finally
+            {
+                client.SetObjectProperty(objectId, property, originalValue);
+            }
         }
 
         private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(List<ObjectProperty> blacklist)
@@ -143,9 +210,23 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
                 if (prop.Item3 is IEnumerable)
                     AssertEx.AreEqual(string.Join(" ", (IEnumerable)prop.Item3), string.Join(" ", (IEnumerable)direct), $"Values of property '{prop.Item1}' were not equal");
                 else
-                    AssertEx.AreEqual(prop.Item3, direct, $"Values of property '{prop.Item1}' were not equal");
+                {
+                    var first = prop.Item3;
+                    var second = direct;
 
-                AssertEx.AreEqual(prop.Item3.GetType(), direct.GetType(), $"Types of property '{prop.Item1}' were not equal");
+                    if (first is Schedule)
+                        first = ((Schedule) first).Id.ToString();
+
+                    AssertEx.AreEqual(first, second, $"Values of property '{prop.Item1}' were not equal");
+                }
+
+                var firstType = prop.Item3.GetType();
+                var secondType = direct.GetType();
+
+                if (firstType == typeof(Schedule))
+                    firstType = typeof(string);
+
+                AssertEx.AreEqual(firstType, secondType, $"Types of property '{prop.Item1}' were not equal");
             }
         }
 
@@ -168,7 +249,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
         private int GetMissingPropertyTarget(ObjectProperty property)
         {
-            var category = property.GetEnumAttribute<CategoryAttribute>(true).Name.ToEnum<ObjectPropertyCategory>();
+            var category = property.GetEnumAttributeViaPrtgAPI<CategoryAttribute>(true).Name.ToEnum<ObjectPropertyCategory>();
 
             switch (category)
             {

@@ -3,10 +3,10 @@
     /// <summary>
     /// Specifies alternate methods of formatting values returned from PRTG Requests.
     /// </summary>
-    public enum CustomNumberFormat
+    public enum CustomValueFormat
     {
         /// <summary>
-        /// Display values using symbols instead of numbers, e.g. five stars (*****) for <see cref="Priority.Five"/>.
+        /// Display as text, using symbols instead of numbers and escaping invalid characters, e.g. five stars (*****) for <see cref="Priority.Five"/> and &amp;amp; instead of &amp;.
         /// </summary>
         Text
     }

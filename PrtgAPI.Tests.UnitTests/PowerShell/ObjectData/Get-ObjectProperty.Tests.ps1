@@ -37,6 +37,15 @@ Describe "Get-ObjectProperty" {
         $property | Should Be "testName"
     }
 
+    It "retrieves a raw property with -Text" {
+
+        $sensor = Get-Sensor -Count 1
+
+        WithResponseArgs "AddressValidatorResponse" "id=4000&name=name&show=text&username=username" {
+            $sensor | Get-ObjectProperty -RawProperty name_ -Text
+        }
+    }
+
     It "retrieves multiple properties" {
         $sensor = Get-Sensor -Count 1
 

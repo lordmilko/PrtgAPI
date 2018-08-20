@@ -568,6 +568,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region GetObjectPropertyRawParameters
+
+        [TestMethod]
+        public void GetObjectPropertyRawParameters_SpecifiesShow_WithStringProperty()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&name=name&show=text&username=username"));
+
+            client.GetObjectProperty(1001, ObjectProperty.Name);
+        }
+
+        [TestMethod]
+        public void GetObjectPropertyRawParameters_DoesNotSpecifyShow_WithNonStringProperty()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("id=1001&name=active&username=username"));
+
+            client.GetObjectProperty(1001, ObjectProperty.Active);
+        }
+
+        #endregion
         {
             var customParameters = ((List<CustomParameter>) parameters.GetParameters()[Parameter.Custom]);
 
