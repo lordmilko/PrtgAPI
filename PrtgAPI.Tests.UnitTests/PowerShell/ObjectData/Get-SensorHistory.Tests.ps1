@@ -22,17 +22,17 @@ function CreateData($name1, $name2, $val1, $val2)
         $val2 = "< 1 MByte"
     }
 
-    $channel1 = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryChannelItem -ArgumentList @("0", $name1, $val1, "0")
-    $channel2 = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryChannelItem -ArgumentList @("1", $name2, $val2, "0")
+    $channel1 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", $name1, $val1, "0")
+    $channel2 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("1", $name2, $val2, "0")
 
-    $item2 = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", @($channel1, $channel2), "100 %", "0000010000")
+    $item2 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", @($channel1, $channel2), "100 %", "0000010000")
 
     return $item2
 }
 
 function SetSensorHistoryResponse
 {
-    $item1 = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", $null, "100 %", "0000010000")
+    $item1 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", $null, "100 %", "0000010000")
 
     $item2 = CreateData
 
@@ -42,7 +42,7 @@ function SetSensorHistoryResponse
 function ValidateChannels($file, $labels, $properties)
 {
     $lines = gc $file.FullName
-    $matchingLines = ($lines -match ".+Custom\d.+").Trim()
+    $matchingLines = ($lines -match ".+Custom\d.+") | foreach { $_.Trim() }
     $matchingLines.Count | Should Be 8
 
     foreach($line in $matchingLines)
@@ -88,8 +88,8 @@ Describe "Get-SensorHistory" {
     It "processes a ValueLookup" {
         try
         {
-            $channel = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryChannelItem -ArgumentList @("0", "Backup State", "Success", "Success")
-            $item = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", $channel, "100 %", "0000010000")
+            $channel = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", "Backup State", "Success", "Success")
+            $item = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", $channel, "100 %", "0000010000")
 
             SetResponseAndClientWithArguments "SensorHistoryResponse" $item
 
@@ -131,31 +131,136 @@ Describe "Get-SensorHistory" {
         $items.Count | Should Be 2
     }
 
-    It "retrieves the specified number of records when a count is specified" {
+    Context "Count" {
+        It "retrieves the specified number of records when a count is specified" {
 
-        $start = Get-Date
-        $end = $start.AddHours(-1)
+            $start = Get-Date
+            $end = $start.AddHours(-1).AddMinutes(-4)
 
-        SetAddressValidatorResponse "historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=4&sortby=-datetime"
+            SetAddressValidatorResponse "historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=4&sortby=-datetime"
 
-        $items = $sensor | Get-SensorHistory -Count 4 -StartDate $start
+            $items = $sensor | Get-SensorHistory -Count 4 -StartDate $start
 
-        $items.Count | Should Be 4
+            $items.Count | Should Be 4
+        }
+
+        It "retrieves the specified number of records when an end date and a count is specified" {
+
+            $start = Get-Date
+            $end = $start.AddDays(-1)
+
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+            )
+
+            $items = @($sensor | Get-SensorHistory -StartDate $start -EndDate $end -Count 1)
+
+            $items.Count | Should Be 1
+        }
+        
+        It "adjusts the missing end date when a large count is specified" {
+
+            $start = (Get-Date)
+            $end = $start.AddHours(-3)
+
+            $s = Run Sensor { Get-Sensor }
+            $s.Interval | Should Be "00:01:00"
+
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=120&sortby=-datetime&"
+            )
+
+            $s | Get-SensorHistory -Count 120
+        }
+
+        It "doesn't adjust the specified end date when a large count is specified" {
+            
+            $start = (Get-Date)
+            $end = $start.AddHours(-1)
+            
+            $s = Run Sensor { Get-Sensor }
+            $s.Interval | Should Be "00:01:00"
+
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+            )
+
+            $s | Get-SensorHistory -Count 120 -StartDate $start -EndDate $end
+        }
+        
+        It "adjusts the end date based on an interval of 24 hours" {
+            $start = (Get-Date)
+            $end = $start.AddDays(-20).AddHours(-1)
+            
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=20&sortby=-datetime&"
+            )
+
+            $s = Run Sensor { Get-Sensor }
+            $s.Interval = "01:00:00:00"
+            $s.Interval | Should Be "1.00:00:00"
+
+            $s | Get-SensorHistory -Count 20 -StartDate $start
+        }
+        
+        It "adjusts the missing end date when a sensor ID is specified" {
+
+            $start = (Get-Date)
+            $end = $start.AddHours(-2).AddMinutes(-10)
+            
+            SetAddressValidatorResponse @(
+                "api/table.xml?content=sensors&columns=objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active&count=*&filter_objid=4000&"
+                "api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=70&sortby=-datetime&"
+            )
+
+            Get-SensorHistory -Id 4000 -Count 70
+        }
+        
+        It "adjusts the missing end date when an average is specified" {
+
+            $start = (Get-Date)
+            $end = $start.AddHours(-7).AddMinutes(-40)
+            
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=80&sortby=-datetime&"
+            )
+
+            $s = Run Sensor { Get-Sensor }
+            $s.Interval | Should Be "00:01:00"
+
+            $s | Get-SensorHistory -Count 80 -Average 300
+        }
+
+        It "doesn't resolve the sensor ID when an average is specified" {
+
+            $start = (Get-Date)
+            $end = $start.AddHours(-6).AddMinutes(-50)
+
+            SetAddressValidatorResponse @(
+                "api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=70&sortby=-datetime&"
+            )
+
+            Get-SensorHistory -Id 4000 -Count 70 -Average 300
+        }
     }
-
-    It "retrieves the specified number of records when an end date and a count is specified" {
-
+    
+    It "executes when performing two stage formatting" {
         $start = Get-Date
         $end = $start.AddDays(-1)
 
-        SetAddressValidatorResponse @(
+        $response = SetAddressValidatorResponse @(
             "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=500&sortby=-datetime&"
+            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&start=500&"
         )
 
-        $items = @($sensor | Get-SensorHistory -StartDate $start -EndDate $end -Count 1)
+        $response.FixedCountOverride = 1000
 
-        $items.Count | Should Be 1
+        $items = @($sensor | Get-SensorHistory -StartDate $start -EndDate $end -Count 1000)
+
+        $items.Count | Should Be 1000
     }
 
     It "replaces impure formats" {
@@ -174,7 +279,7 @@ Describe "Get-SensorHistory" {
         $sensor | Get-SensorHistory
 
         # Validate that the format was created
-        $post = gci $dir
+        $post = gci $dir | sort LastWriteTime
         $post.Count | Should Be ($pre.Count + 1)
 
         $new = $post | Select -Last 1
@@ -190,4 +295,4 @@ Describe "Get-SensorHistory" {
         # Validate the format was updated
         ValidateChannels $new @("$name1(#)", $name2) @($name1, $name2)
     }
-}pqp
+}

@@ -22,9 +22,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// If PRTG finds it does not have enough monitoring data to return for the specified time span, an exception will be thrown. To work around this,
     /// you can request date for a larger time frame and then potentially filter the data with the Where-Object and Select-Object cmdlets.</para>
     /// 
-    /// <para type="description">When an <see cref="EndDate"/> is specified, Get-SensorHistory will split the sensor history query into a series of smaller
-    /// requests, emitting results to the pipeline as they arrive. If the -<see cref="Count"/> parameter is speciifed, Get-SensorHistory will limit
-    /// results to the specified number items within the specified time period.</para>
+    /// <para type="description">When an -<see cref="EndDate"/> is specified, Get-SensorHistory will split the sensor history query into a series of smaller
+    /// requests, emitting results to the pipeline as they arrive. If the -<see cref="Count"/> parameter is speciifed, and -<see cref="EndDate"/> is not
+    /// specified, Get-SensorHistory will automatically adjust the -<see cref="EndDate"/> such that the specified number of records can be retrieved, based
+    /// on the sensor's Interval or the specified -<see cref="Average" />. If an -<see cref="EndDate"/> has been specified, the number of records
+    /// returned may be limited by the number of records available in the specified time period.</para>
     /// 
     /// <para type="description">Due to limitations of the PRTG API, Get-SensorHistory cannot display both downtime and channel value lookups
     /// at the same time. Value lookups can only be displayed when an -<see cref="Average"/> of 0 is specified, while downtime can only
@@ -155,7 +157,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var parameters = new SensorHistoryParameters(Id, average.Value, StartDate, EndDate, Count);
 
             if (EndDate == null)
+            {
                 StreamProvider.StreamResults = false;
+
+                if (Count != null)
+                {
+                    AdjustCountPeriod(parameters, average.Value);
+                }
+            }
 
             if (EndDate != null)
             {
@@ -173,6 +182,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 records = GetFormattedRecords(parameters);
 
             WriteList(records);
+        }
+
+        private void AdjustCountPeriod(SensorHistoryParameters parameters, int average)
+        {
+            //A count was specified without specifying an EndDate. We want to ensure the Start/End date range that
+            //is specified is capable of meeting the specified amount.
+            var sensor = Sensor;
+
+            if (ParameterSetName == ParameterSet.Manual && average == 0)
+                sensor = client.GetSensor(Id);
+
+            //If we're using the default average, get the total TimeSpan (in seconds) we need records for
+            var requiredSeconds = (average == 0 ? sensor.Interval.TotalSeconds : average) * Count.Value;
+
+            //An additional hour for good measure. Sometimes we can't scan according to our specified interval
+            var requiredTimeSpan = TimeSpan.FromSeconds(requiredSeconds + 3600);
+
+            var requiredEnd = parameters.StartDate - requiredTimeSpan;
+
+            parameters.StartDate = parameters.StartDate;
+            parameters.EndDate = requiredEnd;
         }
 
         private IEnumerable<PSObject> GetFormattedRecords(SensorHistoryParameters parameters)
