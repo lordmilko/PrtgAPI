@@ -188,7 +188,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             var formatter = new SensorHistoryFormatter(this);
 
-            return formatter.Format(records, EndDate != null);
+            return formatter.Format(records, EndDate != null, Count);
         }
 
         /// <summary>

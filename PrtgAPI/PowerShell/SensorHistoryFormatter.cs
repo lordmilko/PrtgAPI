@@ -37,12 +37,15 @@ namespace PrtgAPI.PowerShell
             return ps;
         }
 
-        public IEnumerable<PSObject> Format(IEnumerable<SensorHistoryData> response, bool lazy)
+        public IEnumerable<PSObject> Format(IEnumerable<SensorHistoryData> response, bool lazy, int? count)
         {
             var firstResponse = new List<SensorHistoryData>();
 
             foreach (var record in response)
             {
+                if (count != null && readCount > count)
+                    break;
+
                 if (readCount < 500 || !lazy)
                 {
                     readCount++;
