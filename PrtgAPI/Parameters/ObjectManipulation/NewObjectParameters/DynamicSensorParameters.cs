@@ -10,6 +10,7 @@ using PrtgAPI.Dynamic;
 using PrtgAPI.Helpers;
 using PrtgAPI.Objects.Deserialization;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Parameters
 {

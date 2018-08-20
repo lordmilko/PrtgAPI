@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Targets;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests

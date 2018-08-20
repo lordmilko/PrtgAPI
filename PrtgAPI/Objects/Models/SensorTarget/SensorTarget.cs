@@ -5,7 +5,7 @@ using System.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 
-namespace PrtgAPI
+namespace PrtgAPI.Targets
 {
     /// <summary>
     /// <para type="description">Represents a resource that can be monitored or used for monitoring by a PRTG Sensor.</para>
@@ -14,14 +14,14 @@ namespace PrtgAPI
     public abstract class SensorTarget<T> : IFormattable, IEquatable<T> where T : SensorTarget<T>
     {
         /// <summary>
-        /// The name of the target.
+        /// Gets the name of the target.
         /// </summary>
         public string Name { get; internal set; }
 
         private readonly string raw;
 
         /// <summary>
-        /// The individual components of the target's raw value.
+        /// Gets the individual components of the target's raw value. This field is read-only.
         /// </summary>
         protected readonly string[] components;
 
@@ -31,6 +31,9 @@ namespace PrtgAPI
         /// <param name="raw">The raw value of this object.</param>
         protected SensorTarget(string raw)
         {
+            if (raw == null)
+                throw new ArgumentNullException(nameof(raw));
+
             this.raw = raw;
             components = raw.Split('|');
             Name = components[0];
@@ -43,6 +46,12 @@ namespace PrtgAPI
         /// <returns>The encoded format used by PRTG dropdown options.</returns>
         protected static string ToDropDownOption(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            if (name == string.Empty)
+                throw new ArgumentException("Value must not be an empty string", nameof(name));
+
             return $"{name}|{name}||";
         }
 
@@ -61,9 +70,18 @@ namespace PrtgAPI
                 return (T) obj;
 
             if (obj is string)
-                return (T) Activator.CreateInstance(typeof (T), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] {obj}, null);
+            {
+                if ((string) obj == string.Empty)
+                    goto Throw;
 
-            throw new InvalidCastException($"Cannot convert '{obj}' of type '{obj.GetType()}' to type '{nameof(T)}'. Value type must be convertable to type {typeof(T).FullName}.");
+                if (!((string) obj).Contains("|"))
+                    obj = ToDropDownOption(obj.ToString());
+
+                return (T)Activator.CreateInstance(typeof(T), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { obj }, null);
+            }
+
+        Throw:
+            throw new InvalidCastException($"Cannot convert value '{obj}' of type '{obj.GetType().FullName}' to type '{typeof(T).FullName}'. Value type must be convertable to type {typeof(T).FullName}.");
         }
 
         internal static List<T> CreateFromDropDownOptions(string response, ObjectProperty name, Func<string, T> createObj)
@@ -131,7 +149,6 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-        [ExcludeFromCodeCoverage]
         public override bool Equals(object other)
         {
             if (ReferenceEquals(null, other))

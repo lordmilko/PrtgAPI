@@ -42,7 +42,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     function GetItemSubset($skip, $select)
     {
-        $format = [PrtgAPI.WmiServiceTarget].GetMethod("PrtgAPI.IFormattable.GetSerializedFormat", @("NonPublic", "Instance"))
+        $format = [PrtgAPI.Targets.WmiServiceTarget].GetMethod("PrtgAPI.IFormattable.GetSerializedFormat", @("NonPublic", "Instance"))
 
         $serviceStrs = $services | select -First $select -Skip $skip | foreach {
             $str = ("service__check=" + $format.Invoke($_, $null))

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PrtgAPI
+namespace PrtgAPI.Targets
 {
     [DataContract]
     class SensorTargetProgress

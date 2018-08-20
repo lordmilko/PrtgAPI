@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PrtgAPI.Html;
 
-namespace PrtgAPI
+namespace PrtgAPI.Targets
 {
     /// <summary>
     /// Represents a generic sensor target that can be used for creating a new sensor.
@@ -11,12 +11,12 @@ namespace PrtgAPI
     public class GenericSensorTarget : SensorTarget<GenericSensorTarget>
     {
         /// <summary>
-        /// The internal value or unique identifier of the target.
+        /// Gets or sets the internal value or unique identifier of the target.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// The individual raw properties of this object.
+        /// Gets the individual raw properties of this object.
         /// </summary>
         public string[] Properties
         {

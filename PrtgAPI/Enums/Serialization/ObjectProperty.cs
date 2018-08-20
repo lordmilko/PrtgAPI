@@ -1,5 +1,6 @@
 ﻿using PrtgAPI.Attributes;
 using PrtgAPI.Internal;
+using PrtgAPI.Targets;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 namespace PrtgAPI

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.ServiceProcess;
 using PrtgAPI.Helpers;
 
-namespace PrtgAPI
+namespace PrtgAPI.Targets
 {
     /// <summary>
     /// Describes a system service on a Microsoft Windows server that can be monitored via WMI.
@@ -12,12 +12,12 @@ namespace PrtgAPI
     public class WmiServiceTarget : SensorTarget<WmiServiceTarget>
     {
         /// <summary>
-        /// The friendly display name of the service.
+        /// Gets the friendly display name of the service.
         /// </summary>
         public string DisplayName { get; }
 
         /// <summary>
-        /// The description of the service.
+        /// Gets the description of the service.
         /// </summary>
         public string Description { get; }
 

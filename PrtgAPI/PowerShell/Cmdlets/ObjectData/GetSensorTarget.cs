@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {

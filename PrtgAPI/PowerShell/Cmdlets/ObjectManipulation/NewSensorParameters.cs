@@ -7,6 +7,7 @@ using System.Management.Automation;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -320,7 +321,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (Type)
             {
                 case SensorType.ExeXml:
-                    parameters = new ExeXmlSensorParameters(string.Empty) { ExeFile = GetImplicit<ExeFileTarget>(Second) };
+                    parameters = new ExeXmlSensorParameters("FAKE_VALUE") { ExeFile = GetImplicit<ExeFileTarget>(Second) };
                     break;
                 case SensorType.Http:
                     var httpParameters = new HttpSensorParameters();

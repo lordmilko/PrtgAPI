@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PrtgAPI
+namespace PrtgAPI.Targets
 {
     /// <summary>
-    /// Represents a SQL query file that can be used for querying the status of a SQL Server Database.
+    /// Represents a SQL query file that can be used to query the status of a SQL Server Database.
     /// </summary>
     public class SqlServerQueryTarget : SensorTarget<SqlServerQueryTarget>
     {
@@ -12,7 +12,8 @@ namespace PrtgAPI
         /// Converts an object of one of several types to a <see cref="SqlServerQueryTarget"/>. If the specified value is not convertable to <see cref="SqlServerQueryTarget"/>, an <see cref="InvalidCastException"/> is thrown.
         /// </summary>
         /// <param name="sqlQuery">The value to parse.</param>
-        /// <returns>An <see cref="ExeFileTarget"/> that encapsulates the passed value.</returns>
+        /// <exception cref="InvalidCastException">The specified value could not be parsed to a <see cref="SqlServerQueryTarget"/>.</exception>
+        /// <returns>An <see cref="SqlServerQueryTarget"/> that encapsulates the passed value.</returns>
         public static SqlServerQueryTarget Parse(object sqlQuery)
         {
             return ParseStringCompatible(sqlQuery);
@@ -30,6 +31,9 @@ namespace PrtgAPI
         /// <param name="sqlQuery">The name of the query file to use.</param>
         public static implicit operator SqlServerQueryTarget(string sqlQuery)
         {
+            if (sqlQuery == null)
+                return null;
+
             return new SqlServerQueryTarget(ToDropDownOption(sqlQuery));
         }
 
