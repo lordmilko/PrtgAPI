@@ -55,7 +55,7 @@ for(int i = 0; i < 2; i++)
 
             items = response.Descendants("item").ToList();
 
-            foreach (var item in items)
+            <#= StartLoopOrTask("item", "items", i) #>
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
@@ -63,7 +63,7 @@ for(int i = 0; i < 2; i++)
 
                 item.Add(properties.Nodes());
                 item.Add(new XElement("injected_sensorId", sensorId));
-            }
+            }<#= EndLoopOrTask(i) #>
 
             if (items.Count > 0)
                 return XmlDeserializer<Channel>.DeserializeList(response).Items;
@@ -88,14 +88,14 @@ for(int i = 0; i < 2; i++)
 
             var items = response.Descendants("item").ToList();
 
-            foreach (var item in items)
+            <#= StartLoopOrTask("item", "items", i) #>
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
                 var properties = <#= CallFunction("GetNotificationActionProperties", "id", i) #>;
 
                 item.Add(properties.Nodes());
-            }
+            }<#= EndLoopOrTask(i) #>
             var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();

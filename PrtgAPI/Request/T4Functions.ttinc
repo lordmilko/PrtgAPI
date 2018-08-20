@@ -86,7 +86,7 @@
             return $"Func<Task> {variableName} = async () => await {function}Async({functionArgs}).ConfigureAwait(false)";
     }
 
-	public string DeclareFunc(string variableName, string lambdaArgs, string inputTypes, string function, string args, string functionReturnType, int i)
+    public string DeclareFunc(string variableName, string lambdaArgs, string inputTypes, string function, string args, string functionReturnType, int i)
     {
         if(i == 0)
             return $"Func<{inputTypes}, {functionReturnType}> {variableName} = ({lambdaArgs}) => {function}({args})";
@@ -94,7 +94,7 @@
             return $"Func<{inputTypes}, Task<{functionReturnType}>> {variableName} = async ({lambdaArgs}) => await {function}Async({args}).ConfigureAwait(false)";
     }
 
-	public string DeclareFuncFromVariable0(string variableName, string function, string args, string functionReturnType, int i)
+    public string DeclareFuncFromVariable0(string variableName, string function, string args, string functionReturnType, int i)
     {
         if(i == 0)
             return $"Func<{functionReturnType}> {variableName} = () => {function}({args})";
@@ -124,5 +124,21 @@
             return "Action";
         else
             return "Func<Task>";
+    }
+
+    public string StartLoopOrTask(string elm, string elms, int i)
+    {
+        if(i == 0)
+            return $"foreach (var {elm} in {elms})";
+        else
+            return $"await Task.WhenAll({elms}.Select(async {elm} =>";
+    }
+
+    public string EndLoopOrTask(int i)
+    {
+        if(i == 0)
+            return "";
+        else
+            return ")).ConfigureAwait(false);";
     }
 #>

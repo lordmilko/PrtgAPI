@@ -80,7 +80,7 @@ namespace PrtgAPI
 
             items = response.Descendants("item").ToList();
 
-            foreach (var item in items)
+            await Task.WhenAll(items.Select(async item =>
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
@@ -88,7 +88,7 @@ namespace PrtgAPI
 
                 item.Add(properties.Nodes());
                 item.Add(new XElement("injected_sensorId", sensorId));
-            }
+            })).ConfigureAwait(false);
 
             if (items.Count > 0)
                 return XmlDeserializer<Channel>.DeserializeList(response).Items;
@@ -130,13 +130,15 @@ namespace PrtgAPI
 
             var items = response.Descendants("item").ToList();
 
-            foreach (var item in items)
+            await Task.WhenAll(items.Select(async item =>
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
                 var properties = await GetNotificationActionPropertiesAsync(id).ConfigureAwait(false);
 
                 item.Add(properties.Nodes());
+            })).ConfigureAwait(false);
+
             var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
