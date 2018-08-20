@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -70,13 +69,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Filter the response to objects with a certain OnNotificationAction. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Default)]
-        public string OnNotificationAction { get; set; }
+        public string[] OnNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects of a certain type.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
-        public TriggerType? Type { get; set; }
+        public TriggerType[] Type { get; set; }
 
         /// <summary>
         /// <para type="description">List all notification trigger types compatible with the specified object.</para> 
@@ -135,10 +134,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Inherited == false)
                 triggers = triggers.Where(a => a.Inherited == false);
 
-            triggers = FilterResponseRecords(triggers, OnNotificationAction, t => t.OnNotificationAction.Name);
+            triggers = FilterResponseRecordsByWildcardArray(OnNotificationAction, t => t.OnNotificationAction.Name, triggers);
 
             if (Type != null)
-                triggers = triggers.Where(t => t.Type == Type.Value);
+                triggers = triggers.Where(t => Type.Contains(t.Type));
 
             return triggers;
         }
