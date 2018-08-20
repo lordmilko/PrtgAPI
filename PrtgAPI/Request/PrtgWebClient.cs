@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Request
@@ -14,10 +16,31 @@ namespace PrtgAPI.Request
         private HttpClientHandler handler = new HttpClientHandler();
         private CookieContainer cookies = new CookieContainer();
 
-        public PrtgWebClient()
+        private string server;
+
+        public PrtgWebClient(bool ignoreSSL, string server)
         {
+            this.server = server?.ToLower();
+
+            if (ignoreSSL)
+                ServicePointManager.ServerCertificateValidationCallback += IgnoreSSLCallback;
+
             handler.CookieContainer = cookies;
             asyncClient = new HttpClient(handler);
+        }
+
+        private bool IgnoreSSLCallback(object sender, X509Certificate certificate, X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+        {
+            var request = sender as HttpWebRequest;
+
+            if (request != null)
+            {
+                if (request.Address.Host.ToLower() == server)
+                    return true;
+            }
+
+            return false;
         }
 
         public Task<HttpResponseMessage> GetSync(string address)

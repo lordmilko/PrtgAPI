@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
@@ -143,7 +144,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Returns the <see cref="PrtgClient"/> that was created by this cmdlet.
+        /// <para type="description">Whether to ignore SSL certificate errors encountered when communicating with your <see cref="Server"/>.
+        /// Affects all requests for the life of your process.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter IgnoreSSL { get; set; }
+
         /// <summary>
         /// <para type="description">Returns the <see cref="PrtgClient"/> that was created by this cmdlet.</para>
         /// </summary>
@@ -167,6 +173,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private bool IsISE => GetVariableValue("global:psISE") != null;
 
         private bool ProgressTrue => ProgressSpecified && Progress;
+
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
@@ -175,8 +182,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (PrtgSessionState.Client == null || Force.IsPresent)
             {
                 PrtgSessionState.Client = PassHash.IsPresent ?
-                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, AuthMode.PassHash) :
-                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password);
+                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, AuthMode.PassHash, IgnoreSSL) :
+                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, ignoreSSL: IgnoreSSL);
 
                 if (RetryCount != null)
                     PrtgSessionState.Client.RetryCount = RetryCount.Value;
