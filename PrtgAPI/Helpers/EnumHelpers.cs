@@ -116,7 +116,7 @@ namespace PrtgAPI.Helpers
             return XmlToEnum(value, type, typeof (TXmlEnumAttribute), requireValue, allowFlags);
         }
 
-        internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
+        internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true, bool allowNumeric = false)
         {
             var enumXmlCache = ReflectionCacheManager.GetEnumXml(type);
 
@@ -140,6 +140,9 @@ namespace PrtgAPI.Helpers
                 var e = Enum.Parse(type, value, true);
 
                 if (allowFlags == false && ((Enum)e).GetUnderlyingFlags().Any())
+                    return null;
+
+                if (!allowNumeric && e.ToString().ToLower() != value.ToLower())
                     return null;
 
                 return e;

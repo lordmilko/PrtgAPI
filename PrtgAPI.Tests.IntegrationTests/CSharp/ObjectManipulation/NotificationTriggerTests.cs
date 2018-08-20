@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.Helpers;
 
 namespace PrtgAPI.Tests.IntegrationTests.ActionTests
 {
@@ -251,8 +251,131 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
         }
 
         #endregion
+        #region TriggerChannel
 
-        private void AddRemoveTrigger(TriggerParameters parameters, bool empty)
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnSensor()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(sensor.Id, TriggerChannel.Total), "Channel 'Total' is not a valid value");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnContainer()
+        {
+            TestTriggerChannel(Settings.Probe, TriggerChannel.Total);
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_Channel_OnSensor()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+            var channel = client.GetChannel(sensor.Id, "Processor 1");
+
+            TestTriggerChannel(sensor.Id, channel);
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_Channel_OnContainer()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+            var channel = client.GetChannel(sensor.Id, "Total");
+
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, channel), "Channel 'Total' of type 'Channel' is not a valid channel");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnSensor()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+            var channel = client.GetChannel(sensor.Id, "Total").Id;
+
+            TestTriggerChannel(sensor.Id, new TriggerChannel(channel), (paramValue, triggerValue, propertyName) =>
+            {
+                if (propertyName != "Channel")
+                    return false;
+
+                var first = PrtgAPIHelpers.GetTriggerChannelSource((TriggerChannel)paramValue);
+                var second = PrtgAPIHelpers.GetTriggerChannelSource((TriggerChannel)triggerValue);
+
+                if (first is int)
+                    Assert.AreEqual(first, ((Channel)second).Id);
+                else
+                    Assert.AreEqual(((Channel)first).Id, ((Channel)second).Id);
+
+                return true;
+            });
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnContainer()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First(); ;
+            var channel = client.GetChannel(sensor.Id, "Total").Id;
+
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, new TriggerChannel(channel)), "Channel ID '0' is not a valid channel");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnSensor()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(sensor.Id, new TriggerChannel(99)), "Channel ID '99' is not a valid channel");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnContainer()
+        {
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, new TriggerChannel(99)), "Channel ID '99' is not a valid channel");
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnSensor()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+            var channel = client.GetChannel(sensor.Id, "Total");
+
+            TestTriggerChannel(sensor.Id, channel);
+        }
+
+        [TestMethod]
+        public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnContainer()
+        {
+            var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
+            var channel = client.GetChannel(sensor.Id, "Total");
+
+            AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, channel), "Channel 'Total' of type 'Channel' is not a valid channel");
+        }
+
+        private void TestTriggerChannel(int objectId, TriggerChannel channel, Func<object, object, string, bool> validator = null)
+        {
+            var parameters = new ThresholdTriggerParameters(objectId)
+            {
+                Channel = channel
+            };
+
+            DoubleAddRemoveTrigger(
+                parameters,
+                t => new ThresholdTriggerParameters(objectId, t),
+                validator
+            );
+        }
+
+        #endregion
+
+        private void DoubleAddRemoveTrigger(TriggerParameters parameters, Func<NotificationTrigger, TriggerParameters> cloneBuilder, Func<object, object, string, bool> validator = null)
+        {
+            AddRemoveTrigger(
+                parameters,
+                true,
+                t => AddRemoveTrigger(cloneBuilder(t), true, validator: validator),
+                validator
+            );
+        }
+
+        private void AddRemoveTrigger(TriggerParameters parameters, bool empty, Action<NotificationTrigger> action = null, Func<object, object, string, bool> validator = null)
         {
             var initialTriggers = client.GetNotificationTriggers(parameters.ObjectId).Where(t => !t.Inherited).ToList();
             client.AddNotificationTrigger(parameters); //i wonder if the new trigger returns the details of the new trigger in the url
@@ -263,7 +386,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
             AssertEx.IsTrue(afterTriggers.Count == initialTriggers.Count + 1, $"Initial triggers was {initialTriggers.Count}, but after adding a trigger the number of triggers was {afterTriggers.Count}");
             var newTrigger = afterTriggers.First(a => initialTriggers.All(b => b.SubId != a.SubId));
 
-            ValidateNewTrigger(parameters, newTrigger, empty);
+            ValidateNewTrigger(parameters, newTrigger, empty, validator);
+
+            action?.Invoke(newTrigger);
 
             Thread.Sleep(5000);
             client.RemoveNotificationTrigger(newTrigger);
@@ -273,8 +398,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
             AssertEx.IsTrue(initialTriggers.Count == removeTriggers.Count, $"Initial triggers was {initialTriggers.Count}, however after and removing a trigger the number of triggers was {removeTriggers.Count}");
         }
 
-        private void ValidateNewTrigger(TriggerParameters parameters, NotificationTrigger trigger, bool empty)
+        private void ValidateNewTrigger(TriggerParameters parameters, NotificationTrigger trigger, bool empty, Func<object, object, string, bool> validator = null)
         {
+            if(validator == null)
+                validator = (o, t, n) => false;
+
             foreach (var paramProp in parameters.GetType().GetNormalProperties())
             {
                 bool found = false;
@@ -308,7 +436,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ActionTests
                             }
                         }
 
-                        AssertEx.AreEqual(paramValue, triggerValue, triggerProp.Name);
+                        if(!validator(paramProp.GetValue(parameters), triggerProp.GetValue(trigger), triggerProp.Name))
+                            AssertEx.AreEqual(paramValue, triggerValue, triggerProp.Name);
 
                         //when we create a trigger without customization, some fields get default values
                         //we should have verification of those values, but ONLY when we're doing

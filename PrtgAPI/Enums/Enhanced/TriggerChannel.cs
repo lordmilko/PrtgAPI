@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
@@ -8,7 +9,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents a channel that can cause a Notification Trigger to activate.
     /// </summary>
-    public class TriggerChannel : IFormattable
+    public class TriggerChannel : IFormattable, IEquatable<TriggerChannel>, IEnumEx
     {
         /// <summary>
         /// The sensor's primary channel.
@@ -35,46 +36,73 @@ namespace PrtgAPI
         /// <summary>
         /// Converts an object of one of several types to a <see cref="TriggerChannel"/>. If the specified value is not convertable to <see cref="TriggerChannel"/>, an <see cref="InvalidCastException"/> is thrown.
         /// </summary>
-        /// <param name="channel">The value to parse.</param>
-        /// <returns>A TriggerChannel that encapsulates the passed value.</returns>
-        public static TriggerChannel Parse(object channel)
+        /// <param name="value">The value to parse.</param>
+        /// <returns>A <see cref="TriggerChannel"/> that encapsulates the passed value.</returns>
+        public static TriggerChannel Parse(object value)
         {
-            if (channel == null)
-                throw new ArgumentNullException(nameof(channel));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
 
-            if (channel is TriggerChannel)
-                return (TriggerChannel) channel;
+            TriggerChannel channel;
 
-            if (channel is string)
+            if (!TryParse(value, out channel))
+                throw new InvalidCastException($"Cannot convert value '{value}' of type '{value.GetType()}' to type '{nameof(TriggerChannel)}'. Value type must be convertable to one of {typeof(StandardTriggerChannel).FullName}, {typeof(Channel).FullName} or {typeof(int).FullName}.");
+
+            return channel;
+        }
+
+        /// <summary>
+        /// Converts an object of one of several types to a <see cref="TriggerChannel"/>. A return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="value">The value to parse.</param>
+        /// <param name="result">When this method returns, if the <paramref name="value"/> was successfully converted to a <see cref="TriggerChannel"/>, this parameter
+        /// contains the result of that conversion. If the conversion was unsuccessful, this parameter will be set to null. </param>
+        /// <returns>True if the value was successfully parsed. Otherwise, false.</returns>
+        public static bool TryParse(object value, out TriggerChannel result)
+        {
+            if (value == null)
             {
-                StandardTriggerChannel value;
+                result = null;
+                return false;
+            }
 
+            if (value is TriggerChannel)
+            {
+                result = (TriggerChannel)value;
+                return true;
+            }
+
+            if (value is string)
+            {
                 //Convert it to an enum, and then let the enum handler below convert it to a static member
-                if (Enum.TryParse(channel.ToString(), true, out value))
-                {
-                    channel = value;
-                }
-            }
-            
-            if (channel is StandardTriggerChannel)
-            {
-                return ParseChannelEnum((StandardTriggerChannel) channel);
-            }
-            else if (channel is Channel)
-            {
-                return new TriggerChannel((Channel) channel);
-            }
-            else
-            {
-                int value;
+                var val = EnumHelpers.XmlToEnum<XmlEnumAttribute>(value.ToString(), typeof(StandardTriggerChannel), false);
 
-                if (int.TryParse(channel.ToString(), out value))
-                    return new TriggerChannel(value);
-                else
-                {
-                    throw new InvalidCastException($"Cannot convert '{channel}' of type '{channel.GetType()}' to type '{nameof(TriggerChannel)}'. Value type must be convertable to one of {typeof(StandardTriggerChannel).FullName}, {typeof(Channel).FullName} or {typeof(int).FullName}.");
-                }
+                if (val != null)
+                    value = val;
             }
+
+            if (value is StandardTriggerChannel)
+            {
+                result = ParseChannelEnum((StandardTriggerChannel)value);
+                return true;
+            }
+
+            if (value is Channel)
+            {
+                result = new TriggerChannel((Channel)value);
+                return true;
+            }
+
+            int intValue;
+
+            if (int.TryParse(value.ToString(), out intValue))
+            {
+                result = new TriggerChannel(intValue);
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         private static TriggerChannel ParseChannelEnum(StandardTriggerChannel channel)
@@ -111,7 +139,7 @@ namespace PrtgAPI
 
             object @enum = null;
 
-            if (!(channel is TriggerChannel && ((TriggerChannel)channel).channel is int))
+            if (ChannelMaybeEnum(channel))
                 @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(StandardTriggerChannel), false);
 
             if (@enum != null)
@@ -122,6 +150,22 @@ namespace PrtgAPI
 
                 return result;
             }
+        }
+
+        private static bool ChannelMaybeEnum(object channel)
+        {
+            if (channel is Channel)
+                return false;
+
+            var triggerChannel = channel as TriggerChannel;
+
+            if(triggerChannel != null)
+            {
+                if (triggerChannel.channel is int || triggerChannel.channel is Channel)
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -178,25 +222,83 @@ namespace PrtgAPI
             //The serialized format of a TriggerChannel is an integer.
 
             if (channel is Channel)
-            {
                 return ((Channel)channel).Id.ToString();
-            }
-            else if (channel is StandardTriggerChannel)
-            {
-                return ((StandardTriggerChannel) channel).EnumToXml();
-            }
-            else
-            {
-                int value;
 
-                if (int.TryParse(channel.ToString(), out value))
-                {
-                    return value.ToString();
-                }
-                else
-                {
-                    return channel.ToString();
-                }
+            if (channel is StandardTriggerChannel)
+                return ((StandardTriggerChannel) channel).EnumToXml();
+
+            int value;
+
+            if (int.TryParse(channel.ToString(), out value))
+                return value.ToString();
+
+            return channel.ToString();
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in object obj is
+        /// Equal to this. The specified object is equal to this if both
+        /// objects target the same channel.
+        /// </summary>
+        /// <param name="other">The object to compare with the current object.</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        [ExcludeFromCodeCoverage]
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            TriggerChannel c;
+
+            if (TryParse(other, out c))
+                return IsEqual(c);
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in object obj is
+        /// Equal to this. The specified object is equal to this if both
+        /// objects target the same channel.
+        /// </summary>
+        /// <param name="other">The object to compare with the current object.</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        [ExcludeFromCodeCoverage]
+        public bool Equals(TriggerChannel other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return IsEqual(other);
+        }
+
+        private bool IsEqual(TriggerChannel other)
+        {
+            return ((IFormattable)this).GetSerializedFormat() == ((IFormattable)other).GetSerializedFormat();
+        }
+
+        //todo: this NEEDS unit tests
+
+        /// <summary>
+        /// Returns a hash code for this object. If two trigger channels target
+        /// the same channel, they will have the same hash code.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var result = 0;
+
+                result = (result * 419) ^ Convert.ToInt32(((IFormattable)this).GetSerializedFormat());
+
+                return result;
             }
         }
     }

@@ -1,94 +1,242 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Attributes;
+using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
+using PrtgAPI.PowerShell;
+using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization.FilterHandlers;
+using PrtgAPI.Request.Serialization.ValueConverters;
+using PrtgAPI.Schedules;
+using PrtgAPI.Targets;
+using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
+using ReflectionHelpers = PrtgAPI.Helpers.ReflectionHelpers;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectTests
 {
+    class Parsee
+    {
+        public object Value { get; }
+
+        public string StringValue { get; }
+
+        public string Serialized { get; }
+
+        public Parsee(object val, string str, string serialized)
+        {
+            Value = val;
+            StringValue = str;
+            Serialized = serialized;
+        }
+    }
+
+    interface IThrows
+    {
+        object Value { get; }
+
+        string StringValue { get; }
+
+        void Assert(object val, Action<object> action);
+    }
+
+    class Throws<T> : IThrows where T : Exception
+    {
+        public object Value { get; }
+
+        public string StringValue { get; }
+
+        private Func<object, string> Message { get; }
+
+        public Throws(object value, string str, Func<object, string> message)
+        {
+            Value = value;
+            StringValue = str;
+            Message = message;
+        }
+
+        public void Assert(object val, Action<object> action)
+        {
+            AssertEx.Throws<T>(() => action(val), Message(val));
+        }
+    }
+
     [TestClass]
     public class TypeTests
     {
         #region Sensor Target
 
         [TestMethod]
-        public void SensorTarget_ReferenceEquals_SensorTarget()
+        public void SensorTarget_ObjectEquals_SensorTarget()
         {
-            ExeFileTarget target1 = "test.ps1";
-            ExeFileTarget target2 = target1;
-
-            Assert.IsTrue(target1.Equals(target2));
+            TestObjectEquals(
+                (ExeFileTarget) "test.ps1",
+                (ExeFileTarget) "test.ps1",
+                (ExeFileTarget) "test.sql"
+            );
         }
 
         [TestMethod]
-        public void SensorTarget_ValueEquals_SensorTarget()
+        public void SensorTarget_TypeEquals_SensorTarget()
         {
-            ExeFileTarget target1 = "test.ps1";
-            ExeFileTarget target2 = "test.ps1";
-            ExeFileTarget target3 = "test.ps2";
-
-            Assert.IsTrue(target1.Equals(target2));
-            Assert.IsFalse(target1.Equals(target3));
+            TestTypeEquals<SqlServerQueryTarget>(
+                "test.sql",
+                "test.sql",
+                "test.ps1"
+            );
         }
 
         [TestMethod]
         public void SensorTarget_HashCodeEquals_SensorTarget()
         {
-            ExeFileTarget target1 = "test.ps1";
-            ExeFileTarget target2 = "test.ps1";
-
-            var target1Hash = target1.GetHashCode();
-            var target2Hash = target2.GetHashCode();
-
-            Assert.AreEqual(target1Hash, target2Hash);
+            TestHashCode<ExeFileTarget>(
+                "test.ps1",
+                "test.ps1",
+                "test.ps2",
+                (SqlServerQueryTarget)"test.ps1", "test.ps1"
+            );
         }
-        
+
+        [TestMethod]
+        public void SensorTarget_Parse()
+        {
+            TestParse<ExeFileTarget>(
+                new Parsee((ExeFileTarget)"test.ps1", "test.ps1", "test.ps1|test.ps1||")
+            );
+            TestParse<SqlServerQueryTarget>(
+                new Parsee((SqlServerQueryTarget) "test.sql", "test.sql", "test.sql|test.sql||")
+            );
+        }
+
+        #endregion
+        #region Scanning Interval
+
+        [TestMethod]
+        public void ScanningInterval_Equals()
+        {
+            TestObjectEquals(
+                ScanningInterval.FifteenMinutes,
+                new ScanningInterval(new TimeSpan(0, 15, 0)),
+                StandardScanningInterval.FiveMinutes
+            );
+
+            TestTypeEquals(
+                ScanningInterval.FifteenMinutes,
+                new ScanningInterval(new TimeSpan(0, 15, 0)),
+                ScanningInterval.FiveMinutes
+            );
+
+            TestObjectEquals(
+                ScanningInterval.FifteenMinutes,
+                new TimeSpan(0, 15, 0),
+                new TimeSpan(0, 5, 0)
+            );
+        }
+
+        [TestMethod]
+        public void ScanningInterval_Parse()
+        {
+            TestParse<ScanningInterval>(
+                new Parsee(ScanningInterval.FiveMinutes,       "300|5 minutes", "300|5 minutes"),
+                new Parsee(new TimeSpan(0, 0, 10),             "00:00:10",      "10|10 seconds"),
+                new Parsee(StandardScanningInterval.FourHours, "FourHours",     "14400|4 hours"),
+                new Parsee(20,                                 "20",            "20|20 seconds"),
+                new Throws<InvalidCastException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
+            );
+        }
+
         [TestMethod]
         public void ScanningInterval_HasCorrectHashCode()
         {
-            ScanningInterval interval1 = ScanningInterval.OneHour;
-            ScanningInterval interval2 = new TimeSpan(1, 0, 0);
+            TestHashCode(
+                ScanningInterval.OneHour,
+                new TimeSpan(1, 0, 0),
+                new TimeSpan(0, 1, 0)
+            );
+        }
 
-            var code1 = interval1.GetHashCode();
-            var code2 = interval2.GetHashCode();
+        #endregion
+        #region Trigger Channel
 
-            Assert.AreEqual(code1, code2);
+        [TestMethod]
+        public void TriggerChannel_Equals()
+        {
+            TestObjectEquals(
+                TriggerChannel.Primary,
+                new TriggerChannel(-999),
+                TriggerChannel.Total
+            );
 
-            var timeSpan = new TimeSpan(1, 0, 0);
+            TestTypeEquals(
+                TriggerChannel.Primary,
+                new TriggerChannel(-999),
+                TriggerChannel.Total
+            );
 
-            Assert.AreNotEqual(code2, timeSpan);
+            TestObjectEquals(
+                TriggerChannel.Primary,
+                new Channel { Id = -999 },
+                new Channel { Id = 0 }
+            );
+        }
+
+        [TestMethod]
+        public void TriggerChannel_Parse()
+        {
+            TestParse<TriggerChannel>(
+                new Parsee(TriggerChannel.Primary,         "-999",    "-999"),
+                new Parsee(StandardTriggerChannel.Primary, "Primary", "-999"),
+                new Parsee(new Channel { Id = 3 },         "3",       "3"),
+                new Parsee(1,                              "1",       "1"),
+                new Throws<InvalidCastException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
+            );
+        }
+
+        [TestMethod]
+        public void TriggerChannel_HasCorrectHashCode()
+        {
+            TestHashCode(
+                TriggerChannel.Total,
+                new TriggerChannel(-1),
+                new Channel {Id = 2}
+            );
         }
 
         #endregion
         #region Device Template
 
         [TestMethod]
-        public void DeviceTemplate_ReferenceEquals_DeviceTemplate()
+        public void DeviceTemplate_ObjectEquals_DeviceTemplate()
         {
-            DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
-            DeviceTemplate template2 = template1;
-
-            Assert.IsTrue(template1.Equals(template2));
+            TestObjectEquals(
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file2.odt|File 2||")
+            );
         }
 
         [TestMethod]
-        public void DeviceTemplate_ValueEquals_DeviceTemplate()
+        public void DeviceTemplate_TypeEquals_DeviceTemplate()
         {
-            DeviceTemplate template1 = new DeviceTemplate("file1.odt|File 1||");
-            DeviceTemplate template2 = new DeviceTemplate("file1.odt|File 1||");
-            DeviceTemplate template3 = new DeviceTemplate("file2.odt|File 2||");
-
-            Assert.IsTrue(template1.Equals(template2));
-            Assert.IsFalse(template1.Equals(template3));
+            TestTypeEquals(
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file2.odt|File 2||")
+            );
         }
 
         [TestMethod]
         public void DeviceTemplate_HashCodeEquals_DeviceTemplate()
         {
-            DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
-            DeviceTemplate template2 = new DeviceTemplate("file.odt|File||");
-
-            var template1Hash = template1.GetHashCode();
-            var template2Hash = template2.GetHashCode();
-
-            Assert.AreEqual(template1Hash, template2Hash);
+            TestHashCode(
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file1.odt|File 1||"),
+                new DeviceTemplate("file2.odt|File 2||")
+            );
         }
 
         [TestMethod]
@@ -102,37 +250,333 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         #endregion
         #region Schedule
-
+        
         [TestMethod]
-        public void Schedule_ReferenceEquals_Schedule()
+        public void Schedule_ObjectEquals_Schedule()
         {
-            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
-            Schedule schedule2 = schedule1;
-
-            Assert.IsTrue(schedule1.Equals(schedule2));
+            TestObjectEquals(
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("624|Sundays [GMT+0800]|")
+            );
         }
 
         [TestMethod]
-        public void Schedule_ValueEquals_Schedule()
+        public void Schedule_TypeEquals_Schedule()
         {
-            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
-            Schedule schedule2 = new Schedule("623|Saturdays [GMT+0800]|");
-            Schedule schedule3 = new Schedule("622|Sundays [GMT+0800]|");
-
-            Assert.IsTrue(schedule1.Equals(schedule2));
-            Assert.IsFalse(schedule1.Equals(schedule3));
+            TestTypeEquals(
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("624|Sundays [GMT+0800]|")
+            );
         }
 
         [TestMethod]
         public void Schedule_HashCodeEquals_Schedule()
         {
-            Schedule schedule1 = new Schedule("623|Saturdays [GMT+0800]|");
-            Schedule schedule2 = new Schedule("623|Saturdays [GMT+0800]|");
+            TestHashCode(
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("623|Saturdays [GMT+0800]|"),
+                new Schedule("624|Sundays [GMT+0800]|")
+            );
+        }
+        
+        #endregion
+        #region TimeTable
 
-            var schedule1Hash = schedule1.GetHashCode();
-            var schedule2Hash = schedule2.GetHashCode();
+        [TestMethod]
+        public void TimeTable_ObjectEquals_TimeTable()
+        {
+            var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
+            var friday = TimeSlot.Default(DayOfWeek.Friday, i => i != 3);
 
-            Assert.AreEqual(schedule1Hash, schedule2Hash);
+
+            TestObjectEquals(
+                new TimeTable(thursday: thursday),
+                new TimeTable(thursday: thursday),
+                new TimeTable(friday: friday)
+            );
+        }
+
+        [TestMethod]
+        public void TimeTable_TypeEquals_TimeTable()
+        {
+            var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
+            var friday = TimeSlot.Default(DayOfWeek.Friday, i => i != 3);
+
+            TestTypeEquals(
+                new TimeTable(thursday: thursday),
+                new TimeTable(thursday: thursday),
+                new TimeTable(friday: friday)
+            );
+        }
+
+        [TestMethod]
+        public void TimeTable_HashCodeEquals_TimeTable()
+        {
+            var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
+            var friday = TimeSlot.Default(DayOfWeek.Friday, i => i != 3);
+
+            TestHashCode(
+                new TimeTable(thursday: thursday),
+                new TimeTable(thursday: thursday),
+                new TimeTable(friday: friday)
+            );
+        }
+
+        [TestMethod]
+        public void TimeTable_Equals_DifferentDaysActive()
+        {
+            var normal = new TimeTable();
+
+            Action<TimeTable> assert = t => Assert.AreNotEqual(normal, t);
+
+            assert(new TimeTable(TimeSlot.Default(DayOfWeek.Monday, i => i != 0)));
+            assert(new TimeTable(tuesday: TimeSlot.Default(DayOfWeek.Tuesday, i => i != 0)));
+            assert(new TimeTable(wednesday: TimeSlot.Default(DayOfWeek.Wednesday, i => i != 0)));
+            assert(new TimeTable(thursday: TimeSlot.Default(DayOfWeek.Thursday, i => i != 0)));
+            assert(new TimeTable(friday: TimeSlot.Default(DayOfWeek.Friday, i => i != 0)));
+            assert(new TimeTable(saturday: TimeSlot.Default(DayOfWeek.Saturday, i => i != 0)));
+            assert(new TimeTable(sunday: TimeSlot.Default(DayOfWeek.Sunday, i => i != 0)));
+        }
+
+        [TestMethod]
+        public void TimeTable_Requires24Hours()
+        {
+            AssertEx.Throws<ArgumentException>(() => new TimeTable(new TimeSlot[] { }), "Must specify 24 records however only 0 were specified.");
+        }
+
+        #endregion
+        #region TimeSlotRow
+
+        [TestMethod]
+        public void TimeSlotRow_ObjectEquals_TimeSlotRow()
+        {
+            TestObjectEquals(
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, thursday: false)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlotRow_TypeEquals_TimeSlotRow()
+        {
+            TestTypeEquals(
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, thursday: false)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlotRow_Equals_DifferentDaysActive()
+        {
+            var normal = new TimeSlotRow(1);
+
+            Action<TimeSlotRow> assert = r => Assert.AreNotEqual(normal, r);
+
+            assert(new TimeSlotRow(2));
+            assert(new TimeSlotRow(1, false));
+            assert(new TimeSlotRow(1, tuesday: false));
+            assert(new TimeSlotRow(1, wednesday: false));
+            assert(new TimeSlotRow(1, thursday: false));
+            assert(new TimeSlotRow(1, friday: false));
+            assert(new TimeSlotRow(1, saturday: false));
+            assert(new TimeSlotRow(1, sunday: false));
+        }
+
+        [TestMethod]
+        public void TimeSlotRow_HashCodeEquals_TimeSlotRow()
+        {
+            TestHashCode(
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, wednesday: false),
+                new TimeSlotRow(3, thursday: false)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlotRow_CompareTo()
+        {
+            var row1 = new TimeSlotRow(1);
+            var row2 = new TimeSlotRow(2);
+
+            Assert.AreEqual(1, row2.CompareTo(row1));
+            Assert.AreEqual(1, row2.CompareTo((object)row1));
+            Assert.AreEqual(-1, row1.CompareTo(row2));
+            Assert.AreEqual(1, row2.CompareTo(null));
+            Assert.AreEqual(1, row2.CompareTo((object)null));
+            AssertEx.Throws<ArgumentException>(() => row2.CompareTo(1), "Cannot compare TimeSlotRow with value of type Int32.");
+
+            var row2_2 = new TimeSlotRow(2);
+            Assert.AreEqual(0, row2.CompareTo(row2_2));
+
+            var row2_3 = new TimeSlotRow(2, false);
+            Assert.AreEqual(-1, row2_3.CompareTo(row2));
+            Assert.AreEqual(1, row2.CompareTo(row2_3));
+
+            var row3_1 = new TimeSlotRow(3, false, false);
+            var row3_2 = new TimeSlotRow(3, false);
+            Assert.AreEqual(-1, row3_1.CompareTo(row3_2));
+            Assert.AreEqual(1, row3_2.CompareTo(row3_1));
+        }
+
+        [TestMethod]
+        public void TimeSlotRow_CompareTo_DifferentDays()
+        {
+            var normal = new TimeSlotRow(1);
+
+            Action<TimeSlotRow> assert = r => Assert.AreEqual(1, normal.CompareTo(r));
+
+            Assert.AreEqual(-1, normal.CompareTo(new TimeSlotRow(2)));
+            assert(new TimeSlotRow(1, false));
+            assert(new TimeSlotRow(1, tuesday: false));
+            assert(new TimeSlotRow(1, wednesday: false));
+            assert(new TimeSlotRow(1, thursday: false));
+            assert(new TimeSlotRow(1, friday: false));
+            assert(new TimeSlotRow(1, saturday: false));
+            assert(new TimeSlotRow(1, sunday: false));
+        }
+
+        #endregion
+        #region TimeSlot
+
+        [TestMethod]
+        public void TimeSlot_InvalidHour()
+        {
+            AssertEx.Throws<ArgumentException>(() => new TimeSlot(30, DayOfWeek.Monday), "Hour must be between 0-23.");
+        }
+
+        [TestMethod]
+        public void TimeSlot_InvalidDay()
+        {
+            AssertEx.Throws<ArgumentException>(() => new TimeSlot(1, (DayOfWeek) 10), "'10' is not a valid System.DayOfWeek.");
+        }
+
+        [TestMethod]
+        public void TimeSlot_ObjectEquals_TimeSlot()
+        {
+            TestObjectEquals(
+                new TimeSlot(1, DayOfWeek.Wednesday),
+                new TimeSlot(1, DayOfWeek.Wednesday),
+                new TimeSlot(1, DayOfWeek.Thursday)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlot_TypeEquals_Schedule()
+        {
+            TestTypeEquals(
+                new TimeSlot(2, DayOfWeek.Friday),
+                new TimeSlot(2, DayOfWeek.Friday),
+                new TimeSlot(2, DayOfWeek.Friday, false)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlot_HashCodeEquals_TimeSlot()
+        {
+            TestHashCode(
+                new TimeSlot(2, DayOfWeek.Friday),
+                new TimeSlot(2, DayOfWeek.Friday),
+                new TimeSlot(2, DayOfWeek.Friday, false)
+            );
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_Same()
+        {
+            var slot1 = new TimeSlot(1, DayOfWeek.Monday);
+            var slot2 = new TimeSlot(1, DayOfWeek.Monday);
+
+            Assert.AreEqual(0, slot1.CompareTo(slot2));
+            Assert.AreEqual(0, slot1.CompareTo((object)slot2));
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_Illegal()
+        {
+            var slot1 = new TimeSlot(1, DayOfWeek.Tuesday);
+            Assert.AreEqual(1, slot1.CompareTo(null));
+            Assert.AreEqual(1, slot1.CompareTo((object)null));
+            AssertEx.Throws<ArgumentException>(() => slot1.CompareTo(1), "Cannot compare TimeSlot with value of type Int32.");
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_SameDay_DifferentHour()
+        {
+            var slot1 = new TimeSlot(0, DayOfWeek.Monday);
+            var slot2 = new TimeSlot(1, DayOfWeek.Monday);
+
+            Assert.AreEqual(1, slot2.CompareTo(slot1));
+            Assert.AreEqual(-1, slot1.CompareTo(slot2));
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_DifferentDay_SameHour()
+        {
+            var slot1 = new TimeSlot(1, DayOfWeek.Monday);
+            var slot2 = new TimeSlot(1, DayOfWeek.Tuesday);
+
+            Assert.AreEqual(1, slot2.CompareTo(slot1));
+            Assert.AreEqual(-1, slot1.CompareTo(slot2));
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_SameDay_SameHour_DifferentActive()
+        {
+            var slot1 = new TimeSlot(0, DayOfWeek.Monday);
+            var slot2 = new TimeSlot(0, DayOfWeek.Monday, false);
+
+            Assert.AreEqual(1, slot1.CompareTo(slot2));
+            Assert.AreEqual(-1, slot2.CompareTo(slot1));
+        }
+
+        [TestMethod]
+        public void TimeSlot_CompareTo_OrderOfDays()
+        {
+            var monday = new TimeSlot(1, DayOfWeek.Monday);
+            var sunday = new TimeSlot(1, DayOfWeek.Sunday);
+
+            Assert.AreEqual(-1, monday.CompareTo(sunday));
+            Assert.AreEqual(1, sunday.CompareTo(monday));
+
+            Assert.AreEqual(0, monday.CompareTo(monday));
+            Assert.AreEqual(0, sunday.CompareTo(sunday));
+        }
+
+        #endregion
+        #region Notification Types
+
+        [TestMethod]
+        public void NotificationTypes_ObjectEquals_NotificationTypes()
+        {
+            TestObjectEquals(
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 4")
+            );
+        }
+
+        [TestMethod]
+        public void NotificationTypes_TypeEquals_NotificationTypes()
+        {
+            TestTypeEquals(
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 4")
+            );
+        }
+
+        [TestMethod]
+        public void NotificationTypes_HashCodeEquals_NotificationTypes()
+        {
+            TestHashCode(
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 3"),
+                new NotificationTypes("Inherited 1 2 4")
+            );
         }
 
         #endregion
@@ -300,6 +744,155 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region ToString
+
+        [TestMethod]
+        public void ToStringTests()
+        {
+            var client = BaseTest.Initialize_Client(new MultiTypeResponse());
+
+            var @event = client.GetModificationHistory(1001).First();
+            Assert.AreEqual("05/24/2017 12:53:54: Created. 17.2.31.2018", @event.ToString());
+
+            var properties = client.GetDeviceProperties(1001);
+            Assert.AreEqual("Device", properties.ToString());
+
+            var logs = client.GetLogs().First();
+            Assert.AreEqual("3/11/2017 5:10:31 PM: WMI Remote Ping0", logs.ToString());
+
+            var history = client.GetSensorHistory(1001).First();
+            Assert.AreEqual("10/22/2017 15:19:54", history.ToString());
+            Assert.AreEqual("PercentAvailableMemory: 51 %", history.ChannelRecords.First().ToString());
+
+            var timeSlotRowNever = new TimeSlotRow(1, false, false, false, false, false, false, false);
+            Assert.AreEqual("01:00 Never", timeSlotRowNever.ToString());
+
+            var timeSlotRowWeekdays = new TimeSlotRow(2, saturday: false, sunday: false);
+            Assert.AreEqual("02:00 Weekdays", timeSlotRowWeekdays.ToString());
+
+            var timeSlotRowWeekends = new TimeSlotRow(3, false, false, false, false, false);
+            Assert.AreEqual("03:00 Weekends", timeSlotRowWeekends.ToString());
+        }
+
+        #endregion
+
+        private void TestObjectEquals(object value1, object sameValue1, object value2)
+        {
+            object value1Ref = value1;
+
+            //Value equals object reference
+            Assert.IsTrue(value1.Equals(value1Ref));
+
+            //Value equals object null
+            Assert.IsFalse(value1.Equals(null));
+
+            //Value equals object value
+            Assert.IsFalse(value1.Equals(value2));
+            Assert.IsTrue(value1.Equals(sameValue1));
+
+            //Value equals object wrong type
+            Assert.IsFalse(value1.Equals(1));
+        }
+
+        private void TestTypeEquals<T>(T value1, T sameValue1, T value2) where T : class, IEquatable<T>
+        {
+            T value1Ref = value1;
+
+            //Value equals type reference
+            Assert.IsTrue(value1.Equals(value1Ref));
+
+            //Value equals type null
+            Assert.IsFalse(value1.Equals(null));
+
+            //Value equals type value
+            Assert.IsFalse(value1.Equals(value2));
+            Assert.IsTrue(value1.Equals(sameValue1));
+        }
+
+        private void TestHashCode<T>(T value1, T sameValue1, T value2, params object[] wrongType)
+        {
+            var value1Hash = value1.GetHashCode();
+            var sameValue1Hash = sameValue1.GetHashCode();
+            var value2Hash = value2.GetHashCode();
+
+            Assert.AreEqual(value1Hash, sameValue1Hash);
+            Assert.AreNotEqual(value1Hash, value2Hash);
+
+            foreach (var wrong in wrongType)
+            {
+                var wrongTypeHash = wrong.GetHashCode();
+                Assert.AreNotEqual(value1Hash, wrongTypeHash);
+            }
+        }
+
+        private void TestParse<T>(params object[] args) where T : IFormattable
+        {
+             var method = typeof(T).GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
+
+            var parse = (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), method);
+
+            foreach (var v in args)
+            {
+                var arg = v as Parsee;
+
+                if (arg != null)
+                {
+                    var normal = parse(arg.Value);
+                    var str = parse(arg.StringValue);
+
+                    Assert.AreEqual(arg.Serialized, normal.GetSerializedFormat());
+                    Assert.AreEqual(arg.Serialized, str.GetSerializedFormat());
+                    Assert.AreEqual(normal, str);
+                }
+                else
+                {
+                    var throws = v as IThrows;
+
+                    if (throws != null)
+                    {
+                        throws.Assert(throws.Value, a => parse(a));
+                        throws.Assert(throws.StringValue, a => parse(a));
+                    }
+                    else
+                        throw new NotImplementedException($"Don't know how to handle argument of type {v.GetType().Name}");
+                }
+            }
+
+            AssertEx.Throws<ArgumentNullException>(() => parse(null), "Value cannot be null");
+            AssertEx.Throws<InvalidCastException>(() => parse(string.Empty), "Cannot convert value '' of type 'System.String'");
+
+            if(typeof(IEnumEx).IsAssignableFrom(typeof(T)))
+                AssertEx.Throws<InvalidCastException>(() => parse("abc123"), "Cannot convert value 'abc123' of type 'System.String'");
+        }
+
+        [TestMethod]
+        public void All_PrtgObjectProperties_HaveArrayLookupProperties()
+        {
+            var properties = PrtgObjectFilterTests.GetPrtgObjectProperties(new[] {"NotificationTypes"});
+            var propertyTypes = properties.Select(p => p.PropertyType).Select(ReflectionHelpers.GetUnderlyingType).DistinctBy(p => p.Name).ToList();
+
+            var arrayTypes = typeof(DynamicParameterPropertyTypes).GetProperties();
+
+            var missing = propertyTypes.Where(p => arrayTypes.All(a => a.PropertyType.GetElementType() != p) && !p.IsArray && !ReflectionHelpers.IsNullable(p)).ToList();
+
+            if (missing.Count > 0)
+                Assert.Fail($"{missing.Count}/{propertyTypes.Count} properties are missing are missing: " + string.Join(", ", missing));
+        }
+
+        [TestMethod]
+        public void AllBoolean_PrtgObjectProperties_HaveXmlBoolAttribute()
+        {
+            var values = GetFilterPropertiesForPrtgObjectProperties(p => p.PropertyType == typeof(bool) || p.PropertyType == typeof(bool?));
+
+            foreach (var val in values)
+            {
+                var attrib = val.GetEnumAttribute<XmlBoolAttribute>();
+
+                if (attrib == null)
+                    Assert.Fail($"Boolean property {nameof(Property)}.{val} is missing a {nameof(XmlBoolAttribute)}");
+            }
+        }
+
         [TestMethod]
         public void AllString_FilterProperties_HaveStringFilterHandler()
         {

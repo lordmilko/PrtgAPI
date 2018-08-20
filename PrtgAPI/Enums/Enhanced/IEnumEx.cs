@@ -1,0 +1,6 @@
+﻿namespace PrtgAPI
+{
+    interface IEnumEx
+    {
+    }
+}

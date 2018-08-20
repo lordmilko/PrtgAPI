@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace PrtgAPI
@@ -6,7 +7,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies the number of notification triggers on a PRTG Object, as well as whether any triggers are inherited from parent objects
     /// </summary>
-    public class NotificationTypes
+    public class NotificationTypes : IEquatable<NotificationTypes>
     {
         /// <summary>
         /// Number of State Triggers defined on a PRTG Object.
@@ -38,39 +39,43 @@ namespace PrtgAPI
         /// </summary>
         public bool InheritTriggers { get; private set; }
 
+        private readonly string rawNotificationTypes;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationTypes"/> class.
         /// </summary>
         /// <param name="rawNotificationTypes">Raw <see cref="Property.NotificationTypes"/> value returned from a PRTG Request.</param>
         public NotificationTypes(string rawNotificationTypes)
         {
+            this.rawNotificationTypes = rawNotificationTypes;
+
             if (rawNotificationTypes != null)
             {
                 if (rawNotificationTypes.StartsWith("Inherited"))
                     InheritTriggers = true;
 
-                SetTriggerValue(rawNotificationTypes, "State", v => StateTriggers = v);
-                SetTriggerValue(rawNotificationTypes, "Threshold", v => ThresholdTriggers = v);
-                SetTriggerValue(rawNotificationTypes, "Change", v => ChangeTriggers = v);
-                SetTriggerValue(rawNotificationTypes, "Speed", v => SpeedTriggers = v);
-                SetTriggerValue(rawNotificationTypes, "Volume", v => SpeedTriggers = v);
+                SetTriggerValue("State", v => StateTriggers = v);
+                SetTriggerValue("Threshold", v => ThresholdTriggers = v);
+                SetTriggerValue("Change", v => ChangeTriggers = v);
+                SetTriggerValue("Speed", v => SpeedTriggers = v);
+                SetTriggerValue("Volume", v => SpeedTriggers = v);
             }
         }
 
-        private void SetTriggerValue(string rawNotificationTypes, string type, Action<int> setter)
+        private void SetTriggerValue(string type, Action<int> setter)
         {
-            if (ContainsTriggers(rawNotificationTypes, type))
+            if (ContainsTriggers(type))
             {
-                setter(GetTriggerValue(rawNotificationTypes, type));
+                setter(GetTriggerValue(type));
             }
         }
 
-        private bool ContainsTriggers(string rawNotificationTypes, string name)
+        private bool ContainsTriggers(string name)
         {
             return Regex.Match(rawNotificationTypes, $"\\d {name}").Success;
         }
 
-        private int GetTriggerValue(string rawNotificationTypes, string type)
+        private int GetTriggerValue(string type)
         {
             return Convert.ToInt32(Regex.Replace(rawNotificationTypes, $"(.*)(\\d)( {type}.*)", "$2"));
         }
@@ -82,6 +87,65 @@ namespace PrtgAPI
         public override string ToString()
         {
             return $"Inheritance: {InheritTriggers}, State: {StateTriggers}, Threshold: {ThresholdTriggers}, Change: {ChangeTriggers}, Speed: {SpeedTriggers}, Volume: {VolumeTriggers}";
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in object obj is
+        /// Equal to this.
+        /// </summary>
+        /// <param name="other">The object to compare with the current object.</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        [ExcludeFromCodeCoverage]
+        public override bool Equals(object other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            if (other.GetType() != typeof(NotificationTypes))
+                return false;
+
+            return IsEqual((NotificationTypes) other);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in object obj is
+        /// Equal to this.
+        /// </summary>
+        /// <param name="other">The object to compare with the current object.</param>
+        /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+        public bool Equals(NotificationTypes other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return IsEqual(other);
+        }
+
+        private bool IsEqual(NotificationTypes other)
+        {
+            return rawNotificationTypes == other.rawNotificationTypes;
+        }
+
+        /// <summary>
+        /// Returns a hash code for this object.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var result = 0;
+
+                result = (result * 409) ^ rawNotificationTypes.GetHashCode();
+
+                return result;
+            }
         }
     }
 }
