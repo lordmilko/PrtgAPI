@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
@@ -59,6 +60,38 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("injected_location")]
         public string Location { get; set; }
+
+        [XmlElement("injected_lonlat")]
+        internal string coordinates { get; set; }
+
+        /// <summary>
+        /// The latitudinal and longitudinal coordinates of this object's <see cref="Location"/>.
+        /// </summary>
+        public Coordinates Coordinates
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(coordinates))
+                    return null;
+
+                var coords = coordinates.Split(',');
+
+                if (coords.Length != 2)
+                    return null;
+
+                var lon = Convert.ToDouble(coords[0]);
+                var lat = Convert.ToDouble(coords[1]);
+
+                if (lon == 0 && lat == 0)
+                    return null;
+
+                return new Coordinates
+                {
+                    Latitude = lat,
+                    Longitude = lon
+                };
+            }
+        }
 
         #endregion
         #region Credentials for Windows Systems
@@ -211,7 +244,7 @@ namespace PrtgAPI
         /// Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Engine.
         /// </summary>
         [XmlElement("injected_sshversion_devicegroup")]
-        public SSHEngine SSHEngine { get; set; }
+        public SSHEngine? SSHEngine { get; set; }
 
         #endregion
         #region Credentials for VMware/XenServer
@@ -254,7 +287,7 @@ namespace PrtgAPI
         /// Corresponds to Credentials for VMware/XenServer -> Session Pool.
         /// </summary>
         [XmlElement("injected_vmwaresessionpool")]
-        public VMwareSessionMode VMwareSessionMode { get; set; }
+        public VMwareSessionMode? VMwareSessionMode { get; set; }
 
         #endregion
         #region Credentials for SNMP Devices

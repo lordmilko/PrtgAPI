@@ -12,9 +12,9 @@ namespace PrtgAPI
         [DataMember(Name = "formatted_address")]
         public string Address { get; set; }
 
-        public string Latitude => Geometry.Location.Latitude;
+        public double Latitude => Geometry.Location.Latitude;
 
-        public string Longitude => Geometry.Location.Longitude;
+        public double Longitude => Geometry.Location.Longitude;
 
         [DataMember(Name = "geometry")]
         private GeoResultGeometry Geometry { get; set; }
@@ -103,16 +103,34 @@ namespace PrtgAPI
     internal class GeoResultGeometry
     {
         [DataMember(Name = "location")]
-        internal GeoResultLocation Location { get; set; }
+        internal Coordinates Location { get; set; }
     }
 
+    /// <summary>
+    /// Represents a geographic coordinate used to specify a physical location.
+    /// </summary>
     [DataContract]
-    internal class GeoResultLocation
+    public class Coordinates
     {
+        /// <summary>
+        /// The north/south position of the coordinate.
+        /// </summary>
         [DataMember(Name = "lat")]
-        internal string Latitude { get; set; }
+        public double Latitude { get; set; }
 
+        /// <summary>
+        /// The east/west position of the coordinate.
+        /// </summary>
         [DataMember(Name = "lng")]
-        internal string Longitude { get; set; }
+        public double Longitude { get; set; }
+
+        /// <summary>
+        /// The latitude and longitude of these coordinates in the form <see cref="Latitude"/>,<see cref="Longitude"/>.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"{Latitude},{Longitude}";
+        }
     }
 }

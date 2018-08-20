@@ -1,9 +1,7 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
+namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class DeviceSettingsResponse : IWebResponse
     {
@@ -254,7 +252,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses
             builder.Append("<label class=\"control-label no_help \" for=\"lonlat_\"></label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" >\n");
             builder.Append("<div id=\"geomap-edit\"><div class=\"geomap prtg-plugin\"  data-markers='{\"locationlist\":null}' data-api-key=\"\" data-plugin=\"geomap\" data-options='{\"edit\":true}'></div></div>\n");
-            builder.Append("<input type=\"hidden\" name=\"lonlat_\" value=\"0,0\">\n");
+            builder.Append("<input type=\"hidden\" name=\"lonlat_\" value=\"10,20\">\n");
             builder.Append("</div>\n");
             builder.Append("</div></fieldset><fieldset>\n");
             builder.Append("<legend class=\"prtg-header\">Credentials for Windows Systems\n");
