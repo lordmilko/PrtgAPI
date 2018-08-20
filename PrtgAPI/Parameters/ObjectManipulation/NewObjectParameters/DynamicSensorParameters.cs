@@ -29,7 +29,7 @@ namespace PrtgAPI.Parameters
         private bool locked = true;
 
         /// <summary>
-        /// Source device these parameters were derived from. If these parameters were not derived from a specific device this value is null.
+        /// Gets or sets the source device these parameters were derived from. If these parameters were not derived from a specific device this value is null.
         /// </summary>
         public Device Source { get; internal set; }
 
@@ -121,7 +121,7 @@ namespace PrtgAPI.Parameters
             {
                 var targets = Targets[targetKey];
 
-                Add(name, targets.First());
+                Add(name, targets.FirstOrDefault());
 
                 return;
             }
