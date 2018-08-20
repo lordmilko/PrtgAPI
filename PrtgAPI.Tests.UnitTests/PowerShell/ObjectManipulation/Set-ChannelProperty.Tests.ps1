@@ -182,7 +182,7 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         $versionCases = @(
             @{version = "17.3"; address = "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1"}
             @{version = "18.1"; address = @(
-                    "api/table.xml?content=channels&columns=lastvalue,objid,name&count=*&id=1001&"
+                    "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&"
                     "controls/channeledit.htm?id=1001&channel=1&"
                     "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&"
                 )

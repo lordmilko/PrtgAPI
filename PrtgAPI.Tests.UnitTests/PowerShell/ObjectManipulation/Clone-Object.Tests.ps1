@@ -2,7 +2,7 @@
 
 function SetCloneResponse
 {
-    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.CloneResponse))
+    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.CloneResponse))
 
     SetPrtgClient $client
 }
@@ -46,9 +46,9 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
 
     SetCloneResponse
 
-    $sensorProperties = "probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
-    $deviceProperties = "location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
-    $groupProperties = "probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,interval,intervalx,access,dependency,position,status,comments,priority,message,type,tags,active,objid,name"
+    $sensorProperties = "objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
+    $deviceProperties = "objid,name,location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
+    $groupProperties = "objid,name,probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
 
     It "Retries resolving an object" {
         $sensor = Run Sensor { Get-Sensor }

@@ -48,7 +48,10 @@ namespace PrtgAPI.Parameters
                 .Where(p => p != null)
                 .Select(e => e.Name.ToEnum<Property>())
                 .Distinct()
-            .ToArray();
+                .OrderBy(p => p != Property.Id && p != Property.Name) //Id and Name come first (if applicable)
+                .ToArray();
+
+            return properties;
         }
     }
 }

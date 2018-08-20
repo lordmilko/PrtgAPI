@@ -687,7 +687,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var addresses = new[]
             {
-                "api/table.xml?content=channels&columns=lastvalue,objid,name&count=*&id=1001",
+                "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001",
                 "controls/channeledit.htm?id=1001&channel=1",
                 "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
             };
@@ -1103,7 +1103,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         {
             var addresses = new[]
             {
-                "api/table.xml?content=channels&columns=lastvalue,objid,name&count=*&id=1001",
+                "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001",
                 "controls/channeledit.htm?id=1001&channel=1",
                 "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
             };
