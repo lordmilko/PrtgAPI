@@ -289,8 +289,6 @@ namespace PrtgAPI.Request
 
         internal static List<SensorHistoryData> ParseSensorHistoryResponse(List<SensorHistoryData> items, int sensorId)
         {
-            var regex = new Regex("^(.+)(\\(.+\\))$");
-
             foreach (var history in items)
             {
                 history.SensorId = sensorId;
@@ -299,8 +297,24 @@ namespace PrtgAPI.Request
                 {
                     value.Name = value.Name.Replace(" ", "");
 
-                    if (regex.Match(value.Name).Success)
-                        value.Name = regex.Replace(value.Name, "$1");
+                    string newName;
+
+                    if (GetNewSensorHistoryChannelName(value.Name, out newName))
+                    {
+                        if (history.ChannelRecords.Where(r => r != value).All(r =>
+                        {
+                            //Is this new name unique amongst all the other channel names (after updating their names)?
+                            string other;
+
+                            if (!GetNewSensorHistoryChannelName(r.Name.Replace(" ", ""), out other))
+                                other = r.Name;
+
+                            return other != newName;
+                        }))
+                        {
+                            value.Name = newName;
+                        }
+                    }
 
                     value.DateTime = history.DateTime;
                     value.SensorId = sensorId;
@@ -308,6 +322,21 @@ namespace PrtgAPI.Request
             }
 
             return items;
+        }
+
+        private static bool GetNewSensorHistoryChannelName(string oldName, out string newName)
+        {
+            var regex = new Regex("^(.+)(\\(.+\\))$");
+
+            if (regex.Match(oldName).Success)
+            {
+                newName = regex.Replace(oldName, "$1");
+
+                return true;
+            }
+
+            newName = null;
+            return false;
         }
 
         #endregion

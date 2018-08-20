@@ -172,6 +172,18 @@ Describe "Get-SensorHistory_IT" {
         $lookup | Should Be "Denied"
     }
 
+    It "includes all channels when processing traffic sensors" {
+
+        $sensor = Get-Sensor -Tags wmiband* -Count 1
+
+        $sensor | Should Not BeNullOrEmpty
+
+        $history = $sensor | Get-SensorHistory
+
+        $history."Total(volume)" | Should Not BeNullOrEmpty
+        $history."Total(speed)" | Should Not BeNullOrEmpty
+    }
+
     It "processes all sensors" {
         Get-Sensor | Get-SensorHistory
     }
