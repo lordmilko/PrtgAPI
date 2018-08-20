@@ -207,7 +207,25 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 [Parameter.FilterXyz] = new[] {new SearchFilter(Property.UpDuration, new TimeSpan(1, 2, 3))}
             });
 
-            Assert.AreEqual("filter_uptimesince=3723", url);
+            Assert.AreEqual("filter_uptimesince=000000000003723", url);
+        }
+
+        [TestMethod]
+        public void PrtgUrl_Parameter_WithBool()
+        {
+            var url = CreateUrl(new BaseParameters
+            {
+                [Parameter.Action] = true
+            });
+
+            Assert.AreEqual("action=1", url);
+
+            url = CreateUrl(new BaseParameters
+            {
+                [Parameter.Action] = false
+            });
+
+            Assert.AreEqual("action=0", url);
         }
 
         [TestMethod]
@@ -350,7 +368,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var url = CreateUrl(new SensorParameters
             {
-                SearchFilter = null,
+                SearchFilters = null,
                 Properties = new[] { Property.Name }
             });
 
@@ -362,7 +380,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         {
             var url = CreateUrl(new SensorParameters
             {
-                SearchFilter = new SearchFilter[] { },
+                SearchFilters = new List<SearchFilter>(),
                 Properties = new[] { Property.Name }
             });
 

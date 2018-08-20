@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Web;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
-using System.Reflection;
 
 namespace PrtgAPI.Request
 {
@@ -110,7 +110,7 @@ namespace PrtgAPI.Request
 
             var component = GetUrlComponent(parameter, value);
 
-            if (!string.IsNullOrEmpty(component))
+            if (!string.IsNullOrWhiteSpace(component))
                 urlBuilder.Append(delim + component);
         }
 
@@ -242,6 +242,8 @@ namespace PrtgAPI.Request
                 }
                 else if (val is IFormattable)
                     str = ((IFormattable)val).GetSerializedFormat();
+                else if (val is bool)
+                    str = (bool) val ? "1" : "0";
                 else
                     str = Convert.ToString(val);
             }
@@ -325,16 +327,17 @@ namespace PrtgAPI.Request
                     }
                     else if (val != null && val.GetType().IsEnum) //If it's an enum other than FilterXyz
                     {
-                        var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v));
+                        var result = FormatFlagEnum((Enum)val, v => SearchFilter.ToString(description, FilterOperator.Equals, v, null, FilterMode.Normal));
 
-                        query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val);
+                        query = result ?? SearchFilter.ToString(description, FilterOperator.Equals, val, null, FilterMode.Normal);
                     }
                     else
                     {
                         query = FormatSingleParameterWithValEncode(description, val);
                     }
 
-                    builder.Append(query + "&");
+                    if(!string.IsNullOrWhiteSpace(query))
+                        builder.Append(query + "&");
                 }
             }
 
@@ -350,6 +353,9 @@ namespace PrtgAPI.Request
 
             string result = null;
 
+            if (value == null)
+                return null;
+
             if (value.GetType().IsEnum)
             {
                 var e = (Enum)value;
@@ -361,11 +367,11 @@ namespace PrtgAPI.Request
                 query = result;
             else
             {
-                if (value is IEnumerable && !(value is string))
+                if (value.IsIEnumerable())
                 {
-                    var formatted = ((IEnumerable)value).Cast<object>().Select(o => FormatMultiParameterFilter(filter, o));
+                    var formatted = value.ToIEnumerable().Select(o => FormatMultiParameterFilter(filter, o));
 
-                    query = string.Join("&", formatted);
+                    query = string.Join("&", formatted.Where(f => f != null));
                 }
                 else
                     query = filter.ToString(value);
@@ -410,6 +416,7 @@ namespace PrtgAPI.Request
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return url;
