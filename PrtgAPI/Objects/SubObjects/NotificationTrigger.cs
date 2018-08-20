@@ -192,7 +192,7 @@ namespace PrtgAPI
         public TriggerCondition? Condition => conditionStr?.DescriptionToEnum<TriggerCondition>() ?? TriggerCondition.Equals;
 
         /// <summary>
-        /// Delay before the <see cref="EscalationNotificationAction"/> occurs after this trigger has been activated.
+        /// Delay (in seconds) before the <see cref="EscalationNotificationAction"/> occurs after this trigger has been activated.
         /// Applies to: State Triggers
         /// </summary>
         [DataMember(Name = "esclatency")]
@@ -204,7 +204,7 @@ namespace PrtgAPI
         private NotificationAction escalationNotificationAction;
 
         /// <summary>
-        /// Notification action to repeat when the trigger cause does not get cleared.
+        /// Notification action that will occur when the trigger condition has been remained active for an extended period of time. Repeats every <see cref="EscalationLatency"/> seconds.
         /// Applies to: State Triggers
         /// </summary>
         public NotificationAction EscalationNotificationAction => escalationNotificationActionStr == null ? null : escalationNotificationAction ?? (escalationNotificationAction = new NotificationAction(escalationNotificationActionStr));
@@ -221,28 +221,27 @@ namespace PrtgAPI
 
         private XElement objectLinkXml => XElement.Parse(objectLink.Replace("&", "&amp;"));
 
-        /// <summary>
-        /// Indicates whether the notification trigger can use a <see cref="StandardTriggerChannel"/> as its <see cref="Channel"/> (where applicable).
-        /// If so, the object's channel is set to the resolved enum value.
-        /// </summary>
-        /// <returns></returns>
-        internal bool SetEnumChannel()
+        internal bool HasChannel()
         {
-            switch (Type)
+            switch(Type)
             {
                 case TriggerType.Speed:
                 case TriggerType.Threshold:
                 case TriggerType.Volume:
-                    var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        
+        internal bool SetEnumChannel()
+        {
+            var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
 
-                    if (@enum == null)
-                    {
-                        return true;
-                    }
-
-                    channel = (StandardTriggerChannel)@enum;
-
-                    break;
+            if(@enum != null)
+            {
+                channel = (StandardTriggerChannel)@enum;
+                return true;
             }
 
             return false;

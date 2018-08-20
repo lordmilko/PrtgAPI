@@ -34,17 +34,22 @@ namespace PrtgAPI
 
         internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
-            var response = RequestEngine.ExecuteRequest(XmlFunction.TableData, new ChannelParameters(sensorId));
+            if (nameFilter == null)
+                nameFilter = n => true;
+
+            if (idFilter == null)
+                idFilter = i => true;
+
+            var response = RequestEngine.ExecuteRequest(new ChannelParameters(sensorId));
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
             var items = response.Descendants("item").ToList();
 
-            if (nameFilter != null)
-                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
-
-            if (idFilter != null)
-                items.Where(e => !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))).Remove();
+            items.Where(e => 
+                !nameFilter(e.Element("name").Value?.ToString()) ||
+                !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))
+            ).Remove();
 
             items = response.Descendants("item").ToList();
 
@@ -66,17 +71,22 @@ namespace PrtgAPI
 
         internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null)
         {
-            var response = await RequestEngine.ExecuteRequestAsync(XmlFunction.TableData, new ChannelParameters(sensorId)).ConfigureAwait(false);
+            if (nameFilter == null)
+                nameFilter = n => true;
+
+            if (idFilter == null)
+                idFilter = i => true;
+
+            var response = await RequestEngine.ExecuteRequestAsync(new ChannelParameters(sensorId)).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
             var items = response.Descendants("item").ToList();
 
-            if (nameFilter != null)
-                items.Where(e => !nameFilter(e.Element("name").Value?.ToString())).Remove();
-
-            if (idFilter != null)
-                items.Where(e => !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))).Remove();
+            items.Where(e => 
+                !nameFilter(e.Element("name").Value?.ToString()) ||
+                !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))
+            ).Remove();
 
             items = response.Descendants("item").ToList();
 
@@ -207,17 +217,21 @@ namespace PrtgAPI
                 bool anyResponse = false;
 
                 if (channel.channel is Channel)
-                    anyResponse = (GetChannels(parameters.ObjectId, ((Channel)channel.channel).Name)).Any();
+                    anyResponse = (GetChannelsInternal(parameters.ObjectId, n => n == ((Channel)channel.channel).Name, i => i == ((Channel)channel.channel).Id)).Any();
                 else
                     anyResponse = (GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat()))).Descendants().Any();
 
                 if (!anyResponse)
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor ID {parameters.ObjectId}. Channel could not be found.");
+                    throw new InvalidOperationException($"Channel {(channel.channel is int ? "ID " : "")}'{channel}' is not a valid channel for sensor with ID {parameters.ObjectId}. Channel could not be found.");
             }
             else //It's a container. Only enum values are permitted.
             {
                 if (!(channel.channel is StandardTriggerChannel))
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
+                {
+                    var prefix = channel.channel is int ? $"Channel ID '{channel}'" : $"Channel '{channel.channel}' of type '{channel.channel.GetType().Name}'";
+
+                    throw new InvalidOperationException($"{prefix} is not a valid channel for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut' of type '{nameof(StandardTriggerChannel)}'."); //todo: make this dynamically get all names in the enum
+                }
             }
         }
 
@@ -246,17 +260,21 @@ namespace PrtgAPI
                 bool anyResponse = false;
 
                 if (channel.channel is Channel)
-                    anyResponse = (await GetChannelsAsync(parameters.ObjectId, ((Channel)channel.channel).Name).ConfigureAwait(false)).Any();
+                    anyResponse = (await GetChannelsInternalAsync(parameters.ObjectId, n => n == ((Channel)channel.channel).Name, i => i == ((Channel)channel.channel).Id).ConfigureAwait(false)).Any();
                 else
                     anyResponse = (await GetChannelPropertiesAsync(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())).ConfigureAwait(false)).Descendants().Any();
 
                 if (!anyResponse)
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor ID {parameters.ObjectId}. Channel could not be found.");
+                    throw new InvalidOperationException($"Channel {(channel.channel is int ? "ID " : "")}'{channel}' is not a valid channel for sensor with ID {parameters.ObjectId}. Channel could not be found.");
             }
             else //It's a container. Only enum values are permitted.
             {
                 if (!(channel.channel is StandardTriggerChannel))
-                    throw new InvalidOperationException($"Channel '{channel}' is not a valid value for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut'"); //todo: make this dynamically get all names in the enum
+                {
+                    var prefix = channel.channel is int ? $"Channel ID '{channel}'" : $"Channel '{channel.channel}' of type '{channel.channel.GetType().Name}'";
+
+                    throw new InvalidOperationException($"{prefix} is not a valid channel for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut' of type '{nameof(StandardTriggerChannel)}'."); //todo: make this dynamically get all names in the enum
+                }
             }
         }
 
@@ -268,19 +286,23 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if (trigger.SetEnumChannel())
+                if(trigger.HasChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
-                    try
-                    {
-                        trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => n == trigger.channelName)).First();
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
 
-                        throw;
+                    bool isSensor = false;
+
+                    trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; })).FirstOrDefault();
+
+                    if(trigger.channelObj == null)
+                    {
+                        //Either we're not a sensor, or our channel is corrupt.
+                        //If we detected we had ANY channels, we must be a sensor.
+                        //If SetEnumChannel fails (which should be impossible)
+                        //then maybe we're a sensor with zero channels or something?
+
+                        if((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
             }
@@ -290,19 +312,23 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if (trigger.SetEnumChannel())
+                if(trigger.HasChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
-                    try
-                    {
-                        trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => n == trigger.channelName).ConfigureAwait(false)).First();
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        if (ex.Message.Contains("Sequence contains no elements"))
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.", ex);
 
-                        throw;
+                    bool isSensor = false;
+
+                    trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }).ConfigureAwait(false)).FirstOrDefault();
+
+                    if(trigger.channelObj == null)
+                    {
+                        //Either we're not a sensor, or our channel is corrupt.
+                        //If we detected we had ANY channels, we must be a sensor.
+                        //If SetEnumChannel fails (which should be impossible)
+                        //then maybe we're a sensor with zero channels or something?
+
+                        if((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
+                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
             }

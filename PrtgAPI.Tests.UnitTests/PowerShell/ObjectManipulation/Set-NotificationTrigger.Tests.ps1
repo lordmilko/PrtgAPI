@@ -21,7 +21,7 @@ Describe "Set-NotificationTrigger" {
 
         $params.Channel = $channel
 
-        { $params | Set-NotificationTrigger } | Should Throw "'Banana' is not a valid value"
+        { $params | Set-NotificationTrigger } | Should Throw "Channel 'Banana' is not a valid channel"
     }
 
     It "throws when setting an enum on a sensor" {
@@ -29,6 +29,6 @@ Describe "Set-NotificationTrigger" {
 
         $params.Channel = "Primary"
 
-        { $params | Set-NotificationTrigger } | Should Throw "'Primary' is not a valid value for sensor"
+        { $params | Set-NotificationTrigger } | Should Throw "Channel 'Primary' is not a valid value for sensor"
     }
 }

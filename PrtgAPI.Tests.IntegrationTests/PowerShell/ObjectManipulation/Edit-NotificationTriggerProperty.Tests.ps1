@@ -73,7 +73,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
         
         $channel = Get-Channel -SensorId (Settings ChannelSensor) | where Id -EQ (Settings Channel)
 
-        { $trigger | Edit-NotificationTriggerProperty Channel $channel } | Should Throw "is not a valid value"
+        { $trigger | Edit-NotificationTriggerProperty Channel $channel } | Should Throw "is not a valid channel"
     }
 
     It "throws setting an enum TriggerChannel on a sensor" {
@@ -116,7 +116,7 @@ Describe "Edit-NotificationTriggerProperty_IT" {
 
         try
         {
-            { $trigger | Edit-TriggerProperty Channel $badChannel } | Should Throw "is not a valid value"
+            { $trigger | Edit-TriggerProperty Channel $badChannel } | Should Throw "is not a valid channel"
         }
         finally
         {
