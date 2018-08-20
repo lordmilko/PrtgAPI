@@ -372,9 +372,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (val is List<T>)
                 return (List<T>)val;
 
-            if (val is IEnumerable)
+            if (val.IsIEnumerable())
             {
-                var objList = ((IEnumerable) val).Cast<object>().Where(o => o != null);
+                var objList = val.ToIEnumerable().Where(o => o != null);
 
                 var list = new List<T>();
 

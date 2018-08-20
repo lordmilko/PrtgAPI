@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell
 {
@@ -62,8 +62,8 @@ namespace PrtgAPI.PowerShell
 
         public string[] GetSerializedFormats()
         {
-            if (Value is IEnumerable && !(Value is string))
-                return ((IEnumerable) Value).Cast<object>().Select(GetSerializedFormat).ToArray();
+            if (Value.IsIEnumerable())
+                return Value.ToIEnumerable().Select(GetSerializedFormat).ToArray();
 
             return new[] { GetSerializedFormat(Value) };
         }

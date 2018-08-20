@@ -542,9 +542,9 @@ namespace PrtgAPI
 
             var limit = limitParam.Key.GetEnumAttribute<LengthLimitAttribute>().Length;
 
-            if (limitParam.Value is IEnumerable)
+            if (limitParam.Value.IsIEnumerable())
             {
-                var list = ((IEnumerable)limitParam.Value).Cast<object>().ToList();
+                var list = limitParam.Value.ToIEnumerable().ToList();
 
                 var count = list.Count();
 
@@ -572,9 +572,9 @@ namespace PrtgAPI
 
             var limit = limitParam.Key.GetEnumAttribute<LengthLimitAttribute>().Length;
 
-            if (limitParam.Value is IEnumerable)
+            if (limitParam.Value.IsIEnumerable())
             {
-                var list = ((IEnumerable)limitParam.Value).Cast<object>().ToList();
+                var list = limitParam.Value.ToIEnumerable().ToList();
 
                 var count = list.Count();
 

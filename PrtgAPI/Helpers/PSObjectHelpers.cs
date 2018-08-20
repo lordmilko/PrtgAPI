@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 
 namespace PrtgAPI.Helpers
@@ -8,8 +7,8 @@ namespace PrtgAPI.Helpers
     {
         internal static object CleanPSObject(object obj)
         {
-            if (!(obj is string) && obj is IEnumerable)
-                return ((IEnumerable)obj).Cast<object>().Select(CleanPSObject).ToArray();
+            if (obj.IsIEnumerable())
+                return obj.ToIEnumerable().Select(CleanPSObject).ToArray();
 
             if (obj is PSObject)
                 return ((PSObject)obj).BaseObject;

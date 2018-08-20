@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Progress;
 
 namespace PrtgAPI.PowerShell.Base
@@ -60,9 +59,9 @@ namespace PrtgAPI.PowerShell.Base
         {
             var items = getItems(DisplayProgress);
 
-            if (items is IEnumerable)
+            if (items.IsIEnumerable())
             {
-                ProgressManager.TotalRecords = ((IEnumerable) items).Cast<object>().Count();
+                ProgressManager.TotalRecords = items.ToIEnumerable().Count();
 
                 foreach (var obj in (IEnumerable) items)
                 {
@@ -185,6 +184,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void PreUpdateProgress()
         {
+            if (!ProgressManager.ProgressEnabled)
+                return;
+
             switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:
@@ -209,6 +211,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void DuringUpdateProgress(object obj)
         {
+            if (!ProgressManager.ProgressEnabled)
+                return;
+
             ProgressManager.CurrentState.Add(obj);
             ProgressManager.CurrentState.Current = obj;
 
@@ -244,6 +249,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected void PostUpdateProgress()
         {
+            if (!ProgressManager.ProgressEnabled)
+                return;
+
             switch (GetSwitchScenario())
             {
                 case ProgressScenario.NoProgress:

@@ -163,7 +163,7 @@ namespace PrtgAPI.Parameters
             if (val.GetType().IsSubclassOfRawGeneric(typeof(SensorTarget<>)))
                 return true;
 
-            if (val is IEnumerable && ((IEnumerable)val).Cast<object>().All(o => o.GetType().IsSubclassOfRawGeneric(typeof(SensorTarget<>))))
+            if (val.IsIEnumerable() && val.ToIEnumerable().All(o => o.GetType().IsSubclassOfRawGeneric(typeof(SensorTarget<>))))
                 return true;
 
             return false;
