@@ -145,16 +145,20 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         }
 
         [TestMethod]
-        public void Data_StreamLogs_WithCorrectPageSize()
+        public void bad_Data_StreamLogs_WithCorrectPageSize()
         {
-            Stream_WithCorrectPageSize(
-                () => client.GetLogs(RecordAge.Today, 15),
-                () => client.StreamLogs(RecordAge.Today, 15, true),
-                p => client.GetLogs(p),
-                PrtgAPIHelpers.LogEqualityComparer(),
-                new LogParameters(null, RecordAge.Today, 5),
-                1
-            );
+            FilterTests.Retry(retry =>
+            {
+                Stream_WithCorrectPageSize(
+                    () => client.GetLogs(RecordAge.Today, 15),
+                    () => client.StreamLogs(RecordAge.Today, 15, true),
+                    p => client.GetLogs(p),
+                    PrtgAPIHelpers.LogEqualityComparer(),
+                    new LogParameters(null, RecordAge.Today, 5),
+                    1,
+                    retry
+                );
+            });
         }
 
         internal static void Stream_WithCorrectPageSize<TObject, TParam>(
@@ -162,7 +166,8 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             Func<IEnumerable<TObject>> streamObjects,
             Func<TParam, List<TObject>> getManualObjects,
             IEqualityComparer<TObject> comparer,
-            TParam parameters, int? start) where TParam : PageableParameters
+            TParam parameters, int? start,
+            bool retry = false) where TParam : PageableParameters
         {
             var normalObjects = getObjects();
             var streamedObjects = streamObjects().ToList();
@@ -180,8 +185,8 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
             allManualObjects.AddRange(secondManualObjects);
             allManualObjects.AddRange(thirdManualObjects);
 
-            AssertEx.AreEqualLists(normalObjects, streamedObjects, comparer, "Normal logs were not equal to streamed logs");
-            AssertEx.AreEqualLists(normalObjects, allManualObjects, comparer, "Normal logs were not equal to manual logs");
+            AssertEx.AreEqualLists(normalObjects, streamedObjects, comparer, "Normal logs were not equal to streamed logs", retry);
+            AssertEx.AreEqualLists(normalObjects, allManualObjects, comparer, "Normal logs were not equal to manual logs", retry);
 
             AssertEx.AllListElementsUnique(normalObjects, comparer);
             AssertEx.AllListElementsUnique(streamedObjects, comparer);
@@ -189,47 +194,50 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
         }
 
         [TestMethod]
-        public void Data_StreamLogs_WithIncorrectPageSize()
+        public void bad_Data_StreamLogs_WithIncorrectPageSize()
         {
-            var correctParameters =   new LogParameters(null, RecordAge.Today, 15) { PageSize = 5 };
-            var automaticParameters = new LogParameters(null, RecordAge.Today, 15) { Start = 0, PageSize = 5 };
-            var manualParameters =    new LogParameters(null, RecordAge.Today, 5)  { Start = 0 };
+            FilterTests.Retry(retry =>
+            {
+                var correctParameters = new LogParameters(null, RecordAge.Today, 15) { PageSize = 5 };
+                var automaticParameters = new LogParameters(null, RecordAge.Today, 15) { Start = 0, PageSize = 5 };
+                var manualParameters = new LogParameters(null, RecordAge.Today, 5) { Start = 0 };
 
-            //The real logs that exist on the server. This is what all other requests compare against
-            var correctLogs = client.GetLogs(correctParameters);
+                //The real logs that exist on the server. This is what all other requests compare against
+                var correctLogs = client.GetLogs(correctParameters);
 
-            //What we get when we make the same request with a starting index of 0. We expect GetLogs to return
-            //something equivalent to a normal request, but StreamSensors to contain a duplicate at index 4 and 5
-            var automaticLogs = client.GetLogs(automaticParameters);
-            var automaticStreamLogs = client.StreamLogs(automaticParameters, true).ToList();
+                //What we get when we make the same request with a starting index of 0. We expect GetLogs to return
+                //something equivalent to a normal request, but StreamSensors to contain a duplicate at index 4 and 5
+                var automaticLogs = client.GetLogs(automaticParameters);
+                var automaticStreamLogs = client.StreamLogs(automaticParameters, true).ToList();
 
-            //What we get when we manually increment the pages of a stream. We expect to end up with a list
-            //identical to our streamed list
-            var firstManualLogs = client.GetLogs(manualParameters);
-            manualParameters.Page++;
-            var secondManualLogs = client.GetLogs(manualParameters);
-            manualParameters.Page++;
-            var thirdManualLogs = client.GetLogs(manualParameters);
+                //What we get when we manually increment the pages of a stream. We expect to end up with a list
+                //identical to our streamed list
+                var firstManualLogs = client.GetLogs(manualParameters);
+                manualParameters.Page++;
+                var secondManualLogs = client.GetLogs(manualParameters);
+                manualParameters.Page++;
+                var thirdManualLogs = client.GetLogs(manualParameters);
 
-            var allManualLogs = new List<Log>();
-            allManualLogs.AddRange(firstManualLogs);
-            allManualLogs.AddRange(secondManualLogs);
-            allManualLogs.AddRange(thirdManualLogs);
+                var allManualLogs = new List<Log>();
+                allManualLogs.AddRange(firstManualLogs);
+                allManualLogs.AddRange(secondManualLogs);
+                allManualLogs.AddRange(thirdManualLogs);
 
-            var comparer = PrtgAPIHelpers.LogEqualityComparer();
+                var comparer = PrtgAPIHelpers.LogEqualityComparer();
 
-            AssertEx.AreEqualLists(correctLogs, automaticLogs, comparer, "Correct logs were not equal to off by one logs");
-            AssertEx.AreEqualLists(automaticStreamLogs, allManualLogs, comparer, "Streamed off by one logs were not equal to manual logs");
+                AssertEx.AreEqualLists(correctLogs, automaticLogs, comparer, "Correct logs were not equal to off by one logs", retry);
+                AssertEx.AreEqualLists(automaticStreamLogs, allManualLogs, comparer, "Streamed off by one logs were not equal to manual logs", retry);
 
-            Assert.IsTrue(comparer.Equals(automaticStreamLogs[4], automaticStreamLogs[5]));
-            Assert.IsTrue(comparer.Equals(allManualLogs[4], allManualLogs[5]));
-            //now check none of the OTHER elements are equal to each other
+                Assert.IsTrue(comparer.Equals(automaticStreamLogs[4], automaticStreamLogs[5]));
+                Assert.IsTrue(comparer.Equals(allManualLogs[4], allManualLogs[5]));
+                //now check none of the OTHER elements are equal to each other
 
-            var automaticDiff = automaticStreamLogs.Where((l, i) => i != 4 && i != 5).ToList();
-            var manualDiff = allManualLogs.Where((l, i) => i != 4 && i != 5).ToList();
+                var automaticDiff = automaticStreamLogs.Where((l, i) => i != 4 && i != 5).ToList();
+                var manualDiff = allManualLogs.Where((l, i) => i != 4 && i != 5).ToList();
 
-            AssertEx.AllListElementsUnique(automaticDiff, comparer);
-            AssertEx.AllListElementsUnique(manualDiff, comparer);
+                AssertEx.AllListElementsUnique(automaticDiff, comparer);
+                AssertEx.AllListElementsUnique(manualDiff, comparer);
+            });
         }
 
         public static IOrderedEnumerable<Log> OrderLogs(IEnumerable<Log> logs)

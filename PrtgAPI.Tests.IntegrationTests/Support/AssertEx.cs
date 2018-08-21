@@ -9,9 +9,9 @@ namespace PrtgAPI.Tests.IntegrationTests
     {
         internal static bool HadFailure { get; set; }
 
-        public static void AreEqual<T>(T expected, T actual, string message)
+        public static void AreEqual<T>(T expected, T actual, string message, bool retry = false)
         {
-            ExecuteAssert(() => Assert.AreEqual(expected, actual, message), "Assert.AreEqual");
+            ExecuteAssert(() => Assert.AreEqual(expected, actual, message), "Assert.AreEqual", retry);
         }
 
         public static void IsTrue(bool condition, string message)

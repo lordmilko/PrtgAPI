@@ -4,11 +4,22 @@ function Describe($name, $script) {
 
     Pester\Describe $name {
         BeforeAll {
-            Startup
+            Startup $name
 
             LogTest "Running unsafe test '$name'"
         }
-        AfterAll { Shutdown }
+        AfterAll {
+            try
+            {
+                LogTest "Completed '$name' tests. Shutting down"
+                Shutdown
+                LogTest "'$name' shut down successfully"
+            }
+            finally
+            {
+                ClearTestName
+            }
+        }
 
         & $script
     }

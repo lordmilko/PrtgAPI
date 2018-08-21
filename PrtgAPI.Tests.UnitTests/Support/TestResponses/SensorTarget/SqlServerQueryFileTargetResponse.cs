@@ -96,10 +96,10 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("    </a>\n");
             builder.Append("</div>\n");
             builder.Append("<div class=\"statusinfo alert display0\" title=\"Current Alarm Count\">\n");
-            builder.Append("	<a id=\"new_alarms\" href=\"/alarms.htm?filter_status=5&filter_status=4&filter_status=10&filter_status=13&filter_status=14\">\n");
-            builder.Append("		<span class=\"text\">New Alarms</span>\n");
-            builder.Append("		<span class=\"counter\">...</span>\n");
-            builder.Append("	</a>\n");
+            builder.Append("    <a id=\"new_alarms\" href=\"/alarms.htm?filter_status=5&filter_status=4&filter_status=10&filter_status=13&filter_status=14\">\n");
+            builder.Append("        <span class=\"text\">New Alarms</span>\n");
+            builder.Append("        <span class=\"counter\">...</span>\n");
+            builder.Append("    </a>\n");
             builder.Append("</div>\n");
             builder.Append("  </div>\n");
             builder.Append("  <nav id=\"header_menu\">\n");
@@ -972,7 +972,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("<option value=\"Demo Serveruptime.sql|Demo Serveruptime.sql||\" selected=\"selected\" >Demo Serveruptime.sql</option>\n");
             builder.Append("<option value=\"test.sql|test.sql||\">test.sql</option></select></div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"useparam_\">Use Input Parameter</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Optionally pass a parameter to the SQL query file that replaces a placeholder in the SQL query. Using a placeholder is useful if you have various SQL sensors where the queries differ in only one parameter.  		  You can use the placeholder <i>@prtg</i> in SQL queries for Microsoft SQL, MySQL, and PostgreSQL, the placeholder <i>:prtg</i> for Oracle SQL, and the placeholder <i>?</i> (question mark) for ADO SQL.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Optionally pass a parameter to the SQL query file that replaces a placeholder in the SQL query. Using a placeholder is useful if you have various SQL sensors where the queries differ in only one parameter.            You can use the placeholder <i>@prtg</i> in SQL queries for Microsoft SQL, MySQL, and PostgreSQL, the placeholder <i>:prtg</i> for Oracle SQL, and the placeholder <i>?</i> (question mark) for ADO SQL.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<div class=\"radio-control\">\n");
             builder.Append("<input type=\"radio\" class=\"hidden radio  GroupShowHide\" name=\"useparam_\" value=\"0\" checked  id=\"useparam0\" >\n");
             builder.Append("<label for=\"useparam0\" class=\"radio-control-label\">\n");
@@ -987,7 +987,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help  Showuseparam1  Hideuseparam0  InitialDisplayNone  groupshowhideelement\" for=\"param_\">Input Parameter</label>\n");
-            builder.Append("<div class=\"controls  Showuseparam1  Hideuseparam0  InitialDisplayNone  groupshowhideelement\" data-placement=\"right\" data-helptext=\"Enter a parameter that replaces the <i>@prtg</i> or <i>:prtg</i> or <i>?</i> (question mark) placeholder in the SQL query file. You can also use PRTG placeholders for custom sensors as input parameter, for example, <i>%sensorid</i> 		  <br/><br/><b>Note:</b> Strings do not need to be surrounded by quotation marks.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls  Showuseparam1  Hideuseparam0  InitialDisplayNone  groupshowhideelement\" data-placement=\"right\" data-helptext=\"Enter a parameter that replaces the <i>@prtg</i> or <i>:prtg</i> or <i>?</i> (question mark) placeholder in the SQL query file. You can also use PRTG placeholders for custom sensors as input parameter, for example, <i>%sensorid</i>           <br/><br/><b>Note:</b> Strings do not need to be surrounded by quotation marks.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<input class=\"text\"  data-rule-required=\"true\" type=\"text\" name=\"param_\" id=\"param_\" autocomplete=\"off\" value=\"\" ></div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"transaction_\">Use Transaction</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"<b>Use transaction and always rollback</b> if you want to make sure that the query will never actually change any data in the database. <b>Use transaction and commit on success</b> if you want to make sure that the query will only affect the database if all steps can be executed without errors. Use semicolons ';' as delimiters between all steps.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
@@ -1101,7 +1101,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel1unit_\">Sensor Channel #1 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel1unit_\" class=\"combo GroupShowHide\" id=\"channel1unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel1unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel1unitBytesMemory\">BytesMemory</option>\n");
@@ -1314,7 +1314,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel2unit_\">Sensor Channel #2 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel2unit_\" class=\"combo GroupShowHide\" id=\"channel2unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel2unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel2unitBytesMemory\">BytesMemory</option>\n");
@@ -1528,7 +1528,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel3unit_\">Sensor Channel #3 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel3unit_\" class=\"combo GroupShowHide\" id=\"channel3unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel3unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel3unitBytesMemory\">BytesMemory</option>\n");
@@ -1742,7 +1742,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel4unit_\">Sensor Channel #4 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel4unit_\" class=\"combo GroupShowHide\" id=\"channel4unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel4unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel4unitBytesMemory\">BytesMemory</option>\n");
@@ -1956,7 +1956,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel5unit_\">Sensor Channel #5 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel5unit_\" class=\"combo GroupShowHide\" id=\"channel5unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel5unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel5unitBytesMemory\">BytesMemory</option>\n");
@@ -2170,7 +2170,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel6unit_\">Sensor Channel #6 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel6unit_\" class=\"combo GroupShowHide\" id=\"channel6unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel6unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel6unitBytesMemory\">BytesMemory</option>\n");
@@ -2384,7 +2384,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel7unit_\">Sensor Channel #7 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel7unit_\" class=\"combo GroupShowHide\" id=\"channel7unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel7unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel7unitBytesMemory\">BytesMemory</option>\n");
@@ -2598,7 +2598,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel8unit_\">Sensor Channel #8 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel8unit_\" class=\"combo GroupShowHide\" id=\"channel8unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel8unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel8unitBytesMemory\">BytesMemory</option>\n");
@@ -2812,7 +2812,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel9unit_\">Sensor Channel #9 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel9unit_\" class=\"combo GroupShowHide\" id=\"channel9unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel9unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel9unitBytesMemory\">BytesMemory</option>\n");
@@ -3026,7 +3026,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"channel10unit_\">Sensor Channel #10 Unit</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation. 		  <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Choose a unit for this channel. For further information about the available units, see the custom sensors section of the PRTG API documentation.           <br/><br/><b>Note:</b> If you want to use lookups with this channel, please choose the unit <b>Value Lookup</b> and select the lookup file below.<p><a class='morehelp nohjax' target='_blank' href='/help/microsoft_sql_v2_sensor.htm#datagroup'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<select name=\"channel10unit_\" class=\"combo GroupShowHide\" id=\"channel10unit_\" >\n");
             builder.Append("<option  value=\"BytesBandwidth\" id=\"channel10unitBytesBandwidth\">BytesBandwidth</option>\n");
             builder.Append("<option  value=\"BytesMemory\" id=\"channel10unitBytesMemory\">BytesMemory</option>\n");
@@ -3288,7 +3288,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("</div>\n");
             builder.Append("</div>\n");
             builder.Append("<footer class=\"hidebuttons\">\n");
-            builder.Append("	<div id='alarmsound'></div>\n");
+            builder.Append("    <div id='alarmsound'></div>\n");
             builder.Append("  <div id=\"prtg_growls\"></div>\n");
             builder.Append("  <div id='helpcontainer' class=\"hidden prtg-plugin\" data-plugin=\"contexthelp\">\n");
             builder.Append("    <div class=\"helptitle\">\n");

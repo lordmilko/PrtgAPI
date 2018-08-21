@@ -326,8 +326,6 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         [TestMethod]
         public void Data_Query_Where_Operators_Equals_NullableDoubleToString()
         {
-            //todo: have analyzer note doing lastvalue == server side is not reliable. consider using asenumerable() first instead
-
             var mostCommon = client.GetSensors().Where(s => s.LastValue > 0).GroupBy(s => s.LastValue).OrderBy(s => s.Key).First();
 
             ExecuteFilter(s => s.LastValue.ToString() == mostCommon.Key.ToString(), s => AssertEx.AreEqual(mostCommon.Count(), s.Count, $"Number of sensors with LastValue {mostCommon.Key} was incorrect"));
@@ -339,13 +337,13 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             FilterTests.Retry(retry =>
             {
                 var lastUp = client.GetSensors().Select(s => s.LastUp?.ToString()).First(u => u != null);
-                ExecuteFilter(s => s.LastUp.ToString().Contains(lastUp), s => AssertEx.AreEqual(1, s.Count, $"Number of sensors with LastUp {lastUp} was incorrect"));
+                ExecuteFilter(s => s.LastUp.ToString().Contains(lastUp), s => AssertEx.AreEqual(1, s.Count, $"Number of sensors with LastUp {lastUp} was incorrect", retry));
             });
 
             FilterTests.Retry(retry =>
             {
                 var upDuration = client.GetSensors().Select(s => s.UpDuration?.ToString()).First(u => u != null);
-                ExecuteFilter(s => s.UpDuration.ToString().Contains(upDuration), s => AssertEx.AreEqual(1, s.Count, $"Number of sensors with UpDuration {upDuration} was incorrect"));
+                ExecuteFilter(s => s.UpDuration.ToString().Contains(upDuration), s => AssertEx.AreEqual(1, s.Count, $"Number of sensors with UpDuration {upDuration} was incorrect", retry));
             });
         }
 

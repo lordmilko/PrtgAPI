@@ -6,7 +6,7 @@ function Describe($name, $script) {
 
     Pester\Describe $name {
         BeforeAll { 
-            StartupSafe
+            StartupSafe $name
 
             $init = $true
 
@@ -17,6 +17,8 @@ function Describe($name, $script) {
             {
                 LogTest "Completed '$name' tests; no need to clean up"
             }
+
+            ClearTestName
         }
 
         & $script

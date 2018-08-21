@@ -1007,7 +1007,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("<option  value=\"5\" id=\"errorintervalsdown5\">Set sensor to warning for 5 intervals, then set to &quot;down&quot;</option></select></div>\n");
             builder.Append("<span class=\" InitialDisplayNone \"><div class=\"wiz1-3\"><input type=\"hidden\" name=\"inherittriggers\" value=\"1\"></div></span>\n");
             builder.Append("</div></fieldset><input type=\"hidden\" name=\"id\" value=\"2055\"> <input type=\"hidden\" name=\"sensortype\" value=\"wmiservice\">\n");
-            builder.Append("		  <input type=\"hidden\" id=\"tmpid\" name=\"tmpid\" value=\"3\">\n");
+            builder.Append("          <input type=\"hidden\" id=\"tmpid\" name=\"tmpid\" value=\"3\">\n");
             builder.Append("          <div style='' class=\"quick-action-wrapper \">\n");
             builder.Append("              <button style='' class=\"submit btngrey button quick-action-button force-visible\" type=\"submit\">Continue</button>\n");
             builder.Append("              <button style='' type=\"submit\" class='ui-icon quick-action-badge continue-badge'></button>\n");

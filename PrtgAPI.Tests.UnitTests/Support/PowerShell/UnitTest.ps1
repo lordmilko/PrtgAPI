@@ -63,6 +63,30 @@ function Run($objectType, $script)
     return $result
 }
 
+function RunCustomCount($hashtable, $action)
+{
+    $dictionary = GetCustomCountDictionary $hashtable
+
+    $oldClient = Get-PrtgClient
+
+    $newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.MultiTypeResponse -ArgumentList $dictionary))
+
+    try
+    {
+        SetPrtgClient $newClient
+
+        & $action
+    }
+    catch
+    {
+        throw
+    }
+    finally
+    {
+        SetPrtgClient $oldClient
+    }
+}
+
 function WithStrict($script)
 {
     try
@@ -104,7 +128,7 @@ function WithResponse($responseName, $scriptBlock) {
 
     try
     {
-        SetResponseAndClient $responseName
+        SetResponseAndClient $responseName | Out-Null
 
         & $scriptBlock
     }
@@ -120,7 +144,7 @@ function WithResponseArgs($responseName, $arguments, $scriptBlock) {
 
     try
     {
-        SetResponseAndClientWithArguments $responseName $arguments
+        SetResponseAndClientWithArguments $responseName $arguments | Out-Null
 
         & $scriptBlock
     }
@@ -169,14 +193,14 @@ function SetAddressValidatorResponse($strArr, $exactMatch = $false)
 
 function SetResponseAndClient($responseName)
 {
-    $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName
+    $response = New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.$responseName
 
     SetResponseAndClientInternal $response
 }
 
 function SetResponseAndClientWithArguments($responseName, $arguments)
 {
-    $response = New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.$responseName -ArgumentList $arguments
+    $response = New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.$responseName -ArgumentList $arguments
 
     SetResponseAndClientInternal $response
 }
@@ -186,6 +210,8 @@ function SetResponseAndClientInternal($response)
     $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client($response)
 
     SetPrtgClient $client
+
+    $response
 }
 
 #endregion

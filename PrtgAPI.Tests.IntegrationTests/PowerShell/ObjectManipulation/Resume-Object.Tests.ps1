@@ -31,11 +31,23 @@ Describe "Resume-Object_IT" {
 
         $redSensor = Get-Sensor -Id (Settings UpSensor)
 
-        if($redSensor.Status -eq "Up")
+        for($i = 0; $i -lt 5; $i++)
         {
-            LogTestDetail "Status was still Up. Waiting 120 seconds"
-            Sleep 120
-            $redSensor = Get-Sensor -Id (Settings UpSensor)
+            if($redSensor.Status -eq "Up")
+            {
+                LogTestDetail "Status was still Up. Waiting 30 seconds"
+                Sleep 30
+                $redSensor = Get-Sensor -Id (Settings UpSensor)
+            }
+            else
+            {
+                if($redSensor.Message -eq $null)
+                {
+                    LogTestDetail "Message was still null. Waiting 30 seconds"
+                    Sleep 30
+                    $redSensor = Get-Sensor -Id (Settings UpSensor)
+                }
+            }
         }
 
         $redSensor.Status | Should Be Down
@@ -70,7 +82,10 @@ Describe "Resume-Object_IT" {
         if($redSensor.Status -eq "Up")
         {
             LogTestDetail "Status was still Up. Waiting 120 seconds"
-            Sleep 120
+            $redSensor | Refresh-Object
+            Sleep 60
+            $redSensor | Refresh-Object
+            Sleep 60
             $redSensor = Get-Sensor -Id (Settings UpSensor)
         }
 

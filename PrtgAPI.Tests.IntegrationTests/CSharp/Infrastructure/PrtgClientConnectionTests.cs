@@ -240,8 +240,8 @@ namespace PrtgAPI.Tests.IntegrationTests
                     coreService.Start();
                     coreService.WaitForStatus(ServiceControllerStatus.Running);
 
-                    Logger.LogTestDetail("Sleeping for 20 seconds");
-                    Thread.Sleep(20000);
+                    Logger.LogTestDetail("Sleeping for 30 seconds");
+                    Thread.Sleep(30000);
 
                     Logger.LogTestDetail("Refreshing and sleeping for 20 seconds");
                     localClient.RefreshObject(Settings.Device);

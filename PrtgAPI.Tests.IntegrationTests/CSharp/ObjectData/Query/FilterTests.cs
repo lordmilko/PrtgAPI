@@ -872,11 +872,8 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         [TestMethod]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_LessThan()
         {
-            Retry(retry =>
-            {
-                var sensor = client.GetSensors().OrderByDescending(s => s.DataCollectedSince).First();
-                ExecuteSensor(s => s.DataCollectedSince < sensor.DataCollectedSince, Property.DataCollectedSince, sensor.DataCollectedSince, FilterOperator.LessThan, s => s.DataCollectedSince == null, retry: retry);
-            });
+            var sensor = client.GetSensors().OrderByDescending(s => s.DataCollectedSince).First();
+            ExecuteSensor(s => s.DataCollectedSince < sensor.DataCollectedSince, Property.DataCollectedSince, sensor.DataCollectedSince, FilterOperator.LessThan, s => s.DataCollectedSince == null);
         }
 
         [TestMethod]
@@ -1937,15 +1934,19 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         );
 
         [TestMethod]
-        public void Data_QueryFilter_LogProperties_Sensor()
+        public void bad_Data_QueryFilter_LogProperties_Sensor()
         {
-            var sensor = client.GetSensors(Property.Tags, "systemhealthsensor").Single().Name;
+            Retry(retry =>
+            {
+                var sensor = client.GetSensors(Property.Tags, "systemhealthsensor").Single().Name;
 
-            ExecuteLog(
-                l => l.Sensor == sensor && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
-                c => c.GetLogs(Time.Today, Time.Yesterday, null),
-                applyPredicate: true
-            );
+                ExecuteLog(
+                    l => l.Sensor == sensor && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
+                    c => c.GetLogs(Time.Today, Time.Yesterday, null),
+                    applyPredicate: true,
+                    retry: retry
+                );
+            });
         }
 
         [TestMethod]
@@ -2056,7 +2057,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         }
 
         private void ExecuteLog(Expression<Func<Log, bool>> predicate, Func<PrtgClient, IEnumerable<Log>> getFilterObjects,
-            bool allowEmpty = false, bool applyPredicate = false, bool distinct = false)
+            bool allowEmpty = false, bool applyPredicate = false, bool distinct = false, bool retry = false)
         {
             var count = 20000;
 
@@ -2067,7 +2068,8 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
                 PrtgAPIHelpers.LogEqualityComparer(),
                 allowEmpty,
                 applyPredicate,
-                distinct
+                distinct,
+                retry
             );
         }
 
@@ -2232,7 +2234,8 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             IEqualityComparer<T> comparer,
             bool allowEmpty = false,
             bool applyPredicate = false,
-            bool distinct = false
+            bool distinct = false,
+            bool retry = false
         ) where T : IObject
         {
             var lambda = (LambdaExpression)predicate.ToClientExpression();
@@ -2281,7 +2284,12 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             var getError = FormatError(new List<T>(), new List<T>(), extraFiltered, extraQuery);
 
             if (getError != null)
+            {
+                if (retry)
+                    Assert.Fail(getError);
+
                 AssertEx.Fail(getError);
+            }
         }
 
         private string FormatError<T>(List<T> missingFiltered, List<T> missingQuery, List<T> extraFiltered,

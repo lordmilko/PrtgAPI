@@ -100,6 +100,11 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static TimeSpan? CustomUnsupportedInterval;
         public static DateTime? MaintenanceStart;
         public static DateTime? MaintenanceEnd;
+        public static string Comment;
+        public static int CommentSensor = -1;
+        public static int FavoriteDevice = -1;
+        public static int FavoriteSensor = -1;
+        public static string Location;
 
         //Sensor Types
         public static int WmiRemotePing = -1;

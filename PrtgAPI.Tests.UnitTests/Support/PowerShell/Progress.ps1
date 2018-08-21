@@ -83,30 +83,6 @@ function UninitializeClient {
     Disable-PrtgProgress
 }
 
-function RunCustomCount($hashtable, $action)
-{
-    $dictionary = GetCustomCountDictionary $hashtable
-
-    $oldClient = Get-PrtgClient
-
-    $newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.MultiTypeResponse -ArgumentList $dictionary))
-
-    try
-    {
-        SetPrtgClient $newClient
-
-        & $action
-    }
-    catch
-    {
-        throw
-    }
-    finally
-    {
-        SetPrtgClient $oldClient
-    }
-}
-
 function It
 {
     param(

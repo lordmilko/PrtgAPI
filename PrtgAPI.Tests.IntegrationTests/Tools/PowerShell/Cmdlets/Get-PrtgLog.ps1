@@ -4,17 +4,28 @@
         DefaultParameterSetName="Default"
     )]
     param (
+        [Parameter(Mandatory = $false, Position = 0)]
+        [string[]]$Pattern,
+
         [Parameter(Mandatory=$false, ParameterSetName = "Full")]
         [Switch]$Full = $false,
 
         [Parameter(Mandatory=$false, ParameterSetName = "Default")]
-        [int]$Lines = 10
+        [int]$Lines = 10,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$Clear = $false
     )
     
     $log = "$env:temp\PrtgAPI.IntegrationTests.log"
 
     if(Test-Path $log)
     {
+        if($Clear)
+        {
+            Set-Content $log "" -NoNewline
+        }
+
         if($Full)
         {
             notepad $log
@@ -24,7 +35,14 @@
             cls
             $Host.UI.RawUI.WindowTitle = $log
 
-            gc $log -Tail $Lines -Wait
+            if($Pattern)
+            {
+                gc $log -Tail $Lines -Wait | sls $Pattern
+            }
+            else
+            {
+                gc $log -Tail $Lines -Wait
+            }
         }
     }
     else

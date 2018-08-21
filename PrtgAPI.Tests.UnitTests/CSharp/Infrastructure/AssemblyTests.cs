@@ -73,7 +73,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
         [TestCategory("SkipCI")]
         public void AllTextFiles_UseSpaces_AndCRLF()
         {
-            var path = GetProjectRoot();
+            var path = GetProjectRoot(true);
 
             var types = new[]
             {
@@ -292,17 +292,22 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
                 throw new Exception("ConfigureAwait has a value other than 'false'");
         }
 
-        private string GetProjectRoot()
+        private string GetProjectRoot(bool solution = false)
         {
             var dll = new Uri(typeof(PrtgClient).Assembly.CodeBase);
             var root = dll.Host + dll.PathAndQuery + dll.Fragment;
+            var rootStr = Uri.UnescapeDataString(root);
 
             var thisProject = Assembly.GetExecutingAssembly().GetName().Name;
 
-            var prefix = root.IndexOf(thisProject, StringComparison.InvariantCulture);
-            var path = root.Substring(0, prefix) + "PrtgAPI";
+            var prefix = rootStr.IndexOf(thisProject, StringComparison.InvariantCulture);
 
-            return path;
+            var solutionPath = rootStr.Substring(0, prefix);
+
+            if (solution)
+                return solutionPath;
+
+            return solutionPath + "PrtgAPI";
         }
     }
 }

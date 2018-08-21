@@ -3,36 +3,82 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Objects.Shared;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
+    public class Test
+    {
+    }
+
+    //todo: implement parallel test execution support
+
+    public class TestContextEx
+    {
+        public Queue<Test> Tests { get; set; }
+    }
+
     [TestClass]
     public class BasePrtgClientTest
     {
         public static ServerManager ServerManager = new ServerManager(() => new BasePrtgClientTest().client);
 
-        protected PrtgClient client => new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
+        private PrtgClient cachedClient;
+
+        protected PrtgClient client
+        {
+            get
+            {
+                if(cachedClient == null)
+                    cachedClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
+
+                return cachedClient;
+            }
+        }
 
         public TestContext TestContext { get; set; }
+
+        public TestContextEx TestContextEx { get; set; }
 
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
             ServerManager.Initialize();
         }
-
+        
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
             ServerManager.Cleanup();
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ServerManager.WaitForSensors(Status.None);
+        }
+
         [TestCleanup]
         public void TestCleanup()
         {
             if (AssertEx.HadFailure) //We've already logged that we failed; no need to log it again
+            {
+                try
+                {
+                    var groups = client.GetSensors().OrderBy(s => s.Id).GroupBy(s => s.Status);
+
+                    Logger.LogTestDetail("Sensor statuses:");
+
+                    foreach (var group in groups)
+                    {
+                        Logger.LogTestDetail($"    {group.Key}: " + string.Join(",", group));
+                    }
+                }
+                catch
+                {
+                }
+
                 AssertEx.HadFailure = false;
+            }
             else
             {
                 if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed)

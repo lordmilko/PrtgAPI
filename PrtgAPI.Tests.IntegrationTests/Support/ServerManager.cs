@@ -95,7 +95,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             if (reply.Status != IPStatus.Success)
             {
-                AssertEx.Fail("Ping responded with " + reply.Status.ToString());
+                AssertEx.Fail("Ping responded with " + reply.Status);
             }
         }
 
@@ -114,6 +114,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             try
             {
                 WaitForSensors(Status.Down);
+                WaitForSensor(Settings.WarningSensor, Status.Warning);
             }
             catch
             {
@@ -122,11 +123,45 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        private void WaitForSensors(params Status[] status)
+        public void WaitForSensor(int id, Status desiredStatus)
+        {
+            Logger.LogTest($"Waiting for sensor with ID {id} to become '{desiredStatus}'");
+
+            for(var i = 0; i < 10; i++)
+            {
+                Logger.LogTestDetail("Refreshing sensor and sleeping 5 seconds");
+                Client.RefreshObject(id);
+                Thread.Sleep(5000);
+
+                var sensor = Client.GetSensor(id);
+
+                if (sensor.Status == desiredStatus)
+                    return;
+            }
+
+            AssertEx.Fail($"Sensor ID {id} failed to return to status '{desiredStatus}'");
+        }
+
+        internal void WaitForSensors(params Status[] status)
         {
             List<Sensor> sensors;
 
             var attempts = 15;
+
+            var downSensor = Client.GetSensor(Settings.DownSensor);
+
+            if (downSensor.Status == Status.DownAcknowledged)
+            {
+                Logger.LogTest("Down sensor is still acknowledged. Pausing sensor");
+                Client.PauseObject(Settings.DownSensor);
+                Client.RefreshObject(Settings.DownSensor);
+
+                Logger.LogTest("Unpausing sensor");
+                Client.ResumeObject(Settings.DownSensor);
+                Logger.LogTest("Waiting for sensor to go down");
+                WaitForSensors(Status.DownAcknowledged);
+                Logger.LogTest("Sensor successfully went down");
+            }
 
             do
             {
@@ -134,7 +169,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
                 if (sensors.Count > 1)
                 {
-                    Logger.LogTest("Sensors are still initializing. Sleeping for 30 seconds");
+                    Logger.LogTest($"Sensors are still initializing ({sensors.Count}x " + string.Join("/", status)  + "). Sleeping for 30 seconds");
 
                     attempts--;
 
@@ -243,14 +278,14 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             Logger.Log("Retrieving service details");
 
-            var controller = new ServiceController("PRTGCoreService", Settings.Server);
+            var coreService = GetCoreService();
 
             Logger.Log("Stopping service");
 
-            controller.Stop();
-            WaitForStop(controller);
+            coreService.Stop();
+            WaitForStop(coreService);
 
-            Logger.Log("Restoring config");
+            Logger.Log($"Restoring config. Delete config backup: {deleteConfig}");
 
             try
             {
@@ -264,8 +299,8 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             Logger.Log("Starting service");
 
-            controller.Start();
-            controller.WaitForStatus(ServiceControllerStatus.Running);
+            coreService.Start();
+            coreService.WaitForStatus(ServiceControllerStatus.Running);
 
             if (probeNameNeedsRepairing)
             {
@@ -274,6 +309,19 @@ namespace PrtgAPI.Tests.IntegrationTests
                 Thread.Sleep(60000);
 
                 RepairState();
+            }
+            else
+            {
+                Logger.Log("Restarting probe service");
+                var probeService = GetProbeService();
+                probeService.Stop();
+                WaitForStop(probeService);
+
+                if (probeService.Status != ServiceControllerStatus.Stopped)
+                    Thread.Sleep(5000);
+
+                probeService.Start();
+                probeService.WaitForStatus(ServiceControllerStatus.Running);
             }
 
             Logger.Log("Finished");
@@ -300,7 +348,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        private static void KillService(string service) //todo: make it private
+        private static void KillService(string service)
         {
             var options = new ConnectionOptions
             {
@@ -393,7 +441,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 Thread.Sleep(30 * 1000);
             }
             else
-                AssertEx.Fail($"{friendlyName} is not running. Service status is {service.Status}", true);
+                AssertEx.Fail($"{friendlyName} did not stop after killing service. Service status is {service.Status}", true);
         }
 
         public void RepairState()
@@ -401,28 +449,30 @@ namespace PrtgAPI.Tests.IntegrationTests
             try
             {
                 Logger.Log("Checking probe health");
-                Logger.Log("Validating probe can be retrieved by ID");
+                Logger.LogTest("Validating probe can be retrieved by ID");
 
                 if (Client.GetProbes(Property.Id, Settings.Probe).First().Name != Settings.ProbeName)
                 {
-                    Logger.Log("Probe name was incorrect. Requires rename");
+                    Logger.LogTestDetail("Probe name was incorrect. Requires rename");
                     RestoreProbeName();
                 }
                 else
                 {
                     probeNameNeedsRepairing = false;
 
-                    Logger.Log("Validating probe can be retrieved by name");
+                    Logger.LogTest("Validating probe can be retrieved by name");
 
                     if (Client.GetProbes(Property.Name, Settings.ProbeName).Count == 0)
                     {
-                        Logger.Log("Probe could not be retrieved by name; previous rename may have failed. Re-attempting rename");
+                        Logger.LogTestDetail("Probe could not be retrieved by name; previous rename may have failed. Re-attempting rename");
                         RestoreProbeName();
 
-                        Logger.Log("Sleeping for 30 seconds so name change can properly apply");
+                        Logger.LogTestDetail("Sleeping for 30 seconds so name change can properly apply");
                         Thread.Sleep(30000);
                     }
                 }
+
+                Logger.Log("State was successfully repaired");
             }
             catch (Exception ex)
             {

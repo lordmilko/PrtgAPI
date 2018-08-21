@@ -9,6 +9,16 @@ namespace PrtgAPI.Tests.IntegrationTests
     {
         private static bool newFile = false;
 
+        public static string PSTestName { get; set; }
+
+        private static string PSTestStr(string engine)
+        {
+            if (!string.IsNullOrEmpty(PSTestName) && engine == "C#")
+                return PSTestName + ": ";
+
+            return string.Empty;
+        }
+
         public static void Log(string message, bool error = false, string engine = "C#")
         {
             var path = Environment.GetEnvironmentVariable("temp") + "\\PrtgAPI.IntegrationTests.log";
@@ -31,7 +41,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             var errText = error ? "!!!" : "   ";
 
-            File.AppendAllText(path, $"{DateTime.Now} [{pid}:{tid}] {engine} {errText} : {message}\r\n");
+            File.AppendAllText(path, $"{DateTime.Now} [{pid}:{tid}] {engine} {errText} : {PSTestStr(engine)}{message}\r\n");
         }
 
         public static void LogTest(string message, bool error = false, string engine = "C#")

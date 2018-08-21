@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
 {
-    interface IWebStreamResponse : IWebResponse
+    public interface IWebStreamResponse : IWebResponse
     {
         Task<string> GetResponseTextStream(string address);
     }

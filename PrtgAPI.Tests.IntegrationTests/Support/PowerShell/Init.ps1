@@ -10,9 +10,9 @@ function ServerManager
     return [PrtgAPI.Tests.IntegrationTests.BasePrtgClientTest]::ServerManager
 }
 
-function Startup
+function Startup($testName)
 {
-    StartupSafe
+    StartupSafe $testName
 
     (ServerManager).Initialize();
 }
@@ -44,7 +44,7 @@ function LogTestDetail($message, $error = $false)
     LogTestName "    $message" $error
 }
 
-function StartupSafe()
+function StartupSafe($testName)
 {
     Write-Host "Performing startup tasks"
     InitializeModules "PrtgAPI.Tests.IntegrationTests" $PSScriptRoot
@@ -54,6 +54,8 @@ function StartupSafe()
     $substr = $path.Substring(0, $slash + 1)
     $psd1 = $substr + "PrtgAPI.Tests.psd1"
     ipmo $psd1
+
+    SetTestName $testName
 
     if(!(Get-PrtgClient))
     {
@@ -100,6 +102,22 @@ function StartupSafe()
 
     (ServerManager).RepairState()
     (ServerManager).WaitForObjects()
+}
+
+function SetTestName($name)
+{
+    [PrtgAPI.Tests.IntegrationTests.Logger]::PSTestName = $name
+}
+
+function ClearTestName
+{
+    try
+    {
+        SetTestName $null
+    }
+    catch
+    {
+    }
 }
 
 function InitializePrtgClient

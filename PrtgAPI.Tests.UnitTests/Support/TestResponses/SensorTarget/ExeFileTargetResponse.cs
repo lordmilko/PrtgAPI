@@ -743,7 +743,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("<option value=\"testScript.bat|testScript.bat||\">testScript.bat</option></select></div>\n");
             builder.Append("<span class=\" InitialDisplayNone \"><div class=\"wiz1-3\"><input type=\"hidden\" name=\"exefilelabel\" value=\"\"></div></span>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"exeparams_\">Parameters</label>\n");
-            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Enter command line parameters that the sensor will pass to the EXE/script file. 		  <br/><br/><b>Note:</b> Use quotation marks to escape the parameters correctly, for example, if the values contain blanks. With PowerShell scripts use single quotation marks, with all other scripts use double quotation marks.<p><a class='morehelp nohjax' target='_blank' href='/help/exe_script_advanced_sensor.htm#xmlexespecific'>Further Help (Manual)</a></p>\">\n");
+            builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Enter command line parameters that the sensor will pass to the EXE/script file.           <br/><br/><b>Note:</b> Use quotation marks to escape the parameters correctly, for example, if the values contain blanks. With PowerShell scripts use single quotation marks, with all other scripts use double quotation marks.<p><a class='morehelp nohjax' target='_blank' href='/help/exe_script_advanced_sensor.htm#xmlexespecific'>Further Help (Manual)</a></p>\">\n");
             builder.Append("<input class=\"text\"  type=\"text\" name=\"exeparams_\" id=\"exeparams_\" autocomplete=\"off\" value=\"\" ></div>\n");
             builder.Append("<label class=\"control-label has_help \" for=\"environment_\">Environment</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Define if commandline parameters of PRTG will be also available as environment parameters. Use this option carefully, there can be security issues with this option.<p><a class='morehelp nohjax' target='_blank' href='/help/exe_script_advanced_sensor.htm#xmlexespecific'>Further Help (Manual)</a></p>\">\n");
@@ -834,7 +834,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("<option  value=\"5\" id=\"errorintervalsdown5\">Set sensor to warning for 5 intervals, then set to &quot;down&quot;</option></select></div>\n");
             builder.Append("<span class=\" InitialDisplayNone \"><div class=\"wiz1-3\"><input type=\"hidden\" name=\"inherittriggers\" value=\"1\"></div></span>\n");
             builder.Append("</div></fieldset><input type=\"hidden\" name=\"id\" value=\"2055\"> <input type=\"hidden\" name=\"sensortype\" value=\"exexml\">\n");
-            builder.Append("		  <input type=\"hidden\" id=\"tmpid\" name=\"tmpid\" value=\"2\">\n");
+            builder.Append("          <input type=\"hidden\" id=\"tmpid\" name=\"tmpid\" value=\"2\">\n");
             builder.Append("          <div style='' class=\"quick-action-wrapper \">\n");
             builder.Append("              <button style='' class=\"submit btngrey button quick-action-button force-visible\" type=\"submit\">Continue</button>\n");
             builder.Append("              <button style='' type=\"submit\" class='ui-icon quick-action-badge continue-badge'></button>\n");

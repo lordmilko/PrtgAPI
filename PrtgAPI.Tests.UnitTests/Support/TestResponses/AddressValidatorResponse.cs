@@ -43,6 +43,20 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         protected override IWebResponse GetResponse(ref string address, string function)
         {
+            ValidateAddress(address);
+
+            return base.GetResponse(ref address, function);
+        }
+
+        protected override IWebStreamResponse GetResponseStream(string address, string function)
+        {
+            ValidateAddress(address);
+
+            return base.GetResponseStream(address, function);
+        }
+
+        internal void ValidateAddress(string address)
+        {
             if (exactMatch)
             {
                 if (strArray != null)
@@ -52,23 +66,64 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                         Assert.Fail($"Request for address '{address}' was not expected");
                     }
 
-                    if(address != strArray[arrayPos])
-                        Assert.AreEqual(strArray[arrayPos], address, "Address was not correct");
+                    if (address != strArray[arrayPos])
+                    {
+                        try
+                        {
+                            Assert.AreEqual(strArray[arrayPos], address, "Address was not correct");
+                        }
+                        catch (AssertFailedException ex)
+                        {
+                            throw GetDifference(strArray[arrayPos], address, ex);
+                        }
+                    }
 
                     arrayPos++;
                 }
                 else
                 {
+                    arrayPos++;
                     Assert.AreEqual(str, address, "Address was not correct");
                 }
             }
             else
             {
+                arrayPos++;
+
                 if (!address.Contains(str))
                     Assert.Fail($"Address '{address}' did not contain '{str}'");
             }
+        }
 
-            return base.GetResponse(ref address, function);
+        private AssertFailedException GetDifference(string expected, string actual, AssertFailedException originalException)
+        {
+            var expectedParts = PrtgAPI.Helpers.UrlHelpers.CrackUrl(expected);
+            var actualParts = PrtgAPI.Helpers.UrlHelpers.CrackUrl(actual);
+
+            foreach(var part in actualParts.AllKeys)
+            {
+                var expectedVal = expectedParts[part];
+                var actualVal = actualParts[part];
+
+                if (expectedVal != actualVal)
+                    Assert.Fail($"{part} was different. Expected: {expectedVal}. Actual: {actualVal}.\r\n\r\n{originalException.Message}");
+            }
+
+            return originalException;
+        }
+
+        public void AssertFinished()
+        {
+            if(strArray != null)
+            {
+                if (arrayPos < strArray.Length )
+                    Assert.Fail($"Failed to call request '{strArray[arrayPos]}'");
+            }
+            else
+            {
+                if (arrayPos == 0)
+                    Assert.Fail($"Failed to call request '{str}'");
+            }
         }
     }
 }
