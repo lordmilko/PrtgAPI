@@ -707,7 +707,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
-        public List<Device> GetDevices(Property property, FilterOperator @operator, string value) => GetDevices(new SearchFilter(property, @operator, value));
+        public List<Device> GetDevices(Property property, FilterOperator @operator, object value) => GetDevices(new SearchFilter(property, @operator, value));
 
         /// <summary>
         /// Asynchronously retrieves devices from a PRTG Server based on the value of a certain property.
@@ -716,7 +716,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of devices that match the specified search criteria.</returns>
-        public async Task<List<Device>> GetDevicesAsync(Property property, FilterOperator @operator, string value) => await GetDevicesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+        public async Task<List<Device>> GetDevicesAsync(Property property, FilterOperator @operator, object value) => await GetDevicesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams devices from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -725,7 +725,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Device> StreamDevices(Property property, FilterOperator @operator, string value) => StreamDevices(new SearchFilter(property, @operator, value));
+        public IEnumerable<Device> StreamDevices(Property property, FilterOperator @operator, object value) => StreamDevices(new SearchFilter(property, @operator, value));
 
             #endregion
             #region Filter (Array)
@@ -917,7 +917,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
-        public List<Group> GetGroups(Property property, FilterOperator @operator, string value) => GetGroups(new SearchFilter(property, @operator, value));
+        public List<Group> GetGroups(Property property, FilterOperator @operator, object value) => GetGroups(new SearchFilter(property, @operator, value));
 
         /// <summary>
         /// Asynchronously retrieves groups from a PRTG Server based on the value of a certain property.
@@ -926,7 +926,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of groups that match the specified search criteria.</returns>
-        public async Task<List<Group>> GetGroupsAsync(Property property, FilterOperator @operator, string value) => await GetGroupsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+        public async Task<List<Group>> GetGroupsAsync(Property property, FilterOperator @operator, object value) => await GetGroupsAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams groups from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -935,7 +935,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Group> StreamGroups(Property property, FilterOperator @operator, string value) => StreamGroups(new SearchFilter(property, @operator, value));
+        public IEnumerable<Group> StreamGroups(Property property, FilterOperator @operator, object value) => StreamGroups(new SearchFilter(property, @operator, value));
 
             #endregion
             #region Filter (Array)
@@ -1108,7 +1108,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
-        public List<Probe> GetProbes(Property property, FilterOperator @operator, string value) => GetProbes(new SearchFilter(property, @operator, value));
+        public List<Probe> GetProbes(Property property, FilterOperator @operator, object value) => GetProbes(new SearchFilter(property, @operator, value));
 
         /// <summary>
         /// Asynchronously retrieves probes from a PRTG Server based on the value of a certain property.
@@ -1117,7 +1117,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A list of probes that match the specified search criteria.</returns>
-        public async Task<List<Probe>> GetProbesAsync(Property property, FilterOperator @operator, string value) => await GetProbesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
+        public async Task<List<Probe>> GetProbesAsync(Property property, FilterOperator @operator, object value) => await GetProbesAsync(new SearchFilter(property, @operator, value)).ConfigureAwait(false);
 
         /// <summary>
         /// Streams probes from a PRTG Server based on the value of a certain property. When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
@@ -1126,7 +1126,7 @@ namespace PrtgAPI
         /// <param name="operator">Operator to compare value and property value with.</param>
         /// <param name="value">Value to search for.</param>
         /// <returns>A generator encapsulating a series of <see cref="Task"/> objects capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<Probe> StreamProbes(Property property, FilterOperator @operator, string value) => StreamProbes(new SearchFilter(property, @operator, value));
+        public IEnumerable<Probe> StreamProbes(Property property, FilterOperator @operator, object value) => StreamProbes(new SearchFilter(property, @operator, value));
 
             #endregion
             #region Filter (Array)
