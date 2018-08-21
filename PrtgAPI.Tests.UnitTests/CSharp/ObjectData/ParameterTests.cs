@@ -587,6 +587,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
         }
 
         #endregion
+        #region SetChannelPropertyParameters
+
+        [TestMethod]
+        public void SetChannelPropertyParameters_ConstructorValidation()
+        {
+            var settings = new[] { new ChannelParameter(ChannelProperty.LimitsEnabled, true) };
+
+            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(null, 1, settings), "Value cannot be null.\r\nParameter name: sensorIds");
+            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new int[] { }, 1, settings), "At least one Sensor ID must be specified.\r\nParameter name: sensorIds");
+            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, null), "Value cannot be null.\r\nParameter name: parameters");
+            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, new ChannelParameter[] { }), "At least one parameter must be specified.\r\nParameter name: parameters");
+        }
+
+        #endregion
+
+        private string GetCustomParameter(BaseParameters parameters, string name)
         {
             var customParameters = ((List<CustomParameter>) parameters.GetParameters()[Parameter.Custom]);
 

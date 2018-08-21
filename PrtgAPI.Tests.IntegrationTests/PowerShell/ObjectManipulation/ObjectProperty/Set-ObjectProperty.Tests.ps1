@@ -23,7 +23,7 @@ Describe "Set-ObjectProperty_IT" {
             @{name = "Groups";  obj = { Get-Group  -Id (Settings Group)  }}
             @{name = "Probes";  obj = { Get-Probe  -Id (Settings Probe)  }}
         )
-
+        
         It "Scanning Interval" -TestCases $testCases {
             param($name, $obj)
 
@@ -104,7 +104,7 @@ Describe "Set-ObjectProperty_IT" {
             #SetChild Dependency (Settings DownSensor)
             #SetChild DependencyDelay 3
         }
-
+        
         It "Proxy Settings for HTTP Sensors" -TestCases $testCases {
             param($name, $obj)
 
@@ -148,6 +148,25 @@ Describe "Set-ObjectProperty_IT" {
                 SetChild "FileSizeUnit"    "TByte" "InheritChannelUnit" $false
             }
         }
+    }
+    
+    It "sets a notification action property" {
+
+        $action = Get-NotificationAction -Id (Settings NotificationAction)
+
+        $action.Active | Should Be $true
+
+        $action | Set-ObjectProperty Active $false
+
+        $newAction = Get-NotificationAction -Id (Settings NotificationAction)
+
+        $newAction.Active | Should Be $false
+
+        $newAction | Set-ObjectProperty Active $true
+
+        $finalAction = Get-NotificationAction -Id (Settings NotificationAction)
+
+        $finalAction.Active | Should Be $true
     }
 
     It "sets a schedule property" {
@@ -249,10 +268,10 @@ Describe "Set-ObjectProperty_IT" {
 
     It "can set the properties of multiple in a single request" {
         $upSensor = Get-Sensor -Id (Settings UpSensor)
-        $upSensor.Interval | Should Not Be "00:05:00"
+        $upSensor.Interval | Should Not Be "00:10:00"
 
         $device = Get-Device -Id (Settings Device)
-        $device.Interval | Should Be "00:05:00"
+        $device.Interval | Should Not Be "00:10:00"
 
         $objects = $upSensor,$device
 
@@ -283,7 +302,7 @@ Describe "Set-ObjectProperty_IT" {
         $newProps.VMwareUserName | Should Be "root"
         $newProps.HasVMwarePassword | Should Be $true
     }
-
+    
     function SetDirect($property, $value)
     {
         $object = Get-Sensor -Id (Settings UpSensor)

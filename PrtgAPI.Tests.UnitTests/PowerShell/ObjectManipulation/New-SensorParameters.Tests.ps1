@@ -93,6 +93,19 @@ Describe "New-SensorParameters" {
         It "throws when a raw sensortype is null" {
             { New-SensorParameters @{"name_" = "custom name"; "sensortype" = $null} } | Should Throw "sensorType cannot be null or empty"
         }
+
+        It "throws when multiple CustomParameter objects exist for a non sensor target property" {
+            $params = New-SensorParameters -Empty
+            $params["name"] = "first"
+            $params["name"] | Should Be "first"
+            $params.Parameters.Add((New-Object PrtgAPI.Parameters.CustomParameter "name","second"))
+
+            $params["name"] | Should BeNullOrEmpty
+
+            WithStrict {
+                { $params["name"] } | Should Throw "Property 'name' contains an invalid collection of elements"
+            }
+        }
     }
 
     Context "Empty Parameters" {

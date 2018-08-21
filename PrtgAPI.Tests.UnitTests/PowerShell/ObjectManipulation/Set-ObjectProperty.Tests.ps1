@@ -66,6 +66,16 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $sensor | Set-ObjectProperty Priority 2
         }
 
+        It "sets a notification action property" {
+            SetMultiTypeResponse
+
+            $action = Get-NotificationAction -Count 1
+
+            SetAddressValidatorResponse "editsettings?id=300&active_=1"
+
+            $action | Set-ObjectProperty Active $true
+        }
+
         it "sets a schedule property" {
             SetMultiTypeResponse
 
@@ -184,6 +194,25 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             }
 
             $devices | Set-ObjectProperty -RawParameters $table -Force
+        }
+
+        It "sets multiple raw properties from a hashtable with -Batch:`$false" {
+            SetMultiTypeResponse
+
+            $devices = Get-Device -Count 2
+            $schedule = Get-PrtgSchedule | Select -First 1
+
+            SetAddressValidatorResponse @(
+                "editsettings?id=3000&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c&"
+                "editsettings?id=3001&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c&"
+            )
+
+            $table = @{
+                scheduledependency = 0
+                schedule_ = $schedule
+            }
+
+            $devices | Set-ObjectProperty -RawParameters $table -Force -Batch:$false
         }
 
         It "throws setting from an empty hashtable" {

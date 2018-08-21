@@ -7,7 +7,7 @@ function SetFactorySourceResponse($channelDefinition)
     $propertyChanger = [Func[string, string]]{
         param($body)
 
-        [PrtgAPI.Tests.UnitTests.ObjectTests.TestResponses.SensorSettingsResponse]::SetContainerTagContents($body, $channelDefinitionStr, "textarea", "aggregationchannel_")
+        [PrtgAPI.Tests.UnitTests.Support.TestResponses.SensorSettingsResponse]::SetContainerTagContents($body, $channelDefinitionStr, "textarea", "aggregationchannel_")
     }.GetNewClosure()
 
     SetResponseAndClientWithArguments "SensorFactorySourceResponse" $propertyChanger
@@ -22,7 +22,6 @@ Describe "Get-SensorFactorySource" {
         )
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $sourceSensors = $sensor | Get-SensorFactorySource
 
@@ -39,7 +38,6 @@ Describe "Get-SensorFactorySource" {
         )
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $sourceSensors = $sensor | Get-SensorFactorySource
 
@@ -50,7 +48,6 @@ Describe "Get-SensorFactorySource" {
         SetFactorySourceResponse @()
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $sourceSensors = $sensor | Get-SensorFactorySource
 
@@ -64,11 +61,27 @@ Describe "Get-SensorFactorySource" {
         )
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $sourceSensors = $sensor | Get-SensorFactorySource
 
         $sourceSensors.Count | Should Be 3
+    }
+    
+    It "parses a factory containing a horizontal line" {
+        SetFactorySourceResponse @(
+            "#1:First Channel"
+            "channel(1001, 0)"
+            "#2:Line at 50ms [ms]"
+            "50"
+            "#3:Second Channel"
+            "channel(1002,1)"
+        )
+
+        $sensor = Get-Sensor
+
+        $sourceSensors = $sensor | Get-SensorFactorySource
+
+        $sourceSensors.Count | Should Be 2
     }
 
     It "retrieves channels from a sensor factory" {
@@ -81,7 +94,6 @@ Describe "Get-SensorFactorySource" {
         )
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $sourceChannels = $sensor | Get-SensorFactorySource -Channels
         $sourceChannels.Count | Should Be 2
@@ -92,7 +104,6 @@ Describe "Get-SensorFactorySource" {
         SetFactorySourceResponse "test"
 
         $sensor = Get-Sensor
-        $sensor.Type = "Sensor Factory"
 
         $response = $sensor | Get-SensorFactorySource
 
@@ -102,7 +113,7 @@ Describe "Get-SensorFactorySource" {
     It "throws when a sensor isn't a sensor factory" {
         SetResponseAndClientWithArguments "SensorFactorySourceResponse"
 
-        $sensor = Get-Sensor
+        $sensor = Get-Sensor -Type ping
 
         { $sensor | Get-SensorFactorySource } | Should Throw "Only Sensor Factory objects may be specified"
     }

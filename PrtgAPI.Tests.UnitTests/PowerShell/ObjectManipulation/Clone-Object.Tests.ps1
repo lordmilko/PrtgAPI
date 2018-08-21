@@ -65,13 +65,44 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
         $output | Should Be $expected
     }
 
-    It "Clones a trigger" {
+    $triggerCases = @(
+        @{name = "State"}
+        @{name = "Speed"}
+        @{name = "Volume"}
+        @{name = "Threshold"}
+        @{name = "Change"}
+    )
+
+    It "Clones a <name> trigger" -TestCases $triggerCases {
+        param($name)
+
+        $group = Run Group { Get-Group }
+
+        $trigger = Run NotificationTrigger { $group | Get-Trigger -Type $name } | Select -First 1
+
+        $clone = {
+                WithResponseArgs "DiffBasedResolveResponse" $false {
+                $trigger | Clone-Object 1001
+            }
+        }
+
+        if($name -eq "State" -or $name -eq "Change")
+        {
+            & $clone
+        }
+        else
+        {
+            { & $clone } | Should Throw "Channel 'Primary' is not a valid value"
+        }
+    }
+
+    It "clones a trigger without resolving it" {
         $group = Run Group { Get-Group }
 
         $trigger = Run NotificationTrigger { $group | Get-Trigger } | Select -First 1
 
         WithResponseArgs "DiffBasedResolveResponse" $false {
-            $trigger | Clone-Object 1001
+            $trigger | Clone-Object 1001 -Resolve:$false
         }
     }
 
