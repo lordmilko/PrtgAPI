@@ -9,7 +9,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The Simulate-ErrorStatus cmdlet forces a PRTG Sensor to enter an error (Down) state.
     /// When an object is in a simulated error status, it will display a message indicating it is in a simulated error state.
     /// Any object put into a simulated error status will remain in this state until the object is resumed via the Resume-Object cmdlet
-    /// or via the PRTG UI. Even if an object is paused, it will return to an error state when the object is unpaused.</para>
+    /// or via the PRTG UI. Even if an object in a simulated error state is paused, it will return to this state when the object is
+    /// unpaused.</para>
     /// 
     /// <para type="description">By default, Simulate-ErrorStatus will operate in Batch Mode. In Batch Mode, Simulate-ErrorStatus
     /// will not execute a request for each individual object, but will rather store each item in a queue to simulate errors

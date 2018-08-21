@@ -11,7 +11,7 @@ namespace PrtgAPI.Helpers
     /// </summary>
     /// <typeparam name="T">The type of object returned by this generator.</typeparam>
     [ExcludeFromCodeCoverage]
-    public class ParallelObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
+    class ParallelObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
     {
         private IEnumerator enumerator;
 

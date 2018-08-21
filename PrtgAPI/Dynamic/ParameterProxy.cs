@@ -11,27 +11,36 @@ namespace PrtgAPI.Dynamic
     {
         public override bool TryGetMember(IDynamicParameters instance, GetMemberBinder binder, out object value)
         {
-            value = instance[binder.Name];
+            lock (lockObject)
+            {
+                value = instance[binder.Name];
 
-            return true;
+                return true;
+            }
         }
 
         public override bool TrySetMember(IDynamicParameters instance, SetMemberBinder binder, object value)
         {
-            instance[binder.Name] = value;
+            lock (lockObject)
+            {
+                instance[binder.Name] = value;
 
-            return true;
+                return true;
+            }
         }
 
         [ExcludeFromCodeCoverage]
         public override IEnumerable<string> GetDynamicMemberNames(IDynamicParameters instance)
         {
-            var customParameters = instance[Parameter.Custom] as List<CustomParameter>;
+            lock (lockObject)
+            {
+                var customParameters = instance[Parameter.Custom] as List<CustomParameter>;
 
-            if (customParameters != null)
-                return customParameters.Where(p => p.Value is PSVariableEx).Select(p => ((PSVariableEx)p.Value).Name);
+                if (customParameters != null)
+                    return customParameters.Where(p => p.Value is PSVariableEx).Select(p => ((PSVariableEx)p.Value).Name);
 
-            return base.GetDynamicMemberNames(instance);
+                return base.GetDynamicMemberNames(instance);
+            }
         }
     }
 }

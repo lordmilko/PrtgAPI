@@ -3,7 +3,6 @@
  * Please do not modify this file directly - modify PrtgClient.AsyncHelpers.tt instead *
  ***************************************************************************************/
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -14,10 +13,11 @@ using System.Threading;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
+using PrtgAPI.Linq;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 //Methods with complex logic surrounding sync/async function calls.
 //For each method, two variants a generated. A synchronous method with the
@@ -474,9 +474,9 @@ namespace PrtgAPI
         // WaitForCoreRestart
         //######################################
 
-        internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<List<ProbeRestartProgress>, bool>  progressCallback)
         {
-            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+            List<ProbeRestartProgress> probeStatuses = probes.Select(p => new ProbeRestartProgress(p)).ToList();
 
             while (probeStatuses.Any(p => p.Reconnected == false))
             {
@@ -503,9 +503,9 @@ namespace PrtgAPI
             }
         }
 
-        internal async Task WaitForProbeRestartAsync(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        internal async Task WaitForProbeRestartAsync(DateTime restartTime, List<Probe> probes, Func<List<ProbeRestartProgress>, bool>  progressCallback)
         {
-            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+            List<ProbeRestartProgress> probeStatuses = probes.Select(p => new ProbeRestartProgress(p)).ToList();
 
             while (probeStatuses.Any(p => p.Reconnected == false))
             {

@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net.Http;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
-using PrtgAPI.Objects.Undocumented;
+using PrtgAPI.Internal;
+using PrtgAPI.Linq;
+using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization;
+using XmlSerializer = PrtgAPI.Request.Serialization.XmlSerializer;
 
 namespace PrtgAPI
 {
@@ -2449,7 +2451,10 @@ namespace PrtgAPI
 
         private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, object objectType) =>
             await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
-            
+
+        #endregion
+        #region Get Single Typed Property
+
         /// <summary>
         /// Retrieves a type safe property from a PRTG Server.
         /// </summary>
@@ -2483,7 +2488,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Retrieves a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// Retrieves a type safe property from a PRTG Server, cast to its actual type. If the deserialized value is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
@@ -2495,7 +2500,7 @@ namespace PrtgAPI
             ResponseParser.GetTypedProperty<T>(GetObjectProperty(objectId, property));
 
         /// <summary>
-        /// Asynchronously retrieves a type safe property from a PRTG Server, cast to its actual type. If the object is not of the type specified,
+        /// Asynchronously retrieves a type safe property from a PRTG Server, cast to its actual type. If the deserialized value is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to. If the object</typeparam>
@@ -2943,7 +2948,7 @@ namespace PrtgAPI
         /// <param name="probeId">The ID of the probe to restart. If this value is null, the PRTG Probe Service of all probes will be restarted.</param>
         /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
-        public void RestartProbe(int? probeId, bool waitForRestart = false, Func<List<RestartProbeProgress>, bool> progressCallback = null)
+        public void RestartProbe(int? probeId, bool waitForRestart = false, Func<List<ProbeRestartProgress>, bool> progressCallback = null)
         {
             var restartTime = DateTime.Now;
 
@@ -2965,7 +2970,7 @@ namespace PrtgAPI
         /// <param name="probeId">The ID of the probe to restart. If this value is null, the PRTG Probe Service of all probes will be restarted.</param>
         /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
-        public async Task RestartProbeAsync(int? probeId, bool waitForRestart = false, Func<List<RestartProbeProgress>, bool> progressCallback = null)
+        public async Task RestartProbeAsync(int? probeId, bool waitForRestart = false, Func<List<ProbeRestartProgress>, bool> progressCallback = null)
         {
             var restartTime = DateTime.Now;
 

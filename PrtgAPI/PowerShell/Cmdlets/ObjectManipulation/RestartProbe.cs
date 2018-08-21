@@ -140,7 +140,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
-        private bool WriteProbeProgress(List<RestartProbeProgress> probeStatuses)
+        private bool WriteProbeProgress(List<ProbeRestartProgress> probeStatuses)
         {
             var completed = probeStatuses.Count(p => p.Reconnected) + 1;
 

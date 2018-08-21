@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Parameters;
+using PrtgAPI.Schedules;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Request
 {
@@ -83,7 +85,7 @@ namespace PrtgAPI.Request
                     {
                         Name = regex.Replace(p.Name.ToString(), "$1"),
                         Category = e,
-                        Value = p.Value
+                        p.Value
                     };
                 }
 
@@ -288,7 +290,7 @@ namespace PrtgAPI.Request
         #endregion
         #region System Administration
 
-        internal static void UpdateProbeStatus(List<RestartProbeProgress> probes, List<Log> logs)
+        internal static void UpdateProbeStatus(List<ProbeRestartProgress> probes, List<Log> logs)
         {
             foreach (var probe in probes)
             {

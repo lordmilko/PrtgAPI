@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
     sealed class DependentPropertyAttribute : Attribute
     {
         /// <summary>

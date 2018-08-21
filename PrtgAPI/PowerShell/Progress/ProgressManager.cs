@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
-using System.Reflection;
 using Microsoft.PowerShell.Commands;
-using PrtgAPI.Objects.Shared;
+using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -635,7 +634,7 @@ namespace PrtgAPI.PowerShell.Progress
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressManager"/> class. You MUST dispose the created object, else <see cref="ProgressManager"/>  will leak <see cref="progressPipelines"/> .
+        /// Initializes a new instance of the <see cref="ProgressManager"/> class. You MUST dispose the created object, else <see cref="ProgressManager"/> will leak <see cref="progressPipelines"/>.
         /// </summary>
         /// <param name="cmdlet">The cmdlet to manage.</param>
         public ProgressManager(PrtgCmdlet cmdlet)
@@ -832,7 +831,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (!PrtgSessionState.EnableProgress)
                 return -1;
 
-            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetType().GetField("_lastUsedSourceId", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null));
+            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId").GetValue(null));
 
             if (PipeFromVariableWithProgress && FirstInChain)
             {
@@ -1434,7 +1433,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public static void CloneRecord(ProgressRecordEx sourceRecord, ProgressRecordEx destinationRecord)
         {
-            destinationRecord.GetType().BaseType.GetField("id", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(destinationRecord, sourceRecord.ActivityId);
+            destinationRecord.GetType().BaseType.GetInternalFieldInfo("id").SetValue(destinationRecord, sourceRecord.ActivityId);
             destinationRecord.Activity = sourceRecord.Activity;
             destinationRecord.StatusDescription = sourceRecord.StatusDescription;
             destinationRecord.CurrentOperation = sourceRecord.CurrentOperation;

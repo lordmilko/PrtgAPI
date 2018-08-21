@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Request.Serialization
 {
     [ExcludeFromCodeCoverage]
     internal class JsonDeserializer<T>
@@ -15,7 +15,7 @@ namespace PrtgAPI.Objects.Deserialization
         {
             var deserializer = new DataContractJsonSerializer(typeof(T));
 
-            T data = default(T);
+            T data;
 
             using (var stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
             {

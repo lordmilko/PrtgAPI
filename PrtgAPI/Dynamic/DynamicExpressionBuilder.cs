@@ -10,7 +10,7 @@ namespace PrtgAPI.Dynamic
 {
     delegate DynamicMetaObject Fallback(DynamicMetaObject errorSuggestion);
 
-    class ExpressionBuilder<T>
+    class DynamicExpressionBuilder<T>
     {
         public static readonly Expression[] NoArgs = new Expression[0]; //Used in reference comparison, requires unique object identity
 
@@ -24,7 +24,7 @@ namespace PrtgAPI.Dynamic
 
         public Fallback FallbackInvoke { get; set; }
 
-        public ExpressionBuilder(DynamicMetaObject<T> metaObject, DynamicMetaObjectBinder binder, Expression[] args,
+        public DynamicExpressionBuilder(DynamicMetaObject<T> metaObject, DynamicMetaObjectBinder binder, Expression[] args,
             Fallback fallback, Fallback fallbackInvoke = null)
         {
             MetaObject = metaObject;

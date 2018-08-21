@@ -21,14 +21,14 @@ namespace PrtgAPI.Dynamic
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
-            var builder = new ExpressionBuilder<T>(this, binder, ExpressionBuilder<T>.NoArgs, e => binder.FallbackGetMember(this, e));
+            var builder = new DynamicExpressionBuilder<T>(this, binder, DynamicExpressionBuilder<T>.NoArgs, e => binder.FallbackGetMember(this, e));
 
             return builder.CallMethodWithResult(DynamicProxy<T>.GetMember);
         }
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
-            var builder = new ExpressionBuilder<T>(this, binder, ExpressionBuilder<T>.NoArgs, e => binder.FallbackSetMember(this, value, e));
+            var builder = new DynamicExpressionBuilder<T>(this, binder, DynamicExpressionBuilder<T>.NoArgs, e => binder.FallbackSetMember(this, value, e));
 
             return builder.CallMethodReturnLast(DynamicProxy<T>.SetMember, value.Expression);
         }

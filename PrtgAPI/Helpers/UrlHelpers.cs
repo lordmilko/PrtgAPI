@@ -9,7 +9,12 @@ namespace PrtgAPI.Helpers
     {
         public static NameValueCollection CrackUrl(string url)
         {
-            var addr = url.Substring(url.IndexOf('?')).Split('#')[0];
+            var start = url.IndexOf('?');
+
+            if (start < 0)
+                start = 0;
+
+            var addr = url.Substring(start).Split('#')[0];
 
             var queries = HttpUtility.ParseQueryString(addr);
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
+using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
@@ -25,7 +26,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// If PrtgAPI detects the number is about a specified threshold, PrtgAPI will split the request up into several smaller requests
     /// which will each be invoked one after the other. Results will then be "streamed" to the pipeline as each smaller request completes. A progress
     /// bar will also be visible up the top indicating the total number of sensors retrieved/remaining.</para>
-    /// 
     /// 
     /// <para type="description">Get-Sensor provides two parameter sets for filtering objects by tags. When filtering for sensors
     /// that contain one of several tags, the -Tag parameter can be used, performing a logical OR between all specified operands.

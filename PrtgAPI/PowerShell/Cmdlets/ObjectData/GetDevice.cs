@@ -142,6 +142,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 AddNameOrObjectFilter(Property.ParentId, Group, g => g.Id, Property.Group);
 
             ProcessWildcardArrayFilter(Property.Host, Host);
+
             base.ProcessAdditionalParameters();
         }
 

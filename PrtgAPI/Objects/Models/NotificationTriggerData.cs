@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using PrtgAPI.Helpers;
 
-namespace PrtgAPI.Objects.Deserialization
+namespace PrtgAPI.Internal
 {
 #pragma warning disable CS0649
 

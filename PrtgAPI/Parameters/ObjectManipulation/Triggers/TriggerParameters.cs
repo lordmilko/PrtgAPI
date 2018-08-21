@@ -16,12 +16,12 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets the ID of the object this trigger applies to.
         /// </summary>
-        public int ObjectId { get; private set; }
+        public int ObjectId { get; }
 
         /// <summary>
         /// Gets the sub ID of the trigger these parameters apply to. If these parameters are being used to create a new trigger, this value is null.
         /// </summary>
-        public string SubId => subId == "new" ? null : subId;
+        public int? SubId => subId == "new" ? null : (int?) Convert.ToInt32(subId);
 
         private string subId;
 
@@ -67,7 +67,8 @@ namespace PrtgAPI.Parameters
         {
             if (action == ModifyAction.Add && subId != null)
                 throw new ArgumentException("SubId must be null when ModifyAction is Add", nameof(subId));
-            else if (action == ModifyAction.Edit && subId == null)
+
+            if (action == ModifyAction.Edit && subId == null)
                 throw new ArgumentException("SubId cannot be null when ModifyAction is Edit", nameof(subId));
 
             if(action == ModifyAction.Add)
@@ -84,7 +85,7 @@ namespace PrtgAPI.Parameters
 
             if (action == ModifyAction.Add)
             {
-                Parameters.Add(new CustomParameter("class", type.ToString().ToLower())); //todo: does this tolower itself during prtgurl construction? check debug output!
+                Parameters.Add(new CustomParameter("class", type));
                 this[Parameter.ObjectType] = "nodetrigger";
             }
         }
@@ -105,9 +106,7 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentException($"A NotificationTrigger of type '{sourceTrigger.Type}' cannot be used to initialize trigger parameters of type '{type}'");
 
             if (action == ModifyAction.Add)
-            {
                 OnNotificationAction = sourceTrigger.OnNotificationAction;
-            }
             else
             {
                 if (sourceTrigger.Inherited)
@@ -133,9 +132,8 @@ namespace PrtgAPI.Parameters
                     return null;
                 return EmptyNotificationAction();
             }
-                
-            else
-                return (NotificationAction)value;
+
+            return (NotificationAction)value;
         }
 
         /// <summary>
@@ -165,8 +163,8 @@ namespace PrtgAPI.Parameters
 
             if (index == -1)
                 return null;
-            else
-                return Parameters[index].Value;
+
+            return Parameters[index].Value;
         }
 
         private int GetCustomParameterIndex(TriggerProperty property)

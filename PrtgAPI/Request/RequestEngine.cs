@@ -179,7 +179,6 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-
         private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
         {
             prtgClient.Log($"Synchronously executing request {url.Url}", LogLevel.Request);

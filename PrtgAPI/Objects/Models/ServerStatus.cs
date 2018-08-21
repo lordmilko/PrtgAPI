@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using PrtgAPI.Helpers;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
+using DH = PrtgAPI.Request.Serialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {

@@ -6,7 +6,6 @@
  * Please do not modify this file directly - modify PrtgClient.AsyncHelpers.tt instead *
  ***************************************************************************************/
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -17,10 +16,11 @@ using System.Threading;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
-using PrtgAPI.Objects.Shared;
 using PrtgAPI.Parameters;
+using PrtgAPI.Linq;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
+using PrtgAPI.Targets;
 
 //Methods with complex logic surrounding sync/async function calls.
 //For each method, two variants a generated. A synchronous method with the
@@ -101,6 +101,7 @@ for(int i = 0; i < 2; i++)
 
                 item.Add(properties.Nodes());
             }<#= EndLoopOrTask(i) #>
+
             var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
@@ -184,6 +185,7 @@ for(int i = 0; i < 2; i++)
                     var prefix = channel.channel is int ? $"Channel ID '{channel}'" : $"Channel '{channel.channel}' of type '{channel.channel.GetType().Name}'";
 
                     throw new InvalidOperationException($"{prefix} is not a valid channel for Device, Group or Probe with ID {parameters.ObjectId}. Channel must be one of 'Primary', 'Total', 'TrafficIn' or 'TrafficOut' of type '{nameof(StandardTriggerChannel)}'."); //todo: make this dynamically get all names in the enum
+                }
             }
         }
 
@@ -330,9 +332,9 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal <#= GetSignature("WaitForProbeRestart", "void", i) #>(DateTime restartTime, List<Probe> probes, Func<List<RestartProbeProgress>, bool>  progressCallback)
+        internal <#= GetSignature("WaitForProbeRestart", "void", i) #>(DateTime restartTime, List<Probe> probes, Func<List<ProbeRestartProgress>, bool>  progressCallback)
         {
-            List<RestartProbeProgress> probeStatuses = probes.Select(p => new RestartProbeProgress(p)).ToList();
+            List<ProbeRestartProgress> probeStatuses = probes.Select(p => new ProbeRestartProgress(p)).ToList();
 
             while (probeStatuses.Any(p => p.Reconnected == false))
             {

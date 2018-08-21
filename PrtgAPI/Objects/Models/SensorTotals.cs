@@ -1,5 +1,5 @@
 ﻿using System.Xml.Serialization;
-using DH = PrtgAPI.Objects.Deserialization.DeserializationHelpers;
+using DH = PrtgAPI.Request.Serialization.DeserializationHelpers;
 
 namespace PrtgAPI
 {

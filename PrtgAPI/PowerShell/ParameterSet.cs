@@ -13,7 +13,7 @@
         internal const string Manual = "ManualSet";
 
         /// <summary>
-        /// The parameter set that is used when specifying a limit set of values for a specified set of <see cref="Parameters.Parameters"/>.
+        /// The parameter set that is used when specifying a limit set of values for a specified set of <see cref="Parameters.BaseParameters"/>.
         /// </summary>
         internal const string Basic = "BasicSet";
 
@@ -43,6 +43,7 @@
 
         internal const string RecordAge = "RecordAgeSet";
         internal const string DateTime = "DateTimeSet";
+        internal const string DateTimeManual = "DateTimeManualSet";
 
         internal const string Aggregate = "AggregateSet";
 
@@ -65,9 +66,36 @@
 
         internal const string Empty = "EmptySet";
 
+        /// <summary>
+        /// The parameter set that is used when adding to an existing object.
+        /// </summary>
         internal const string Add = "AddSet";
-        internal const string Edit = "EditSet";
+
+        /// <summary>
+        /// The parameter set that is used when adding a new object specifying an Object ID manually.
+        /// </summary>
+        internal const string AddManual = "AddManual";
+
+        /// <summary>
+        /// The parameter set that is used when editing an object specifying the Object ID manually.
+        /// </summary>
+        internal const string EditManual = "EditManual";
+
+        /// <summary>
+        /// The parameter set that is used when adding a new object from an existing object.
+        /// </summary>
         internal const string AddFrom = "AddFromSet";
+
+        /// <summary>
+        /// The parameter set that is used when editing an existing object.
+        /// </summary>
         internal const string EditFrom = "EditFromSet";
+
+        internal const string SensorToDestination = "SensorToDestinationSet";
+        internal const string DeviceToDestination = "DeviceToDestinationSet";
+        internal const string GroupToDestination = "GroupToDestinationSet";
+        internal const string TriggerToDestination = "TriggerToDestinationSet";
+
+        internal const string TargetForSource = "TargetForSourceSet";
     }
 }

@@ -57,6 +57,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CSharp\ObjectData\Query\AnyTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\BaseQueryTest.cs" />
+    <Compile Include="CSharp\ObjectData\Query\CountTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\FirstTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\OrderByTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\SelectManyTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\SelectTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\SkipTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\TakeTests.cs" />
+    <Compile Include="CSharp\ObjectData\StreamTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\AddObjectTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\AdminToolTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\DynamicSensorParameterTests.cs" />
@@ -66,7 +76,9 @@
     <Compile Include="CSharp\ObjectData\GetObjectProperties.cs" />
     <Compile Include="CSharp\ObjectData\LogTests.cs" />
     <Compile Include="CSharp\ObjectData\SensorTargetTests.cs" />
-    <Compile Include="Support\EnumHelpers.cs" />
+    <Compile Include="CSharp\ObjectData\Query\FilterTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\WhereTests.cs" />
+    <Compile Include="Support\PrtgObjectComparer.cs" />
     <Compile Include="Support\ServerManager.cs" />
     <Compile Include="Support\AssertEx.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
@@ -114,6 +126,7 @@
     <None Include="PowerShell\ObjectData\Get-Group.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-NotificationAction.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-NotificationTrigger.Tests.ps1" />
+    <None Include="PowerShell\ObjectData\Get-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-ObjectLog.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-ObjectProperty.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-Probe.Tests.ps1" />

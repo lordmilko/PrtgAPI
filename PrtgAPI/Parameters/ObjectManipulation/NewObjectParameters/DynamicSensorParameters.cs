@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -8,7 +7,7 @@ using System.Linq.Expressions;
 using System.Management.Automation;
 using PrtgAPI.Dynamic;
 using PrtgAPI.Helpers;
-using PrtgAPI.Objects.Deserialization;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
 

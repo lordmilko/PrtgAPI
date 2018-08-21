@@ -111,7 +111,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public ScriptBlock Aggregator { get; set; }
 
         /// <summary>
-        /// <para type="description">A post-processing action to perform on an aggregated expresion before emititing to the pipeline.</para>
+        /// <para type="description">A post-processing action to perform on an aggregated expresion before emititing to the pipeline.
+        /// If -<see cref="Aggregator"/> is not specified this parameter does nothing.</para>
         /// <para type="description">Provides the following automatic variables:</para>
         /// <para type="description">    '$acc' (the accumulated result)</para>
         /// </summary>

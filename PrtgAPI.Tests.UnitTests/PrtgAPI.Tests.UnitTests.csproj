@@ -73,9 +73,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CSharp\ObjectData\QueryableObjectTests.cs" />
+    <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
+    <Compile Include="CSharp\ObjectData\StreamTests.cs" />
     <Compile Include="Support\AssertEx.cs" />
-    <Compile Include="Support\EnumHelpers.cs" />
+    <Compile Include="Support\PrtgAPIHelpers.cs" />
     <Compile Include="Support\ReflectionHelpers.cs" />
+    <Compile Include="Support\TestHelpers.cs" />
     <Compile Include="CSharp\Infrastructure\AssemblyTests.cs" />
     <Compile Include="CSharp\Infrastructure\SerializationTests.cs" />
     <Compile Include="Support\Infrastructure\IWebContentHeaderResponse.cs" />
@@ -87,6 +91,35 @@
     <Compile Include="Support\Infrastructure\Progress\ProgressQueueRecord.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressGrouper.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressHierarchy.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsForceStreamScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientForceStreamScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientOneLeftScenarioForceStream.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientNoneLeftScenarioForceStream.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeFilteredLogsInsufficientNegativeLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeFilteredLogsInsufficientNoneLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeFilteredLogsInsufficientOneLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeFilteredLogsInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeFilteredLogsScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeUnfilteredLogsForceStreamScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeUnfilteredLogsInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\Normal\TakeUnfilteredLogsScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeFilteredSensorsFromDuplicateGroupInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeFilteredSensorsFromDuplicateGroupScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeFilteredSensorsFromGroupInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeFilteredSensorsFromGroupNoRecurseScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeFilteredSensorsFromGroupScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeUnfilteredSensorsFromGroupNoRecurseScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeFilteredSensorsInsufficientNegativeLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeFilteredSensorsInsufficientNoneLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeFilteredSensorsInsufficientOneLeftScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeFilteredSensorsInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeFilteredSensorsScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeUnfilteredSensorsInsufficientScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\TakeIteratorResponse.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\TakeIteratorScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\TakeScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeUnfilteredSensorsFromGroupScenario.cs" />
+    <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeUnfilteredSensorsScenario.cs" />
     <Compile Include="Support\TreeNodes\DeviceNode.cs" />
     <Compile Include="Support\TreeNodes\GroupNode.cs" />
     <Compile Include="Support\TreeNodes\IDeviceContainer.cs" />
@@ -106,9 +139,29 @@
     <Compile Include="CSharp\ObjectManipulation\CloneTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\DynamicSensorParameterTests.cs" />
     <Compile Include="CSharp\ObjectData\GetObjectPropertyTests.cs" />
+    <Compile Include="CSharp\ObjectData\ObjectTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\OrganizationTests.cs" />
     <Compile Include="CSharp\ObjectData\DeviceSettingsTests.cs" />
-    <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\BaseQueryTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Expression\BaseExpressionTest.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Expression\MiscellaneousExpressionTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Expression\UnaryExpressionTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\AnyTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\CountTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Expression\BinaryExpressionTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\FirstTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\LastTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\OrderByTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\PrtgObjectFilterTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\SelectManyTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\SkipTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\StrictTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\TakeTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\PartialEvalQueryTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\SelectTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Linq\WhereTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\SearchFilterToExpressionTests.cs" />
+    <Compile Include="CSharp\ObjectData\Query\Types.cs" />
     <Compile Include="CSharp\ObjectData\SensorHistoryTests.cs" />
     <Compile Include="CSharp\ObjectData\GroupTests.cs" />
     <Compile Include="CSharp\ObjectData\LogTests.cs" />
@@ -127,6 +180,7 @@
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\SetObjectPropertyParametersTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\StateTests.cs" />
+    <Compile Include="CSharp\ObjectData\StringEnumTests.cs" />
     <Compile Include="CSharp\Infrastructure\TypeTests.cs" />
     <Compile Include="Support\TestItems\GroupItem.cs" />
     <Compile Include="Support\TestItems\MessageItem.cs" />
@@ -142,7 +196,7 @@
     <Compile Include="Support\TestItems\SensorHistoryItem.cs" />
     <Compile Include="Support\TestItems\SensorTotalsItem.cs" />
     <Compile Include="CSharp\ObjectData\NotificationActionTests.cs" />
-    <Compile Include="CSharp\ObjectData\ObjectTests.cs" />
+    <Compile Include="CSharp\ObjectData\StandardObjectTests.cs" />
     <Compile Include="Support\TestItems\ServerStatusItem.cs" />
     <Compile Include="Support\TestResponses\AddressValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\BaseTargetResponse.cs" />
@@ -154,9 +208,24 @@
     <Compile Include="Support\TestResponses\DeviceSettingsResponse.cs" />
     <Compile Include="Support\TestResponses\DiffBasedResolveResponse.cs" />
     <Compile Include="Support\TestResponses\ExceptionResponse.cs" />
+    <Compile Include="Support\TestResponses\Objects\ObjectResponse.cs" />
     <Compile Include="Support\TestResponses\Objects\ScheduleResponse.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Device\DeviceDeepNestingChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Device\DeviceDeepNestingGrandChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Device\DeviceDeepNestingGreatGrandChildScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\Device\DeviceDeepNestingScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\Count\GroupNoRecurseAvailableCount.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\Count\GroupNoRecurseUnavailableCount.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\Count\GroupRecurseAvailableCount.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\Count\GroupRecurseAvailableSingleCount.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\Count\GroupRecurseUnavailableCount.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\GroupDeepNestingChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\GroupDeepNestingGrandChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Group\GroupDeepNestingGreatGrandChildScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\Group\GroupDeepNestingScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingGrandChildScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingGreatGrandChildScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorDeepNestingScenario.cs" />
     <Compile Include="Support\TestResponses\SensorTarget\ExeFileTargetResponse.cs" />
     <Compile Include="Support\TestResponses\Objects\GroupResponse.cs" />
@@ -236,6 +305,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PowerShell\Infrastructure\Set-PrtgClient.Tests.ps1" />
+    <None Include="PowerShell\ObjectData\Get-Object.Tests.ps1" />
+    <None Include="PowerShell\ObjectData\Get-PrtgSchedule.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Acknowledge-Sensor.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-Device.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-Group.Tests.ps1" />
@@ -302,6 +374,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

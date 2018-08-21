@@ -3,7 +3,7 @@
     /// <summary>
     /// Tracks the progress of a PRTG Probe being restarted.
     /// </summary>
-    public class RestartProbeProgress
+    public class ProbeRestartProgress
     {
         private Probe probe { get; set; }
 
@@ -33,10 +33,10 @@
         public bool Reconnected { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RestartProbeProgress"/> class.
+        /// Initializes a new instance of the <see cref="ProbeRestartProgress"/> class.
         /// </summary>
         /// <param name="probe">The probe that is being restarted.</param>
-        public RestartProbeProgress(Probe probe)
+        public ProbeRestartProgress(Probe probe)
         {
             this.probe = probe;
         }

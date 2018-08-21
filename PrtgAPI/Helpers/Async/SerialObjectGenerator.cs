@@ -11,7 +11,7 @@ namespace PrtgAPI.Helpers
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [ExcludeFromCodeCoverage]
-    public class SerialObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
+    class SerialObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
     {
         private IEnumerator<Task<T>> enumerator;
 

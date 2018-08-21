@@ -32,7 +32,7 @@ PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which
 Install-Package PrtgAPI
 ```
 
-PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio).
+PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio). In order to install PrtgAPI from the PowerShell Gallery you must be running PowerShell 5+.
 
 If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the source you wish to install from, e.g.
 ```powershell
@@ -206,6 +206,7 @@ Get-Group
 Get-ModificationHistory
 Get-NotificationAction
 Get-NotificationTrigger
+Get-Object
 Get-ObjectLog
 Get-ObjectProperty
 Get-Probe
@@ -241,6 +242,7 @@ Set-ChannelProperty
 Set-GoPrtgAlias
 Set-ObjectPosition
 Set-ObjectProperty
+Set-PrtgClient
 Set-NotificationTrigger
 Simulate-ErrorStatus
 Sort-PrtgObject
@@ -349,3 +351,4 @@ Objects can be [cloned or created from scratch](https://github.com/lordmilko/Prt
 * [Test Logging](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#logging)
 * [PowerShell Property Binding](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#powershell-property-binding)
 * Dynamic PowerShell Formats
+* Hybrid IQueryable / IEnumerable requests

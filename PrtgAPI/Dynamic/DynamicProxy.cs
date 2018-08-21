@@ -11,6 +11,8 @@ namespace PrtgAPI.Dynamic
         internal static string GetMember => nameof(TryGetMember);
         internal static string SetMember => nameof(TrySetMember);
 
+        internal object lockObject = new object();
+
         /// <summary>
         /// Retrieves the value of a property from a dynamic object.
         /// </summary>
@@ -20,9 +22,12 @@ namespace PrtgAPI.Dynamic
         /// <returns>True if the member was successfully retrieved. Otherwise, false.</returns>
         public virtual bool TryGetMember(T instance, GetMemberBinder binder, out object value)
         {
-            value = null;
+            lock (lockObject)
+            {
+                value = null;
 
-            return false;
+                return false;
+            }
         }
 
         /// <summary>

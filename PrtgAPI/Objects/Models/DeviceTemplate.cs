@@ -9,12 +9,12 @@ namespace PrtgAPI
     public class DeviceTemplate : IFormattable, IEquatable<DeviceTemplate>
     {
         /// <summary>
-        /// The name of the template.
+        /// Gets the name of the template.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// The config file that defines the device template. Found under C:\Program Files (x86)\PRTG Network Monitor\devicetemplates on the PRTG Core Server.
+        /// Gets the config file that defines the device template. Found under C:\Program Files (x86)\PRTG Network Monitor\devicetemplates on the PRTG Core Server.
         /// </summary>
         public string Value { get; }
 
@@ -47,7 +47,6 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-        [ExcludeFromCodeCoverage]
         public override bool Equals(object other)
         {
             if (ReferenceEquals(null, other))
@@ -69,7 +68,6 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-        [ExcludeFromCodeCoverage]
         public bool Equals(DeviceTemplate other)
         {
             if (ReferenceEquals(null, other))
@@ -93,11 +91,14 @@ namespace PrtgAPI
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            var result = 0;
+            unchecked
+            {
+                var result = 0;
 
-            result = (result * 397) ^ raw.GetHashCode();
+                result = (result * 439) ^ raw.GetHashCode();
 
-            return result;
+                return result;
+            }
         }
 
         private Func<DeviceTemplate, string> serializedFormat;
