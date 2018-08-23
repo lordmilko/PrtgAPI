@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies how a PRTG Response should be formatted.
     /// </summary>
-    public enum Output
+    enum Output
     {
         /// <summary>
         /// XML file.

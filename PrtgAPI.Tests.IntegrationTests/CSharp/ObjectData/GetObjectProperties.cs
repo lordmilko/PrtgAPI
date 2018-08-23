@@ -249,7 +249,7 @@ namespace PrtgAPI.Tests.IntegrationTests.DataTests
 
         private int GetMissingPropertyTarget(ObjectProperty property)
         {
-            var category = property.GetEnumAttributeViaPrtgAPI<CategoryAttribute>(true).Name.ToEnum<ObjectPropertyCategory>();
+            var category = PrtgAPIHelpers.GetPropertyCategory(property).ToEnum<ObjectPropertyCategory>();
 
             switch (category)
             {

@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies the settings category an <see cref="ObjectProperty"/> belongs to.
     /// </summary>
-    public enum ObjectPropertyCategory
+    enum ObjectPropertyCategory
     {
         #region Containers
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions.Visitors;
@@ -66,10 +67,9 @@ namespace PrtgAPI.Tests.UnitTests.Helpers
             return EnumHelpers.ToEnum<T>(value);
         }
 
-        public static TAttribute GetEnumAttributeViaPrtgAPI<TAttribute>(this Enum element, bool mandatory = false)
-            where TAttribute : Attribute
+        public static string GetPropertyCategory(ObjectProperty property)
         {
-            return element.GetEnumAttribute<TAttribute>(mandatory);
+            return property.GetEnumAttribute<CategoryAttribute>().Name;
         }
     }
 }

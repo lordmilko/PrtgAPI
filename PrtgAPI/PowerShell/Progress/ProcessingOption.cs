@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies the progress processing mode of a cmdlet.
     /// </summary>
-    public enum ProcessingOperation
+    enum ProcessingOperation
     {
         /// <summary>
         /// Retrieving items from the server.

@@ -8,7 +8,7 @@ namespace PrtgAPI.Attributes
     /// </summary>
     [ExcludeFromCodeCoverage]
     [AttributeUsage(AttributeTargets.Field)]
-    public sealed class CategoryAttribute : Attribute
+    sealed class CategoryAttribute : Attribute
     {
         /// <summary>
         /// Gets the name of the category this attribute's associated field belongs to.

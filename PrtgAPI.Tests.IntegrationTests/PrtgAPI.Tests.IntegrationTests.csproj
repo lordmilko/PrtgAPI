@@ -57,6 +57,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="..\PrtgAPI\Enums\Serialization\ObjectPropertyCategory.cs">
+      <Link>Support\ObjectPropertyCategory.cs</Link>
+    </Compile>
     <Compile Include="CSharp\ObjectData\Query\AnyTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\BaseQueryTest.cs" />
     <Compile Include="CSharp\ObjectData\Query\CountTests.cs" />

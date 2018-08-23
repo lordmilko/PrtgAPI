@@ -10,7 +10,7 @@ namespace PrtgAPI.Exceptions.Internal
     /// </summary>
     [Serializable]
     [ExcludeFromCodeCoverage]
-    public class InvalidExpressionException : Exception
+    class InvalidExpressionException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="InvalidExpressionException"/> class.

@@ -21,7 +21,7 @@
     [void]$builder.AppendLine("    /// <summary>");
     [void]$builder.AppendLine("    /// <para type=`"description`">Specifies types of sensors that can be created in PRTG.</para>");
     [void]$builder.AppendLine("    /// </summary>");
-    [void]$builder.AppendLine("    public enum SensorTypeInternal");
+    [void]$builder.AppendLine("    enum SensorTypeInternal");
     [void]$builder.AppendLine("    {");
 
     for($i = 0; $i -lt $sortedTypes.Count; $i++)

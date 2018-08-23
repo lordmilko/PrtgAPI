@@ -566,7 +566,6 @@
     <Compile Include="Exceptions\Internal\MissingAttributeException.cs" />
     <Compile Include="Exceptions\Internal\MissingParameterTypeException.cs" />
     <Compile Include="Exceptions\PrtgRequestException.cs" />
-    <Compile Include="Exceptions\UnknownTypeException.cs" />
     <Compile Include="Exceptions\XmlDeserializationException.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\XDocumentHelpers.cs" />
