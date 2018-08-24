@@ -119,7 +119,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (probe != null)
                         probesRestarted.Add(probe);
 
-                    ExecuteOperation(() => client.RestartProbe(probe?.Id), progressMessage, !Wait);
+                    ExecuteOperation(() => client.RestartProbe(probe == null ? null : new[] {probe.Id}), progressMessage, !Wait);
                 }
             }
         }
@@ -140,20 +140,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
-        private bool WriteProbeProgress(List<ProbeRestartProgress> probeStatuses)
+        private bool WriteProbeProgress(ProbeRestartProgress[] probeStatuses)
         {
             var completed = probeStatuses.Count(p => p.Reconnected) + 1;
 
             var complete = false;
 
-            if (completed > probeStatuses.Count)
+            if (completed > probeStatuses.Length)
             {
                 completed--;
                 complete = true;
             }
 
-            var statusDescription = $"Restarting all probes {completed}/{probeStatuses.Count}";
-            var completedPercent = (int) (completed/(double) probeStatuses.Count*100);
+            var statusDescription = $"Restarting all probes {completed}/{probeStatuses.Length}";
+            var completedPercent = (int) (completed/(double) probeStatuses.Length * 100);
             var currentOperation = "Waiting for all probes to restart";
 
             DisplayPostProcessProgress(ProgressActivity, statusDescription, completedPercent, secondsRemaining, currentOperation, complete);
@@ -173,7 +173,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 if (secondsElapsed > Timeout)
                 {
-                    var remaining = probeStatuses.Count - completed + 1;
+                    var remaining = probeStatuses.Length - completed + 1;
 
                     var plural = remaining == 1 ? "probe" : "probes";
 
@@ -185,10 +185,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
 #if DEBUG
                 if(!client.UnitTest())
-                    Thread.Sleep(1000);
-#else
-                Thread.Sleep(1000);
 #endif
+                Thread.Sleep(1000);
+
 
                 ProgressManager.WriteProgress(true);
             }

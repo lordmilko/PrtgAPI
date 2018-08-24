@@ -97,15 +97,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestMethod]
         public void AdminTool_RestartProbe_CanWait()
         {
-            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
-            var webClient = new MockWebClient(new RestartProbeResponse());
-            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
+            var customClient = GetRestartProbeClient();
 
             var count = 0;
 
             customClient.RestartProbe(null, true, probes =>
             {
-                count += probes.Count;
+                count += probes.Length;
 
                 return false;
             });
@@ -116,20 +114,51 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestMethod]
         public async Task AdminTool_RestartProbe_CanWaitAsync()
         {
-            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
-            var webClient = new MockWebClient(new RestartProbeResponse());
-            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
+            var customClient = GetRestartProbeClient();
 
             var count = 0;
 
             await customClient.RestartProbeAsync(null, true, probes =>
             {
-                count += probes.Count;
+                count += probes.Length;
 
                 return false;
             });
 
             Assert.AreEqual(2, count, "Callback was not called expected number of times");
+        }
+
+        [TestMethod]
+        public void AdminTool_RestartProbe_NoArguments()
+        {
+            Execute(c => c.RestartProbe(), "restartprobes.htm?username");
+        }
+
+        [TestMethod]
+        public async Task AdminTool_RestartProbe_NoArgumentsAsync()
+        {
+            await ExecuteAsync(async c => await c.RestartProbeAsync(), "restartprobes.htm?username");
+        }
+
+        [TestMethod]
+        public void AdminTool_RestartProbe_EmptyArray()
+        {
+            Execute(c => c.RestartProbe(new int[] {}), "restartprobes.htm?username");
+        }
+
+        [TestMethod]
+        public async Task AdminTool_RestartProbe_EmptyArrayAsync()
+        {
+            await ExecuteAsync(async c => await c.RestartProbeAsync(new int[] {}), "restartprobes.htm?username");
+        }
+
+        private PrtgClient GetRestartProbeClient()
+        {
+            var standardClient = Initialize_Client(new BasicResponse(string.Empty));
+            var webClient = new MockWebClient(new RestartProbeResponse());
+            var customClient = new PrtgClient(standardClient.Server, standardClient.UserName, standardClient.PassHash, AuthMode.PassHash, webClient);
+
+            return customClient;
         }
     }
 }

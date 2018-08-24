@@ -474,7 +474,7 @@ namespace PrtgAPI
         // WaitForCoreRestart
         //######################################
 
-        internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<List<ProbeRestartProgress>, bool>  progressCallback)
+        internal void WaitForProbeRestart(DateTime restartTime, List<Probe> probes, Func<ProbeRestartProgress[], bool>  progressCallback)
         {
             List<ProbeRestartProgress> probeStatuses = probes.Select(p => new ProbeRestartProgress(p)).ToList();
 
@@ -495,7 +495,7 @@ namespace PrtgAPI
                     Thread.Sleep(5000);
                 else
                 {
-                    var result = progressCallback(probeStatuses);
+                    var result = progressCallback(probeStatuses.ToArray());
 
                     if (!result)
                         break;
@@ -503,7 +503,7 @@ namespace PrtgAPI
             }
         }
 
-        internal async Task WaitForProbeRestartAsync(DateTime restartTime, List<Probe> probes, Func<List<ProbeRestartProgress>, bool>  progressCallback)
+        internal async Task WaitForProbeRestartAsync(DateTime restartTime, List<Probe> probes, Func<ProbeRestartProgress[], bool>  progressCallback)
         {
             List<ProbeRestartProgress> probeStatuses = probes.Select(p => new ProbeRestartProgress(p)).ToList();
 
@@ -524,7 +524,7 @@ namespace PrtgAPI
                     await Task.Delay(5000).ConfigureAwait(false);
                 else
                 {
-                    var result = progressCallback(probeStatuses);
+                    var result = progressCallback(probeStatuses.ToArray());
 
                     if (!result)
                         break;

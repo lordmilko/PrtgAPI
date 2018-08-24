@@ -149,8 +149,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     return false;
 #if DEBUG
                 if(!client.UnitTest())
-                    Thread.Sleep(1000);
 #endif
+                Thread.Sleep(1000);
+
 
                 ProgressManager.WriteProgress(true);
             }
