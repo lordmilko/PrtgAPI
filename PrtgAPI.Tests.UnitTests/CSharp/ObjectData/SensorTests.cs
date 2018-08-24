@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
     public class SensorTests : QueryableObjectTests<Sensor, SensorItem, SensorResponse>

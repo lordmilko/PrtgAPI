@@ -3,11 +3,10 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Request.Serialization;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
+namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     class CustomType
     {
@@ -150,7 +149,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
 
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)
         {
-            Assert.AreEqual(((IFormattable) interval).GetSerializedFormat(), value, "Serialized format was not correct");
+            Assert.AreEqual(((Request.IFormattable) interval).GetSerializedFormat(), value, "Serialized format was not correct");
         }
 
         private void ParseScanningIntervalAndCheckSerializedValue(StandardScanningInterval interval, string value)

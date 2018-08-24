@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Internal
+﻿namespace PrtgAPI
 {
     /// <summary>
     /// Specifies the settings category an <see cref="ObjectProperty"/> belongs to.

@@ -7,7 +7,7 @@ using PrtgAPI.Schedules;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
     public class ScheduleTests : StandardObjectTests<Schedule, ScheduleItem, ScheduleResponse>

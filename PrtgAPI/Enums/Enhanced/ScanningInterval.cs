@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents a well known or custom TimeSpan used for the Scanning Interval of an object.
     /// </summary>
-    public class ScanningInterval : IFormattable, IEquatable<ScanningInterval>, IEnumEx
+    public class ScanningInterval : Request.IFormattable, IEquatable<ScanningInterval>, IEnumEx
     {
         /// <summary>
         /// Scan every 30 seconds.
@@ -289,7 +289,7 @@ namespace PrtgAPI
             return TimeSpan.ToString();
         }
 
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             if (interval is StandardScanningInterval)
             {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes
+namespace PrtgAPI.Tests.UnitTests.TreeNodes
 {
     abstract class TreeNode<TTestItem> : ITreeNode
     {

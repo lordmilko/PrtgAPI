@@ -14,7 +14,7 @@ using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
+namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
     public class AssemblyTests

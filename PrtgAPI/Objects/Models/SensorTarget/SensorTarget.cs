@@ -11,7 +11,7 @@ namespace PrtgAPI.Targets
     /// <para type="description">Represents a resource that can be monitored or used for monitoring by a PRTG Sensor.</para>
     /// </summary>
     /// <typeparam name="T">The type of this object.</typeparam>
-    public abstract class SensorTarget<T> : IFormattable, IEquatable<T> where T : SensorTarget<T>
+    public abstract class SensorTarget<T> : Request.IFormattable, IEquatable<T> where T : SensorTarget<T>
     {
         /// <summary>
         /// Gets the name of the target.
@@ -55,7 +55,7 @@ namespace PrtgAPI.Targets
             return $"{name}|{name}||";
         }
 
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             return raw;
         }

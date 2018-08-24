@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 {
     [TestClass]
     public class ChannelTests : BasePrtgClientTest

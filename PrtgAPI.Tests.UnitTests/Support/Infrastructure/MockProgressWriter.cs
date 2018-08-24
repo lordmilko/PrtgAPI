@@ -2,9 +2,9 @@
 using System.Linq;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.PowerShell.Progress;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress;
+using PrtgAPI.Tests.UnitTests.Support.Progress;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     public class MockProgressWriter : IProgressWriter
     {

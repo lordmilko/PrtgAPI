@@ -5,9 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
     public abstract class StreamableObjectTests<TObject, TItem, TResponse> : StandardObjectTests<TObject, TItem, TResponse>

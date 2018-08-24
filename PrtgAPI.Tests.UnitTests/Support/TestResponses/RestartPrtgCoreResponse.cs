@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {

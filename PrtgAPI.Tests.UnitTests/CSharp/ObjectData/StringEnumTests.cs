@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     enum SimpleEnum
     {

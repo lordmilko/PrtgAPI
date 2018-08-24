@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     [TestClass]
     public class SelectManyTests : BaseQueryTests

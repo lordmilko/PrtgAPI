@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     class MockRetryWebClient : IWebClient
     {

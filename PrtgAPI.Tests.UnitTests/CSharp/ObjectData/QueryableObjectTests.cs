@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     public abstract class QueryableObjectTests<TObject, TItem, TResponse> : StreamableObjectTests<TObject, TItem, TResponse>
         where TResponse : IWebResponse

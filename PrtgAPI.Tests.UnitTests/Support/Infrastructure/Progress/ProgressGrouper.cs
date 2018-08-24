@@ -7,9 +7,9 @@ using System.Reflection;
 using System.Text;
 using PrtgAPI.PowerShell.Progress;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
+namespace PrtgAPI.Tests.UnitTests.Support.Progress
 {
-    public class ProgressGrouperLogger
+    public static class ProgressGrouperLogger
     {
         private static int indentLevel = -1;
 
@@ -47,7 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
         }
     }
 
-    public class ProgressGrouper
+    public static class ProgressGrouper
     {
         public static ProgressHierarchy GetHierarchy(List<ProgressRecordEx> records)
         {

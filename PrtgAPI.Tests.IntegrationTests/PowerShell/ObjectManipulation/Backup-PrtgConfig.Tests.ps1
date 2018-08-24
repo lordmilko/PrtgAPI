@@ -2,7 +2,7 @@
 
 Describe "Backup-PrtgConfig_IT" {
     It "can execute" {
-        $originalFiles = [PrtgAPI.Tests.IntegrationTests.ActionTests.AdminToolTests]::GetBackupFiles() | select -ExpandProperty FullName
+        $originalFiles = [PrtgAPI.Tests.IntegrationTests.ObjectManipulation.AdminToolTests]::GetBackupFiles() | select -ExpandProperty FullName
 
         $originalFiles.Count | Should BeGreaterThan 0
 
@@ -11,7 +11,7 @@ Describe "Backup-PrtgConfig_IT" {
         LogTest "Pausing for 10 seconds while backup is created"
         Sleep 10
 
-        $newFiles = [PrtgAPI.Tests.IntegrationTests.ActionTests.AdminToolTests]::GetBackupFiles() | select -ExpandProperty FullName
+        $newFiles = [PrtgAPI.Tests.IntegrationTests.ObjectManipulation.AdminToolTests]::GetBackupFiles() | select -ExpandProperty FullName
 
         $newFiles.Count | Should Be ($originalFiles.Count + 1)
 
@@ -21,6 +21,6 @@ Describe "Backup-PrtgConfig_IT" {
 
         $firstFile = $diff | select -First 1
 
-        [PrtgAPI.Tests.IntegrationTests.ActionTests.AdminToolTests]::RemoveBackupFile($firstFile)
+        [PrtgAPI.Tests.IntegrationTests.ObjectManipulation.AdminToolTests]::RemoveBackupFile($firstFile)
     }
 }

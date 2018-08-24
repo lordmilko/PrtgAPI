@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Tests.IntegrationTests.DataTests
+﻿namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
     class SensorTotalsTests
     {

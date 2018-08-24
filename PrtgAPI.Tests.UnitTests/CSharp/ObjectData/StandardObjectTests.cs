@@ -2,9 +2,8 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     /*
      

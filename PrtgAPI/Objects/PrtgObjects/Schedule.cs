@@ -9,7 +9,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a schedule used to indicate when monitoring should be active on an object.</para>
     /// </summary>
-    public class Schedule : PrtgObject, IEquatable<Schedule>, IFormattable
+    public class Schedule : PrtgObject, IEquatable<Schedule>, Request.IFormattable
     {
         private string url;
 
@@ -87,7 +87,7 @@ namespace PrtgAPI
 
         private bool IsEqual(Schedule other)
         {
-            return ((IFormattable)this).GetSerializedFormat() == ((IFormattable)other).GetSerializedFormat();
+            return ((Request.IFormattable)this).GetSerializedFormat() == ((Request.IFormattable)other).GetSerializedFormat();
         }
 
         /// <summary>
@@ -101,14 +101,14 @@ namespace PrtgAPI
             {
                 var result = 0;
 
-                result = (result * 401) ^ ((IFormattable)this).GetSerializedFormat().GetHashCode();
+                result = (result * 401) ^ ((Request.IFormattable)this).GetSerializedFormat().GetHashCode();
 
                 return result;
             }
         }
 
         [ExcludeFromCodeCoverage]
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             return $"{Id}|{Name}|";
         }

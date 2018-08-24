@@ -1,4 +1,6 @@
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+using PrtgAPI.Request;
+
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     class FakeMultipleFormattable : IFormattableMultiple
     {

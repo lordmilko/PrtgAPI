@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using Expr = System.Linq.Expressions.Expression;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     public class IllegalInt
     {
@@ -540,7 +541,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
         [TestMethod]
         public void Query_Where_Enum_AgainstDifferentEnumType_ManualExpression()
         {
-            var lambda = Expression.BaseExpressionTest.CreateLambda(Property.Status, s =>
+            var lambda = BaseExpressionTest.CreateLambda(Property.Status, s =>
             {
                 var retry = Expr.Constant(RetryMode.Retry);
                 var methodInfo = typeof(object).GetMethod(nameof(Equals), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);

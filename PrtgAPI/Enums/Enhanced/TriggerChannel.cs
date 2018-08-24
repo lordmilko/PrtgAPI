@@ -9,7 +9,7 @@ namespace PrtgAPI
     /// <summary>
     /// Represents a channel that can cause a Notification Trigger to activate.
     /// </summary>
-    public class TriggerChannel : IFormattable, IEquatable<TriggerChannel>, IEnumEx
+    public class TriggerChannel : Request.IFormattable, IEquatable<TriggerChannel>, IEnumEx
     {
         /// <summary>
         /// The sensor's primary channel.
@@ -217,7 +217,7 @@ namespace PrtgAPI
             return channel.ToString();
         }
 
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             //The serialized format of a TriggerChannel is an integer.
 
@@ -280,7 +280,7 @@ namespace PrtgAPI
 
         private bool IsEqual(TriggerChannel other)
         {
-            return ((IFormattable)this).GetSerializedFormat() == ((IFormattable)other).GetSerializedFormat();
+            return ((Request.IFormattable)this).GetSerializedFormat() == ((Request.IFormattable)other).GetSerializedFormat();
         }
 
         //todo: this NEEDS unit tests
@@ -296,7 +296,7 @@ namespace PrtgAPI
             {
                 var result = 0;
 
-                result = (result * 419) ^ Convert.ToInt32(((IFormattable)this).GetSerializedFormat());
+                result = (result * 419) ^ Convert.ToInt32(((Request.IFormattable)this).GetSerializedFormat());
 
                 return result;
             }

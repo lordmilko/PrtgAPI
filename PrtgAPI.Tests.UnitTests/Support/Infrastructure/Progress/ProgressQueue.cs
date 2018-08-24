@@ -5,7 +5,7 @@ using System.Management.Automation;
 using System.Text;
 using PrtgAPI.PowerShell.Progress;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
+namespace PrtgAPI.Tests.UnitTests.Support.Progress
 {
     public class ProgressQueue
     {

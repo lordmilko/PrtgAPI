@@ -2,7 +2,7 @@
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 
-namespace PrtgAPI.Tests.IntegrationTests.ActionTests.Types
+namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation.Types
 {
     public class ExeXmlRawSensorParameters : RawSensorParameters
     {

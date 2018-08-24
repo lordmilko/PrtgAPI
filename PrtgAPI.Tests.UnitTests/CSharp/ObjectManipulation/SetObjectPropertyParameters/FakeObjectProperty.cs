@@ -1,6 +1,6 @@
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     enum FakeObjectProperty
     {

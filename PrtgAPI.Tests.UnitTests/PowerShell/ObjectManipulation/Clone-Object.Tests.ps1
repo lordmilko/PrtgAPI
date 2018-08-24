@@ -2,7 +2,7 @@
 
 function SetCloneResponse
 {
-    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.CloneResponse))
+    $client = [PrtgAPI.Tests.UnitTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.CloneResponse))
 
     SetPrtgClient $client
 }

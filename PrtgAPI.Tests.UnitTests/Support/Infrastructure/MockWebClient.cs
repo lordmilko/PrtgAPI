@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     class MockWebClient : IWebClient
     {

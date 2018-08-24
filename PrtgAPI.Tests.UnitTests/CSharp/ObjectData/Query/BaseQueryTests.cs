@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     public abstract class BaseQueryTests : BaseTest
     {

@@ -3,8 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
+using PrtgAPI.Tests.UnitTests.TreeNodes;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {

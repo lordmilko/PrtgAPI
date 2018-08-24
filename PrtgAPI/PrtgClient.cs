@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
-using PrtgAPI.Internal;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     [TestClass]
     public class StrictTests : BaseQueryTests
@@ -457,7 +458,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq
         {
             ExecuteUnsupported(
                 q => q.Where(s => StrictMethodSource(s)),
-                "Condition 'value(PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq.StrictTests).StrictMethodSource(s)' did not contain a property expression.",
+                "Condition 'value(PrtgAPI.Tests.UnitTests.ObjectData.Query.StrictTests).StrictMethodSource(s)' did not contain a property expression.",
 
                 q => q.AsEnumerable().Where(StrictMethodSource),
                 string.Empty,

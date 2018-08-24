@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI
+﻿namespace PrtgAPI.Request
 {
     /// <summary>
     /// Represents a type whose value when serialized is different from its typical string representation.

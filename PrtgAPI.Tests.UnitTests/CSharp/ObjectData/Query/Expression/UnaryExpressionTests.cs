@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Expr = System.Linq.Expressions.Expression;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Expression
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     [TestClass]
     public class UnaryExpressionTests : BaseExpressionTest

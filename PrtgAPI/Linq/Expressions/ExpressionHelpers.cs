@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Linq.Expressions;
+using PrtgAPI.Helpers;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Linq.Expressions
 {
     static class ExpressionHelpers
     {

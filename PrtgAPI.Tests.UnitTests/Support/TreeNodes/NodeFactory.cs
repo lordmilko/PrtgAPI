@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes
+﻿namespace PrtgAPI.Tests.UnitTests.TreeNodes
 {
     class NodeFactory
     {

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PrtgAPI.PowerShell;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     public abstract class BaseObjectTests<TObject, TItem, TResponse> : BaseTest where TResponse : IWebResponse
     {

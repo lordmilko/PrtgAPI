@@ -85,11 +85,11 @@ function SetState($objectType, $items)
 
     if(!$items)
     {
-        $tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
+        $tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectData.$($objectType)Tests)
     }
     else
     {
-        $tester = New-Object "PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests" -ArgumentList ($items)
+        $tester = New-Object "PrtgAPI.Tests.UnitTests.ObjectData.$($objectType)Tests" -ArgumentList ($items)
     }
     
     $tester.SetPrtgSessionState()

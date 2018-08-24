@@ -5,10 +5,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions;
-using PrtgAPI.Tests.UnitTests.Helpers;
-using PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     [TestClass]
     public class SearchFilterToExpressionTests

@@ -2,7 +2,7 @@ using System;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request.Serialization.Cache;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     class FakeSetObjectPropertyParameters : BaseSetObjectPropertyParameters<FakeObjectProperty>
     {

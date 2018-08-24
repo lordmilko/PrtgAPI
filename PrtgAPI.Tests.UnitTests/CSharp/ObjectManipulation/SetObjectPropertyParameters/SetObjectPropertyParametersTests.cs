@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     [TestClass]
     public class SetObjectPropertyParametersTests : BaseTest

@@ -173,7 +173,7 @@ for(int i = 0; i < 2; i++)
                 if (channel.channel is Channel)
                     anyResponse = (<#= CallFunction("GetChannelsInternal", "parameters.ObjectId, n => n == ((Channel)channel.channel).Name, i => i == ((Channel)channel.channel).Id", i) #>).Any();
                 else
-                    anyResponse = (<#= CallFunction("GetChannelProperties", "parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())", i) #>).Descendants().Any();
+                    anyResponse = (<#= CallFunction("GetChannelProperties", "parameters.ObjectId, Convert.ToInt32(((Request.IFormattable)channel).GetSerializedFormat())", i) #>).Descendants().Any();
 
                 if (!anyResponse)
                     throw new InvalidOperationException($"Channel {(channel.channel is int ? "ID " : "")}'{channel}' is not a valid channel for sensor with ID {parameters.ObjectId}. Channel could not be found.");

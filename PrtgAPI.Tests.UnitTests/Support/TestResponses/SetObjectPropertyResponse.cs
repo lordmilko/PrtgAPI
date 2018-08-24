@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.Parameters;

@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.PowerShell
 {
@@ -54,8 +55,8 @@ namespace PrtgAPI.PowerShell
 
         private string GetSerializedFormat(object value)
         {
-            if (value is IFormattable)
-                return ((IFormattable)value).GetSerializedFormat();
+            if (value is Request.IFormattable)
+                return ((Request.IFormattable)value).GetSerializedFormat();
 
             return value?.ToString();
         }

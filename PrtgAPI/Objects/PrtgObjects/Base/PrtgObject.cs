@@ -9,7 +9,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
-    public class PrtgObject : IPrtgObject, ITableObject, IFormattable
+    public class PrtgObject : IPrtgObject, ITableObject, Request.IFormattable
     {
         // ################################## All Object Tables ##################################
 
@@ -161,7 +161,7 @@ namespace PrtgAPI
         }
 
         [ExcludeFromCodeCoverage]
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             return raw ?? ToString();
         }

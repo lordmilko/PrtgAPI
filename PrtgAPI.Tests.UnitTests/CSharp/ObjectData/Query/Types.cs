@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query
+﻿namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     public class RealTypeProperty
     {

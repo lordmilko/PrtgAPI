@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {

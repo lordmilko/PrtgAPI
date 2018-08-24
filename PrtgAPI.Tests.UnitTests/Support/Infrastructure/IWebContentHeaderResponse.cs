@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http.Headers;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     interface IWebContentHeaderResponse : IWebResponse
     {

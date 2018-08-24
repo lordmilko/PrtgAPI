@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     [TestClass]
     public class PartialEvalQueryTests : BaseQueryTests

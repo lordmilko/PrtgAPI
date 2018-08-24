@@ -21,7 +21,7 @@
 
         $uniquePrtgTypes = $prtgTypes|group id|foreach { $_.group | Select -first 1 }
 
-        $knownValues = [Enum]::GetValues([PrtgAPI.SensorTypeInternal])
+        $knownValues = [Enum]::GetValues([PrtgAPI.PrtgClient].Assembly.GetType("PrtgAPI.SensorTypeInternal"))
         $xmlEnumAttributes = $knownValues | foreach {
             $attribs = ($_.GetType().GetMember($_.ToString()) | Select -First 1).GetCustomAttributes([System.Xml.Serialization.XmlEnumAttribute], $false)
 

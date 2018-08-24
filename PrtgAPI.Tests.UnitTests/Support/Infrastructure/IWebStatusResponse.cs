@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     interface IWebStatusResponse : IWebResponse
     {

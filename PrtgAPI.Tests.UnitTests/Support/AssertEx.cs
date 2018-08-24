@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
-using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests
 {

@@ -4,9 +4,9 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
     public class NotificationTriggerParametersTests : NotificationTriggerBaseTests

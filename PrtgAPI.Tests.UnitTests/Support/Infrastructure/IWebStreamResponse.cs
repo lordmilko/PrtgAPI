@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support
+namespace PrtgAPI.Tests.UnitTests
 {
     public interface IWebStreamResponse : IWebResponse
     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {

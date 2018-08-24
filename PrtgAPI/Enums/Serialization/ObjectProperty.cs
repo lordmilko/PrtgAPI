@@ -1,5 +1,4 @@
 ﻿using PrtgAPI.Attributes;
-using PrtgAPI.Internal;
 using PrtgAPI.Targets;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
@@ -726,8 +725,8 @@ namespace PrtgAPI
         FileSizeUnit,
 
         #endregion
-        #endregion
-        #region Sensors
+    #endregion
+    #region Sensors
         #region Access Rights
 
         /// <summary>
@@ -1271,8 +1270,8 @@ namespace PrtgAPI
         [Category(nameof(ObjectPropertyCategory.Special))]
         Comments,
 
-        #endregion
-        #region Devices
+    #endregion
+    #region Devices
 
         /// <summary>
         /// The IPv4 Address or HostName to use to connect to a device. The same as <see cref="Hostv4"/>.<para/>

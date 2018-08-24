@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
+namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
     public class SearchFilterTests

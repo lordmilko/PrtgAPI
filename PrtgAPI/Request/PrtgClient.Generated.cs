@@ -219,7 +219,7 @@ namespace PrtgAPI
                 if (channel.channel is Channel)
                     anyResponse = (GetChannelsInternal(parameters.ObjectId, n => n == ((Channel)channel.channel).Name, i => i == ((Channel)channel.channel).Id)).Any();
                 else
-                    anyResponse = (GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat()))).Descendants().Any();
+                    anyResponse = (GetChannelProperties(parameters.ObjectId, Convert.ToInt32(((Request.IFormattable)channel).GetSerializedFormat()))).Descendants().Any();
 
                 if (!anyResponse)
                     throw new InvalidOperationException($"Channel {(channel.channel is int ? "ID " : "")}'{channel}' is not a valid channel for sensor with ID {parameters.ObjectId}. Channel could not be found.");
@@ -262,7 +262,7 @@ namespace PrtgAPI
                 if (channel.channel is Channel)
                     anyResponse = (await GetChannelsInternalAsync(parameters.ObjectId, n => n == ((Channel)channel.channel).Name, i => i == ((Channel)channel.channel).Id).ConfigureAwait(false)).Any();
                 else
-                    anyResponse = (await GetChannelPropertiesAsync(parameters.ObjectId, Convert.ToInt32(((IFormattable)channel).GetSerializedFormat())).ConfigureAwait(false)).Descendants().Any();
+                    anyResponse = (await GetChannelPropertiesAsync(parameters.ObjectId, Convert.ToInt32(((Request.IFormattable)channel).GetSerializedFormat())).ConfigureAwait(false)).Descendants().Any();
 
                 if (!anyResponse)
                     throw new InvalidOperationException($"Channel {(channel.channel is int ? "ID " : "")}'{channel}' is not a valid channel for sensor with ID {parameters.ObjectId}. Channel could not be found.");

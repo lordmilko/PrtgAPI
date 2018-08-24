@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI
+﻿namespace PrtgAPI.Request
 {
     interface IFormattableMultiple : IFormattable
     {

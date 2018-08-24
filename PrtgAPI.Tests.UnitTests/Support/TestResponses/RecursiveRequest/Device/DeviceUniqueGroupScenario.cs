@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes;
+using PrtgAPI.Tests.UnitTests.TreeNodes;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {

@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Targets;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests;
+using PrtgAPI.Tests.UnitTests.Infrastructure;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     [TestClass]
     public class DynamicSensorParameterTests : BaseTest

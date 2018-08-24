@@ -66,10 +66,10 @@ namespace PrtgAPI.Parameters.Helpers
 
             if (Property.GetEnumAttribute<TypeAttribute>() != null)
             {
-                if (Value is IFormattable)
+                if (Value is Request.IFormattable)
                 {
                     Type = TypeCategory.Other;
-                    return ((IFormattable)Value).GetSerializedFormat();
+                    return ((Request.IFormattable)Value).GetSerializedFormat();
                 }
 
                 throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported");
@@ -261,14 +261,14 @@ namespace PrtgAPI.Parameters.Helpers
 
             if (PropertyType == ValueType)
             {
-                if (typeof (IFormattable).IsAssignableFrom(PropertyType))
+                if (typeof (Request.IFormattable).IsAssignableFrom(PropertyType))
                 {
                     Type = TypeCategory.Other;
-                    val = ((IFormattable)Value).GetSerializedFormat();
+                    val = ((Request.IFormattable)Value).GetSerializedFormat();
                 }
                     
                 else
-                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(IFormattable)}");
+                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(Request.IFormattable)}");
             }
             else
                 throw new InvalidTypeException(PropertyType, ValueType);

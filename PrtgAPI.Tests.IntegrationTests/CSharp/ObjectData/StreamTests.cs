@@ -2,9 +2,8 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.IntegrationTests.QueryTests;
-using PrtgAPI.Tests.UnitTests;
-using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.IntegrationTests.ObjectData.Query;
+using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
@@ -1164,7 +1163,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         [TestMethod]
         public void Data_HasAllStreamTests()
         {
-            var expected = TestHelpers.GetTests(typeof(UnitTests.ObjectTests.StreamTests)).Where(m => m.Name != "Stream_HasAllTests").Select(m => $"Data_{m.Name}").ToList();
+            var expected = TestHelpers.GetTests(typeof(UnitTests.ObjectData.StreamTests)).Where(m => m.Name != "Stream_HasAllTests").Select(m => $"Data_{m.Name}").ToList();
 
             TestHelpers.Assert_TestClassHasMethods(GetType(), expected);
         }

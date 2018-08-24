@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Linq.Expressions.Visitors.Parameters
 {

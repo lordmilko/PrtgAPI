@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests
+namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
     public class PrtgUrlTests

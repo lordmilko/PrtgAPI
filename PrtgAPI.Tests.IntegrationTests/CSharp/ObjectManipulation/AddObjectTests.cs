@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.IntegrationTests.ActionTests.Types;
+using PrtgAPI.Tests.IntegrationTests.ObjectManipulation.Types;
 
-namespace PrtgAPI.Tests.IntegrationTests.ActionTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 {
     [TestClass]
     public class AddObjectTests : BasePrtgClientTest

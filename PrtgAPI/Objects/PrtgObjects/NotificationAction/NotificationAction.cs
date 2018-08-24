@@ -13,7 +13,7 @@ namespace PrtgAPI
     /// <para type="description">An action to be performed by PRTG when a <see cref="NotificationTrigger"/> activates.</para>
     /// </summary>
     [Description("Notification Action")]
-    public class NotificationAction : PrtgObject, IFormattable, ILazy
+    public class NotificationAction : PrtgObject, Request.IFormattable, ILazy
     {
         private string url;
 
@@ -175,7 +175,7 @@ namespace PrtgAPI
         {
         }
 
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             return $"{Id}|{Name}";
         }

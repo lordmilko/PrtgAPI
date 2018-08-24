@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Attributes;
-using PrtgAPI.Internal;
-using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.IntegrationTests.DataTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
     [TestClass]
     public class GetObjectProperties : BasePrtgClientTest

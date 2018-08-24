@@ -9,7 +9,7 @@ using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions.Visitors;
 using PrtgAPI.Parameters;
 
-namespace PrtgAPI.Tests.UnitTests.Helpers
+namespace PrtgAPI.Tests.UnitTests.Support
 {
     public static class PrtgAPIHelpers
     {

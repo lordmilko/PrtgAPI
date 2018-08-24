@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unit = PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query;
+using Unit = PrtgAPI.Tests.UnitTests.ObjectData.Query;
 
-namespace PrtgAPI.Tests.IntegrationTests.QueryTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 {
     [TestClass]
     public class SelectManyTests : BaseQueryTest
@@ -226,7 +226,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         [TestMethod]
         public void Data_SelectManyTests_HasAllTests()
         {
-            HasAllTests(typeof(Unit.Linq.SelectManyTests));
+            HasAllTests(typeof(Unit.SelectManyTests));
         }
     }
 }

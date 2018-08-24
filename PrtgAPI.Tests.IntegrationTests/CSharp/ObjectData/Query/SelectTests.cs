@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query;
-using Unit = PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using Unit = PrtgAPI.Tests.UnitTests.ObjectData.Query;
 
-namespace PrtgAPI.Tests.IntegrationTests.QueryTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 {
     [TestClass]
     public class SelectTests : BaseQueryTest
@@ -242,7 +241,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
 
             Execute(q => q.Select(s =>
-                    new RealTypeProperty
+                    new Unit.RealTypeProperty
                     {
                         RealName = s.Name,
                         RealBaseType = s.BaseType
@@ -260,7 +259,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
 
-            Execute(q => q.Select(s => new RealTypeConstructor(s.Name, s.BaseType)
+            Execute(q => q.Select(s => new Unit.RealTypeConstructor(s.Name, s.BaseType)
                 ).Select(a => new
                 {
                     Val = a.RealName
@@ -275,7 +274,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
 
             Execute(q => q.Select(s =>
-                    new RealTypeConstructorGetOnly(s.Name, s.BaseType)
+                    new Unit.RealTypeConstructorGetOnly(s.Name, s.BaseType)
                 ).Select(a => new
                 {
                     Val = a.RealName
@@ -290,7 +289,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
 
             Execute(q => q.Select(s =>
-                    new RealTypeHybrid(s.Name, s.BaseType)
+                    new Unit.RealTypeHybrid(s.Name, s.BaseType)
                     {
                         RealActive = s.Active
                     }

@@ -9,7 +9,7 @@ using PrtgAPI.Parameters;
 using PrtgAPI.Targets;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     [TestClass]
     public class AddObjectTests : BaseTest
@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
 
         private PrtgClient GetAddExcessiveSensorClient(List<WmiServiceTarget> services)
         {
-            var formats = services.Select(s => "service__check=" + HttpUtility.UrlEncode(((IFormattable)s).GetSerializedFormat())).ToList();
+            var formats = services.Select(s => "service__check=" + HttpUtility.UrlEncode(((Request.IFormattable)s).GetSerializedFormat())).ToList();
 
             var urls = new List<string>();
 

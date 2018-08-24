@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.UnitTests.Helpers;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.IntegrationTests.DataTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
     [TestClass]
     public class NotificationTriggerTests : BasePrtgClientTest

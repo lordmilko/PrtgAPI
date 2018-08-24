@@ -2,7 +2,7 @@
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 {
     [TestClass]
     public class PrtgClientStateTests : BasePrtgClientTest

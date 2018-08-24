@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests.ActionTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 {
     [TestClass]
     public class AdminToolTests : BasePrtgClientTest

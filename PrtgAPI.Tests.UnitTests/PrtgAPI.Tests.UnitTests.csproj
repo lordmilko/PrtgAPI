@@ -295,7 +295,7 @@
     <Compile Include="CSharp\Infrastructure\PrtgClientTests.cs" />
     <Compile Include="CSharp\Infrastructure\PrtgUrlTests.cs" />
     <Compile Include="CSharp\Infrastructure\SearchFilterTests.cs" />
-    <Compile Include="Support\Infrastructure\PassHashResponse.cs" />
+    <Compile Include="Support\TestResponses\PassHashResponse.cs" />
     <Compile Include="Support\TestItems\SensorItem.cs" />
   </ItemGroup>
   <ItemGroup>

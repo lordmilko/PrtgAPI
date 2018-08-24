@@ -12,12 +12,12 @@ using PrtgAPI.Request.Serialization.FilterHandlers;
 using PrtgAPI.Request.Serialization.ValueConverters;
 using PrtgAPI.Schedules;
 using PrtgAPI.Targets;
-using PrtgAPI.Tests.UnitTests.Helpers;
-using PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using PrtgAPI.Tests.UnitTests.ObjectData.Query;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 using ReflectionHelpers = PrtgAPI.Helpers.ReflectionHelpers;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     class Parsee
     {
@@ -825,7 +825,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectTests
             }
         }
 
-        private void TestParse<T>(params object[] args) where T : IFormattable
+        private void TestParse<T>(params object[] args) where T : Request.IFormattable
         {
              var method = typeof(T).GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.IntegrationTests.QueryTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 {
     public class BaseQueryTest : BasePrtgClientTest
     {

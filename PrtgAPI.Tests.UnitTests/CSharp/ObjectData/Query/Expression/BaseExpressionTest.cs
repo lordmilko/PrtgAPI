@@ -4,9 +4,10 @@ using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Linq.Expressions.Visitors;
+using PrtgAPI.Tests.UnitTests.Support;
 using Expr = System.Linq.Expressions.Expression;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Expression
+namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 {
     public abstract class BaseExpressionTest : BaseQueryTests
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.IntegrationTests.DataTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
     [TestClass]
     public class SensorTargetTests : BasePrtgClientTest

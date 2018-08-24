@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using PrtgAPI.Helpers;
+using PrtgAPI.Linq.Expressions;
 
 namespace PrtgAPI.Linq
 {

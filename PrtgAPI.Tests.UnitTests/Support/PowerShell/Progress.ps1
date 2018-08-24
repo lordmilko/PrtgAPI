@@ -2,7 +2,7 @@
 
 function Clear-Progress {
 
-    $val = [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::ProgressSnapshots
+    $val = [PrtgAPI.Tests.UnitTests.Support.Progress.ProgressQueue]::ProgressSnapshots
 
     if($val -ne $null)
     {
@@ -19,7 +19,7 @@ function Describe($name, $script)
             InitializeClient
         }
         AfterEach {
-            [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::RecordQueue.Clear()
+            [PrtgAPI.Tests.UnitTests.Support.Progress.ProgressQueue]::RecordQueue.Clear()
             Clear-Progress
         }
         AfterAll {
@@ -31,7 +31,7 @@ function Describe($name, $script)
 }
 
 function Get-Progress {
-    return [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress.ProgressQueue]::Dequeue()
+    return [PrtgAPI.Tests.UnitTests.Support.Progress.ProgressQueue]::Dequeue()
 }
 
 function Assert-NoProgress($expr) {
@@ -70,7 +70,7 @@ function Validate($list)    {
 }
 
 function InitializeClient {
-    [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Bind()
+    [PrtgAPI.Tests.UnitTests.MockProgressWriter]::Bind()
 
     SetMultiTypeResponse
 
@@ -78,7 +78,7 @@ function InitializeClient {
 }
 
 function UninitializeClient {
-    [PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.MockProgressWriter]::Unbind()
+    [PrtgAPI.Tests.UnitTests.MockProgressWriter]::Unbind()
 
     Disable-PrtgProgress
 }

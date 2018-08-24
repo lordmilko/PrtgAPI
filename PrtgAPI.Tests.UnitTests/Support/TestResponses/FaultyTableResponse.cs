@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using PrtgAPI.Helpers;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {

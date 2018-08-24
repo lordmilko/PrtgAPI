@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace PrtgAPI.Tests.UnitTests.Helpers
+namespace PrtgAPI.Tests.UnitTests.Support
 {
     public static class TestReflectionHelpers
     {

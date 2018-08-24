@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
+using PrtgAPI.Linq.Expressions.Visitors;
 
-namespace PrtgAPI.Linq.Expressions.Visitors
+namespace PrtgAPI.Linq.Expressions
 {
     /// <summary>
     /// Helper class for constructing new <see cref="LinqExpression"/>s.<para/>

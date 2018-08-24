@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unit = PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using Unit = PrtgAPI.Tests.UnitTests.ObjectData.Query;
 using Expr = System.Linq.Expressions.Expression;
 
-namespace PrtgAPI.Tests.IntegrationTests.QueryTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 {
     [TestClass]
     public class WhereTests : BaseQueryTest
@@ -636,7 +636,7 @@ namespace PrtgAPI.Tests.IntegrationTests.QueryTests
         [TestMethod]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_ManualExpression()
         {
-            var lambda = UnitTests.ObjectTests.CSharp.Query.Expression.BaseExpressionTest.CreateLambda(Property.Status, s =>
+            var lambda = Unit.BaseExpressionTest.CreateLambda(Property.Status, s =>
             {
                 var retry = Expr.Constant(RetryMode.Retry);
                 var methodInfo = typeof(object).GetMethod(nameof(Equals), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);

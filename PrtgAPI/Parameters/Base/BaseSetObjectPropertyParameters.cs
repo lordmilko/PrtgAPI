@@ -8,6 +8,7 @@ using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.Parameters.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {

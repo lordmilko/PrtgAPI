@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
-namespace PrtgAPI.Tests.UnitTests.ObjectTests
+namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
     class FakeSettings
     {

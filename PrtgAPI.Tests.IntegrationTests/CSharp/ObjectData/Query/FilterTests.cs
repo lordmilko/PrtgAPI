@@ -6,12 +6,10 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Tests.IntegrationTests.DataTests;
-using PrtgAPI.Tests.UnitTests;
-using PrtgAPI.Tests.UnitTests.Helpers;
-using PrtgAPI.Tests.UnitTests.ObjectTests.CSharp.Query.Linq;
+using PrtgAPI.Tests.UnitTests.ObjectData.Query;
+using PrtgAPI.Tests.UnitTests.Support;
 
-namespace PrtgAPI.Tests.IntegrationTests.QueryTests
+namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 {
     static class Time
     {

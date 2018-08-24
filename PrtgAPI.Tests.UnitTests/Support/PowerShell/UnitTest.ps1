@@ -47,7 +47,7 @@ function Run($objectType, $script)
 {
     $oldClient = Get-PrtgClient
     $oldTester = $global:tester
-    $global:tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectTests.$($objectType)Tests)
+    $global:tester = (New-Object PrtgAPI.Tests.UnitTests.ObjectData.$($objectType)Tests)
     $global:tester.SetPrtgSessionState()
 
     try
@@ -69,7 +69,7 @@ function RunCustomCount($hashtable, $action)
 
     $oldClient = Get-PrtgClient
 
-    $newClient = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.MultiTypeResponse -ArgumentList $dictionary))
+    $newClient = [PrtgAPI.Tests.UnitTests.BaseTest]::Initialize_Client((New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.MultiTypeResponse -ArgumentList $dictionary))
 
     try
     {
@@ -207,7 +207,7 @@ function SetResponseAndClientWithArguments($responseName, $arguments)
 
 function SetResponseAndClientInternal($response)
 {
-    $client = [PrtgAPI.Tests.UnitTests.ObjectTests.BaseTest]::Initialize_Client($response)
+    $client = [PrtgAPI.Tests.UnitTests.BaseTest]::Initialize_Client($response)
 
     SetPrtgClient $client
 

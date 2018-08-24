@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace PrtgAPI.Tests.UnitTests
+namespace PrtgAPI.Tests.UnitTests.Support
 {
     [Flags]
     public enum UrlFlag

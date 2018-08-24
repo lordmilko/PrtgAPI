@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PrtgAPI.PowerShell.Cmdlets
+namespace PrtgAPI.PowerShell
 {
     class CloneCmdletConfig
     {

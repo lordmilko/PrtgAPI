@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.TreeNodes
+namespace PrtgAPI.Tests.UnitTests.TreeNodes
 {
     [DebuggerDisplay("Name: {Name,nq}, Sensors: {Sensors.Count}")]
     class DeviceNode : TreeNode<DeviceItem>, ISensorContainer

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
 
-namespace PrtgAPI.Tests.UnitTests.InfrastructureTests.Support.Progress
+namespace PrtgAPI.Tests.UnitTests.Support.Progress
 {
     public class ProgressHierarchy
     {

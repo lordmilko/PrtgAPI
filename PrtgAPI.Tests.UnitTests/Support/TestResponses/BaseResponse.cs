@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
-using PrtgAPI.Tests.UnitTests.InfrastructureTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses

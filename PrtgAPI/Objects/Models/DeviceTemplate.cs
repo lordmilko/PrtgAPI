@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Represents a device template that can be used for performing an auto-discovery.</para>
     /// </summary>
-    public class DeviceTemplate : IFormattable, IEquatable<DeviceTemplate>
+    public class DeviceTemplate : Request.IFormattable, IEquatable<DeviceTemplate>
     {
         /// <summary>
         /// Gets the name of the template.
@@ -103,7 +102,7 @@ namespace PrtgAPI
 
         private Func<DeviceTemplate, string> serializedFormat;
 
-        string IFormattable.GetSerializedFormat()
+        string Request.IFormattable.GetSerializedFormat()
         {
             if (serializedFormat == null)
                 return raw;
