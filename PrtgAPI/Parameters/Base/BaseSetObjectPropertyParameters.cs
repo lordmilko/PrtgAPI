@@ -58,9 +58,9 @@ namespace PrtgAPI.Parameters
 
             if (secondaryPropertyAttrib != null)
             {
-                if (parser.Value is IFormattableMultiple)
+                if (parser.Value is IMultipleSerializable)
                 {
-                    var val2 = ((IFormattableMultiple)parser.Value).GetSerializedFormats().Last();
+                    var val2 = ((IMultipleSerializable)parser.Value).GetSerializedFormats().Last();
 
                     CustomParameters.Add(new CustomParameter($"{secondaryPropertyAttrib.Name}_", val2));
                 }

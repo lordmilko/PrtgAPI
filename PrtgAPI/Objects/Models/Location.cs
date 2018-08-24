@@ -8,7 +8,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI
 {
     [DataContract]
-    internal class Location : IFormattableMultiple
+    internal class Location : IMultipleSerializable
     {
         [DataMember(Name = "formatted_address")]
         public string Address { get; set; }
@@ -25,12 +25,12 @@ namespace PrtgAPI
             return Address;
         }
 
-        string IFormattable.GetSerializedFormat()
+        string Request.ISerializable.GetSerializedFormat()
         {
             return Address;
         }
 
-        string[] IFormattableMultiple.GetSerializedFormats()
+        string[] IMultipleSerializable.GetSerializedFormats()
         {
             if (Address == null)
                 return new string[] {null, null};

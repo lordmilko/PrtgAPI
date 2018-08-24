@@ -2,7 +2,7 @@ using PrtgAPI.Request;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
-    class FakeMultipleFormattable : IFormattableMultiple
+    class FakeMultipleSerializable : IMultipleSerializable
     {
         public string GetSerializedFormat()
         {

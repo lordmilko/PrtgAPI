@@ -440,8 +440,8 @@
     <Compile Include="Exceptions\InvalidTriggerTypeException.cs" />
     <Compile Include="Exceptions\InvalidTypeException.cs" />
     <Compile Include="Request\ConnectionDetails.cs" />
-    <Compile Include="Request\IFormattable.cs" />
-    <Compile Include="Request\IFormattableMultiple.cs" />
+    <Compile Include="Request\ISerializable.cs" />
+    <Compile Include="Request\IMultipleSerializable.cs" />
     <Compile Include="Request\ILazy.cs" />
     <Compile Include="Request\IWebClient.cs" />
     <Compile Include="Request\Serialization\JsonDeserializer.cs" />

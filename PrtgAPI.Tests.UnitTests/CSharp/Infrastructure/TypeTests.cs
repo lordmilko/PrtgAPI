@@ -825,7 +825,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
-        private void TestParse<T>(params object[] args) where T : Request.IFormattable
+        private void TestParse<T>(params object[] args) where T : ISerializable
         {
              var method = typeof(T).GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
 

@@ -3,13 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
-    public class PrtgObject : IPrtgObject, ITableObject, Request.IFormattable
+    public class PrtgObject : IPrtgObject, ITableObject, Request.ISerializable
     {
         // ################################## All Object Tables ##################################
 
@@ -161,7 +162,7 @@ namespace PrtgAPI
         }
 
         [ExcludeFromCodeCoverage]
-        string Request.IFormattable.GetSerializedFormat()
+        string ISerializable.GetSerializedFormat()
         {
             return raw ?? ToString();
         }

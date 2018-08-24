@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Targets
 {
@@ -11,7 +12,7 @@ namespace PrtgAPI.Targets
     /// <para type="description">Represents a resource that can be monitored or used for monitoring by a PRTG Sensor.</para>
     /// </summary>
     /// <typeparam name="T">The type of this object.</typeparam>
-    public abstract class SensorTarget<T> : Request.IFormattable, IEquatable<T> where T : SensorTarget<T>
+    public abstract class SensorTarget<T> : ISerializable, IEquatable<T> where T : SensorTarget<T>
     {
         /// <summary>
         /// Gets the name of the target.
@@ -55,7 +56,7 @@ namespace PrtgAPI.Targets
             return $"{name}|{name}||";
         }
 
-        string Request.IFormattable.GetSerializedFormat()
+        string ISerializable.GetSerializedFormat()
         {
             return raw;
         }

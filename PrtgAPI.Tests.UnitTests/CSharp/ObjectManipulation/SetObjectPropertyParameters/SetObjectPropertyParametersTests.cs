@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestMethod]
         public void SetObjectPropertyParameters_WithTypeLookup_HasSecondaryProperty()
         {
-            ExecuteWithTypeLookupInternal(FakeObjectProperty.HasSecondaryProperty, new FakeMultipleFormattable());
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.HasSecondaryProperty, new FakeMultipleSerializable());
         }
 
         [TestMethod]

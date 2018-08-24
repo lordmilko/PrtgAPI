@@ -173,7 +173,7 @@
     <Compile Include="CSharp\ObjectData\SensorTypeTests.cs" />
     <Compile Include="CSharp\ObjectData\ServerStatusTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetNotificationTriggerTests.cs" />
-    <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeMultipleFormattable.cs" />
+    <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeMultipleSerializable.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeObjectProperty.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeSetObjectPropertyParameters.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeSettings.cs" />

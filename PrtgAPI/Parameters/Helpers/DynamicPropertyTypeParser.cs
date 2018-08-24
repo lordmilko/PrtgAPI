@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Parameters.Helpers
@@ -66,10 +67,10 @@ namespace PrtgAPI.Parameters.Helpers
 
             if (Property.GetEnumAttribute<TypeAttribute>() != null)
             {
-                if (Value is Request.IFormattable)
+                if (Value is ISerializable)
                 {
                     Type = TypeCategory.Other;
-                    return ((Request.IFormattable)Value).GetSerializedFormat();
+                    return ((ISerializable)Value).GetSerializedFormat();
                 }
 
                 throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported");
@@ -261,14 +262,14 @@ namespace PrtgAPI.Parameters.Helpers
 
             if (PropertyType == ValueType)
             {
-                if (typeof (Request.IFormattable).IsAssignableFrom(PropertyType))
+                if (typeof (ISerializable).IsAssignableFrom(PropertyType))
                 {
                     Type = TypeCategory.Other;
-                    val = ((Request.IFormattable)Value).GetSerializedFormat();
+                    val = ((ISerializable)Value).GetSerializedFormat();
                 }
                     
                 else
-                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(Request.IFormattable)}");
+                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(ISerializable)}");
             }
             else
                 throw new InvalidTypeException(PropertyType, ValueType);

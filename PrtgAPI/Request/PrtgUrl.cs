@@ -231,17 +231,17 @@ namespace PrtgAPI.Request
                 str = val.ToString();
             else
             {
-                if (val is IFormattableMultiple)
+                if (val is IMultipleSerializable)
                 {
-                    var ps = ((IFormattableMultiple) val).GetSerializedFormats().Select(f =>
+                    var ps = ((IMultipleSerializable) val).GetSerializedFormats().Select(f =>
                         FormatSingleParameterInternal(name, f, encodeValue, isEnum)
                     ).ToList();
 
                     if(ps.Count > 0)
                         return string.Join("&", ps);
                 }
-                else if (val is IFormattable)
-                    str = ((IFormattable)val).GetSerializedFormat();
+                else if (val is ISerializable)
+                    str = ((ISerializable)val).GetSerializedFormat();
                 else if (val is bool)
                     str = (bool) val ? "1" : "0";
                 else
@@ -285,8 +285,8 @@ namespace PrtgAPI.Request
                         toEncode = ((Enum)obj).GetDescription();
                     else
                     {
-                        if (obj is IFormattable)
-                            toEncode = ((IFormattable) obj).GetSerializedFormat();
+                        if (obj is ISerializable)
+                            toEncode = ((ISerializable) obj).GetSerializedFormat();
                         else
                             toEncode = Convert.ToString(obj);
                     }

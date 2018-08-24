@@ -8,7 +8,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.PowerShell
 {
     [ExcludeFromCodeCoverage]
-    class PSVariableEx : PSVariable, IFormattableMultiple
+    class PSVariableEx : PSVariable, IMultipleSerializable
     {
         internal string RawName { get; set; }
 
@@ -55,8 +55,8 @@ namespace PrtgAPI.PowerShell
 
         private string GetSerializedFormat(object value)
         {
-            if (value is Request.IFormattable)
-                return ((Request.IFormattable)value).GetSerializedFormat();
+            if (value is ISerializable)
+                return ((ISerializable)value).GetSerializedFormat();
 
             return value?.ToString();
         }

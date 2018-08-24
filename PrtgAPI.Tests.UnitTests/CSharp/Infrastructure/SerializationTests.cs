@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
@@ -149,7 +150,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)
         {
-            Assert.AreEqual(((Request.IFormattable) interval).GetSerializedFormat(), value, "Serialized format was not correct");
+            Assert.AreEqual(((ISerializable) interval).GetSerializedFormat(), value, "Serialized format was not correct");
         }
 
         private void ParseScanningIntervalAndCheckSerializedValue(StandardScanningInterval interval, string value)

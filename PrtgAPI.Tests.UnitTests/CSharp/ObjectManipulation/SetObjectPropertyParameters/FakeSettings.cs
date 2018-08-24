@@ -15,7 +15,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         public string MissingXmlElementAndDescription { get; set; }
 
         [XmlElement("injected_hassecondaryproperty")]
-        public FakeMultipleFormattable HasSecondaryProperty { get; set; }
+        public FakeMultipleSerializable HasSecondaryProperty { get; set; }
 
         [XmlElement("injected_parentproperty")]
         public string ParentProperty { get; set; }

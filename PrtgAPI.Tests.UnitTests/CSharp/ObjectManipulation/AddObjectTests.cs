@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request;
 using PrtgAPI.Targets;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -80,7 +81,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         private PrtgClient GetAddExcessiveSensorClient(List<WmiServiceTarget> services)
         {
-            var formats = services.Select(s => "service__check=" + HttpUtility.UrlEncode(((Request.IFormattable)s).GetSerializedFormat())).ToList();
+            var formats = services.Select(s => "service__check=" + HttpUtility.UrlEncode(((ISerializable)s).GetSerializedFormat())).ToList();
 
             var urls = new List<string>();
 

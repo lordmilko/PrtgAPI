@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Request;
 using PrtgAPI.Schedules;
 
 namespace PrtgAPI
@@ -9,7 +10,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a schedule used to indicate when monitoring should be active on an object.</para>
     /// </summary>
-    public class Schedule : PrtgObject, IEquatable<Schedule>, Request.IFormattable
+    public class Schedule : PrtgObject, IEquatable<Schedule>, ISerializable
     {
         private string url;
 
@@ -87,7 +88,7 @@ namespace PrtgAPI
 
         private bool IsEqual(Schedule other)
         {
-            return ((Request.IFormattable)this).GetSerializedFormat() == ((Request.IFormattable)other).GetSerializedFormat();
+            return ((ISerializable)this).GetSerializedFormat() == ((ISerializable)other).GetSerializedFormat();
         }
 
         /// <summary>
@@ -101,14 +102,14 @@ namespace PrtgAPI
             {
                 var result = 0;
 
-                result = (result * 401) ^ ((Request.IFormattable)this).GetSerializedFormat().GetHashCode();
+                result = (result * 401) ^ ((ISerializable)this).GetSerializedFormat().GetHashCode();
 
                 return result;
             }
         }
 
         [ExcludeFromCodeCoverage]
-        string Request.IFormattable.GetSerializedFormat()
+        string ISerializable.GetSerializedFormat()
         {
             return $"{Id}|{Name}|";
         }

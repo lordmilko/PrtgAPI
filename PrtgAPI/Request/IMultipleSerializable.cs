@@ -1,6 +1,6 @@
 ﻿namespace PrtgAPI.Request
 {
-    interface IFormattableMultiple : IFormattable
+    interface IMultipleSerializable : ISerializable
     {
         string[] GetSerializedFormats();
     }
