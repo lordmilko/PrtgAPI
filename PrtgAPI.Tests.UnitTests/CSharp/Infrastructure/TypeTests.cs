@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -752,16 +753,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
 
             var @event = client.GetModificationHistory(1001).First();
-            Assert.AreEqual("05/24/2017 12:53:54: Created. 17.2.31.2018", @event.ToString());
+            Assert.AreEqual($"{@event.DateTime}: Created. 17.2.31.2018", @event.ToString());
 
             var properties = client.GetDeviceProperties(1001);
             Assert.AreEqual("Device", properties.ToString());
 
-            var logs = client.GetLogs().First();
-            Assert.AreEqual("3/11/2017 5:10:31 PM: WMI Remote Ping0", logs.ToString());
+            var log = client.GetLogs().First();
+            Assert.AreEqual($"{log.DateTime}: WMI Remote Ping0", log.ToString());
 
             var history = client.GetSensorHistory(1001).First();
-            Assert.AreEqual("10/22/2017 15:19:54", history.ToString());
+            Assert.AreEqual(history.DateTime.ToString(), history.ToString());
             Assert.AreEqual("PercentAvailableMemory: 51 %", history.ChannelRecords.First().ToString());
 
             var timeSlotRowNever = new TimeSlotRow(1, false, false, false, false, false, false, false);

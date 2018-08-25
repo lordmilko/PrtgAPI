@@ -220,7 +220,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestMethod]
         public void Query_Where_Serialize_DateTime()
         {
-            ExecuteFilter(s => s.LastUp > new DateTime(2000, 10, 3, 4, 2, 1, DateTimeKind.Utc), "filter_lastup=@above(36802.1680671296)", s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
+            ExecuteFilter(s => s.LastUp > new DateTime(2000, 10, 2, 19, 2, 1, DateTimeKind.Utc), "filter_lastup=@above(36801.7930671296)", s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
         }
 
         [TestMethod]

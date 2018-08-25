@@ -58,7 +58,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return DateTime.ToString(CultureInfo.InvariantCulture);
+            return DateTime.ToString(CultureInfo.CurrentCulture);
         }
     }
 }

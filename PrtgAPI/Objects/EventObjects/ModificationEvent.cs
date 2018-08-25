@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 
@@ -52,7 +51,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{DateTime.ToString(CultureInfo.InvariantCulture)}: {Message}";
+            return $"{DateTime}: {Message}";
         }
     }
 }

@@ -215,7 +215,7 @@ Describe "Get-SensorHistory" {
                 "api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=70&sortby=-datetime&"
             )
 
-            Get-SensorHistory -Id 4000 -Count 70
+            Get-SensorHistory -Id 4000 -Count 70 -StartDate $start
         }
         
         It "adjusts the missing end date when an average is specified" {
@@ -230,7 +230,7 @@ Describe "Get-SensorHistory" {
             $s = Run Sensor { Get-Sensor }
             $s.Interval | Should Be "00:01:00"
 
-            $s | Get-SensorHistory -Count 80 -Average 300
+            $s | Get-SensorHistory -Count 80 -Average 300 -StartDate $start
         }
 
         It "doesn't resolve the sensor ID when an average is specified" {

@@ -328,7 +328,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteUnsupportedLog(
                 q => q.Where(l => l.DateTime < Time.Today && l.DateTime < Time.Yesterday),
-                "Cannot specify multiple upper DateTime bounds in a single request. One of '16/05/2018 11:20:35 AM', '15/05/2018 11:20:35 AM' must be specified.",
+                $"Cannot specify multiple upper DateTime bounds in a single request. One of '{Time.Today}', '{Time.Yesterday}' must be specified.",
 
                 q => q.Where(l => l.DateTime < Time.Today).AsEnumerable().Where(l => l.DateTime < Time.Yesterday),
                 $"start=1&filter_dend={Time.TodayStr}",
@@ -341,7 +341,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteUnsupportedLog(
                 q => q.Where(l => l.DateTime > Time.TwoDaysAgo && l.DateTime > Time.Yesterday),
-                "Cannot specify multiple lower DateTime bounds in a single request. One of '14/05/2018 11:20:35 AM', '15/05/2018 11:20:35 AM' must be specified.",
+                $"Cannot specify multiple lower DateTime bounds in a single request. One of '{Time.TwoDaysAgo}', '{Time.Yesterday}' must be specified.",
 
                 q => q.Where(l => l.DateTime > Time.TwoDaysAgo).AsEnumerable().Where(l => l.DateTime > Time.Yesterday),
                 $"start=1&filter_dstart={Time.TwoDaysAgoStr}",

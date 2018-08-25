@@ -1,5 +1,5 @@
 ﻿//0
-//8
+//9
 //0
 //0
 // 
@@ -9,4 +9,4 @@
 
 using System.Reflection;
 
-[assembly: AssemblyVersion("0.8.0.0")]
+[assembly: AssemblyVersion("0.9.0.0")]

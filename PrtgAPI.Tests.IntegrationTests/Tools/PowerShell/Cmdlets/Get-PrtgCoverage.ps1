@@ -3,7 +3,7 @@
     [CmdletBinding()]
     param ()
 
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
     Invoke-WebRequest https://gist.githubusercontent.com/lordmilko/5291d64509dab5bd6c2d4556df988371/raw/Get-CodeCoverage.ps1 -OutFile "$env:temp\Get-CodeCoverage.ps1"
     . $env:temp\Get-CodeCoverage.ps1

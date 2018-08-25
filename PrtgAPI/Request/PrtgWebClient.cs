@@ -32,10 +32,16 @@ namespace PrtgAPI.Request
         private bool IgnoreSSLCallback(object sender, X509Certificate certificate, X509Chain chain,
             SslPolicyErrors sslPolicyErrors)
         {
+            //Default validation scheme is called before our custom handler is executed. If SSL
+            //contained no errors, allow request immediately
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
             var request = sender as HttpWebRequest;
 
             if (request != null)
             {
+                //Otherwise, was the request executed against our PRTG server?
                 if (request.Address.Host.ToLower() == server)
                     return true;
             }
