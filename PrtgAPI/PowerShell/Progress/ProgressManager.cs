@@ -300,7 +300,7 @@ namespace PrtgAPI.PowerShell.Progress
         #region Pipe To/From Select Object Cmdlet
 
         /// <summary>
-        /// If true, indicates that the previous cmdlet before this one is a <see cref="SelectObjectCommand"/>.
+        /// If true, indicates that the previous cmdlet before this one is a SelectObjectCommand.
         /// </summary>
         public bool PreviousCmdletIsSelectObject => upstreamSelectObjectManager != null;
 
@@ -419,7 +419,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 var commands = CacheManager.GetPipelineCommands().Skip(2);
 
-                if (commands.OfType<SelectObjectCommand>().Any(c => new SelectObjectDescriptor(c).HasFilters))
+                if (commands.Where(SelectObjectDescriptor.IsSelectObjectCommand).Any(c => new SelectObjectDescriptor((PSCmdlet) c).HasFilters))
                     return true;
 
                 return false;
@@ -434,9 +434,9 @@ namespace PrtgAPI.PowerShell.Progress
 
                 for (int i = 0; i < commands.Count - 2; i++)
                 {
-                    if (commands[i] is SelectObjectCommand && commands[i + 1] is PrtgOperationCmdlet && commands[i + 2] is PrtgOperationCmdlet)
+                    if (SelectObjectDescriptor.IsSelectObjectCommand(commands[i]) && commands[i + 1] is PrtgOperationCmdlet && commands[i + 2] is PrtgOperationCmdlet)
                     {
-                        var descriptor = new SelectObjectDescriptor((SelectObjectCommand) commands[i]);
+                        var descriptor = new SelectObjectDescriptor((PSCmdlet) commands[i]);
 
                         if (descriptor.HasIndex || descriptor.HasLast || descriptor.HasSkip || descriptor.HasSkipLast)
                             return true;
@@ -457,7 +457,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             foreach (object t in commands)
             {
-                if (t is SelectObjectCommand)
+                if (SelectObjectDescriptor.IsSelectObjectCommand(t))
                     selectInARow++;
                 else
                     selectInARow = 0;
@@ -473,22 +473,22 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                List<List<SelectObjectCommand>> selectObjectSets = new List<List<SelectObjectCommand>>();
+                List<List<PSCmdlet>> selectObjectSets = new List<List<PSCmdlet>>();
 
-                var currentSet = new List<SelectObjectCommand>();
+                var currentSet = new List<PSCmdlet>();
 
                 foreach (var obj in CacheManager.GetPipelineCommands())
                 {
-                    if (obj is SelectObjectCommand)
+                    if (SelectObjectDescriptor.IsSelectObjectCommand(obj))
                     {
-                        currentSet.Add((SelectObjectCommand) obj);
+                        currentSet.Add((PSCmdlet) obj);
                     }
                     else
                     {
                         if (currentSet.Count > 0)
                         {
                             selectObjectSets.Add(currentSet);
-                            currentSet = new List<SelectObjectCommand>();
+                            currentSet = new List<PSCmdlet>();
                         }
                     }
                 }
@@ -664,7 +664,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             progressWriter = GetWriter();
 
-            if (CacheManager.GetUpstreamCmdletNotOfType<WhereObjectCommand>() is SelectObjectCommand)
+            if (SelectObjectDescriptor.IsSelectObjectCommand(CacheManager.GetUpstreamCmdletNotOfType<WhereObjectCommand>()))
             {
                 upstreamSelectObjectManager = new SelectObjectManager(CacheManager, cmdlet, Direction.Upstream);
 
@@ -672,7 +672,7 @@ namespace PrtgAPI.PowerShell.Progress
                     upstreamSelectObjectManager = null;
             }
 
-            if (CacheManager.GetDownstreamCmdletNotOfType<WhereObjectCommand>() is SelectObjectCommand)
+            if (SelectObjectDescriptor.IsSelectObjectCommand(CacheManager.GetDownstreamCmdletNotOfType<WhereObjectCommand>()))
             {
                 downstreamSelectObjectManager = new SelectObjectManager(CacheManager, cmdlet, Direction.Downstream);
 
@@ -1450,7 +1450,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (cmdlet == typeof(WhereObjectCommand))
                 return true;
 
-            if (cmdlet == typeof(SelectObjectCommand))
+            if (SelectObjectDescriptor.TypeIsSelectObjectCommand(cmdlet))
                 return true;
 
             return false;

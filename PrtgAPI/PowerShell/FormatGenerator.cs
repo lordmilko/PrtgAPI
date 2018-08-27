@@ -6,7 +6,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Microsoft.PowerShell.Commands;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell
@@ -127,18 +126,39 @@ namespace PrtgAPI.PowerShell
 
         public static void LoadXml(Cmdlet cmdlet)
         {
-            var updateFormatData = new UpdateFormatDataCommand();
+            var updateFormatData = GetUpdateFormatDataCommand();
 
             var destinationContextInfo = updateFormatData.GetInternalPropertyInfo("Context");
             var sourceContext = cmdlet.GetInternalProperty("Context");
+            var appendPath = updateFormatData.GetPublicPropertyInfo("AppendPath");
 
             destinationContextInfo.SetValue(updateFormatData, sourceContext);
 
-            updateFormatData.AppendPath = Formats.ToArray();
+            appendPath.SetValue(updateFormatData, Formats.ToArray());
 
             var processRecord = updateFormatData.GetInternalMethod("ProcessRecord");
 
             processRecord.Invoke(updateFormatData, null);
+        }
+
+        private static PSCmdlet GetUpdateFormatDataCommand()
+        {
+            var assemblyName = "Microsoft.PowerShell.Commands.Utility.dll";
+            var typeName = "Microsoft.PowerShell.Commands.UpdateFormatDataCommand";
+
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == assemblyName);
+
+            if (assembly == null)
+                throw new InvalidOperationException($"Cannot load type '{typeName}': cannot find assembly '{assemblyName}'.");
+
+            var type = assembly.GetType(typeName);
+
+            if (type == null)
+                throw new InvalidOperationException($"Cannot find type '{typeName}' in assembly '{assemblyName}'.");
+
+            var obj = Activator.CreateInstance(type);
+
+            return (PSCmdlet) obj;
         }
     }
 

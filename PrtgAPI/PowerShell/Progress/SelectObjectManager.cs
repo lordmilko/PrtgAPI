@@ -15,7 +15,7 @@ namespace PrtgAPI.PowerShell.Progress
 
     class SelectObjectDescriptor
     {
-        public SelectObjectCommand Command { get; set; }
+        public PSCmdlet Command { get; set; }
 
         public bool HasFirst => HasKey("First");
         public int First => Convert.ToInt32(GetKey("First"));
@@ -36,7 +36,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool HasFilters => HasFirst || HasLast || HasSkip || HasSkipLast || HasIndex;
 
-        public SelectObjectDescriptor(SelectObjectCommand command)
+        public SelectObjectDescriptor(PSCmdlet command)
         {
             Command = command;
         }
@@ -49,6 +49,22 @@ namespace PrtgAPI.PowerShell.Progress
         private object GetKey(string key)
         {
             return Command.MyInvocation.BoundParameters[key];
+        }
+
+        public static bool IsSelectObjectCommand(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            return obj is PSCmdlet && TypeIsSelectObjectCommand(obj.GetType());
+        }
+
+        public static bool TypeIsSelectObjectCommand(Type type)
+        {
+            if (type == null)
+                return false;
+
+            return type.Name == "SelectObjectCommand";
         }
     }
 
@@ -87,8 +103,8 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 for (int i = myIndex - 1; i >= 0; i--)
                 {
-                    if (cmds[i] is SelectObjectCommand)
-                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand) cmds[i]));
+                    if (SelectObjectDescriptor.IsSelectObjectCommand(cmds[i]))
+                        Commands.Add(new SelectObjectDescriptor((PSCmdlet) cmds[i]));
                     else
                     {
                         if (i == myIndex - 1 && cmds[i] is WhereObjectCommand)
@@ -102,8 +118,8 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 for (int i = myIndex + 1; i < cmds.Count; i++)
                 {
-                    if (cmds[i] is SelectObjectCommand)
-                        Commands.Add(new SelectObjectDescriptor((SelectObjectCommand) cmds[i]));
+                    if (SelectObjectDescriptor.IsSelectObjectCommand(cmds[i]))
+                        Commands.Add(new SelectObjectDescriptor((PSCmdlet) cmds[i]));
                     else
                     {
                         if (i == myIndex + 1 && cmds[i] is WhereObjectCommand)

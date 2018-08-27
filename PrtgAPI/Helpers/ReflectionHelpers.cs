@@ -65,6 +65,13 @@ namespace PrtgAPI.Helpers
             return info.GetValue(obj);
         }
 
+        public static PropertyInfo GetPublicPropertyInfo(this object obj, string name)
+        {
+            var prop = obj.GetType().GetProperty(name);
+
+            return prop;
+        }
+
         /// <summary>
         /// Retrieve the property info metadata of an internal property.
         /// </summary>

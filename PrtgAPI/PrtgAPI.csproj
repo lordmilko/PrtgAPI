@@ -35,7 +35,6 @@
     <DocumentationFile>bin\Release\PrtgAPI\PrtgAPI.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Powershell.Commands.Utility" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation" />

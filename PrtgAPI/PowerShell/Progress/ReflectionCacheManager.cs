@@ -221,7 +221,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             for (int i = myIndex; i >= 1; i--)
             {
-                if (commands[i - 1] is SelectObjectCommand)
+                if (SelectObjectDescriptor.IsSelectObjectCommand(commands[i - 1]))
                 {
                     if (commands[i] is PrtgOperationCmdlet)
                         return commands[i] as PrtgOperationCmdlet;
@@ -362,9 +362,9 @@ namespace PrtgAPI.PowerShell.Progress
                 if (commands[i] is PrtgCmdlet)
                     return false;
 
-                if (commands[i] is SelectObjectCommand)
+                if (SelectObjectDescriptor.IsSelectObjectCommand(commands[i]))
                 {
-                    var selectObject = (SelectObjectCommand) commands[i];
+                    var selectObject = (PSCmdlet) commands[i];
                     var boundParameters = selectObject.MyInvocation.BoundParameters;
 
                     if (boundParameters.ContainsKey("Last"))
@@ -407,7 +407,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public Pipeline GetSelectPipelineOutput()
         {
-            var command = (SelectObjectCommand)GetUpstreamCmdletNotOfType<WhereObjectCommand>();
+            var command = (PSCmdlet)GetUpstreamCmdletNotOfType<WhereObjectCommand>();
 
             var queue = (Queue<PSObject>) command.GetInternalField("selectObjectQueue");
 

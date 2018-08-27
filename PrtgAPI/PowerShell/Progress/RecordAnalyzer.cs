@@ -30,7 +30,7 @@ namespace PrtgAPI.PowerShell.Progress
                 for (int i = myIndex; i >= 0; i--)
                 {
                     //If we found a Select-Object cmdlet, return true
-                    if (commands[i] is SelectObjectCommand)
+                    if (SelectObjectDescriptor.IsSelectObjectCommand(commands[i]))
                         return true;
 
                     //If we're not a PrtgOperation cmdlet, return false. Otherwise, we're still in a chain of PrtgOperationCmdlets, so we'll next check the previous cmdlet

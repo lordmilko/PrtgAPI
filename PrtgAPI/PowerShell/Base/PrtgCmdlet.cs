@@ -118,7 +118,7 @@ namespace PrtgAPI.PowerShell.Base
 
             var myIndex = commands.IndexOf(this);
 
-            return commands.Skip(myIndex + 1).OfType<SelectObjectCommand>().Any(c => new SelectObjectDescriptor(c).HasFilters);
+            return commands.Skip(myIndex + 1).Where(SelectObjectDescriptor.IsSelectObjectCommand).Any(c => new SelectObjectDescriptor((PSCmdlet) c).HasFilters);
         }
 
         #region Events
