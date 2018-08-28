@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Management.Automation;
 using PrtgAPI.Dynamic;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization;
@@ -153,9 +152,6 @@ namespace PrtgAPI.Parameters
 
         private bool IsSensorTarget(object val)
         {
-            if (val is PSObject)
-                val = ((PSObject) val).BaseObject;
-
             if (val == null)
                 return true;
 

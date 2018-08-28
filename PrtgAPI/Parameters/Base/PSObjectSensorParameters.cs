@@ -121,8 +121,7 @@ namespace PrtgAPI.Parameters
             get { return GetIndex(name); }
             set
             {
-                if (value is PSObject)
-                    value = ((PSObject)value).BaseObject;
+                value = PSObjectHelpers.CleanPSObject(value);
 
                 SetIndex(name, value);
             }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 
 namespace PrtgAPI.Helpers
@@ -7,11 +9,34 @@ namespace PrtgAPI.Helpers
     {
         internal static object CleanPSObject(object obj)
         {
-            if (obj.IsIEnumerable())
-                return obj.ToIEnumerable().Select(CleanPSObject).ToArray();
-
             if (obj is PSObject)
-                return ((PSObject)obj).BaseObject;
+                obj = ((PSObject) obj).BaseObject;
+
+            var enumerable = obj as IEnumerable;
+
+            if (enumerable != null && !(enumerable is string))
+            {
+                var list = new List<object>();
+                bool dirty = false;
+
+                foreach (var o in enumerable)
+                {
+                    var psObject = o as PSObject;
+
+                    if (psObject != null)
+                    {
+                        list.Add(psObject.BaseObject);
+                        dirty = true;
+                    }
+                    else
+                        list.Add(o);
+                }
+
+                if (dirty)
+                    return list.ToArray();
+
+                return obj;
+            }
 
             return obj;
         }

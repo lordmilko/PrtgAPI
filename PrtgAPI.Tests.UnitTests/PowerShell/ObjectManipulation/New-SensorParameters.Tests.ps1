@@ -558,6 +558,41 @@ Describe "New-SensorParameters" {
             $params.environment[1] | Should Be 4
         }
 
+        It "sets multiple sensor targets retrieved from Where-Object" {
+
+            $params = GetDynamicParams
+
+            $params.Targets["exefile"].Count | Should Be 2
+            $params.exefile = $params.Targets["exefile"]
+            $params.exefile.GetType().Name | Should Be "GenericSensorTarget[]"
+            $params.exefile = $params.Targets["exefile"] | where name -Like *
+            $params.exefile.GetType().Name | Should Be "object[]"
+
+            $paramsArr = @(
+                "name_=XML+Custom+EXE%2fScript+Sensor"
+                "tags_=xmlexesensor"
+                "exefilelabel="
+                "exeparams_="
+                "environment_=0"
+                "usewindowsauthentication_=0"
+                "mutexname_="
+                "timeout_=60"
+                "writeresult_=0"
+                "intervalgroup=1"
+                "inherittriggers_=1"
+                "priority_=3"
+                "interval_=60%7c60+seconds"
+                "errorintervalsdown_=1"
+                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7cDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7c%7c"
+                "exefile_=testScript.bat%7ctestScript.bat%7c%7c"
+                "sensortype=exexml"
+            )
+
+            $address = [string]::Join("&", $paramsArr)
+
+            ValidateParams $params $address
+        }
+
         It "locks and unlocks" {
 
             $params = GetDynamicParams

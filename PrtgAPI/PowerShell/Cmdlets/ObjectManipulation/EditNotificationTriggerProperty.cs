@@ -51,8 +51,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (Value is PSObject)
-                Value = ((PSObject) Value).BaseObject;
+            Value = PSObjectHelpers.CleanPSObject(Value);
 
             switch (Trigger.Type)
             {

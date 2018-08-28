@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -49,8 +50,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>If the target property type contains a Parse method which did not throw upon being called, the parsed value. Otherwise, the original value.</returns>
         protected object ParseValueIfRequired(PropertyInfo property, object value)
         {
-            if (value is PSObject)
-                value = ((PSObject) value).BaseObject;
+            value = PSObjectHelpers.CleanPSObject(value);
 
             //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
             //Only parse types that are defined in the PrtgAPI assembly.

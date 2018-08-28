@@ -233,6 +233,26 @@ Describe "Add-Sensor_IT" {
         $sensor | Remove-Object -Force
     }
 
+    It "adds sensor targets to dynamic parameters retrieved from Where-Object" {
+
+        $device = Get-Device -Id (Settings Device)
+
+        $params = $device | New-SensorParameters -RawType wmiservice
+        $params.service__check = $params.Targets.service__check | where name -Like *prtg*
+        $params.service__check.Count | Should Be 2
+
+        $sensors = $params | Add-Sensor
+
+        try
+        {
+            $sensors.Count | Should Be 2
+        }
+        finally
+        {
+            $sensors | Remove-Object -Force
+        }
+    }
+
     It "adds a sensor using a hashtable that contain a multi parameter" {
         $table = @{
             name_ = "Base Sensor"
