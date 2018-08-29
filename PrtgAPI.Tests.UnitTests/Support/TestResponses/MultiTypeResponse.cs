@@ -571,7 +571,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private static string GetPage(string address)
         {
-            var queries = HttpUtility.ParseQueryString(address);
+            var queries = UrlHelpers.ParseQueryString(address);
 
             var items = queries.AllKeys.SelectMany(queries.GetValues, (k, v) => new { Key = k, Value = v });
 

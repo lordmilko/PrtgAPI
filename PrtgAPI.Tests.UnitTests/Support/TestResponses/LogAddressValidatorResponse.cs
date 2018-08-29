@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                         if (components["start"] != null)
                             components.Remove("start");
 
-                        var filtered = WebUtility.UrlDecode(components.ToString());
+                        var filtered = WebUtility.UrlDecode(UrlHelpers.QueryCollectionToString(components));
 
                         if (filtered != str)
                             Assert.Fail($"Address was '{filtered}' instead of '{str}'");

@@ -91,7 +91,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var addr = address.Substring(address.IndexOf('?')).Split('#')[0];
 
-            var queries = HttpUtility.ParseQueryString(addr);
+            var queries = UrlHelpers.ParseQueryString(addr);
 
             if (queries["start"] == "0" || queries["start"] == null)
                 return 1;

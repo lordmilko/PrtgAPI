@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Xml.Linq;
 using PrtgAPI.Html;
 
@@ -203,7 +203,7 @@ namespace PrtgAPI
             var properties = inputs.Select(input => new Input
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
-                Value = HttpUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")), //todo: should we maybe be decoding the value for all other input types? (text, ddl). test put \\ and " in a sensor factor definition and see if prtg encoded it
+                Value = WebUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")), //todo: should we maybe be decoding the value for all other input types? (text, ddl). test put \\ and " in a sensor factor definition and see if prtg encoded it
                 Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success
