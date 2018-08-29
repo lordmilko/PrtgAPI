@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
@@ -89,9 +89,9 @@ namespace PrtgAPI
             var operatorDescription = @operator.GetDescription(false);
 
             if (operatorDescription == null)
-                return HttpUtility.UrlEncode(val);
+                return WebUtility.UrlEncode(val);
 
-            return $"@{operatorDescription}({HttpUtility.UrlEncode(val)})";
+            return $"@{operatorDescription}({WebUtility.UrlEncode(val)})";
         }
 
         internal static string GetValue(Property? property, FilterOperator op, object value, FilterMode filterMode = FilterMode.Normal)

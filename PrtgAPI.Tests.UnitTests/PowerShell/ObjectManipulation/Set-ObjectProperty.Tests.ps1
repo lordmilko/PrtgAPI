@@ -96,7 +96,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $sensors = Get-Sensor -Count 2
 
-            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7c5+minutes&intervalgroup=0&"
+            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7C5+minutes&intervalgroup=0&"
 
             $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$true
         }
@@ -108,8 +108,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $sensors = Get-Sensor -Count 2
 
             SetAddressValidatorResponse @(
-                "editsettings?id=4000&interval_=300%7c5+minutes&intervalgroup=0&"
-                "editsettings?id=4001&interval_=300%7c5+minutes&intervalgroup=0&"
+                "editsettings?id=4000&interval_=300%7C5+minutes&intervalgroup=0&"
+                "editsettings?id=4001&interval_=300%7C5+minutes&intervalgroup=0&"
             )
 
             $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$false
@@ -165,7 +165,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $sensors= Get-Sensor -Count 2
 
-            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7c5+minutes&"
+            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7C5+minutes&"
 
             $sensors | Set-ObjectProperty -RawProperty "interval_" -RawValue "300|5 minutes" -Force
         }
@@ -186,7 +186,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $devices = Get-Device -Count 2
             $schedule = Get-PrtgSchedule | Select -First 1
 
-            SetAddressValidatorResponse "id=3000,3001&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c"
+            SetAddressValidatorResponse "id=3000,3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C"
 
             $table = @{
                 scheduledependency = 0
@@ -203,8 +203,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $schedule = Get-PrtgSchedule | Select -First 1
 
             SetAddressValidatorResponse @(
-                "editsettings?id=3000&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c&"
-                "editsettings?id=3001&scheduledependency=0&schedule_=623%7cWeekdays+%5bGMT%2b0800%5d%7c&"
+                "editsettings?id=3000&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C&"
+                "editsettings?id=3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C&"
             )
 
             $table = @{
@@ -255,7 +255,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&interval_=30%7c30+seconds&intervalgroup=1"
+            SetAddressValidatorResponse "id=3000,3001&interval_=30%7C30+seconds&intervalgroup=1"
 
             $devices | Set-ObjectProperty -Interval "00:00:30" -InheritInterval $true
         }

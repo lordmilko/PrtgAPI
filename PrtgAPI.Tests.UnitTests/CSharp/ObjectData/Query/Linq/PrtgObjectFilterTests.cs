@@ -102,7 +102,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position() => QuerySensor(s => s.Position == 4, "filter_position=0000000040");
 
         [TestMethod]
-        public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule() => QuerySensor(s => s.Schedule == "Weekends [GMT+0800]", "filter_schedule=Weekends+%5bGMT%2b0800%5d");
+        public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule() => QuerySensor(s => s.Schedule == "Weekends [GMT+0800]", "filter_schedule=Weekends+%5BGMT%2B0800%5D");
 
         [TestMethod]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status() => QuerySensor(s => s.Status == Status.Down, "filter_status=5");
@@ -193,7 +193,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         public void QueryFilter_SensorProperties_LastValue() => QuerySensor(s => s.LastValue > 3, "filter_lastvalue=@above(0000000000000030.0000)");
 
         [TestMethod]
-        public void QueryFilter_SensorProperties_MiniGraph() => QuerySensor(s => s.MiniGraph == "0,0,0,0", "filter_minigraph=0%2c0%2c0%2c0");
+        public void QueryFilter_SensorProperties_MiniGraph() => QuerySensor(s => s.MiniGraph == "0,0,0,0", "filter_minigraph=0%2C0%2C0%2C0");
 
         [TestMethod]
         public void QueryFilter_SensorProperties_TotalDowntime() => QuerySensor(s => s.TotalDowntime == TimeSpan.FromMinutes(2), "filter_downtimetime=000000000000120");

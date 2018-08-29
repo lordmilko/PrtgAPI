@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
@@ -22,9 +22,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2fScript+Sensor&exefile_=test.ps1%7ctest.ps1%7c%7c&");
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&");
             builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
-            builder.Append("&intervalgroup=1&interval_=60%7c60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+            builder.Append("&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
@@ -38,9 +38,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2fScript+Sensor&exefile_=test.ps1%7ctest.ps1%7c%7c&");
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&");
             builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
-            builder.Append("&intervalgroup=1&interval_=60%7c60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+            builder.Append("&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
@@ -81,7 +81,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         private PrtgClient GetAddExcessiveSensorClient(List<WmiServiceTarget> services)
         {
-            var formats = services.Select(s => "service__check=" + HttpUtility.UrlEncode(((ISerializable)s).GetSerializedFormat())).ToList();
+            var formats = services.Select(s => "service__check=" + WebUtility.UrlEncode(((ISerializable)s).GetSerializedFormat())).ToList();
 
             var urls = new List<string>();
 
@@ -249,8 +249,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var builder = new StringBuilder();
             builder.Append("adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&");
-            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7cADSL%7c%7c&");
-            builder.Append("devicetemplate__check=Cloudwatch.odt%7cAmazon+Cloudwatch%7c%7c&");
+            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7CADSL%7C%7C&");
+            builder.Append("devicetemplate__check=Cloudwatch.odt%7CAmazon+Cloudwatch%7C%7C&");
             builder.Append("id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
@@ -288,8 +288,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var builder = new StringBuilder();
             builder.Append("adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&");
-            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7cADSL%7c%7c&");
-            builder.Append("devicetemplate__check=Cloudwatch.odt%7cAmazon+Cloudwatch%7c%7c&");
+            builder.Append("devicetemplate__check=Cisco+ADSL.odt%7CADSL%7C%7C&");
+            builder.Append("devicetemplate__check=Cloudwatch.odt%7CAmazon+Cloudwatch%7C%7C&");
             builder.Append("id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));

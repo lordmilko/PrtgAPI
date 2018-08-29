@@ -193,7 +193,7 @@ namespace PrtgAPI.Request
 
         internal static int CloneResponseParser(string response)
         {
-            var decodedResponse = HttpUtility.UrlDecode(response);
+            var decodedResponse = WebUtility.UrlDecode(response);
 
             var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
 

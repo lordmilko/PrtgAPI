@@ -48,8 +48,8 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
             $str = ("service__check=" + $format.Invoke($_, $null))
             
             $str -replace "&","%26" `
-                 -replace "\+","%2b" `
-                 -replace " ","+" -replace "/","%2f" -replace "`"","%22"-replace "\|","%7c" -replace ",","%2c" -replace "'","%27" -replace ":","%3a" -replace ";","%3b" -replace "–","%e2%80%93" -replace "’","%e2%80%99"
+                 -replace "\+","%2B" `
+                 -replace " ","+" -replace "/","%2F" -replace "`"","%22"-replace "\|","%7C" -replace ",","%2C" -replace "'","%27" -replace ":","%3A" -replace ";","%3B" -replace "–","%E2%80%93" -replace "’","%E2%80%99"
         }
 
         $str = [string]::Join("&", $serviceStrs)

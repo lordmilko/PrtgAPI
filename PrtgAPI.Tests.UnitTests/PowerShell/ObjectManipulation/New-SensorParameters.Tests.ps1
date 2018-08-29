@@ -393,7 +393,7 @@ Describe "New-SensorParameters" {
             $params["test_"] | Should Be "hello"
 
             $paramsArr = @(
-                "name_=XML+Custom+EXE%2fScript+Sensor"
+                "name_=XML+Custom+EXE%2FScript+Sensor"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -405,8 +405,8 @@ Describe "New-SensorParameters" {
                 "intervalgroup=1"
                 "inherittriggers_=1"
                 "priority_=3"
-                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7cDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7c%7c"
-                "interval_=60%7c60+seconds"
+                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
+                "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
                 "test_=hello"
                 "sensortype=exexml"
@@ -474,7 +474,7 @@ Describe "New-SensorParameters" {
             $params["interval"] = "60|60 seconds"
 
             $paramsArr = @(
-                "name_=XML+Custom+EXE%2fScript+Sensor"
+                "name_=XML+Custom+EXE%2FScript+Sensor"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -486,8 +486,8 @@ Describe "New-SensorParameters" {
                 "intervalgroup=1"
                 "inherittriggers_=1"
                 "priority_=3"
-                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7cDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7c%7c"
-                "interval_=60%7c60+seconds"
+                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
+                "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
                 "sensortype=exexml"
             )
@@ -503,7 +503,7 @@ Describe "New-SensorParameters" {
             $params["interval_"] = "300|5 minutes"
 
             $paramsArr = @(
-                "name_=XML+Custom+EXE%2fScript+Sensor"
+                "name_=XML+Custom+EXE%2FScript+Sensor"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -515,8 +515,8 @@ Describe "New-SensorParameters" {
                 "intervalgroup=1"
                 "inherittriggers_=1"
                 "priority_=3"
-                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7cDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7c%7c"
-                "interval_=300%7c5+minutes"
+                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
+                "interval_=300%7C5+minutes"
                 "errorintervalsdown_=1"
                 "sensortype=exexml"
             )
@@ -569,7 +569,7 @@ Describe "New-SensorParameters" {
             $params.exefile.GetType().Name | Should Be "object[]"
 
             $paramsArr = @(
-                "name_=XML+Custom+EXE%2fScript+Sensor"
+                "name_=XML+Custom+EXE%2FScript+Sensor"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -581,10 +581,10 @@ Describe "New-SensorParameters" {
                 "intervalgroup=1"
                 "inherittriggers_=1"
                 "priority_=3"
-                "interval_=60%7c60+seconds"
+                "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
-                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7cDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7c%7c"
-                "exefile_=testScript.bat%7ctestScript.bat%7c%7c"
+                "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
+                "exefile_=testScript.bat%7CtestScript.bat%7C%7C"
                 "sensortype=exexml"
             )
 
@@ -624,7 +624,7 @@ Describe "New-SensorParameters" {
                 "name_=HTTP"
                 "tags_=httpsensor"
                 "timeout_=60"
-                "httpurl_=http%3a%2f%2f"
+                "httpurl_=http%3A%2F%2F"
                 "httpmethod_=GET"
                 "postcontentoptions_=0"
                 "postcontenttype_="
@@ -638,7 +638,7 @@ Describe "New-SensorParameters" {
                 "intervalgroup=1"
                 "inherittriggers_=1"
                 "priority_=3"
-                "interval_=60%7c60+seconds"
+                "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
                 "postdata_="
                 "sensortype=http"

@@ -52,13 +52,13 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "filters via OR tags" {
-        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2cu)&filter_tags=@sub(wmimem)" {
+        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2Cu)&filter_tags=@sub(wmimem)" {
             Get-Sensor -Tag wmi*u*,wmimem*
         }
     }
 
     It "filters via AND tags" {
-        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2cu%2cwmimem)" {
+        WithResponseArgs "AddressValidatorResponse" "filter_tags=@sub(wmi%2Cu%2Cwmimem)" {
             Get-Sensor -Tags wmi*u*,wmimem*
         }
     }

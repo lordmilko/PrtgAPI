@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Web;
+using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 
@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                         if (components["start"] != null)
                             components.Remove("start");
 
-                        var filtered = HttpUtility.UrlDecode(components.ToString());
+                        var filtered = WebUtility.UrlDecode(components.ToString());
 
                         if (filtered != str)
                             Assert.Fail($"Address was '{filtered}' instead of '{str}'");

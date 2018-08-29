@@ -55,7 +55,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var builder = new StringBuilder();
 
-            builder.Append("name_=XML+Custom+EXE%2fScript+Sensor&");
+            builder.Append("name_=XML+Custom+EXE%2FScript+Sensor&");
             builder.Append("tags_=xmlexesensor&");
             builder.Append("exefilelabel=&");
             builder.Append("exeparams_=&");
@@ -67,9 +67,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             builder.Append("intervalgroup=1&");
             builder.Append("inherittriggers_=1&");
             builder.Append("priority_=3&");
-            builder.Append("interval_=60%7c60+seconds&");
+            builder.Append("interval_=60%7C60+seconds&");
             builder.Append("errorintervalsdown_=1&");
-            builder.Append("exefile=testScript.bat%7ctestScript.bat%7c%7c&");
+            builder.Append("exefile=testScript.bat%7CtestScript.bat%7C%7C&");
             builder.Append("sensortype=exexml");
 
             var str = builder.ToString();

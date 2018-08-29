@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Text;
-using System.Web;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 
@@ -253,13 +253,13 @@ namespace PrtgAPI.Request
                 str = str.ToLower();
 
                 if (encodeValue)
-                    str = HttpUtility.UrlEncode(str);
+                    str = WebUtility.UrlEncode(str);
 
                 return $"{name.ToLower()}={str}";
             }
 
             if (encodeValue)
-                str = HttpUtility.UrlEncode(str);
+                str = WebUtility.UrlEncode(str);
 
             return $"{name.ToLower()}={str}";
         }
@@ -291,7 +291,7 @@ namespace PrtgAPI.Request
                             toEncode = Convert.ToString(obj);
                     }
 
-                    builder.Append(HttpUtility.UrlEncode(toEncode) + ",");
+                    builder.Append(WebUtility.UrlEncode(toEncode) + ",");
                 }
             }
 
