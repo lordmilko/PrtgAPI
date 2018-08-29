@@ -125,6 +125,14 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public void WaitForSensor(int id, Status desiredStatus)
         {
+            var sensor = Client.GetSensor(id);
+
+            if (sensor.Status == desiredStatus)
+            {
+                Logger.LogTest($"Sensor with ID {id} was already status '{desiredStatus}'");
+                return;
+            }
+
             Logger.LogTest($"Waiting for sensor with ID {id} to become '{desiredStatus}'");
 
             for(var i = 0; i < 10; i++)
@@ -133,7 +141,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 Client.RefreshObject(id);
                 Thread.Sleep(5000);
 
-                var sensor = Client.GetSensor(id);
+                sensor = Client.GetSensor(id);
 
                 if (sensor.Status == desiredStatus)
                     return;
@@ -329,6 +337,12 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private void RestorePrtgConfig(bool deleteConfig)
         {
+            if (!Initialized)
+            {
+                Logger.Log("Cannot restore PRTG config as test never initialized");
+                return;
+            }
+
             File.Copy(PrtgConfigBackup, PrtgConfig, true);
 
             if (deleteConfig)
@@ -441,7 +455,22 @@ namespace PrtgAPI.Tests.IntegrationTests
                 Thread.Sleep(30 * 1000);
             }
             else
-                AssertEx.Fail($"{friendlyName} did not stop after killing service. Service status is {service.Status}", true);
+            {
+                var message = $"{friendlyName} did not stop after killing service. Service status is {service.Status}";
+
+                if (service.Status == ServiceControllerStatus.StartPending)
+                {
+                    Logger.LogTest("Sleeping for 30 seconds while PRTG service starts");
+                    Thread.Sleep(30 * 1000);
+
+                    if (service.Status == ServiceControllerStatus.StartPending)
+                    {
+                        AssertEx.Fail($"Service did not leave status {service.Status}. Giving up");
+                    }
+                }
+                else
+                    AssertEx.Fail(message);
+            }
         }
 
         public void RepairState()

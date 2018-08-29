@@ -1932,11 +1932,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
-        public void bad_Data_QueryFilter_LogProperties_Sensor()
+        public void Data_QueryFilter_LogProperties_Sensor()
         {
+            var sensors = client.GetSensors();
+            var logs = client.GetLogs(count: 2000);
+
+            var log = logs.FirstOrDefault(l => sensors.Any(s => s.Id == l.Id));
+
+            if (log == null)
+                Assert.Fail("Couldn't find an event that applied to a sensor");
+
+            Logger.LogTestDetail($"Searching for logs for sensor '{log.Name}'");
+
             Retry(retry =>
             {
-                var sensor = client.GetSensors(Property.Tags, "systemhealthsensor").Single().Name;
+                var sensor = client.GetSensors(Property.Name, log.Name).First().Name;
 
                 ExecuteLog(
                     l => l.Sensor == sensor && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,

@@ -145,7 +145,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        public void bad_Data_StreamLogs_WithCorrectPageSize()
+        public void Data_StreamLogs_WithCorrectPageSize()
         {
             FilterTests.Retry(retry =>
             {
@@ -194,7 +194,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        public void bad_Data_StreamLogs_WithIncorrectPageSize()
+        public void Data_StreamLogs_WithIncorrectPageSize()
         {
             FilterTests.Retry(retry =>
             {
