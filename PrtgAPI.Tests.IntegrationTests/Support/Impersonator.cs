@@ -1,15 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
+using Microsoft.Win32.SafeHandles;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
-    //http://stackoverflow.com/questions/6866104/c-sharp-service-status-on-remote-machine
-    class Impersonator : IDisposable
+    static class Impersonator
     {
         [DllImport("advapi32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -22,22 +20,13 @@ namespace PrtgAPI.Tests.IntegrationTests
             ref IntPtr phToken
         );
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool CloseHandle(IntPtr hObject);
-
-        private static IntPtr tokenHandle = new IntPtr(0);
-        private static WindowsImpersonationContext impersonatedUser;
-
         const int LOGON32_PROVIDER_DEFAULT = 0;
         const int LOGON32_LOGON_NEW_CREDENTIALS = 9;
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public Impersonator(string domain, string username, string password)
+        private static SafeAccessTokenHandle GetHandle(string domain, string username, string password)
         {
-            tokenHandle = IntPtr.Zero;
+            var tokenHandle = IntPtr.Zero;
 
             var result = LogonUser(username, domain, password, LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_DEFAULT, ref tokenHandle);
 
@@ -47,39 +36,24 @@ namespace PrtgAPI.Tests.IntegrationTests
                 throw new Win32Exception(ret);
             }
 
-            var newIdentity = new WindowsIdentity(tokenHandle);
+            var safeToken = new SafeAccessTokenHandle(tokenHandle);
 
-            impersonatedUser = newIdentity.Impersonate();
-        }
-
-        public void RevertToSelf()
-        {
-            impersonatedUser.Undo();
-
-            if (tokenHandle != IntPtr.Zero)
-            {
-                CloseHandle(tokenHandle);
-            }
-        }
-
-        public void Dispose()
-        {
-            RevertToSelf();
+            return safeToken;
         }
 
         public static void ExecuteAction(Action action)
         {
-            using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
+            using (var token = GetHandle(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
             {
-                action();
+                WindowsIdentity.RunImpersonated(token, action);
             }
         }
 
         public static T ExecuteAction<T>(Func<T> action)
         {
-            using (var impersonator = new Impersonator(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
+            using (var token = GetHandle(Settings.Server, Settings.WindowsUserName, Settings.WindowsPassword))
             {
-                return action();
+                return WindowsIdentity.RunImpersonated(token, action);
             }
         }
     }
