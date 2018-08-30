@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.ServiceProcess;
 using PrtgAPI.Helpers;
 
 namespace PrtgAPI.Targets
@@ -24,13 +23,13 @@ namespace PrtgAPI.Targets
         /// <summary>
         /// Indicates whether the service is currently running or stopped.
         /// </summary>
-        public ServiceControllerStatus Status { get; }
+        public WmiServiceStatus Status { get; }
 
         private WmiServiceTarget(string raw) : base(raw)
         {
             DisplayName = components[1];
             Description = components[2];
-            Status = components[3].ToEnum<ServiceControllerStatus>();
+            Status = components[3].XmlToEnum<WmiServiceStatus>();
         }
 
         /// <summary>

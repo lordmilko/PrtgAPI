@@ -118,7 +118,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteUnsupported(
                 q => q.Where(s => ((Enum) s.Status).Equals((Enum) RetryMode.Retry)),
-                "Cannot evaluate condition '(Convert(Convert(<root>.Status)) == Convert(Retry))' between enums of type 'PrtgAPI.Status' and 'PrtgAPI.RetryMode'.",
+                $"Cannot evaluate condition '({Cast(Cast("<root>.Status", "Enum"), "Object")} == {Cast("Retry", "Object")})' between enums of type 'PrtgAPI.Status' and 'PrtgAPI.RetryMode'.",
 
                 q => q.AsEnumerable().Where(s => ((Enum) s.Status).Equals((Enum) RetryMode.Retry)),
                 string.Empty,
@@ -131,7 +131,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteUnsupported(
                 q => q.Where(s => (bool?)(s.Id == 4000) == false),
-                "Cannot evaluate multi-part expression 'Convert((s.Id == 4000)) == False'.",
+                $"Cannot evaluate multi-part expression '{Cast("(s.Id == 4000)", "Nullable`1")} == False'.",
 
                 q => q.AsEnumerable().Where(s => (bool?)(s.Id == 4000) == false),
                 string.Empty,
@@ -209,7 +209,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteUnsupported(
                 q => q.Where(s => ((bool)(object)(s.Id == 4000)).ToString().Contains("Volume")),
-                "Cannot evaluate expression 'Convert(Convert((s.Id == 4000))).ToString().Contains(\"Volume\")' containing multiple sub-conditions ('Convert(Convert((s.Id == 4000))).ToString().Contains(\"Volume\")', 's.Id == 4000').",
+                $"Cannot evaluate expression '{Cast(Cast("(s.Id == 4000)", "Object"), "Boolean")}.ToString().Contains(\"Volume\")' containing multiple sub-conditions ('{Cast(Cast("(s.Id == 4000)", "Object"), "Boolean")}.ToString().Contains(\"Volume\")', 's.Id == 4000').",
 
                 q => q.AsEnumerable().Where(s => ((bool)(object)(s.Id == 4000)).ToString().Contains("Volume")),
                 string.Empty,

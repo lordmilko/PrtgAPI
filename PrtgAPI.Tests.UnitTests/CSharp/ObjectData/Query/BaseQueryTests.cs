@@ -143,5 +143,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             return client;
         }
+
+        public static string Cast(string value, string type)
+        {
+#if NET461
+            return $"Convert({value})";
+#else
+            return $"Convert({value}, {type})";
+#endif
+        }
     }
 }

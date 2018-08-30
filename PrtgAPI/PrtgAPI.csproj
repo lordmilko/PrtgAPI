@@ -39,7 +39,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
@@ -106,6 +105,7 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\WmiTimeoutMethod.cs" />
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
+    <Compile Include="Enums\Deserialization\WmiServiceStatus.cs" />
     <Compile Include="Enums\Enhanced\IEnumEx.cs" />
     <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\FilterMode.cs" />
