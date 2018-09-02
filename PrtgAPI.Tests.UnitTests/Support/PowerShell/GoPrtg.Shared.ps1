@@ -96,6 +96,20 @@ function InstallMultipleWithAlias
     $content | Should BeLike $expected
 }
 
+function InstallInProfileFunctionWithoutHeaderFooter
+{
+    Install-GoPrtgServer
+
+    $contents = gc $Profile
+
+    $newContents = $contents | where {
+        $_ -ne "########################### Start GoPrtg Servers ###########################" -and
+        $_ -ne "############################ End GoPrtg Servers ############################"
+    }
+
+    Set-Content $Profile $newContents
+}
+
 #endregion
 #region Init
 

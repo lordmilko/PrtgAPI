@@ -368,6 +368,15 @@
     <Compile Include="PowerShell\Cmdlets\Session\DisablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\EnablePrtgProgress.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorType.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\ConnectGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\GetGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Base\GoPrtgCmdlet.cs" />
+    <Compile Include="PowerShell\GoPrtg\GoPrtgProfile.cs" />
+    <Compile Include="PowerShell\GoPrtg\GoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\InstallGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\SetGoPrtgAlias.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UninstallGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UpdateGoPrtgCredential.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTarget.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
@@ -395,7 +404,6 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
     <None Include="PowerShell\Functions\New-Credential.ps1" />
-    <None Include="PowerShell\Functions\Update-GoPrtgCredential.ps1" />
     <Compile Include="PowerShell\Progress\AbortProgressParser.cs" />
     <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
@@ -602,17 +610,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="PowerShell\Functions\Connect-GoPrtgServer.ps1" />
-    <None Include="PowerShell\Functions\Get-GoPrtgServer.ps1" />
-    <None Include="PowerShell\Functions\Install-GoPrtgServer.ps1" />
-    <None Include="PowerShell\Functions\Set-GoPrtgAlias.ps1" />
-    <None Include="PowerShell\Functions\Uninstall-GoPrtgServer.ps1" />
     <Compile Include="PowerShell\Progress\ProgressManager.SelectObject.cs" />
     <None Include="PowerShell\Resources\PrtgAPI.cmd" />
     <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PowerShell\Resources\PrtgAPI.GoPrtg.ps1" />
     <None Include="PowerShell\Resources\PrtgAPI.psd1">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

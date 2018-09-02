@@ -11,6 +11,40 @@ Describe "Install-GoPrtgServer" {
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
 
+    It "creates a new profile and profile folder if one doesn't exist" {
+
+        $needsRestore = $false
+
+        $folder = $null
+
+        $folder = Split-Path $Profile -Parent
+
+        if(Test-Path $folder)
+        {
+            $needsRestore = $true
+
+            Rename-Item $folder "$folder.tmp"
+        }
+
+        try
+        {
+            Install-GoPrtgServer
+
+            $content = gc $Profile -Raw
+
+            $content | Should BeLike $baseExpected
+        }
+        finally
+        {
+            if($needsRestore)
+            {
+                Remove-Item $folder -Force -Recurse
+
+                Rename-Item "$folder.tmp" $folder
+            }
+        }
+    }
+
     It "installs correctly in new profile" {
         Install-GoPrtgServer
 
@@ -168,6 +202,53 @@ Describe "Install-GoPrtgServer" {
         $content | Should BeLike $expected
     }
 
+    It "treats a null and empty alias as being the same with the same server but different usernames" {
+        Install-GoPrtgServer
+
+        try
+        {
+            Connect-PrtgServer prtg.example.com (New-Credential username2 12345678) -PassHash -Force
+
+            $client = Get-PrtgClient
+
+            { Install-GoPrtgServer "" } | Should Throw "Cannot add server '$($client.Server)': a record for the server already exists without an alias. Please update the alias of this record with Set-GoPrtgAlias and try again."
+        }
+        finally
+        {
+            Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+        }
+    }
+
+    It "treats a null and empty alias as being the same with a different server" {
+        Install-GoPrtgServer
+
+        try
+        {
+            Connect-PrtgServer prtg.example2.com (New-Credential username 12345678) -PassHash -Force
+
+            $client = Get-PrtgClient
+
+            Install-GoPrtgServer ""
+        }
+        finally
+        {
+            Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+        }
+
+        $contents = gc $Profile -Raw
+
+        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
+        $expected += "function __goPrtgGetServers {@(`r`n"
+        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
+        $expected += "    `"```"prtg.example2.com```",,```"username```",```"*```"`"`r`n"
+        $expected += ")}`r`n`r`n"
+        $expected += "############################ End GoPrtg Servers ############################`r`n"
+
+        $expected = $expected.Replace("``", "````")
+
+        $contents | Should BeLike $expected
+    }
+
     It "installs multiple with alias" {
         InstallMultipleWithAlias
     }
@@ -206,7 +287,7 @@ Describe "Install-GoPrtgServer" {
 
         Install-GoPrtgServer
         
-        { Install-GoPrtgServer } | Should Throw "Cannot add server '$($client.Server)': a record for user '$($client.UserName)' already exists."
+        { Install-GoPrtgServer } | Should Throw "Cannot add server '$($client.Server)': a record for the user '$($client.UserName)' already exists."
     }
 
     #todo: update-goprtgserver should allow specifying the server to update explicitly
@@ -239,14 +320,12 @@ Describe "Install-GoPrtgServer" {
 
             $client = Get-PrtgClient
 
-            { Install-GoPrtgServer } | Should Throw "Cannot add server '$($client.Server)': a record for server already exists without an alias. Please update the alias of this record with Set-GoPrtgAlias and try again."
+            { Install-GoPrtgServer } | Should Throw "Cannot add server '$($client.Server)': a record for the server already exists without an alias. Please update the alias of this record with Set-GoPrtgAlias and try again."
         }
         finally
         {
             Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
         }
-
-        $client = Get-PrtgClient
     }
 
     It "throws when alias already exists" {
@@ -256,7 +335,7 @@ Describe "Install-GoPrtgServer" {
         {
             Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
 
-            { Install-GoPrtgServer prod } | Should Throw "Cannot add server 'prtg.example2.com' with alias 'prod': a record for this alias already exists. For more information see 'Get-GoPrtgServer prod'"
+            { Install-GoPrtgServer prod } | Should Throw "Cannot add server 'prtg.example2.com' with alias 'prod': a record for the alias already exists. For more information see 'Get-GoPrtgServer prod'"
         }
         finally
         {
@@ -266,7 +345,7 @@ Describe "Install-GoPrtgServer" {
 
     It "throws installing a duplicate username/server combination even with a different alias" {
         Install-GoPrtgServer prod
-        { Install-GoPrtgServer dev } | Should Throw "Cannot add server 'prtg.example.com': a record for user 'username' already exists. To update the alias of this record use Set-GoPrtgAlias. To reinstall this record, first uninstall with Uninstall-GoPrtgServer and then re-run Install-GoPrtgServer."
+        { Install-GoPrtgServer dev } | Should Throw "Cannot add server 'prtg.example.com': a record for the user 'username' already exists. To update the alias of this record use Set-GoPrtgAlias. To reinstall this record, first uninstall with Uninstall-GoPrtgServer and then re-run Install-GoPrtgServer."
     }
 
     It "throws when getServers function is missing" {
@@ -310,5 +389,21 @@ Describe "Install-GoPrtgServer" {
         Set-Content $Profile $newContents
 
         { Install-GoPrtgServer } | Should Throw "GoPrtg Servers end line '############################ End GoPrtg Servers ############################' has been removed from PowerShell profile. Please reinstate line or remove all lines pertaining to GoPrtg from your profile."
+    }
+
+    It "throws when both the header and footer have been removed" {
+
+        InstallInProfileFunctionWithoutHeaderFooter
+
+        try
+        {
+            Connect-PrtgServer prtg.example2.com (New-Credential username2 12345678) -PassHash -Force
+
+            { Install-GoPrtgServer } | Should Throw "GoPrtg Servers start line '########################### Start GoPrtg Servers ###########################' and end line"
+        }
+        finally
+        {
+            Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+        }
     }
 }

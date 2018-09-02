@@ -11,12 +11,6 @@ Describe "Update-GoPrtgCredential" {
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
 
-    Mock -ModuleName PrtgAPI GetNewCredential {
-        param($UserName)
-
-        return New-Credential $UserName newpassword
-    }
-
     Mock -ModuleName PrtgAPI Connect-PrtgServer {
         param($Server, $Credential, $Force)
 
@@ -30,7 +24,7 @@ Describe "Update-GoPrtgCredential" {
 
         $property.SetValue($null, $client)
     }
-
+    
     It "updates the credential" {
         Install-GoPrtgServer
 
@@ -38,7 +32,7 @@ Describe "Update-GoPrtgCredential" {
 
         $content | Should BeLike $baseExpected
 
-        Update-GoPrtgCredential
+        Update-GoPrtgCredential (New-Credential prtgadmin newpassword)
 
         (Get-PrtgClient).PassHash | Should Be newpassword
 
@@ -60,7 +54,7 @@ Describe "Update-GoPrtgCredential" {
 
         $content | Should Not Be $newContent
     }
-
+    
     It "updates the username and password when the username is changed" {
         Install-GoPrtgServer
 
@@ -95,6 +89,12 @@ Describe "Update-GoPrtgCredential" {
         Connect-PrtgServer prtg.example2.com (New-Credential username 12345678) -PassHash -Force
 
         { Update-GoPrtgCredential } | Should Throw "Server 'prtg.example2.com' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>]"
+    }
+
+    It "throws when both the header and footer have been removed" {
+        InstallInProfileFunctionWithoutHeaderFooter
+
+        { Update-GoPrtgCredential (New-Credential username password) } | Should Throw "GoPrtg Servers start line '########################### Start GoPrtg Servers ###########################' and end line"
     }
 
     # and maybe also all the tests where we're not even connected to a goprtg server, or dont even have a profile, or the profile is empty...same tests set-goprtgalias uses

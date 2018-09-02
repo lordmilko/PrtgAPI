@@ -164,20 +164,25 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 WriteObject(PassThruObject);
         }
 
-        private bool ProgressSpecified => MyInvocation.BoundParameters.ContainsKey(nameof(Progress));
+        private static bool ProgressSpecified(PSCmdlet cmdlet) => cmdlet.MyInvocation.BoundParameters.ContainsKey(nameof(Progress));
 
-        private bool ProgressFalse => ProgressSpecified && Progress == false;
+        private bool ProgressFalse(PSCmdlet cmdlet) => ProgressSpecified(cmdlet) && Progress == false;
 
-        private bool IsScript => !string.IsNullOrEmpty(MyInvocation.ScriptName) && !GoPrtgScript();
+        private static bool IsScript(PSCmdlet cmdlet) => !string.IsNullOrEmpty(cmdlet.MyInvocation.ScriptName);
 
-        private bool IsISE => GetVariableValue("global:psISE") != null;
+        private static bool IsISE(PSCmdlet cmdlet) => cmdlet.GetVariableValue("global:psISE") != null;
 
-        private bool ProgressTrue => ProgressSpecified && Progress;
+        private bool ProgressTrue(PSCmdlet cmdlet) => ProgressSpecified(cmdlet) && Progress;
 
         /// <summary>
         /// Performs record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
+        {
+            Connect(this);
+        }
+
+        internal void Connect(PSCmdlet cmdlet)
         {
             if (PrtgSessionState.Client == null || Force.IsPresent)
             {
@@ -201,7 +206,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     PrtgSessionState.Client.LogLevel = level;
                 }
 
-                if (!ProgressTrue && (ProgressFalse || IsScript || IsISE))
+                if (!ProgressTrue(cmdlet) && (ProgressFalse(cmdlet) || IsScript(cmdlet) || IsISE(cmdlet)))
                     PrtgSessionState.EnableProgress = false;
                 else
                     PrtgSessionState.EnableProgress = true;
@@ -212,14 +217,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 throw new InvalidOperationException($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
             }
-        }
-
-        [ExcludeFromCodeCoverage]
-        private bool GoPrtgScript()
-        {
-            var script = MyInvocation.ScriptName;
-
-            return script.EndsWith("Connect-GoPrtgServer.ps1") || script.EndsWith("Update-GoPrtgCredential.ps1");
         }
     }
 }

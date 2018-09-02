@@ -248,4 +248,10 @@ Describe "Uninstall-GoPrtgServer" {
 
         { Uninstall-GoPrtgServer } | Should Throw "GoPrtg Servers end line '############################ End GoPrtg Servers ############################' has been removed from PowerShell profile. Please reinstate line or remove all lines pertaining to GoPrtg from your profile."
     }
+    
+    It "throws when both the header and footer have been removed" {
+        InstallInProfileFunctionWithoutHeaderFooter
+
+        { Uninstall-GoPrtgServer } | Should Throw "GoPrtg Servers start line '########################### Start GoPrtg Servers ###########################' and end line"
+    }
 }

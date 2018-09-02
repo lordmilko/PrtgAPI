@@ -91,6 +91,8 @@
         /// </summary>
         internal const string EditFrom = "EditFromSet";
 
+        internal const string Force = "ForceSet";
+
         internal const string SensorToDestination = "SensorToDestinationSet";
         internal const string DeviceToDestination = "DeviceToDestinationSet";
         internal const string GroupToDestination = "GroupToDestinationSet";

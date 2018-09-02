@@ -284,6 +284,12 @@ Describe "Set-GoPrtgAlias" {
         }
     }
 
+    It "throws when both the header and footer have been removed" {
+        InstallInProfileFunctionWithoutHeaderFooter
+
+        { Set-GoPrtgAlias dev } | Should Throw "GoPrtg Servers start line '########################### Start GoPrtg Servers ###########################' and end line"
+    }
+
     <#
     it sets an alias on a record that doesnt have one
 on one that does have one
