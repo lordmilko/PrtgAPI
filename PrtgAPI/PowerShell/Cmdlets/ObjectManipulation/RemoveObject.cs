@@ -48,7 +48,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The object to remove.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        public PrtgObject Object { get; set; }
 
         /// <summary>
         /// <para type="description">Forces an object to be removed without displaying a confirmation prompt.</para>
@@ -73,7 +73,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
-                if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
+                if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
                 {
                     if (Force.IsPresent && batch == null)
                         Batch = true;
@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {Object.BaseType.ToString().ToLower()} '{Object.Name}' (ID: {Object.Id})");
+            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' (ID: {Object.Id})");
         }
 
         /// <summary>

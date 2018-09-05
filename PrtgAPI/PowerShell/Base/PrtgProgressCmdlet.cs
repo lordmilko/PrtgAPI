@@ -166,7 +166,7 @@ namespace PrtgAPI.PowerShell.Base
                     var prtgObj = obj as IObject;
 
                     if (prtgObj != null)
-                        ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj.GetType()).ToLower()}";
+                        ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj).ToLower()}";
                     else
                         ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(obj.GetType()).ToLower()}s";
                     ProgressManager.CurrentRecord.CurrentOperation = currentOperation ?? $"Retrieving all {GetTypePlural()}";
@@ -418,6 +418,16 @@ namespace PrtgAPI.PowerShell.Base
                 return attribute.Description;
 
             return type.Name;
+        }
+
+        internal static string GetTypeDescription(IObject value)
+        {
+            var type = value.GetType();
+
+            if (type == typeof(PrtgObject))
+                return ((PrtgObject)value).Type.StringValue;
+
+            return GetTypeDescription(type);
         }
 
         private string GetTypePlural()

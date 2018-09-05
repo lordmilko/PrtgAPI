@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">The object to rename.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        public PrtgObject Object { get; set; }
 
         /// <summary>
         /// <para type="description">The new name to give the object.</para>
@@ -67,7 +67,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {Object.BaseType.ToString().ToLower()} '{Object.Name}' to '{Name}'");
+            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' to '{Name}'");
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             var server = PrtgUrl.AddUrlPrefix(client.Server);
 
-            ExecuteOperation(() => Process.Start($"{server}{url}"), $"Opening {PrtgProgressCmdlet.GetTypeDescription(obj.GetType())} '{obj.Name}'");
+            ExecuteOperation(() => Process.Start($"{server}{url}"), $"Opening {PrtgProgressCmdlet.GetTypeDescription(obj)} '{obj.Name}'");
         }
 
         internal override string ProgressActivity => "Opening PRTG Objects";
