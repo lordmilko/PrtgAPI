@@ -227,7 +227,9 @@
     <Compile Include="Parameters\ObjectManipulation\SortAlphabeticallyParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
     <Compile Include="PowerShell\DynamicParameterPropertyTypes.cs" />
+    <Compile Include="PowerShell\Either.cs" />
     <Compile Include="PowerShell\NameOrObject.cs" />
+    <Compile Include="PowerShell\NameOrScriptBlock.cs" />
     <Compile Include="Request\Serialization\Cache\EnumNameCache.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\StringFilterHandler.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\StringOrNumericFilterHandler.cs" />
