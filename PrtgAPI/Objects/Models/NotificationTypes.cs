@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PrtgAPI
@@ -35,9 +36,14 @@ namespace PrtgAPI
         public int VolumeTriggers { get; private set; }
 
         /// <summary>
+        /// Total number of triggers. This property is language indendent, and as such may not reflect the sum of all State/Threshold/Speed/Volume/Change Triggers
+        /// </summary>
+        public int TotalTriggers { get; }
+
+        /// <summary>
         /// Whether notification triggers are inherited from a PRTG Object's parent object.
         /// </summary>
-        public bool InheritTriggers { get; private set; }
+        public bool InheritTriggers { get; }
 
         private readonly string rawNotificationTypes;
 
@@ -58,8 +64,19 @@ namespace PrtgAPI
                 SetTriggerValue("Threshold", v => ThresholdTriggers = v);
                 SetTriggerValue("Change", v => ChangeTriggers = v);
                 SetTriggerValue("Speed", v => SpeedTriggers = v);
-                SetTriggerValue("Volume", v => SpeedTriggers = v);
+                SetTriggerValue("Volume", v => VolumeTriggers = v);
+
+                TotalTriggers = GetTotalTriggers();
             }
+        }
+
+        private int GetTotalTriggers()
+        {
+            var matches = Regex.Matches(rawNotificationTypes, "\\d+ ");
+
+            var count = matches.Cast<Match>().Select(m => Convert.ToInt32(Regex.Replace(m.Value, "(\\d+) ", "$1"))).Sum();
+
+            return count;
         }
 
         private void SetTriggerValue(string type, Action<int> setter)
@@ -77,7 +94,7 @@ namespace PrtgAPI
 
         private int GetTriggerValue(string type)
         {
-            return Convert.ToInt32(Regex.Replace(rawNotificationTypes, $"(.*)(\\d)( {type}.*)", "$2"));
+            return Convert.ToInt32(Regex.Replace(rawNotificationTypes, $"(.*?)(\\d+)( {type}.*)", "$2"));
         }
 
         /// <summary>
