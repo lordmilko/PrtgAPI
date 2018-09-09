@@ -15,6 +15,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             switch (function)
             {
+                case nameof(JsonFunction.GetStatus):
+                    return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(XmlFunction.TableData):
                     return GetTableResponse(address);
                 case nameof(CommandFunction.RestartProbes):

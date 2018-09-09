@@ -2973,7 +2973,7 @@ namespace PrtgAPI
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
         public void RestartProbe(int[] probeIds = null, bool waitForRestart = false, Func<ProbeRestartProgress[], bool> progressCallback = null)
         {
-            var restartTime = DateTime.Now;
+            var restartTime = waitForRestart ? (DateTime?) GetStatus().DateTime : null;
 
             if (probeIds != null && probeIds.Length > 1)
             {
@@ -2986,7 +2986,7 @@ namespace PrtgAPI
             if (waitForRestart)
             {
                 var probe = probeIds == null || probeIds.Length == 0 ? GetProbes() : GetProbes(Property.Id, probeIds);
-                WaitForProbeRestart(restartTime, probe, progressCallback);
+                WaitForProbeRestart(restartTime.Value, probe, progressCallback);
             }
         }
 
@@ -3001,7 +3001,7 @@ namespace PrtgAPI
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
         public async Task RestartProbeAsync(int[] probeIds = null, bool waitForRestart = false, Func<ProbeRestartProgress[], bool> progressCallback = null)
         {
-            var restartTime = DateTime.Now;
+            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync().ConfigureAwait(false)).DateTime : null;
 
             if (probeIds != null && probeIds.Length > 1)
             {
@@ -3015,7 +3015,7 @@ namespace PrtgAPI
             if (waitForRestart)
             {
                 var probe = probeIds == null || probeIds.Length == 0 ? await GetProbesAsync().ConfigureAwait(false) : await GetProbesAsync(Property.Id, probeIds).ConfigureAwait(false);
-                await WaitForProbeRestartAsync(restartTime, probe, progressCallback).ConfigureAwait(false);
+                await WaitForProbeRestartAsync(restartTime.Value, probe, progressCallback).ConfigureAwait(false);
             }
         }
 
@@ -3030,12 +3030,12 @@ namespace PrtgAPI
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether PRTG has restarted.</param>
         public void RestartCore(bool waitForRestart = false, Func<RestartCoreStage, bool> progressCallback = null)
         {
-            DateTime restartTime = DateTime.Now;
+            var restartTime = waitForRestart ? (DateTime?)GetStatus().DateTime : null;
 
             RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.RestartServer));
 
             if (waitForRestart)
-                WaitForCoreRestart(restartTime, progressCallback);
+                WaitForCoreRestart(restartTime.Value, progressCallback);
         }
 
         /// <summary>
@@ -3047,12 +3047,12 @@ namespace PrtgAPI
         /// </summary>
         public async Task RestartCoreAsync(bool waitForRestart = false, Func<RestartCoreStage, bool> progressCallback = null)
         {
-            DateTime restartTime = DateTime.Now;
+            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync().ConfigureAwait(false)).DateTime : null;
 
             await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.RestartServer)).ConfigureAwait(false);
 
             if (waitForRestart)
-                await WaitForCoreRestartAsync(restartTime, progressCallback).ConfigureAwait(false);
+                await WaitForCoreRestartAsync(restartTime.Value, progressCallback).ConfigureAwait(false);
         }
 
         #endregion
@@ -3334,14 +3334,14 @@ namespace PrtgAPI
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
         /// <summary>
-        /// Retrieves configuration, status and version details from a PRTG Server.
+        /// Retrieves configuration, status and version details of the PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
         public ServerStatus GetStatus() =>
             ObjectEngine.GetObject<ServerStatus>(new ServerStatusParameters());
 
         /// <summary>
-        /// Asynchronously retrieves configuration, status and version details from a PRTG Server.
+        /// Asynchronously retrieves configuration, status and version details of the PRTG Server.
         /// </summary>
         /// <returns>Status details of a PRTG Server.</returns>
         public async Task<ServerStatus> GetStatusAsync() =>

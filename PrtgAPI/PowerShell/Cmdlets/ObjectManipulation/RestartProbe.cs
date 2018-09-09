@@ -114,7 +114,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 if (Force || yesToAll || ShouldContinue(continueMessage, "WARNING", true, ref yesToAll, ref noToAll))
                 {
-                    restartTime = DateTime.Now;
+                    if (Wait)
+                        restartTime = client.GetStatus().DateTime;
 
                     if (probe != null)
                         probesRestarted.Add(probe);

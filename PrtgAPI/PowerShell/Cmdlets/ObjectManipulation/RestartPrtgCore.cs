@@ -77,7 +77,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 bool no = false;
                 if (Force || ShouldContinue("Are you sure you want to restart the PRTG Core Service? All users will be disconnected while restart is in progress", "WARNING!", true, ref yes, ref no))
                 {
-                    restartTime = DateTime.Now;
+                    if (Wait)
+                        restartTime = client.GetStatus().DateTime;
 
                     ExecuteOperation(() => client.RestartCore(), statusDescription);
                 }

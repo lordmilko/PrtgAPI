@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
@@ -14,6 +15,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             switch (function)
             {
+                case nameof(JsonFunction.GetStatus):
+                    return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(CommandFunction.RestartServer):
                     return new BasicResponse(string.Empty);
                 default:

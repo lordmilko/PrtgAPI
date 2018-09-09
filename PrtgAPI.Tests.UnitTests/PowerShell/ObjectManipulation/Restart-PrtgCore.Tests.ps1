@@ -3,9 +3,14 @@
 Describe "Restart-PrtgCore" -Tag @("PowerShell", "UnitTest") {
     It "restarts the core server" {
 
-        $startDate = (Get-Date).ToString("yyyy-MM-dd-HH-mm-ss")
+        $status = WithResponse "MultiTypeResponse" {
+            Get-PrtgStatus
+        }
+
+        $startDate = $status.DateTime.ToString("yyyy-MM-dd-HH-mm-ss")
 
         SetAddressValidatorResponse @(
+            "api/getstatus.htm?id=0&"
             "api/restartserver.htm?"
             "api/table.xml?content=messages&" +
                 "columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&" +
