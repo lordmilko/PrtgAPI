@@ -230,6 +230,11 @@
     <Compile Include="PowerShell\Either.cs" />
     <Compile Include="PowerShell\NameOrObject.cs" />
     <Compile Include="PowerShell\NameOrScriptBlock.cs" />
+    <Compile Include="Request\PrtgClient.Methods.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrtgClient.Methods.Generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="Request\Serialization\Cache\EnumNameCache.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\StringFilterHandler.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\StringOrNumericFilterHandler.cs" />
@@ -647,6 +652,11 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrtgClient.Generated.cs</LastGenOutput>
     </Content>
+    <Content Include="Request\PrtgClient.Methods.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PrtgClient.Methods.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="Request\PrtgClient.Methods.xml" />
     <Content Include="Request\Version\VersionClient18_1.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VersionClient18_1.Generated.cs</LastGenOutput>

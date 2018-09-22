@@ -4,10 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4572A75-AC79-4E5E-B253-1A545446220A} = {C4572A75-AC79-4E5E-B253-1A545446220A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj", "{2179C33F-C774-45AF-A664-338B8C3B799B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.IntegrationTests", "PrtgAPI.Tests.IntegrationTests\PrtgAPI.Tests.IntegrationTests.csproj", "{60277601-FF8C-4712-BE9B-972921F5C763}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{873CF2EE-4D15-4445-BAE9-33F1D82848A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CodeGenerator", "Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj", "{C4572A75-AC79-4E5E-B253-1A545446220A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +34,15 @@ Global
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4572A75-AC79-4E5E-B253-1A545446220A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4572A75-AC79-4E5E-B253-1A545446220A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4572A75-AC79-4E5E-B253-1A545446220A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4572A75-AC79-4E5E-B253-1A545446220A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C4572A75-AC79-4E5E-B253-1A545446220A} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
 	EndGlobalSection
 EndGlobal
