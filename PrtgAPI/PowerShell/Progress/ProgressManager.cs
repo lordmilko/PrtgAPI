@@ -796,7 +796,12 @@ namespace PrtgAPI.PowerShell.Progress
         private void WriteProgress(ProgressRecordEx progressRecord, ProgressRecordEx previousRecord, bool cache = false)
         {
             if (progressRecord.ContainsProgress == false)
+            {
+                if (cmdlet.Stopping)
+                    throw new PipelineStoppedException();
+
                 throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
+            }
 
             progressRecord.State.Completed = progressRecord.RecordType == ProgressRecordType.Completed;
 

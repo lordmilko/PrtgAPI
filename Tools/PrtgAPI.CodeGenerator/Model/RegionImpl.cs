@@ -26,18 +26,23 @@ namespace PrtgAPI.CodeGenerator.Model
             InlineMethodDefs = regionImpl.InlineMethodDefs.Select(m => new InlineMethodDef(m)).ToReadOnlyList();
         }
 
-        public Region Serialize(Config config)
+        public Region Serialize(DocumentConfig documentConfig)
         {
-            var regions = Regions.Select(r => r.Serialize(config)).ToList();
+            var regions = Regions.Select(r => r.Serialize(documentConfig)).ToList();
 
-            var implMethodsAndRegions = MethodImpls.Select(m => MethodImpl.Serialize(m, config)).ToList();
+            var implMethodsAndRegions = MethodImpls.Select(m => MethodImpl.Serialize(m, documentConfig)).ToList();
 
             regions.AddRange(implMethodsAndRegions.Select(i => i.Item1).Where(v => v != null));
 
             var implMethods = implMethodsAndRegions.SelectMany(i => i.Item2).ToList();
-            var inlineMethods = InlineMethodDefs.SelectMany(m => m.Serialize(m, config)).ToList();
+            var inlineMethods = InlineMethodDefs.SelectMany(m => m.Serialize(m, documentConfig)).ToList();
 
             return new Region(Name, regions.ToReadOnlyList(), implMethods.Union(inlineMethods).ToReadOnlyList(), GroupOverloads);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

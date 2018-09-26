@@ -33,6 +33,10 @@ namespace PrtgAPI.CodeGenerator
 
         XmlElement StreamBodyElement { get; }
 
+        XmlElement TokenBodyElement { get; }
+
+        TokenMode TokenMode { get; }
+
         string Overload { get; }
 
         bool NeedsStream { get; }

@@ -130,6 +130,7 @@
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
     <Compile Include="Helpers\DictionaryHelpers.cs" />
+    <Compile Include="Helpers\WaitHandleHelpers.cs" />
     <Compile Include="Linq\Expressions\ExpressionHelpers.cs" />
     <Compile Include="Helpers\ILazyExtensions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
@@ -665,7 +666,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)PowerShell\Resources\*.*" "$(TargetDir)"

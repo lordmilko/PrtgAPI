@@ -59,11 +59,11 @@ namespace PrtgAPI.Linq
                 return source.Single();
 
             if(source.Count == 0)
-                throw new InvalidOperationException($"Failed to retrieve object with {property} {value}: Object does not exist");
+                throw new InvalidOperationException($"Failed to retrieve object with {property} '{value}': Object does not exist");
 
             var str = source.Select(s => $"{s} ({s.GetId()})");
 
-            throw new InvalidOperationException($"Failed to retrieve object with {property} {value}: Multiple objects were returned: " + string.Join(", ", str));
+            throw new InvalidOperationException($"Failed to retrieve object with {property} '{value}': Multiple objects were returned: " + string.Join(", ", str));
         }
     }
 }

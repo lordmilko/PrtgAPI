@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Request;
@@ -22,10 +23,10 @@ namespace PrtgAPI.Tests.UnitTests
             this.synchronous = synchronous;
         }
 
-        public Task<HttpResponseMessage> GetSync(string address)
+        public Task<HttpResponseMessage> GetSync(string address, CancellationToken token)
         {
             if (!synchronous)
-                return realWebClient.GetSync(address);
+                return realWebClient.GetSync(address, token);
             else
             {
                 var exception = new HttpRequestException("Outer Exception", new WebException("Inner Exception"));
@@ -34,12 +35,12 @@ namespace PrtgAPI.Tests.UnitTests
             }
         }
 
-        public Task<HttpResponseMessage> GetAsync(string address)
+        public Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
         {
             if (successfulUrls.Count < 1)
             {
                 successfulUrls.Add(address);
-                return realWebClient.GetAsync(address);
+                return realWebClient.GetAsync(address, token);
             }
             else
             {

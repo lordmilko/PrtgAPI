@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using System.Xml.Serialization;
 using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
@@ -142,7 +143,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 GetTargets(
                    str,
-                    (d, c) => client.Targets.GetSensorTargets(d, RawType, Table, c),
+                   (d, c, t) => client.Targets.GetSensorTargets(d, RawType, Table, c, t),
                    ParametersNotSupported,
                     e => e.Name
                 );
@@ -209,7 +210,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void GetTargets<T>(
             string typeDescription,
-            Func<int, Func<int, bool>, List<T>> getItems,
+            Func<int, Func<int, bool>, CancellationToken, List<T>> getItems,
             Func<List<T>, SensorParametersInternal> createParams,
             params Func<T, string>[] nameProperties)
         {
@@ -219,7 +220,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             TypeDescription = typeDescription;
 
             WriteProcessProgressRecords(
-                f => ParseItems(getItems(Device.Id, f), createParams, nameProperties)
+                f => ParseItems(getItems(Device.Id, f,CancellationToken), createParams, nameProperties)
             );
         }
 

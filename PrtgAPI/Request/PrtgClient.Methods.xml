@@ -1,6 +1,9 @@
 ﻿<Document>
     <Resources>
-        <StreamSummary>When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.</StreamSummary>
+        <StreamSummary>
+            &lt;para/&gt;
+            When this method's response is enumerated multiple parallel requests will be executed against the PRTG Server and yielded in the order they return.
+        </StreamSummary>
         <SerialSummary>
             &lt;para/&gt;
             If &lt;paramref name="serial"/&gt; is false, when this method's response is enumerated multiple parallel requests will be executed against the PRTG Server
@@ -19,17 +22,24 @@
         <StreamReturnDescription>A generator encapsulating a series of &lt;see cref="Task"/&gt; objects capable of streaming a response from a PRTG Server.</StreamReturnDescription>
         <SerialReturnDescription>If &lt;paramref name="serial"/&gt; is false, a generator encapsulating a series of &lt;see cref="Task"/&gt; objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</SerialReturnDescription>
         <SerialOnlyReturnDescription>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</SerialOnlyReturnDescription>
+
+        <CancellationToken>with a specified cancellation token.</CancellationToken>
     </Resources>
+    <CommonParameters>
+        <CommonParameter name="token" type="CancellationToken" description="A cancellation token that can be used by other objects or threads to receive notice of cancellation."/>
+    </CommonParameters>
     <Templates>
         <Template name="Object">
             <Region name="Single">
                 <MethodDef name="{Request}{Name}" returns="{type}" needsStream="false">
-                    <Summary>Retrieves a {extendedDescription} with a specified ID from a PRTG Server. If the {description} does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
+                    <Summary>
+                        Retrieves a {extendedDescription} with a specified ID from a PRTG Server.&lt;para/&gt;
+                        If the {description} does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
                     <Exception type="InvalidOperationException" description="The specified {description} does not exist or multiple {description}s were resolved with the specified ID." />
                     <ReturnDescription>The {description} with the specified ID.</ReturnDescription>
 
                     <Parameter name="id" type="int" description="The ID of the {description} to retrieve." />
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="{Request}{Name}s" args="Property.Id, id"/>.SingleObject(id)
                     </Body>
                 </MethodDef>
@@ -71,6 +81,9 @@
                     <Body expression="true">
                         <Call name="{Request}{Name}s" args="new SearchFilter(property, value)"/>
                     </Body>
+                    <TokenBody expression="true">
+                        <Call name="{Request}{Name}s" args="new[]{new SearchFilter(property, value)}"/>
+                    </TokenBody>
                 </MethodDef>
             </Region>
             <Region name="Filter (Property, Operator, Value)">
@@ -90,6 +103,9 @@
                     <Body expression="true">
                         <Call name="{Request}{Name}s" args="new SearchFilter(property, @operator, value)"/>
                     </Body>
+                    <TokenBody expression="true">
+                        <Call name="{Request}{Name}s" args="new[]{new SearchFilter(property, @operator, value)}"/>
+                    </TokenBody>
                 </MethodDef>
             </Region>
             <Region name="Filter (Array)">
@@ -104,7 +120,7 @@
                     </ReturnDescription>
 
                     <Parameter name="filters" type="params SearchFilter[]" description="One or more filters used to limit search results." />
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="{Request}{Name}s" args="new {type}Parameters(filters)"/>
                     </Body>
                 </MethodDef>
@@ -155,13 +171,13 @@
                     <Parameter name="predicate" type="Expression&lt;Func&lt;{type}, bool&gt;&gt;" description="The predicate to initially filter {name}s by."/>
                     <Parameter name="strict" type="bool" description="Whether to use strict evaluation. If true, a &lt;see cref=&quot;NotSupportedException&quot;/&gt; will be thrown\nif an expression is encountered that cannot be evaluated server side.&lt;para/&gt;If &lt;paramref name=&quot;strict&quot;/&gt; is false,\nthe maximal supported expression will be executed server side, with any remaining expressions executed client side."/>
 
-                    <Body expression="true" singleLine="false">
+                    <Body expression="true">
                         <Call name="ObjectEngine.QueryObjects" args="predicate, strict, () =&gt; new {type}Parameters()"/>
                     </Body>
                 </MethodDef>
             </Region>
-            <Region name="Parameters">
-                <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" needsStream="true">
+            <Region name="Parameters" cancellationToken="true">
+                <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" needsStream="true" tokenMode="AutomaticNamed">
                     <Summary>
                         Retrieves {extendedDescription}s from a PRTG Server using a custom set of parameters.
                         <Resource name="SerialSummary" condition="Stream" mode="append"/>
@@ -185,7 +201,7 @@
         </Template>
         <Template name="LogObject">
             <Region name="DateTime Root">
-                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true">
+                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true" tokenMode="Automatic">
                     <Summary>
                         Retrieves logs between two time periods from a PRTG Server. Logs are ordered from newest to oldest.
                         <Resource name="StreamLogsDateTimeSummary" condition="Stream" mode="replace"/>
@@ -210,7 +226,7 @@
                 </MethodDef>
             </Region>
             <Region name="DateTime Object">
-                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true">
+                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true" tokenMode="Automatic">
                     <Summary>
                         Retrieves logs between two time periods from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
                         <Resource name="StreamLogsDateTimeObjectSummary" condition="Stream" mode="replace"/>
@@ -236,7 +252,7 @@
                 </MethodDef>
             </Region>
             <Region name="RecordAge Root">
-                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true">
+                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true" tokenMode="Automatic">
                     <Summary>
                         Retrieves logs for a standard time period from a PRTG Server. Logs are ordered from newest to oldest.
                         <Resource name="StreamLogsRecordAgeSummary" condition="Stream" mode="replace"/>
@@ -260,7 +276,7 @@
                 </MethodDef>
             </Region>
             <Region name="RecordAge Object">
-                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true">
+                <MethodDef name="{Request}{Name}s" returns="List&lt;Log&gt;" needsStream="true" tokenMode="Automatic">
                     <Summary>
                         Retrieves logs from a standard time period from a PRTG Server for a specified object. Logs are ordered from newest to oldest.
                         <Resource name="StreamLogsRecordAgeObjectSummary" condition="Stream" mode="replace"/>
@@ -320,13 +336,13 @@
                         logs will be retrieved for all objects.
                     </Summary>
 
-                    <Body expression="true" singleLine="false">
+                    <Body expression="true">
                         <Call name="ObjectEngine.QueryObjects" args="predicate, strict, () =&gt; new {type}Parameters(null), new QueryLogHelper(strict)"/>
                     </Body>
                 </MethodDef>
             </Region>
-            <Region name="Parameters">
-                <MethodDef name="{Request}{Name}s" template="Object" parameters="parameters"/>
+            <Region name="Parameters" cancellationToken="true">
+                <MethodDef name="{Request}{Name}s" template="Object" parameters="parameters" tokenMode="AutomaticNamed"/>
             </Region>
         </Template>
         <Template name="ChannelObject">
@@ -344,7 +360,7 @@
                         <Call name="GetChannelsInternal" args="sensorId, null, i =&gt; i == id"/>.SingleObject(id)
                     </Body>
                 </MethodDef>
-                <MethodDef name="{Request}{Name}" returns="{type}">
+                <MethodDef name="{Request}{Name}" returns="{type}" tokenMode="AutomaticNamed">
                     <Summary>Retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
                     <ReturnDescription>The channel with the specified name.</ReturnDescription>
                     
@@ -359,7 +375,7 @@
                 </MethodDef>
             </Region>
 
-            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;">
+            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" tokenMode="AutomaticNamed">
                 <Summary>Retrieves all channels of a sensor.</Summary>
                 <ReturnDescription>A list of channels on the specified sensor.</ReturnDescription>
 
@@ -369,7 +385,7 @@
                     <Call name="GetChannelsInternal" args="sensorId"/>
                 </Body>
             </MethodDef>
-            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;">
+            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" tokenMode="AutomaticNamed">
                 <Summary>Retrieves all channels of a sensor that match the specified name.</Summary>
                 <ReturnDescription>A list of channels on the specified sensor.</ReturnDescription>
 
@@ -393,20 +409,20 @@
                     <Call name="{Request}{Name}s" args="Property.Name, name"/>.SingleObject(name, "name")
                 </Body>
             </MethodDef>
-            <MethodDef name="{Request}{Name}s" template="Object" parameters="none" overload="all">
+            <MethodDef name="{Request}{Name}s" template="Object" parameters="none" overload="all" tokenMode="MandatoryCall">
                 <SyncAsyncBody expression="true">
                     <Call name="{Request}{Name}sInternal" args="new {type}Parameters()"/>
                 </SyncAsyncBody>
             </MethodDef>
             <MethodDef name="{Request}{Name}s" template="Object" parameters="property,value"/>
-            <MethodDef name="{Request}{Name}s" template="Object" parameters="filters">
+            <MethodDef name="{Request}{Name}s" template="Object" parameters="filters" tokenMode="MandatoryCall">
                 <SyncAsyncBody expression="true">
                     <Call name="{Request}{type}sInternal" args="new {type}Parameters(filters)"/>
                 </SyncAsyncBody>
             </MethodDef>
         </Template>
         <Template name="NotificationTrigger">
-            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;">
+            <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" tokenMode="MandatoryCall">
                 <Summary>Retrieves all notification triggers of a PRTG Object.</Summary>
                 <ReturnDescription>A list of notification triggers that apply to the specified object.</ReturnDescription>
 
@@ -416,19 +432,19 @@
                     <Call name="GetNotificationTriggersInternal" args="objectId"/>
                 </Body>
             </MethodDef>
-            <MethodDef name="{Request}{Name}Types" returns="List&lt;TriggerType&gt;">
+            <MethodDef name="{Request}{Name}Types" returns="List&lt;TriggerType&gt;" tokenMode="MandatoryCall">
                 <Summary>Retrieves all notification trigger types supported by a PRTG Object.</Summary>
                 <ReturnDescription>The trigger types supported by the object.</ReturnDescription>
 
                 <Parameter name="objectId" type="int" description="The object to retrieve supported trigger types for."/>
 
                 <Body expression="true">
-                    <Call name="GetNotificationTriggerData" args="objectId, CancellationToken.None"/>.SupportedTypes.ToList()
+                    <Call name="GetNotificationTriggerData" args="objectId"/>.SupportedTypes.ToList()
                 </Body>
             </MethodDef>
         </Template>
         <Template name="SensorHistory">
-            <MethodDef name="{Request}{Name}" returns="List&lt;{type}&gt;" needsStream="true">
+            <MethodDef name="{Request}{Name}" returns="List&lt;{type}&gt;" needsStream="true" tokenMode="AutomaticDefault">
                 <Summary>
                     Retrieves the historical values of a sensor's channels from within a specified time period.
                     <Resource name="SerialOnlySummary" condition="Stream" mode="append"/>
@@ -478,21 +494,21 @@
         <Region name="Object Data">
             <MethodImpl name="Object" type="PrtgObject" extendedDescription ="uniquely identifiable {name}" template="Object" stream="true" region="true">
                 <Region name="Single">
-                    <MethodDef name="{Request}{Name}">
+                    <MethodDef name="{Request}{Name}" tokenMode="AutomaticDefault">
                         <Summary>
-                            Retrieves an object of an unspecified type based on its object ID. If an object with the specified object ID
-                            does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; exception is thrown.
+                            Retrieves an object of an unspecified type based on its object ID.&lt;para/&gt;
+                            If an object with the specified object ID does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; exception is thrown.
                         </Summary>
 
                         <Parameter name="resolve" type="bool" default="false" after="id" description="Whether to resolve the resultant object to its most derived &lt;see cref=&quot;PrtgObject&quot;/&gt; type. If the object type\nis not supported by PrtgAPI, the original &lt;see cref=&quot;PrtgObject&quot;/&gt; is returned."/>
                     
-                        <Body expression="true" singleLine="false">
+                        <Body expression="true">
                             <Call name="{Request}{Name}Internal" args="id, resolve"/>
                         </Body>
                     </MethodDef>
                 </Region>
                 <Region name="Parameters">
-                    <MethodDef name="{Request}{Name}s">
+                    <MethodDef name="{Request}{Name}s" tokenMode="AutomaticNamed">
                         <SyncAsyncBody expression="true">
                             <Call name="ObjectEngine.GetObjects" genericArgs="{type}" args="parameters"/>.OrderBy(o => o.Id).ToList()
                         </SyncAsyncBody>
@@ -513,13 +529,13 @@
 
                         <Parameter name="statuses" type="params Status[]" description="A list of {description} statuses to filter for." />
 
-                        <Body expression="true" singleLine="true">
+                        <Body expression="true">
                             <Call name="{Request}{type}s" args="new SensorParameters { Status = statuses }"/>
                         </Body>
                     </MethodDef>
                 </Region>
                 <Region name="Types" after="*">
-                    <MethodDef name="GetSensorTypes" returns="List&lt;SensorTypeDescriptor&gt;">
+                    <MethodDef name="GetSensorTypes" returns="List&lt;SensorTypeDescriptor&gt;" tokenMode="AutomaticNamedDefault">
                         <Summary>
                             Retrieves descriptions of all sensor types that can be created under a specified object. Actual supported types may differ based on current PRTG settings.&lt;para/&gt;
                             If the specified object does not support querying sensor types, this method returns null.
@@ -534,7 +550,7 @@
                     </MethodDef>
                 </Region>
                 <Region name="Totals" after="*">
-                    <MethodDef name="GetSensorTotals" returns="SensorTotals">
+                    <MethodDef name="GetSensorTotals" returns="SensorTotals" tokenMode="AutomaticNamed">
                         <Summary>Retrieves the number of sensors of each sensor type in the system.</Summary>
                         <ReturnDescription>The total number of sensors of each &lt;see cref=&quot;Status&quot;/&gt; type.</ReturnDescription>
                         
@@ -545,7 +561,7 @@
                 </Region>
             </MethodImpl>
             <MethodImpl name="Device" type="Device" template="Object" stream="true" query="true" region="true">
-                <MethodDef name="GetDeviceTemplates" returns="List&lt;DeviceTemplate&gt;" after="*">
+                <MethodDef name="GetDeviceTemplates" returns="List&lt;DeviceTemplate&gt;" after="*" tokenMode="AutomaticDefault">
                     <Summary>Retrieves all auto-discovery device templates supported by the specified object.</Summary>
                     <ReturnDescription>A list of device templates supported by the specified object.</ReturnDescription>
 
@@ -566,10 +582,14 @@
             <MethodImpl name="NotificationTrigger" type="NotificationTrigger" description="Notification Trigger" template="NotificationTrigger" region="true"/>
             <MethodImpl name="Schedule" type="Schedule" extendedDescription="monitoring {name}" template="LimitedObject" region="true">
                 <MethodDef name="{Request}{Name}" overload="id">
-                    <Summary>Retrieves a monitoring schedule with a specified ID from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
+                    <Summary>
+                        Retrieves a monitoring schedule with a specified ID from a PRTG Server.&lt;para/&gt;
+                        If the schedule does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
                 </MethodDef>
                 <MethodDef name="{Request}{Name}" overload="name">
-                    <Summary>Retrieves a monitoring schedule with a specified name from a PRTG Server. If the schedule does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
+                    <Summary>
+                        Retrieves a monitoring schedule with a specified name from a PRTG Server.&lt;para/&gt;
+                        If the schedule does not exist or an ambiguous match is found, an &lt;see cref="InvalidOperationException"/&gt; is thrown.</Summary>
                 </MethodDef>
                 <MethodDef name="{Request}{Name}s" overload="all">
                     <ReturnDescription>A list of all monitoring schedules supported by a PRTG Server.</ReturnDescription>
@@ -579,7 +599,7 @@
         </Region>
         <Region name="Object Manipulation">
             <Region name="Add Objects">
-                <InlineMethodDef name="AddSensor" returns="List&lt;Sensor&gt;">
+                <InlineMethodDef name="AddSensor" returns="List&lt;Sensor&gt;" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, all new sensors that were created from the sensor &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
@@ -588,10 +608,12 @@
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new sensors to their resultant &lt;see cref=&quot;Sensor&quot;/&gt; objects.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="deviceId, parameters, GetSensors{Request}, resolve, allowMultiple: true"/>
+                        <Call name="AddObject" args="deviceId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve, allowMultiple: true">
+                            <Call name="{Request}Sensors" args="new SensorParameters(f), t" alias="GetObjects"/>
+                        </Call>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="AddDevice" returns="Device">
+                <InlineMethodDef name="AddDevice" returns="Device" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new device to a PRTG group or probe.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the device that was created from this method's device parameters. Otherwise, null.</ReturnDescription>
 
@@ -605,7 +627,7 @@
                         <Call name="AddDevice" args="parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="AddDevice" returns="Device">
+                <InlineMethodDef name="AddDevice" returns="Device" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new device to a PRTG group or probe with a complex set of parameters.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the device that was created from this method's device &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
@@ -614,10 +636,12 @@
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new device to its resultant &lt;see cref=&quot;Device&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="parentId, parameters, GetDevices{Request}, resolve"/>?.Single()
+                        <Call name="AddObject" args="parentId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
+                            <Call name="{Request}Devices" args="new DeviceParameters(f), t" alias="GetObjects"/>
+                        </Call>?.Single()
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="AddGroup" returns="Group">
+                <InlineMethodDef name="AddGroup" returns="Group" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new group to a PRTG group or probe.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the group that was created from this method's group parameters. Otherwise, null.</ReturnDescription>
 
@@ -629,7 +653,7 @@
                         <Call name="AddGroup" args="parentId, new NewGroupParameters(name), resolve"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="AddGroup" returns="Group">
+                <InlineMethodDef name="AddGroup" returns="Group" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new group to a PRTG group or probe with a complex set of parameters.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the group that was created from this method's group &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
@@ -638,10 +662,12 @@
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new group to its resultant &lt;see cref=&quot;Group&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="parentId, parameters, GetGroups{Request}, resolve"/>?.Single()
+                        <Call name="AddObject" args="parentId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
+                            <Call name="{Request}Groups" args="new GroupParameters(f), t" alias="GetObjects"/>
+                        </Call>?.Single()
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="GetDynamicSensorParameters" returns="DynamicSensorParameters">
+                <InlineMethodDef name="GetDynamicSensorParameters" returns="DynamicSensorParameters" tokenMode="MandatoryDefault">
                     <Summary>Creates a set of dynamic sensor parameters for creating a new sensor of a specified type.</Summary>
                     <ReturnDescription>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</ReturnDescription>
 
@@ -656,7 +682,7 @@
             </Region>
             <Region name="Sensor State">
                 <Region name="Acknowledge" groupOverloads="true">
-                    <InlineMethodDef name="AcknowledgeSensor" returns="void">
+                    <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticDefault">
                         <Summary>Marks a &lt;see cref="Status.Down"/&gt; sensor as &lt;see cref="Status.DownAcknowledged"/&gt;. If an acknowledged sensor returns to &lt;see cref="Status.Up"/&gt;, it will not be acknowledged when it goes down again.</Summary>
 
                         <Parameter name="objectId" type="int" description="ID of the sensor to acknowledge."/>
@@ -667,7 +693,7 @@
                             <Call name="AcknowledgeSensor" args="new[] {objectId}, duration, message"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="AcknowledgeSensor" returns="void">
+                    <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticNamedDefault">
                         <Summary>Marks one or more &lt;see cref="Status.Down"/&gt; sensors as &lt;see cref="Status.DownAcknowledged"/&gt;. If an acknowledged sensor returns to &lt;see cref="Status.Up"/&gt;, it will not be acknowledged when it goes down again.</Summary>
 
                         <Parameter name="objectIds" type="int[]" description="IDs of the sensors to acknowledge."/>
@@ -680,7 +706,7 @@
                     </InlineMethodDef>
                 </Region>
                 <Region name="Pause" groupOverloads="true">
-                    <InlineMethodDef name="PauseObject" returns="void">
+                    <InlineMethodDef name="PauseObject" returns="void" tokenMode="AutomaticNamedDefault">
                         <Summary>Pauses monitoring on a PRTG Object and all child objects.</Summary>
 
                         <Parameter name="objectId" type="int" description="ID of the object to pause."/>
@@ -691,7 +717,7 @@
                             <Call name="PauseObject" args="new[] {objectId}, duration, message"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="PauseObject" returns="void">
+                    <InlineMethodDef name="PauseObject" returns="void" tokenMode="AutomaticNamedDefault">
                         <Summary>Pauses monitoring on one or more PRTG Objects and all child objects.</Summary>
 
                         <Parameter name="objectIds" type="int[]" description="IDs of the objects to pause."/>
@@ -704,7 +730,7 @@
                     </InlineMethodDef>
                 </Region>
                 <Region name="Resume" groupOverloads="true">
-                    <InlineMethodDef name="ResumeObject" returns="void">
+                    <InlineMethodDef name="ResumeObject" returns="void" tokenMode="AutomaticNamed">
                         <Summary>Resumes monitoring on one or more PRTG Objects (including sensors, devices, groups and probes) from a Paused or Simulated Error state.</Summary>
 
                         <Parameter name="objectIds" type="params int[]" description="IDs of the objects to resume."/>
@@ -715,7 +741,7 @@
                     </InlineMethodDef>
                 </Region>
                 <Region name="Simulate Error" groupOverloads="true">
-                    <InlineMethodDef name="SimulateError" returns="void">
+                    <InlineMethodDef name="SimulateError" returns="void" tokenMode="AutomaticNamed">
                         <Summary>
                             Simulates a &lt;see cref="Status.Down"/&gt; state for one or more sensors.
                         </Summary>
@@ -729,7 +755,7 @@
                 </Region>
             </Region>
             <Region name="Notifications">
-                <InlineMethodDef name="AddNotificationTrigger" returns="NotificationTrigger">
+                <InlineMethodDef name="AddNotificationTrigger" returns="NotificationTrigger" tokenMode="MandatoryDefault">
                     <Summary>Adds a notification trigger to an object specified by a set of trigger parameters.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the trigger that was created from this method's trigger parameters. Otherwise, null.</ReturnDescription>
 
@@ -740,19 +766,19 @@
                         <Call name="AddNotificationTriggerInternal" args="parameters, resolve"/>?.Single()
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="SetNotificationTrigger" returns="void">
+                <InlineMethodDef name="SetNotificationTrigger" returns="void" tokenMode="MandatoryCall">
                     <Summary>Adds or edits a notification trigger on an object specified by a set of trigger parameters.</Summary>
 
                     <Parameter name="parameters" type="TriggerParameters" description="A set of parameters describing the type of notification trigger and how to manipulate it."/>
 
-                    <Body expression="false">
-                        <Call name="ValidateTriggerParameters" args="parameters"/>;
-                        
-                        <Call name="RequestEngine.ExecuteRequest" args="parameters"/>;
+                    <Body expression="true">
+                        <Call name="SetNotificationTriggerInternal" args="parameters"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RemoveNotificationTrigger" returns="void">
-                    <Summary>Removes a notification trigger from an object. Triggers can only be removed from their parent objects, and cannot be removed from objects that have inherited them.</Summary>
+                <InlineMethodDef name="RemoveNotificationTrigger" returns="void" tokenMode="AutomaticNamed">
+                    <Summary>
+                        Removes a notification trigger from an object.&lt;para/&gt;
+                        Triggers can only be removed from their parent objects, and cannot be removed from objects that have inherited them.</Summary>
                     <Exception type="InvalidOperationException" description="The &lt;paramref name=&quot;trigger&quot;/&gt; was inherited from another object."/>
 
                     <Parameter name="trigger" type="NotificationTrigger" description="The notification trigger to remove."/>
@@ -763,7 +789,7 @@
                 </InlineMethodDef>
             </Region>
             <Region name="Clone Object" groupOverloads="true">
-                <InlineMethodDef name="CloneObject" returns="int">
+                <InlineMethodDef name="CloneObject" returns="int" tokenMode="MandatoryCall">
                     <Summary>Clones a sensor or group to another device or group.</Summary>
                     <ReturnDescription>The ID of the object that was created.</ReturnDescription>
 
@@ -775,7 +801,7 @@
                         <Call name="CloneObject" args="new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="CloneObject" returns="int">
+                <InlineMethodDef name="CloneObject" returns="int" tokenMode="MandatoryCall">
                     <Summary>Clones a device to another group or probe.</Summary>
                     <ReturnDescription>The ID of the object that was created.</ReturnDescription>
 
@@ -791,13 +817,13 @@
             </Region>
             <Region name="Get Object Properties">
                 <Region name="Get Typed Properties">
-                    <MethodImpl name="Sensor" type="Sensor" template="ObjectProperties"/>
-                    <MethodImpl name="Device" type="Device" template="ObjectProperties"/>
-                    <MethodImpl name="Group" type="Group" template="ObjectProperties"/>
-                    <MethodImpl name="Probe" type="Probe" template="ObjectProperties"/>
+                    <MethodImpl name="Sensor" type="Sensor" template="ObjectProperties" region="true"/>
+                    <MethodImpl name="Device" type="Device" template="ObjectProperties" region="true"/>
+                    <MethodImpl name="Group" type="Group" template="ObjectProperties" region="true"/>
+                    <MethodImpl name="Probe" type="Probe" template="ObjectProperties" region="true"/>
                 </Region>
                 <Region name="Get Multiple Raw Properties" groupOverloads="true">
-                    <InlineMethodDef name="GetObjectPropertiesRaw" returns="Dictionary&lt;string, string&gt;">
+                    <InlineMethodDef name="GetObjectPropertiesRaw" returns="Dictionary&lt;string, string&gt;" tokenMode="Automatic">
                         <Summary>
                             Retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
                             that cannot be retrieved via this method.
@@ -811,7 +837,7 @@
                             <Call name="GetObjectPropertiesRawDictionary" args="objectId, objectType"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="GetObjectPropertiesRaw" returns="Dictionary&lt;string, string&gt;">
+                    <InlineMethodDef name="GetObjectPropertiesRaw" returns="Dictionary&lt;string, string&gt;" tokenMode="AutomaticDefault">
                         <Summary>
                             Retrieves all raw properties and settings of an unsupported object type. Note: objects may have additional properties
                             that cannot be retrieved via this method.
@@ -862,7 +888,7 @@
                     </InlineMethodDef>
                 </Region>
                 <Region name="Get Single Raw Property" groupOverloads="true">
-                    <InlineMethodDef name="GetObjectPropertyRaw" returns="string">
+                    <InlineMethodDef name="GetObjectPropertyRaw" returns="string" tokenMode="AutomaticDefault">
                         <Summary>Retrieves unsupported properties and settings of a PRTG Object.</Summary>
                         <ReturnDescription>The raw value of the object's property.</ReturnDescription>
 
@@ -907,6 +933,9 @@
                         <Body expression="true">
                             <Call name="SetObjectProperty" args="objectIds, new PropertyParameter(property, value)"/>
                         </Body>
+                        <TokenBody expression="true">
+                            <Call name="SetObjectProperty" args="objectIds, new[]{new PropertyParameter(property, value)}"/>
+                        </TokenBody>
                     </InlineMethodDef>
                 </Region>
                 <Region name="Normal (Multiple)" groupOverloads="true">
@@ -936,7 +965,7 @@
 
                         <Body expression="true">
                             <Call name="SetObjectProperty" args="{Alias:GetParameters}, objectIds.Length">
-                                <Call name="CreateSetObjectPropertyParameters" args="objectIds, parameters" alias="GetParameters"/>
+                                <Call name="CreateSetObjectPropertyParameters" args="objectIds, parameters" alias="GetParameters" needsToken="true"/>
                             </Call>
                         </Body>
                     </InlineMethodDef>
@@ -965,6 +994,9 @@
                         <Body expression="true">
                             <Call name="SetObjectProperty" args="sensorIds, channelId, new ChannelParameter(property, value)"/>
                         </Body>
+                        <TokenBody expression="true">
+                            <Call name="SetObjectProperty" args="sensorIds, channelId, new[]{new ChannelParameter(property, value)}"/>
+                        </TokenBody>
                     </InlineMethodDef>
                 </Region>
                 <Region name="Channel (Multiple)" groupOverloads="true">
@@ -1013,6 +1045,9 @@
                         <Body expression="true">
                             <Call name="SetObjectPropertyRaw" args="objectIds, new CustomParameter(property, value)"/>
                         </Body>
+                        <TokenBody expression="true">
+                            <Call name="SetObjectPropertyRaw" args="objectIds, new[]{new CustomParameter(property, value)}"/>
+                        </TokenBody>
                     </InlineMethodDef>
                 </Region>
                 <Region name="Custom (Multiple)" groupOverloads="true">
@@ -1039,7 +1074,7 @@
                 </Region>
             </Region>
             <Region name="System Administration">
-                <InlineMethodDef name="BackupConfigDatabase" returns="void">
+                <InlineMethodDef name="BackupConfigDatabase" returns="void" tokenMode="AutomaticNamed">
                     <Summary>
                         Requests PRTG generate a backup of the PRTG Configuration Database.&lt;para/&gt;
                         When executed, this method will request PRTG store a backup of its configuration database under
@@ -1053,7 +1088,7 @@
                         <Call name="RequestEngine.ExecuteRequest" args="new CommandFunctionParameters(CommandFunction.SaveNow)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="ClearSystemCache" returns="void">
+                <InlineMethodDef name="ClearSystemCache" returns="void" tokenMode="AutomaticNamed">
                     <Summary>
                         Clears cached data used by PRTG, including map, graph and authentication caches. Note: clearing certain cache types may result in a restart of the PRTG Core Server.
                         See each cache type for further details.
@@ -1065,7 +1100,7 @@
                         <Call name="RequestEngine.ExecuteRequest" args="new ClearSystemCacheParameters(cacheType)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="LoadConfigFiles" returns="void">
+                <InlineMethodDef name="LoadConfigFiles" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Reloads config files including sensor lookups, device icons and report templates used by PRTG.</Summary>
 
                     <Parameter name="fileType" type="ConfigFileType" description="The type of files to reload."/>
@@ -1074,7 +1109,7 @@
                         <Call name="RequestEngine.ExecuteRequest" args="new LoadConfigFilesParameters(fileType)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RestartProbe" returns="void">
+                <InlineMethodDef name="RestartProbe" returns="void" tokenMode="Manual">
                     <Summary>
                         Restarts the PRTG Probe Service of a specified PRTG Probe.&lt;para/&gt;
                         By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether all probes have successfully restarted.&lt;para/&gt;
@@ -1085,12 +1120,13 @@
                     <Parameter name="probeId" type="int" description="The ID of the probe to restart."/>
                     <Parameter name="waitForRestart" type="bool" default="false" description="Whether to wait for the Probe Service on all probes to restart before completing this method."/>
                     <Parameter name="progressCallback" type="Func&lt;ProbeRestartProgress, bool&gt;" default="null" description="A callback method to execute upon each request against PRTG to check whether all probes have restarted."/>
-
+                    <Parameter name="token" type="CancellationToken" default="default(CancellationToken)" description="A cancellation token to use when waiting for all probes to restart. If cancellation is requested, this method will abort waiting for any remaining probes to restart."/>
+                    
                     <Body expression="true">
-                        <Call name="RestartProbe" args="new[] { probeId }, waitForRestart, p =&gt; progressCallback(p.First())"/>
+                        <Call name="RestartProbe" args="new[] { probeId }, waitForRestart, p =&gt; progressCallback(p.First()), token"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RestartProbe" returns="void">
+                <InlineMethodDef name="RestartProbe" returns="void" tokenMode="Manual">
                     <Summary>
                         Restarts the PRTG Probe Service of one or more PRTG Probes. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.&lt;para/&gt;
                         By default, PrtgAPI will wait 5 seconds between each probing attempt to confirm whether all probes have successfully restarted.&lt;para/&gt;
@@ -1107,7 +1143,7 @@
                         <Call name="RestartProbeInternal" args="probeIds, waitForRestart, progressCallback, token"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RestartCore" returns="void">
+                <InlineMethodDef name="RestartCore" returns="void" tokenMode="Manual">
                     <Summary>
                         Restarts the PRTG Core Service. This will cause PRTG to disconnect all users and become completely unavailable while the service restarts.&lt;para/&gt;
                         If PRTG is part of a cluster, only the server specified by the current &lt;see cref="PrtgClient"/&gt; will be restarted.&lt;para/&gt;
@@ -1126,97 +1162,97 @@
                 </InlineMethodDef>
             </Region>
             <Region name="Miscellaneous" groupOverloads="true">
-                <InlineMethodDef name="RefreshObject" returns="void">
+                <InlineMethodDef name="RefreshObject" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Requests an object or any children of one or more objects refresh themselves immediately.</Summary>
 
                     <Parameter name="objectIds" type="params int[]" description="The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new RefreshObjectParameters(objectIds)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="AutoDiscover" returns="void">
+                <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Automatically creates sensors under an object based on the object's (or it's children's) device type.</Summary>
 
                     <Parameter name="objectId" type="int" description="The object to run Auto-Discovery for (such as a device or group)."/>
                     <Parameter name="templates" type="params DeviceTemplate[]" description="An optional list of device templates to use for performing the auto-discovery."/>
 
-                    <Body expression="true" singleLine="false">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new AutoDiscoverParameters(objectId, templates)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="SetPosition" returns="void">
+                <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Moves the position of an object up or down under its parent within the PRTG User Interface.</Summary>
 
                     <Parameter name="objectId" type="int" description="The object to reposition."/>
                     <Parameter name="position" type="Position" description="The direction to move in."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(objectId, position)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="SetPosition" returns="void">
+                <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Sets the absolute position of an object under its parent within the PRTG User Interface.</Summary>
 
                     <Parameter name="obj" type="SensorOrDeviceOrGroupOrProbe" description="The object to reposition."/>
                     <Parameter name="position" type="int" description="The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(obj, position)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="MoveObject" returns="void">
+                <InlineMethodDef name="MoveObject" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Moves a device or group (excluding the root group) to another group or probe within PRTG.</Summary>
 
                     <Parameter name="objectId" type="int" description="The ID of a device or group to move."/>
                     <Parameter name="destinationId" type="int" description="The group or probe to move the object to."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new MoveObjectParameters(objectId, destinationId)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="SortAlphabetically" returns="void">
+                <InlineMethodDef name="SortAlphabetically" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Sorts the children of a device, group or probe alphabetically.</Summary>
 
                     <Parameter name="objectId" type="int" description="The ID of the object to sort."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new SortAlphabeticallyParameters(objectId)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RemoveObject" returns="void">
+                <InlineMethodDef name="RemoveObject" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.</Summary>
 
                     <Parameter name="objectIds" type="params int[]" description="IDs of the objects to remove."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new DeleteParameters(objectIds)"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RenameObject" returns="void">
-                    <Summary>Renames a Sensor, Device, Group or Probe within PRTG.</Summary>
+                <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
+                    <Summary>Renames an object such as a Sensor, Device, Group or Probe within PRTG.</Summary>
 
                     <Parameter name="objectId" type="int" description="ID of the object to rename."/>
                     <Parameter name="name" type="string" description="New name to give the object."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RenameObject" args="new[] {objectId}, name"/>
                     </Body>
                 </InlineMethodDef>
-                <InlineMethodDef name="RenameObject" returns="void">
+                <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Renames one or more Sensors, Devices, Groups or Probes within PRTG.</Summary>
 
                     <Parameter name="objectIds" type="int[]" description="IDs of the objects to rename."/>
                     <Parameter name="name" type="string" description="New name to give the objects."/>
 
-                    <Body expression="true" singleLine="true">
+                    <Body expression="true">
                         <Call name="RequestEngine.ExecuteRequest" args="new RenameParameters(objectIds, name)"/>
                     </Body>
                 </InlineMethodDef>
             </Region>
         </Region>
         <Region name="Unsorted">
-            <InlineMethodDef name="GetTotalObjects" returns="int">
+            <InlineMethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
                 <Summary>Calculates the total number of objects of a given type present on a PRTG Server.</Summary>
                 <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
 
@@ -1226,7 +1262,7 @@
                     <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content)"/>.TotalCount
                 </Body>
             </InlineMethodDef>
-            <InlineMethodDef name="GetTotalObjects" returns="int">
+            <InlineMethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
                 <Summary>Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.</Summary>
                 <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
 
@@ -1237,7 +1273,7 @@
                     <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content, filters)"/>.TotalCount
                 </Body>
             </InlineMethodDef>
-            <InlineMethodDef name="GetModificationHistory" returns="List&lt;ModificationEvent&gt;">
+            <InlineMethodDef name="GetModificationHistory" returns="List&lt;ModificationEvent&gt;" tokenMode="AutomaticNamed">
                 <Summary>Retrieves the setting/state modification history of a PRTG Object.</Summary>
                 <ReturnDescription>A list of all setting/state modifications to the specified object.</ReturnDescription>
 
@@ -1247,7 +1283,7 @@
                     ResponseParser.Amend(<Call name="ObjectEngine.GetObjects" genericArgs="ModificationEvent" args="new ModificationHistoryParameters(objectId)"/>, e => e.ObjectId = objectId)
                 </Body>
             </InlineMethodDef>
-            <InlineMethodDef name="GetStatus" returns="ServerStatus">
+            <InlineMethodDef name="GetStatus" returns="ServerStatus" tokenMode="AutomaticNamed">
                 <Summary>Retrieves configuration, status and version details of the PRTG Server.</Summary>
                 <ReturnDescription>Status details of a PRTG Server.</ReturnDescription>
 

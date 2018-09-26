@@ -19,8 +19,8 @@ using XmlSerializer = PrtgAPI.Request.Serialization.XmlSerializer;
 
 namespace PrtgAPI
 {
-	public partial class PrtgClient
-	{
+    public partial class PrtgClient
+    {
 <#= PrtgAPI.CodeGenerator.PrtgClientGenerator.Generate(Host.ResolvePath("PrtgClient.Methods.xml")) #>
-	}
+    }
 }

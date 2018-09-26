@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
@@ -89,7 +90,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
                 Channel = channel
             };
 
-            method.Invoke(engine, new object[] { param, null });
+            method.Invoke(engine, new object[] { param, null, CancellationToken.None });
         }
     }
 }

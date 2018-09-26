@@ -16,5 +16,9 @@ namespace PrtgAPI.CodeGenerator.Xml
 
         [XmlAnyElement("Resources")]
         public XmlElement ResourcesXml { get; set; }
+
+        [XmlArray("CommonParameters")]
+        [XmlArrayItem("CommonParameter")]
+        public List<CommonParameterXml> CommonParameters { get; set; }
     }
 }

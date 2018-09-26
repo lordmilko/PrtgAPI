@@ -18,6 +18,17 @@ namespace PrtgAPI.CodeGenerator
         {
             var path = Path.GetFullPath(xmlConfigPath);
 
+            var model = GetDocument(path);
+            
+            var config = new DocumentConfig(model.Templates, model.Resources, model.CommonParameters);
+
+            var csharpRegions = model.Methods.Regions.Select(r => r.Serialize(config)).ToList();
+
+            return Write(csharpRegions);
+        }
+
+        internal static Document GetDocument(string path)
+        {
             var text = File.ReadAllText(path);
 
             using (var reader = XmlReader.Create(new StringReader(text), new XmlReaderSettings { IgnoreWhitespace = true }))
@@ -25,12 +36,10 @@ namespace PrtgAPI.CodeGenerator
                 var serializer = new XmlSerializer(typeof(DocumentXml));
 
                 var xmlDoc = (DocumentXml)serializer.Deserialize(reader);
+
                 var model = new Document(xmlDoc);
-                var config = new Config(model.Templates, model.Resources);
 
-                var csharpRegions = model.Methods.Regions.Select(r => r.Serialize(config)).ToList();
-
-                return Write(csharpRegions);
+                return model;
             }
         }
 
@@ -39,7 +48,7 @@ namespace PrtgAPI.CodeGenerator
             var writer = new RegionWriter();
             writer.Write(regions);
 
-            return writer.ToString();
+            return writer.ToString().TrimEnd('\r', '\n');
         }
 
         private static System.Exception GetInvalidXml(XDocument response, InvalidOperationException ex)

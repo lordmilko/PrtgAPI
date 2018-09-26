@@ -22,6 +22,8 @@ namespace PrtgAPI.Request
 
         private const int BatchLimit = 1500;
 
+        internal CancellationToken DefaultCancellationToken { get; set; }
+
         internal RequestEngine(PrtgClient prtgClient, IWebClient webClient)
         {
             this.prtgClient = prtgClient;
@@ -30,20 +32,20 @@ namespace PrtgAPI.Request
 
         #region JSON + Response Parser
 
-        internal string ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = ExecuteRequest(url, responseParser);
+            var response = ExecuteRequest(url, token, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
             return response;
         }
@@ -51,22 +53,22 @@ namespace PrtgAPI.Request
         #endregion
         #region XML + Response Validator / Response Parser
 
-        internal XDocument ExecuteRequest(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, string> responseParser = null)
+        internal XDocument ExecuteRequest(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = ExecuteRequest(url, responseParser);
+            var response = ExecuteRequest(url, token, responseParser);
 
             responseValidator?.Invoke(response);
 
             return XDocumentHelpers.SanitizeXml(response);
         }
 
-        internal async Task<XDocument> ExecuteRequestAsync(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<XDocument> ExecuteRequestAsync(IXmlParameters parameters, Action<string> responseValidator = null, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
             responseValidator?.Invoke(response);
 
@@ -76,26 +78,26 @@ namespace PrtgAPI.Request
         #endregion
         #region Command + Response Parser
 
-        internal string ExecuteRequest(ICommandParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(ICommandParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             if (parameters is IMultiTargetParameters)
-                return ExecuteMultiRequest(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, responseParser);
+                return ExecuteMultiRequest(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser);
 
             var url = GetPrtgUrl(parameters);
 
-            var response = ExecuteRequest(url, responseParser);
+            var response = ExecuteRequest(url, token, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(ICommandParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(ICommandParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             if (parameters is IMultiTargetParameters)
-                return await ExecuteMultiRequestAsync(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, responseParser).ConfigureAwait(false);
+                return await ExecuteMultiRequestAsync(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser).ConfigureAwait(false);
 
             var url = GetPrtgUrl(parameters);
 
-            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
             return response;
         }
@@ -103,41 +105,41 @@ namespace PrtgAPI.Request
         #endregion
         #region HTML
 
-        internal string ExecuteRequest(IHtmlParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal string ExecuteRequest(IHtmlParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = ExecuteRequest(url, responseParser);
+            var response = ExecuteRequest(url, token, responseParser);
 
             return response;
         }
 
-        internal async Task<string> ExecuteRequestAsync(IHtmlParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteRequestAsync(IHtmlParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             var url = GetPrtgUrl(parameters);
 
-            var response = await ExecuteRequestAsync(url, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
             return response;
         }
 
-        internal XElement ExecuteRequest(IHtmlParameters parameters, Func<string, XElement> xmlParser)
+        internal XElement ExecuteRequest(IHtmlParameters parameters, Func<string, XElement> xmlParser, CancellationToken token = default(CancellationToken))
         {
-            var response = ExecuteRequest(parameters);
+            var response = ExecuteRequest(parameters, token: token);
 
             return xmlParser(response);
         }
 
-        internal async Task<XElement> ExecuteRequestAsync(IHtmlParameters parameters, Func<string, XElement> xmlParser)
+        internal async Task<XElement> ExecuteRequestAsync(IHtmlParameters parameters, Func<string, XElement> xmlParser, CancellationToken token = default(CancellationToken))
         {
-            var response = await ExecuteRequestAsync(parameters).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
 
             return xmlParser(response);
         }
 
         #endregion
 
-        private string ExecuteMultiRequest(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        private string ExecuteMultiRequest(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, string> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -147,7 +149,7 @@ namespace PrtgAPI.Request
                 {
                     parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
 
-                    ExecuteRequest(getUrl(parameters), responseParser);
+                    ExecuteRequest(getUrl(parameters), token, responseParser);
                 }
             }
             finally
@@ -158,7 +160,7 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-        internal async Task<string> ExecuteMultiRequestAsync(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<string> ExecuteMultiRequestAsync(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -168,7 +170,7 @@ namespace PrtgAPI.Request
                 {
                     parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
 
-                    await ExecuteRequestAsync(getUrl(parameters), responseParser).ConfigureAwait(false);
+                    await ExecuteRequestAsync(getUrl(parameters), token, responseParser).ConfigureAwait(false);
                 }
             }
             finally
@@ -179,7 +181,7 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-        private string ExecuteRequest(PrtgUrl url, Func<HttpResponseMessage, string> responseParser = null)
+        private string ExecuteRequest(PrtgUrl url, CancellationToken token, Func<HttpResponseMessage, string> responseParser = null)
         {
             prtgClient.Log($"Synchronously executing request {url.Url}", LogLevel.Request);
 
@@ -189,7 +191,10 @@ namespace PrtgAPI.Request
             {
                 try
                 {
-                    var response = webClient.GetSync(url.Url).Result;
+                    if (token == CancellationToken.None && DefaultCancellationToken != CancellationToken.None)
+                        token = DefaultCancellationToken;
+
+                    var response = webClient.GetSync(url.Url, token).Result;
 
                     string responseText = null;
 
@@ -209,8 +214,15 @@ namespace PrtgAPI.Request
                 {
                     var innerException = ex.InnerException;
 
-                    if (ex.InnerException is TaskCanceledException)
+                    if (innerException is TaskCanceledException)
+                    {
+                        //If the token we specified was cancelled, throw the TaskCanceledException
+                        if (token.IsCancellationRequested)
+                            throw innerException;
+
+                        //Otherwise, a token that was created internally for use with timing out was cancelled, so throw a timeout exception
                         innerException = new TimeoutException($"The server timed out while executing request.", ex.InnerException);
+                    }
 
                     var result = HandleRequestException(ex.InnerException?.InnerException, innerException, url, ref retriesRemaining, () =>
                     {
@@ -224,7 +236,7 @@ namespace PrtgAPI.Request
             } while (true);
         }
 
-        private async Task<string> ExecuteRequestAsync(PrtgUrl url, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        private async Task<string> ExecuteRequestAsync(PrtgUrl url, CancellationToken token, Func<HttpResponseMessage, Task<string>> responseParser = null)
         {
             prtgClient.Log($"Asynchronously executing request {url.Url}", LogLevel.Request);
 
@@ -234,7 +246,10 @@ namespace PrtgAPI.Request
             {
                 try
                 {
-                    var response = await webClient.GetAsync(url.Url).ConfigureAwait(false);
+                    if (token == CancellationToken.None && DefaultCancellationToken != CancellationToken.None)
+                        token = DefaultCancellationToken;
+
+                    var response = await webClient.GetAsync(url.Url, token).ConfigureAwait(false);
 
                     string responseText = null;
 
@@ -261,6 +276,11 @@ namespace PrtgAPI.Request
                 }
                 catch (TaskCanceledException ex)
                 {
+                    //If the token we specified was cancelled, throw the TaskCanceledException
+                    if (token.IsCancellationRequested)
+                        throw;
+
+                    //Otherwise, a token that was created internally for use with timing out was cancelled, so throw a timeout exception
                     throw new TimeoutException($"The server timed out while executing request.", ex);
                 }
             } while (true);

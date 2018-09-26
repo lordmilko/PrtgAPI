@@ -142,7 +142,13 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 var asyncName = fullName.Replace($"{s.Name}(", $"{s.Name}Async(");
 
                 if (!methodFullNames.Contains(asyncName))
-                    missingAsync.Add(s);
+                {
+                    //Maybe the async method only exists with a CancellationToken parameter
+                    var asyncWithToken = asyncName.Replace(")", ", System.Threading.CancellationToken)");
+
+                    if (!methodFullNames.Contains(asyncWithToken))
+                        missingAsync.Add(s);
+                }
             }
 
             Assert.AreEqual(0, missingAsync.Count, $"Async counterparts of the following methods are missing: {string.Join(", ", missingAsync.Select(m => m.GetInternalProperty("FullName").ToString().Substring("PrtgAPI.PrtgClient.".Length)))}");

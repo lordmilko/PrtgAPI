@@ -120,7 +120,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (probe != null)
                         probesRestarted.Add(probe);
 
-                    ExecuteOperation(() => client.RestartProbe(probe == null ? null : new[] {probe.Id}), progressMessage, !Wait);
+                    ExecuteOperation(() => client.RestartProbe(probe == null ? null : new[] {probe.Id}, token: CancellationToken), progressMessage, !Wait);
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 probesRestarted = Probe == null ? client.GetProbes() : probesRestarted;
 
-                client.WaitForProbeRestart(restartTime.Value, probesRestarted, WriteProbeProgress);
+                client.WaitForProbeRestart(restartTime.Value, probesRestarted, WriteProbeProgress, CancellationToken);
 
                 allProbesRestarted = true;
                 WriteMultiPassThru();
@@ -187,7 +187,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 #if DEBUG
                 if(!client.UnitTest())
 #endif
-                Thread.Sleep(1000);
+                Sleep(1000);
 
 
                 ProgressManager.WriteProgress(true);

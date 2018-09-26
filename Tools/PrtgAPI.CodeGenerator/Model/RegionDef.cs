@@ -8,13 +8,26 @@ namespace PrtgAPI.CodeGenerator.Model
     internal interface IRegion : IInsertableDefinition
     {
         MethodType Type { get; }
+
+        bool IsTokenRegion { get; }
+
+        bool HasTokenRegion { get; }
     }
 
     internal class RegionDef : IRegion
     {
         private RegionDefXml regionDefXml;
 
-        public string Name => regionDefXml.Name;
+        public string Name
+        {
+            get
+            {
+                if (IsTokenRegion)
+                    return regionDefXml.Name + " (Cancellation Token)";
+
+                return regionDefXml.Name;
+            }
+        }
 
         public ReadOnlyCollection<RegionDef> Regions { get; set; }
 
@@ -24,29 +37,39 @@ namespace PrtgAPI.CodeGenerator.Model
 
         public MethodType Type => regionDefXml.Type;
 
-        public RegionDef(RegionDefXml region)
+        public bool IsTokenRegion { get; }
+
+        public bool HasTokenRegion { get; set; }
+
+        public bool CancellationToken => regionDefXml.CancellationToken;
+
+        public RegionDef(RegionDefXml region, bool tokenRegion = false)
         {
+            IsTokenRegion = tokenRegion;
+
             regionDefXml = region;
-            Regions = new ReadOnlyCollection<RegionDef>(region.Regions.Select(r => new RegionDef(r)).ToList());
-            MethodDefs = new ReadOnlyCollection<MethodDef>(region.MethodDefs.Select(m => new MethodDef(m)).ToList());
+            Regions = region.Regions.Select(r => new RegionDef(r, tokenRegion)).ToReadOnlyList();
+            MethodDefs = region.MethodDefs.Select(m => new MethodDef(m)).ToReadOnlyList();
         }
 
-        public RegionDef(RegionDef originalRegion, ReadOnlyCollection<RegionDef> regions, ReadOnlyCollection<MethodDef> methods)
+        public RegionDef(RegionDef originalRegion, bool tokenRegion = false, ReadOnlyCollection<RegionDef> regions = null, ReadOnlyCollection<MethodDef> methods = null)
         {
             regionDefXml = originalRegion.regionDefXml;
 
-            Regions = Regions;
-            Regions = regions;
-            MethodDefs = methods;
+            Regions = regions ?? originalRegion.Regions; ;
+            MethodDefs = methods ?? originalRegion.MethodDefs;
+            HasTokenRegion = originalRegion.HasTokenRegion;
+
+            IsTokenRegion = tokenRegion;
         }
 
-        public Region Serialize(IMethodImpl method, Config config)
+        public Region Serialize(IMethodImpl method, DocumentConfig documentConfig)
         {
             if (Type == MethodType.Query && !method.Query)
                 return null;
 
-            var regions = new ReadOnlyCollection<Region>(Regions.Select(r => r.Serialize(method, config)).ToList());
-            var methods = new ReadOnlyCollection<Method>(MethodDefs.SelectMany(m => m.Serialize(method, config, this)).ToList());
+            var regions = Regions.Select(r => r.Serialize(method, documentConfig)).ToReadOnlyList();
+            var methods = MethodDefs.SelectMany(m => m.Serialize(method, documentConfig, this)).ToReadOnlyList();
 
             return new Region(Name, regions, methods, false);
         }

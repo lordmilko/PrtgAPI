@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PrtgAPI.Request
@@ -49,14 +50,14 @@ namespace PrtgAPI.Request
             return false;
         }
 
-        public Task<HttpResponseMessage> GetSync(string address)
+        public Task<HttpResponseMessage> GetSync(string address, CancellationToken token)
         {
-            return GetAsync(address);
+            return GetAsync(address, token);
         }
 
-        public Task<HttpResponseMessage> GetAsync(string address)
+        public Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
         {
-            return asyncClient.GetAsync(address);
+            return asyncClient.GetAsync(address, token);
         }
     }
 }

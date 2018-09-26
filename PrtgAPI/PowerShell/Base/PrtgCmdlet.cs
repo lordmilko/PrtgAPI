@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Progress;
 
@@ -11,7 +12,7 @@ namespace PrtgAPI.PowerShell.Base
     /// <summary>
     /// Base class for all cmdlets requiring authenticated access to a PRTG Server.
     /// </summary>
-    public abstract class PrtgCmdlet : PSCmdlet
+    public abstract class PrtgCmdlet : PSCmdlet, IDisposable
     {
         /// <summary>
         /// Provides access to the <see cref="PrtgClient"/> stored in the current PowerShell Session State.
@@ -25,6 +26,15 @@ namespace PrtgAPI.PowerShell.Base
         internal ProgressManagerEx ProgressManagerEx = new ProgressManagerEx();
 
         private EventManager eventManager = new EventManager();
+
+        private bool disposed;
+
+        /// <summary>
+        /// A cancellation token source to use with long running tasks that may need to be interrupted by Ctrl+C.
+        /// </summary>
+        private readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
+
+        internal CancellationToken CancellationToken => TokenSource.Token;
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -58,6 +68,9 @@ namespace PrtgAPI.PowerShell.Base
 
             try
             {
+                if(client != null)
+                    client.DefaultCancellationToken = TokenSource.Token;
+
                 using (ProgressManager = new ProgressManager(this))
                 {
                     try
@@ -75,13 +88,16 @@ namespace PrtgAPI.PowerShell.Base
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 UnregisterEvents(false);
                 throw;
             }
             finally
             {
+                if (client != null)
+                    client.DefaultCancellationToken = CancellationToken.None;
+
                 if (Stopping)
                 {
                     UnregisterEvents(false);
@@ -90,7 +106,7 @@ namespace PrtgAPI.PowerShell.Base
 
             //If we're the last cmdlet in the pipeline, we need to unregister ourselves so that the upstream cmdlet
             //regains the ability to invoke its events when its control is returned to it
-            if (!noClient && EventManager.LogVerboseEventStack.Peek().Target == this)
+            if (!noClient && !Stopping && EventManager.LogVerboseEventStack.Peek().Target == this)
             {
                 UnregisterEvents(true);
             }
@@ -111,6 +127,27 @@ namespace PrtgAPI.PowerShell.Base
             UnregisterEvents(false);
         }
 
+        /// <summary>
+        /// Interrupts the currently running code to signal the cmdlet has been requested to stop.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            TokenSource.Cancel();
+        }
+
+        /// <summary>
+        /// Disposes of all managed and unmanaged resources used by the cmdlet.
+        /// </summary>
+        public void Dispose()
+        {
+            if (disposed == false)
+            {
+                TokenSource.Dispose();
+
+                disposed = true;
+            }
+        }
+
         private bool PipeToSelectObject()
         {
             var commands = ProgressManager.CacheManager.GetPipelineCommands();
@@ -118,6 +155,11 @@ namespace PrtgAPI.PowerShell.Base
             var myIndex = commands.IndexOf(this);
 
             return commands.Skip(myIndex + 1).Where(SelectObjectDescriptor.IsSelectObjectCommand).Any(c => new SelectObjectDescriptor((PSCmdlet) c).HasFilters);
+        }
+
+        internal void Sleep(int milliseconds)
+        {
+            TokenSource.Token.WaitHandle.WaitOne(milliseconds);
         }
 
         #region Events

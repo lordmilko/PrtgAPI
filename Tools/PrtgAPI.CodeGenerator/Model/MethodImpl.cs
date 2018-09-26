@@ -52,17 +52,17 @@ namespace PrtgAPI.CodeGenerator.Model
             }
         }
 
-        public static Tuple<Region, List<Method>> Serialize(IMethodImpl method, Config config)
+        public static Tuple<Region, List<Method>> Serialize(IMethodImpl method, DocumentConfig documentConfig)
         {
-            var template = config.Templates.FirstOrDefault(t => t.Name == method.Template);
+            var template = documentConfig.Templates.FirstOrDefault(t => t.Name == method.Template);
 
             if (template == null)
                 throw new InvalidOperationException($"Template '{method.Template}' does not exist");
 
-            template = new TemplateEvaluator(method, template, config.Templates).ResolveAll();
+            template = new TemplateEvaluator(method, template, documentConfig.Templates).ResolveAll();
 
-            var finalRegions = template.Regions.Select(r => r.Serialize(method, config)).Where(r => r != null).ToReadOnlyList();
-            var finalMethods = template.MethodDefs.SelectMany(m => m.Serialize(method, config)).ToList();
+            var finalRegions = template.Regions.Select(r => r.Serialize(method, documentConfig)).Where(r => r != null).ToReadOnlyList();
+            var finalMethods = template.MethodDefs.SelectMany(m => m.Serialize(method, documentConfig)).ToList();
 
             if (method.Region)
             {

@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
+    <Compile Include="DocumentConfig.cs" />
     <Compile Include="CSharp\Method.cs" />
     <Compile Include="CSharp\Region.cs" />
     <Compile Include="EnumerableHelpers.cs" />
@@ -49,8 +49,19 @@
     <Compile Include="Interface\IGenericArg.cs" />
     <Compile Include="Interface\IMethodDef.cs" />
     <Compile Include="Interface\IParameter.cs" />
-    <Compile Include="MethodBuilder.cs" />
+    <Compile Include="MethodBuilder\Builders\MethodBodyBuilder.cs" />
+    <Compile Include="MethodBuilder\Builders\MethodHeaderBuilder.cs" />
+    <Compile Include="MethodBuilder\Builders\MethodXmlDocBuilder.cs" />
+    <Compile Include="MethodBuilder\MethodRunner.cs" />
+    <Compile Include="MethodBuilder\MethodConfig.cs" />
+    <Compile Include="MethodBuilder\Model\HeaderParameter.cs" />
+    <Compile Include="MethodBuilder\Model\MethodBody.cs" />
+    <Compile Include="MethodBuilder\Model\MethodHeader.cs" />
+    <Compile Include="MethodBuilder\Model\MethodXmlDoc.cs" />
+    <Compile Include="MethodBuilder\XmlHelper.cs" />
     <Compile Include="MethodType.cs" />
+    <Compile Include="Model\CommonParameter.cs" />
+    <Compile Include="NodeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrtgClientGenerator.cs" />
     <Compile Include="Model\Document.cs" />
@@ -69,6 +80,8 @@
     <Compile Include="RegionWriter.cs" />
     <Compile Include="SourceWriter.cs" />
     <Compile Include="TemplateEvaluator.cs" />
+    <Compile Include="TokenMode.cs" />
+    <Compile Include="Xml\CommonParameterXml.cs" />
     <Compile Include="Xml\DocumentXml.cs" />
     <Compile Include="Xml\ExceptionXml.cs" />
     <Compile Include="Xml\GenericArgXml.cs" />

@@ -100,5 +100,23 @@ namespace PrtgAPI.Tests.UnitTests.Support
             if (missing.Count > 0)
                 Assert.Fail($"{missing.Count}/{expectedMethods.Count} tests are missing: " + string.Join(", ", missing));
         }
+
+        internal static string GetProjectRoot(bool solution = false)
+        {
+            var dll = new Uri(typeof(PrtgClient).Assembly.CodeBase);
+            var root = dll.Host + dll.PathAndQuery + dll.Fragment;
+            var rootStr = Uri.UnescapeDataString(root);
+
+            var thisProject = Assembly.GetExecutingAssembly().GetName().Name;
+
+            var prefix = rootStr.IndexOf(thisProject, StringComparison.InvariantCulture);
+
+            var solutionPath = rootStr.Substring(0, prefix);
+
+            if (solution)
+                return solutionPath;
+
+            return solutionPath + "PrtgAPI";
+        }
     }
 }

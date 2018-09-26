@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
@@ -315,7 +316,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             var host = "exch-1";
 
             AddsWithLightParameters(
-                (p, n, r) => client.AddDevice(p, n, host, resolve: r),
+                (p, n, r, t) => client.AddDevice(p, n, host, resolve: r, token: t),
                 client.GetDevices,
                 device => AssertEx.AreEqual(device.Host, host, "Host was not correct")
             );
@@ -345,7 +346,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             Resolves(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDevice,
-                (o, n, r) => client.AddDevice(o, n, "sql-2", resolve: r),
+                (o, n, r, t) => client.AddDevice(o, n, "sql-2", resolve: r, token: t),
                 client.GetDevices,
                 true
             );
@@ -357,7 +358,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             Resolves(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDevice,
-                (o, n, r) => client.AddDevice(o, n, "sql-2", resolve: r),
+                (o, n, r, t) => client.AddDevice(o, n, "sql-2", resolve: r, token: t),
                 client.GetDevices,
                 false
             );
@@ -370,7 +371,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         public async Task AddDevice_AddsWithLightParametersAsync()
         {
             await AddsWithLightParametersAsync(
-                async (p,n,r) => await client.AddDeviceAsync(p, n, "exc-1", resolve: r),
+                async (p, n, r, t) => await client.AddDeviceAsync(p, n, "exc-1", resolve: r, token: t),
                 client.GetDevicesAsync,
                 null
             );
@@ -400,7 +401,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             await ResolvesAsync(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDeviceAsync,
-                (p, n, r) => client.AddDeviceAsync(p, n, "sql-2", resolve: r),
+                (p, n, r, t) => client.AddDeviceAsync(p, n, "sql-2", resolve: r, token: t),
                 client.GetDevicesAsync,
                 true
             );
@@ -412,7 +413,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             await ResolvesAsync(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDeviceAsync,
-                (p, n, r) => client.AddDeviceAsync(p, n, "sql-2", resolve: r),
+                (p, n, r, t) => client.AddDeviceAsync(p, n, "sql-2", resolve: r, token: t),
                 client.GetDevicesAsync,
                 false
             );
@@ -511,13 +512,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Synchronous Helpers
 
         private void AddsWithLightParameters<TObject>(
-            Func<int, string, bool, TObject> addObject,
+            Func<int, string, bool, CancellationToken, TObject> addObject,
             Func<Property, object, List<TObject>> getObjects,
             Action<TObject> validateAdditional) where TObject : SensorOrDeviceOrGroupOrProbe
         {
             var name = "lightParameters";
 
-            addObject(Settings.Probe, name, true);
+            addObject(Settings.Probe, name, true, CancellationToken.None);
 
             var obj = getObjects(Property.Name, name).Single();
 
@@ -536,11 +537,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         private void AddsWithRealParameters<TObject, TParams>(
             TParams parameters,
-            Func<int, TParams, bool, TObject> addObject,
+            Func<int, TParams, bool, CancellationToken, TObject> addObject,
             Func<Property, object, List<TObject>> getObjects,
             Action<TObject, TParams> validateAdditional) where TParams : NewObjectParameters where TObject : SensorOrDeviceOrGroupOrProbe
         {
-            addObject(Settings.Probe, parameters, true);
+            addObject(Settings.Probe, parameters, true, CancellationToken.None);
 
             var obj = getObjects(Property.Name, parameters.Name).Single();
 
@@ -559,18 +560,18 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         private void Resolves<TObject, TParams>(
             Func<string, TParams> createParams,
-            Func<int, TParams, bool, TObject> addObjectParams,
-            Func<int, string, bool, TObject> addObjectLight,
+            Func<int, TParams, bool, CancellationToken, TObject> addObjectParams,
+            Func<int, string, bool, CancellationToken, TObject> addObjectLight,
             Func<Property, object, List<TObject>> getObjects,
             bool resolve) where TObject : PrtgObject
         {
             var parametersName = resolve ? "resolveRealParameters" : "doesntResolveRealParameters";
             var parameters = createParams(parametersName);
-            var paramsResolvedObj = addObjectParams(Settings.Group, parameters, resolve);
+            var paramsResolvedObj = addObjectParams(Settings.Group, parameters, resolve, CancellationToken.None);
             var paramsManualObj = getObjects(Property.Name, parametersName).Single();
 
             var lightName = resolve ? "resolveLightParameters" : "doesntResolveLightParameters";
-            var lightResolvedObj = addObjectLight(Settings.Group, lightName, resolve);
+            var lightResolvedObj = addObjectLight(Settings.Group, lightName, resolve, CancellationToken.None);
             var lightManualObj = getObjects(Property.Name, lightName).Single();
 
             try
@@ -596,13 +597,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Asynchronous Helpers
 
         private async Task AddsWithLightParametersAsync<TObject>(
-            Func<int, string, bool, Task<TObject>> addObject,
+            Func<int, string, bool, CancellationToken, Task<TObject>> addObject,
             Func<Property, object, Task<List<TObject>>> getObjects,
             Func<TObject, Task> validateAdditional) where TObject : SensorOrDeviceOrGroupOrProbe
         {
             var name = "lightParameters";
 
-            await addObject(Settings.Probe, name, true);
+            await addObject(Settings.Probe, name, true, CancellationToken.None);
 
             var obj = (await getObjects(Property.Name, name)).Single();
 
@@ -621,11 +622,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         private async Task AddsWithRealParametersAsync<TObject, TParams>(
             TParams parameters,
-            Func<int, TParams, bool, Task<TObject>> addObject,
+            Func<int, TParams, bool, CancellationToken, Task<TObject>> addObject,
             Func<Property, object, Task<List<TObject>>> getObjects,
             Func<TObject, TParams, Task> validateAdditional) where TParams : NewObjectParameters where TObject : SensorOrDeviceOrGroupOrProbe
         {
-            await addObject(Settings.Probe, parameters, true);
+            await addObject(Settings.Probe, parameters, true, CancellationToken.None);
 
             var obj = (await getObjects(Property.Name, parameters.Name)).Single();
 
@@ -644,18 +645,18 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         private async Task ResolvesAsync<TObject, TParams>(
             Func<string, TParams> createParams,
-            Func<int, TParams, bool, Task<TObject>> addObjectParams,
-            Func<int, string, bool, Task<TObject>> addObjectLight,
+            Func<int, TParams, bool, CancellationToken, Task<TObject>> addObjectParams,
+            Func<int, string, bool, CancellationToken, Task<TObject>> addObjectLight,
             Func<Property, object, Task<List<TObject>>> getObjects,
             bool resolve) where TObject : PrtgObject
         {
             var parametersName = resolve ? "resolveRealParameters" : "doesntResolveRealParameters";
             var parameters = createParams(parametersName);
-            var paramsResolvedObj = await addObjectParams(Settings.Group, parameters, resolve);
+            var paramsResolvedObj = await addObjectParams(Settings.Group, parameters, resolve, CancellationToken.None);
             var paramsManualObj = (await getObjects(Property.Name, parametersName)).Single();
 
             var lightName = resolve ? "resolveLightParameters" : "doesntResolveLightParameters";
-            var lightResolvedObj = await addObjectLight(Settings.Group, lightName, resolve);
+            var lightResolvedObj = await addObjectLight(Settings.Group, lightName, resolve, CancellationToken.None);
             var lightManualObj = (await getObjects(Property.Name, lightName)).Single();
 
             try

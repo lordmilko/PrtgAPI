@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 
@@ -22,9 +23,9 @@ namespace PrtgAPI.Request
             client.SetObjectProperty(new SetChannelPropertyParameters(sensorIds, channelId, @params, versionSpecific), sensorIds.Length);
         }
 
-        internal virtual async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal virtual async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, CancellationToken token, Tuple<ChannelProperty, object> versionSpecific = null)
         {
-            await client.SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, @params, versionSpecific), sensorIds.Length).ConfigureAwait(false);
+            await client.SetObjectPropertyAsync(new SetChannelPropertyParameters(sensorIds, channelId, @params, versionSpecific), sensorIds.Length, token).ConfigureAwait(false);
         }
     }
 }

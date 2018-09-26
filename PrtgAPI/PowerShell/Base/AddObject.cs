@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -65,7 +66,7 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.RecordsProcessed = -1;
                     }
                     else
-                        client.AddObject(destination.Id, Parameters, GetObjects, false);
+                        client.AddObject(destination.Id, Parameters, (f, t) => GetObjects(f), false, CancellationToken);
 
                 }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
             }

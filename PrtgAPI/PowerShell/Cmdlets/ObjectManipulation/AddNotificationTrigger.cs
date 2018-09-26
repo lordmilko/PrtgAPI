@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -57,7 +58,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void Resolver()
         {
-            var objs = AddAndResolveRunner(() => client.AddNotificationTriggerInternal(Parameters, true, DisplayResolutionError, ShouldStop));
+            var objs = AddAndResolveRunner(() => client.AddNotificationTriggerInternal(Parameters, true, CancellationToken, DisplayResolutionError, ShouldStop));
 
             foreach (var o in objs.OrderBy(i => i.SubId))
                 WriteObject(o);

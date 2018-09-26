@@ -24,6 +24,9 @@ namespace PrtgAPI.CodeGenerator.Xml
         [XmlAttribute("type")]
         public MethodType Type { get; set; }
 
+        [XmlAttribute("cancellationToken")]
+        public bool CancellationToken { get; set; }
+
         public override string ToString()
         {
             return Name;

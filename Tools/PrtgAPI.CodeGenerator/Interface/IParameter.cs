@@ -21,6 +21,8 @@
 
         bool ExcludeStream { get; }
 
+        bool TokenOnly { get; }
+
         string After { get; }
     }
 }

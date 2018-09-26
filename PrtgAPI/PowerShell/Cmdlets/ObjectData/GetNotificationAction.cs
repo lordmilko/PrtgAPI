@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -64,7 +65,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override List<NotificationAction> GetObjectsInternal(NotificationActionParameters parameters)
         {
-            return client.GetNotificationActionsInternal(parameters);
+            return client.GetNotificationActionsInternal(parameters, CancellationToken.None);
         }
 
         /// <summary>

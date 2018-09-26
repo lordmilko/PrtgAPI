@@ -116,7 +116,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
 
-            var location = await Location.ResolveAsync(client, null);
+            var location = await Location.ResolveAsync(client, null, CancellationToken.None);
 
             Assert.AreEqual(null, location.ToString());
         }
@@ -126,7 +126,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something"), "Could not resolve 'something' to an actual address");
+            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something", CancellationToken.None), "Could not resolve 'something' to an actual address");
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new LocationUnresolvedResponse());
 
-            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await Location.ResolveAsync(client, "something"), "Could not resolve 'something' to an actual address");
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await Location.ResolveAsync(client, "something", CancellationToken.None), "Could not resolve 'something' to an actual address");
         }
 
         [TestMethod]
@@ -142,7 +142,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new LocationUnresolvedResponse(true));
 
-            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something"), "the PRTG map provider is not currently available");
+            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something", CancellationToken.None), "the PRTG map provider is not currently available");
         }
 
         [TestMethod]
@@ -1114,7 +1114,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, RequestVersion.v18_1);
 
-            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
+            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
         }
 
         private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
@@ -1128,7 +1128,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
             SetVersion(client, version);
 
-            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) });
+            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
@@ -237,7 +238,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             client.GetSensorHistoryInternal(parameters);
 
         async Task<List<SensorHistoryData>> IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamObjectsAsync(SensorHistoryParameters parameters) =>
-            await client.GetSensorHistoryAsyncInternal(parameters).ConfigureAwait(false);
+            await client.GetSensorHistoryInternalAsync(parameters, CancellationToken.None).ConfigureAwait(false);
 
         int IStreamableCmdlet<GetSensorHistory, SensorHistoryData, SensorHistoryParameters>.GetStreamTotalObjects(SensorHistoryParameters parameters) =>
             client.GetSensorHistoryTotals(parameters);

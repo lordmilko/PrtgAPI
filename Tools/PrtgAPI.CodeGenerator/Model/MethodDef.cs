@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.CodeGenerator.CSharp;
+using PrtgAPI.CodeGenerator.MethodBuilder;
 using PrtgAPI.CodeGenerator.Xml;
 
 namespace PrtgAPI.CodeGenerator.Model
@@ -48,6 +49,8 @@ namespace PrtgAPI.CodeGenerator.Model
 
         public XmlElement StreamBodyElement { get; }
 
+        public XmlElement TokenBodyElement { get; }
+
         public bool NeedsStream { get; }
 
         public bool NeedsAsync { get; }
@@ -55,6 +58,8 @@ namespace PrtgAPI.CodeGenerator.Model
         public string[] TemplateParameters => TemplateParametersRaw?.Split(',');
 
         public string After => methodDefXml.After;
+
+        public TokenMode TokenMode { get; }
 
         private XElement body;
 
@@ -121,14 +126,28 @@ namespace PrtgAPI.CodeGenerator.Model
             }
         }
 
+        private XElement tokenBody;
+
+        public XElement TokenBody
+        {
+            get
+            {
+                if (tokenBody == null)
+                    tokenBody = XElement.Parse(TokenBodyElement.OuterXml);
+
+                return tokenBody;
+            }
+        }
+
+
         public MethodDef(MethodDefXml methodDefXml) : this(methodDefXml, name: null)
         {
         }
 
         private MethodDef(IMethodDef original, string name = null, string returnType = null, XmlElement summary = null, XmlElement returnDescription = null, IException exception = null,
             ReadOnlyCollection<GenericArg> genericArgs = null, ReadOnlyCollection<Parameter> parameters = null, XmlElement bodyElement = null, XmlElement syncBodyElement = null,
-            XmlElement asyncBodyElement = null, XmlElement syncAsyncBodyElement = null,
-            XmlElement streamBodyElement = null, string overload = null, bool? needsStream = null, bool? streamSerial = null, bool? needsAsync = null)
+            XmlElement asyncBodyElement = null, XmlElement syncAsyncBodyElement = null, XmlElement streamBodyElement = null,
+            XmlElement tokenBodyElement = null, string overload = null, bool? needsStream = null, bool? streamSerial = null, bool? needsAsync = null, TokenMode tokenMode = TokenMode.None)
         {
             methodDefXml = original.GetMethodDefXml();
 
@@ -144,9 +163,11 @@ namespace PrtgAPI.CodeGenerator.Model
             AsyncBodyElement = asyncBodyElement ?? (XmlElement)original.AsyncBodyElement?.CloneNode(true);
             SyncAsyncBodyElement = syncAsyncBodyElement ?? (XmlElement)original.SyncAsyncBodyElement?.CloneNode(true);
             StreamBodyElement = streamBodyElement ?? (XmlElement)original.StreamBodyElement?.CloneNode(true);
+            TokenBodyElement = tokenBodyElement ?? (XmlElement)original.TokenBodyElement?.CloneNode(true);
             Overload = overload ?? original.Overload;
             NeedsStream = needsStream.HasValue ? needsStream.Value : original.NeedsStream;
             NeedsAsync = needsAsync.HasValue ? needsAsync.Value : original.NeedsAsync;
+            TokenMode = tokenMode != TokenMode.None ? tokenMode : original.TokenMode;
         }
 
         public static MethodDef Merge(MethodDef original, MethodDef customDef)
@@ -164,7 +185,9 @@ namespace PrtgAPI.CodeGenerator.Model
                 customDef.AsyncBodyElement,
                 customDef.SyncAsyncBodyElement,
                 customDef.StreamBodyElement,
-                customDef.Overload
+                customDef.TokenBodyElement,
+                customDef.Overload,
+                tokenMode: customDef.TokenMode
             );
         }
 
@@ -186,30 +209,45 @@ namespace PrtgAPI.CodeGenerator.Model
             return parameters;
         }
 
-        public List<Method> Serialize(IMethodImpl method, Config config, IRegion region = null)
+        public List<Method> Serialize(IMethodImpl method, DocumentConfig documentConfig, IRegion region = null)
         {
             List<Method> methods = new List<Method>();
 
             foreach (var type in method.Types)
             {
-                if (type == MethodType.Asynchronous && !NeedsAsync)
+                var methodConfig = new MethodConfig(method, this, type, documentConfig, region);
+
+                if (!methodConfig.MethodRequired)
                     continue;
 
-                if (type == MethodType.Stream && !NeedsStream)
-                    continue;
+                methods.Add(BuildMethod(methodConfig));
 
-                var w = new SourceWriter();
+                //Query methods don't require any other request types
+                if (methodConfig.MethodType == MethodType.Query)
+                    break;
 
-                MethodDef def = this;
+                if(methodConfig.NeedsTokenInterfaceOverload)
+                {
+                    var tokenConfig = methodConfig.GetTokenOverloadConfig();
 
-                var builder = new MethodBuilder(method, def, config, w, type);
-
-                builder.WriteMethod();
-
-                methods.Add(new Method(method.Name, region?.Type == MethodType.Query ? MethodType.Query : type, w.ToString()));
+                    methods.Add(BuildMethod(tokenConfig));
+                }
             }
 
             return methods;
+        }
+
+        private Method BuildMethod(MethodConfig methodConfig)
+        {
+            var w = new SourceWriter();
+
+            MethodDef def = this;
+
+            var builder = new MethodRunner(methodConfig, w);
+
+            builder.WriteMethod();
+
+            return new Method(methodConfig.Method.Name, methodConfig.MethodType, w.ToString());
         }
 
         public static List<PropertyInfo> GetProperties()

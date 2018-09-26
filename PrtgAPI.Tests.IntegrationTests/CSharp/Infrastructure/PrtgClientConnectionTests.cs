@@ -7,6 +7,7 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
@@ -137,7 +138,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
 
             try
             {
-                await (Task<string>)method.Invoke(engine, new object[] {parameters, null});
+                await (Task<string>)method.Invoke(engine, new object[] {parameters, null, CancellationToken.None});
             }
             catch (WebException ex)
             {
@@ -252,6 +253,30 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
 
                 AssertEx.AreEqual(retriesToMake, retriesMade, "An incorrect number of retries were made.");
             });
+        }
+
+        [TestMethod]
+        public void Logic_Client_CancelsSynchronous()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            AssertEx.Throws<TaskCanceledException>(
+                () => client.GetSensors(new SensorParameters(), cts.Token),
+                "A task was canceled."
+            );
+        }
+
+        [TestMethod]
+        public async Task Logic_Client_CancelsAsynchronous()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            await AssertEx.ThrowsAsync<TaskCanceledException>(
+                async () => await client.GetSensorsAsync(new SensorParameters(), cts.Token),
+                "A task was canceled."
+            );
         }
     }
 }

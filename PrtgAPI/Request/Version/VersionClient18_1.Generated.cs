@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 
@@ -45,7 +46,7 @@ namespace PrtgAPI.Request
                 base.SetChannelProperty(sensorIds, channelId, null, @params);
         }
 
-        internal override async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal override async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, CancellationToken token, Tuple<ChannelProperty, object> versionSpecific = null)
         {
             if (NeedsLimit(@params))
             {
@@ -71,11 +72,11 @@ namespace PrtgAPI.Request
 
                 foreach (var group in groups)
                 {
-                    await base.SetChannelPropertyAsync(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1)).ConfigureAwait(false);
+                    await base.SetChannelPropertyAsync(group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, token, Tuple.Create(group.Item3, (object)group.Item1)).ConfigureAwait(false);
                 }
             }
             else
-                await base.SetChannelPropertyAsync(sensorIds, channelId, null, @params).ConfigureAwait(false);
+                await base.SetChannelPropertyAsync(sensorIds, channelId, null, @params, token).ConfigureAwait(false);
         }
     }
 }

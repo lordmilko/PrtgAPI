@@ -80,7 +80,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (Wait)
                         restartTime = client.GetStatus().DateTime;
 
-                    ExecuteOperation(() => client.RestartCore(), statusDescription);
+                    ExecuteOperation(() => client.RestartCore(token: CancellationToken), statusDescription);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Wait && restartTime != null)
             {
-                client.WaitForCoreRestart(restartTime.Value, WriteCoreProgress);
+                client.WaitForCoreRestart(restartTime.Value, WriteCoreProgress, CancellationToken);
             }
         }
 
@@ -151,7 +151,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 #if DEBUG
                 if(!client.UnitTest())
 #endif
-                Thread.Sleep(1000);
+                Sleep(1000);
 
 
                 ProgressManager.WriteProgress(true);

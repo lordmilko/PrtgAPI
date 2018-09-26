@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Request;
 
@@ -16,9 +17,12 @@ namespace PrtgAPI.Tests.UnitTests
             this.response = response;
         }
 
-        public Task<HttpResponseMessage> GetSync(string address)
+        public Task<HttpResponseMessage> GetSync(string address, CancellationToken token)
         {
             var statusCode = GetStatusCode();
+
+            if (token.IsCancellationRequested)
+                throw new TaskCanceledException();
 
             var message = new HttpResponseMessage(statusCode)
             {
@@ -34,9 +38,12 @@ namespace PrtgAPI.Tests.UnitTests
             return Task.FromResult(message);
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string address)
+        public async Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
         {
             var statusCode = GetStatusCode();
+
+            if (token.IsCancellationRequested)
+                throw new TaskCanceledException();
 
             var stack = new System.Diagnostics.StackTrace();
 

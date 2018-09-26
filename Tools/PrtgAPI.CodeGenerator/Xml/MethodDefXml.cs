@@ -62,11 +62,17 @@ namespace PrtgAPI.CodeGenerator.Xml
         [XmlAnyElement("StreamBody")]
         public XmlElement StreamBodyElement { get; set; }
 
+        [XmlAnyElement("TokenBody")]
+        public XmlElement TokenBodyElement { get; set; }
+
         [XmlAttribute("needsStream")]
         public bool NeedsStream { get; set; }
 
         [XmlAttribute("needsAsync")]
         public bool NeedsAsync { get; set; } = true;
+
+        [XmlAttribute("tokenMode")]
+        public TokenMode TokenMode { get; set; }
 
         public override string ToString()
         {

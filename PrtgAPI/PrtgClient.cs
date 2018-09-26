@@ -100,6 +100,15 @@ namespace PrtgAPI
 
         internal Version version;
 
+        /// <summary>
+        /// The default <see cref="CancellationToken"/> token to use in requests when a token is not otherwise specified.
+        /// </summary>
+        internal CancellationToken DefaultCancellationToken
+        {
+            get { return RequestEngine.DefaultCancellationToken; }
+            set { RequestEngine.DefaultCancellationToken = value; }
+        }
+
         internal void Log(string message, LogLevel logLevel)
         {
             if((LogLevel & logLevel) == logLevel)
@@ -200,35 +209,46 @@ namespace PrtgAPI
             return response;
         }
 
+        internal List<Sensor> GetSensors(Property property, object value, CancellationToken token) =>
+            GetSensors(new SensorParameters(new SearchFilter(property, value)), token);
+
+        internal List<Probe> GetProbes(Property property, object value, CancellationToken token) =>
+            GetProbes(new ProbeParameters(new SearchFilter(property, value)), token);
+
+        internal Schedule GetSchedule(int id, CancellationToken token) =>
+            GetSchedules(Property.Id, id, token).SingleObject(id);
+
+        internal List<Schedule> GetSchedules(Property property, object value, CancellationToken token) =>
+            GetSchedulesInternal(new ScheduleParameters(new SearchFilter(property, value)), token);
         #region Channel
 
-        private XElement GetChannelProperties(int sensorId, int channelId)
+        private XElement GetChannelProperties(int sensorId, int channelId, CancellationToken token)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            return RequestEngine.ExecuteRequest(parameters, r => ChannelSettings.GetChannelXml(r, channelId));
+            return RequestEngine.ExecuteRequest(parameters, r => ChannelSettings.GetChannelXml(r, channelId), token);
         }
 
-        private async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId)
+        private async Task<XElement> GetChannelPropertiesAsync(int sensorId, int channelId, CancellationToken token)
         {
             var parameters = new ChannelPropertiesParameters(sensorId, channelId);
 
-            return await RequestEngine.ExecuteRequestAsync(parameters, r => ChannelSettings.GetChannelXml(r, channelId)).ConfigureAwait(false);
+            return await RequestEngine.ExecuteRequestAsync(parameters, r => ChannelSettings.GetChannelXml(r, channelId), token).ConfigureAwait(false);
         }
 
         #endregion
         #region Notification Actions
         
-        private XElement GetNotificationActionProperties(int id)
+        private XElement GetNotificationActionProperties(int id, CancellationToken token)
         {
-            var xml = RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(id, ObjectType.Notification), ObjectSettings.GetXml);
+            var xml = RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(id, ObjectType.Notification), ObjectSettings.GetXml, token);
 
             xml = ResponseParser.GroupNotificationActionProperties(xml);
 
             return xml;
         }
 
-        private async Task<XElement> GetNotificationActionPropertiesAsync(int id)
+        private async Task<XElement> GetNotificationActionPropertiesAsync(int id, CancellationToken token)
         {
             var xml = await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(id, ObjectType.Notification), ObjectSettings.GetXml, token).ConfigureAwait(false);
 
@@ -237,25 +257,25 @@ namespace PrtgAPI
             return xml;
         }
 
-        private void UpdateActionSchedules(List<IGrouping<int, NotificationAction>> actions)
+        private void UpdateActionSchedules(List<IGrouping<int, NotificationAction>> actions, CancellationToken token)
         {
             if (actions.Count > 0)
             {
-                var schedules = new Lazy<List<Schedule>>(() => GetSchedules(Property.Id, actions.Select(a => a.Key)));
+                var schedules = new Lazy<List<Schedule>>(() => GetSchedules(Property.Id, actions.Select(a => a.Key), token), LazyThreadSafetyMode.PublicationOnly);
 
                 foreach (var group in actions)
                 {
                     foreach (var action in group)
-                        action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key));
+                        action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key), LazyThreadSafetyMode.PublicationOnly);
                 }
             }
         }
 
-        private async Task UpdateActionSchedulesAsync(List<IGrouping<int, NotificationAction>> actions)
+        private async Task UpdateActionSchedulesAsync(List<IGrouping<int, NotificationAction>> actions, CancellationToken token)
         {
             if (actions.Count > 0)
             {
-                var schedules = await GetSchedulesAsync(Property.Id, actions.Select(a => a.Key)).ConfigureAwait(false);
+                var schedules = await GetSchedulesAsync(Property.Id, actions.Select(a => a.Key), token).ConfigureAwait(false);
 
                 foreach (var group in actions)
                 {
@@ -268,33 +288,33 @@ namespace PrtgAPI
         #endregion
         #region Notification Triggers
 
-        private List<NotificationTrigger> GetNotificationTriggersInternal(int objectId)
+        private List<NotificationTrigger> GetNotificationTriggersInternal(int objectId, CancellationToken token)
         {
-            var xmlResponse = RequestEngine.ExecuteRequest(new NotificationTriggerParameters(objectId));
+            var xmlResponse = RequestEngine.ExecuteRequest(new NotificationTriggerParameters(objectId), token: token);
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
-            UpdateTriggerChannels(parsed);
-            UpdateTriggerActions(parsed);
+            UpdateTriggerChannels(parsed, token);
+            UpdateTriggerActions(parsed, token);
 
             return parsed;
         }
 
-        private async Task<List<NotificationTrigger>> GetNotificationTriggersInternalAsync(int objectId)
+        private async Task<List<NotificationTrigger>> GetNotificationTriggersInternalAsync(int objectId, CancellationToken token)
         {
-            var xmlResponse = await RequestEngine.ExecuteRequestAsync(new NotificationTriggerParameters(objectId)).ConfigureAwait(false);
+            var xmlResponse = await RequestEngine.ExecuteRequestAsync(new NotificationTriggerParameters(objectId), token: token).ConfigureAwait(false);
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
-            var updateTriggerChannels = UpdateTriggerChannelsAsync(parsed);
-            var updateTriggerActions = UpdateTriggerActionsAsync(parsed);
+            var updateTriggerChannels = UpdateTriggerChannelsAsync(parsed, token);
+            var updateTriggerActions = UpdateTriggerActionsAsync(parsed, token);
 
             await Task.WhenAll(updateTriggerChannels, updateTriggerActions).ConfigureAwait(false);
 
             return parsed;
         }
 
-        private void UpdateTriggerActions(List<NotificationTrigger> triggers)
+        private void UpdateTriggerActions(List<NotificationTrigger> triggers, CancellationToken token)
         {
             //Group all actions from all triggers together based on their object ID
             var actions = ResponseParser.GroupTriggerActions(triggers);
@@ -302,14 +322,17 @@ namespace PrtgAPI
             //Retrieve the XML required to construct "proper" notification actions for all unique actions
             //specified in the triggers
             var actionParameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
-            var normalActions = new Lazy<XDocument>(() => ObjectEngine.GetObjectsXml(actionParameters));
+            var normalActions = new Lazy<XDocument>(() => ObjectEngine.GetObjectsXml(actionParameters, token: token), LazyThreadSafetyMode.PublicationOnly);
 
             foreach (var group in actions)
             {
                 //As soon as a notification with a specified ID is accessed on any one of the triggers, retrieve
                 //the "supported" properties of ALL of the notification actions, and then retrieve the "unsupported"
                 //properties of JUST the notification action object ID that was accessed.
-                var lazyAction = new Lazy<XDocument>(() => RequestParser.ExtractActionXml(normalActions.Value, GetNotificationActionProperties(group.Key), @group.Key));
+                var lazyAction = new Lazy<XDocument>(
+                    () => RequestParser.ExtractActionXml(normalActions.Value, GetNotificationActionProperties(group.Key, token), @group.Key),
+                    LazyThreadSafetyMode.PublicationOnly
+                );
 
                 Logger.Log("Setting lazy action to retrieve notification actions");
 
@@ -326,23 +349,23 @@ namespace PrtgAPI
                             {
                                 Logger.Log($"Resolving schedule {action.lazyScheduleStr} to schedule");
 
-                                return GetSchedule(new Schedule(action.lazyScheduleStr).Id);
+                                return GetSchedule(new Schedule(action.lazyScheduleStr).Id, token);
                             }
 
                             return new Schedule(action.lazyScheduleStr);
-                        });
+                        }, LazyThreadSafetyMode.PublicationOnly);
                 }
             }
         }
 
-        private async Task UpdateTriggerActionsAsync(List<NotificationTrigger> triggers)
+        private async Task UpdateTriggerActionsAsync(List<NotificationTrigger> triggers, CancellationToken token)
         {
             var actions = ResponseParser.GroupTriggerActions(triggers);
 
             var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
 
             var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.Key, token));
-            var normal = await ObjectEngine.GetObjectsXmlAsync(parameters).ConfigureAwait(false);
+            var normal = await ObjectEngine.GetObjectsXmlAsync(parameters, token: token).ConfigureAwait(false);
 
             //All the properties of all desired notifications
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -364,7 +387,7 @@ namespace PrtgAPI
             List<Schedule> schedules = new List<Schedule>();
 
             if(list.Count > 0)
-                schedules = await GetSchedulesAsync(Property.Id, list.Select(l => l.Key).ToArray()).ConfigureAwait(false);
+                schedules = await GetSchedulesAsync(Property.Id, list.Select(l => l.Key).ToArray(), token).ConfigureAwait(false);
 
             foreach (var group in actions)
             {
@@ -385,16 +408,18 @@ namespace PrtgAPI
             }
         }
         
-        private NotificationTriggerData GetNotificationTriggerData(int objectId) =>
+        private NotificationTriggerData GetNotificationTriggerData(int objectId, CancellationToken token) =>
             ObjectEngine.GetObject<NotificationTriggerData>(
                 new NotificationTriggerDataParameters(objectId),
-                ParseNotificationTriggerTypes
+                ParseNotificationTriggerTypes,
+                token
             );
 
-        private async Task<NotificationTriggerData> GetNotificationTriggerDataAsync(int objectId) =>
+        private async Task<NotificationTriggerData> GetNotificationTriggerDataAsync(int objectId, CancellationToken token) =>
             await ObjectEngine.GetObjectAsync<NotificationTriggerData>(
                 new NotificationTriggerDataParameters(objectId),
-                ParseNotificationTriggerTypesAsync
+                ParseNotificationTriggerTypesAsync,
+                token
             ).ConfigureAwait(false);
 
         #endregion
@@ -409,9 +434,9 @@ namespace PrtgAPI
             return Tuple.Create(data, raw.TotalCount);
         }
 
-        internal async Task<List<SensorHistoryData>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters)
+        internal async Task<List<SensorHistoryData>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters, CancellationToken token)
         {
-            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse).ConfigureAwait(false);
+            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse, token: token).ConfigureAwait(false);
 
             return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
@@ -422,7 +447,7 @@ namespace PrtgAPI
                 parameters,
                 serial,
                 () => GetSensorHistoryTotals(parameters),
-                GetSensorHistoryInternalAsync,
+                p => GetSensorHistoryInternalAsync(p, CancellationToken.None),
                 GetSensorHistoryInternal
             );
         }
@@ -441,16 +466,34 @@ namespace PrtgAPI
         #endregion
     #endregion
     #region Object Manipulation
+        #region Notifications
+
+        private void SetNotificationTriggerInternal(TriggerParameters parameters, CancellationToken token)
+        {
+            ValidateTriggerParameters(parameters, token);
+
+            RequestEngine.ExecuteRequest(parameters, token: token);
+        }
+
+        private async Task SetNotificationTriggerInternalAsync(TriggerParameters parameters, CancellationToken token)
+        {
+            await ValidateTriggerParametersAsync(parameters, token).ConfigureAwait(false);
+
+            await RequestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
+        }
+
+        #endregion
         #region Clone Object
 
-        private int CloneObject(CloneParameters parameters) =>
-            ResponseParser.Amend(RequestEngine.ExecuteRequest(parameters, ResponseParser.CloneRequestParser), ResponseParser.CloneResponseParser);
+        private int CloneObject(CloneParameters parameters, CancellationToken token) =>
+            ResponseParser.Amend(RequestEngine.ExecuteRequest(parameters, ResponseParser.CloneRequestParser, token), ResponseParser.CloneResponseParser);
 
-        private async Task<int> CloneObjectAsync(CloneParameters parameters) =>
+        private async Task<int> CloneObjectAsync(CloneParameters parameters, CancellationToken token) =>
             ResponseParser.Amend(
                 await RequestEngine.ExecuteRequestAsync(
                     parameters,
-                    async r => await Task.FromResult(ResponseParser.CloneRequestParser(r)).ConfigureAwait(false)
+                    async r => await Task.FromResult(ResponseParser.CloneRequestParser(r)).ConfigureAwait(false),
+                    token
                 ).ConfigureAwait(false), ResponseParser.CloneResponseParser
             );
 
@@ -474,7 +517,8 @@ namespace PrtgAPI
                 {
                     table.schedule = new LazyValue<Schedule>(
                         table.scheduleStr,
-                        () => GetSchedule(PrtgObject.GetId(table.scheduleStr))
+                        () => GetSchedule(PrtgObject.GetId(table.scheduleStr)),
+                        LazyThreadSafetyMode.PublicationOnly
                     );
                 }
             }
@@ -482,9 +526,9 @@ namespace PrtgAPI
             return data;
         }
 
-        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType)
+        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType, CancellationToken token)
         {
-            var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false);
+            var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType, token).ConfigureAwait(false);
 
             var data = ResponseParser.GetObjectProperties<T>(response);
 
@@ -496,7 +540,7 @@ namespace PrtgAPI
                     table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => new Schedule(table.scheduleStr));
                 else
                 {
-                    var schedule = await GetScheduleAsync(PrtgObject.GetId(table.scheduleStr)).ConfigureAwait(false);
+                    var schedule = await GetScheduleAsync(PrtgObject.GetId(table.scheduleStr), token).ConfigureAwait(false);
 
                     table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => schedule);
                 }
@@ -511,14 +555,14 @@ namespace PrtgAPI
         private Dictionary<string, string> GetObjectPropertiesRawDictionary(int objectId, object objectType) =>
             ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectId, objectType));
 
-        private async Task<Dictionary<string, string>> GetObjectPropertiesRawDictionaryAsync(int objectId, object objectType) =>
-            ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType).ConfigureAwait(false));
+        private async Task<Dictionary<string, string>> GetObjectPropertiesRawDictionaryAsync(int objectId, object objectType, CancellationToken token) =>
+            ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType, token).ConfigureAwait(false));
 
-        private string GetObjectPropertiesRawInternal(int objectId, object objectType) =>
-            RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectId, objectType));
+        private string GetObjectPropertiesRawInternal(int objectId, object objectType, CancellationToken token = default(CancellationToken)) =>
+            RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectId, objectType), token: token);
 
-        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, object objectType) =>
-            await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType)).ConfigureAwait(false);
+        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, object objectType, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType), token: token).ConfigureAwait(false);
 
             #endregion
             #region Get Single Raw Property
@@ -538,7 +582,7 @@ namespace PrtgAPI
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
 
-        private async Task<string> GetObjectPropertyRawInternalAsync(int objectId, string property, bool text)
+        private async Task<string> GetObjectPropertyRawInternalAsync(int objectId, string property, bool text, CancellationToken token)
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
 
@@ -547,7 +591,8 @@ namespace PrtgAPI
                 responseParser: async m => ResponseParser.ParseGetObjectPropertyResponse(
                     await m.Content.ReadAsStringAsync().ConfigureAwait(false),
                     property
-                )
+                ),
+                token: token
             ).ConfigureAwait(false);
 
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
@@ -560,8 +605,8 @@ namespace PrtgAPI
         internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
             RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
 
-        internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m))).ConfigureAwait(false);
+        internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m)), token).ConfigureAwait(false);
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
         {
@@ -577,7 +622,7 @@ namespace PrtgAPI
 
                         if (method != null)
                         {
-                            prop.Value = method.Invoke(null, new[] { this, prop.Value });
+                            prop.Value = method.Invoke(null, new[] { this, prop.Value, CancellationToken.None });
                         }
                     }
                     catch (TargetInvocationException ex)
@@ -592,7 +637,7 @@ namespace PrtgAPI
             return parameters;
         }
 
-        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, params PropertyParameter[] @params)
+        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, PropertyParameter[] @params, CancellationToken token)
         {
             foreach (var prop in @params)
             {
@@ -606,7 +651,7 @@ namespace PrtgAPI
 
                         if (method != null)
                         {
-                            var task = ((Task)method.Invoke(null, new[] { this, prop.Value }));
+                            var task = ((Task)method.Invoke(null, new[] { this, prop.Value, token }));
 
                             await task.ConfigureAwait(false);
 
@@ -628,63 +673,63 @@ namespace PrtgAPI
         #endregion
         #region System Administration
         
-        private void RestartProbeInternal(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[], bool> progressCallback)
+        private void RestartProbeInternal(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[], bool> progressCallback, CancellationToken token)
         {
             var restartTime = waitForRestart ? (DateTime?) GetStatus().DateTime : null;
 
             if (probeIds != null && probeIds.Length > 1)
             {
                 foreach (var probeId in probeIds)
-                    RequestEngine.ExecuteRequest(new RestartProbeParameters(probeId));
+                    RequestEngine.ExecuteRequest(new RestartProbeParameters(probeId), token: token);
             }
             else
-                RequestEngine.ExecuteRequest(new RestartProbeParameters(probeIds?.Cast<int?>().FirstOrDefault()));
+                RequestEngine.ExecuteRequest(new RestartProbeParameters(probeIds?.Cast<int?>().FirstOrDefault()), token: token);
 
             if (waitForRestart)
             {
-                var probe = probeIds == null || probeIds.Length == 0 ? GetProbes() : GetProbes(Property.Id, probeIds);
-                WaitForProbeRestart(restartTime.Value, probe, progressCallback);
+                var probe = probeIds == null || probeIds.Length == 0 ? GetProbes(new ProbeParameters(), token) : GetProbes(Property.Id, probeIds, token);
+                WaitForProbeRestart(restartTime.Value, probe, progressCallback, token);
             }
         }
 
-        private async Task RestartProbeInternalAsync(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[], bool> progressCallback)
+        private async Task RestartProbeInternalAsync(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[], bool> progressCallback, CancellationToken token)
         {
-            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync().ConfigureAwait(false)).DateTime : null;
+            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync(token).ConfigureAwait(false)).DateTime : null;
 
             if (probeIds != null && probeIds.Length > 1)
             {
-                var tasks = probeIds.Select(probeId => RequestEngine.ExecuteRequestAsync(new RestartProbeParameters(probeId)));
+                var tasks = probeIds.Select(probeId => RequestEngine.ExecuteRequestAsync(new RestartProbeParameters(probeId), token: token));
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
             }
             else
-                RequestEngine.ExecuteRequest(new RestartProbeParameters(probeIds?.Cast<int?>().FirstOrDefault()));
+                RequestEngine.ExecuteRequest(new RestartProbeParameters(probeIds?.Cast<int?>().FirstOrDefault()), token: token);
 
             if (waitForRestart)
             {
-                var probe = probeIds == null || probeIds.Length == 0 ? await GetProbesAsync().ConfigureAwait(false) : await GetProbesAsync(Property.Id, probeIds).ConfigureAwait(false);
-                await WaitForProbeRestartAsync(restartTime.Value, probe, progressCallback).ConfigureAwait(false);
+                var probe = probeIds == null || probeIds.Length == 0 ? await GetProbesAsync(token).ConfigureAwait(false) : await GetProbesAsync(Property.Id, probeIds, token).ConfigureAwait(false);
+                await WaitForProbeRestartAsync(restartTime.Value, probe, progressCallback, token).ConfigureAwait(false);
             }
         }
 
-        private void RestartCoreInternal(bool waitForRestart, Func<RestartCoreStage, bool> progressCallback)
+        private void RestartCoreInternal(bool waitForRestart, Func<RestartCoreStage, bool> progressCallback, CancellationToken token)
         {
             var restartTime = waitForRestart ? (DateTime?)GetStatus().DateTime : null;
 
             RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.RestartServer));
 
             if (waitForRestart)
-                WaitForCoreRestart(restartTime.Value, progressCallback);
+                WaitForCoreRestart(restartTime.Value, progressCallback, token);
         }
 
-        private async Task RestartCoreInternalAsync(bool waitForRestart, Func<RestartCoreStage, bool> progressCallback)
+        private async Task RestartCoreInternalAsync(bool waitForRestart, Func<RestartCoreStage, bool> progressCallback, CancellationToken token)
         {
             var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync().ConfigureAwait(false)).DateTime : null;
 
             await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.RestartServer)).ConfigureAwait(false);
 
             if (waitForRestart)
-                await WaitForCoreRestartAsync(restartTime.Value, progressCallback).ConfigureAwait(false);
+                await WaitForCoreRestartAsync(restartTime.Value, progressCallback, token).ConfigureAwait(false);
         }
 
         #endregion
@@ -707,9 +752,10 @@ namespace PrtgAPI
         /// Asynchronously resolves an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
         /// </summary>
         /// <param name="address">The address to resolve.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns></returns>
-        internal async Task<List<Location>> ResolveAddressAsync(string address) =>
-            (await ObjectEngine.GetObjectAsync<GeoResult>(new ResolveAddressParameters(address), m => Task.FromResult(ResponseParser.ResolveParser(m))).ConfigureAwait(false)).Results.ToList();
+        internal async Task<List<Location>> ResolveAddressAsync(string address, CancellationToken token) =>
+            (await ObjectEngine.GetObjectAsync<GeoResult>(new ResolveAddressParameters(address), m => Task.FromResult(ResponseParser.ResolveParser(m)), token).ConfigureAwait(false)).Results.ToList();
 
         internal void FoldObject(int objectId, bool fold) =>
             RequestEngine.ExecuteRequest(new FoldParameters(objectId, fold));

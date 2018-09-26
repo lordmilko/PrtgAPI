@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,6 +14,7 @@ using PrtgAPI.Attributes;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
@@ -73,7 +75,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestCategory("SkipCI")]
         public void AllTextFiles_UseSpaces_AndCRLF()
         {
-            var path = GetProjectRoot(true);
+            var path = TestHelpers.GetProjectRoot(true);
 
             var types = new[]
             {
@@ -129,6 +131,26 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                         InspectMethodCall(item, model);
                 }
             });
+        }
+
+        [TestMethod]
+        public void AllPublicAsyncMethods_AcceptACancellationToken_OrHaveAnOverloadThatDoes()
+        {
+            var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));
+            var groups = methods.GroupBy(m => m.Name);
+
+            foreach (var group in groups)
+            {
+                var subGroups = group.GroupBy(m => string.Join(", ",
+                    m.GetParameters().Where(p => p.ParameterType != typeof(CancellationToken))
+                        .Select(p => p.ParameterType.Name + " " + p.Name)));
+
+                foreach (var subGroup in subGroups)
+                {
+                    if (!subGroup.Any(m => m.GetParameters().Any(p => p.ParameterType == typeof(CancellationToken))))
+                        Assert.Fail($"{group.Key}({subGroup.Key}) does not accept a {nameof(CancellationToken)} or have an overload that does");
+                }
+            }
         }
 
         private SyntaxToken GetMethodName(InvocationExpressionSyntax invocationNode)
@@ -243,7 +265,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private void WithTree(Action<string, SyntaxTree, SemanticModel> action)
         {
-            var path = GetProjectRoot();
+            var path = TestHelpers.GetProjectRoot();
 
             var files = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
@@ -290,24 +312,6 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             if (args.Arguments.First().Expression.IsKind(SyntaxKind.FalseLiteralExpression) == false)
                 throw new Exception("ConfigureAwait has a value other than 'false'");
-        }
-
-        private string GetProjectRoot(bool solution = false)
-        {
-            var dll = new Uri(typeof(PrtgClient).Assembly.CodeBase);
-            var root = dll.Host + dll.PathAndQuery + dll.Fragment;
-            var rootStr = Uri.UnescapeDataString(root);
-
-            var thisProject = Assembly.GetExecutingAssembly().GetName().Name;
-
-            var prefix = rootStr.IndexOf(thisProject, StringComparison.InvariantCulture);
-
-            var solutionPath = rootStr.Substring(0, prefix);
-
-            if (solution)
-                return solutionPath;
-
-            return solutionPath + "PrtgAPI";
         }
     }
 }

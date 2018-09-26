@@ -29,6 +29,9 @@ namespace PrtgAPI.CodeGenerator.Xml
         [XmlAttribute("excludeStream")]
         public bool ExcludeStream { get; set; }
 
+        [XmlAttribute("tokenOnly")]
+        public bool TokenOnly { get; set; }
+
         [XmlAttribute("after")]
         public string After { get; set; }
 

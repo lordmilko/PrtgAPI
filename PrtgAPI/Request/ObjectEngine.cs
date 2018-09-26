@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Helpers;
@@ -37,22 +38,22 @@ namespace PrtgAPI.Request
 
         #region Get Objects
 
-        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true) =>
-            GetObjectsRaw<T>(parameters, responseValidator, deserializeAll).Items;
+        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken)) =>
+            GetObjectsRaw<T>(parameters, responseValidator, deserializeAll, token).Items;
 
-        internal XmlDeserializer<T> GetObjectsRaw<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true)
+        internal XmlDeserializer<T> GetObjectsRaw<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken))
         {
-            var response = requestEngine.ExecuteRequest(parameters, responseValidator);
+            var response = requestEngine.ExecuteRequest(parameters, responseValidator, token: token);
 
             return SetVersion(XmlDeserializer<T>.DeserializeList(response, deserializeAll));
         }
 
-        internal async Task<List<T>> GetObjectsAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true) =>
-            (await GetObjectsRawAsync<T>(parameters, responseValidator, deserializeAll).ConfigureAwait(false)).Items;
+        internal async Task<List<T>> GetObjectsAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken)) =>
+            (await GetObjectsRawAsync<T>(parameters, responseValidator, deserializeAll, token).ConfigureAwait(false)).Items;
 
-        internal async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true)
+        internal async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, token: token).ConfigureAwait(false);
 
             return SetVersion(XmlDeserializer<T>.DeserializeList(response, deserializeAll));
         }
@@ -64,25 +65,25 @@ namespace PrtgAPI.Request
             return XmlDeserializer<T>.DeserializeType(response);
         }
 
-        internal async Task<T> GetObjectAsync<T>(IXmlParameters parameters)
+        internal async Task<T> GetObjectAsync<T>(IXmlParameters parameters, CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
 
             return XmlDeserializer<T>.DeserializeType(response);
         }
 
-        internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null)
+        internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var response = requestEngine.ExecuteRequest(parameters, responseParser);
+            var response = requestEngine.ExecuteRequest(parameters, responseParser, token);
 
             var data = JsonDeserializer<T>.DeserializeType(response);
 
             return data;
         }
 
-        internal async Task<T> GetObjectAsync<T>(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null)
+        internal async Task<T> GetObjectAsync<T>(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters, responseParser).ConfigureAwait(false);
+            var response = await requestEngine.ExecuteRequestAsync(parameters, responseParser, token).ConfigureAwait(false);
 
             var data = JsonDeserializer<T>.DeserializeType(response);
 
@@ -100,11 +101,11 @@ namespace PrtgAPI.Request
         #endregion
         #region Get Objects XML
 
-        internal XDocument GetObjectsXml(IXmlParameters parameters, Action<string> responseValidator = null) =>
-            requestEngine.ExecuteRequest(parameters, responseValidator);
+        internal XDocument GetObjectsXml(IXmlParameters parameters, Action<string> responseValidator = null, CancellationToken token = default(CancellationToken)) =>
+            requestEngine.ExecuteRequest(parameters, responseValidator, token: token);
 
-        internal async Task<XDocument> GetObjectsXmlAsync(IXmlParameters parameters, Action<string> responseValidator = null) =>
-            await requestEngine.ExecuteRequestAsync(parameters, responseValidator).ConfigureAwait(false);
+        internal async Task<XDocument> GetObjectsXmlAsync(IXmlParameters parameters, Action<string> responseValidator = null, CancellationToken token = default(CancellationToken)) =>
+            await requestEngine.ExecuteRequestAsync(parameters, responseValidator, token: token).ConfigureAwait(false);
 
         #endregion
         #region Stream Objects

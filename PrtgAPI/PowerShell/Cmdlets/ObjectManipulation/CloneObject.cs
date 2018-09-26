@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -16,6 +17,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// you wish to clone are piped into Clone-Object, requiring you to specify the Object ID of the parent the cloned object will sit under.
     /// In Clone To mode, objects you wish to clone a single object to are piped to Clone-Object, requiring you to specify the ID of the object you
     /// wish to clone.</para>
+    /// 
     /// <para type="description">Sensors can only be cloned to <see cref="Device"/> objects, whereas devices and groups can both cloned to other groups
     /// or directly under a probe.</para>
     /// 
@@ -45,12 +47,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// the new object so that you may unpause the object with Resume-Object.</para>
     /// 
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object 5678</code>
+    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object -DestinationId 5678</code>
     ///     <para>Clone the sensor with ID 1234 to the device with ID 5678</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object 5678 MyNewSensor</code>
+    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object -DestinationId 5678 MyNewSensor</code>
     ///     <para>Clone the sensor with ID 1234 to the device with ID 5678 renamed as "MyNewSensor"</para>
     ///     <para/>
     /// </example>
@@ -60,17 +62,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object 5678 -Resolve:$false</code>
+    ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object -DestinationId 5678 -Resolve:$false</code>
     ///     <para>Clone the sensor with ID 1234 into the device with ID 5678 without resolving the resultant PrtgObject</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Device -Id 1234 | Clone-Object 5678 MyNewDevice 192.168.1.1</code>
+    ///     <code>C:\> Get-Device -Id 1234 | Clone-Object -DestinationId 5678 MyNewDevice 192.168.1.1</code>
     ///     <para>Clone the device with ID 1234 into the group or probe with ID 5678 renamed as "MyNewDevice" with IP Address 192.168.1.1</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Probe -Id 1234 | Get-Trigger | Clone-Object 5678</code>
+    ///     <code>C:\> Get-Probe -Id 1234 | Get-Trigger | Clone-Object -DestinationId 5678</code>
     ///     <para>Clone all notification triggers (both inherited and explicitly defined) on the probe with ID 1234 to the object with ID 5678</para>
     /// </example>
     /// 
@@ -224,7 +226,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (Resolve)
             {
-                var triggers = client.AddNotificationTriggerInternal(parameters, true, DisplayResolutionError, ShouldStop);
+                var triggers = client.AddNotificationTriggerInternal(parameters, true, CancellationToken, DisplayResolutionError, ShouldStop);
 
                 foreach (var obj in triggers)
                     WriteObject(obj);
@@ -318,7 +320,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void ResolveObject<T>(int id, Func<int, List<T>> getObjects, Type trueType)
         {
             var objs = client.ResolveObject(
-                () => getObjects(id),
+                t => getObjects(id),
+                CancellationToken,
                 o => o.Count > 0,
                 $"Could not resolve object with ID '{id}'",
                 trueType,

@@ -72,6 +72,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CSharp\Infrastructure\CancellationTests.cs" />
+    <Compile Include="CSharp\Infrastructure\CodeGeneratorTests.cs" />
     <Compile Include="CSharp\ObjectData\QueryableObjectTests.cs" />
     <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
@@ -301,6 +303,10 @@
     <ProjectReference Include="..\PrtgAPI\PrtgAPI.csproj">
       <Project>{0f6f773a-7053-424e-89f8-43467a695433}</Project>
       <Name>PrtgAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj">
+      <Project>{c4572a75-ac79-4e5e-b253-1a545446220a}</Project>
+      <Name>PrtgAPI.CodeGenerator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

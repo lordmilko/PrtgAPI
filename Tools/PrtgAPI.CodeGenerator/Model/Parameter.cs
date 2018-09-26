@@ -18,6 +18,8 @@
 
         public bool ExcludeStream { get; }
 
+        public bool TokenOnly { get; }
+
         public string After { get; }
 
         public Parameter(IParameter parameter)
@@ -30,6 +32,7 @@
             StreamDescription = parameter.StreamDescription;
             StreamOnly = parameter.StreamOnly;
             ExcludeStream = parameter.ExcludeStream;
+            TokenOnly = parameter.TokenOnly;
             After = parameter.After;
         }
 

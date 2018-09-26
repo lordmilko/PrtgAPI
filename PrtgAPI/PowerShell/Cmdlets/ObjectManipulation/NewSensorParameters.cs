@@ -287,7 +287,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private DynamicSensorParameters CreateDynamicParameters(Func<int, bool> progressCallback)
         {
-            var dynamicParamters = client.GetDynamicSensorParameters(Device.Id, RawType, progressCallback);
+            var dynamicParamters = client.GetDynamicSensorParameters(Device.Id, RawType, progressCallback, CancellationToken);
             dynamicParamters.Source = Device;
 
             if (!string.IsNullOrEmpty(Target) && dynamicParamters.Targets.Count > 0)

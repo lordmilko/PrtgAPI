@@ -14,11 +14,39 @@
         return $"async {returnType} {name}Async";
     }
 
+	public string GetAsyncTokenSignature(string name, string returnType, string parameters, string tokenParameter, int i)
+    {
+        if(i == 0)
+            return $"{returnType} {name}({parameters})";
+        else
+        {
+            if(returnType == "void")
+                returnType = "Task";
+            else
+                returnType = $"Task<{returnType}>";
+
+		    parameters += $", CancellationToken {tokenParameter}";
+        }
+
+        return $"async {returnType} {name}Async({parameters})";
+    }
+
     public string CallFunction(string name, string parameters, int i)
     {
         if(i == 0)
             return $"{name}({parameters})";
         else
+            return $"await {name}Async({parameters}).ConfigureAwait(false)";
+    }
+
+	public string CallAsyncTokenFunction(string name, string parameters, string tokenParameter, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters})";
+        else
+		{
+		    parameters += ", " + tokenParameter;
+		}
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
     }
 
@@ -46,30 +74,6 @@
             return $"await {function}.ConfigureAwait(false);";
     }
 
-    public string Sleep(int duration, int i)
-    {
-        if(i == 0)
-            return $"Thread.Sleep({duration});";
-        else
-            return $"await Task.Delay({duration}).ConfigureAwait(false);";
-    }
-
-    public string SleepPre(int i)
-    {
-        if(i == 0)
-            return "Thread.Sleep(";
-        else
-            return "await Task.Delay(";
-    }
-
-    public string SleepPost(int i)
-    {
-        if(i == 0)
-            return ")";
-        else
-            return ").ConfigureAwait(false)";
-    }
-
     public string DeclareLightFunc1(string funcName, string args, string returnType, string function, int i)
     {
         if(i == 0)
@@ -84,6 +88,18 @@
             return $"Action {variableName} = () => {function}({functionArgs})";
         else
             return $"Func<Task> {variableName} = async () => await {function}Async({functionArgs}).ConfigureAwait(false)";
+    }
+
+	public string DeclareTokenAction0(string variableName, string function, string functionArgs, int i)
+    {
+        if(i == 0)
+            return $"Action<CancellationToken> {variableName} = t => {function}({functionArgs}, t)";
+        else
+		{
+			functionArgs += $", t";
+
+			return $"Func<CancellationToken, Task> {variableName} = async t => await {function}Async({functionArgs}).ConfigureAwait(false)";
+		}
     }
 
     public string DeclareFunc(string variableName, string lambdaArgs, string inputTypes, string function, string args, string functionReturnType, int i)
@@ -102,12 +118,32 @@
             return $"Func<Task<{functionReturnType}>> {variableName} = async () => await {function}({args}).ConfigureAwait(false)";
     }
 
+	public string DeclareTokenFuncFromVariable0(string variableName, string function, string args, string functionReturnType, int i)
+    {
+        if(i == 0)
+            return $"Func<CancellationToken, {functionReturnType}> {variableName} = t => {function}({args}, t)";
+        else
+            return $"Func<CancellationToken, Task<{functionReturnType}>> {variableName} = async t => await {function}({args}, t).ConfigureAwait(false)";
+    }
+
     public string DeclareFuncThen0(string variableName, string function, string args, string functionReturnType, string then, int i)
     {
         if(i == 0)
             return $"Func<{functionReturnType}> {variableName} = () => {function}({args}){then}";
         else
             return $"Func<Task<{functionReturnType}>> {variableName} = async () => (await {function}Async({args}).ConfigureAwait(false)){then}";
+    }
+
+	public string DeclareTokenFuncThen0(string variableName, string function, string args, string functionReturnType, string then, int i)
+    {
+        if(i == 0)
+            return $"Func<CancellationToken, {functionReturnType}> {variableName} = t => {function}({args}, t){then}";
+        else
+		{
+			args += $", t";
+
+			return $"Func<CancellationToken, Task<{functionReturnType}>> {variableName} = async t => (await {function}Async({args}).ConfigureAwait(false)){then}";
+		}
     }
 
     public string GetFuncRet(string type, int i)
@@ -126,6 +162,14 @@
             return "Func<Task>";
     }
 
+	public string GetTokenActionParam0(int i)
+    {
+        if(i == 0)
+            return "Action<CancellationToken>";
+        else
+            return "Func<CancellationToken, Task>";
+    }
+
     public string StartLoopOrTask(string elm, string elms, int i)
     {
         if(i == 0)
@@ -141,4 +185,12 @@
         else
             return ")).ConfigureAwait(false);";
     }
+
+	public string WaitOne(string duration, string tokenVar, int i)
+	{
+		if(i == 0)
+			return $"{tokenVar}.WaitHandle.WaitOne({duration}, true);";
+		else
+			return $"await {tokenVar}.WaitHandle.WaitOneAsync({duration}, {tokenVar}).ConfigureAwait(false);";
+	}
 #>

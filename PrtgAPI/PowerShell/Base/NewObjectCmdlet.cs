@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+using System.Threading;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -32,8 +33,9 @@ namespace PrtgAPI.PowerShell.Base
                 () => client.AddObject(
                     destinationId,
                     parameters,
-                    getObjects,
+                    (f, t) => getObjects(f),
                     true,
+                    CancellationToken,
                     DisplayResolutionError,
                     ShouldStop,
                     typeof(T) == typeof(Sensor)

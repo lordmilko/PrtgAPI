@@ -22,7 +22,7 @@ namespace PrtgAPI.CodeGenerator
         public TemplateEvaluator(IMethodImpl method, Template template,
             ReadOnlyCollection<Template> templates)
         {
-            this.methodImpl = method;
+            methodImpl = method;
             this.template = template;
             this.templates = templates;
         }
@@ -88,7 +88,7 @@ namespace PrtgAPI.CodeGenerator
             }
 
             if (modified)
-                return new RegionDef(originalRegion, regionList.ToReadOnlyList(), methodList.ToReadOnlyList());
+                return new RegionDef(originalRegion, false, regionList.ToReadOnlyList(), methodList.ToReadOnlyList());
 
             return originalRegion;
         }
@@ -123,6 +123,20 @@ namespace PrtgAPI.CodeGenerator
                 }
                 else
                     list.Add(obj);
+
+                var last = list.Last();
+
+                var region = last as RegionDef;
+
+                if(region != null)
+                {
+                    if (region.CancellationToken)
+                    {
+                        modified = true;
+                        region.HasTokenRegion = true;
+                        list.Add((T)(object)new RegionDef(region, true));
+                    }
+                }
 
                 var nextObj = overrideObjects.SingleOrDefault(m => m.After == obj.Name);
 
@@ -184,7 +198,7 @@ namespace PrtgAPI.CodeGenerator
                 if (newRegions != region.Regions || newMethods != region.MethodDefs)
                 {
                     modified = true;
-                    list.Add(new RegionDef(region, newRegions, newMethods));
+                    list.Add(new RegionDef(region, false, newRegions, newMethods));
                 }
                 else
                     list.Add(region);
@@ -239,7 +253,7 @@ namespace PrtgAPI.CodeGenerator
                     return false;
 
                 //Does it have the same number of parameters?
-                var parameterNames = c.Parameters.Where(p => !p.StreamOnly).Select(p => p.Name).ToList();
+                var parameterNames = c.Parameters.Where(p => !p.StreamOnly && !p.TokenOnly).Select(p => p.Name).ToList();
 
                 //Same parameters (none)?
                 if (parameterNames.Count == 0)
@@ -265,7 +279,7 @@ namespace PrtgAPI.CodeGenerator
             });
 
             if (match == null)
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Couldn't find the method pointer '{pointerMethod}' corresponds to");
 
             return match;
         }

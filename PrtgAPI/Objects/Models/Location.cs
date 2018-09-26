@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using PrtgAPI.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -42,7 +43,7 @@ namespace PrtgAPI
             };
         }
 
-        internal static Location Resolve(PrtgClient client, object value)
+        internal static Location Resolve(PrtgClient client, object value, CancellationToken token)
         {
             if (value == null)
                 return new Location();
@@ -57,7 +58,7 @@ namespace PrtgAPI
                     break;
 
 #if !DEBUG
-                Thread.Sleep(1000);
+                token.WaitHandle.WaitOne(1000);
 #endif
             }
 
@@ -67,7 +68,7 @@ namespace PrtgAPI
             return result.First();
         }
 
-        internal static async Task<Location> ResolveAsync(PrtgClient client, object value)
+        internal static async Task<Location> ResolveAsync(PrtgClient client, object value, CancellationToken token)
         {
             if (value == null)
                 return new Location();
@@ -76,13 +77,13 @@ namespace PrtgAPI
 
             for (int i = 0; i < 10; i++)
             {
-                result = await client.ResolveAddressAsync(value.ToString()).ConfigureAwait(false);
+                result = await client.ResolveAddressAsync(value.ToString(), token).ConfigureAwait(false);
 
                 if (result.Any())
                     break;
 
 #if !DEBUG
-                await Task.Delay(1000).ConfigureAwait(false);
+                await token.WaitHandle.WaitOneAsync(1000, token).ConfigureAwait(false);
 #endif
             }
 

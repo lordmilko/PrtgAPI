@@ -3,7 +3,7 @@
     /// <summary>
     /// Base class for parameter types that modify object properties.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of property manipulated by this object.</typeparam>
     public abstract class PropertyParameter<T>
     {
         /// <summary>
