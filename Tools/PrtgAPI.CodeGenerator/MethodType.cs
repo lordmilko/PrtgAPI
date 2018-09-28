@@ -6,6 +6,7 @@
         Synchronous,
         Asynchronous,
         Stream,
-        Query
+        Query,
+        Watch
     }
 }

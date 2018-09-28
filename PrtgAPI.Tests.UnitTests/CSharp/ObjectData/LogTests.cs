@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support;
@@ -55,6 +56,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var logsTimeSpanObject = client.GetLogs(1001, RecordAge.LastMonth);
             var logsTimeSpanObjectAsync = client.GetLogsAsync(1001, RecordAge.LastMonth).Result;
             var logsTimeSpanObjectStream = client.StreamLogs(1001, RecordAge.LastMonth).ToList();
+
+            var logsWatch = client.WatchLogs();
+            var logsWatchObject = client.WatchLogs(1001);
         }
 
         [TestMethod]
@@ -89,6 +93,61 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var log = client.GetLogs().First();
 
             Assert.AreEqual(log.Message, "Timeout (code: PE018)");
+        }
+
+        [TestMethod]
+        public void Log_Watch_KeepsRequestingMoreRecords()
+        {
+            var client = Initialize_Client(new InfiniteLogResponse());
+
+            var logs = client.WatchLogs(interval: 0).Take(320).ToList();
+
+            Assert.AreEqual(320, logs.Count);
+        }
+
+        [TestMethod]
+        public void Log_Watch_StopsWhenCallbackReturnsFalse()
+        {
+            var client = Initialize_Client(new InfiniteLogResponse());
+
+            var logs = client.WatchLogs(interval: 0, progressCallback: i =>
+            {
+                if (i > 501)
+                    return false;
+
+                return true;
+            }).ToList();
+
+            Assert.AreEqual(550, logs.Count);
+        }
+
+        [TestMethod]
+        public void Log_Watch_StopsWhenCancelled()
+        {
+            var client = Initialize_Client(new InfiniteLogResponse());
+
+            var cts = new CancellationTokenSource();
+
+            AssertEx.Throws<OperationCanceledException>(() =>
+            {
+                client.WatchLogs(interval: 0, progressCallback: i =>
+                {
+                    if (i > 10)
+                        cts.Cancel();
+
+                    return true;
+                }, token: cts.Token).ToList();
+            }, "The operation was canceled.");
+        }
+
+        [TestMethod]
+        public void Log_Watch_UpdatesStartDate()
+        {
+            var client = Initialize_Client(new InfiniteLogValidatorResponse(DateTime.Now));
+
+            var logs = client.WatchLogs(interval: 0).Take(7).ToList();
+
+            Assert.AreEqual(7, logs.Count);
         }
     }
 }

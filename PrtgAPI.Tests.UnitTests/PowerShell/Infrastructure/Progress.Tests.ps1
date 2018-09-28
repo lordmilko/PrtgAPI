@@ -10557,6 +10557,56 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             #endregion
         #endregion
     #endregion
+    #region 109: Watch
+
+    It "109a: Displays watch progress" {
+
+        WithResponseArgs "InfiniteLogValidatorResponse" @((Get-Date).AddMinutes(-1), "id=0&start=1") {
+            Get-ObjectLog -Tail -Interval 0 | select -First 7
+        }
+
+        Validate(@(
+            (Gen "PRTG Log Watcher" "Waiting for first event")
+            (Gen "PRTG Log Watcher" "Retrieving all logs 1/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 2/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 3/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 4/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 5/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 6/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs 7/∞" 0)
+            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs 7/∞" 0)
+        ))
+    }
+
+    It "109b: Loops watch progress" {
+
+        $total = 1101
+
+        WithResponse "InfiniteLogResponse" {
+
+            Get-ObjectLog -Tail -Interval 0 | select -First $total
+        }
+
+        $progress = @()
+
+        # Progress goes up to 1000 then resets again
+        $progressLength = 1000
+
+        for($i = 1; $i -le $total; $i++)
+        {
+            $p = [Math]::Floor(($i % $progressLength) / $progressLength * 100)
+
+            $progress += (Gen "PRTG Log Watcher" "Retrieving all logs $i/∞" $p)
+        }
+
+        Validate(@(
+            (Gen "PRTG Log Watcher" "Waiting for first event")
+            $progress
+            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs 1101/∞" 10)
+        ))
+    }
+
+    #endregion
     #region Sanity Checks
 
     It "Streams when the number of returned objects is above the threshold" {

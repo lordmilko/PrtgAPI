@@ -1875,6 +1875,38 @@ namespace PrtgAPI
             ObjectEngine.QueryObjects(predicate, strict, () => new LogParameters(null), new QueryLogHelper(strict));
 
             #endregion
+            #region Watch
+
+        /// <summary>
+        /// Continuously streams logs from a PRTG Server. This method will not end until you stop requesting items from it,
+        /// <paramref name="progressCallback"/> returns false or the specified <see cref="CancellationToken"/> is cancelled.<para/>
+        /// Logs are ordered from oldest to newest.
+        /// </summary>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <param name="interval">Interval (in seconds) with which PrtgAPI should poll for new logs.</param>
+        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.
+        /// Called between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</returns>
+        public IEnumerable<Log> WatchLogs(LogStatus[] status = null, int interval = 1, Func<int, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
+            new InfiniteLogGenerator(GetLogs, null, status, interval, progressCallback, token);
+
+        /// <summary>
+        /// Continuously streams logs for a specified object from a PRTG Server. This method will not end until you stop requesting items from it,
+        /// <paramref name="progressCallback"/> returns false or the specified <see cref="CancellationToken"/> is cancelled.<para/>
+        /// Logs are ordered from oldest to newest.
+        /// </summary>
+        /// <param name="objectId">ID of the object to retrieve logs for.</param>
+        /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
+        /// <param name="interval">Interval (in seconds) with which PrtgAPI should poll for new logs.</param>
+        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.
+        /// Called between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</returns>
+        public IEnumerable<Log> WatchLogs(int objectId, LogStatus[] status = null, int interval = 1, Func<int, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
+            new InfiniteLogGenerator(GetLogs, objectId, status, interval, progressCallback, token);
+
+            #endregion
             #region Parameters
 
         /// <summary>

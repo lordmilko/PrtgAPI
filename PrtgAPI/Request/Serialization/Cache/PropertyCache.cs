@@ -9,13 +9,33 @@ namespace PrtgAPI.Request.Serialization.Cache
     {
         public PropertyInfo Property { get; set; }
 
+        private Lazy<Func<object, object>> getValue;
         private Lazy<Action<object, object>> setValue;
 
         public PropertyCache(PropertyInfo property)
         {
             Property = property;
 
+            getValue = new Lazy<Func<object, object>>(CreateGetValue);
             setValue = new Lazy<Action<object, object>>(CreateSetValue);
+        }
+
+        private Func<object, object> CreateGetValue()
+        {
+            var @this = Expression.Parameter(typeof(object), "obj");
+            var val = Expression.Parameter(typeof(object), "val");
+
+            var thisCast = Expression.Convert(@this, Property.DeclaringType);
+
+            var access = Expression.MakeMemberAccess(thisCast, Property);
+            var accessCast = Expression.Convert(access, typeof(object));
+
+            var lambda = Expression.Lambda<Func<object, object>>(
+                accessCast,
+                @this
+            );
+
+            return lambda.Compile();
         }
 
         private Action<object, object> CreateSetValue()
@@ -41,6 +61,11 @@ namespace PrtgAPI.Request.Serialization.Cache
         public void SetValue(object obj, object value)
         {
             setValue.Value(obj, value);
+        }
+
+        public object GetValue(object obj)
+        {
+            return getValue.Value(obj);
         }
 
         [ExcludeFromCodeCoverage]

@@ -143,7 +143,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
             MethodDef = methodDef;
             MethodType = type;
 
-            if (region != null && region.Type == MethodType.Query)
+            if (region != null && region.Type != MethodType.Unspecified)
                 MethodType = region.Type;
 
             DocumentConfig = documentConfig;
@@ -257,7 +257,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                         name = name.Replace("{Request}", "Stream");
                         break;
                     default:
-                        throw new System.NotImplementedException();
+                        throw new NotImplementedException();
                 }
             }
             else

@@ -114,6 +114,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var skipStartsWith = new List<string>
             {
                 "Stream",
+                "Watch",
                 "Query",
                 "get_",
                 "set_",

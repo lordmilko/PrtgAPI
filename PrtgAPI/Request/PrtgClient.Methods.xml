@@ -341,6 +341,43 @@
                     </Body>
                 </MethodDef>
             </Region>
+            <Region name="Watch" type="Watch">
+                <MethodDef name="Watch{Name}s" returns="IEnumerable&lt;Log&gt;" needsAsync="false">
+                    <Summary>
+                        Continuously streams logs from a PRTG Server. This method will not end until you stop requesting items from it,
+                        &lt;paramref name="progressCallback"/&gt; returns false or the specified &lt;see cref="CancellationToken"/&gt; is cancelled.&lt;para/&gt;
+                        Logs are ordered from oldest to newest.
+                    </Summary>
+                    <ReturnDescription>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</ReturnDescription>
+
+                    <Parameter name="status" type="LogStatus[]" default="null" description="Log event types to retrieve records for. If no types are specified, all record types will be retrieved."/>
+                    <Parameter name="interval" type="int" default="1" description="Interval (in seconds) with which PrtgAPI should poll for new logs."/>
+                    <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.\nCalled between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort."/>
+                    <Parameter name="token" type="CancellationToken" default="default(CancellationToken)" description="A cancellation token that can be used by other objects or threads to receive notice of cancellation."/>
+
+                    <Body expression="true">
+                        new InfiniteLogGenerator(GetLogs, null, status, interval, progressCallback, token)
+                    </Body>
+                </MethodDef>
+                <MethodDef name="Watch{Name}s" returns="IEnumerable&lt;Log&gt;" needsAsync="false">
+                    <Summary>
+                        Continuously streams logs for a specified object from a PRTG Server. This method will not end until you stop requesting items from it,
+                        &lt;paramref name="progressCallback"/&gt; returns false or the specified &lt;see cref="CancellationToken"/&gt; is cancelled.&lt;para/&gt;
+                        Logs are ordered from oldest to newest.
+                    </Summary>
+                    <ReturnDescription>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</ReturnDescription>
+
+                    <Parameter name="objectId" type="int" description="ID of the object to retrieve logs for."/>
+                    <Parameter name="status" type="LogStatus[]" default="null" description="Log event types to retrieve records for. If no types are specified, all record types will be retrieved."/>
+                    <Parameter name="interval" type="int" default="1" description="Interval (in seconds) with which PrtgAPI should poll for new logs."/>
+                    <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.\nCalled between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort."/>
+                    <Parameter name="token" type="CancellationToken" default="default(CancellationToken)" description="A cancellation token that can be used by other objects or threads to receive notice of cancellation."/>
+
+                    <Body expression="true">
+                        new InfiniteLogGenerator(GetLogs, objectId, status, interval, progressCallback, token)
+                    </Body>
+                </MethodDef>
+            </Region>
             <Region name="Parameters" cancellationToken="true">
                 <MethodDef name="{Request}{Name}s" template="Object" parameters="parameters" tokenMode="AutomaticNamed"/>
             </Region>

@@ -164,6 +164,29 @@ namespace PrtgAPI.PowerShell.Base
 
         private IEnumerable<TObject> GetObjectsWhenStreaming(TParam parameters)
         {
+            if (ProgressManager.WatchStream)
+            {
+                if (typeof(TObject) == typeof(Log))
+                {
+                    return (IEnumerable<TObject>)new InfiniteLogGenerator(
+                        client.GetLogs,
+                        (LogParameters)(object)parameters,
+                        ((IWatchableCmdlet)this).Interval,
+                        i =>
+                        {
+                            if (Stopping)
+                                throw new PipelineStoppedException();
+
+                            return true;
+                        },
+                        CancellationToken,
+                        logs => (IEnumerable<Log>)PostProcessRecords((IEnumerable<TObject>)logs)
+                    );
+                }
+
+                throw new NotImplementedException($"Don't know how to watch objects of type ({typeof(TObject).Name})");
+            }
+
             if (Count != null && filters != null)
             {
                 int previousCount;

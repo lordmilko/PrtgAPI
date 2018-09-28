@@ -128,7 +128,7 @@ function Gen($activity, $description, $percentage, $operation, $timeRemaining)
 
     if($percentage -ne $null)
     {
-        [void]$builder.Append("`n    $(CreateProgressbar $percentage)")
+        [void]$builder.Append("`n    $(CreateProgressBar $percentage)")
     }
 
     if($timeRemaining -ne $null)

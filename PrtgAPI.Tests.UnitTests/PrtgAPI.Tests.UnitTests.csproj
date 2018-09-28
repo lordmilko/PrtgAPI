@@ -92,6 +92,9 @@
     <Compile Include="Support\Infrastructure\Progress\ProgressQueueRecord.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressGrouper.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressHierarchy.cs" />
+    <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
+    <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
+    <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientOneLeftScenarioForceStream.cs" />

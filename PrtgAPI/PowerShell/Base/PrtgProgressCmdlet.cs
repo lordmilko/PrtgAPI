@@ -379,7 +379,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="operation">The type of processing that is being performed by this cmdlet.</param>
         internal void SetObjectSearchProgress(ProcessingOperation operation)
         {
-            ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} Search";
+            ProgressManager.CurrentRecord.Activity = $"PRTG {TypeDescription} {(ProgressManager.WatchStream ? "Watcher" : "Search")}";
 
             if (operation == ProcessingOperation.Processing)
                 ProgressManager.InitialDescription = $"Processing {TypeDescription.ToLower()}";

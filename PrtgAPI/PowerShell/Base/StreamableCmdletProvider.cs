@@ -51,10 +51,18 @@ namespace PrtgAPI.PowerShell.Base
         {
             cmdlet.ProgressManager.Scenario = ProgressScenario.StreamProgress;
 
-            cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
+            if (!cmdlet.ProgressManager.WatchStream)
+            {
+                cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
 
-            StreamCount = cmdlet.GetStreamTotalObjects(parameters);
-            SetTotalExist(StreamCount.Value);
+                StreamCount = cmdlet.GetStreamTotalObjects(parameters);
+                SetTotalExist(StreamCount.Value);
+            }
+            else
+            {
+                cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Watcher", "Waiting for first event");
+                StreamCount = 1000;
+            }
 
             IEnumerable<TRet> records;
 
@@ -67,7 +75,7 @@ namespace PrtgAPI.PowerShell.Base
             else
                 records = StreamRecords<TRet>(parameters, count);
 
-            if (StreamCount > streamThreshold)
+            if (StreamCount > streamThreshold || cmdlet.ProgressManager.WatchStream)
             {
                 //We'll be replacing this progress record, so just null it out via a call to CompleteProgress()
                 //We strategically set the TotalRecords AFTER calling this method, to avoid CompleteProgress truly completing the record

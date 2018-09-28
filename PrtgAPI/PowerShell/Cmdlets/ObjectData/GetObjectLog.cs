@@ -11,20 +11,34 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Retrieves object logs from a PRTG Server.</para>
     /// 
     /// <para type="description">The Get-ObjectLog cmdlet retrieves event logs from a PRTG Server. If no object is specified,
-    /// Get-ObjectLog will retrieve results from the Root PRTG Group (ID: 0). Logs are ordered from newest to oldest. When retrieving logs from an object, all logs
-    /// on child objects are also included. By default, PRTG only stores 30 days worth of logs.</para>
+    /// Get-ObjectLog will retrieve results from the Root PRTG Group (ID: 0). Logs are ordered from newest to oldest. When retrieving logs
+    /// from an object, all logs on child objects are also included. By default, PRTG only stores 30 days worth of logs.</para> 
     /// 
     /// <para type="description">If no date range or count is specified, by default Get-ObjectLog will retrieve all logs defined on
     /// the specified object for the last 7 days unless the specified object is the root group (ID: 0) or a probe, in which cause
     /// only logs that have occurred today will be retrieved.</para>
     /// 
     /// <para type="description">When specifying a date range, well known constants as well as manual start and end
-    /// times can be specified. When specifying a date and time, Get-ObjectLog considers the "start time" as the time
-    /// closest to now, while the "end time" is the point in time furthest away from now. If a -StartTime is specified
-    /// without specifying an -EndTime, Get-ObjectLog will default to retrieving logs for the past 7 days prior to the -StartTime,
-    /// unless the specified object is the root group (ID: 0) or a probe, in which case Get-ObjectLog will default to retrieving
-    /// logs for the past 24 hours from the start time. When specifying well known constants, logs are retrieved from the specified
+    /// times can be specified. When specifying a date and time, the meaning of -<see cref="StartDate"/> and -<see cref="EndDate"/>
+    /// are dependent upon the order with which the logs are being output. When logs are ordered from newest to oldest
+    /// -<see cref="StartDate"/> refers to the time closest to now, while -<see cref="EndDate"/> represents the time furthest
+    /// away from now. When logs are ordered from oldest to newest (i.e. when -<see cref="Wait"/> is specified) -<see cref="StartDate"/>
+    /// represents the point in time logs furthest away from now logs should be retrieved from going into the future.</para>
+    /// 
+    /// <para type="descrption">If a -<see cref="StartDate"/> is specified without specifying an -<see cref="EndDate"/>,
+    /// Get-ObjectLog will default to retrieving logs for the past 7 days prior to the -<see cref="StartDate"/>, unless the
+    /// specified object is the root group (ID: 0) or a probe, in which case Get-ObjectLog will default to retrieving logs
+    /// for the past 24 hours from the start time. When specifying well known constants, logs are retrieved from the specified
     /// point in time until the current time.</para>
+    /// 
+    /// <para type="description">Logs can be streamed continuously from a PRTG Object by specifying the -<see cref="Wait"/> parameter.
+    /// When -<see cref="Wait"/> is specified (also aliased as -Tail) PrtgAPI will continuously poll PRTG for new logs according
+    /// to a specified -<see cref="Interval"/>, outputting them to the console as they arrive in order from oldest to newest. If
+    /// no -<see cref="Interval"/> is specified, by default Get-ObjectLog will poll once per second. A -<see cref="StartDate"/>
+    /// can optionally be specified, specifying the initial point in time PrtgAPI should retrieve logs from. When -<see cref="Wait"/>
+    /// is specified -<see cref="EndDate"/> will have no effect. Specifying an -<see cref="EndDate"/> in conjunction with -<see cref="Wait"/>
+    /// will cause a warning to be emitted to the warning stream specifying that the -<see cref="EndDate"/> parameter will be ignored.
+    /// </para>
     /// 
     /// <para type="description">Logs can be filtered to those of one or more event types by specifying the -Status parameter.
     /// Logs can also be filtered according to their event name, however note that name based filtering of Get-ObjectLog is
@@ -32,9 +46,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// cirvumvented using Select-Object with the -First parameter instead.</para>
     /// 
     /// <para type="description">Note that while Get-ObjectLog considers the "start time" as being the point in time closest to now
-    /// and the "end time" as the point in time furthest away from now, PRTG's underlying API actually defines these in the opposite way.
-    /// Since logs are ordered from newest to oldest however, PrtgAPI flips these definitions as to prevent any confusion. Keep this
-    /// in mind in the event the -Verbose parameter is specified, as the start and end times will appear to be switched.</para>
+    /// and the "end time" as the point in time furthest away from now when logs are ordered from newest to oldest, PRTG's underlying
+    /// API actually defines these in the opposite way. Since logs are ordered from newest to oldest however, PrtgAPI flips these
+    /// definitions as to prevent any confusion. Keep this in mind in the event the -Verbose parameter is specified, as the start
+    /// and end times will appear to be switched. When -<see cref="Wait"/> is specified the meaning of -<see cref="StartDate"/>
+    /// and -<see cref="EndDate"/> are flipped to match their meaningings in the underlying API so that logs can continuously
+    /// be retrieved.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-ObjectLog</code>
@@ -79,6 +96,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-ObjectLog -Id 1001 -EndDate $null</code>
     ///     <para>Retrieve all logs from the object with ID 1001.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-ObjectLog -Status Connected -Wait</code>
+    ///     <para>Continuously poll PRTG for new Probe Connected events, requesting once every second.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -87,7 +109,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = ParameterSet.DateTime)]
-    public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>
+    public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>, IWatchableCmdlet
     {
         /// <summary>
         /// <para type="description">Object to retrieve logs for. If no object is specified, defaults to the root object (group ID: 0)</para>
@@ -128,15 +150,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(ValueFromPipeline = true)]
         public LogStatus[] Status { get; set; }
 
+        [Alias("Tail")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
+        public SwitchParameter Wait { get; set; }
+
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
+        public int Interval { get; set; } = 1;
+
+        bool IWatchableCmdlet.WatchStream { get; set; }
+
+        int? id;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GetObjectLog"/> class.
         /// </summary>
         public GetObjectLog() : base(Content.Logs, true)
         {
-        }
-
-        int? id;
-        
+        }        
         internal override bool StreamCount()
         {
             return true;
@@ -147,6 +177,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            if (Wait)
+                ((IWatchableCmdlet) this).WatchStream = true;
+
             if (ParameterSetName == ParameterSet.DateTimeManual)
                 id = Id;
             else
@@ -161,13 +194,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessAdditionalParameters()
         {
             ProcessStatusFilter();
-            ProcessDateFilter(Property.EndDate, StartDate);
-            ProcessDateFilter(Property.StartDate, EndDate);
+
+            if (Wait)
+                ProcessWatchDateFilters();
+            else
+            {
+                ProcessDateFilter(Property.EndDate, StartDate); //Closest to now
+                ProcessDateFilter(Property.StartDate, EndDate); //Furthest from now
+            }
+            
             ProcessRecordAgeFilter();
 
             ProcessUnspecifiedRange();
 
             base.ProcessAdditionalParameters();
+        }
+
+        private void ProcessWatchDateFilters()
+        {
+            if (EndDate != null)
+                WriteWarning($"Ignoring -{nameof(EndDate)} as cmdlet is executing in Watch Mode. To specify a start time use -{nameof(StartDate)}");
+
+            if (StartDate != null)
+                ProcessDateFilter(Property.StartDate, StartDate);
         }
 
         private void ProcessStatusFilter()
@@ -184,7 +233,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void ProcessDateFilter(Property property, DateTime? datetime)
         {
             if (datetime != null)
+            {
                 AddPipelineFilter(property, ParameterHelpers.DateToString(datetime.Value), false);
+            }
         }
 
         private void ProcessRecordAgeFilter()
@@ -199,6 +250,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ProcessUnspecifiedRange()
         {
+            if (ProgressManager.WatchStream)
+            {
+                StreamProvider.ForceStream = true;
+
+                if (StartDate == null)
+                    ProcessDateFilter(Property.StartDate, DateTime.Now.AddMinutes(-1));
+
+                return;
+            }
+
             //If a start date, time period and a count haven't been specified, for performance with
             //larger installs limit the records to those in the past 7 days
             if (Unspecified(nameof(EndDate)) && Unspecified(nameof(Period)) && Unspecified(nameof(Count)))

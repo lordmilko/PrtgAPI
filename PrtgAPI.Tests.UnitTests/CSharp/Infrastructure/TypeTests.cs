@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
+using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
@@ -15,6 +16,7 @@ using PrtgAPI.Schedules;
 using PrtgAPI.Targets;
 using PrtgAPI.Tests.UnitTests.ObjectData.Query;
 using PrtgAPI.Tests.UnitTests.Support;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 using ReflectionHelpers = PrtgAPI.Helpers.ReflectionHelpers;
 
@@ -745,6 +747,105 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         #endregion
+        #region Log
+
+        [TestMethod]
+        public void Log_EqualityComparer_Equals_DifferentObjectsSameValues()
+        {
+            var client = BaseTest.Initialize_Client(new MessageResponse(new MessageItem()));
+
+            var log1 = client.GetLogs().Single();
+            var log2 = client.GetLogs().Single();
+
+            var comparer = new LogEqualityComparer();
+
+            Assert.IsTrue(!Equals(log1, log2), "Both logs referenced equaled each other");
+            Assert.IsTrue(comparer.Equals(log1, log2), "Logs were not equal");
+        }
+
+        [TestMethod]
+        public void Log_EqualityComparer_Equals_DifferentObjectsNullableValues()
+        {
+            var item = new MessageItem(null, null, "43042.2573037732", null, null, "604", null, null, null, null, "1", null, null, "2304", null, null, null, null);
+
+            var client = BaseTest.Initialize_Client(new MessageResponse(item));
+
+            var log1 = client.GetLogs().Single();
+            var log2 = client.GetLogs().Single();
+
+            var comparer = new LogEqualityComparer();
+
+            Assert.IsTrue(!Equals(log1, log2), "Both logs referenced equaled each other");
+            Assert.IsTrue(comparer.Equals(log1, log2), "Logs were not equal");
+        }
+
+        [TestMethod]
+        public void Log_EqualityComparer_GetHashCode_UniqueValues()
+        {
+            var random = new Random();
+
+            var response = new MessageResponse(Enumerable.Range(0, 50).Select(i =>
+            {
+                var r = random.NextDouble();
+
+                return new MessageItem(
+                    $"WMI Remote Ping_{r}",
+                    datetimeRaw: (43042.2573037732 + r).ToString(),
+                    parent: $"Probe Device_{r}",
+                    sensor: $"WMI Remote Ping_{r}",
+                    device: $"Probe Device_{r}",
+                    group: $"Local Probe_{r}"
+                );
+            }).ToArray());
+
+            var logs = BaseTest.Initialize_Client(response).GetLogs(count: null);
+
+            Assert.AreEqual(50, logs.Count);
+
+            var set = new HashSet<Log>(new LogEqualityComparer());
+
+            foreach (var log in logs)
+                set.Add(log);
+
+            Assert.AreEqual(50, set.Count);
+
+            var comparer = new LogEqualityComparer();
+
+            foreach (var log in logs)
+                Assert.AreEqual(comparer.GetHashCode(log), comparer.GetHashCode(log));
+        }
+
+        [TestMethod]
+        public void Log_EqualityComparer_GetHashCode_NullableValues()
+        {
+            var random = new Random();
+
+            var response = new MessageResponse(Enumerable.Range(0, 50).Select(i =>
+            {
+                var dateTimeRaw = 43042.2573037732 + random.NextDouble() * 3000;
+                var dateTimeRawStr = dateTimeRaw.ToString(CultureInfo.InvariantCulture);
+
+                return new MessageItem(null, null, dateTimeRawStr, null, null, "604", null, null, null, null, "1", null, null, "2304", null, null, null, null);
+            }).ToArray());
+
+            var logs = BaseTest.Initialize_Client(response).GetLogs(count: null);
+
+            Assert.AreEqual(50, logs.Count);
+
+            var set = new HashSet<Log>(new LogEqualityComparer());
+
+            foreach (var log in logs)
+                set.Add(log);
+
+            Assert.AreEqual(50, set.Count);
+
+            var comparer = new LogEqualityComparer();
+
+            foreach (var log in logs)
+                Assert.AreEqual(comparer.GetHashCode(log), comparer.GetHashCode(log));
+        }
+
+        #endregion
         #region ToString
 
         [TestMethod]
@@ -870,7 +971,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         public void All_PrtgObjectProperties_HaveArrayLookupProperties()
         {
             var properties = PrtgObjectFilterTests.GetPrtgObjectProperties(new[] {"NotificationTypes"});
-            var propertyTypes = properties.Select(p => p.PropertyType).Select(ReflectionHelpers.GetUnderlyingType).DistinctBy(p => p.Name).ToList();
+            var propertyTypes = PrtgAPIHelpers.DistinctBy(properties.Select(p => p.PropertyType).Select(ReflectionHelpers.GetUnderlyingType), p => p.Name).ToList();
 
             var arrayTypes = typeof(DynamicParameterPropertyTypes).GetProperties();
 

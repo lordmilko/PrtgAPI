@@ -631,6 +631,8 @@ namespace PrtgAPI.PowerShell.Progress
 
         internal ReflectionCacheManager CacheManager { get; set; }
 
+        public bool WatchStream => cmdlet is IWatchableCmdlet && ((IWatchableCmdlet) cmdlet).WatchStream;
+
         #endregion
 
         /// <summary>
@@ -1099,13 +1101,15 @@ namespace PrtgAPI.PowerShell.Progress
 
                 manager.RecordsProcessed++;
 
+                var str = GetStatusDescriptionProgressCount(manager.RecordsProcessed, manager.TotalRecords.Value);
+
                 if (obj != null && Scenario != ProgressScenario.StreamProgress)
-                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({manager.RecordsProcessed}/{manager.TotalRecords})";
+                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({str})";
                 else
-                    record.StatusDescription = $"{InitialDescription} {manager.RecordsProcessed}/{manager.TotalRecords}";
+                    record.StatusDescription = $"{InitialDescription} {str}";
 
                 if (manager.RecordsProcessed > 0)
-                    record.PercentComplete = (int)(manager.RecordsProcessed / Convert.ToDouble(manager.TotalRecords) * 100);
+                    record.PercentComplete = GetPercentComplete(manager.RecordsProcessed, manager.TotalRecords.Value);
 
                 if (abortProgress.AbortProgress(manager))
                     return;
@@ -1147,12 +1151,14 @@ namespace PrtgAPI.PowerShell.Progress
             if (index > maxCount)
                 index = maxCount;
 
-            if(obj != null)
-                record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({index}/{maxCount})";
-            else
-                record.StatusDescription = $"{InitialDescription} {index}/{maxCount}";
+            var str = GetStatusDescriptionProgressCount(index, maxCount);
 
-            record.PercentComplete = (int)((index) / Convert.ToDouble(maxCount) * 100);
+            if(obj != null)
+                record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({str})";
+            else
+                record.StatusDescription = $"{InitialDescription} {str}";
+
+            record.PercentComplete = GetPercentComplete(index, maxCount);
 
             if (writeObject)
                 variableProgressDisplayed = true;
@@ -1221,6 +1227,9 @@ namespace PrtgAPI.PowerShell.Progress
                 cache = true;
             }
 
+            if (WatchStream)
+                percentComplete = percentComplete % 100;
+
             CurrentRecord.Activity = activity;
             CurrentRecord.StatusDescription = progressMessage;
             CurrentRecord.PercentComplete = percentComplete;
@@ -1273,8 +1282,8 @@ namespace PrtgAPI.PowerShell.Progress
             var count = Pipeline.CurrentIndex + 1;
 
             CurrentRecord.Activity = activity;
-            CurrentRecord.PercentComplete = (int)((count) / Convert.ToDouble(TotalRecords) * 100);
-            CurrentRecord.StatusDescription = $"{progressMessage} ({count}/{TotalRecords})";
+            CurrentRecord.PercentComplete = GetPercentComplete(count, TotalRecords.Value);
+            CurrentRecord.StatusDescription = $"{progressMessage} ({GetStatusDescriptionProgressCount(count, TotalRecords.Value)})";
 
             WriteProgress();
         }
@@ -1308,8 +1317,8 @@ namespace PrtgAPI.PowerShell.Progress
             var count = previousManager.RecordsProcessed;
 
             CurrentRecord.Activity = activity;
-            CurrentRecord.PercentComplete = (int)((count) / Convert.ToDouble(TotalRecords) * 100);
-            CurrentRecord.StatusDescription = $"{progressMessage} ({count}/{TotalRecords})";
+            CurrentRecord.PercentComplete = GetPercentComplete(count, TotalRecords.Value);
+            CurrentRecord.StatusDescription = $"{progressMessage} ({GetStatusDescriptionProgressCount(count, TotalRecords.Value)})";
 
             WriteProgress();
         }
@@ -1363,8 +1372,8 @@ namespace PrtgAPI.PowerShell.Progress
                     total = EntirePipeline.List.Count;
                 }
 
-                PreviousRecord.StatusDescription = $"{progressMessage} ({processed}/{total})";
-                PreviousRecord.PercentComplete = (int) ((processed)/Convert.ToDouble(total)*100);
+                PreviousRecord.StatusDescription = $"{progressMessage} ({GetStatusDescriptionProgressCount(processed, total.Value)})";
+                PreviousRecord.PercentComplete = GetPercentComplete(processed, total.Value);
 
                 PreviousRecord.CmdletOwnsRecord = false;
 
@@ -1419,6 +1428,26 @@ namespace PrtgAPI.PowerShell.Progress
         private void SkipCurrentRecord()
         {
             CloneRecord(PreviousRecord, CurrentRecord);
+        }
+
+        private int GetPercentComplete(int count, int total)
+        {
+            var percentComplete = (int)(count / Convert.ToDouble(total) * 100);
+
+            if (WatchStream)
+                percentComplete = percentComplete % 100;
+
+            return percentComplete;
+        }
+
+        private string GetStatusDescriptionProgressCount(int index, int maxCount)
+        {
+            var totalStr = maxCount.ToString();
+
+            if (WatchStream)
+                totalStr = "∞";
+
+            return $"{index}/{totalStr}";
         }
 
         public static ProgressRecordEx CloneRecord(ProgressRecordEx progressRecord)

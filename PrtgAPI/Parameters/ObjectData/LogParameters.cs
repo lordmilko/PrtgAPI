@@ -15,7 +15,7 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="LogParameters"/> class for retrieving logs between two time periods.
         /// </summary>
         /// <param name="objectId">ID of the object to retrieve logs from. If this value is null or 0, logs will be retrieved from the root group.</param>
-        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be from the current date and time.</param>
+        /// <param name="startDate">Start date to retrieve logs from. If this value is null, logs will be retrieved from the current date and time.</param>
         /// <param name="endDate">End date to retrieve logs to. If this value is null, logs will be retrieved until the beginning of all logs.</param>
         /// <param name="count">Number of logs to retrieve. Depending on the number of logs stored in the system, specifying a high number may cause the request to timeout.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>

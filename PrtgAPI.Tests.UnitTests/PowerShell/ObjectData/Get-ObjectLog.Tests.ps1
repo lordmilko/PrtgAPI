@@ -293,4 +293,55 @@ Describe "Get-ObjectLog" {
             $logs.Count | Should Be 0
         }
     }
+    
+    Context "Watch" {
+        It "watches logs" {
+
+            SetResponseAndClientWithArguments "InfiniteLogValidatorResponse" @((Get-Date).AddMinutes(-1), "id=0&start=1")
+
+            $logs = Get-ObjectLog -Tail -Interval 0 | select -First 7
+
+            $logs.Count | Should Be 7
+        }
+
+        It "filters watched logs by name" {
+            SetResponseAndClientWithArguments "InfiniteLogPostProcessValidatorResponse" @((Get-Date).AddMinutes(-1), "id=0&start=1&filter_name=@sub(Item+2)&filter_name=@sub(Item+7)")
+
+            $logs = Get-ObjectLog "Item 2","Item 7" -Tail -Interval 0  | select -First 2
+
+            $logs.Count | Should Be 2
+        }
+
+        It "filters watched logs by status" {
+            SetResponseAndClientWithArguments "InfiniteLogPostProcessValidatorResponse" @((Get-Date).AddMinutes(-1), "id=2304&start=1&filter_status=612&filter_status=613")
+
+            $logs = Get-ObjectLog -Id 2304 -Status Connected,Disconnected -Tail -Interval 0  | select -First 2
+
+            $logs.Count | Should Be 2
+        }
+
+        It "specifies a custom start time" {
+
+            $start = (Get-Date).AddDays(-3)
+
+            $str = $start.ToString("yyyy-MM-dd-HH-mm-ss")
+
+            SetAddressValidatorResponse "id=0&start=1&filter_dstart=$str&username=username"
+
+            Get-ObjectLog -Interval 0 -Tail -StartDate $start | select -First 1
+        }
+
+        It "ignores an end date" {
+
+            $start = (Get-Date).AddMinutes(-1)
+
+            $str = $start.ToString("yyyy-MM-dd-HH-mm-ss")
+
+            SetAddressValidatorResponse "id=0&start=1&filter_dstart=$str&username=username"
+
+            $output = [string]::Join("`n",(&{try { Get-ObjectLog -Interval 0 -Tail -EndDate (Get-Date).AddDays(-3) 3>&1 | %{$_.Message} | select -First 1  } catch [exception] { }}))
+
+            $output | Should Be "Ignoring -EndDate as cmdlet is executing in Watch Mode. To specify a start time use -StartDate"
+        }
+    }
 }

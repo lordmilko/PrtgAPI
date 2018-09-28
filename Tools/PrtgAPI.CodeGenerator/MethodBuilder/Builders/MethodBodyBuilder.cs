@@ -184,6 +184,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
                 case MethodType.Synchronous:
                 case MethodType.Stream:
                 case MethodType.Query:
+                case MethodType.Watch:
                     return $"{name}({args})";
                 case MethodType.Asynchronous:
                     var str = $"await {name}({args}).ConfigureAwait(false)";

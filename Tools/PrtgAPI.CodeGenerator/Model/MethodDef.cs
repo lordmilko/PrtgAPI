@@ -223,7 +223,7 @@ namespace PrtgAPI.CodeGenerator.Model
                 methods.Add(BuildMethod(methodConfig));
 
                 //Query methods don't require any other request types
-                if (methodConfig.MethodType == MethodType.Query)
+                if (methodConfig.MethodType == MethodType.Query || methodConfig.MethodType == MethodType.Watch)
                     break;
 
                 if(methodConfig.NeedsTokenInterfaceOverload)
