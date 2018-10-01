@@ -2351,6 +2351,59 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Modification History
+
+        /// <summary>
+        /// Retrieves the setting/state modification history of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <returns>A list of all setting/state modifications to the specified object.</returns>
+        public List<ModificationEvent> GetModificationHistory(int objectId) =>
+            ResponseParser.Amend(ObjectEngine.GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
+
+        /// <summary>
+        /// Asynchronously retrieves the setting/state modification history of a PRTG Object.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <returns>A list of all setting/state modifications to the specified object.</returns>
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) =>
+            await GetModificationHistoryAsync(objectId, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves the setting/state modification history of a PRTG Object with a specified cancellation token.
+        /// </summary>
+        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A list of all setting/state modifications to the specified object.</returns>
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId, CancellationToken token) =>
+            ResponseParser.Amend(await ObjectEngine.GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId), token: token).ConfigureAwait(false), e => e.ObjectId = objectId);
+
+        #endregion
+        #region Server Status
+
+        /// <summary>
+        /// Retrieves configuration, status and version details of the PRTG Server.
+        /// </summary>
+        /// <returns>Status details of a PRTG Server.</returns>
+        public ServerStatus GetStatus() =>
+            ObjectEngine.GetObject<ServerStatus>(new ServerStatusParameters());
+
+        /// <summary>
+        /// Asynchronously retrieves configuration, status and version details of the PRTG Server.
+        /// </summary>
+        /// <returns>Status details of a PRTG Server.</returns>
+        public async Task<ServerStatus> GetStatusAsync() =>
+            await GetStatusAsync(CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves configuration, status and version details of the PRTG Server with a specified cancellation token.
+        /// </summary>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Status details of a PRTG Server.</returns>
+        public async Task<ServerStatus> GetStatusAsync(CancellationToken token) =>
+            await ObjectEngine.GetObjectAsync<ServerStatus>(new ServerStatusParameters(), token: token).ConfigureAwait(false);
+
+        #endregion
         #region System Informations
             #region Full
 
@@ -2445,6 +2498,62 @@ namespace PrtgAPI
             await GetSystemInfoInternalAsync(deviceId, type, token).ConfigureAwait(false);
 
             #endregion
+        #endregion
+        #region Total Objects
+
+        /// <summary>
+        /// Calculates the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public int GetTotalObjects(Content content) =>
+            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content)).TotalCount;
+
+        /// <summary>
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content) =>
+            await GetTotalObjectsAsync(content, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server with a specified cancellation token.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content, CancellationToken token) =>
+            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content), token: token).ConfigureAwait(false)).TotalCount;
+
+        /// <summary>
+        /// Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public int GetTotalObjects(Content content, params SearchFilter[] filters) =>
+            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content, filters)).TotalCount;
+
+        /// <summary>
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content, params SearchFilter[] filters) =>
+            await GetTotalObjectsAsync(content, filters, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria with a specified cancellation token.
+        /// </summary>
+        /// <param name="content">The type of object to total.</param>
+        /// <param name="filters">One or more filters used to limit search results.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The total number of objects of the given type.</returns>
+        public async Task<int> GetTotalObjectsAsync(Content content, SearchFilter[] filters, CancellationToken token) =>
+            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content, filters), token: token).ConfigureAwait(false)).TotalCount;
+
         #endregion
     #endregion
     #region Object Manipulation
@@ -2601,6 +2710,31 @@ namespace PrtgAPI
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
         public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(int deviceId, string sensorType, Func<int, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
             new DynamicSensorParameters(await GetSensorTargetsResponseAsync(deviceId, sensorType, progressCallback, token).ConfigureAwait(false), sensorType);
+
+        /// <summary>
+        /// Automatically creates sensors under an object based on the object's (or it's children's) device type.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
+        public void AutoDiscover(int objectId, params DeviceTemplate[] templates) =>
+            RequestEngine.ExecuteRequest(new AutoDiscoverParameters(objectId, templates));
+
+        /// <summary>
+        /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
+        public async Task AutoDiscoverAsync(int objectId, params DeviceTemplate[] templates) =>
+            await AutoDiscoverAsync(objectId, templates, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type with a specified cancellation token.
+        /// </summary>
+        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task AutoDiscoverAsync(int objectId, DeviceTemplate[] templates, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new AutoDiscoverParameters(objectId, templates), token: token).ConfigureAwait(false);
 
         #endregion
         #region Sensor State
@@ -3712,7 +3846,8 @@ namespace PrtgAPI
             await RestartCoreInternalAsync(waitForRestart, progressCallback, token).ConfigureAwait(false);
 
         #endregion
-        #region Miscellaneous
+        #region Organization
+            #region Refresh Objects
 
         /// <summary>
         /// Requests an object or any children of one or more objects refresh themselves immediately.
@@ -3736,30 +3871,8 @@ namespace PrtgAPI
         public async Task RefreshObjectAsync(int[] objectIds, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new RefreshObjectParameters(objectIds), token: token).ConfigureAwait(false);
 
-        /// <summary>
-        /// Automatically creates sensors under an object based on the object's (or it's children's) device type.
-        /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
-        public void AutoDiscover(int objectId, params DeviceTemplate[] templates) =>
-            RequestEngine.ExecuteRequest(new AutoDiscoverParameters(objectId, templates));
-
-        /// <summary>
-        /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type.
-        /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
-        public async Task AutoDiscoverAsync(int objectId, params DeviceTemplate[] templates) =>
-            await AutoDiscoverAsync(objectId, templates, CancellationToken.None).ConfigureAwait(false);
-
-        /// <summary>
-        /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type with a specified cancellation token.
-        /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
-        /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
-        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AutoDiscoverAsync(int objectId, DeviceTemplate[] templates, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new AutoDiscoverParameters(objectId, templates), token: token).ConfigureAwait(false);
+            #endregion
+            #region Set Position
 
         /// <summary>
         /// Moves the position of an object up or down under its parent within the PRTG User Interface.
@@ -3811,6 +3924,9 @@ namespace PrtgAPI
         public async Task SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new SetPositionParameters(obj, position), token: token).ConfigureAwait(false);
 
+            #endregion
+            #region Move Objects
+
         /// <summary>
         /// Moves a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
@@ -3836,6 +3952,9 @@ namespace PrtgAPI
         public async Task MoveObjectAsync(int objectId, int destinationId, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new MoveObjectParameters(objectId, destinationId), token: token).ConfigureAwait(false);
 
+            #endregion
+            #region Sort Alphabetically
+
         /// <summary>
         /// Sorts the children of a device, group or probe alphabetically.
         /// </summary>
@@ -3858,6 +3977,9 @@ namespace PrtgAPI
         public async Task SortAlphabeticallyAsync(int objectId, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new SortAlphabeticallyParameters(objectId), token: token).ConfigureAwait(false);
 
+            #endregion
+            #region Remove Object
+
         /// <summary>
         /// Permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.
         /// </summary>
@@ -3879,6 +4001,9 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async Task RemoveObjectAsync(int[] objectIds, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new DeleteParameters(objectIds), token: token).ConfigureAwait(false);
+
+            #endregion
+            #region Rename Object
 
         /// <summary>
         /// Renames an object such as a Sensor, Device, Group or Probe within PRTG.
@@ -3930,110 +4055,8 @@ namespace PrtgAPI
         public async Task RenameObjectAsync(int[] objectIds, string name, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(new RenameParameters(objectIds, name), token: token).ConfigureAwait(false);
 
+            #endregion
         #endregion
-    #endregion
-    #region Unsorted
-
-        /// <summary>
-        /// Calculates the total number of objects of a given type present on a PRTG Server.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public int GetTotalObjects(Content content) =>
-            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content)).TotalCount;
-
-        /// <summary>
-        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public async Task<int> GetTotalObjectsAsync(Content content) =>
-            await GetTotalObjectsAsync(content, CancellationToken.None).ConfigureAwait(false);
-
-        /// <summary>
-        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server with a specified cancellation token.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public async Task<int> GetTotalObjectsAsync(Content content, CancellationToken token) =>
-            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content), token: token).ConfigureAwait(false)).TotalCount;
-
-        /// <summary>
-        /// Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <param name="filters">One or more filters used to limit search results.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public int GetTotalObjects(Content content, params SearchFilter[] filters) =>
-            ObjectEngine.GetObjectsRaw<object>(new TotalObjectParameters(content, filters)).TotalCount;
-
-        /// <summary>
-        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <param name="filters">One or more filters used to limit search results.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public async Task<int> GetTotalObjectsAsync(Content content, params SearchFilter[] filters) =>
-            await GetTotalObjectsAsync(content, filters, CancellationToken.None).ConfigureAwait(false);
-
-        /// <summary>
-        /// Asynchronously calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria with a specified cancellation token.
-        /// </summary>
-        /// <param name="content">The type of object to total.</param>
-        /// <param name="filters">One or more filters used to limit search results.</param>
-        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The total number of objects of the given type.</returns>
-        public async Task<int> GetTotalObjectsAsync(Content content, SearchFilter[] filters, CancellationToken token) =>
-            (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content, filters), token: token).ConfigureAwait(false)).TotalCount;
-
-        /// <summary>
-        /// Retrieves the setting/state modification history of a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
-        /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public List<ModificationEvent> GetModificationHistory(int objectId) =>
-            ResponseParser.Amend(ObjectEngine.GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
-
-        /// <summary>
-        /// Asynchronously retrieves the setting/state modification history of a PRTG Object.
-        /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
-        /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) =>
-            await GetModificationHistoryAsync(objectId, CancellationToken.None).ConfigureAwait(false);
-
-        /// <summary>
-        /// Asynchronously retrieves the setting/state modification history of a PRTG Object with a specified cancellation token.
-        /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
-        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId, CancellationToken token) =>
-            ResponseParser.Amend(await ObjectEngine.GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId), token: token).ConfigureAwait(false), e => e.ObjectId = objectId);
-
-        /// <summary>
-        /// Retrieves configuration, status and version details of the PRTG Server.
-        /// </summary>
-        /// <returns>Status details of a PRTG Server.</returns>
-        public ServerStatus GetStatus() =>
-            ObjectEngine.GetObject<ServerStatus>(new ServerStatusParameters());
-
-        /// <summary>
-        /// Asynchronously retrieves configuration, status and version details of the PRTG Server.
-        /// </summary>
-        /// <returns>Status details of a PRTG Server.</returns>
-        public async Task<ServerStatus> GetStatusAsync() =>
-            await GetStatusAsync(CancellationToken.None).ConfigureAwait(false);
-
-        /// <summary>
-        /// Asynchronously retrieves configuration, status and version details of the PRTG Server with a specified cancellation token.
-        /// </summary>
-        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Status details of a PRTG Server.</returns>
-        public async Task<ServerStatus> GetStatusAsync(CancellationToken token) =>
-            await ObjectEngine.GetObjectAsync<ServerStatus>(new ServerStatusParameters(), token: token).ConfigureAwait(false);
-
     #endregion
     }
 }

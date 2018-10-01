@@ -518,6 +518,28 @@
                 </StreamBody>
             </MethodDef>
         </Template>
+        <Template name="ModificationHistory">
+            <MethodDef name="GetModificationHistory" returns="List&lt;ModificationEvent&gt;" tokenMode="AutomaticNamed">
+                <Summary>Retrieves the setting/state modification history of a PRTG Object.</Summary>
+                <ReturnDescription>A list of all setting/state modifications to the specified object.</ReturnDescription>
+
+                <Parameter name="objectId" type="int" description="The ID of the object to retrieve historical records for."/>
+
+                <Body expression="true">
+                    ResponseParser.Amend(<Call name="ObjectEngine.GetObjects" genericArgs="ModificationEvent" args="new ModificationHistoryParameters(objectId)"/>, e => e.ObjectId = objectId)
+                </Body>
+            </MethodDef>
+        </Template>
+        <Template name="ServerStatus">
+            <MethodDef name="GetStatus" returns="ServerStatus" tokenMode="AutomaticNamed">
+                <Summary>Retrieves configuration, status and version details of the PRTG Server.</Summary>
+                <ReturnDescription>Status details of a PRTG Server.</ReturnDescription>
+
+                <Body expression="true">
+                    <Call name="ObjectEngine.GetObject" genericArgs="ServerStatus" args="new ServerStatusParameters()"/>
+                </Body>
+            </MethodDef>
+        </Template>
         <Template name="SystemInfo">
             <Region name="Full">
                 <MethodDef name="GetSystemInfo" returns="SystemInfo">
@@ -560,6 +582,29 @@
                     </Body>
                 </MethodDef>
             </Region>
+        </Template>
+        <Template name="TotalObjects">
+            <MethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
+                <Summary>Calculates the total number of objects of a given type present on a PRTG Server.</Summary>
+                <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
+
+                <Parameter name="content" type="Content" description="The type of object to total."/>
+
+                <Body expression="true">
+                    <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content)"/>.TotalCount
+                </Body>
+            </MethodDef>
+            <MethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
+                <Summary>Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.</Summary>
+                <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
+
+                <Parameter name="content" type="Content" description="The type of object to total."/>
+                <Parameter name="filters" type="params SearchFilter[]" description="One or more filters used to limit search results."/>
+
+                <Body expression="true">
+                    <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content, filters)"/>.TotalCount
+                </Body>
+            </MethodDef>
         </Template>
         <Template name="ObjectProperties">
             <MethodDef name="Get{type}Properties" returns="{type}Settings">
@@ -680,7 +725,10 @@
                 </MethodDef>
             </MethodImpl>
             <MethodImpl name="SensorHistory" type="SensorHistoryData" description="Sensor History" template="SensorHistory" stream="true" query="false" region="true" pluralRegion="false"/>
+            <MethodImpl name="ModificationHistory" type="ModificationEvent" description="Modification History" template="ModificationHistory" region="true" pluralRegion="false"/>
+            <MethodImpl name="ServerStatus" type="ServerStatus" description="Server Status" template="ServerStatus" region="true" pluralRegion="false"/>
             <MethodImpl name="SystemInfo" type="SystemInfo" description="System Information" template="SystemInfo" region="true"/>
+            <MethodImpl name="TotalObjects" type="int" description="Total Objects" template="TotalObjects" region="true" pluralRegion="false"/>
         </Region>
         <Region name="Object Manipulation">
             <Region name="Add Objects">
@@ -762,6 +810,16 @@
 
                     <Body expression="true">
                         new DynamicSensorParameters(<Call name="GetSensorTargetsResponse" args="deviceId, sensorType, progressCallback"/>, sensorType)
+                    </Body>
+                </InlineMethodDef>
+                <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">
+                    <Summary>Automatically creates sensors under an object based on the object's (or it's children's) device type.</Summary>
+
+                    <Parameter name="objectId" type="int" description="The object to run Auto-Discovery for (such as a device or group)."/>
+                    <Parameter name="templates" type="params DeviceTemplate[]" description="An optional list of device templates to use for performing the auto-discovery."/>
+
+                    <Body expression="true">
+                        <Call name="RequestEngine.ExecuteRequest" args="new AutoDiscoverParameters(objectId, templates)"/>
                     </Body>
                 </InlineMethodDef>
             </Region>
@@ -1253,136 +1311,97 @@
                     </Body>
                 </InlineMethodDef>
             </Region>
-            <Region name="Miscellaneous" groupOverloads="true">
-                <InlineMethodDef name="RefreshObject" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Requests an object or any children of one or more objects refresh themselves immediately.</Summary>
+            <Region name="Organization">
+                <Region name="Refresh Objects" groupOverloads="true">
+                    <InlineMethodDef name="RefreshObject" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Requests an object or any children of one or more objects refresh themselves immediately.</Summary>
 
-                    <Parameter name="objectIds" type="params int[]" description="The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed."/>
+                        <Parameter name="objectIds" type="params int[]" description="The IDs of the Sensors and/or the IDs of the Probes, Groups or Devices whose child sensors should be refreshed."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new RefreshObjectParameters(objectIds)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Automatically creates sensors under an object based on the object's (or it's children's) device type.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new RefreshObjectParameters(objectIds)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Set Position" groupOverloads="true">
+                    <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Moves the position of an object up or down under its parent within the PRTG User Interface.</Summary>
 
-                    <Parameter name="objectId" type="int" description="The object to run Auto-Discovery for (such as a device or group)."/>
-                    <Parameter name="templates" type="params DeviceTemplate[]" description="An optional list of device templates to use for performing the auto-discovery."/>
+                        <Parameter name="objectId" type="int" description="The object to reposition."/>
+                        <Parameter name="position" type="Position" description="The direction to move in."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new AutoDiscoverParameters(objectId, templates)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Moves the position of an object up or down under its parent within the PRTG User Interface.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(objectId, position)"/>
+                        </Body>
+                    </InlineMethodDef>
+                    <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Sets the absolute position of an object under its parent within the PRTG User Interface.</Summary>
 
-                    <Parameter name="objectId" type="int" description="The object to reposition."/>
-                    <Parameter name="position" type="Position" description="The direction to move in."/>
+                        <Parameter name="obj" type="SensorOrDeviceOrGroupOrProbe" description="The object to reposition."/>
+                        <Parameter name="position" type="int" description="The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(objectId, position)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Sets the absolute position of an object under its parent within the PRTG User Interface.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(obj, position)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Move Objects" groupOverloads="true">
+                    <InlineMethodDef name="MoveObject" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Moves a device or group (excluding the root group) to another group or probe within PRTG.</Summary>
 
-                    <Parameter name="obj" type="SensorOrDeviceOrGroupOrProbe" description="The object to reposition."/>
-                    <Parameter name="position" type="int" description="The position to move the object to. If this value is higher than the total number of objects under the parent node, the object will be moved to the last possible position."/>
+                        <Parameter name="objectId" type="int" description="The ID of a device or group to move."/>
+                        <Parameter name="destinationId" type="int" description="The group or probe to move the object to."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(obj, position)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="MoveObject" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Moves a device or group (excluding the root group) to another group or probe within PRTG.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new MoveObjectParameters(objectId, destinationId)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Sort Alphabetically" groupOverloads="true">
+                    <InlineMethodDef name="SortAlphabetically" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Sorts the children of a device, group or probe alphabetically.</Summary>
 
-                    <Parameter name="objectId" type="int" description="The ID of a device or group to move."/>
-                    <Parameter name="destinationId" type="int" description="The group or probe to move the object to."/>
+                        <Parameter name="objectId" type="int" description="The ID of the object to sort."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new MoveObjectParameters(objectId, destinationId)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="SortAlphabetically" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Sorts the children of a device, group or probe alphabetically.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new SortAlphabeticallyParameters(objectId)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Remove Object" groupOverloads="true">
+                    <InlineMethodDef name="RemoveObject" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.</Summary>
 
-                    <Parameter name="objectId" type="int" description="The ID of the object to sort."/>
+                        <Parameter name="objectIds" type="params int[]" description="IDs of the objects to remove."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new SortAlphabeticallyParameters(objectId)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="RemoveObject" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Permanently removes one or more objects such as a Sensor, Device, Group or Probe from PRTG. This cannot be undone.</Summary>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new DeleteParameters(objectIds)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Rename Object" groupOverloads="true">
+                    <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Renames an object such as a Sensor, Device, Group or Probe within PRTG.</Summary>
 
-                    <Parameter name="objectIds" type="params int[]" description="IDs of the objects to remove."/>
+                        <Parameter name="objectId" type="int" description="ID of the object to rename."/>
+                        <Parameter name="name" type="string" description="New name to give the object."/>
 
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new DeleteParameters(objectIds)"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Renames an object such as a Sensor, Device, Group or Probe within PRTG.</Summary>
+                        <Body expression="true">
+                            <Call name="RenameObject" args="new[] {objectId}, name"/>
+                        </Body>
+                    </InlineMethodDef>
+                    <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
+                        <Summary>Renames one or more Sensors, Devices, Groups or Probes within PRTG.</Summary>
 
-                    <Parameter name="objectId" type="int" description="ID of the object to rename."/>
-                    <Parameter name="name" type="string" description="New name to give the object."/>
+                        <Parameter name="objectIds" type="int[]" description="IDs of the objects to rename."/>
+                        <Parameter name="name" type="string" description="New name to give the objects."/>
 
-                    <Body expression="true">
-                        <Call name="RenameObject" args="new[] {objectId}, name"/>
-                    </Body>
-                </InlineMethodDef>
-                <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
-                    <Summary>Renames one or more Sensors, Devices, Groups or Probes within PRTG.</Summary>
-
-                    <Parameter name="objectIds" type="int[]" description="IDs of the objects to rename."/>
-                    <Parameter name="name" type="string" description="New name to give the objects."/>
-
-                    <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new RenameParameters(objectIds, name)"/>
-                    </Body>
-                </InlineMethodDef>
+                        <Body expression="true">
+                            <Call name="RequestEngine.ExecuteRequest" args="new RenameParameters(objectIds, name)"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
             </Region>
-        </Region>
-        <Region name="Unsorted">
-            <InlineMethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
-                <Summary>Calculates the total number of objects of a given type present on a PRTG Server.</Summary>
-                <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
-
-                <Parameter name="content" type="Content" description="The type of object to total."/>
-
-                <Body expression="true">
-                    <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content)"/>.TotalCount
-                </Body>
-            </InlineMethodDef>
-            <InlineMethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">
-                <Summary>Calculates the total number of objects of a given type present on a PRTG Server that match one or more search criteria.</Summary>
-                <ReturnDescription>The total number of objects of the given type.</ReturnDescription>
-
-                <Parameter name="content" type="Content" description="The type of object to total."/>
-                <Parameter name="filters" type="params SearchFilter[]" description="One or more filters used to limit search results."/>
-
-                <Body expression="true">
-                    <Call name="ObjectEngine.GetObjectsRaw" genericArgs="object" args="new TotalObjectParameters(content, filters)"/>.TotalCount
-                </Body>
-            </InlineMethodDef>
-            <InlineMethodDef name="GetModificationHistory" returns="List&lt;ModificationEvent&gt;" tokenMode="AutomaticNamed">
-                <Summary>Retrieves the setting/state modification history of a PRTG Object.</Summary>
-                <ReturnDescription>A list of all setting/state modifications to the specified object.</ReturnDescription>
-
-                <Parameter name="objectId" type="int" description="The ID of the object to retrieve historical records for."/>
-
-                <Body expression="true">
-                    ResponseParser.Amend(<Call name="ObjectEngine.GetObjects" genericArgs="ModificationEvent" args="new ModificationHistoryParameters(objectId)"/>, e => e.ObjectId = objectId)
-                </Body>
-            </InlineMethodDef>
-            <InlineMethodDef name="GetStatus" returns="ServerStatus" tokenMode="AutomaticNamed">
-                <Summary>Retrieves configuration, status and version details of the PRTG Server.</Summary>
-                <ReturnDescription>Status details of a PRTG Server.</ReturnDescription>
-
-                <Body expression="true">
-                    <Call name="ObjectEngine.GetObject" genericArgs="ServerStatus" args="new ServerStatusParameters()"/>
-                </Body>
-            </InlineMethodDef>
         </Region>
         
         <!--<InlineMethodDef name="" returns="">

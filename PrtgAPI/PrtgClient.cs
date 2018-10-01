@@ -769,7 +769,7 @@ namespace PrtgAPI
     #endregion
 #endregion
 
-#region Unsorted
+#region Internal
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
