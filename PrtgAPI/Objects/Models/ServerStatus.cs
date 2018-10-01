@@ -133,20 +133,44 @@ namespace PrtgAPI
         /// </summary>
         public int NewTickets => DH.StrToInt(newTicketsStr);
 
+        private string userId;
+
         /// <summary>
         /// Object ID of your user within PRTG.
         /// </summary>
         [DataMember(Name = "UserId")]
-        public string UserId { get; set; }
+        public string UserId
+        {
+            get { return userId; }
+            set
+            {
+                if (value == string.Empty)
+                    value = null;
+
+                userId = value;
+            }
+        }
+
+        private string userTimeZone;
 
         /// <summary>
         /// UTC offset of your PRTG Server's timezone.
         /// </summary>
         [DataMember(Name = "UserTimeZone")]
-        public string UserTimeZone { get; set; }
+        public string UserTimeZone
+        {
+            get { return userTimeZone; }
+            set
+            {
+                if (value == string.Empty)
+                    value = null;
+
+                userTimeZone = value;
+            }
+        }
 
         //[DataMember(Name = "ToDos")] //todo: what type is this
-        //public string ToDos { get; set; }
+        //public string ToDos { get; set; } //todo: needs backing property to make it null
 
         /// <summary>
         /// Indicates how many sensors have been favorited.
@@ -308,6 +332,9 @@ namespace PrtgAPI
                 if (clusterNodeName.EndsWith(endFailover))
                     clusterNodeName = clusterNodeName.Substring(0, clusterNodeName.Length - endFailover.Length);
 
+                if (clusterNodeName == string.Empty)
+                    return null;
+
                 return clusterNodeName;
             }
         }
@@ -356,6 +383,8 @@ namespace PrtgAPI
 
         //[DataMember(Name = "ActivationAlert")]
         //public bool ActivationAlert { get; set; } //todo: is this bool
+
+        //todo: needs backing property to make it null
 
         /// <summary>
         /// Host ID of the PRTG Core Server.

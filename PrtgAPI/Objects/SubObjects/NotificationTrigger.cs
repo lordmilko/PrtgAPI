@@ -62,12 +62,24 @@ namespace PrtgAPI
         /// </summary>
         public TriggerType Type => type.ToEnum<TriggerType>();
 
+        private string typeName;
+
         /// <summary>
         /// Full name of the event that triggers this notification.
         /// Applies to: State, Volume, Threshold, Change, Speed Triggers
         /// </summary>
         [DataMember(Name = "typename")]
-        public string TypeName { get; set; }
+        public string TypeName
+        {
+            get { return typeName; }
+            set
+            {
+                if (value == string.Empty)
+                    value = null;
+
+                typeName = value;
+            }
+        }
 
         /// <summary>
         /// ID of the trigger on the object it is assigned to.
