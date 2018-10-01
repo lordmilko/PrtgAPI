@@ -27,6 +27,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// specified when retrieving an "option" property, the property's "label" in the PRTG UI will be returned instead of its numeric
     /// representation.</para> 
     /// 
+    /// <para type="descrption">When retrieving individual properties, Get-ObjectProperty will throw a <see cref="PrtgRequestException"/> if the specified
+    /// property is not present on the target object. If the PRTG Server is not in English however, Get-ObjectProperty will return
+    /// "(Property not found)" in the PRTG Server's language when a property cannot be found.</para>
+    /// 
     /// <para type="description">In order to provide type safety when modifying properties, all properties supported by Set-ObjectProperty
     /// perform a lookup against their corresponding property in Get-ObjectProperty. If the type of value passed to Set-ObjectProperty
     /// does not match the property's expected type, PrtgAPI will attempt to parse the value into the expected type. For more information,

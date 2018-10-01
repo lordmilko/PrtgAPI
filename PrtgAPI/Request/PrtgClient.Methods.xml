@@ -974,9 +974,16 @@
                 </Region>
                 <Region name="Get Single Raw Property" groupOverloads="true">
                     <InlineMethodDef name="GetObjectPropertyRaw" returns="string" tokenMode="AutomaticDefault">
-                        <Summary>Retrieves unsupported properties and settings of a PRTG Object.</Summary>
+                        <Summary>
+                            Retrieves unsupported properties and settings of a PRTG Object.&lt;para/&gt;
+
+                            If the specified property does not exist, a &lt;see cref="PrtgRequestException"/&gt; will be thrown, unless
+                            the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
+                        </Summary>
                         <ReturnDescription>The raw value of the object's property.</ReturnDescription>
 
+                        <Exception type="PrtgRequestException" description="The specified property does not exist and the PRTG Server's language is English."/>
+                        
                         <Parameter name="objectId" type="int" description="The ID of the object whose property should be retrieved."/>
                         <Parameter name="property" type="string" description="The property of the object to retrieve. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
                         <Parameter name="text" type="bool" default="false" description="If true, displays option properties using their label names instead of their internal numeric values."/>

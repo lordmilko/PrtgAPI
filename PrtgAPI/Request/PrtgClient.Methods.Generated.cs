@@ -3137,24 +3137,30 @@ namespace PrtgAPI
             #region Get Single Raw Property
 
         /// <summary>
-        /// Retrieves unsupported properties and settings of a PRTG Object.
+        /// Retrieves unsupported properties and settings of a PRTG Object.<para/>
+        /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
+        /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
+        /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the object's property.</returns>
         public string GetObjectPropertyRaw(int objectId, string property, bool text = false) =>
             GetObjectPropertyRawInternal(objectId, property, text);
 
         /// <summary>
-        /// Asynchronously retrieves unsupported properties and settings of a PRTG Object.
+        /// Asynchronously retrieves unsupported properties and settings of a PRTG Object.<para/>
+        /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
+        /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the object's property.</returns>
         public async Task<string> GetObjectPropertyRawAsync(int objectId, string property, bool text = false, CancellationToken token = default(CancellationToken)) =>
             await GetObjectPropertyRawInternalAsync(objectId, property, text, token).ConfigureAwait(false);

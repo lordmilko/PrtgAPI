@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -241,7 +242,10 @@ for(int i = 0; i < 2; i++)
         {
             var responseText = <#= AwaitOrForceResult("response.Content.ReadAsStringAsync()", i) #>
 
-            responseText = responseText.Replace("\"data\": \"(no triggers defined)\",", "");
+            var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
+
+            if(match.Success)
+                responseText = responseText.Replace(match.Value, "");
 
             return responseText;
         }

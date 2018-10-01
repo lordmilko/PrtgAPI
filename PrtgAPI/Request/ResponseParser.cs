@@ -185,6 +185,7 @@ namespace PrtgAPI.Request
 
             var message = response.RequestMessage.RequestUri.ToString();
 
+            //todo: does this work with other languages? Not sure how to replicate it
             if (message.Contains("the object is currently not valid"))
                 RequestEngine.SetErrorUrlAsRequestUri(response);
 
@@ -257,6 +258,7 @@ namespace PrtgAPI.Request
         {
             var value = response.Descendants("result").First().Value;
 
+            //Does not work when the server's language is not English. API XmlDocs document this fact.
             if (value == "(Property not found)")
                 throw new PrtgRequestException($"PRTG was unable to complete the request. A value for property '{parameters.Name}' could not be found.");
 
@@ -315,7 +317,8 @@ namespace PrtgAPI.Request
 
         internal static void ValidateSensorHistoryResponse(string response)
         {
-            if (response == "Not enough monitoring data")
+            //If the response doesn't contain an XML tag, it's not a valid response
+            if (!response.Contains("<"))
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
         }
 
@@ -391,6 +394,9 @@ namespace PrtgAPI.Request
 
                 if (message != null)
                 {
+                    message = message.Trim('\r', '\n');
+
+                    //todo: does this work in other languages? Not sure how to replicate it
                     if (message.StartsWith("Incomplete connection settings"))
                         throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
 

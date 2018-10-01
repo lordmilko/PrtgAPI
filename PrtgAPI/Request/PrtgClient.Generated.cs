@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -342,7 +343,10 @@ namespace PrtgAPI
         {
             var responseText = response.Content.ReadAsStringAsync().Result;
 
-            responseText = responseText.Replace("\"data\": \"(no triggers defined)\",", "");
+            var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
+
+            if(match.Success)
+                responseText = responseText.Replace(match.Value, "");
 
             return responseText;
         }
@@ -351,7 +355,10 @@ namespace PrtgAPI
         {
             var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            responseText = responseText.Replace("\"data\": \"(no triggers defined)\",", "");
+            var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
+
+            if(match.Success)
+                responseText = responseText.Replace(match.Value, "");
 
             return responseText;
         }

@@ -72,5 +72,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 Assert.AreEqual("Channel",                 record.ChannelRecords[7].Name);
             }
         }
+
+        [TestMethod]
+        public void SensorHistory_NoData_AllLanguages()
+        {
+            AssertEx.AssertErrorResponseAllLanguages<PrtgRequestException>(
+                "Not enough monitoring data",
+                "Zu wenige Monitoringdaten",
+                "監視データが不十分です",
+                "The server responded with the following error",
+                c => c.GetSensorHistory(1001)
+            );
+        }
     }
 }
