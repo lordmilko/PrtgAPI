@@ -219,6 +219,7 @@ Get-SensorHistory
 Get-SensorTarget
 Get-SensorTotals
 Get-SensorType
+Get-SystemInfo
 Install-GoPrtgServer
 Load-PrtgConfigFile
 Move-Object

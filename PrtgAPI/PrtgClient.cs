@@ -220,6 +220,39 @@ namespace PrtgAPI
 
         internal List<Schedule> GetSchedules(Property property, object value, CancellationToken token) =>
             GetSchedulesInternal(new ScheduleParameters(new SearchFilter(property, value)), token);
+
+        #region System Information
+
+        private SystemInfo GetSystemInfoInternal(int deviceId)
+        {
+            var system = GetSystemInfo<DeviceSystemInfo>(deviceId);
+            var hardware = GetSystemInfo<DeviceHardwareInfo>(deviceId);
+            var software = GetSystemInfo<DeviceSoftwareInfo>(deviceId);
+            var processes = GetSystemInfo<DeviceProcessInfo>(deviceId);
+            var services = GetSystemInfo<DeviceServiceInfo>(deviceId);
+            var users = GetSystemInfo<DeviceUserInfo>(deviceId);
+
+            return new SystemInfo(deviceId, system, hardware, software, processes, services, users);
+        }
+
+        private async Task<SystemInfo> GetSystemInfoInternalAsync(int deviceId, CancellationToken token)
+        {
+            var system = GetSystemInfoAsync<DeviceSystemInfo>(deviceId, token);
+            var hardware = GetSystemInfoAsync<DeviceHardwareInfo>(deviceId, token);
+            var software = GetSystemInfoAsync<DeviceSoftwareInfo>(deviceId, token);
+            var processes = GetSystemInfoAsync<DeviceProcessInfo>(deviceId, token);
+            var services = GetSystemInfoAsync<DeviceServiceInfo>(deviceId, token);
+            var users = GetSystemInfoAsync<DeviceUserInfo>(deviceId, token);
+
+            await Task.WhenAll(system, hardware, software, processes, services, users).ConfigureAwait(false);
+
+            return new SystemInfo(deviceId,
+                await system.ConfigureAwait(false),    await hardware.ConfigureAwait(false), await software.ConfigureAwait(false),
+                await processes.ConfigureAwait(false), await services.ConfigureAwait(false), await users.ConfigureAwait(false)
+            );
+        }
+
+        #endregion
         #region Channel
 
         private XElement GetChannelProperties(int sensorId, int channelId, CancellationToken token)

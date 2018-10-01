@@ -55,7 +55,7 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        internal void WriteProcessProgressRecords(Func<Func<int, bool>, object> getItems)
+        internal void WriteProcessProgressRecords(Func<Func<int, string, bool>, object> getItems)
         {
             var items = getItems(DisplayProgress);
 
@@ -93,14 +93,14 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        private bool DisplayProgress(int percentage)
+        private bool DisplayProgress(int percentage, string operation)
         {
-            DisplayProcessProgress(percentage, false);
+            DisplayProcessProgress(percentage, operation, false);
 
             return true;
         }
 
-        private void DisplayProcessProgress(int percentage, bool complete = true)
+        private void DisplayProcessProgress(int percentage, string operation, bool complete = true)
         {
             if (!ProgressManager.ProgressEnabled)
                 return;
@@ -110,13 +110,13 @@ namespace PrtgAPI.PowerShell.Base
 
             if (ProgressManager.GetRecordsWithVariableProgress)
             {
-                UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"Probing target device ({percentage}%)");
+                UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"{operation} ({percentage}%)");
             }
             else
             {
                 ProgressManager.CurrentRecord.PercentComplete = percentage;
 
-                ProgressManager.WriteProgress($"PRTG {TypeDescription} Search", $"Probing target device ({percentage}%)");
+                ProgressManager.WriteProgress($"PRTG {TypeDescription} Search", $"{operation} ({percentage}%)");
             }
 
             if (percentage == 100)

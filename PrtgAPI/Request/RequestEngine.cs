@@ -30,6 +30,18 @@ namespace PrtgAPI.Request
             this.webClient = webClient;
         }
 
+        #region CSV
+
+        internal string ExecuteRequest(ICsvParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
+        {
+            var url = GetPrtgUrl(parameters);
+
+            var response = ExecuteRequest(url, token, responseParser);
+
+            return response;
+        }
+
+        #endregion
         #region JSON + Response Parser
 
         internal string ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
@@ -389,6 +401,9 @@ namespace PrtgAPI.Request
         }
 
         private PrtgUrl GetPrtgUrl(ICommandParameters parameters) =>
+            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+
+        private PrtgUrl GetPrtgUrl(ICsvParameters parameters) =>
             new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
         private PrtgUrl GetPrtgUrl(IHtmlParameters parameters) =>

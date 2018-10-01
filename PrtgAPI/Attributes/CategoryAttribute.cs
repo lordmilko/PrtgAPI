@@ -7,7 +7,7 @@ namespace PrtgAPI.Attributes
     /// Specifies the category a value belongs to.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
     sealed class CategoryAttribute : Attribute
     {
         /// <summary>

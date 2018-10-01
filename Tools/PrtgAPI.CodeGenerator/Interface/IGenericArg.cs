@@ -8,5 +8,7 @@
         string Name { get; }
 
         string Description { get; }
+
+        string Constraint { get; }
     }
 }

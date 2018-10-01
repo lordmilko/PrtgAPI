@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Tests.UnitTests.Support;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests
 {
@@ -14,11 +15,15 @@ namespace PrtgAPI.Tests.UnitTests
     {
         private static BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-        public static void AllPropertiesAreNull(object obj)
+        public static void AllPropertiesAreDefault(object obj, Func<PropertyInfo, bool> customHandler = null)
         {
+            if (customHandler == null)
+                customHandler = p => false;
+
             foreach (var prop in obj.GetType().GetProperties())
             {
-                Assert.IsTrue(prop.GetValue(obj, null) == null, $"Property '{prop.Name}' was not null");
+                if (!customHandler(prop))
+                    Assert.IsTrue(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' was not its default value");
             }
         }
 
@@ -180,6 +185,18 @@ namespace PrtgAPI.Tests.UnitTests
                     Assert.IsFalse(comparer.Equals(list[i], list[j]), $"{list[i]} was equal to {list[j]}, however this should not have been the case");
                 }
             }
+        }
+
+        internal static void AssertErrorResponseAllLanguages<T>(string english, string german, string japanese, string exceptionMessage, Action<PrtgClient> action) where T : Exception
+        {
+            var englishClient = BaseTest.Initialize_Client(new BasicResponse(english));
+            Throws<T>(() => action(englishClient), exceptionMessage);
+
+            var germanClient = BaseTest.Initialize_Client(new BasicResponse(german));
+            Throws<T>(() => action(germanClient), exceptionMessage);
+
+            var japaneseClient = BaseTest.Initialize_Client(new BasicResponse(japanese));
+            Throws<T>(() => action(japaneseClient), exceptionMessage);
         }
     }
 }

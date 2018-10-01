@@ -734,6 +734,276 @@
                 </TableRowEntries>
             </TableControl>
         </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceHardwareInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>35</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Class -->
+                        <Width>20</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- State -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Capacity -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- SerialNumber -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Class</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>State</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Capacity</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>SerialNumber</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceProcessInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>30</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- ProcessId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- CreationDate -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ProcessId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>CreationDate</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceServiceInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>27</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- User -->
+                        <Width>28</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- StartMode -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- State -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- Description -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>StartMode</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>State</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Description</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceSoftwareInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>35</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Vendor -->
+                        <Width>25</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Version -->
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Size -->
+                        <Width>10</Width>
+                        <Label>Size(KB)</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- InstallDate -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Vendor</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Version</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Size</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>InstallDate</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceSystemInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>30</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Property -->
+                        <Width>20</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Id -->
+                        <Width>6</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- Value -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Property</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Value</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.DeviceUserInfo</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- Name -->
+                        <Width>30</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- DeviceId -->
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader> <!-- Domain -->
+                        <Width>15</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- User -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DeviceId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Domain</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
         
         <View>
             <Name>Default</Name>

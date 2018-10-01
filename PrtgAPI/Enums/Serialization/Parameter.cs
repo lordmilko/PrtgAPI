@@ -257,6 +257,13 @@ namespace PrtgAPI
         Fold,
 
         /// <summary>
+        /// Object category request should apply to.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        Category,
+
+        /// <summary>
         /// The details of a WMI Service to create.
         /// </summary>
         [Undocumented]

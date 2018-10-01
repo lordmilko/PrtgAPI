@@ -220,7 +220,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             TypeDescription = typeDescription;
 
             WriteProcessProgressRecords(
-                f => ParseItems(getItems(Device.Id, f,CancellationToken), createParams, nameProperties)
+                f => ParseItems(getItems(Device.Id, i => f(i, "Probing target device"), CancellationToken), createParams, nameProperties)
             );
         }
 

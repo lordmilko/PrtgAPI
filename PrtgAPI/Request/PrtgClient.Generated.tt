@@ -737,6 +737,70 @@ for(int i = 0; i < 2; i++)
 
             return obj;
         }
+
+<#
+}
+#>
+        //######################################
+        // GetSystemInfoInternal
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetGenericTokenSignature("GetSystemInfoInternal", "List<T>", "T", "int deviceId", "token", i)#> where T : IDeviceInfo
+        {
+            var parameters = new SystemInfoParameters<T>(deviceId);
+
+            <#= DeclareFunc("func", "m", "HttpResponseMessage", "ParseSystemInfoResponse", "m, parameters.Columns", "string", i) #>;
+
+            var info = <#= CallGenericFunction("ObjectEngine.GetObject", "SysInfoData<T>", "parameters, func, token: token", i) #>;
+
+            foreach (var item in info.Items)
+                item.DeviceId = deviceId;
+
+            return info.Items;
+        }
+
+        internal <#= GetAsyncTokenSignature("GetSystemInfoInternal", "List<IDeviceInfo>", "int deviceId, SystemInfoType type", "token", i)#>
+        {
+            switch (type)
+            {
+                case SystemInfoType.System:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceSystemInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Hardware:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceHardwareInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Software:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceSoftwareInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Processes:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceProcessInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Services:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceServiceInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Users:
+                    return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceUserInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
+                default:
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+            }
+        }
+
+<#
+}
+#>
+        //######################################
+        // ParseSystemInfoResponse
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("ParseSystemInfoResponse", "string", i) #>(HttpResponseMessage response, SysInfoProperty[] columns)
+        {
+            var responseText = <#= AwaitOrForceResult("response.Content.ReadAsStringAsync()", i) #>
+
+            return SysInfoJsonCleaner.Clean(responseText, columns);
+        }
 <#
 if(i == 0)
     WriteLine("");

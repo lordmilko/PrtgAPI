@@ -145,6 +145,8 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                         if (!methodConfig.IsTokenInterface)
                             return string.Empty;
                         break;
+                    case "none":
+                        break;
                     default:
                         throw new NotImplementedException($"Don't know how to handle resource for condition '{condition}'");
                 }

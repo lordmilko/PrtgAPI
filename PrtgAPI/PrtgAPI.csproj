@@ -106,9 +106,11 @@
     <Compile Include="Enums\Deserialization\ProbeStatus.cs" />
     <Compile Include="Enums\Deserialization\TicketStatus.cs" />
     <Compile Include="Enums\Deserialization\WmiServiceStatus.cs" />
+    <Compile Include="Enums\DeviceInfoType.cs" />
     <Compile Include="Enums\Enhanced\IEnumEx.cs" />
     <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\FilterMode.cs" />
+    <Compile Include="Enums\Functions\CsvFunction.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Enums\NotificationType.cs" />
     <Compile Include="Enums\RestartCoreStage.cs" />
@@ -117,9 +119,11 @@
     <Compile Include="Enums\Serialization\ObjectType.cs" />
     <Compile Include="Enums\Serialization\SensorType.cs" />
     <Compile Include="Enums\Serialization\SensorTypeInternal.cs" />
+    <Compile Include="Enums\Serialization\SysInfoProperty.cs" />
     <Compile Include="Enums\SystemCacheType.cs" />
     <Compile Include="Enums\ConfigFileType.cs" />
     <Compile Include="Enums\RequestVersion.cs" />
+    <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Events\EventStack.cs" />
     <Compile Include="Events\EventState.cs" />
     <Compile Include="Events\LogVerboseEventArgs.cs" />
@@ -212,7 +216,18 @@
     <Compile Include="Objects\Models\Schedules\TimeSlot.cs" />
     <Compile Include="Objects\Models\Schedules\TimeSlotRow.cs" />
     <Compile Include="Objects\Models\Schedules\TimeTable.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceHardwareInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceProcessInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceServiceInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceSoftwareInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceSystemInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\DeviceUserInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\IDeviceInfo.cs" />
+    <Compile Include="Objects\Models\SysInfo\SysInfoData.cs" />
+    <Compile Include="Objects\Models\SysInfo\SystemInfo.cs" />
     <Compile Include="Parameters\Interfaces\ICommandParameters.cs" />
+    <Compile Include="Parameters\Interfaces\ICsvParameters.cs" />
     <Compile Include="Parameters\Interfaces\IHtmlParameters.cs" />
     <Compile Include="Parameters\Interfaces\IJsonParameters.cs" />
     <Compile Include="Parameters\Interfaces\IXmlParameters.cs" />
@@ -220,6 +235,7 @@
     <Compile Include="Parameters\ObjectData\PassHashParameters.cs" />
     <Compile Include="Parameters\ObjectData\SensorTypeParameters.cs" />
     <Compile Include="Parameters\ObjectData\ServerStatusParameters.cs" />
+    <Compile Include="Parameters\ObjectData\SystemInfoParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\ClearSystemCacheParameters.cs" />
     <Compile Include="Parameters\Base\FunctionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\FoldParameters.cs" />
@@ -228,6 +244,7 @@
     <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetCompletedParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SortAlphabeticallyParameters.cs" />
     <Compile Include="PowerShell\Base\IWatchableCmdlet.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSystemInfo.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
     <Compile Include="PowerShell\DynamicParameterPropertyTypes.cs" />
     <Compile Include="PowerShell\Either.cs" />
@@ -243,6 +260,7 @@
     <Compile Include="Request\Serialization\FilterHandlers\StringOrNumericFilterHandler.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\TypeFilterHandler.cs" />
     <Compile Include="Request\ObjectEngine.cs" />
+    <Compile Include="Request\Serialization\SysInfoJsonCleaner.cs" />
     <Compile Include="Request\Serialization\ValueConverters\DateTimeConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\IZeroPaddingConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\TimeSpanConverter.cs" />

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace PrtgAPI.Exceptions.Internal
 {
     /// <summary>
-    /// The exception that is thrown when a type property is missing a required attribute.
+    /// The exception that is thrown when a type or property property is missing a required attribute.
     /// </summary>
     [Serializable]
     [ExcludeFromCodeCoverage]
@@ -19,12 +19,21 @@ namespace PrtgAPI.Exceptions.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MissingAttributeException"/> with the attribute that was missing and the type it was missing from.
+        /// </summary>
+        /// <param name="type">The type that was missing an attribute.</param>
+        /// <param name="attribute">The attribute that was missing.</param>
+        public MissingAttributeException(Type type, Type attribute) : base(GetTypeMessage(type, attribute))
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MissingAttributeException"/> class with the attribute that was missing, the property it was missing from, and the type the property belonged to.
         /// </summary>
         /// <param name="type">The type whose property was missing an attribute.</param>
         /// <param name="property">The property that was missing an attribute.</param>
         /// <param name="attribute">The attribute that was missing.</param>
-        public MissingAttributeException(Type type, string property, Type attribute) : base(GetMessage(type, property, attribute))
+        public MissingAttributeException(Type type, string property, Type attribute) : base(GetPropertyMessage(type, property, attribute))
         {
         }
 
@@ -35,7 +44,7 @@ namespace PrtgAPI.Exceptions.Internal
         /// <param name="property">The property that was missing an attribute.</param>
         /// <param name="attribute">The attribute that was missing.</param>
         /// <param name="inner">The exception that is the cause of the current exception. If the <paramref name="inner"/> parameter is not null, the current exception is raised in a catch block that handles the inner exception.</param>
-        public MissingAttributeException(Type type, string property, Type attribute, Exception inner) : base(GetMessage(type, property, attribute), inner)
+        public MissingAttributeException(Type type, string property, Type attribute, Exception inner) : base(GetPropertyMessage(type, property, attribute), inner)
         {
         }
 
@@ -48,7 +57,12 @@ namespace PrtgAPI.Exceptions.Internal
         {
         }
 
-        private static string GetMessage(Type type, string property, Type attribute)
+        private static string GetTypeMessage(Type type, Type attribute)
+        {
+            return $"Type '{type}' is missing a {attribute}";
+        }
+
+        private static string GetPropertyMessage(Type type, string property, Type attribute)
         {
             return $"Property '{property}' of type '{type}' is missing a {attribute}";
         }

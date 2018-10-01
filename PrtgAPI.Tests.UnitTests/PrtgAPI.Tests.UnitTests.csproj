@@ -77,6 +77,7 @@
     <Compile Include="CSharp\ObjectData\QueryableObjectTests.cs" />
     <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
+    <Compile Include="CSharp\ObjectData\SystemInfoTests.cs" />
     <Compile Include="Support\AssertEx.cs" />
     <Compile Include="Support\PrtgAPIHelpers.cs" />
     <Compile Include="Support\ReflectionHelpers.cs" />
@@ -92,9 +93,11 @@
     <Compile Include="Support\Infrastructure\Progress\ProgressQueueRecord.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressGrouper.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressHierarchy.cs" />
+    <Compile Include="Support\TestItems\SystemInfoItem.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
+    <Compile Include="Support\TestResponses\SystemInfoResponse.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientOneLeftScenarioForceStream.cs" />
@@ -339,6 +342,7 @@
     <None Include="PowerShell\ObjectData\Get-SensorType.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Connect-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Get-GoPrtgServer.Tests.ps1" />
+    <None Include="PowerShell\ObjectData\Get-SystemInfo.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Load-PrtgConfigFile.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Move-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectData\New-SearchFilter.Tests.ps1" />

@@ -1430,7 +1430,7 @@ namespace PrtgAPI.PowerShell.Progress
             CloneRecord(PreviousRecord, CurrentRecord);
         }
 
-        private int GetPercentComplete(int count, int total)
+        internal int GetPercentComplete(int count, int total)
         {
             var percentComplete = (int)(count / Convert.ToDouble(total) * 100);
 

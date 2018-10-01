@@ -31,6 +31,23 @@
         return $"async {returnType} {name}Async({parameters})";
     }
 
+	public string GetGenericTokenSignature(string name, string returnType, string genericArgs, string parameters, string tokenParameter, int i)
+    {
+		parameters += $", CancellationToken {tokenParameter}";
+
+        if(i == 0)
+            return $"{returnType} {name}<{genericArgs}>({parameters})";
+        else
+        {
+            if(returnType == "void")
+                returnType = "Task";
+            else
+                returnType = $"Task<{returnType}>";
+        }
+
+        return $"async {returnType} {name}Async<{genericArgs}>({parameters})";
+    }
+
     public string CallFunction(string name, string parameters, int i)
     {
         if(i == 0)
@@ -48,6 +65,17 @@
 		    parameters += ", " + tokenParameter;
 		}
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
+    }
+
+	public string CallGenericAsyncTokenFunction(string name, string parameters, string genericArgs, string tokenParameter, int i)
+    {
+        if(i == 0)
+            return $"{name}<{genericArgs}>({parameters})";
+        else
+		{
+		    parameters += ", " + tokenParameter;
+		}
+            return $"await {name}Async<{genericArgs}>({parameters}).ConfigureAwait(false)";
     }
 
     public string CallFunc(string name, string parameters, int i)

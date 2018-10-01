@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace PrtgAPI.CodeGenerator.MethodBuilder.Model
 {
@@ -12,17 +14,22 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Model
 
         public ReadOnlyCollection<HeaderParameter> Parameters { get; }
 
-        public MethodHeader(string visibility, string returnType, string methodName, ReadOnlyCollection<HeaderParameter> parameters)
+        public List<string> GenericConstraints { get; }
+
+        public MethodHeader(string visibility, string returnType, string methodName, ReadOnlyCollection<HeaderParameter> parameters, List<string> genericConstraints)
         {
             Visibility = visibility;
             ReturnType = returnType;
             MethodName = methodName;
             Parameters = parameters;
+            GenericConstraints = genericConstraints;
         }
 
         public override string ToString()
         {
-            return $"{Visibility} {ReturnType} {MethodName}({(string.Join(", ", Parameters))})";
+            var constraints = string.Join("", GenericConstraints.Select(c => $" where {c}"));
+
+            return $"{Visibility} {ReturnType} {MethodName}({(string.Join(", ", Parameters))}){constraints}";
         }
 
         public void Write(SourceWriter writer)

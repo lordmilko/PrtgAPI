@@ -18,6 +18,12 @@ namespace PrtgAPI.Tests.UnitTests
             return client;
         }
 
+        /// <summary>
+        /// Validates the request URL of a specified action.
+        /// </summary>
+        /// <param name="action">Action to perform.</param>
+        /// <param name="url">URL that should be created.</param>
+        /// <param name="countOverride">Override for the number of objects that should be created.</param>
         protected void Execute(Action<PrtgClient> action, string url, Dictionary<Content, int> countOverride = null)
         {
             var response = GetValidator(url, countOverride);
@@ -29,6 +35,12 @@ namespace PrtgAPI.Tests.UnitTests
             response.AssertFinished();
         }
 
+        /// <summary>
+        /// Validates the request URL of a specified action where multiple URLs are executed.
+        /// </summary>
+        /// <param name="action">Action to perform.</param>
+        /// <param name="url">URLs that should be created.</param>
+        /// <param name="countOverride">Override for the number of objects that should be created.</param>
         protected void Execute(Action<PrtgClient> action, string[] url, Dictionary<Content, int> countOverride = null)
         {
             var response = GetValidator(url, countOverride);

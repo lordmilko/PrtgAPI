@@ -2351,6 +2351,101 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region System Informations
+            #region Full
+
+        /// <summary>
+        /// Retrieves System Information including hardware, software, process, service and user information for a specified device.<para/>
+        /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
+        public SystemInfo GetSystemInfo(int deviceId) =>
+            GetSystemInfoInternal(deviceId);
+
+        /// <summary>
+        /// Asynchronously retrieves System Information including hardware, software, process, service and user information for a specified device.<para/>
+        /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
+        public async Task<SystemInfo> GetSystemInfoAsync(int deviceId) =>
+            await GetSystemInfoAsync(deviceId, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves System Information including hardware, software, process, service and user information for a specified device with a specified cancellation token.<para/>
+        /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
+        public async Task<SystemInfo> GetSystemInfoAsync(int deviceId, CancellationToken token) =>
+            await GetSystemInfoInternalAsync(deviceId, token).ConfigureAwait(false);
+
+            #endregion
+            #region Generic
+
+        /// <summary>
+        /// Retrieves a specific type of system information for a specified device based on the resulting object type.
+        /// </summary>
+        /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public List<T> GetSystemInfo<T>(int deviceId) where T : IDeviceInfo =>
+            GetSystemInfoInternal<T>(deviceId, CancellationToken.None);
+
+        /// <summary>
+        /// Asynchronously retrieves a specific type of system information for a specified device based on the resulting object type.
+        /// </summary>
+        /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public async Task<List<T>> GetSystemInfoAsync<T>(int deviceId) where T : IDeviceInfo =>
+            await GetSystemInfoAsync<T>(deviceId, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves a specific type of system information for a specified device based on the resulting object type with a specified cancellation token.
+        /// </summary>
+        /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public async Task<List<T>> GetSystemInfoAsync<T>(int deviceId, CancellationToken token) where T : IDeviceInfo =>
+            await GetSystemInfoInternalAsync<T>(deviceId, token).ConfigureAwait(false);
+
+            #endregion
+            #region Type
+
+        /// <summary>
+        /// Retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/>.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="type">Type of information to retrieve.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public List<IDeviceInfo> GetSystemInfo(int deviceId, SystemInfoType type) =>
+            GetSystemInfoInternal(deviceId, type);
+
+        /// <summary>
+        /// Asynchronously retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/>.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="type">Type of information to retrieve.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(int deviceId, SystemInfoType type) =>
+            await GetSystemInfoAsync(deviceId, type, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/> with a specified cancellation token.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="type">Type of information to retrieve.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
+        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(int deviceId, SystemInfoType type, CancellationToken token) =>
+            await GetSystemInfoInternalAsync(deviceId, type, token).ConfigureAwait(false);
+
+            #endregion
+        #endregion
     #endregion
     #region Object Manipulation
         #region Add Objects

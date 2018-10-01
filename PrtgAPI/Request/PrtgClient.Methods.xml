@@ -23,6 +23,10 @@
         <SerialReturnDescription>If &lt;paramref name="serial"/&gt; is false, a generator encapsulating a series of &lt;see cref="Task"/&gt; objects capable of streaming a response from a PRTG Server. Otherwise, an enumeration that when iterated retrieves the specified objects.</SerialReturnDescription>
         <SerialOnlyReturnDescription>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</SerialOnlyReturnDescription>
 
+        <SystemInfoSummary>
+            &lt;para/&gt;
+            System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
+        </SystemInfoSummary>
         <CancellationToken>with a specified cancellation token.</CancellationToken>
     </Resources>
     <CommonParameters>
@@ -514,6 +518,49 @@
                 </StreamBody>
             </MethodDef>
         </Template>
+        <Template name="SystemInfo">
+            <Region name="Full">
+                <MethodDef name="GetSystemInfo" returns="SystemInfo">
+                    <Summary>
+                        Retrieves System Information including hardware, software, process, service and user information for a specified device.
+                        <Resource name="SystemInfoSummary" mode="append" condition="none"/>
+                    </Summary>
+                    <ReturnDescription>A complete summary of System Information known to PRTG for the specified device.</ReturnDescription>
+
+                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+
+                    <Body expression="true">
+                        <Call name="GetSystemInfoInternal" args="deviceId"/>
+                    </Body>
+                </MethodDef>
+            </Region>
+            <Region name="Generic">
+                <MethodDef name="GetSystemInfo" returns="List&lt;T&gt;" tokenMode="MandatoryCall">
+                    <Summary>Retrieves a specific type of system information for a specified device based on the resulting object type.</Summary>
+                    <ReturnDescription>System Information known to PRTG for the specified information type for the specified device.</ReturnDescription>
+
+                    <GenericArg name="T" description="Type of System Information to retrieve." constraint="IDeviceInfo"/>
+                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+
+                    <Body expression="true">
+                        <Call name="GetSystemInfoInternal" args="deviceId" genericArgs="T"/>
+                    </Body>
+                </MethodDef>
+            </Region>
+            <Region name="Type">
+                <MethodDef name="GetSystemInfo" returns="List&lt;IDeviceInfo&gt;">
+                    <Summary>Retrieves a specific type of system information for a specified device based on a &lt;see cref="SystemInfoType"/&gt;.</Summary>
+                    <ReturnDescription>System Information known to PRTG for the specified information type for the specified device.</ReturnDescription>
+
+                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+                    <Parameter name="type" type="SystemInfoType" description="Type of information to retrieve."/>
+
+                    <Body expression="true">
+                        <Call name="GetSystemInfoInternal" args="deviceId, type"/>
+                    </Body>
+                </MethodDef>
+            </Region>
+        </Template>
         <Template name="ObjectProperties">
             <MethodDef name="Get{type}Properties" returns="{type}Settings">
                 <Summary>Retrieves properties and settings of a PRTG {type}.</Summary>
@@ -633,6 +680,7 @@
                 </MethodDef>
             </MethodImpl>
             <MethodImpl name="SensorHistory" type="SensorHistoryData" description="Sensor History" template="SensorHistory" stream="true" query="false" region="true" pluralRegion="false"/>
+            <MethodImpl name="SystemInfo" type="SystemInfo" description="System Information" template="SystemInfo" region="true"/>
         </Region>
         <Region name="Object Manipulation">
             <Region name="Add Objects">

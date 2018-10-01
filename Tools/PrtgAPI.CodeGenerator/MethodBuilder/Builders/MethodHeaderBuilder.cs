@@ -24,8 +24,9 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             var returnType = GetReturnType();
             var methodName = GetMethodName();
             var parameters = GetParameters();
+            var genericConstraints = GetGenericConstraints();
 
-            return new MethodHeader(visibility, returnType, methodName, parameters);
+            return new MethodHeader(visibility, returnType, methodName, parameters, genericConstraints);
         }
 
         private string GetVisibility()
@@ -99,6 +100,19 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             }
 
             return list.ToReadOnlyList();
+        }
+
+        private List<string> GetGenericConstraints()
+        {
+            var list = new List<string>();
+
+            foreach(var arg in methodConfig.MethodDef.GenericArgs)
+            {
+                if (!string.IsNullOrEmpty(arg.Constraint))
+                    list.Add($"{arg.Name} : {arg.Constraint}");
+            }
+
+            return list;
         }
 
         private bool CanHaveDefaultParameters(List<Parameter> parameters)

@@ -14,9 +14,13 @@ namespace PrtgAPI.Tests.IntegrationTests
     /// </summary>
     public class ServerManager
     {
-        private static string PrtgConfig => $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor\\PRTG Configuration.dat";
+        private static string PrtgConfigFolder = $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor";
+
+        private static string PrtgConfig => $"{PrtgConfigFolder}\\PRTG Configuration.dat";
 
         public static string PrtgConfigBackup => $"\\\\{Settings.Server}\\c$\\Users\\{Settings.WindowsUserName}\\AppData\\Local\\Temp\\PRTG Configuration.dat";
+
+        internal static string PrtgSystemInformationDatabase = $"{PrtgConfigFolder}\\System Information Database";
 
         public bool Initialized { get; set; }
 

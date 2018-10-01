@@ -115,6 +115,11 @@ namespace PrtgAPI
         /// <summary>
         /// A group used for organizing user accounts.
         /// </summary>
-        UserGroup
+        UserGroup,
+
+        /// <summary>
+        /// Device system information.
+        /// </summary>
+        SysInfo
     }
 }

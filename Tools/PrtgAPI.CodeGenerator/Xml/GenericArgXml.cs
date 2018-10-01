@@ -10,5 +10,8 @@ namespace PrtgAPI.CodeGenerator.Xml
 
         [XmlAttribute("description")]
         public string Description { get; set; }
+
+        [XmlAttribute("constraint")]
+        public string Constraint { get; set; }
     }
 }

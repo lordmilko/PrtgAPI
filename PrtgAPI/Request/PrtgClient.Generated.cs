@@ -1159,5 +1159,97 @@ namespace PrtgAPI
 
             return obj;
         }
+
+        //######################################
+        // GetSystemInfoInternal
+        //######################################
+
+        internal List<T> GetSystemInfoInternal<T>(int deviceId, CancellationToken token) where T : IDeviceInfo
+        {
+            var parameters = new SystemInfoParameters<T>(deviceId);
+
+            Func<HttpResponseMessage, string> func = (m) => ParseSystemInfoResponse(m, parameters.Columns);
+
+            var info = ObjectEngine.GetObject<SysInfoData<T>>(parameters, func, token: token);
+
+            foreach (var item in info.Items)
+                item.DeviceId = deviceId;
+
+            return info.Items;
+        }
+
+        internal List<IDeviceInfo> GetSystemInfoInternal(int deviceId, SystemInfoType type)
+        {
+            switch (type)
+            {
+                case SystemInfoType.System:
+                    return (GetSystemInfo<DeviceSystemInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Hardware:
+                    return (GetSystemInfo<DeviceHardwareInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Software:
+                    return (GetSystemInfo<DeviceSoftwareInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Processes:
+                    return (GetSystemInfo<DeviceProcessInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Services:
+                    return (GetSystemInfo<DeviceServiceInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Users:
+                    return (GetSystemInfo<DeviceUserInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
+                default:
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+            }
+        }
+
+        internal async Task<List<T>> GetSystemInfoInternalAsync<T>(int deviceId, CancellationToken token) where T : IDeviceInfo
+        {
+            var parameters = new SystemInfoParameters<T>(deviceId);
+
+            Func<HttpResponseMessage, Task<string>> func = async (m) => await ParseSystemInfoResponseAsync(m, parameters.Columns).ConfigureAwait(false);
+
+            var info = await ObjectEngine.GetObjectAsync<SysInfoData<T>>(parameters, func, token: token).ConfigureAwait(false);
+
+            foreach (var item in info.Items)
+                item.DeviceId = deviceId;
+
+            return info.Items;
+        }
+
+        internal async Task<List<IDeviceInfo>> GetSystemInfoInternalAsync(int deviceId, SystemInfoType type, CancellationToken token)
+        {
+            switch (type)
+            {
+                case SystemInfoType.System:
+                    return (await GetSystemInfoAsync<DeviceSystemInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Hardware:
+                    return (await GetSystemInfoAsync<DeviceHardwareInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Software:
+                    return (await GetSystemInfoAsync<DeviceSoftwareInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Processes:
+                    return (await GetSystemInfoAsync<DeviceProcessInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Services:
+                    return (await GetSystemInfoAsync<DeviceServiceInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                case SystemInfoType.Users:
+                    return (await GetSystemInfoAsync<DeviceUserInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
+                default:
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+            }
+        }
+
+        //######################################
+        // ParseSystemInfoResponse
+        //######################################
+
+        private string ParseSystemInfoResponse(HttpResponseMessage response, SysInfoProperty[] columns)
+        {
+            var responseText = response.Content.ReadAsStringAsync().Result;
+
+            return SysInfoJsonCleaner.Clean(responseText, columns);
+        }
+
+        private async Task<string> ParseSystemInfoResponseAsync(HttpResponseMessage response, SysInfoProperty[] columns)
+        {
+            var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return SysInfoJsonCleaner.Clean(responseText, columns);
+        }
     }
 }

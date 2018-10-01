@@ -70,6 +70,7 @@
     <Compile Include="CSharp\ObjectData\Query\SkipTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\TakeTests.cs" />
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
+    <Compile Include="CSharp\ObjectData\SystemInfoTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\AddObjectTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\AdminToolTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\DynamicSensorParameterTests.cs" />
@@ -140,6 +141,7 @@
     <None Include="PowerShell\ObjectData\Get-SensorHistory.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-SensorTarget.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-SensorType.Tests.ps1" />
+    <None Include="PowerShell\ObjectData\Get-SystemInfo.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Load-PrtgConfigFile.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />

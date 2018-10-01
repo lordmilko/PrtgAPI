@@ -189,6 +189,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case Content.Channels: return new ChannelResponse(GetItems(Content.Channels, i => new ChannelItem(), 1));
                 case Content.Objects:
                     return Objects(address, function, components);
+                case Content.SysInfo:
+                    return new SystemInfoResponse(
+                        SystemInfoItem.SystemItem(), SystemInfoItem.HardwareItem(), SystemInfoItem.SoftwareItem(),
+                        SystemInfoItem.ProcessItem(), SystemInfoItem.ServiceItem(), SystemInfoItem.UserItem()
+                    );
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(MultiTypeResponse)}");
             }

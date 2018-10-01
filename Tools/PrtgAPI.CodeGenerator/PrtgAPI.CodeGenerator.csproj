@@ -75,7 +75,6 @@
     <Compile Include="Model\Parameter.cs" />
     <Compile Include="Model\RegionDef.cs" />
     <Compile Include="Model\RegionImpl.cs" />
-    <Compile Include="Model\Resources.cs" />
     <Compile Include="Model\Template.cs" />
     <Compile Include="RegionWriter.cs" />
     <Compile Include="SourceWriter.cs" />
@@ -92,7 +91,6 @@
     <Compile Include="Xml\ParameterXml.cs" />
     <Compile Include="Xml\RegionDefXml.cs" />
     <Compile Include="Xml\RegionImplXml.cs" />
-    <Compile Include="Xml\ResourcesXml.cs" />
     <Compile Include="Xml\TemplateXml.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

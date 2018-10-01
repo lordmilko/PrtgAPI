@@ -7,6 +7,9 @@ namespace PrtgAPI
         [Description("getpasshash.htm")]
         GetPassHash,
 
+        [Description("table.json")]
+        TableData,
+
         [Description("triggers.json")]
         Triggers,
 

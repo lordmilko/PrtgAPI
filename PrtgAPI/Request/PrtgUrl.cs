@@ -35,6 +35,11 @@ namespace PrtgAPI.Request
         {
         }
 
+        public PrtgUrl(ConnectionDetails connectionDetails, CsvFunction function, IParameters parameters) :
+            this(connectionDetails, GetResourcePath(function), parameters)
+        {
+        }
+
         public PrtgUrl(ConnectionDetails connectionDetails, CommandFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
