@@ -295,4 +295,26 @@ Describe "Get-SensorHistory" {
         # Validate the format was updated
         ValidateChannels $new @("$name1(#)", $name2) @($name1, $name2)
     }
+    
+    It "regenerates deleted formats" {
+        SetMultiTypeResponse
+
+        Get-SensorHistory -Id 1001
+
+        $dir = gci $env:temp\PrtgAPIFormats
+
+        $dir.Count | Should BeGreaterThan 0
+
+        $dir | Remove-Item -Force
+
+        $dir = gci $env:temp\PrtgAPIFormats
+
+        $dir.Count | Should Be 0
+
+        Get-SensorHistory -Id 1001
+
+        $dir = gci $env:temp\PrtgAPIFormats
+
+        $dir.Count | Should BeGreaterThan 1
+    }
 }

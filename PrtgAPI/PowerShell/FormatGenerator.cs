@@ -6,7 +6,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 
 namespace PrtgAPI.PowerShell
 {
@@ -14,7 +13,7 @@ namespace PrtgAPI.PowerShell
     {
         internal static string PSObjectTypeName = "PrtgAPI.DynamicFormatPSObject";
 
-        private static List<string> Formats = new List<string>();
+        private static List<Tuple<string, XElement>> Formats = new List<Tuple<string, XElement>>();
 
         static string folder;
 
@@ -121,44 +120,24 @@ namespace PrtgAPI.PowerShell
 
             xml.Save(newPath);
 
-            Formats.Add(newPath);
+            Formats.Add(Tuple.Create(newPath, xml));
         }
 
-        public static void LoadXml(Cmdlet cmdlet)
+        public static void RepairMissing()
         {
-            var updateFormatData = GetUpdateFormatDataCommand();
+            var missingFormats = Formats.Where(f => !File.Exists(f.Item1)).ToList();
 
-            var destinationContextInfo = updateFormatData.GetInternalPropertyInfo("Context");
-            var sourceContext = cmdlet.GetInternalProperty("Context");
-            var appendPath = updateFormatData.GetPublicPropertyInfo("AppendPath");
-
-            destinationContextInfo.SetValue(updateFormatData, sourceContext);
-
-            appendPath.SetValue(updateFormatData, Formats.ToArray());
-
-            var processRecord = updateFormatData.GetInternalMethod("ProcessRecord");
-
-            processRecord.Invoke(updateFormatData, null);
+            foreach (var f in missingFormats)
+                f.Item2.Save(f.Item1);
         }
 
-        private static PSCmdlet GetUpdateFormatDataCommand()
+        public static void LoadXml(PSCmdlet cmdlet)
         {
-            var assemblyName = "Microsoft.PowerShell.Commands.Utility.dll";
-            var typeName = "Microsoft.PowerShell.Commands.UpdateFormatDataCommand";
+            RepairMissing();
 
-            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == assemblyName);
+            var command = $"Update-FormatData -AppendPath {string.Join(",", Formats.Select(f => f.Item1))}";
 
-            if (assembly == null)
-                throw new InvalidOperationException($"Cannot load type '{typeName}': cannot find assembly '{assemblyName}'.");
-
-            var type = assembly.GetType(typeName);
-
-            if (type == null)
-                throw new InvalidOperationException($"Cannot find type '{typeName}' in assembly '{assemblyName}'.");
-
-            var obj = Activator.CreateInstance(type);
-
-            return (PSCmdlet) obj;
+            cmdlet.InvokeCommand.InvokeScript(command);
         }
     }
 
