@@ -7,7 +7,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Represents a modification event of a PRTG Object.
+    /// <para type="description">Represents a modification event of a PRTG Object.</para>
     /// </summary>
     [Description("Modification Event")]
     public class ModificationEvent : IEventObject

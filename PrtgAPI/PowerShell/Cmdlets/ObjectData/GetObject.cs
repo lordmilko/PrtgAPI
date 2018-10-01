@@ -58,8 +58,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-ObjectProperty</para>
     /// <para type="link">Set-ObjectProperty</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Object")]
     [OutputType(typeof(PrtgObject))]
+    [Cmdlet(VerbsCommon.Get, "Object")]
     public class GetObject : PrtgTableFilterCmdlet<PrtgObject, PrtgObjectParameters>
     {
         /// <summary>

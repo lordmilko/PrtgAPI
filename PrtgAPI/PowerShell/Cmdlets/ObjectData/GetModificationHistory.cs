@@ -20,6 +20,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
+    [OutputType(typeof(ModificationEvent))]
     [Cmdlet(VerbsCommon.Get, "ModificationHistory")]
     public class GetModificationHistory : PrtgObjectCmdlet<ModificationEvent>
     {

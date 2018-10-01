@@ -29,8 +29,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-Device</para>
     /// 
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "DeviceTemplate")]
     [OutputType(typeof(DeviceTemplate))]
+    [Cmdlet(VerbsCommon.Get, "DeviceTemplate")]
     public class GetDeviceTemplate : PrtgProgressCmdlet
     {
         /// <summary>

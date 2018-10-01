@@ -7,7 +7,7 @@ namespace PrtgAPI
 {
 #pragma warning disable CS0649
     /// <summary>
-    /// Status details of a PRTG Server.
+    /// <para type="description">Status details of a PRTG Server.</para>
     /// </summary>
     [DataContract]
     public class ServerStatus

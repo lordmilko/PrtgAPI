@@ -34,6 +34,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-SensorParameters</para> 
     /// 
     /// </summary>
+    [OutputType(typeof(SensorTypeDescriptor))]
     [Cmdlet(VerbsCommon.Get, "SensorType")]
     public class GetSensorType : PrtgCmdlet
     {

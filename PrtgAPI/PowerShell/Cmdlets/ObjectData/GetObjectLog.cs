@@ -108,6 +108,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
+    [OutputType(typeof(Log))]
     [Cmdlet(VerbsCommon.Get, "ObjectLog", DefaultParameterSetName = ParameterSet.DateTime)]
     public class GetObjectLog : PrtgTableCmdlet<Log, LogParameters>, IWatchableCmdlet
     {
@@ -150,10 +151,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(ValueFromPipeline = true)]
         public LogStatus[] Status { get; set; }
 
+        /// <summary>
+        /// <para type="description">Indicates Get-ObjectLog should continuously retrieve new records from PRTG according to a specified polling -<see cref="Interval"/>.</para> 
+        /// </summary>
         [Alias("Tail")]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
         public SwitchParameter Wait { get; set; }
 
+        /// <summary>
+        /// <para type="description">Interval with which Get-ObjectLog should poll for new records when using -<see cref="Wait"/>.</para> 
+        /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DateTimeManual)]
         public int Interval { get; set; } = 1;
 

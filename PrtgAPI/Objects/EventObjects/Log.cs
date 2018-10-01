@@ -8,7 +8,7 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Describes an event that has occurred to a <see cref="PrtgObject"/>.
+    /// <para type="description">Describes an event that has occurred to a <see cref="PrtgObject"/>.</para>
     /// </summary>
     [DebuggerDisplay("DateTime = {DateTime}, Name = {Name,nq}")]
     public class Log : IEventObject, ITableObject

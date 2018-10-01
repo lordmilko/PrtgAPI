@@ -14,7 +14,7 @@ namespace PrtgAPI
     }
 
     /// <summary>
-    /// Describes a sensor type that can be applied under an object.
+    /// <para type="description">Describes a sensor type that can be applied under an object.</para>
     /// </summary>
     [DataContract]
     [ExcludeFromCodeCoverage]

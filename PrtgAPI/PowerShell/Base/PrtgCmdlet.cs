@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Base
                     }
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 UnregisterEvents(false);
                 throw;

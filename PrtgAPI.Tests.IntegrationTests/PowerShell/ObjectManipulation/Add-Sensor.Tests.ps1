@@ -253,7 +253,7 @@ Describe "Add-Sensor_IT" {
         }
     }
 
-    It "adds a sensor using a hashtable that contain a multi parameter" {
+    It "adds a sensor using a hashtable that contains a multi parameter" {
         $table = @{
             name_ = "Base Sensor"
             interfacenumber_ = 1
