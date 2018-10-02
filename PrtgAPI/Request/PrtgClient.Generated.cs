@@ -1249,14 +1249,32 @@ namespace PrtgAPI
         {
             var responseText = response.Content.ReadAsStringAsync().Result;
 
-            return SysInfoJsonCleaner.Clean(responseText, columns);
+            try
+            {
+                return SysInfoJsonCleaner.Clean(responseText, columns);
+            }
+            catch
+            {
+                Log(responseText, LogLevel.Response);
+
+                throw;
+            }
         }
 
         private async Task<string> ParseSystemInfoResponseAsync(HttpResponseMessage response, SysInfoProperty[] columns)
         {
             var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return SysInfoJsonCleaner.Clean(responseText, columns);
+            try
+            {
+                return SysInfoJsonCleaner.Clean(responseText, columns);
+            }
+            catch
+            {
+                Log(responseText, LogLevel.Response);
+
+                throw;
+            }
         }
     }
 }

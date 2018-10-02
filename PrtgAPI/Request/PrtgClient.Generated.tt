@@ -803,7 +803,16 @@ for(int i = 0; i < 2; i++)
         {
             var responseText = <#= AwaitOrForceResult("response.Content.ReadAsStringAsync()", i) #>
 
-            return SysInfoJsonCleaner.Clean(responseText, columns);
+            try
+            {
+                return SysInfoJsonCleaner.Clean(responseText, columns);
+            }
+            catch
+            {
+                Log(responseText, LogLevel.Response);
+
+                throw;
+            }
         }
 <#
 if(i == 0)

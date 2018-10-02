@@ -89,7 +89,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 var percent = ProgressManager.GetPercentComplete(i + 1, Type.Length);
 
-                progressCallback(percent, $"Retrieving {GetInfoTypeDescription(Type[i])} Info");
+                progressCallback(percent, $"Retrieving {GetInfoTypeDescription(Type[i])} Info ({i + 1}/{Type.Length})");
 
                 var info = client.GetSystemInfo(id, Type[i]).ToList();
                 records.Add(Tuple.Create(Type[i], info));

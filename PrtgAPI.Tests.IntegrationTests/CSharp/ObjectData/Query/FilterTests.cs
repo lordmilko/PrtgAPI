@@ -878,7 +878,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_Contains()
         {
             var upSensor = client.GetSensors(Property.Name, "System Health").First();
-            ExecuteSensor(s => s.DataCollectedSince.ToString().Contains(upSensor.DataCollectedSince.ToString()), Property.DataCollectedSince, upSensor.DataCollectedSince, FilterOperator.Contains);
+            ExecuteSensor(s => (s.DataCollectedSince ?? new DateTime()).Ticks.ToString().Contains(upSensor.DataCollectedSince.Value.Ticks.ToString()), Property.DataCollectedSince, upSensor.DataCollectedSince, FilterOperator.Contains);
         }
 
         #endregion

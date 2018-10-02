@@ -58,7 +58,11 @@ namespace PrtgAPI
                 return;
 
             strField = value;
-            intField = Convert.ToInt32(value);
+
+            int i;
+
+            if (int.TryParse(value, out i))
+                intField = i;
         }
 
         internal void SetLong(string value, ref string strField, ref long? longField)
@@ -67,7 +71,11 @@ namespace PrtgAPI
                 return;
 
             strField = value;
-            longField = Convert.ToInt64(value);
+
+            long l;
+
+            if (long.TryParse(value, out l))
+                longField = l;
         }
 
         internal void SetDate(string value, ref string strField, ref DateTime? dateField)
@@ -89,7 +97,10 @@ namespace PrtgAPI
             if (!value.Contains("."))
                 value += ".0";
 
-            versionField = Version.Parse(value);
+            Version v;
+
+            if (Version.TryParse(value, out v))
+                versionField = v;
         }
 
         internal string CleanState(string state)

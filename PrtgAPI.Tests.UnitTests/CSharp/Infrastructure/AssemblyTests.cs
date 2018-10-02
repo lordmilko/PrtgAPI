@@ -220,6 +220,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("SlowCoverage")]
         public void AllAwaits_Call_ConfigureAwaitFalse()
         {
             WithTree((file, tree, model) =>

@@ -110,13 +110,13 @@ namespace PrtgAPI.PowerShell.Base
 
             if (ProgressManager.GetRecordsWithVariableProgress)
             {
-                UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"{operation} ({percentage}%)");
+                UpdatePreviousAndCurrentVariableProgressOperations(percentage == 100, $"{operation}");
             }
             else
             {
                 ProgressManager.CurrentRecord.PercentComplete = percentage;
 
-                ProgressManager.WriteProgress($"PRTG {TypeDescription} Search", $"{operation} ({percentage}%)");
+                ProgressManager.WriteProgress($"PRTG {TypeDescription} Search", $"{operation}");
             }
 
             if (percentage == 100)

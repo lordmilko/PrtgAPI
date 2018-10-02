@@ -238,7 +238,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (ParameterSetName == ParameterSet.Dynamic)
             {
-                WriteProcessProgressRecords(f => CreateDynamicParameters(i => f(i, "Probing target device")));
+                WriteProcessProgressRecords(f => CreateDynamicParameters(i => f(i, $"Probing target device ({i}%)")));
 
                 return;
             }
