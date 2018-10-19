@@ -12,14 +12,14 @@ namespace PrtgAPI
         /// Location of this object.
         /// </summary>
         [XmlElement("location_raw")]
-        [PropertyParameter(nameof(Property.Location))]
+        [PropertyParameter(Property.Location)]
         public string Location { get; set; }
 
         /// <summary>
         /// The Hostname or IP Address of this device.
         /// </summary>
         [XmlElement("host")]
-        [PropertyParameter(nameof(Property.Host))]
+        [PropertyParameter(Property.Host)]
         public string Host { get; set; }
 
         // ################################## Sensors, Devices ##################################
@@ -29,21 +29,21 @@ namespace PrtgAPI
         /// Group this device is contained in.
         /// </summary>
         [XmlElement("group")]
-        [PropertyParameter(nameof(Property.Group))]
+        [PropertyParameter(Property.Group)]
         public string Group { get; set; }
 
         /// <summary>
         /// Probe that monitors this device's sensors.
         /// </summary>
         [XmlElement("probe")]
-        [PropertyParameter(nameof(Property.Probe))]
+        [PropertyParameter(Property.Probe)]
         public string Probe { get; set; }
 
         /// <summary>
         /// Whether this object has been marked as a favorite.
         /// </summary>
         [XmlElement("favorite_raw")]
-        [PropertyParameter(nameof(Property.Favorite))]
+        [PropertyParameter(Property.Favorite)]
         public bool Favorite { get; set; }
 
         // ################################## Devices, Groups ##################################
@@ -53,7 +53,7 @@ namespace PrtgAPI
         /// Auto-discovery progress (if one is in progress). Otherwise, null.
         /// </summary>
         [XmlElement("condition")]
-        [PropertyParameter(nameof(Property.Condition))]
+        [PropertyParameter(Property.Condition)]
         public string Condition { get; set; }
 
         //todo: put these where they need to be

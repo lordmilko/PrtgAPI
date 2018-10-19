@@ -14,7 +14,7 @@ namespace PrtgAPI
         /// Unique identifier of this channel within its parent sensor.
         /// </summary>
         [XmlElement("objid")]
-        [PropertyParameter(nameof(Property.Id))]
+        [PropertyParameter(Property.Id)]
         public int Id { get; set; }
 
         [ExcludeFromCodeCoverage]
@@ -28,7 +28,7 @@ namespace PrtgAPI
         /// Name of this channel.
         /// </summary>
         [XmlElement("name")]
-        [PropertyParameter(nameof(Property.Name))]
+        [PropertyParameter(Property.Name)]
         public string Name { get; set; }
 
         // ################################## Sensors, Channel ##################################
@@ -53,7 +53,7 @@ namespace PrtgAPI
         /// This value is represented in the smallest unit the <see cref="Unit"/> can be divided into (seconds, bits, bytes, etc)
         /// </summary>
         [XmlElement("lastvalue_raw")]
-        [PropertyParameter(nameof(Property.LastValue))]
+        [PropertyParameter(Property.LastValue)]
         public double? LastValue { get; set; }
 
         /// <summary>

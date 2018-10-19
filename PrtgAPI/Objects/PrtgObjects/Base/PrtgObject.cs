@@ -20,14 +20,14 @@ namespace PrtgAPI
         /// Unique identifier of this object within PRTG.
         /// </summary>
         [XmlElement("objid")]
-        [PropertyParameter(nameof(Property.Id))]
+        [PropertyParameter(Property.Id)]
         public int Id { get; set; }
 
         /// <summary>
         /// Name of this object.
         /// </summary>
         [XmlElement("name")]
-        [PropertyParameter(nameof(Property.Name))]
+        [PropertyParameter(Property.Name)]
         public string Name { get; set; }
 
         private string[] tags;
@@ -38,7 +38,7 @@ namespace PrtgAPI
         [XmlElement("tags")]
         [XmlElement("injected_tags")]
         [SplittableString(' ')]
-        [PropertyParameter(nameof(Property.Tags))]
+        [PropertyParameter(Property.Tags)]
         public string[] Tags
         {
             get { return Lazy(() => tags); }
@@ -71,7 +71,7 @@ namespace PrtgAPI
         /// <summary>
         /// The type of this object.
         /// </summary>
-        [PropertyParameter(nameof(Property.Type))]
+        [PropertyParameter(Property.Type)]
         public StringEnum<ObjectType> Type
         {
             get { return Lazy(() =>
@@ -97,7 +97,7 @@ namespace PrtgAPI
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
         [XmlElement("active_raw")]
-        [PropertyParameter(nameof(Property.Active))]
+        [PropertyParameter(Property.Active)]
         public bool Active
         {
             get { return Lazy(() => active); }
@@ -105,7 +105,7 @@ namespace PrtgAPI
         }
 
         [XmlElement("basetype")]
-        [PropertyParameter(nameof(Property.BaseType))]
+        [PropertyParameter(Property.BaseType)]
         internal BaseType? baseType { get; set; }
 
         internal readonly string raw;

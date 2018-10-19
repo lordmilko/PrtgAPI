@@ -18,7 +18,7 @@ namespace PrtgAPI
         /// Monitoring schedule of this object. If this object is a report, this property displays the report generation schedule. If this object does not have a schedule, this value is null.
         /// </summary>
         [XmlElement("schedule")]
-        [PropertyParameter(nameof(Property.Schedule))]
+        [PropertyParameter(Property.Schedule)]
         public string Schedule
         {
             get { return schedule; }
@@ -31,7 +31,7 @@ namespace PrtgAPI
         /// Base type of this object ("sensor", "device", etc)
         /// </summary>
         [XmlElement("basetype")]
-        [PropertyParameter(nameof(Property.BaseType))]
+        [PropertyParameter(Property.BaseType)]
         public BaseType BaseType
         {
             get { return baseType.Value; }
@@ -42,14 +42,14 @@ namespace PrtgAPI
         /// URL of this object.
         /// </summary>
         [XmlElement("baselink")]
-        [PropertyParameter(nameof(Property.Url))]
+        [PropertyParameter(Property.Url)]
         public string Url { get; set; }
 
         /// <summary>
         /// ID of this object's parent.
         /// </summary>
         [XmlElement("parentid")]
-        [PropertyParameter(nameof(Property.ParentId))]
+        [PropertyParameter(Property.ParentId)]
         public int ParentId { get; set; }
 
         // ################################## Sensors, Devices, Groups, Probes ##################################
@@ -58,7 +58,7 @@ namespace PrtgAPI
         /// Number of each notification trigger type defined on this object, as well as whether this object inherits any triggers from its parent object.<para/>
         /// This property does not work in non-English version of PRTG.
         /// </summary>
-        [PropertyParameter(nameof(Property.NotificationTypes))]
+        [PropertyParameter(Property.NotificationTypes)]
         public NotificationTypes NotificationTypes => notificationTypes == null ? new NotificationTypes(string.Empty) : new NotificationTypes(notificationTypes); //todo: add custom handling for this
 
         [XmlElement("notifiesx")]
@@ -68,7 +68,7 @@ namespace PrtgAPI
         /// Scanning interval for this sensor or default scanning interval for sensors under this object.
         /// </summary>
         [XmlElement("intervalx_raw")]
-        [PropertyParameter(nameof(Property.Interval))]
+        [PropertyParameter(Property.Interval)]
         public TimeSpan Interval { get; set; }
 
         /// <summary>
@@ -83,28 +83,28 @@ namespace PrtgAPI
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.
         /// </summary>
         [XmlElement("access_raw")]
-        [PropertyParameter(nameof(Property.Access))]
+        [PropertyParameter(Property.Access)]
         public Access Access { get; set; }
 
         /// <summary>
         /// Name of the object the monitoring of this object is dependent on.
         /// </summary>
         [XmlElement("dependency_raw")]
-        [PropertyParameter(nameof(Property.Dependency))]
+        [PropertyParameter(Property.Dependency)]
         public string Dependency { get; set; }
 
         /// <summary>
         /// Position of this object within its parent object.
         /// </summary>
         [XmlElement("position")]
-        [PropertyParameter(nameof(Property.Position))]
+        [PropertyParameter(Property.Position)]
         public int Position { get; set; }
 
         /// <summary>
         /// <see cref="PrtgAPI.Status"/> indicating this object's monitoring state.
         /// </summary>
         [XmlElement("status_raw")]
-        [PropertyParameter(nameof(Property.Status))]
+        [PropertyParameter(Property.Status)]
         public Status Status { get; set; }
 
         private string comments;
@@ -113,7 +113,7 @@ namespace PrtgAPI
         /// Comments present on this object.
         /// </summary>
         [XmlElement("comments")]
-        [PropertyParameter(nameof(Property.Comments))]
+        [PropertyParameter(Property.Comments)]
         public string Comments
         {
             get { return comments; }

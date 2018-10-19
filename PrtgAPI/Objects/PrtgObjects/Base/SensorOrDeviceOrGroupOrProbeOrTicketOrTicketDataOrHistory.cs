@@ -14,7 +14,7 @@ namespace PrtgAPI
         /// Message or subject displayed on an object.
         /// </summary>
         [XmlElement("message_raw")]
-        [PropertyParameter(nameof(Property.Message))]
+        [PropertyParameter(Property.Message)]
         public string Message { get; set; }
 
         [XmlElement("message")]

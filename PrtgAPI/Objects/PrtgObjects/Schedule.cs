@@ -18,7 +18,7 @@ namespace PrtgAPI
         /// URL of this object.
         /// </summary>
         [XmlElement("baselink")]
-        [PropertyParameter(nameof(Property.Url))]
+        [PropertyParameter(Property.Url)]
         public string Url
         {
             get { return Lazy(() => url); }

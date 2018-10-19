@@ -16,7 +16,7 @@ namespace PrtgAPI
         /// Probe that manages the execution of the sensors contained within this group's devices.
         /// </summary>
         [XmlElement("probe")]
-        [PropertyParameter(nameof(Property.Probe))]
+        [PropertyParameter(Property.Probe)]
         public string Probe { get; set; }
 
         // ################################## Devices, Groups ##################################
@@ -26,7 +26,7 @@ namespace PrtgAPI
         /// Auto-discovery progress (if one is in progress). Otherwise, null.
         /// </summary>
         [XmlElement("condition")]
-        [PropertyParameter(nameof(Property.Condition))]
+        [PropertyParameter(Property.Condition)]
         public string Condition { get; set; }
     }
 }

@@ -8,11 +8,19 @@ namespace PrtgAPI.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     sealed class PropertyParameterAttribute : Attribute
     {
+        public Property? Property { get; }
+
         public string Name { get; }
 
         public PropertyParameterAttribute(string name)
         {
             Name = name;
+        }
+
+        public PropertyParameterAttribute(Property property)
+        {
+            Property = property;
+            Name = property.ToString();
         }
     }
 }

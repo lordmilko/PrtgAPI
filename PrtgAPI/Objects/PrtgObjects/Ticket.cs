@@ -9,7 +9,7 @@ namespace PrtgAPI
         /// Status of this ticket
         /// </summary>
         [XmlElement("status_raw")]
-        [PropertyParameter(nameof(Property.Status))]
+        [PropertyParameter(Property.Status)]
         public TicketStatus Status { get; set; }
     }
 }

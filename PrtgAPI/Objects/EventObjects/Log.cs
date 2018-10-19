@@ -17,7 +17,7 @@ namespace PrtgAPI
         /// ID of the <see cref="PrtgObject"/> this event applies to.
         /// </summary>
         [XmlElement("objid")]
-        [PropertyParameter(nameof(Property.Id))]
+        [PropertyParameter(Property.Id)]
         public int Id { get; set; }
 
         [ExcludeFromCodeCoverage]
@@ -31,56 +31,56 @@ namespace PrtgAPI
         /// Name of the <see cref="PrtgObject"/> this event applies to.
         /// </summary>
         [XmlElement("name")]
-        [PropertyParameter(nameof(Property.Name))]
+        [PropertyParameter(Property.Name)]
         public string Name { get; set; }
 
         /// <summary>
         /// The date and time the event occurred.
         /// </summary>
         [XmlElement("datetime_raw")]
-        [PropertyParameter(nameof(Property.DateTime))]
+        [PropertyParameter(Property.DateTime)]
         public DateTime DateTime { get; set; }
 
         /// <summary>
         /// The parent of the object the event pertained to.
         /// </summary>
         [XmlElement("parent")]
-        [PropertyParameter(nameof(Property.Parent))]
+        [PropertyParameter(Property.Parent)]
         public string Parent { get; set; }
 
         /// <summary>
         /// Type of log record this object contains.
         /// </summary>
         [XmlElement("status_raw")]
-        [PropertyParameter(nameof(Property.Status))]
+        [PropertyParameter(Property.Status)]
         public LogStatus Status { get; set; }
 
         /// <summary>
         /// Sensor the event pertained to (if applicable)
         /// </summary>
         [XmlElement("sensor")]
-        [PropertyParameter(nameof(Property.Sensor))]
+        [PropertyParameter(Property.Sensor)]
         public string Sensor { get; set; }
 
         /// <summary>
         /// Device the event pertained to, or the device of the affected sensor.
         /// </summary>
         [XmlElement("device")]
-        [PropertyParameter(nameof(Property.Device))]
+        [PropertyParameter(Property.Device)]
         public string Device { get; set; }
 
         /// <summary>
         /// Group the event pertained to, or the group of the affected device or sensor.
         /// </summary>
         [XmlElement("group")]
-        [PropertyParameter(nameof(Property.Group))]
+        [PropertyParameter(Property.Group)]
         public string Group { get; set; }
 
         /// <summary>
         /// Probe the event pertained to, or the probe of the affected group, device or sensor.
         /// </summary>
         [XmlElement("probe")]
-        [PropertyParameter(nameof(Property.Probe))]
+        [PropertyParameter(Property.Probe)]
         public string Probe { get; set; }
 
         internal string message;
@@ -89,7 +89,7 @@ namespace PrtgAPI
         /// Message or subject displayed on an object.
         /// </summary>
         [XmlElement("message_raw")]
-        [PropertyParameter(nameof(Property.Message))]
+        [PropertyParameter(Property.Message)]
         public string Message
         {
             get { return GetMessage(); }
@@ -114,7 +114,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("priority")]
         [XmlElement("priority_raw")]
-        [PropertyParameter(nameof(Property.Priority))]
+        [PropertyParameter(Property.Priority)]
         public Priority Priority { get; set; }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace PrtgAPI
         /// <summary>
         /// The type of this object this object pertains to.
         /// </summary>
-        [PropertyParameter(nameof(Property.Type))]
+        [PropertyParameter(Property.Type)]
         public StringEnum<ObjectType> Type
         {
             get
@@ -152,14 +152,14 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("tags")]
         [SplittableString(' ')]
-        [PropertyParameter(nameof(Property.Tags))]
+        [PropertyParameter(Property.Tags)]
         public string[] Tags { get; set; }
 
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
         [XmlElement("active_raw")]
-        [PropertyParameter(nameof(Property.Active))]
+        [PropertyParameter(Property.Active)]
         public bool Active { get; set; }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("priority")]
         [XmlElement("priority_raw")]
-        [PropertyParameter(nameof(Property.Priority))]
+        [PropertyParameter(Property.Priority)]
         public Priority Priority { get; set; }
     }
 }
