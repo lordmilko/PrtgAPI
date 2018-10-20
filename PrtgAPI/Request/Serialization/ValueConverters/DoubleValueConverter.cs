@@ -2,6 +2,10 @@
 {
     abstract class DoubleValueConverter : ValueConverter<double>
     {
+        protected DoubleValueConverter()
+        {
+        }
+
         public override object Deserialize(object value)
         {
             double val;

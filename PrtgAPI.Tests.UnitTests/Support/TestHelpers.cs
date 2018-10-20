@@ -118,5 +118,15 @@ namespace PrtgAPI.Tests.UnitTests.Support
 
             return solutionPath + "PrtgAPI";
         }
+
+        public static bool IsPrtgAPIClass(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            var t = obj.GetType();
+
+            return t.IsClass && t.Namespace.StartsWith("PrtgAPI");
+        }
     }
 }

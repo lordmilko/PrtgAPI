@@ -1009,7 +1009,7 @@
 
                             var rawValue = <Call name="GetObjectPropertyRaw" args="objectId, rawName, cache.Property.PropertyType == typeof(string)"/>;
 
-                            return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
+                            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="GetObjectProperty" returns="T">

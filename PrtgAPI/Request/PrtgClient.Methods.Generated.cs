@@ -12,7 +12,6 @@ using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
-using XmlSerializer = PrtgAPI.Request.Serialization.XmlSerializer;
 
 namespace PrtgAPI
 {
@@ -3201,7 +3200,7 @@ namespace PrtgAPI
 
             var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
 
-            return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
+            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
         }
 
         /// <summary>
@@ -3227,7 +3226,7 @@ namespace PrtgAPI
 
             var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
 
-            return XmlSerializer.DeserializeRawPropertyValue(property, rawName, rawValue);
+            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
         }
 
         /// <summary>

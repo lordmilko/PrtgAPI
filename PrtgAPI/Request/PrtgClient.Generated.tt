@@ -72,7 +72,7 @@ for(int i = 0; i < 2; i++)
             }<#= EndLoopOrTask(i) #>
 
             if (items.Count > 0)
-                return XmlDeserializer<Channel>.DeserializeList(response).Items;
+                return ObjectEngine.XmlEngine.DeserializeTable<Channel>(response.CreateReader()).Items;
 
             return new List<Channel>();
         }
@@ -103,7 +103,7 @@ for(int i = 0; i < 2; i++)
                 item.Add(properties.Nodes());
             }<#= EndLoopOrTask(i) #>
 
-            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            var actions = ObjectEngine.XmlEngine.DeserializeTable<NotificationAction>(response.CreateReader()).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
 

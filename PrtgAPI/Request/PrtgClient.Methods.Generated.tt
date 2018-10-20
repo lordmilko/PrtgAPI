@@ -15,7 +15,6 @@ using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
-using XmlSerializer = PrtgAPI.Request.Serialization.XmlSerializer;
 
 namespace PrtgAPI
 {

@@ -35,9 +35,14 @@ namespace PrtgAPI.Request.Serialization
         internal static DateTime? ConvertFromPrtgDateTime(double datetime)
         {
             if (datetime != 0)
-                return DateTime.FromOADate(datetime).ToLocalTime();
+                return ConvertFromPrtgDateTimeInternal(datetime);
 
             return null;
+        }
+
+        internal static DateTime ConvertFromPrtgDateTimeInternal(double datetime)
+        {
+            return DateTime.FromOADate(datetime).ToLocalTime();
         }
 
         internal static double ConvertToPrtgDateTime(DateTime dateTime)

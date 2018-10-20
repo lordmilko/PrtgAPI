@@ -32,6 +32,9 @@ namespace PrtgAPI.Request.Serialization.Cache
         }
     }
 
+    /// <summary>
+    /// Maps <see cref="XmlEnumAttribute"/> and <see cref="XmlEnumAlternateName"/> values to their corresponding <see cref="Enum"/> values.
+    /// </summary>
     class EnumXmlCache : TypeCache
     {
         private Dictionary<string, Dictionary<Type, EnumValue>> map = new Dictionary<string, Dictionary<Type, EnumValue>>(); //maps a value to its attributes, which are then mapped to their values

@@ -14,7 +14,7 @@ namespace PrtgAPI.Parameters
 
         public SetPositionParameters(SensorOrDeviceOrGroupOrProbe obj, int position) : base(ValidateObject(obj))
         {
-            var newPos = new PositionConverter().SerializeT(position) + (position > obj.Position ? 1 : -1);
+            var newPos = PositionConverter.SerializePosition(position) + (position > obj.Position ? 1 : -1);
 
             Position = newPos;
         }

@@ -65,7 +65,7 @@ namespace PrtgAPI
             }
 
             if (items.Count > 0)
-                return XmlDeserializer<Channel>.DeserializeList(response).Items;
+                return ObjectEngine.XmlEngine.DeserializeTable<Channel>(response.CreateReader()).Items;
 
             return new List<Channel>();
         }
@@ -102,7 +102,7 @@ namespace PrtgAPI
             })).ConfigureAwait(false);
 
             if (items.Count > 0)
-                return XmlDeserializer<Channel>.DeserializeList(response).Items;
+                return ObjectEngine.XmlEngine.DeserializeTable<Channel>(response.CreateReader()).Items;
 
             return new List<Channel>();
         }
@@ -126,7 +126,7 @@ namespace PrtgAPI
                 item.Add(properties.Nodes());
             }
 
-            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            var actions = ObjectEngine.XmlEngine.DeserializeTable<NotificationAction>(response.CreateReader()).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
 
@@ -150,7 +150,7 @@ namespace PrtgAPI
                 item.Add(properties.Nodes());
             })).ConfigureAwait(false);
 
-            var actions = XmlDeserializer<NotificationAction>.DeserializeList(response).Items;
+            var actions = ObjectEngine.XmlEngine.DeserializeTable<NotificationAction>(response.CreateReader()).Items;
 
             var actionsWithSchedules = ResponseParser.GroupActionSchedules(actions).ToList();
 

@@ -23,6 +23,7 @@ namespace PrtgAPI.Request
     {
         private PrtgClient prtgClient;
         private readonly RequestEngine requestEngine;
+        internal XmlEngine XmlEngine { get; }
 
         /// <summary>
         /// The maximum number of objects that may be requested in parallel before objects should be requested
@@ -30,46 +31,47 @@ namespace PrtgAPI.Request
         /// </summary>
         internal const int SerialStreamThreshold = 20000;
 
-        public ObjectEngine(PrtgClient client, RequestEngine engine)
+        public ObjectEngine(PrtgClient client, RequestEngine engine, IXmlSerializer xmlSerializer)
         {
             prtgClient = client;
             requestEngine = engine;
+            XmlEngine = new XmlEngine(xmlSerializer);
         }
 
         #region Get Objects
 
-        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken)) =>
-            GetObjectsRaw<T>(parameters, responseValidator, deserializeAll, token).Items;
+        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken)) =>
+            GetObjectsRaw<T>(parameters, responseValidator, validateValueTypes, token).Items;
 
-        internal XmlDeserializer<T> GetObjectsRaw<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken))
+        internal TableData<T> GetObjectsRaw<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken))
         {
             var response = requestEngine.ExecuteRequest(parameters, responseValidator, token: token);
 
-            return SetVersion(XmlDeserializer<T>.DeserializeList(response, deserializeAll));
+            return SetVersion(XmlEngine.DeserializeTable<T>(response.CreateReader(), validateValueTypes));
         }
 
-        internal async Task<List<T>> GetObjectsAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken)) =>
-            (await GetObjectsRawAsync<T>(parameters, responseValidator, deserializeAll, token).ConfigureAwait(false)).Items;
+        internal async Task<List<T>> GetObjectsAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken)) =>
+            (await GetObjectsRawAsync<T>(parameters, responseValidator, validateValueTypes, token).ConfigureAwait(false)).Items;
 
-        internal async Task<XmlDeserializer<T>> GetObjectsRawAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool deserializeAll = true, CancellationToken token = default(CancellationToken))
+        internal async Task<TableData<T>> GetObjectsRawAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken))
         {
             var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, token: token).ConfigureAwait(false);
 
-            return SetVersion(XmlDeserializer<T>.DeserializeList(response, deserializeAll));
+            return SetVersion(XmlEngine.DeserializeTable<T>(response.CreateReader(), validateValueTypes));
         }
 
         internal T GetObject<T>(IXmlParameters parameters, Action<string> responseValidator = null)
         {
             var response = requestEngine.ExecuteRequest(parameters, responseValidator);
 
-            return XmlDeserializer<T>.DeserializeType(response);
+            return XmlEngine.DeserializeObject<T>(response.CreateReader());
         }
 
         internal async Task<T> GetObjectAsync<T>(IXmlParameters parameters, CancellationToken token = default(CancellationToken))
         {
             var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
 
-            return XmlDeserializer<T>.DeserializeType(response);
+            return XmlEngine.DeserializeObject<T>(response.CreateReader());
         }
 
         internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
@@ -90,7 +92,7 @@ namespace PrtgAPI.Request
             return data;
         }
 
-        private XmlDeserializer<T> SetVersion<T>(XmlDeserializer<T> data)
+        private TableData<T> SetVersion<T>(TableData<T> data)
         {
             if (prtgClient.version == null)
                 prtgClient.version = data.Version != null ? Version.Parse(data.Version.Trim('+')) : null;
@@ -110,7 +112,7 @@ namespace PrtgAPI.Request
         #endregion
         #region Stream Objects
 
-        internal IEnumerable<TObject> StreamObjects<TObject, TParam>(TParam parameters, bool serial, bool deserializeAll = true)
+        internal IEnumerable<TObject> StreamObjects<TObject, TParam>(TParam parameters, bool serial, bool validateValueTypes = true)
             where TObject : IObject
             where TParam : ContentParameters<TObject>, IShallowCloneable<TParam>
         {
@@ -123,14 +125,14 @@ namespace PrtgAPI.Request
                 ),
                 null,                             //The function used to retrieve objects synchronously
                 null,                             //The function used to retrieve objects asynchronously
-                deserializeAll                    //Whether to deserialize all properties onto the output object
+                validateValueTypes                    //Whether to deserialize all properties onto the output object
             );
         }
 
         internal IEnumerable<TObject> StreamObjects<TObject, TParam>(TParam parameters, bool serial, Func<int> getCount,
             Func<TParam, Task<List<TObject>>> getObjectsAsync = null,
             Func<TParam, Tuple<List<TObject>, int>> getObjects = null,
-            bool deserializeAll = true)
+            bool validateValueTypes = true)
             where TParam : PageableParameters, IShallowCloneable<TParam>, IXmlParameters
         {
             prtgClient.Log("Preparing to stream objects", LogLevel.Trace);
@@ -144,7 +146,7 @@ namespace PrtgAPI.Request
                 false,      //Direct Call
                 getObjects, //Get Objects,
                 getObjectsAsync, //Get Objects Async
-                deserializeAll //Deserialize All
+                validateValueTypes //Validate Value Types
             );
 
             if (manager.TotalToRetrieve > SerialStreamThreshold || serial)

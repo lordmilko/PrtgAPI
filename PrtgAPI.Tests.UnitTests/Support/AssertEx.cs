@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
+using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -69,6 +72,9 @@ namespace PrtgAPI.Tests.UnitTests
             {
                 var originalProperty = firstProperties.Find(p => p == newProperty);
 
+                if (IsILazyProperty(originalProperty) && IsILazyProperty(newProperty) || (IsLazy(originalProperty.PropertyType) && IsLazy(newProperty.PropertyType)))
+                    continue;
+
                 var newValue = newProperty.GetValue(clone);
                 var originalValue = originalProperty.GetValue(original);
 
@@ -81,22 +87,87 @@ namespace PrtgAPI.Tests.UnitTests
 
                     for (var i = 0; i < newList.Count; i++)
                     {
-                        Assert.AreEqual(newList[i], originalList[i], $"Property {newProperty.Name} had a different list member at index {i}");
+                        if (newList[i].IsIEnumerable() && originalList[i].IsIEnumerable())
+                            AreEqualLists(originalList[i].ToIEnumerable().ToList(), newList[i].ToIEnumerable().ToList(), $"Lists of property {newProperty.Name} at index '{i}' were not equal");
+                        else
+                        {
+                            if (ReflectionHelpers.IsSubclassOfRawGeneric(newList[i].GetType(), typeof(KeyValuePair<,>)) && ReflectionHelpers.IsSubclassOfRawGeneric(originalList[i].GetType(), typeof(KeyValuePair<,>)))
+                            {
+                                AllPropertiesAndFieldsAreEqual(originalList[i], newList[i]);
+                            }
+                            else
+                                Assert.AreEqual(newList[i], originalList[i], $"Property {newProperty.Name} had a different list member at index {i}");
+                        }
                     }
                 }
                 else
-                    Assert.AreEqual(newValue, originalValue, $"Expected property {newProperty.Name} new value to be {originalValue} ({originalValue.GetType()}) however value was actually {newValue} ({newValue.GetType()})");
+                {
+                    if(TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue))
+                    {
+                        AllPropertiesAndFieldsAreEqual(originalValue, newValue);
+                    }
+                    else
+                    {
+                        if(originalValue is XElement && newValue is XElement)
+                        {
+                            originalValue = ((XElement)originalValue).ToString();
+                            newValue = ((XElement)newValue).ToString();
+                        }
+
+                        Assert.AreEqual(newValue, originalValue, $"Expected property '{newProperty.Name}' new value to be '{originalValue}' ({(originalValue?.GetType().Name ?? "null")}) however value was actually {newValue} ({(newValue?.GetType().Name ?? "null")})");
+                    }
+                }
             }
 
             foreach (var newField in secondFields)
             {
                 var originalField = firstFields.Find(p => p == newField);
 
+                if (IsLazyValue(originalField) && IsLazyValue(newField) || (IsLazy(originalField.FieldType) || IsLazy(newField.FieldType)))
+                    continue;
+
+                if (originalField.Name.Contains(typeof(ILazy).FullName) && newField.Name.Contains(typeof(ILazy).FullName))
+                    continue;
+
                 var newValue = newField.GetValue(clone);
                 var originalValue = originalField.GetValue(original);
 
-                Assert.IsTrue(newValue == originalValue, $"Expected field {newField.Name} new value to be {originalValue} however value was actually {newValue}");
+                if (TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue))
+                {
+                    AllPropertiesAndFieldsAreEqual(originalValue, newValue);
+                }
+                else
+                {
+                    if (ReflectionHelpers.IsSubclassOfRawGeneric(newField.FieldType, typeof(IReadOnlyDictionary<,>)) && ReflectionHelpers.IsSubclassOfRawGeneric(originalField.FieldType, typeof(IReadOnlyDictionary<,>)))
+                    {
+                        AllPropertiesAndFieldsAreEqual(originalValue, originalValue);
+                    }
+                    else
+                    {
+                        if (newValue.IsIEnumerable() && originalValue.IsIEnumerable())
+                            AreEqualLists(originalValue.ToIEnumerable().ToList(), newValue.ToIEnumerable().ToList(), $"Fields '{newField.Name}' were not equal");
+                        else
+                            Assert.IsTrue((newValue == null && originalValue == null) || newValue?.Equals(originalValue) == true, $"Expected field '{newField.Name}' new value to be '{originalValue}' however value was actually '{newValue}'");
+                    }
+                        
+                }
+                    
             }
+        }
+
+        private static bool IsILazyProperty(PropertyInfo info)
+        {
+            return info.Name.StartsWith(typeof(ILazy).FullName);
+        }
+
+        private static bool IsLazy(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Lazy<>);
+        }
+
+        private static bool IsLazyValue(FieldInfo field)
+        {
+            return field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(LazyValue<>);
         }
 
         public static void Throws<T>(Action action, string message) where T : Exception
@@ -135,10 +206,23 @@ namespace PrtgAPI.Tests.UnitTests
             }
         }
 
-        public static void AreEqualLists<T>(List<T> first, List<T> second, string message) => AreEqualLists(first, second, null, message);
+        public static void AreEqualLists<T>(List<T> first, List<T> second, string message) => AreEqualListsInternal(first, second, null, null, message);
 
-        public static void AreEqualLists<T>(List<T> first, List<T> second, IEqualityComparer<T> comparer, string message)
+        public static void AreEqualLists<T>(List<T> first, List<T> second, Action<T, T> assert, string message) => AreEqualListsInternal(first, second, null, assert, message);
+
+        public static void AreEqualLists<T>(List<T> first, List<T> second, IEqualityComparer<T> comparer, string message) => AreEqualListsInternal(first, second, comparer, null, message);
+
+        private static void AreEqualListsInternal<T>(List<T> first, List<T> second, IEqualityComparer<T> comparer, Action<T, T> assert, string message)
         {
+            if (first == null && second == null)
+                return;
+
+            if (first == null && second != null)
+                Assert.Fail("First was null but second wasn't");
+
+            if (first != null && second == null)
+                Assert.Fail("First was not null but second wasn't");
+
             for (var i = 0; i < first.Count; i++)
             {
                 if (i < second.Count)
@@ -158,7 +242,12 @@ namespace PrtgAPI.Tests.UnitTests
                             Assert.IsTrue(comparer.Equals(first[i], second[i]), msg);
                     }
                     else
-                        Assert.AreEqual(first[i], second[i], message);
+                    {
+                        if (assert != null)
+                            assert(first[i], second[i]);
+                        else
+                            Assert.AreEqual(first[i], second[i], message);
+                    }
                 }
                 else
                 {

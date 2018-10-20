@@ -593,7 +593,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 new XElement("type", item.Type),
                 new XElement("type_raw", item.TypeRaw),
                 new XElement("active", item.Active),
-                new XElement("active_raw", item.Active),
+                new XElement("active_raw", item.ActiveRaw),
                 new XElement("baselink", item.BaseLink),
                 new XElement("baselink_raw", item.BaseLinkRaw)
             );

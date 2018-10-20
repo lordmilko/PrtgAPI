@@ -187,7 +187,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 "AttributeCache",
                 "ReflectionHelpers",
-                "TypeCache"
+                "TypeCache",
+                "XmlSerializerMembers"
             };
 
             var invocationNode = (InvocationExpressionSyntax)item.AsNode();

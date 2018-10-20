@@ -265,12 +265,12 @@ namespace PrtgAPI.Request
             return value;
         }
 
-        internal static T GetObjectProperties<T>(string response)
+        internal static T GetObjectProperties<T>(string response, XmlEngine xmlEngine)
         {
             var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
 
-            var items = XmlDeserializer<T>.DeserializeType(xDoc);
+            var items = xmlEngine.DeserializeObject<T>(xDoc.CreateReader());
 
             return items;
         }

@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
+[assembly: InternalsVisibleTo("PrtgAPI.GeneratedCode")]
 [assembly: InternalsVisibleTo("PrtgAPI.Tests.UnitTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

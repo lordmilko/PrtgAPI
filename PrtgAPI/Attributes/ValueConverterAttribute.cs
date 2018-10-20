@@ -1,4 +1,5 @@
 ﻿using System;
+using PrtgAPI.Linq.Expressions.Serialization;
 using PrtgAPI.Request.Serialization.ValueConverters;
 
 namespace PrtgAPI.Attributes
@@ -6,15 +7,15 @@ namespace PrtgAPI.Attributes
     [AttributeUsage(AttributeTargets.Field)]
     class ValueConverterAttribute : Attribute
     {
-        private Type type;
+        public Type Type { get; }
 
         private IValueConverter converter;
 
-        public IValueConverter Converter => converter ?? (converter = (IValueConverter) Activator.CreateInstance(type));
+        public IValueConverter Converter => converter ?? (converter = (IValueConverter) XmlSerializerMembers.GetValueConverterInstance(Type).GetValue(null));
 
         public ValueConverterAttribute(Type type)
         {
-            this.type = type;
+            Type = type;
         }
     }
 }

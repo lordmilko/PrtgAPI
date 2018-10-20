@@ -11,7 +11,7 @@ namespace PrtgAPI
         /// <summary>
         /// Whether the object is currently expanded or collapsed in the PRTG Interface.
         /// </summary>
-        [XmlElement("fold")]
+        [XmlElement("fold_raw")]
         [PropertyParameter(Property.Collapsed)]
         public bool Collapsed { get; set; }
 

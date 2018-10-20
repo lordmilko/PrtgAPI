@@ -211,7 +211,7 @@ namespace PrtgAPI.Request
                 if (getObjectsFunc == null)
                     getObjectsFunc = p =>
                     {
-                        var raw = engine.GetObjectsRaw<TObject>(p, deserializeAll: DeserializeAll);
+                        var raw = engine.GetObjectsRaw<TObject>(p, validateValueTypes: ValidateValueTypes);
                         return Tuple.Create(raw.Items, raw.TotalCount);
                     };
 
@@ -227,7 +227,7 @@ namespace PrtgAPI.Request
             get
             {
                 if (getObjectsAsyncFunc == null)
-                    getObjectsAsyncFunc = p => engine.GetObjectsAsync<TObject>(p, deserializeAll: DeserializeAll);
+                    getObjectsAsyncFunc = p => engine.GetObjectsAsync<TObject>(p, validateValueTypes: ValidateValueTypes);
 
                 return getObjectsAsyncFunc;
             }
@@ -242,7 +242,7 @@ namespace PrtgAPI.Request
 
         public bool DirectCall { get; }
 
-        public bool DeserializeAll { get; }
+        public bool ValidateValueTypes { get; }
 
         ObjectEngine engine;
 
@@ -269,12 +269,12 @@ namespace PrtgAPI.Request
             bool directCall,
             Func<TParam, Tuple<List<TObject>, int>> getObjects,
             Func<TParam, Task<List<TObject>>> getObjectsAsync = null,
-            bool deserializeAll = true) : this(engine, parameters, getCount, serial)
+            bool validateValueTypes = true) : this(engine, parameters, getCount, serial)
         {
             DirectCall = directCall;
             GetObjectsFunc = getObjects;
             GetObjectsAsyncFunc = getObjectsAsync;
-            DeserializeAll = deserializeAll;
+            ValidateValueTypes = validateValueTypes;
         }
 
         #endregion

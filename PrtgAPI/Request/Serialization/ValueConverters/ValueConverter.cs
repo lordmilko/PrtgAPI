@@ -4,6 +4,10 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
 {
     abstract class ValueConverter<T> : IValueConverter<T>
     {
+        protected ValueConverter()
+        {
+        }
+
         public virtual object Serialize(object value)
         {
             return Serialize(value, Serialize);
@@ -28,7 +32,7 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
 
         public abstract string Serialize(T value);
 
-        public abstract T SerializeT(T value);
+        protected abstract T SerializeWithinType(T value);
 
         public abstract T Deserialize(T value);
 

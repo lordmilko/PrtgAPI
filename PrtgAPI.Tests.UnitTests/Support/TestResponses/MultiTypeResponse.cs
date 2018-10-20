@@ -189,6 +189,14 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case Content.Channels: return new ChannelResponse(GetItems(Content.Channels, i => new ChannelItem(), 1));
                 case Content.Objects:
                     return Objects(address, function, components);
+                case Content.Triggers:
+                    return new NotificationTriggerResponse(
+                        NotificationTriggerItem.StateTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group"),
+                        NotificationTriggerItem.ThresholdTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group"),
+                        NotificationTriggerItem.SpeedTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group"),
+                        NotificationTriggerItem.VolumeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group"),
+                        NotificationTriggerItem.ChangeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group")
+                    );
                 case Content.SysInfo:
                     return new SystemInfoResponse(
                         SystemInfoItem.SystemItem(), SystemInfoItem.HardwareItem(), SystemInfoItem.SoftwareItem(),
@@ -508,6 +516,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
             if (components["name"] == "intervalgroup")
                 return new RawPropertyResponse(null);
+
+            if (components["name"] == "dbauth")
+                return new RawPropertyResponse("1");
 
             if (components["name"] == "comments")
                 return new RawPropertyResponse("Do not turn off!");

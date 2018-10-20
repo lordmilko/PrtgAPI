@@ -134,8 +134,12 @@ namespace PrtgAPI
         {
         }
 
-        internal PrtgClient(string server, string username, string password, AuthMode authMode, IWebClient client)
+        internal PrtgClient(string server, string username, string password, AuthMode authMode, IWebClient client,
+            IXmlSerializer xmlSerializer = null)
         {
+            if (xmlSerializer == null)
+                xmlSerializer = new XmlExpressionSerializer();
+
             if (server == null)
                 throw new ArgumentNullException(nameof(server));
 
@@ -153,7 +157,7 @@ namespace PrtgAPI
             if (authMode == AuthMode.Password)
                 ConnectionDetails.PassHash = GetPassHash(password);
 
-            ObjectEngine = new ObjectEngine(this, RequestEngine);
+            ObjectEngine = new ObjectEngine(this, RequestEngine, xmlSerializer);
         }
 
 #region Requests
@@ -538,7 +542,7 @@ namespace PrtgAPI
         {
             var response = GetObjectPropertiesRawInternal(objectId, objectType);
 
-            var data = ResponseParser.GetObjectProperties<T>(response);
+            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine);
 
             if (data is TableSettings)
             {
@@ -563,7 +567,7 @@ namespace PrtgAPI
         {
             var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType, token).ConfigureAwait(false);
 
-            var data = ResponseParser.GetObjectProperties<T>(response);
+            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine);
 
             if (data is TableSettings)
             {

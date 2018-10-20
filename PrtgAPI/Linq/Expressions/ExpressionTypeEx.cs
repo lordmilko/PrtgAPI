@@ -14,6 +14,8 @@ namespace PrtgAPI.Linq.Expressions
         SelectManyLinq,
         SkipLinq,
         TakeLinq,
-        WhereLinq
+        WhereLinq,
+
+        ElseIf
     }
 }

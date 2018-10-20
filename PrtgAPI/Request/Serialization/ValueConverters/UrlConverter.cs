@@ -4,11 +4,17 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
 {
     class UrlConverter : ValueConverter<string>
     {
-        public override string Serialize(string value) => SerializeT(value);
+        internal static UrlConverter Instance = new UrlConverter();
+
+        protected UrlConverter()
+        {
+        }
+
+        public override string Serialize(string value) => SerializeWithinType(value);
 
         public override string Deserialize(string value) => value;
 
-        public override string SerializeT(string value)
+        protected override string SerializeWithinType(string value)
         {
             var pattern = "(.+id=)(\\d+)";
 

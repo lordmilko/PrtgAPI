@@ -179,7 +179,7 @@ namespace PrtgAPI.Parameters
             {
                 if (typeof(T) == typeof(ObjectProperty))
                 {
-                    var val = XmlSerializer.DeserializeRawPropertyValue((ObjectProperty) (object) tuple.Item1, name, value?.ToString());
+                    var val = ILazyExtensions.Serializer.DeserializeObjectProperty((ObjectProperty) (object) tuple.Item1, value?.ToString());
 
                     setValue(val, tuple);
                 }

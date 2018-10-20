@@ -89,7 +89,7 @@ namespace PrtgAPI
             set { enumType = value; }
         }
 
-        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?)EnumHelpers.XmlToEnum<XmlEnumAttribute>(Type.StringValue, typeof(SensorTypeInternal), false);
+        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?)EnumHelpers.XmlToEnum<XmlEnumAttribute>(Type?.StringValue, typeof(SensorTypeInternal), false);
 
         private bool active;
 

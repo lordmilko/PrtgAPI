@@ -4,11 +4,17 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
 {
     class LastValueConverter : DoubleValueConverter, IZeroPaddingConverter
     {
+        internal static LastValueConverter Instance = new LastValueConverter();
+
+        protected LastValueConverter()
+        {
+        }
+
         private const int Multiplier = 10;
 
         public override string Serialize(double value) => Pad(value, true);
 
-        public override double SerializeT(double value)
+        protected override double SerializeWithinType(double value)
         {
             var whole = Math.Floor(value);
 
@@ -23,7 +29,7 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
 
         public string Pad(object value, bool pad)
         {
-            var d = SerializeT((double)value);
+            var d = SerializeWithinType((double)value);
 
             if (!pad)
             {

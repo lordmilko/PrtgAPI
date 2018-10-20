@@ -106,7 +106,7 @@ namespace PrtgAPI.Parameters
             {
                 var prop = TypedProperties[propKey];
 
-                var deserialized = XmlSerializer.DeserializeRawPropertyValue(prop.Item1, propKey, defaultValue);
+                var deserialized = ILazyExtensions.Serializer.DeserializeObjectProperty(prop.Item1, defaultValue);
 
                 prop.Item2.SetValue(this, deserialized);
 

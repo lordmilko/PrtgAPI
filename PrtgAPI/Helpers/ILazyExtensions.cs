@@ -6,7 +6,9 @@ namespace PrtgAPI.Helpers
 {
     static class ILazyExtensions
     {
-        internal static TProperty Get<TProperty>(this PrtgObject obj, Func<TProperty> getValue)
+        public static IXmlSerializer Serializer { get; set; } = new XmlExpressionSerializer();
+
+        internal static TProperty Get<TObject, TProperty>(this TObject obj, Func<TProperty> getValue) where TObject : PrtgObject
         {
             if (obj is ILazy)
             {
@@ -17,7 +19,7 @@ namespace PrtgAPI.Helpers
                     if (lazy.LazyInitialized == false)
                     {
                         if (lazy.LazyXml != null)
-                            XmlDeserializer<PrtgObject>.UpdateType(lazy.LazyXml.Value, obj);
+                            Serializer.Update(lazy.LazyXml.Value.CreateReader(), obj);
 
                         lazy.LazyInitialized = true;
                     }

@@ -2,6 +2,10 @@
 {
     abstract class IntValueConverter : ValueConverter<int>
     {
+        protected IntValueConverter()
+        {
+        }
+
         public override object Deserialize(object value)
         {
             int val;

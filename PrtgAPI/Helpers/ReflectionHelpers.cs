@@ -36,12 +36,12 @@ namespace PrtgAPI.Helpers
         /// <returns></returns>
         public static Type GetUnderlyingType(this Type type)
         {
-            var underlying = type.GetTypeCache().Underlying;
+            var cache = type.GetTypeCache();
 
-            if (underlying != null)
-                return underlying;
+            if (cache.Underlying != null)
+                return cache.Underlying;
 
-            return type;
+            return cache.Cache.Type;
         }
 
         public static bool IsNullable(this Type type)

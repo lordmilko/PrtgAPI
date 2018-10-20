@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -13,13 +13,12 @@ using PrtgAPI.Request.Serialization.Cache;
 
 namespace PrtgAPI.Request.Serialization
 {
-    [ExcludeFromCodeCoverage]
-    class XmlSerializer
+    class XmlReflectionSerializerImpl
     {
         private Type outerType;
         private bool deserializeAll = true;
 
-        public XmlSerializer(Type type)
+        public XmlReflectionSerializerImpl(Type type)
         {
             outerType = type;
         }
@@ -56,7 +55,7 @@ namespace PrtgAPI.Request.Serialization
         public static object DeserializeRawPropertyValue(ObjectProperty property, string rawName, string rawValue)
         {
             var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
-            var deserializer = new XmlSerializer(typeLookup);
+            var deserializer = new XmlReflectionSerializerImpl(typeLookup);
 
             var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
 
@@ -204,7 +203,7 @@ namespace PrtgAPI.Request.Serialization
             }
             catch (Exception ex) when (!(ex is XmlDeserializationException))
             {
-                throw new XmlDeserializationException(mapping.PropertyCache.Property.PropertyType, value?.ToString() ?? "null", ex);
+                throw new XmlDeserializationException(mapping.PropertyCache.Property.PropertyType.GetUnderlyingType(), value?.ToString() ?? "null", ex);
             }
         }
 
@@ -234,26 +233,57 @@ namespace PrtgAPI.Request.Serialization
         {
             var value = mapping.GetSingleXAttributeAttributeValue(elm);
 
-            value = NullifyMissingValue(value);
-            var finalValue = GetValue(value, mapping.PropertyCache, value?.Value, elm);
+            try
+            {
+                value = NullifyMissingValue(value);
+                var finalValue = GetValue(value, mapping.PropertyCache, value?.Value, elm);
 
-            mapping.PropertyCache.SetValue(obj, finalValue);
+                mapping.PropertyCache.SetValue(obj, finalValue);
+            }
+            catch (Exception ex) when (!(ex is XmlDeserializationException))
+            {
+                throw new XmlDeserializationException(mapping.PropertyCache.Property.PropertyType.GetUnderlyingType(), XmlAttributeExceptionNode(value), ex);
+            }
+        }
+
+        private string XmlAttributeExceptionNode(XAttribute attrib)
+        {
+            if (attrib == null)
+                return null;
+
+            var parent = attrib.Parent;
+
+            var name = parent.Name.ToString();
+            var value = parent.Value?.ToString();
+
+            var builder = new StringBuilder();
+            builder.Append($"<{name} {attrib.ToString()}");
+
+            if (string.IsNullOrEmpty(value))
+                builder.Append(" />");
+            else
+                builder.Append($"{value}</{name}>");
+
+            return builder.ToString();
         }
 
         private void ProcessXmlText(object obj, XmlMapping mapping, XElement elm)
         {
             var type = mapping.PropertyCache.Property.PropertyType;
 
-            elm = NullifyMissingValue(elm);
+            var nullifiedElm = NullifyMissingValue(elm);
 
-            var finalValue = GetValue(elm, mapping.PropertyCache, elm?.Value, elm);
+            var finalValue = GetValue(nullifiedElm, mapping.PropertyCache, nullifiedElm?.Value, nullifiedElm);
 
             if (type.IsValueType && Nullable.GetUnderlyingType(type) == null && finalValue == null)
             {
                 if (!deserializeAll)
                     return;
 
-                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{mapping.AttributeValue.First()}' to property '{mapping.PropertyCache.Property.Name}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
+                //AttributeValue is null when processing XmlTextAttribute
+                var elementName = mapping.AttributeValue.First() ?? elm.Name.LocalName;
+
+                throw new XmlDeserializationException($"An error occurred while attempting to deserialize XML element '{elementName}': cannot assign 'null' to value type '{type.Name}'."); //value types cant be null
             }
 
             mapping.PropertyCache.SetValue(obj, finalValue);
