@@ -2,7 +2,7 @@
     about_PrtgAPI
 
 SHORT DESCRIPTION
-    PrtgAPI is a C#/PowerShell library for interacting with the PRTG HTTP API.
+    PrtgAPI is a C#/PowerShell library for interacting with the PRTG Network Monitor HTTP API.
 
 LONG DESCRIPTION
     PrtgAPI provides a series of methods and cmdlets that abstract away the complexity serializing and deserializing

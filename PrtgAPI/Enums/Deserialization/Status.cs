@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace PrtgAPI
 {
     /// <summary>
-    /// <para type="description">Specifies states capable of being held by sensors. Devices, Groups and Probes may also hold certain states.</para>
+    /// <para type="description">Specifies states capable of being held by sensors, devices, groups and probes. Not all states may apply to all object types.</para>
     /// </summary>
     [Flags]
     public enum Status
@@ -65,7 +65,7 @@ namespace PrtgAPI
         [XmlEnum("10")] Unusual = 1024,
 
         /// <summary>
-        /// Sensor has been paused due to sensor limits imposed by a chance in license.
+        /// Sensor has been paused due to sensor limits imposed by the PRTG license.
         /// </summary>
         [XmlEnum("11")] PausedByLicense = 2048,
 

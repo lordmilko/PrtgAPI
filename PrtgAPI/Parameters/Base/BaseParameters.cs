@@ -10,11 +10,7 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class BaseParameters : IParameters
     {
-        bool IParameters.Cookie
-        {
-            get { return Cookie; }
-            set { Cookie = value; }
-        }
+        bool IParameters.Cookie => Cookie;
 
         internal bool Cookie { get; set; }
 

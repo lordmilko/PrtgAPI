@@ -6,14 +6,14 @@
 
 ![PrtgAPI](https://raw.githubusercontent.com/lordmilko/PrtgAPI/master/assets/PrtgAPI.png)
 
-PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the [PRTG HTTP API](https://prtg.paessler.com/api.htm?tabid=2&username=demo&password=demodemo).
+PrtgAPI is a C#/PowerShell library for managing and maintaining [PRTG Network Monitor](https://www.paessler.com/prtg).
 
-PrtgAPI implements a collection of types, methods and cmdlets that help create and execute the API requests required to interface with PRTG. Upon executing a request, PrtgAPI will deserialize the result into an object (Sensor, Device, Probe, etc) containing type safe properties appropriate for the given data type.
+PrtgAPI abstracts away the complexity of interfacing with PRTG via a collection of type safe methods and cmdlets, enabling you to develop powerful applications for managing your installation.
 
 Useful things you can do with PrtgAPI:
 * Generate reports based on custom queries
-* Monitor missing sensors (such as Veeam Backups) and missing devices (from your domain)
-* Create and modify sensors, devices and groups - creating from scratch or cloning from existing ones
+* Monitor the monitoring, such as missing sensors for backup jobs or devices for new domain members!
+* Create and modify sensors, devices, groups, and more! Create objects from scratch, or clone from existing!
 * Generate complex sensor factory definitions
 * Deploy notification triggers to individual sensors for specific clients
 * Maintain standard naming/alerting/object settings across your environment
@@ -75,44 +75,42 @@ For further security, you are able to pass your passhash to `PrtgClient` instead
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
 ```
 
-#### Common Objects
+#### Objects
 
-[Sensors](https://github.com/lordmilko/PrtgAPI/wiki/Sensors), [Devices](https://github.com/lordmilko/PrtgAPI/wiki/Devices), [Groups](https://github.com/lordmilko/PrtgAPI/wiki/Groups), [Probes](https://github.com/lordmilko/PrtgAPI/wiki/Probes) and [Channels](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can all be retrieved using their corresponding `Get` methods
+[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices)(https://github.com/lordmilko/PrtgAPI/wiki/Groups) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
 
 ```c#
+//Get all devices present in your system
 var devices = client.GetDevices();
 ```
 
-Each object type contains a variety of overloads for filtering objects based on a specified set of criteria.
+PrtgAPI defines a variety of methods overloads for filtering requested objects, from simple to [complex](https://github.com/lordmilko/PrtgAPI/wiki/Filters#c) search criteria.
 
 ```c#
 //List all sensors in a "down" or "down acknowledged" state.
 var downSensors = client.GetSensors(Status.Down, Status.DownAcknowledged).Select(s => s.Name).ToList();
 ```
+
 ```c#
 //List all devices under probes whose name contains "chicago"
 var chicagoProbeDevices = client.GetDevices(Property.Probe, FilterOperator.Contains, "chicago");
 ```
+
+Async is fine too
+
 ```c#
 //List all sensors under the Device with Object ID 2000.
-var childSensors = client.GetSensors(Property.ParentId, 2000);
+var childSensors = await client.GetSensorsAsync(Property.ParentId, 2000);
 ```
-```c#
-//Get all channels of all WMI CPU Load sensors
-var sensors = client.GetSensors(Property.Tags, "wmicpuloadsensor");
 
-var channels = sensors.Select(s => client.GetChannels(s.Id));
-```
+You can even use `IQueryable`!
+
 ```c#
 //Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
-var filters = new []
-{
-    new SearchFilter(Property.Type, "ping"),
-    new SearchFilter(Property.Device, FilterOperator.Contains, "dc"),
-    new SearchFilter(Property.Probe, "Perth Office")
-};
 
-var perthDCPingSensors = client.GetSensors(filters);
+var perthDCPingSensors = client.QuerySensors(
+    s => s.Type == "ping" && s.Device.Contains("dc") && s.Probe == "perth Office"
+).Take(3);
 ```
 
 #### Object Manipulation
@@ -157,9 +155,46 @@ var sensors = client.GetSensors(Status.Down);
 client.AcknowledgeSensor(sensors.Select(s => s.Id).ToArray());
 ```
 
-#### Other Objects
+#### Object Creation
 
-Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), [historical logs and data](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) can be perused, and much much more. For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
+You can construct an entirely new object hierarchy all within your application.
+
+First, create a group
+
+```c#
+//Add a new group named "Servers" to the object with ID 1
+var group = client.AddGroup(1, "Servers");
+```
+
+Then, add a device to it
+
+```c#
+//Add a new device named "dc-1" to the "Servers" group
+var device = client.AddDevice(group.Id, "dc-1");
+```
+
+We'll add a new sensor
+
+```c#
+//Create a brand new Ping sensor and add it to our device
+var pingParams = client.DynamicSensorParameters(device.Id, "ping");
+var sensor = client.AddSensor(device.Id, pingParams).Single();
+```
+
+And since we've already defined some notification triggers elsewhere, let's copy one in!
+
+```c#
+//Get the "PagerDuty" notification trigger from the object with ID 2001
+var existingTrigger = client.GetNotificationTriggers(2001).First(t => t.OnNotificationAction.Name.Contains("PagerDuty"));
+
+//Add it to our Ping sensor
+var triggerParams = new StateTriggerParameters(sensor.Id, existingTrigger);
+var newTrigger = client.AddNotificationTrigger(triggerParams);
+```
+
+Madness!
+
+For a comprehensive overview of the functionality of PrtgAPI and detailed usage instructions, please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
 ### Overview (PowerShell)
 
@@ -255,7 +290,9 @@ Update-GoPrtgCredential
 
 All cmdlets include complete `Get-Help` documentation, including a cmdlet overview, parameter descriptions and example usages. For an overview of a cmdlet see `Get-Help <cmdlet>` or `Get-Help <cmdlet> -Full` for complete documentation.
 
-#### Common Objects
+#### Objects
+
+[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices)(https://github.com/lordmilko/PrtgAPI/wiki/Groups) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
 
 Get all ping [sensors](https://github.com/lordmilko/PrtgAPI/wiki/Sensors)
 
@@ -337,9 +374,24 @@ $sensors = Get-Probe | Select -Last 1 | Get-Group | Select -Last 2 | Get-Device 
 $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 ```
 
+#### Object Creation
+
+PowerShell makes it easy to construct complex object hierarchies
+
+```
+# Create a new group and a new device
+$device = Get-Probe contoso | Add-Group "Servers" | Add-Device "exch-1"
+
+# Create sensors for all of your Exchange Services
+$params = $device | Get-SensorTarget WmiService *exchange* -Params
+$device | Add-Sensor $params
+```
+
+By throwing your data into a CSV, you can perform [arbitrarily complex configurations](https://github.com/lordmilko/PrtgAPI/issues/13#issuecomment-383493681) with minimal effort.
+
 #### Other Objects
 
-Objects can be [cloned or created from scratch](https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation), notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), sensor factories can be [generated](https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories), and much much more. For full usage instructions on PrtgAPI please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
+Notification triggers can be [retrieved, added and modified](https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers), sensor factories can be [generated](https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories), historical details can be [viewed](https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information) and much much more. For full usage instructions on PrtgAPI please see [the wiki](https://github.com/lordmilko/PrtgAPI/wiki)
 
 ## Interesting Things PrtgAPI Does
 

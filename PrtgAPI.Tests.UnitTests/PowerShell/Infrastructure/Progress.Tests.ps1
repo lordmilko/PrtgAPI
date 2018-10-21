@@ -8320,7 +8320,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
@@ -8329,7 +8329,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             ###################################################################
 
@@ -8340,7 +8340,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
@@ -8349,7 +8349,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
@@ -8367,7 +8367,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
@@ -8384,7 +8384,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
@@ -8414,7 +8414,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
@@ -8434,7 +8434,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
@@ -8462,7 +8462,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
@@ -8479,7 +8479,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
@@ -8518,7 +8518,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
@@ -8530,7 +8530,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             ###################################################################
 
@@ -8544,7 +8544,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
@@ -8556,7 +8556,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
@@ -8583,7 +8583,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
@@ -8604,7 +8604,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
@@ -8633,7 +8633,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
@@ -8654,7 +8654,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                    (Gen3 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
@@ -8691,10 +8691,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             ###################################################################
 
@@ -8702,10 +8702,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/3)" 66)
         ))
@@ -8731,8 +8731,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
 
-            (Gen "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
-            (Gen "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+            (Gen "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device2' (1/1)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device2' (1/1)" 100)
         ))
     }
 
@@ -8752,19 +8752,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device2' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3002 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device2' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
         ))
@@ -8785,16 +8785,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (50%)")
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device2' (3/3)" 100) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device2' (3/3)" 100)
         ))
@@ -8812,10 +8812,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/3)" 33) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3000 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             ###################################################################
 
@@ -8823,10 +8823,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66 "Probing target device (100%)")
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/3)" 66) +
-                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device ID 3001 (1/1)" 100)
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/3)" 66)
         ))

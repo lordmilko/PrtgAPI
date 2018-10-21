@@ -122,8 +122,9 @@ namespace PrtgAPI.Request.Serialization.Cache
                         if (dict.TryGetValue(underlying, out value))
                         {
                             //The underlying type existed! Map the nullable type to the underlying type's value
-                            dict[type] = new CacheValue<T>(underlying, value.Cache);
-                            return value;
+                            var nullableValue = new CacheValue<T>(underlying, value.Cache);
+                            dict[type] = nullableValue;
+                            return nullableValue;
                         }
 
                         //The underlying type didn't exist. Map both the nullable and non nullable type to the same value

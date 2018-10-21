@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -26,6 +27,7 @@ namespace PrtgAPI
         /// Trigger when the sensor is <see cref="Status.DownPartial"/>.
         /// </summary>
         [XmlEnum("Partial Down")]
+        [XmlEnumAlternateName("Down (Partial)")]
         PartialDown = 3
     }
 }

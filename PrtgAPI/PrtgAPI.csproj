@@ -80,7 +80,7 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\FactoryMissingDataMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\GraphType.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\HashType.cs" />
-    <Compile Include="Enums\Deserialization\ObjectSettings\HTTPMode.cs" />
+    <Compile Include="Enums\Deserialization\ObjectSettings\HttpMode.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\HttpRequestMethod.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\IPSelectionMethod.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\IPVersion.cs" />

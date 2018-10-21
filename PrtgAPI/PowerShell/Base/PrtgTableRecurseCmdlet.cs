@@ -106,7 +106,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private IEnumerable<Group> GetChildGroups(Group parentGroup)
         {
-            client.Log($"Retrieveing all child groups of group {parentGroup}", LogLevel.Trace);
+            client.Log($"Retrieving all child groups of group {parentGroup}", LogLevel.Trace);
 
             var childGroups = client.GetGroups(Property.ParentId, parentGroup.Id);
 

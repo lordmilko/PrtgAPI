@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// Specifies HTTP protocols.
     /// </summary>
-    public enum HTTPMode
+    public enum HttpMode
     {
         /// <summary>
         /// Secure HTTP.

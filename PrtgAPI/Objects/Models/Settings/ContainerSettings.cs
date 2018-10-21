@@ -183,7 +183,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("injected_wbemprotocol")]
         [TypeLookup(typeof(XmlEnumAlternateName))]
-        public HTTPMode WbemProtocolMode { get; set; }
+        public HttpMode WbemProtocolMode { get; set; }
 
         /// <summary>
         /// Indicates the port to use for WBEM communications. If automatic is specified, the port will be 5988 or 5989.<para/>
@@ -280,7 +280,7 @@ namespace PrtgAPI
         /// Corresponds to Credentials for VMware/XenServer -> VMware Protocol.
         /// </summary>
         [XmlElement("injected_esxprotocol")]
-        public HTTPMode VMwareProtocol { get; set; }
+        public HttpMode VMwareProtocol { get; set; }
 
         /// <summary>
         /// Whether to reuse sessions for multiple sensor scans.<para/>

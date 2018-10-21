@@ -95,7 +95,7 @@ namespace PrtgAPI
         [DataMember(Name = "nodest")]
         private string stateTrigger;
 
-        internal TriggerSensorState? StateTrigger => stateTrigger?.XmlToEnum<TriggerSensorState>();
+        internal TriggerSensorState? StateTrigger => stateTrigger == null ? null : (TriggerSensorState?)EnumExtensions.XmlToEnumAnyAttrib(stateTrigger, typeof(TriggerSensorState));
 
         /// <summary>
         /// Delay (in seconds) before this notification is activated after activation requirements have been met.

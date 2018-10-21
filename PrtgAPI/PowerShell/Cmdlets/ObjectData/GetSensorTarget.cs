@@ -44,7 +44,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <example>
     ///     <code>C:\> $device = Get-Device -Id 1001</code>
-    ///     <para>C:\> $services = Get-SensorTarget WmiService *exchange*</para>
+    ///     <para>C:\> $services = $device | Get-SensorTarget WmiService *exchange*</para>
     ///     <para>C:\> $params = New-SensorParameters WmiService $services</para>
     ///     <para>C:\> $device | Add-Sensor $params</para>
     ///     <para>Add all WMI Services whose name contains "Exchange" to the Device with ID 1001</para>

@@ -12,7 +12,7 @@ namespace PrtgAPI.Parameters
         /// Specifies whether to use a stored Cookie for authentication requests. If this value is false,
         /// authentication will be performed with a username and password/passhash.
         /// </summary>
-        bool Cookie { get; set; }
+        bool Cookie { get; }
 
         /// <summary>
         /// Gets or sets a <see cref="Parameter"/> for use in a <see cref="PrtgUrl"/>.

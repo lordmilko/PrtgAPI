@@ -1883,7 +1883,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <param name="interval">Interval (in seconds) with which PrtgAPI should poll for new logs.</param>
-        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.
+        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieving records.
         /// Called between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</returns>
@@ -1898,7 +1898,7 @@ namespace PrtgAPI
         /// <param name="objectId">ID of the object to retrieve logs for.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <param name="interval">Interval (in seconds) with which PrtgAPI should poll for new logs.</param>
-        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieveing records.
+        /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieving records.
         /// Called between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</returns>

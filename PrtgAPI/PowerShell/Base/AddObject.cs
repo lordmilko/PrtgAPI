@@ -68,7 +68,7 @@ namespace PrtgAPI.PowerShell.Base
                     else
                         client.AddObject(destination.Id, Parameters, (f, t) => GetObjects(f), false, CancellationToken);
 
-                }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} ID {destination.Id}");
+                }, $"Adding {type.ToString().ToLower()} '{Parameters.Name}' to {destination.BaseType.ToString().ToLower()} '{destination.Name}'");
             }
         }
 

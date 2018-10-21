@@ -68,6 +68,8 @@ Describe "Add-Sensor_IT" {
             CheckValue "IntervalErrorMode"
 
             $newSensor.NotificationTypes.InheritTriggers | Should Be $false
+
+            $newSensor | Remove-Object -Force
         }
 
         It "adds a new sensor using raw parameters" {
@@ -119,6 +121,8 @@ Describe "Add-Sensor_IT" {
             $properties.Interval | Should Be "00:00:30"
             $properties.IntervalErrorMode | Should Be "TwoWarningsThenDown"
             $newSensor.NotificationTypes.InheritTriggers | Should Be $false
+
+            $newSensor | Remove-Object -Force
         }
 
         It "resolves a new sensor" {

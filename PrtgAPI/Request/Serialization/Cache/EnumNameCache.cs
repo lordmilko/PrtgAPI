@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Request.Serialization.Cache
 {
+    [ExcludeFromCodeCoverage]
     class EnumNameCache : TypeCache
     {
         private Lazy<Dictionary<string, Enum>> nameCache;
