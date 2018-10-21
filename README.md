@@ -233,6 +233,7 @@ New-SensorParameters
 Open-PrtgObject
 Pause-Object
 Refresh-Object
+Refresh-SystemInfo
 Remove-NotificationTrigger
 Remove-Object
 Rename-Object

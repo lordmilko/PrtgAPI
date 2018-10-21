@@ -52,7 +52,7 @@ namespace PrtgAPI
         private string CreationDateStr
         {
             get { return creationDateStr; }
-            set { SetDate(value, ref creationDateStr, ref creationdate); }
+            set { SetDateColon(value, ref creationDateStr, ref creationdate); }
         }
 
         /// <summary>
@@ -66,11 +66,6 @@ namespace PrtgAPI
         /// Name of the process.
         /// </summary>
         public override string Name => DisplayName;
-
-        internal override DateTime FormatDate(string value)
-        {
-            return DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-        }
 
         /// <summary>
         /// Returns a string that represents the current object.

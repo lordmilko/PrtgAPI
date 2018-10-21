@@ -2497,6 +2497,37 @@ namespace PrtgAPI
             await GetSystemInfoInternalAsync(deviceId, type, token).ConfigureAwait(false);
 
             #endregion
+            #region Refresh
+
+        /// <summary>
+        /// Refreshes one or more types of system information on a specified device.<para/>
+        /// If no types are specified, all information types will be refreshed.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
+        public void RefreshSystemInfo(int deviceId, params SystemInfoType[] types) =>
+            RefreshSystemInfoInternal(deviceId, types, CancellationToken.None);
+
+        /// <summary>
+        /// Asynchronously refreshes one or more types of system information on a specified device.<para/>
+        /// If no types are specified, all information types will be refreshed.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
+        public async Task RefreshSystemInfoAsync(int deviceId, params SystemInfoType[] types) =>
+            await RefreshSystemInfoAsync(deviceId, types, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously refreshes one or more types of system information on a specified device with a specified cancellation token.<para/>
+        /// If no types are specified, all information types will be refreshed.
+        /// </summary>
+        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task RefreshSystemInfoAsync(int deviceId, SystemInfoType[] types, CancellationToken token) =>
+            await RefreshSystemInfoInternalAsync(deviceId, types, token).ConfigureAwait(false);
+
+            #endregion
         #endregion
         #region Total Objects
 

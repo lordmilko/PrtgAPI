@@ -801,6 +801,7 @@
                         <Width>10</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/> <!-- CreationDate -->
+                    <TableColumnHeader/> <!-- LastUpdated -->
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
@@ -816,6 +817,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>CreationDate</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>LastUpdated</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
@@ -983,6 +987,7 @@
                         <Width>15</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/> <!-- User -->
+                    <TableColumnHeader/> <!-- LastUpdated -->
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
@@ -998,6 +1003,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>LastUpdated</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>

@@ -149,6 +149,7 @@
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.Probe.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Acknowledge-Sensor.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\Refresh-SystemInfo.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Rename-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Restart-Probe.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Restart-PrtgCore.Tests.ps1" />

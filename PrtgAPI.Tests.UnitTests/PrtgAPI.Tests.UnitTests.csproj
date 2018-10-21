@@ -364,6 +364,7 @@
     <None Include="PowerShell\ObjectManipulation\New-SensorParameters.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Refresh-Object.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\Refresh-SystemInfo.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Remove-NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Remove-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Rename-Object.Tests.ps1" />

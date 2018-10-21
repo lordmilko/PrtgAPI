@@ -249,10 +249,12 @@
     <Compile Include="Parameters\ObjectManipulation\FoldParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\LoadConfigFilesParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RefreshObjectParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\RefreshSystemInfoParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetCompletedParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SortAlphabeticallyParameters.cs" />
     <Compile Include="PowerShell\Base\IWatchableCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetSystemInfo.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RefreshSystemInfo.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
     <Compile Include="PowerShell\DynamicParameterPropertyTypes.cs" />
     <Compile Include="PowerShell\Either.cs" />

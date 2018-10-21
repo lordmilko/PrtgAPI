@@ -77,7 +77,7 @@ namespace PrtgAPI
         private string InstallDateStr
         {
             get { return installDateStr; }
-            set { SetDate(value, ref installDateStr, ref installDate); }
+            set { SetDateDash(value, ref installDateStr, ref installDate); }
         }
 
         /// <summary>

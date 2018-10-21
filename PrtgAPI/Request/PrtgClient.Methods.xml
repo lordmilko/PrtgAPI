@@ -582,6 +582,22 @@
                     </Body>
                 </MethodDef>
             </Region>
+            <Region name="Refresh">
+                <MethodDef name="RefreshSystemInfo" returns="void" tokenMode="MandatoryCall">
+                    <Summary>
+                        Refreshes one or more types of system information on a specified device.&lt;para/&gt;
+
+                        If no types are specified, all information types will be refreshed.
+                </Summary>
+
+                    <Parameter name="deviceId" type="int" description="ID of the device to refresh system information for."/>
+                    <Parameter name="types" type="params SystemInfoType[]" description="Types to refresh. If no types are specified, all types will be refreshed."/>
+
+                    <Body expression="true">
+                        <Call name="RefreshSystemInfoInternal" args="deviceId, types"/>
+                    </Body>
+                </MethodDef>
+            </Region>
         </Template>
         <Template name="TotalObjects">
             <MethodDef name="GetTotalObjects" returns="int" tokenMode="AutomaticNamed">

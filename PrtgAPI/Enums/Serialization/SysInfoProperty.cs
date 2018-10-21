@@ -7,6 +7,9 @@ namespace PrtgAPI
     /// </summary>
     enum SysInfoProperty
     {
+        [Description("_receivetime")]
+        ReceiveTime,
+
         /// <summary>
         /// Object display name. Applies to: all <see cref="DeviceInfoType"/> types.
         /// </summary>

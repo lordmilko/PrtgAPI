@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using PrtgAPI.Helpers;
@@ -21,6 +22,24 @@ namespace PrtgAPI
         /// </summary>
         public abstract DeviceInfoType Type { get; }
 
+        #region LastUpdated
+
+        private string lastUpdatedStr;
+        private DateTime? lastUpdated;
+
+        [DataMember(Name = nameof(SysInfoProperty.ReceiveTime))]
+        internal string LastUpdatedStr
+        {
+            get { return lastUpdatedStr; }
+            set { SetDateColon(value, ref lastUpdatedStr, ref lastUpdated, "dd-MM-yyyy HH:mm:ss.FFF"); }
+        }
+
+        /// <summary>
+        /// Time this information was last received by PRTG from the target device
+        /// </summary>
+        public DateTime LastUpdated => lastUpdated.Value;
+
+        #endregion
         #region DisplayName
 
         private string displayNameStr;
@@ -78,13 +97,23 @@ namespace PrtgAPI
                 longField = l;
         }
 
-        internal void SetDate(string value, ref string strField, ref DateTime? dateField)
+        internal void SetDateDash(string value, ref string strField, ref DateTime? dateField)
+        {
+            SetDateInternal(value, ref strField, ref dateField, s => ParameterHelpers.StringToDate(s));
+        }
+
+        internal void SetDateColon(string value, ref string strField, ref DateTime? dateField, string format = "yyyy-MM-dd HH:mm:ss")
+        {
+            SetDateInternal(value, ref strField, ref dateField, s => DateTime.ParseExact(s, format, CultureInfo.InvariantCulture));
+        }
+
+        private void SetDateInternal(string value, ref string strField, ref DateTime? dateField, Func<string, DateTime?> func)
         {
             if (string.IsNullOrEmpty(value))
                 return;
 
             strField = value;
-            dateField = FormatDate(value);
+            dateField = func(value);
         }
 
         internal void SetVersion(string value, ref string strField, ref Version versionField)
@@ -111,11 +140,6 @@ namespace PrtgAPI
                 return state.Replace(img.Value, "");
 
             return state;
-        }
-
-        internal virtual DateTime FormatDate(string value)
-        {
-            return ParameterHelpers.StringToDate(value);
         }
 
         /// <summary>

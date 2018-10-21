@@ -143,6 +143,9 @@ namespace PrtgAPI
         LoadLookups,
 
         [Description("foldobject.htm")]
-        FoldObject
+        FoldObject,
+
+        [Description("sysinfochecknow.json")]
+        SysInfoCheckNow
     }
 }

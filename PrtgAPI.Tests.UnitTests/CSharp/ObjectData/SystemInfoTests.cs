@@ -39,12 +39,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Execute(
                 c => c.GetSystemInfo(40),
                 new[] {
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_key,_value,_id,_adapter,_displayname&category=system&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_class,_caption,_state,_serialnumber,_capacity,_displayname&category=hardware&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_vendor,_version,_date,_size,_displayname&category=software&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_processid,_caption,_creationdate,_displayname&category=processes&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_startname,_startmode,_state,_displayname&category=services&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_domain,_user,_displayname&category=loggedonusers&username=username&passhash=12345678"
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_key,_value,_id,_adapter,_receivetime,_displayname&category=system&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_class,_caption,_state,_serialnumber,_capacity,_receivetime,_displayname&category=hardware&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_vendor,_version,_date,_size,_receivetime,_displayname&category=software&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_processid,_caption,_creationdate,_receivetime,_displayname&category=processes&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_startname,_startmode,_state,_receivetime,_displayname&category=services&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_domain,_user,_receivetime,_displayname&category=loggedonusers&username=username&passhash=12345678"
                 }
             );
         }
@@ -166,42 +166,42 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         public void SystemInfo_AllPropertiesAreNull()
         {
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem(null, null, null, null, null));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceHardwareInfo>(SystemInfoItem.HardwareItem(null, null, null, null, null, null, null, null));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem(null, null, null, null, null, null));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceProcessInfo>(SystemInfoItem.ProcessItem(null, null, null, null));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceServiceInfo>(SystemInfoItem.ServiceItem(null, null, null, null, null, null));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceUserInfo>(SystemInfoItem.UserItem(null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem(null, null, null, null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceHardwareInfo>(SystemInfoItem.HardwareItem(null, null, null, null, null, null, null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem(null, null, null, null, null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceProcessInfo>(SystemInfoItem.ProcessItem(null, null, null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceServiceInfo>(SystemInfoItem.ServiceItem(null, null, null, null, null, null, null));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceUserInfo>(SystemInfoItem.UserItem(null, null, null, null));
         }
 
         [TestMethod]
         public void SystemInfo_AllPropertiesAreEmpty()
         {
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\""));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceHardwareInfo>(SystemInfoItem.HardwareItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\""));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\""));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceProcessInfo>(SystemInfoItem.ProcessItem("\"0\"", "\"\"", "\"\"", "\"\""));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceServiceInfo>(SystemInfoItem.ServiceItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\""));
-            AssertAllSystemInfoPropertiesDontHaveValues<DeviceUserInfo>(SystemInfoItem.UserItem("\"\"", "\"\"", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem("\"\"", "\"\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceHardwareInfo>(SystemInfoItem.HardwareItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceProcessInfo>(SystemInfoItem.ProcessItem("\"0\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceServiceInfo>(SystemInfoItem.ServiceItem("\"\"", "\"\"", "\"\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
+            AssertAllSystemInfoPropertiesDontHaveValues<DeviceUserInfo>(SystemInfoItem.UserItem("\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
         }
 
         [TestMethod]
         public void SystemInfo_NoPropertiesAreStrings()
         {
-            GetSystemInfoResponse<DeviceSystemInfo>(SystemInfoItem.SystemItem("1", "2", "3", "4", "5"));
-            GetSystemInfoResponse<DeviceHardwareInfo>(SystemInfoItem.HardwareItem("1", "2", "3", "4", "5", "6", "7", "8"));
-            GetSystemInfoResponse<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem("1", "2", "3", "\"2017-05-23-00-00-00\"", "5", "6"));
-            GetSystemInfoResponse<DeviceProcessInfo>(SystemInfoItem.ProcessItem("1", "2", "\"2018-08-31 19:36:26\"", "4"));
-            GetSystemInfoResponse<DeviceServiceInfo>(SystemInfoItem.ServiceItem("1", "2", "3", "4", "5"));
-            GetSystemInfoResponse<DeviceUserInfo>(SystemInfoItem.UserItem("1", "2", "3"));
+            GetSystemInfoResponse<DeviceSystemInfo>(SystemInfoItem.SystemItem("1", "2", "3", "4", "01-02-2003 21:10:13.425", "5"));
+            GetSystemInfoResponse<DeviceHardwareInfo>(SystemInfoItem.HardwareItem("1", "2", "3", "4", "5", "6", "7", "01-02-2003 21:10:13.425", "8"));
+            GetSystemInfoResponse<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem("1", "2", "3", "\"2017-05-23-00-00-00\"", "5", "01-02-2003 21:10:13.425", "6"));
+            GetSystemInfoResponse<DeviceProcessInfo>(SystemInfoItem.ProcessItem("1", "2", "\"2018-08-31 19:36:26\"", "01-02-2003 21:10:13.425", "4"));
+            GetSystemInfoResponse<DeviceServiceInfo>(SystemInfoItem.ServiceItem("1", "2", "3", "4", "5", "01-02-2003 21:10:13.425", "6"));
+            GetSystemInfoResponse<DeviceUserInfo>(SystemInfoItem.UserItem("1", "2", "01-02-2003 21:10:13.425", "3"));
         }
 
         [TestMethod]
         public void SystemInfo_NotSupported_AllLanguages()
         {
-            var english = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"}]}";
-            var german = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"},{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"},{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"}]}";
-            var japanese = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"},{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"},{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"}]}";
+            var english = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"}]}";
+            var german = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"},{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"},{\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\",\"\":\"Nicht gefunden\",\"_raw\":\"\"}]}";
+            var japanese = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"},{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"},{\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\",\"\":\"見つかりません\",\"_raw\":\"\"}]}";
 
             AssertEx.AssertErrorResponseAllLanguages<PrtgRequestException>(
                 english,
@@ -220,6 +220,88 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(obj.Version.ToString(), "5.0");
         }
 
+        #region Escape Quotes
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_FirstObject_FirstProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("first", "\"second\"", displayName: "\"third\"");
+
+            ValidateEscapeQuotes(1, 0, test, normal);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_FirstObject_MiddleProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("\"first\"", "second", displayName: "\"third\"");
+
+            ValidateEscapeQuotes(1, 0, test, normal);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_FirstObject_LastProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("\"first\"", "\"second\"", displayName: "third");
+
+            ValidateEscapeQuotes(1, 0, test, normal);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_LastObject_FirstProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("first", "\"second\"", displayName: "\"third\"");
+
+            ValidateEscapeQuotes(0, 1, normal, test);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_LastObject_MiddleProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("\"first\"", "second", displayName: "\"third\"");
+
+            ValidateEscapeQuotes(0, 1, normal, test);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_LastObject_LastProperty()
+        {
+            var normal = SystemInfoItem.UserItem();
+            var test = SystemInfoItem.UserItem("\"first\"", "\"second\"", displayName: "third");
+
+            ValidateEscapeQuotes(0, 1, normal, test);
+        }
+
+        [TestMethod]
+        public void SystemInfo_EscapesQuotes_Numbers()
+        {
+            var item = SystemInfoItem.ProcessItem("\"2002\"");
+            var result = GetSystemInfoResponse<DeviceProcessInfo>(item);
+            Assert.AreEqual(2002, result.ProcessId);
+        }
+
+        private void ValidateEscapeQuotes(int normalIndex, int testIndex, params SystemInfoItem[] items)
+        {
+            var client = GetSystemInfoClient(items);
+            var users = client.GetSystemInfo<DeviceUserInfo>(1001);
+
+            Assert.AreEqual(2, users.Count);
+
+            Assert.AreEqual("PRTG-1", users[normalIndex].Domain);
+            Assert.AreEqual("NETWORK SERVICE", users[normalIndex].User);
+            Assert.AreEqual("PRTG-1\\NETWORK SERVICE", users[normalIndex].DisplayName);
+
+            Assert.AreEqual("first", users[testIndex].Domain);
+            Assert.AreEqual("second", users[testIndex].User);
+            Assert.AreEqual("third", users[testIndex].DisplayName);
+        }
+
+        #endregion
+
         #region Property Map
 
         [TestMethod]
@@ -229,16 +311,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var value = "\"Value\"";
             var id = "3";
             var adapter = "\"Adapter\"";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"DisplayName\"";
 
             var obj = GetSystemInfoResponse<DeviceSystemInfo>(
-                SystemInfoItem.SystemItem(key, value, id, adapter, displayName)
+                SystemInfoItem.SystemItem(key, value, id, adapter, receiveTime, displayName)
             );
 
             AssertAreEqual("Key", obj.Property);
             AssertAreEqual(value, obj.Value);
             AssertAreEqual(Convert.ToInt32(id), obj.Id);
             AssertAreEqual(adapter, obj.Adapter);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);
         }
 
@@ -252,11 +336,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var state = "\"<img src=\\\"/images/state_.png\\\"> State\"";
             var serialNumber = "\"SerialNumber\"";
             var capacity = "1234567890123456789";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"DisplayName\"";
 
             var obj = GetSystemInfoResponse<DeviceHardwareInfo>(
                 SystemInfoItem.HardwareItem(name, description, @class, caption,
-                    state, serialNumber, capacity, displayName
+                    state, serialNumber, capacity, receiveTime, displayName
                 )
             );
 
@@ -267,6 +352,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertAreEqual("State", obj.State);
             AssertAreEqual(serialNumber, obj.SerialNumber);
             AssertAreEqual(Convert.ToInt64(capacity), obj.Capacity);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);
         }
 
@@ -278,10 +364,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var version = "1.2";
             var date = "\"2017-05-23-00-00-00\"";
             var size = "1234";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"DisplayName\"";
 
             var obj = GetSystemInfoResponse<DeviceSoftwareInfo>(
-                SystemInfoItem.SoftwareItem(name, vendor, version, date, size, displayName)
+                SystemInfoItem.SoftwareItem(name, vendor, version, date, size, receiveTime, displayName)
             );
 
             AssertAreEqual(name, obj.Name);
@@ -289,6 +376,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertAreEqual(Version.Parse(version), obj.Version);
             AssertAreEqual(ParameterHelpers.StringToDate(date.Trim('"')), obj.InstallDate);
             AssertAreEqual(Convert.ToInt32(size), obj.Size);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);
         }
 
@@ -298,15 +386,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var processId = "3";
             var caption = "\"Caption\"";
             var creationDate = "\"2018-08-31 19:36:26\"";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"DisplayName\"";
 
             var obj = GetSystemInfoResponse<DeviceProcessInfo>(
-                SystemInfoItem.ProcessItem(processId, caption, creationDate, displayName)
+                SystemInfoItem.ProcessItem(processId, caption, creationDate, receiveTime, displayName)
             );
 
             AssertAreEqual(Convert.ToInt32(processId), obj.ProcessId);
             AssertAreEqual(caption, obj.Caption);
             AssertAreEqual(DateTime.ParseExact(creationDate.Trim('"'), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), obj.CreationDate);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);
         }
 
@@ -318,10 +408,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var startName = "\"StartName\"";
             var startMode = "\"StartMode\"";
             var state = "\"<img src=\\\"/images/state_stopped.png\\\"> State\"";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"DisplayName\"";
 
             var obj = GetSystemInfoResponse<DeviceServiceInfo>(
-                SystemInfoItem.ServiceItem(name, description, startName, startMode, state, displayName)
+                SystemInfoItem.ServiceItem(name, description, startName, startMode, state, receiveTime, displayName)
             );
 
             AssertAreEqual(name, obj.Name);
@@ -329,6 +420,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertAreEqual(startName, obj.User);
             AssertAreEqual(startMode, obj.StartMode);
             AssertAreEqual("State", obj.State);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);
         }
 
@@ -337,14 +429,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var domain = "\"Domain\"";
             var user = "\"User\"";
+            var receiveTime = "01-02-2003 21:10:13.425";
             var displayName = "\"Domain\\\\User\"";
 
             var obj = GetSystemInfoResponse<DeviceUserInfo>(
-                SystemInfoItem.UserItem(domain, user, displayName)
+                SystemInfoItem.UserItem(domain, user, receiveTime, displayName)
             );
 
             AssertAreEqual(domain, obj.Domain);
             AssertAreEqual(user, obj.User);
+            AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual("Domain\\User", obj.DisplayName);
         }
 
@@ -388,10 +482,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             Func<PropertyInfo, bool> innerCustomHandler = p =>
             {
-                if (p.Name == "DeviceId")
+                if (p.Name == nameof(IDeviceInfo.DeviceId) || p.Name == nameof(IDeviceInfo.LastUpdated))
                     return true;
 
-                if (p.Name == "Type")
+                if (p.Name == nameof(IDeviceInfo.Type))
                     return true;
 
                 if (customHandler != null)

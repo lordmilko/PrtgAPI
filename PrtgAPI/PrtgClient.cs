@@ -256,6 +256,25 @@ namespace PrtgAPI
             );
         }
 
+        private void RefreshSystemInfoInternal(int deviceId, SystemInfoType[] types, CancellationToken token)
+        {
+            if(types == null || types.Length == 0)
+                types = typeof(SystemInfoType).GetEnumValues().Cast<SystemInfoType>().ToArray();
+
+            foreach (var type in types)
+                RequestEngine.ExecuteRequest(new RefreshSystemInfoParameters(deviceId, type), token: token);
+        }
+
+        private async Task RefreshSystemInfoInternalAsync(int deviceId, SystemInfoType[] types, CancellationToken token)
+        {
+            if (types == null || types.Length == 0)
+                types = typeof(SystemInfoType).GetEnumValues().Cast<SystemInfoType>().ToArray();
+
+            var tasks = types.Select(t => RequestEngine.ExecuteRequestAsync(new RefreshSystemInfoParameters(deviceId, t), token: token)).ToArray();
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+
         #endregion
         #region Channel
 

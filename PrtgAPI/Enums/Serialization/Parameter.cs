@@ -264,6 +264,13 @@ namespace PrtgAPI
         Category,
 
         /// <summary>
+        /// Object kind request should apply to.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        Kind,
+
+        /// <summary>
         /// The details of a WMI Service to create.
         /// </summary>
         [Undocumented]

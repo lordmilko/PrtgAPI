@@ -126,6 +126,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(CommandFunction.SetPosition):
                 case nameof(CommandFunction.Simulate):
                 case nameof(CommandFunction.SortSubObjects):
+                case nameof(CommandFunction.SysInfoCheckNow):
                     return new BasicResponse(string.Empty);
                 default:
                     throw GetUnknownFunctionException(function);
