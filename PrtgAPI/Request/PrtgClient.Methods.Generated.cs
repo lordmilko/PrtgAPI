@@ -919,7 +919,7 @@ namespace PrtgAPI
         /// <param name="deviceId">The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates.</param>
         /// <returns>A list of device templates supported by the specified object.</returns>
         public List<DeviceTemplate> GetDeviceTemplates(int deviceId = 40) =>
-            ResponseParser.GetTemplates(GetObjectPropertiesRawInternal(deviceId, ObjectType.Device));
+            ResponseParser.GetTemplates(GetObjectPropertiesRawInternal(deviceId, ObjectType.Device).StringValue);
 
         /// <summary>
         /// Asynchronously retrieves all auto-discovery device templates supported by the specified object.
@@ -928,7 +928,7 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of device templates supported by the specified object.</returns>
         public async Task<List<DeviceTemplate>> GetDeviceTemplatesAsync(int deviceId = 40, CancellationToken token = default(CancellationToken)) =>
-            ResponseParser.GetTemplates(await GetObjectPropertiesRawInternalAsync(deviceId, ObjectType.Device, token).ConfigureAwait(false));
+            ResponseParser.GetTemplates((await GetObjectPropertiesRawInternalAsync(deviceId, ObjectType.Device, token).ConfigureAwait(false)).StringValue);
 
         #endregion
         #region Groups

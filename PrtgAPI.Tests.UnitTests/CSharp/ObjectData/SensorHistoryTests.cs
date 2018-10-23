@@ -84,5 +84,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 c => c.GetSensorHistory(1001)
             );
         }
+
+        [TestMethod]
+        public async Task SensorHistory_NoData_AllLanguagesAsync()
+        {
+            await AssertEx.AssertErrorResponseAllLanguagesAsync<PrtgRequestException>(
+                "Not enough monitoring data",
+                "Zu wenige Monitoringdaten",
+                "監視データが不十分です",
+                "The server responded with the following error",
+                async c => await c.GetSensorHistoryAsync(1001)
+            );
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using PrtgAPI.Html;
+using PrtgAPI.Request;
 
 namespace PrtgAPI
 {
@@ -19,18 +20,20 @@ namespace PrtgAPI
         internal static string backwardsMatchRegex = "<input.+?value=\".*?\".+?name=\".*?\".*?>";
         internal static string standardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
 
-        internal static XElement GetXml(string response)
+        internal static XElement GetXml(PrtgResponse response)
         {
-            var inputXml = GetInputXml(response);
-            var ddlXml = GetDropDownListXml(response);
-            var textXml = GetTextAreaXml(response);
-            var dependencyXml = GetDependency(response); //if the dependency xml is null does that cause an issue for the xelement we create below?
+            var str = response.StringValue;
+
+            var inputXml = GetInputXml(str);
+            var ddlXml = GetDropDownListXml(str);
+            var textXml = GetTextAreaXml(str);
+            var dependencyXml = GetDependency(str); //if the dependency xml is null does that cause an issue for the xelement we create below?
 
             var elm = new XElement("properties", inputXml, ddlXml, textXml, dependencyXml);
             return elm;
         }
 
-        internal static Dictionary<string, string> GetDictionary(string response)
+        internal static Dictionary<string, string> GetDictionary(PrtgResponse response)
         {
             var xml = GetXml(response);
 

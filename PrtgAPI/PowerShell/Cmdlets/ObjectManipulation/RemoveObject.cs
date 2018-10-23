@@ -73,7 +73,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
-                if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
+                if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
                 {
                     if (Force.IsPresent && batch == null)
                         Batch = true;
@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' (ID: {Object.Id})");
+            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})");
         }
 
         /// <summary>

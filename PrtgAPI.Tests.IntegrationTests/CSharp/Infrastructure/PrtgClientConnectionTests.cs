@@ -138,7 +138,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
 
             try
             {
-                await (Task<string>)method.Invoke(engine, new object[] {parameters, null, CancellationToken.None});
+                await (Task)method.Invoke(engine, new object[] {parameters, null, CancellationToken.None});
             }
             catch (WebException ex)
             {

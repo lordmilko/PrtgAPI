@@ -713,7 +713,7 @@
                     <Parameter name="deviceId" type="int" default="40" description="The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates."/>
 
                     <Body expression="true">
-                        ResponseParser.GetTemplates(<Call name="GetObjectPropertiesRawInternal" args="deviceId, ObjectType.Device"/>)
+                        ResponseParser.GetTemplates(<Call name="GetObjectPropertiesRawInternal" args="deviceId, ObjectType.Device"/>.StringValue)
                     </Body>
                 </MethodDef>
             </MethodImpl>

@@ -84,6 +84,6 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>All objects under the parent object that match the new object's name.</returns>
         protected abstract List<TObject> GetObjects(SearchFilter[] filters);
 
-        internal override string ProgressActivity => $"Adding PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))}s";
+        internal override string ProgressActivity => $"Adding PRTG {IObjectExtensions.GetTypeDescription(typeof(TObject))}s";
     }
 }

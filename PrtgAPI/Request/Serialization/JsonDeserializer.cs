@@ -11,7 +11,20 @@ namespace PrtgAPI.Request.Serialization
     [ExcludeFromCodeCoverage]
     internal class JsonDeserializer<T>
     {
-        public static T DeserializeType(string json)
+        internal static T DeserializeType(PrtgResponse response)
+        {
+            switch(response.Type)
+            {
+                case PrtgResponseType.Stream:
+                    return DeserializeType(response.GetStreamUnsafe());
+                case PrtgResponseType.String:
+                    return DeserializeType(response.StringValue);
+                default:
+                    throw new NotImplementedException($"Don't know how to deserialize JSON from response of type {response.Type}");
+            }
+        }
+
+        private static T DeserializeType(string json)
         {
             var deserializer = new DataContractJsonSerializer(typeof(T));
 
@@ -21,6 +34,15 @@ namespace PrtgAPI.Request.Serialization
             {
                 data = (T)deserializer.ReadObject(stream);
             }
+
+            return data;
+        }
+
+        private static T DeserializeType(Stream stream)
+        {
+            var deserializer = new DataContractJsonSerializer(typeof(T));
+
+            T data = (T)deserializer.ReadObject(stream);
 
             return data;
         }

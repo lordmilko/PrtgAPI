@@ -19,7 +19,7 @@ namespace PrtgAPI.PowerShell.Base
 
         internal void DisplayResolutionError(Type type, int retriesRemaining)
         {
-            var typeName = PrtgProgressCmdlet.GetTypeDescription(type).ToLower();
+            var typeName = IObjectExtensions.GetTypeDescription(type).ToLower();
 
             WriteWarning($"'{MyInvocation.MyCommand}' failed to resolve {typeName}: object is still being created. Retries remaining: {retriesRemaining}");
         }

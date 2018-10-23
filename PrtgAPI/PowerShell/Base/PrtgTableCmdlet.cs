@@ -380,7 +380,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (StreamProvider.StreamResults)
             {
-                ProgressManager.WriteProgress($"PRTG {GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
+                ProgressManager.WriteProgress($"PRTG {IObjectExtensions.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
                 StreamProvider.StreamCount = client.GetTotalObjects(content);
 
                 return StreamProvider.StreamCount.Value;

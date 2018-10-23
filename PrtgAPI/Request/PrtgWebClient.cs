@@ -57,6 +57,11 @@ namespace PrtgAPI.Request
 
         public Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
         {
+            //Cannot use HttpCompletionOption.ResponseHeadersRead without manually disposing
+            //HttpResponseMessage objects, which will also dispose internal stream. Existing code
+            //needs to be refactored to have the deserialization happen in a callback to ExecuteRequest
+            //so that there is no problem wrapping the HttpResponseMessage up in a using for both
+            //sync/async
             return asyncClient.GetAsync(address, token);
         }
     }

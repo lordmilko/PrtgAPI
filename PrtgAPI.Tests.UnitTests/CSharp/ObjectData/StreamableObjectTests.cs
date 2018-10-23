@@ -111,14 +111,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var client = Initialize_Client(GetResponse(new TItem[] { }));
 
-            AssertEx.Throws<InvalidOperationException>(() => getObject(client), "Object does not exist");
+            AssertEx.Throws<InvalidOperationException>(() => getObject(client), $"{IObjectExtensions.GetTypeDescription(typeof(TObject))} does not exist");
         }
 
         protected void Object_GetSingle_Throws_WhenMultipleObjectsReturned(Func<PrtgClient, TObject> getObject)
         {
             var client = Initialize_Client(GetResponse(new[] { GetItem(), GetItem() }));
 
-            AssertEx.Throws<InvalidOperationException>(() => getObject(client), "Multiple objects were returned");
+            AssertEx.Throws<InvalidOperationException>(() => getObject(client), $"Multiple {IObjectExtensions.GetTypeDescription(typeof(TObject)).ToLower()}s were returned");
         }
 
         private void RunFunctions<TList, TSingle>(Func<int, object> i, Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where TList : IEnumerable

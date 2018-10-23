@@ -67,7 +67,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}' to '{Name}'");
+            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {Object.GetTypeDescription().ToLower()} '{Object.Name}' to '{Name}'");
         }
 
         /// <summary>

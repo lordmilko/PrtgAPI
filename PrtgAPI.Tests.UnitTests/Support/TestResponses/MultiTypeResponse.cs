@@ -106,6 +106,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new BasicResponse($"{{\"progress\":\"{progress}\",\"targeturl\":\" /addsensor4.htm?id=4251&tmpid=119\"}}");
                 case nameof(HtmlFunction.AddSensor4):
                     return GetSensorTargetResponse();
+                case nameof(XmlFunction.GetTreeNodeStats):
+                    return new SensorTotalsResponse(new SensorTotalsItem());
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):

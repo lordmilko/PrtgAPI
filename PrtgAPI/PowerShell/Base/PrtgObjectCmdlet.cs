@@ -15,7 +15,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgObjectCmdlet{T}"/> class.
         /// </summary>
-        protected PrtgObjectCmdlet() : base(GetTypeDescription(typeof(T)))
+        protected PrtgObjectCmdlet() : base(IObjectExtensions.GetTypeDescription(typeof(T)))
         {
         }
 

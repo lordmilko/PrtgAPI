@@ -287,5 +287,17 @@ namespace PrtgAPI.Tests.UnitTests
             var japaneseClient = BaseTest.Initialize_Client(new BasicResponse(japanese));
             Throws<T>(() => action(japaneseClient), exceptionMessage);
         }
+
+        internal static async Task AssertErrorResponseAllLanguagesAsync<T>(string english, string german, string japanese, string exceptionMessage, Func<PrtgClient, Task> action) where T : Exception
+        {
+            var englishClient = BaseTest.Initialize_Client(new BasicResponse(english));
+            await ThrowsAsync<T>(async () => await action(englishClient), exceptionMessage);
+
+            var germanClient = BaseTest.Initialize_Client(new BasicResponse(german));
+            await ThrowsAsync<T>(async () => await action(germanClient), exceptionMessage);
+
+            var japaneseClient = BaseTest.Initialize_Client(new BasicResponse(japanese));
+            await ThrowsAsync<T>(async () => await action(japaneseClient), exceptionMessage);
+        }
     }
 }

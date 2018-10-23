@@ -58,12 +58,14 @@ namespace PrtgAPI.Linq
             if (source.Count == 1)
                 return source.Single();
 
+            var desc = IObjectExtensions.GetTypeDescription(typeof(T));
+
             if(source.Count == 0)
-                throw new InvalidOperationException($"Failed to retrieve object with {property} '{value}': Object does not exist");
+                throw new InvalidOperationException($"Failed to retrieve {desc.ToLower()} with {property} '{value}': {desc} does not exist");
 
             var str = source.Select(s => $"{s} ({s.GetId()})");
 
-            throw new InvalidOperationException($"Failed to retrieve object with {property} '{value}': Multiple objects were returned: " + string.Join(", ", str));
+            throw new InvalidOperationException($"Failed to retrieve {desc.ToLower()} with {property} '{value}': Multiple {desc.ToLower()}s were returned: " + string.Join(", ", str));
         }
     }
 }

@@ -53,14 +53,14 @@ namespace PrtgAPI.PowerShell.Base
 
             if (!cmdlet.ProgressManager.WatchStream)
             {
-                cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
+                cmdlet.ProgressManager.WriteProgress($"PRTG {IObjectExtensions.GetTypeDescription(typeof(TObject))} Search", "Detecting total number of items");
 
                 StreamCount = cmdlet.GetStreamTotalObjects(parameters);
                 SetTotalExist(StreamCount.Value);
             }
             else
             {
-                cmdlet.ProgressManager.WriteProgress($"PRTG {PrtgProgressCmdlet.GetTypeDescription(typeof(TObject))} Watcher", "Waiting for first event");
+                cmdlet.ProgressManager.WriteProgress($"PRTG {IObjectExtensions.GetTypeDescription(typeof(TObject))} Watcher", "Waiting for first event");
                 StreamCount = 1000;
             }
 

@@ -149,6 +149,7 @@
     <Compile Include="Linq\Expressions\ConsecutiveCallManager.cs" />
     <Compile Include="Linq\Expressions\Pretty\CSharpWriter.cs" />
     <Compile Include="Linq\Expressions\Pretty\TextFormatter.cs" />
+    <Compile Include="Request\PrtgResponse.cs" />
     <Compile Include="Request\Serialization\CodeGen\LadderCondition.cs" />
     <Compile Include="Request\Serialization\CodeGen\ObjectPropertyBuilder.cs" />
     <Compile Include="Request\Serialization\CodeGen\ValueDeserializer.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Request\Serialization\CodeGen\LadderBuilder.cs" />
     <Compile Include="Request\Serialization\CodeGen\DynamicAssembly.cs" />
     <Compile Include="Request\Serialization\IXmlSerializer.cs" />
+    <Compile Include="Request\Serialization\SensorHistoryStream.cs" />
     <Compile Include="Request\Serialization\SysInfoJsonCleaner.cs" />
     <Compile Include="Request\Serialization\ValueConverters\DateTimeConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\IZeroPaddingConverter.cs" />

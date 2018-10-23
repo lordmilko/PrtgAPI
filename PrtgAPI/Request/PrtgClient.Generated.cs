@@ -41,7 +41,7 @@ namespace PrtgAPI
             if (idFilter == null)
                 idFilter = i => true;
 
-            var response = RequestEngine.ExecuteRequest(new ChannelParameters(sensorId), token: token);
+            var response = ObjectEngine.GetObjectsXml(new ChannelParameters(sensorId), token: token);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -78,7 +78,7 @@ namespace PrtgAPI
             if (idFilter == null)
                 idFilter = i => true;
 
-            var response = await RequestEngine.ExecuteRequestAsync(new ChannelParameters(sensorId), token: token).ConfigureAwait(false);
+            var response = await ObjectEngine.GetObjectsXmlAsync(new ChannelParameters(sensorId), token: token).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -113,7 +113,7 @@ namespace PrtgAPI
 
         internal List<NotificationAction> GetNotificationActionsInternal(NotificationActionParameters parameters, CancellationToken token)
         {
-            var response = RequestEngine.ExecuteRequest(parameters, token: token);
+            var response = ObjectEngine.GetObjectsXml(parameters, token: token);
 
             var items = response.Descendants("item").ToList();
 
@@ -137,7 +137,7 @@ namespace PrtgAPI
 
         internal async Task<List<NotificationAction>> GetNotificationActionsInternalAsync(NotificationActionParameters parameters, CancellationToken token)
         {
-            var response = await RequestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
+            var response = await ObjectEngine.GetObjectsXmlAsync(parameters, token: token).ConfigureAwait(false);
 
             var items = response.Descendants("item").ToList();
 
@@ -169,7 +169,7 @@ namespace PrtgAPI
 
             foreach (var schedule in schedules)
             {
-                var response = GetObjectPropertiesRawInternal(schedule.Id, ObjectType.Schedule, token);
+                var response = (GetObjectPropertiesRawInternal(schedule.Id, ObjectType.Schedule, token)).StringValue;
                 ResponseParser.LoadTimeTable(schedule, response);
             }
 
@@ -182,7 +182,7 @@ namespace PrtgAPI
 
             await Task.WhenAll(schedules.Select(async schedule =>
             {
-                var response = await GetObjectPropertiesRawInternalAsync(schedule.Id, ObjectType.Schedule, token).ConfigureAwait(false);
+                var response = (await GetObjectPropertiesRawInternalAsync(schedule.Id, ObjectType.Schedule, token).ConfigureAwait(false)).StringValue;
                 ResponseParser.LoadTimeTable(schedule, response);
             })).ConfigureAwait(false);
 
@@ -339,7 +339,7 @@ namespace PrtgAPI
         // ParseNotificationTriggerTypes
         //######################################
 
-        private string ParseNotificationTriggerTypes(HttpResponseMessage response)
+        private PrtgResponse ParseNotificationTriggerTypes(HttpResponseMessage response)
         {
             var responseText = response.Content.ReadAsStringAsync().Result;
 
@@ -351,7 +351,7 @@ namespace PrtgAPI
             return responseText;
         }
 
-        private async Task<string> ParseNotificationTriggerTypesAsync(HttpResponseMessage response)
+        private async Task<PrtgResponse> ParseNotificationTriggerTypesAsync(HttpResponseMessage response)
         {
             var responseText = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -668,9 +668,9 @@ namespace PrtgAPI
 
         private string GetSensorTargetsResponse(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
         {
-            Func<HttpResponseMessage, string> getSensorTargetTmpId = ResponseParser.GetSensorTargetTmpId;
+            Func<HttpResponseMessage, PrtgResponse> getSensorTargetTmpId = ResponseParser.GetSensorTargetTmpId;
 
-            var tmpIdStr = RequestEngine.ExecuteRequest(parameters, getSensorTargetTmpId, token);
+            var tmpIdStr = (RequestEngine.ExecuteRequest(parameters, getSensorTargetTmpId, token)).StringValue;
 
             int tmpId;
 
@@ -691,9 +691,9 @@ namespace PrtgAPI
 
         private async Task<string> GetSensorTargetsResponseAsync(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
         {
-            Func<HttpResponseMessage, Task<string>> getSensorTargetTmpId = o => Task.FromResult(ResponseParser.GetSensorTargetTmpId(o));
+            Func<HttpResponseMessage, Task<PrtgResponse>> getSensorTargetTmpId = o => Task.FromResult(ResponseParser.GetSensorTargetTmpId(o));
 
-            var tmpIdStr = await RequestEngine.ExecuteRequestAsync(parameters, getSensorTargetTmpId, token).ConfigureAwait(false);
+            var tmpIdStr = (await RequestEngine.ExecuteRequestAsync(parameters, getSensorTargetTmpId, token).ConfigureAwait(false)).StringValue;
 
             int tmpId;
 
@@ -747,7 +747,7 @@ namespace PrtgAPI
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = RequestEngine.ExecuteRequest(new SensorTargetCompletedParameters(deviceId, tmpId), token: token);
+            var page = (RequestEngine.ExecuteRequest(new SensorTargetCompletedParameters(deviceId, tmpId), token: token)).StringValue;
 
             return page;
         }
@@ -790,7 +790,7 @@ namespace PrtgAPI
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = await RequestEngine.ExecuteRequestAsync(new SensorTargetCompletedParameters(deviceId, tmpId), token: token).ConfigureAwait(false);
+            var page = (await RequestEngine.ExecuteRequestAsync(new SensorTargetCompletedParameters(deviceId, tmpId), token: token).ConfigureAwait(false)).StringValue;
 
             return page;
         }
@@ -1175,7 +1175,7 @@ namespace PrtgAPI
         {
             var parameters = new SystemInfoParameters<T>(deviceId);
 
-            Func<HttpResponseMessage, string> func = (m) => ParseSystemInfoResponse(m, parameters.Columns);
+            Func<HttpResponseMessage, PrtgResponse> func = (m) => ParseSystemInfoResponse(m, parameters.Columns);
 
             var info = ObjectEngine.GetObject<SysInfoData<T>>(parameters, func, token: token);
 
@@ -1210,7 +1210,7 @@ namespace PrtgAPI
         {
             var parameters = new SystemInfoParameters<T>(deviceId);
 
-            Func<HttpResponseMessage, Task<string>> func = async (m) => await ParseSystemInfoResponseAsync(m, parameters.Columns).ConfigureAwait(false);
+            Func<HttpResponseMessage, Task<PrtgResponse>> func = async (m) => await ParseSystemInfoResponseAsync(m, parameters.Columns).ConfigureAwait(false);
 
             var info = await ObjectEngine.GetObjectAsync<SysInfoData<T>>(parameters, func, token: token).ConfigureAwait(false);
 

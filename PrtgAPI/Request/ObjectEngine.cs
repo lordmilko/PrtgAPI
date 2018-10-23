@@ -16,6 +16,7 @@ using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.Request
 {
+#pragma warning disable 618
     /// <summary>
     /// Handles constructing requests for retrieving objects and deserializing their responses
     /// </summary>
@@ -40,56 +41,77 @@ namespace PrtgAPI.Request
 
         #region Get Objects
 
-        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken)) =>
-            GetObjectsRaw<T>(parameters, responseValidator, validateValueTypes, token).Items;
+        internal List<T> GetObjects<T>(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken)) =>
+            GetObjectsRaw<T>(parameters, responseValidator, null, validateValueTypes, token).Items;
 
-        internal TableData<T> GetObjectsRaw<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken))
+        internal TableData<T> GetObjectsRaw<T>(
+            IXmlParameters parameters,
+            Action<PrtgResponse> responseValidator = null,
+            Func<HttpResponseMessage, PrtgResponse> responseParser = null,
+            bool validateValueTypes = true,
+            CancellationToken token = default(CancellationToken))
         {
-            var response = requestEngine.ExecuteRequest(parameters, responseValidator, token: token);
-
-            return SetVersion(XmlEngine.DeserializeTable<T>(response.CreateReader(), validateValueTypes));
+            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token: token))
+            {
+                return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
+            }
         }
 
-        internal async Task<List<T>> GetObjectsAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken)) =>
-            (await GetObjectsRawAsync<T>(parameters, responseValidator, validateValueTypes, token).ConfigureAwait(false)).Items;
+        internal async Task<List<T>> GetObjectsAsync<T>(
+            IXmlParameters parameters,
+            Action<PrtgResponse> responseValidator = null,
+            Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null,
+            bool validateValueTypes = true,
+            CancellationToken token = default(CancellationToken)) =>
+            (await GetObjectsRawAsync<T>(parameters, responseValidator, responseParser, validateValueTypes, token).ConfigureAwait(false)).Items;
 
-        internal async Task<TableData<T>> GetObjectsRawAsync<T>(IXmlParameters parameters, Action<string> responseValidator = null, bool validateValueTypes = true, CancellationToken token = default(CancellationToken))
+        internal async Task<TableData<T>> GetObjectsRawAsync<T>(
+            IXmlParameters parameters,
+            Action<PrtgResponse> responseValidator = null,
+            Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null,
+            bool validateValueTypes = true,
+            CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, token: token).ConfigureAwait(false);
-
-            return SetVersion(XmlEngine.DeserializeTable<T>(response.CreateReader(), validateValueTypes));
+            using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token: token).ConfigureAwait(false))
+            {
+                return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
+            }
         }
 
-        internal T GetObject<T>(IXmlParameters parameters, Action<string> responseValidator = null)
+        internal T GetObject<T>(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null)
         {
-            var response = requestEngine.ExecuteRequest(parameters, responseValidator);
-
-            return XmlEngine.DeserializeObject<T>(response.CreateReader());
+            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator))
+            {
+                return XmlEngine.DeserializeObject<T>(response);
+            }
         }
 
         internal async Task<T> GetObjectAsync<T>(IXmlParameters parameters, CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
-
-            return XmlEngine.DeserializeObject<T>(response.CreateReader());
+            using (var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false))
+            {
+                return XmlEngine.DeserializeObject<T>(response);
+            }
         }
 
-        internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, string> responseParser = null, CancellationToken token = default(CancellationToken))
+        internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var response = requestEngine.ExecuteRequest(parameters, responseParser, token);
+            using (var response = requestEngine.ExecuteRequest(parameters, responseParser, token))
+            {
+                var data = JsonDeserializer<T>.DeserializeType(response);
 
-            var data = JsonDeserializer<T>.DeserializeType(response);
-
-            return data;
+                return data;
+            }
         }
 
-        internal async Task<T> GetObjectAsync<T>(IJsonParameters parameters, Func<HttpResponseMessage, Task<string>> responseParser = null, CancellationToken token = default(CancellationToken))
+        internal async Task<T> GetObjectAsync<T>(IJsonParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var response = await requestEngine.ExecuteRequestAsync(parameters, responseParser, token).ConfigureAwait(false);
+            using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseParser, token).ConfigureAwait(false))
+            {
+                var data = JsonDeserializer<T>.DeserializeType(response);
 
-            var data = JsonDeserializer<T>.DeserializeType(response);
-
-            return data;
+                return data;
+            }
         }
 
         private TableData<T> SetVersion<T>(TableData<T> data)
@@ -103,11 +125,21 @@ namespace PrtgAPI.Request
         #endregion
         #region Get Objects XML
 
-        internal XDocument GetObjectsXml(IXmlParameters parameters, Action<string> responseValidator = null, CancellationToken token = default(CancellationToken)) =>
-            requestEngine.ExecuteRequest(parameters, responseValidator, token: token);
+        internal XDocument GetObjectsXml(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
+        {
+            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token))
+            {
+                return XDocument.Load(response);
+            }
+        }
 
-        internal async Task<XDocument> GetObjectsXmlAsync(IXmlParameters parameters, Action<string> responseValidator = null, CancellationToken token = default(CancellationToken)) =>
-            await requestEngine.ExecuteRequestAsync(parameters, responseValidator, token: token).ConfigureAwait(false);
+        internal async Task<XDocument> GetObjectsXmlAsync(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
+        {
+            using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token).ConfigureAwait(false))
+            {
+                return XDocument.Load(response);
+            }
+        }
 
         #endregion
         #region Stream Objects
@@ -237,4 +269,5 @@ namespace PrtgAPI.Request
 
         #endregion
     }
+#pragma warning restore 618
 }

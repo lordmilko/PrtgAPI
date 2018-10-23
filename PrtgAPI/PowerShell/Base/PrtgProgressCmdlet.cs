@@ -166,9 +166,9 @@ namespace PrtgAPI.PowerShell.Base
                     var prtgObj = obj as IObject;
 
                     if (prtgObj != null)
-                        ProgressManager.InitialDescription = $"Processing {GetTypeDescription(prtgObj).ToLower()}";
+                        ProgressManager.InitialDescription = $"Processing {prtgObj.GetTypeDescription().ToLower()}";
                     else
-                        ProgressManager.InitialDescription = $"Processing all {GetTypeDescription(obj.GetType()).ToLower()}s";
+                        ProgressManager.InitialDescription = $"Processing all {IObjectExtensions.GetTypeDescription(obj.GetType()).ToLower()}s";
                     ProgressManager.CurrentRecord.CurrentOperation = currentOperation ?? $"Retrieving all {GetTypePlural()}";
 
                     ProgressManager.RemovePreviousOperation();
@@ -403,31 +403,6 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             PostUpdateProgress();
-        }
-
-        /// <summary>
-        /// Retrieves the value of a <see cref="DescriptionAttribute"/> of the specified type. If the type does not have a <see cref="DescriptionAttribute"/>, its name is used instead.
-        /// </summary>
-        /// <param name="type">The type whose description should be retrieved.</param>
-        /// <returns>The type's name or description.</returns>
-        internal static string GetTypeDescription(Type type)
-        {
-            var attribute = type.GetTypeCache().Cache.GetAttribute<DescriptionAttribute>();
-
-            if (attribute != null)
-                return attribute.Description;
-
-            return type.Name;
-        }
-
-        internal static string GetTypeDescription(IObject value)
-        {
-            var type = value.GetType();
-
-            if (type == typeof(PrtgObject))
-                return ((PrtgObject)value).Type.StringValue;
-
-            return GetTypeDescription(type);
         }
 
         private string GetTypePlural()

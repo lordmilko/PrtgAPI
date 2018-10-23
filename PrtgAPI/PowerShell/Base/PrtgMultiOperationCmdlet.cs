@@ -43,7 +43,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="obj">The object to process.</param>
         protected void ExecuteOrQueue(IObject obj)
         {
-            ExecuteOrQueue(obj, $"Queuing {PrtgProgressCmdlet.GetTypeDescription(obj).ToLower()} '{obj.Name}'");
+            ExecuteOrQueue(obj, $"Queuing {obj.GetTypeDescription().ToLower()} '{obj.Name}'");
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace PrtgAPI.PowerShell.Base
                 remaining = objects.Count - amount;
             }
 
-            var grouped = toProcess.GroupBy(PrtgProgressCmdlet.GetTypeDescription).ToList();
+            var grouped = toProcess.GroupBy(IObjectExtensions.GetTypeDescription).ToList();
 
             var builder = new StringBuilder();
 
@@ -211,7 +211,7 @@ namespace PrtgAPI.PowerShell.Base
 
         internal string GetCommonObjectBaseType()
         {
-            var baseType = PrtgProgressCmdlet.GetTypeDescription(objects.First()).ToLower();
+            var baseType = objects.First().GetTypeDescription().ToLower();
 
             if (objects.Count > 1)
                 baseType += "s";

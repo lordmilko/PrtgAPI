@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Helpers;
@@ -205,7 +206,7 @@ namespace PrtgAPI
 
         private string GetPassHash(string password)
         {
-            var response = RequestEngine.ExecuteRequest(new PassHashParameters(password));
+            var response = RequestEngine.ExecuteRequest(new PassHashParameters(password), m => m.Content.ReadAsStringAsync().Result).StringValue;
 
             if(!Regex.Match(response, "^[0-9]+$").Success)
                 throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
@@ -346,7 +347,7 @@ namespace PrtgAPI
 
         private List<NotificationTrigger> GetNotificationTriggersInternal(int objectId, CancellationToken token)
         {
-            var xmlResponse = RequestEngine.ExecuteRequest(new NotificationTriggerParameters(objectId), token: token);
+            var xmlResponse = ObjectEngine.GetObjectsXml(new NotificationTriggerParameters(objectId), token: token);
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -358,7 +359,7 @@ namespace PrtgAPI
 
         private async Task<List<NotificationTrigger>> GetNotificationTriggersInternalAsync(int objectId, CancellationToken token)
         {
-            var xmlResponse = await RequestEngine.ExecuteRequestAsync(new NotificationTriggerParameters(objectId), token: token).ConfigureAwait(false);
+            var xmlResponse = await ObjectEngine.GetObjectsXmlAsync(new NotificationTriggerParameters(objectId), token: token).ConfigureAwait(false);
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectId, xmlResponse);
 
@@ -421,6 +422,7 @@ namespace PrtgAPI
             var parameters = new NotificationActionParameters(actions.Select(a => a.Key).ToArray());
 
             var tasks = actions.Select(g => GetNotificationActionPropertiesAsync(g.Key, token));
+
             var normal = await ObjectEngine.GetObjectsXmlAsync(parameters, token: token).ConfigureAwait(false);
 
             //All the properties of all desired notifications
@@ -483,7 +485,7 @@ namespace PrtgAPI
 
         internal Tuple<List<SensorHistoryData>, int> GetSensorHistoryInternal(SensorHistoryParameters parameters)
         {
-            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse);
+            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel));
 
             var data = ResponseParser.ParseSensorHistoryResponse(raw.Items, parameters.SensorId);
 
@@ -492,7 +494,7 @@ namespace PrtgAPI
 
         internal async Task<List<SensorHistoryData>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters, CancellationToken token)
         {
-            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse, token: token).ConfigureAwait(false);
+            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponseAsync(m, LogLevel), token: token).ConfigureAwait(false);
 
             return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
@@ -512,7 +514,7 @@ namespace PrtgAPI
         {
             parameters.Count = 0;
 
-            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, ResponseParser.ValidateSensorHistoryResponse);
+            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel));
 
             parameters.GetParameters().Remove(Parameter.Count);
 
@@ -614,11 +616,11 @@ namespace PrtgAPI
         private async Task<Dictionary<string, string>> GetObjectPropertiesRawDictionaryAsync(int objectId, object objectType, CancellationToken token) =>
             ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectId, objectType, token).ConfigureAwait(false));
 
-        private string GetObjectPropertiesRawInternal(int objectId, object objectType, CancellationToken token = default(CancellationToken)) =>
+        private PrtgResponse GetObjectPropertiesRawInternal(int objectId, object objectType, CancellationToken token = default(CancellationToken)) =>
             RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectId, objectType), token: token);
 
-        private async Task<string> GetObjectPropertiesRawInternalAsync(int objectId, object objectType, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType), token: token).ConfigureAwait(false);
+        private async Task<PrtgResponse> GetObjectPropertiesRawInternalAsync(int objectId, object objectType, CancellationToken token) =>
+            (await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectId, objectType), token: token).ConfigureAwait(false));
 
             #endregion
             #region Get Single Raw Property
@@ -627,7 +629,7 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
 
-            var response = RequestEngine.ExecuteRequest(
+            var response = ObjectEngine.GetObjectsXml(
                 parameters,
                 responseParser: m => ResponseParser.ParseGetObjectPropertyResponse(
                     m.Content.ReadAsStringAsync().Result,
@@ -642,7 +644,7 @@ namespace PrtgAPI
         {
             var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
 
-            var response = await RequestEngine.ExecuteRequestAsync(
+            var response = await ObjectEngine.GetObjectsXmlAsync(
                 parameters,
                 responseParser: async m => ResponseParser.ParseGetObjectPropertyResponse(
                     await m.Content.ReadAsStringAsync().ConfigureAwait(false),
@@ -662,7 +664,7 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
 
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m)), token).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult<PrtgResponse>(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m)), token).ConfigureAwait(false);
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
         {

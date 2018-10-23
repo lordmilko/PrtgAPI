@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Helpers;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -211,7 +215,13 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     "Url: /controls/objectdata.htm<br>Params: id=1&objecttype=probe&username=prtgadmin&passhash=***&")
             );
 
-            ExecuteFailedRequest(HttpStatusCode.OK, html.ToString(SaveOptions.DisableFormatting), null, "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly. Error message: Sorry, the selected object cannot be used here.");
+            ExecuteFailedRequest(
+                HttpStatusCode.OK,
+                html.ToString(SaveOptions.DisableFormatting),
+                null,
+                "PRTG Network Monitor has discovered a problem. Your last request could not be processed properly. Error message: Sorry, the selected object cannot be used here.",
+                c => c.GetSensorProperties(1001)
+            );
         }
 
         [TestMethod]
@@ -251,13 +261,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             prtgClientLogVerboseHit++;
         }
 
-        private void ExecuteFailedRequest(HttpStatusCode statusCode, string xml, string address, string expectedError)
+        private void ExecuteFailedRequest(HttpStatusCode statusCode, string xml, string address, string expectedError, Action<PrtgClient> action = null)
         {
+            if (action == null)
+                action = c => c.GetSensors();
+
             var response = new FailedRequestResponse(statusCode, xml, address);
 
             var client = new PrtgClient("prtg.example.com", "username", "1234567890", AuthMode.PassHash, new MockWebClient(response));
 
-            AssertEx.Throws<PrtgRequestException>(() => client.GetSensors(), $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}");
+            AssertEx.Throws<PrtgRequestException>(() => action(client), $"PRTG was unable to complete the request. The server responded with the following error: {expectedError}");
         }
 
         [TestMethod]
@@ -311,5 +324,310 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             client.GetSensors();
         }
+
+        #region Execute With Log Response
+
+        [TestMethod]
+        public void PrtgClient_AllMethodsExecute_WithLogResponse()
+        {
+            var methods = GetMethods(false);
+
+            var client = GetDefaultClient();
+
+            foreach(var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                client.LogLevel = LogLevel.All;
+                var m = GetCustomMethod(method);
+                var p = GetParameters(method);
+
+                m.Invoke(c, p);
+            }
+        }
+
+        [TestMethod]
+        public void PrtgClient_AllMethodsExecute_WithoutLogResponse()
+        {
+            var methods = GetMethods(false);
+
+            var client = GetDefaultClient();
+
+            foreach (var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                client.LogLevel = LogLevel.None;
+                var m = GetCustomMethod(method);
+                var p = GetParameters(method);
+
+                m.Invoke(c, p);
+            }
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_AllMethodsExecute_WithLogResponseAsync()
+        {
+            var methods = GetMethods(true);
+
+            var client = GetDefaultClient();
+
+            foreach (var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                client.LogLevel = LogLevel.All;
+                var m = GetCustomMethod(method);
+                var p = GetParameters(method);
+
+                await (Task)m.Invoke(c, p);
+            }
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_AllMethodsExecute_WithoutLogResponseAsync()
+        {
+            var methods = GetMethods(true);
+
+            var client = GetDefaultClient();
+
+            foreach (var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                client.LogLevel = LogLevel.None;
+                var m = GetCustomMethod(method);
+                var p = GetParameters(method);
+
+                await (Task)m.Invoke(c, p);
+            }
+        }
+
+        private List<MethodInfo> GetMethods(bool allowAsync)
+        {
+            var illegalPrefixes = new[]
+            {
+                "Watch",
+                "get_",
+                "set_",
+                "add_",
+                "remove_"
+            };
+
+            var illegalNames = new[]
+            {
+                "Equals",
+                "GetHashCode",
+                "GetGroupProperties",
+                "GetProbeProperties",
+                "GetGroupPropertiesAsync",
+                "GetProbePropertiesAsync"
+            };
+
+            var methods = typeof(PrtgClient).GetMethods().Where(m => illegalPrefixes.All(p => !m.Name.StartsWith(p)) && illegalNames.All(n => n != m.Name));
+
+            methods = methods.Where(m => m.Name.EndsWith("Async") == allowAsync);
+
+            return methods.ToList();
+        }
+
+        private MethodInfo GetCustomMethod(MethodInfo method)
+        {
+            if (method.ContainsGenericParameters)
+            {
+                if (method.Name.StartsWith("GetSystemInfo"))
+                    return method.MakeGenericMethod(typeof(DeviceProcessInfo));
+                else
+                    return method.MakeGenericMethod(typeof(string));
+            }
+
+            return method;
+        }
+
+        private PrtgClient GetDefaultClient()
+        {
+            var client = BaseTest.Initialize_Client(new MultiTypeResponse
+            {
+                CountOverride = new Dictionary<Content, int>
+                {
+                    [Content.Sensors] = 1,
+                    [Content.Devices] = 1,
+                    [Content.Groups] = 1,
+                    [Content.Probes] = 1,
+                    [Content.Notifications] = 1,
+                    [Content.Schedules] = 1
+                }
+            });
+
+            return client;
+        }
+
+        private PrtgClient GetCustomClient(MethodInfo method, PrtgClient defaultClient)
+        {
+            if (method.Name == "GetNotificationTriggers" || method.Name == "GetNotificationTriggersAsync")
+            {
+                return BaseTest.Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
+            }
+
+            return defaultClient;
+        }
+
+        private object[] GetParameters(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            return parameters.Select(p => GetParameterObject(method, p)).ToArray();
+        }
+
+        private object GetParameterObject(MethodInfo method, ParameterInfo parameter)
+        {
+            var realClient = BaseTest.Initialize_Client(new MultiTypeResponse());
+
+            var t = parameter.ParameterType;
+
+            if (t == typeof(string))
+            {
+                if (parameter.Name == "sensorType")
+                    return "exexml";
+                if (parameter.Name == "objectType")
+                    return "device";
+                if (parameter.Name == "property")
+                    return "name_";
+                if (parameter.Name == "name")
+                {
+                    if (method.Name == "GetChannel" || method.Name == "GetChannelAsync")
+                        return "Percent Available Memory";
+                }
+
+                return "test";
+            }
+            if (t == typeof(int) || t == typeof(int?))
+                return 1;
+            if (t == typeof(int[]))
+                return new[] { 1 };
+            if (t == typeof(CustomParameter[]))
+                return new[] { new CustomParameter("name_", "test") };
+            if (t == typeof(SystemCacheType))
+                return SystemCacheType.General;
+            if (t == typeof(ConfigFileType))
+                return ConfigFileType.General;
+            if (t == typeof(bool))
+                return false;
+            if (t == typeof(Func<ProbeRestartProgress, bool>))
+            {
+                Func<ProbeRestartProgress, bool> f = p => true;
+                return f;
+            }
+            if (t == typeof(Func<ProbeRestartProgress[], bool>))
+            {
+                Func<ProbeRestartProgress[], bool> f = p => true;
+                return f;
+            }
+            if (t == typeof(Func<RestartCoreStage, bool>))
+            {
+                Func<RestartCoreStage, bool> f = p => true;
+                return f;
+            }
+            if (t == typeof(CancellationToken))
+                return CancellationToken.None;
+            if (t == typeof(ObjectProperty))
+                return ObjectProperty.Name;
+            if (t == typeof(ChannelProperty))
+                return ChannelProperty.LowerWarningLimit;
+            if (t == typeof(object) && parameter.Name == "value")
+                return "1";
+            if (t == typeof(Position))
+                return Position.Up;
+            if (t == typeof(SensorOrDeviceOrGroupOrProbe))
+            {
+                return new Sensor
+                {
+                    Name = "test",
+                    Id = 1001,
+                    Position = 3
+                };
+            }
+            if (t == typeof(NewSensorParameters))
+                return new ExeXmlSensorParameters("test.ps1");
+            if (t == typeof(NewDeviceParameters))
+                return new NewDeviceParameters("test");
+            if (t == typeof(NewGroupParameters))
+                return new NewGroupParameters("test");
+            if (t == typeof(TriggerParameters))
+                return new ChangeTriggerParameters(1001);
+            if (t == typeof(LogParameters))
+                return new LogParameters(1001);
+            if (t == typeof(Func<int, bool>))
+            {
+                Func<int, bool> f = p => true;
+                return f;
+            }
+            if (t == typeof(DeviceTemplate[]))
+                return new[] { new DeviceTemplate("test|test") };
+            if (t == typeof(NotificationTrigger))
+                return realClient.GetNotificationTriggers(0).First();
+            if (t == typeof(PropertyParameter[]))
+                return new[] { new PropertyParameter(ObjectProperty.Name, "test") };
+            if (t == typeof(ChannelParameter[]))
+                return new[] { new ChannelParameter(ChannelProperty.LowerWarningLimit, 1) };
+            if (t == typeof(ObjectType))
+                return ObjectType.Device;
+            if (t == typeof(RecordAge))
+                return RecordAge.LastMonth;
+            if (t == typeof(LogStatus[]))
+                return new[] { LogStatus.Connected };
+            if (t == typeof(Expression<Func<Sensor, bool>>))
+            {
+                Expression<Func<Sensor, bool>> f = l => true;
+                return f;
+            }
+            if (t == typeof(Expression<Func<Device, bool>>))
+            {
+                Expression<Func<Device, bool>> f = l => true;
+                return f;
+            }
+            if (t == typeof(Expression<Func<Group, bool>>))
+            {
+                Expression<Func<Group, bool>> f = l => true;
+                return f;
+            }
+            if (t == typeof(Expression<Func<Probe, bool>>))
+            {
+                Expression<Func<Probe, bool>> f = l => true;
+                return f;
+            }
+            if (t == typeof(Expression<Func<Log, bool>>))
+            {
+                Expression<Func<Log, bool>> f = l => true;
+                return f;
+            }
+            if (t == typeof(Property))
+                return Property.Name;
+            if (t == typeof(SearchFilter[]))
+                return new[] { new SearchFilter(Property.Name, "test") };
+            if (t == typeof(DateTime?))
+                return DateTime.Now;
+            if (t == typeof(SystemInfoType))
+                return SystemInfoType.Processes;
+            if (t == typeof(SystemInfoType[]))
+                return new[] { SystemInfoType.Processes };
+            if (t == typeof(Content))
+                return Content.Sensors;
+            if (t == typeof(AutoDiscoveryMode))
+                return AutoDiscoveryMode.Automatic;
+            if (t == typeof(SensorParameters))
+                return new SensorParameters();
+            if (t == typeof(DeviceParameters))
+                return new DeviceParameters();
+            if (t == typeof(GroupParameters))
+                return new GroupParameters();
+            if (t == typeof(ProbeParameters))
+                return new ProbeParameters();
+            if (t == typeof(PrtgObjectParameters))
+                return new PrtgObjectParameters();
+            if (t == typeof(FilterOperator))
+                return FilterOperator.Contains;
+            if (t == typeof(Status[]))
+                return new[] { Status.Up };
+
+            throw new NotImplementedException($"Don't know how to process parameter {parameter}");
+        }
+
+        #endregion
     }
 }

@@ -177,7 +177,7 @@ namespace PrtgAPI.Request
         #endregion
         #region Clone Object
 
-        internal static string CloneRequestParser(HttpResponseMessage response)
+        internal static PrtgResponse CloneRequestParser(HttpResponseMessage response)
         {
             if (response.StatusCode == HttpStatusCode.BadRequest)
                 return null;
@@ -191,9 +191,9 @@ namespace PrtgAPI.Request
             return message;
         }
 
-        internal static int CloneResponseParser(string response)
+        internal static int CloneResponseParser(PrtgResponse response)
         {
-            var decodedResponse = WebUtility.UrlDecode(response);
+            var decodedResponse = WebUtility.UrlDecode(response.StringValue);
 
             var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
 
@@ -264,7 +264,7 @@ namespace PrtgAPI.Request
             return value;
         }
 
-        internal static T GetObjectProperties<T>(string response, XmlEngine xmlEngine)
+        internal static T GetObjectProperties<T>(PrtgResponse response, XmlEngine xmlEngine)
         {
             var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
@@ -314,11 +314,34 @@ namespace PrtgAPI.Request
         #endregion
         #region Sensor History
 
-        internal static void ValidateSensorHistoryResponse(string response)
+        internal static PrtgResponse GetSensorHistoryResponse(HttpResponseMessage responseMessage, LogLevel logLevel)
         {
-            //If the response doesn't contain an XML tag, it's not a valid response
-            if (!response.Contains("<"))
-                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+            if(RequestEngine.NeedsStringResponse(responseMessage, logLevel))
+            {
+                var response = responseMessage.Content.ReadAsStringAsync().Result;
+
+                if (!response.Contains("<"))
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+
+                return new PrtgResponse(response);
+            }
+
+            return new PrtgResponse(new SensorHistoryStream(responseMessage.Content.ReadAsStreamAsync().Result));
+        }
+
+        internal static async Task<PrtgResponse> GetSensorHistoryResponseAsync(HttpResponseMessage responseMessage, LogLevel logLevel)
+        {
+            if (RequestEngine.NeedsStringResponse(responseMessage, logLevel))
+            {
+                var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.Contains("<"))
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+
+                return new PrtgResponse(response);
+            }
+
+            return new PrtgResponse(new SensorHistoryStream(await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false)));
         }
 
         internal static List<SensorHistoryData> ParseSensorHistoryResponse(List<SensorHistoryData> items, int sensorId)
@@ -376,7 +399,7 @@ namespace PrtgAPI.Request
         #endregion
         #region Sensor Targets
 
-        internal static string GetSensorTargetTmpId(HttpResponseMessage message)
+        internal static PrtgResponse GetSensorTargetTmpId(HttpResponseMessage message)
         {
             var id = Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+)(tmpid=)(.+)", "$3");
 
@@ -434,7 +457,7 @@ namespace PrtgAPI.Request
         #endregion
         #region Resolve Address
 
-        internal static string ResolveParser(HttpResponseMessage message)
+        internal static PrtgResponse ResolveParser(HttpResponseMessage message)
         {
             if (message.Content.Headers.ContentType.MediaType == "image/png" || message.StatusCode.ToString() == "530")
                 throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available");
@@ -444,7 +467,7 @@ namespace PrtgAPI.Request
 
         #endregion
 
-        internal static string ValidateHasContent(HttpResponseMessage message)
+        internal static PrtgResponse ValidateHasContent(HttpResponseMessage message)
         {
             var responseText = message.Content.ReadAsStringAsync().Result;
 
@@ -454,7 +477,7 @@ namespace PrtgAPI.Request
             return responseText;
         }
 
-        internal static async Task<string> ValidateHasContentAsync(HttpResponseMessage message)
+        internal static async Task<PrtgResponse> ValidateHasContentAsync(HttpResponseMessage message)
         {
             var responseText = await message.Content.ReadAsStringAsync().ConfigureAwait(false);
 

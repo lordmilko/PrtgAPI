@@ -214,7 +214,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
                 throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
 
-            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {PrtgProgressCmdlet.GetTypeDescription(Object).ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
+            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {Object.GetTypeDescription().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
             {
                 if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {whatIfStr}"))
                     ExecuteOrQueue(Object);

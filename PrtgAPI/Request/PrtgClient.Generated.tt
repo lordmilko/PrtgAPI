@@ -48,9 +48,7 @@ for(int i = 0; i < 2; i++)
             if (idFilter == null)
                 idFilter = i => true;
 
-            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "new ChannelParameters(sensorId), token: token", i) #>;
-
-            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
+            var response = <#= CallFunction("ObjectEngine.GetObjectsXml", "new ChannelParameters(sensorId), token: token", i) #>;
 
             var items = response.Descendants("item").ToList();
 
@@ -90,7 +88,7 @@ for(int i = 0; i < 2; i++)
 #>
         internal <#= GetSignature("GetNotificationActionsInternal", "List<NotificationAction>", i) #>(NotificationActionParameters parameters, CancellationToken token)
         {
-            var response = <#= CallFunction("RequestEngine.ExecuteRequest", "parameters, token: token", i) #>;
+            var response = <#= CallFunction("ObjectEngine.GetObjectsXml", "parameters, token: token", i) #>;
 
             var items = response.Descendants("item").ToList();
 
@@ -129,7 +127,7 @@ for(int i = 0; i < 2; i++)
 
             <#= StartLoopOrTask("schedule", "schedules", i) #>
             {
-                var response = <#= CallFunction("GetObjectPropertiesRawInternal", "schedule.Id, ObjectType.Schedule, token", i) #>;
+                var response = (<#= CallFunction("GetObjectPropertiesRawInternal", "schedule.Id, ObjectType.Schedule, token", i) #>).StringValue;
                 ResponseParser.LoadTimeTable(schedule, response);
             }<#= EndLoopOrTask(i) #>
 
@@ -238,7 +236,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("ParseNotificationTriggerTypes", "string", i) #>(HttpResponseMessage response)
+        private <#= GetSignature("ParseNotificationTriggerTypes", "PrtgResponse", i) #>(HttpResponseMessage response)
         {
             var responseText = <#= AwaitOrForceResult("response.Content.ReadAsStringAsync()", i) #>
 
@@ -461,9 +459,9 @@ for(int i = 0; i < 2; i++)
 
         private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
         {
-            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "string", "ResponseParser.GetSensorTargetTmpId", i) #>;
+            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "PrtgResponse", "ResponseParser.GetSensorTargetTmpId", i) #>;
 
-            var tmpIdStr = <#= CallFunction("RequestEngine.ExecuteRequest", "parameters, getSensorTargetTmpId, token", i) #>;
+            var tmpIdStr = (<#= CallFunction("RequestEngine.ExecuteRequest", "parameters, getSensorTargetTmpId, token", i) #>).StringValue;
 
             int tmpId;
 
@@ -524,7 +522,7 @@ for(int i = 0; i < 2; i++)
 
             ResponseParser.ValidateSensorTargetProgressResult(p);
 
-            var page = <#= CallFunction("RequestEngine.ExecuteRequest", "new SensorTargetCompletedParameters(deviceId, tmpId), token: token", i) #>;
+            var page = (<#= CallFunction("RequestEngine.ExecuteRequest", "new SensorTargetCompletedParameters(deviceId, tmpId), token: token", i) #>).StringValue;
 
             return page;
         }
@@ -757,7 +755,7 @@ for(int i = 0; i < 2; i++)
         {
             var parameters = new SystemInfoParameters<T>(deviceId);
 
-            <#= DeclareFunc("func", "m", "HttpResponseMessage", "ParseSystemInfoResponse", "m, parameters.Columns", "string", i) #>;
+            <#= DeclareFunc("func", "m", "HttpResponseMessage", "ParseSystemInfoResponse", "m, parameters.Columns", "PrtgResponse", i) #>;
 
             var info = <#= CallGenericFunction("ObjectEngine.GetObject", "SysInfoData<T>", "parameters, func, token: token", i) #>;
 
