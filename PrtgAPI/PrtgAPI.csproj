@@ -149,6 +149,7 @@
     <Compile Include="Linq\Expressions\ConsecutiveCallManager.cs" />
     <Compile Include="Linq\Expressions\Pretty\CSharpWriter.cs" />
     <Compile Include="Linq\Expressions\Pretty\TextFormatter.cs" />
+    <Compile Include="PowerShell\Position.cs" />
     <Compile Include="Request\PrtgResponse.cs" />
     <Compile Include="Request\Serialization\CodeGen\LadderCondition.cs" />
     <Compile Include="Request\Serialization\CodeGen\ObjectPropertyBuilder.cs" />

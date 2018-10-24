@@ -7,12 +7,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Adjusts the position of an object within its parent.</para>
     /// 
     /// <para type="description">The Set-ObjectPosition cmdlet adjusts the position of an object under its parent node. Set-ObjectPosition
-    /// allows you to specify the absolute position amongst the list siblings you'd like your object to occupy. If a value lower than 1 or higher
-    /// than the total number of objects under the parent object is specified, PRTG will automatically place this object first or last in the list.</para>
+    /// allows you to specify either the direction to move the object in (Up, Down, Top, Bottom) or an absolute number to move the object to a fixed position.
+    /// If a numeric position lower than 1 or higher than the total number of objects under the parent object is specified, PRTG will automatically move the
+    /// object to the top or bottom of the list.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 3045 | Set-ObjectPosition 1</code>
     ///     <para>Move the sensor with ID 3045 to be first in the list under its parent.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Set-ObjectPosition Up</code>
+    ///     <para>Move the sensor with ID 1001 up a single position from its current location.</para>
     /// </example>
     /// 
     /// <para type="link">Get-Sensor</para>
@@ -34,7 +40,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// this object will be moved to the position closest possible position.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
-        public int Position { get; set; }
+        public Position Position { get; set; }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
@@ -42,7 +48,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecordEx()
         {
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (Current Position: {Object.Position}) (New Position: {Position})"))
-                ExecuteOperation(() => client.SetPosition(Object, Position), $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
+                ExecuteOperation(() =>
+                {
+                    if (Position.IsAbsolutePosition)
+                        client.SetPosition(Object, Position.AbsolutePosition);
+                    else
+                        client.SetPosition(Object.Id, Position.RelativePosition);
+
+                }, $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
         }
 
         internal override string ProgressActivity => "Modify PRTG Object Positions";

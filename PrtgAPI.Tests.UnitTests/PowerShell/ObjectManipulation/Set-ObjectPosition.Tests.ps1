@@ -3,12 +3,28 @@
 Describe "Set-ObjectPosition" -Tag @("PowerShell", "UnitTest") {
     SetActionResponse
 
-    It "can execute" {
+    It "can set an absolute position" {
         $sensor = Run Sensor { Get-Sensor }
 
         WithResponseArgs "AddressValidatorResponse" "api/setposition.htm?id=2203&newpos=9" {
             $sensor | Set-ObjectPosition 1
         }
+    }
+
+    It "can set a relative position" {
+        $sensor = Run Sensor { Get-Sensor }
+
+        WithResponseArgs "AddressValidatorResponse" "api/setposition.htm?id=2203&newpos=up" {
+            $sensor | Set-ObjectPosition up
+        }
+    }
+
+    It "throws setting an invalid position value" {
+        SetMultiTypeResponse
+
+        $sensor = Get-Sensor -Count 1
+
+        { $sensor | Set-ObjectPosition banana } | Should Throw "Cannot convert value 'banana' to an absolute or directional position"
     }
 
     It "can execute with -WhatIf" {
