@@ -27,6 +27,13 @@ namespace PrtgAPI.Request
                 ServicePointManager.ServerCertificateValidationCallback += IgnoreSSLCallback;
 
             handler.CookieContainer = cookies;
+
+            //.NET Core should use DefaultProxyCredentials
+            var proxy = WebRequest.DefaultWebProxy;
+
+            if (proxy.Credentials == null)
+                proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            
             asyncClient = new HttpClient(handler);
         }
 
