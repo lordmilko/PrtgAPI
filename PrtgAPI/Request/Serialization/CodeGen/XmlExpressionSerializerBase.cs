@@ -167,10 +167,13 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             try
             {
-                //XML values should always be InvariantCulture. If value was scraped from HTML, value will be the CurrentCulture of the PRTG Server.
-                if (!double.TryParse(s, numberStyle, NumberFormatInfo.InvariantInfo, out dVal))
+                //XML values should always be InvariantCulture. If value was scraped from HTML, value could use a comma for decimal points
+                //(e.g. if European culture). If we can't convert with InvariantCulture, first let's try and convert with the user's native culture
+                if (!double.TryParse(s, numberStyle, NumberFormatInfo.InvariantInfo, out dVal) && !double.TryParse(s, numberStyle, NumberFormatInfo.CurrentInfo, out dVal))
                 {
-                    dVal = double.Parse(s, numberStyle, NumberFormatInfo.CurrentInfo);
+                    //If neither InvariantCulture nor CurrentCulture worked, this indicates there's most likely a mismatch between the client and server cultures.
+                    //Let's try and make our value InvariantCulture compliant and hope for the best
+                    dVal = double.Parse(s.Replace(",", "."), numberStyle, NumberFormatInfo.InvariantInfo);
                 }
             }
             catch (Exception ex)
