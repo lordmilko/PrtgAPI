@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {

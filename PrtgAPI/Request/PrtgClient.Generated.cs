@@ -13,12 +13,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.Linq;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 
 //Methods with complex logic surrounding sync/async function calls.
 //For each method, two variants a generated. A synchronous method with the

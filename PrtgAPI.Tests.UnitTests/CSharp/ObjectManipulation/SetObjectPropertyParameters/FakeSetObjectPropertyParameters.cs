@@ -1,6 +1,6 @@
 using System;
 using PrtgAPI.Parameters;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection.Cache;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {

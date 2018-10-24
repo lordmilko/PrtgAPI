@@ -8,10 +8,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Base
@@ -78,7 +79,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 dynamicParameters = dynamicParameterSet.GetBoundParameters(this, (p, v) =>
                 {
-                    var cleaned = PSObjectHelpers.CleanPSObject(v);
+                    var cleaned = PSObjectUtilities.CleanPSObject(v);
 
                     if (cleaned == null)
                         return new List<SearchFilter>();
@@ -320,7 +321,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private SearchFilter PreProcessFilterInternal(SearchFilter filter)
         {
-            var typeProperties = typeof(TObject).GetTypeCache().Cache.Properties;
+            var typeProperties = typeof(TObject).GetTypeCache().Properties;
 
             //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
             var property = typeProperties.FirstOrDefault(p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Name == filter.Property.ToString()));

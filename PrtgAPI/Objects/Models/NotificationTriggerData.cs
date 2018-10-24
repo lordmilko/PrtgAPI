@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {

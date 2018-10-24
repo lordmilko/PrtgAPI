@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace PrtgAPI.Request.Serialization
 {
     [ExcludeFromCodeCoverage]
-    static class DeserializationHelpers
+    static class TypeHelpers
     {
         /// <summary>
         /// Converts a <see cref="string"/> to an <see cref="int"/>. If the specified value is null or empty,
@@ -48,6 +49,16 @@ namespace PrtgAPI.Request.Serialization
         internal static double ConvertToPrtgDateTime(DateTime dateTime)
         {
             return dateTime.ToUniversalTime().ToOADate();
+        }
+
+        internal static DateTime StringToDate(string str)
+        {
+            return DateTime.ParseExact(str, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+        }
+
+        internal static string DateToString(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd-HH-mm-ss");
         }
 
         /// <summary>

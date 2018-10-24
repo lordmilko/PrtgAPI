@@ -4,10 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Request.Serialization;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Utilities;
 using XmlMapping = PrtgAPI.Request.Serialization.XmlMapping;
 
 namespace PrtgAPI.Linq.Expressions.Serialization

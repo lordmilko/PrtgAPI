@@ -9,8 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -229,7 +230,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<prtg\0>value!</prtg>";
 
-            var xDoc = XDocumentHelpers.SanitizeXml(xml);
+            var xDoc = XDocumentUtilities.SanitizeXml(xml);
 
             Assert.AreEqual("value!", xDoc.Element("prtg").Value);
         }

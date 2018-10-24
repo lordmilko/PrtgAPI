@@ -8,8 +8,9 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request.Serialization
 {
@@ -123,7 +124,7 @@ namespace PrtgAPI.Request.Serialization
             }
             else
             {
-                if (mapping.PropertyCache.Property.PropertyType.GetTypeCache().Cache.GetAttribute<XmlRootAttribute>() != null)
+                if (mapping.PropertyCache.Property.PropertyType.GetTypeCache().GetAttribute<XmlRootAttribute>() != null)
                 {
                     var elms = mapping.AttributeValue.Select(a => elm.Elements(a)).First(x => x != null).FirstOrDefault();
 
@@ -325,12 +326,12 @@ namespace PrtgAPI.Request.Serialization
                 return GetEnumValue(type, value, elm);
 
             if (type == typeof (DateTime))
-                return DeserializationHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(value.ToString()));
+                return TypeHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(value.ToString()));
 
             if (type == typeof (TimeSpan))
-                return DeserializationHelpers.ConvertFromPrtgTimeSpan(XmlConvert.ToDouble(value.ToString()));
+                return TypeHelpers.ConvertFromPrtgTimeSpan(XmlConvert.ToDouble(value.ToString()));
 
-            var underlying = type.GetTypeCache().Underlying;
+            var underlying = type.GetCacheValue().Underlying;
 
             if (underlying != null)
                 return GetValueInternal(underlying, value, elm);
@@ -377,7 +378,7 @@ namespace PrtgAPI.Request.Serialization
 
         private object GetEnumValue(Type type, object value, XElement elm)
         {
-            var e = EnumHelpers.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
+            var e = EnumExtensions.XmlToEnumAnyAttrib(value.ToString(), type, null, allowFlags: false, allowParse: false);
 
             if (e == null)
             {

@@ -2,7 +2,7 @@
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     static class ILazyExtensions
     {

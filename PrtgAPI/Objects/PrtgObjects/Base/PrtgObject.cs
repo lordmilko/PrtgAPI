@@ -2,8 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -89,7 +89,7 @@ namespace PrtgAPI
             set { enumType = value; }
         }
 
-        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?)EnumHelpers.XmlToEnum<XmlEnumAttribute>(Type?.StringValue, typeof(SensorTypeInternal), false);
+        internal SensorTypeInternal? typeRaw => (SensorTypeInternal?)EnumExtensions.XmlToEnum<XmlEnumAttribute>(Type?.StringValue, typeof(SensorTypeInternal), false);
 
         private bool active;
 

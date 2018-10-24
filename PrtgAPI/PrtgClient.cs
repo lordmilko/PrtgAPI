@@ -6,14 +6,13 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {

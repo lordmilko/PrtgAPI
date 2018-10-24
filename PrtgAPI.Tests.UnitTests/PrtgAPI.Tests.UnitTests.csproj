@@ -94,7 +94,7 @@
     <Compile Include="Support\Serialization\XmlReflectionSerializerImpl.cs" />
     <Compile Include="Support\Serialization\XmlSerializerManual.cs" />
     <Compile Include="Support\PrtgAPIHelpers.cs" />
-    <Compile Include="Support\ReflectionHelpers.cs" />
+    <Compile Include="Support\TestReflectionUtilities.cs" />
     <Compile Include="Support\TestHelpers.cs" />
     <Compile Include="CSharp\Infrastructure\AssemblyTests.cs" />
     <Compile Include="CSharp\Infrastructure\SerializationTests.cs" />

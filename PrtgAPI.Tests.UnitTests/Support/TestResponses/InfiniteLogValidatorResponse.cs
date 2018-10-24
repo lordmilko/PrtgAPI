@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -90,12 +90,12 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         protected string LogDate(DateTime date)
         {
-            return ParameterHelpers.DateToString(date);
+            return TypeHelpers.DateToString(date);
         }
 
         private string OADate(DateTime date)
         {
-            return DeserializationHelpers.ConvertToPrtgDateTime(date).ToString();
+            return TypeHelpers.ConvertToPrtgDateTime(date).ToString();
         }
     }
 }

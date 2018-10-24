@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     static class ObjectExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -124,7 +124,7 @@ namespace PrtgAPI
                 else
                 {
                     //Is it the serialized form of a Standard Interval?
-                    var val = EnumHelpers.XmlToEnum<XmlEnumAttribute>(value.ToString(), typeof(StandardScanningInterval), false);
+                    var val = EnumExtensions.XmlToEnum<XmlEnumAttribute>(value.ToString(), typeof(StandardScanningInterval), false);
 
                     if (val == null) //Must be a TimeSpan then!
                     {

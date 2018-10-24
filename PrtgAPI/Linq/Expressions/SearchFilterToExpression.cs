@@ -5,8 +5,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using PrtgAPI.Attributes;
-using PrtgAPI.Request.Serialization.Cache;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions
 {

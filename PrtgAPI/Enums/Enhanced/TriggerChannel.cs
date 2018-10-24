@@ -2,8 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -76,7 +76,7 @@ namespace PrtgAPI
             if (value is string)
             {
                 //Convert it to an enum, and then let the enum handler below convert it to a static member
-                var val = EnumHelpers.XmlToEnum<XmlEnumAttribute>(value.ToString(), typeof(StandardTriggerChannel), false);
+                var val = EnumExtensions.XmlToEnum<XmlEnumAttribute>(value.ToString(), typeof(StandardTriggerChannel), false);
 
                 if (val != null)
                     value = val;
@@ -141,7 +141,7 @@ namespace PrtgAPI
             object @enum = null;
 
             if (ChannelMaybeEnum(channel))
-                @enum = channel is int ? null : EnumHelpers.XmlToEnum<T>(channel.ToString(), typeof(StandardTriggerChannel), false);
+                @enum = channel is int ? null : EnumExtensions.XmlToEnum<T>(channel.ToString(), typeof(StandardTriggerChannel), false);
 
             if (@enum != null)
                 return Parse(@enum);

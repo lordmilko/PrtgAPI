@@ -4,7 +4,8 @@ using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -51,7 +52,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            Value = PSObjectHelpers.CleanPSObject(Value);
+            Value = PSObjectUtilities.CleanPSObject(Value);
 
             switch (Trigger.Type)
             {

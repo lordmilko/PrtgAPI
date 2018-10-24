@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Attributes
 {

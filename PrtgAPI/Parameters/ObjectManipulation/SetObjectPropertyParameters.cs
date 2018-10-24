@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection.Cache;
 
 namespace PrtgAPI.Parameters
 {

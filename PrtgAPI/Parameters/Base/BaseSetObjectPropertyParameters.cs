@@ -5,10 +5,11 @@ using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
@@ -196,7 +197,7 @@ namespace PrtgAPI.Parameters
         internal static PropertyCache GetPropertyInfoViaTypeLookup(Enum property)
         {
             var attr = property.GetEnumAttribute<TypeLookupAttribute>(true);
-            var prop = attr.Class.GetTypeCache().Cache.Properties.FirstOrDefault(p => p.Property.Name == property.ToString());
+            var prop = attr.Class.GetTypeCache().Properties.FirstOrDefault(p => p.Property.Name == property.ToString());
 
             if (prop == null)
                 throw new MissingMemberException($"Property {property} cannot be found on type {attr.Class} pointed to by {nameof(TypeLookupAttribute)}");
@@ -206,7 +207,7 @@ namespace PrtgAPI.Parameters
 
         internal static PropertyCache GetPropertyInfoViaPropertyParameter<T>(Enum property)
         {
-            var prop = typeof(T).GetTypeCache().Cache.Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
+            var prop = typeof(T).GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Name == property.ToString());
 
             if (prop == null)
                 throw new MissingAttributeException(typeof(T), property.ToString(), typeof(PropertyParameterAttribute));

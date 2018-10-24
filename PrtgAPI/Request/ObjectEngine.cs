@@ -8,11 +8,11 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {

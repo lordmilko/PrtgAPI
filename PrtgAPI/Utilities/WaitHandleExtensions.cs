@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
-    static class WaitHandleHelpers
+    static class WaitHandleExtensions
     {
         internal static async Task<bool> WaitOneAsync(this WaitHandle handle, int millisecondsTimeout, CancellationToken token)
         {

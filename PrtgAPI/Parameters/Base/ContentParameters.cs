@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
@@ -42,7 +43,7 @@ namespace PrtgAPI.Parameters
 
         internal static Property[] GetDefaultProperties()
         {
-            var properties = typeof(T).GetTypeCache().Cache.Properties
+            var properties = typeof(T).GetTypeCache().Properties
                 .Where(p => p.GetAttribute<UndocumentedAttribute>() == null)
                 .Select(e => e.GetAttribute<PropertyParameterAttribute>())
                 .Where(p => p != null)

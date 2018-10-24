@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using PrtgAPI.PowerShell;
+using PrtgAPI.Request.Serialization;
 
-namespace PrtgAPI.Request.Serialization.Cache
+namespace PrtgAPI.Reflection.Cache
 {
     struct CacheValue<T>
     {

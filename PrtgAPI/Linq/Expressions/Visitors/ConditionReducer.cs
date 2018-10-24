@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {

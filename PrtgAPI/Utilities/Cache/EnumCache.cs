@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PrtgAPI.Request.Serialization.Cache
+namespace PrtgAPI.Reflection.Cache
 {
     class EnumCache : TypeCache
     {

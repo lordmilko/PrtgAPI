@@ -5,7 +5,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {

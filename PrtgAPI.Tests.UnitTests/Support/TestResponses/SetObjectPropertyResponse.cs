@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization.Cache;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -36,7 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private string GetSetObjectPropertyResponse(string address)
         {
-            var queries = UrlHelpers.CrackUrl(address);
+            var queries = UrlUtilities.CrackUrl(address);
 
             PropertyCache cache;
 

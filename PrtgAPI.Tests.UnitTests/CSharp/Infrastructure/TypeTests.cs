@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell;
@@ -14,11 +13,12 @@ using PrtgAPI.Request.Serialization.FilterHandlers;
 using PrtgAPI.Request.Serialization.ValueConverters;
 using PrtgAPI.Schedules;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.ObjectData.Query;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
-using ReflectionHelpers = PrtgAPI.Helpers.ReflectionHelpers;
+using ReflectionExtensions = PrtgAPI.Reflection.ReflectionExtensions;
 
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
@@ -971,11 +971,11 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         public void All_PrtgObjectProperties_HaveArrayLookupProperties()
         {
             var properties = PrtgObjectFilterTests.GetPrtgObjectProperties(new[] {"NotificationTypes"});
-            var propertyTypes = PrtgAPIHelpers.DistinctBy(properties.Select(p => p.PropertyType).Select(ReflectionHelpers.GetUnderlyingType), p => p.Name).ToList();
+            var propertyTypes = PrtgAPIHelpers.DistinctBy(properties.Select(p => p.PropertyType).Select(ReflectionExtensions.GetUnderlyingType), p => p.Name).ToList();
 
             var arrayTypes = typeof(DynamicParameterPropertyTypes).GetProperties();
 
-            var missing = propertyTypes.Where(p => arrayTypes.All(a => a.PropertyType.GetElementType() != p) && !p.IsArray && !ReflectionHelpers.IsNullable(p)).ToList();
+            var missing = propertyTypes.Where(p => arrayTypes.All(a => a.PropertyType.GetElementType() != p) && !p.IsArray && !ReflectionExtensions.IsNullable(p)).ToList();
 
             if (missing.Count > 0)
                 Assert.Fail($"{missing.Count}/{propertyTypes.Count} properties are missing are missing: " + string.Join(", ", missing));

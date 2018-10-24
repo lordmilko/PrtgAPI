@@ -5,12 +5,12 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
@@ -62,7 +62,7 @@ namespace PrtgAPI.Parameters
 
         private static Dictionary<string, Tuple<TEnum, PropertyInfo>> GetPropertyDictionary<TEnum>(Func<TEnum, string> getName) where TEnum : struct
         {
-            var ps = typeof(DynamicSensorParameters).GetTypeCache().Cache.Properties;
+            var ps = typeof(DynamicSensorParameters).GetTypeCache().Properties;
 
             var dict = ps.Select(GetTuple<TEnum>).Where(t => t != null).ToDictionary(
                 t => getName(t.Item2),
@@ -121,7 +121,7 @@ namespace PrtgAPI.Parameters
             get { return GetIndex(name); }
             set
             {
-                value = PSObjectHelpers.CleanPSObject(value);
+                value = PSObjectUtilities.CleanPSObject(value);
 
                 SetIndex(name, value);
             }

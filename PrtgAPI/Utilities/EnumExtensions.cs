@@ -6,12 +6,13 @@ using System.Linq;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     [ExcludeFromCodeCoverage]
-    static class EnumHelpers
+    static class EnumExtensions
     {
         public static T ToEnum<T>(this string value)
         {
@@ -58,7 +59,7 @@ namespace PrtgAPI.Helpers
         {
             var cache = typeof(TEnum).GetTypeCache();
 
-            foreach (var field in cache.Cache.Fields)
+            foreach (var field in cache.Fields)
             {
                 var attribute = field.GetAttribute<DescriptionAttribute>();
 

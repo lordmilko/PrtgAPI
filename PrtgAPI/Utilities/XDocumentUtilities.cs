@@ -3,10 +3,10 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     [ExcludeFromCodeCoverage]
-    static class XDocumentHelpers
+    static class XDocumentUtilities
     {
         public static XDocument SanitizeXml(string str)
         {

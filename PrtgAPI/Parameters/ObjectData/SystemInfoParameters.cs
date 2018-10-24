@@ -2,7 +2,8 @@
 using System.Runtime.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Exceptions.Internal;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
@@ -21,7 +22,7 @@ namespace PrtgAPI.Parameters
             this[Parameter.Content] = Content.SysInfo;
             Columns = GetProperties();
 
-            var category = typeof(T).GetTypeCache().Cache.GetAttribute<CategoryAttribute>();
+            var category = typeof(T).GetTypeCache().GetAttribute<CategoryAttribute>();
 
             if (category == null)
                 throw new MissingAttributeException(GetType(), typeof(CategoryAttribute));
@@ -31,7 +32,7 @@ namespace PrtgAPI.Parameters
 
         private SysInfoProperty[] GetProperties()
         {
-            var properties = typeof(T).GetTypeCache().Cache.Properties
+            var properties = typeof(T).GetTypeCache().Properties
                 .Where(p => p.GetAttribute<UndocumentedAttribute>() == null)
                 .Select(e => e.GetAttribute<DataMemberAttribute>())
                 .Where(p => p != null)

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -17,7 +17,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         string GetSettingsResponseText(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             var item = Items.FirstOrDefault(i => i.ObjId == components["id"]);
 

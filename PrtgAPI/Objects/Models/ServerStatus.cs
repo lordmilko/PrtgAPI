@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using PrtgAPI.Helpers;
-using DH = PrtgAPI.Request.Serialization.DeserializationHelpers;
+using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -64,7 +64,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Down"/> state.
         /// </summary>
-        public int Alarms => DH.StrToInt(alarmsStr);
+        public int Alarms => TypeHelpers.StrToInt(alarmsStr);
 
         [DataMember(Name = "AckAlarms")]
         private string acknowledgedAlarmsStr;
@@ -72,7 +72,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.DownAcknowledged"/> state.
         /// </summary>
-        public int AcknowledgedAlarms => DH.StrToInt(acknowledgedAlarmsStr);
+        public int AcknowledgedAlarms => TypeHelpers.StrToInt(acknowledgedAlarmsStr);
 
         [DataMember(Name = "PartialAlarms")]
         private string partialAlarmsStr;
@@ -80,7 +80,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.DownPartial"/> state.
         /// </summary>
-        public int PartialAlarms => DH.StrToInt(partialAlarmsStr);
+        public int PartialAlarms => TypeHelpers.StrToInt(partialAlarmsStr);
 
         [DataMember(Name = "UnusualSens")]
         private string unusualSensorsStr;
@@ -89,7 +89,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Unusual"/> state.
         /// </summary>
 
-        public int UnusualSensors => DH.StrToInt(unusualSensorsStr);
+        public int UnusualSensors => TypeHelpers.StrToInt(unusualSensorsStr);
 
         [DataMember(Name = "UpSens")]
         private string upSensorsStr;
@@ -98,7 +98,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Up"/> state.
         /// </summary>
 
-        public int UpSensors => DH.StrToInt(upSensorsStr);
+        public int UpSensors => TypeHelpers.StrToInt(upSensorsStr);
 
         [DataMember(Name = "WarnSens")]
         private string warningSensorsStr;
@@ -106,7 +106,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Warning"/> state.
         /// </summary>
-        public int WarningSensors => DH.StrToInt(warningSensorsStr);
+        public int WarningSensors => TypeHelpers.StrToInt(warningSensorsStr);
 
         [DataMember(Name = "PausedSens")]
         private string pausedSensorsStr;
@@ -114,7 +114,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of sensors currently in a <see cref="Status.Paused"/> state.
         /// </summary>
-        public int PausedSensors => DH.StrToInt(pausedSensorsStr);
+        public int PausedSensors => TypeHelpers.StrToInt(pausedSensorsStr);
 
         [DataMember(Name = "UnknownSens")]
         private string unknownSensorsStr;
@@ -123,7 +123,7 @@ namespace PrtgAPI
         /// The number of sensors currently in a <see cref="Status.Unknown"/> state.
         /// </summary>
 
-        public int UnknownSensors => DH.StrToInt(unknownSensorsStr);
+        public int UnknownSensors => TypeHelpers.StrToInt(unknownSensorsStr);
 
         [DataMember(Name = "NewTickets")]
         private string newTicketsStr;
@@ -131,7 +131,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of new unread tickets since last logon.
         /// </summary>
-        public int NewTickets => DH.StrToInt(newTicketsStr);
+        public int NewTickets => TypeHelpers.StrToInt(newTicketsStr);
 
         private string userId;
 

@@ -5,10 +5,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -73,7 +72,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(CommandFunction.PauseObjectFor):
                     return new BasicResponse("<a data-placement=\"bottom\" title=\"Resume\" href=\"#\" onclick=\"var self=this; _Prtg.objectTools.pauseObject.call(this,'1234',1);return false;\"><i class=\"icon-play icon-dark\"></i></a>");
                 case nameof(HtmlFunction.ChannelEdit):
-                    var components = UrlHelpers.CrackUrl(address);
+                    var components = UrlUtilities.CrackUrl(address);
 
                     if(components["channel"] != "99")
                         return new ChannelResponse(new ChannelItem());
@@ -95,7 +94,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(XmlFunction.GetObjectStatus):
                     return GetRawObjectProperty(address);
                 case nameof(CommandFunction.AddSensor2):
-                    newSensorType = UrlHelpers.CrackUrl(address)["sensortype"].ToEnum<SensorType>();
+                    newSensorType = UrlUtilities.CrackUrl(address)["sensortype"].ToEnum<SensorType>();
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditNotification):
@@ -148,7 +147,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private IWebResponse GetTableResponse(string address, string function, bool async)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             Content? content;
 
@@ -482,7 +481,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private IWebResponse GetObjectDataResponse(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             var objectType = components["objecttype"].ToEnum<ObjectType>();
 
@@ -503,7 +502,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private IWebResponse GetRawObjectProperty(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             if (components["name"] == "name")
                 return new RawPropertyResponse("testName");
@@ -553,7 +552,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         public static Content GetContent(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             Content content = components["content"].DescriptionToEnum<Content>();
 
@@ -590,7 +589,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private static string GetPage(string address)
         {
-            var queries = UrlHelpers.ParseQueryString(address);
+            var queries = UrlUtilities.ParseQueryString(address);
 
             var items = queries.AllKeys.SelectMany(queries.GetValues, (k, v) => new { Key = k, Value = v });
 

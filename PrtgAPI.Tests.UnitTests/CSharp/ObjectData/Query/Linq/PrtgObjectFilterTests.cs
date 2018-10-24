@@ -5,8 +5,9 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request.Serialization.ValueConverters;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
@@ -32,7 +33,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         private static string GetTime(DateTime dateTime)
         {
-            return ParameterHelpers.DateToString(dateTime);
+            return TypeHelpers.DateToString(dateTime);
         }
     }
 
@@ -543,7 +544,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         private string GetUrlInternal(string u, int i, Enum[] streamOrder)
         {
-            var parts = UrlHelpers.CrackUrl(u);
+            var parts = UrlUtilities.CrackUrl(u);
             var keys = GetKeys(parts);
             var firstIndexCandidates = GetFirstIndexCandidates(keys, streamOrder);
 

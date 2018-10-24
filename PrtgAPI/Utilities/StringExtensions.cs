@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     static class StringExtensions
     {

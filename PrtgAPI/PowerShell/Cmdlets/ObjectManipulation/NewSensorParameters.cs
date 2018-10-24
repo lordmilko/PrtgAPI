@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -222,8 +222,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void BeginProcessing()
         {
-            First = PSObjectHelpers.CleanPSObject(First);
-            Second = PSObjectHelpers.CleanPSObject(Second);
+            First = PSObjectUtilities.CleanPSObject(First);
+            Second = PSObjectUtilities.CleanPSObject(Second);
 
             if (ParameterSetName == ParameterSet.Dynamic)
                 base.BeginProcessing();
@@ -274,7 +274,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             var toAdd = RawParameters.Keys.Cast<object>()
                     .Where(k => k.ToString() != SensorTypeParameter)
-                    .Select(k => new CustomParameter(k.ToString(), PSObjectHelpers.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
+                    .Select(k => new CustomParameter(k.ToString(), PSObjectUtilities.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
                     .ToList();
 
             foreach (var param in toAdd)

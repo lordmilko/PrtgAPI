@@ -5,10 +5,10 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using PrtgAPI.Dynamic;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {

@@ -4,10 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     [ExcludeFromCodeCoverage]
-    static class UrlHelpers
+    static class UrlUtilities
     {
         public static NameValueCollection CrackUrl(string url)
         {

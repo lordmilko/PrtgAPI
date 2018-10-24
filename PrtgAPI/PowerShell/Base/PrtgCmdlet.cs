@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
-using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Progress;
+using PrtgAPI.Reflection;
 
 namespace PrtgAPI.PowerShell.Base
 {

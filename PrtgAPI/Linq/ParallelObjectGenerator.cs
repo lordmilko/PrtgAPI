@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Linq
 {
     /// <summary>
-    /// Transforms an ordered enumeration of tasks into an <see cref="IEnumerable{T}"/> 
+    /// Transforms an unordered parallel task into an <see cref="IEnumerable{T}"/> 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of object returned by this generator.</typeparam>
     [ExcludeFromCodeCoverage]
-    class SerialObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
+    class ParallelObjectGenerator<T> : IEnumerable<T>, IEnumerator<T>
     {
-        private IEnumerator<Task<T>> enumerator;
+        private IEnumerator enumerator;
 
         /// <summary>
         /// Gets the element in the collection at the current position of the enumerator.
@@ -23,23 +23,33 @@ namespace PrtgAPI.Helpers
         object IEnumerator.Current => Current;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerialObjectGenerator{T}"/> class.
+        /// Initializes a new instance of the <see cref="ParallelObjectGenerator{T}"/> class.
         /// </summary>
-        public SerialObjectGenerator(IEnumerable<Task<T>> tasks)
+        public ParallelObjectGenerator(Task<Task<T>>[] tasks)
         {
             enumerator = tasks.GetEnumerator();
         }
 
         /// <summary>
-        /// Advances the enumerator to the next element of the collection and executes the task within.
+        /// Advances the enumerator to the next element of the collection.<para />If this is the first time the enumerator has been advanced, the enumerator's task will be initialized and begin generating results in parallel for subsequent requests to <see cref="MoveNext"/>.
         /// </summary>
         /// <returns>True if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</returns>
         public bool MoveNext()
         {
             var next = enumerator.MoveNext();
 
-            if (next)
-                Current = enumerator.Current.Result;
+            try
+            {
+                if (next)
+                    Current = ((Task<Task<T>>) enumerator.Current).Result.Result;
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException != null)
+                    throw ex.InnerException;
+
+                throw;
+            }
 
             return next;
         }

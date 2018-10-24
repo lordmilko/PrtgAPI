@@ -12,8 +12,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.PowerShell.Base;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
@@ -186,7 +186,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var cacheClasses = new[]
             {
                 "AttributeCache",
-                "ReflectionHelpers",
+                "ReflectionExtensions",
                 "TypeCache",
                 "XmlSerializerMembers"
             };

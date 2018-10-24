@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq
 {
     class LogEqualityComparer : EqualityComparer<Log>
     {
-        static List<PropertyCache> caches = typeof(Log).GetTypeCache().Cache.Properties.Where(p => p.Property.GetSetMethod() != null).ToList();
+        static List<PropertyCache> caches = typeof(Log).GetTypeCache().Properties.Where(p => p.Property.GetSetMethod() != null).ToList();
 
         private Func<Log, Log, bool> areEqual;
 
@@ -21,7 +22,7 @@ namespace PrtgAPI.Linq
 
         private Func<Log, Log, bool> CreateComparer()
         {
-            var properties = typeof(Log).GetTypeCache().Cache.Properties.Where(p => p.Property.GetSetMethod() != null).Select(p => p.Property).ToList();
+            var properties = typeof(Log).GetTypeCache().Properties.Where(p => p.Property.GetSetMethod() != null).Select(p => p.Property).ToList();
 
             var log1 = Expression.Parameter(typeof(Log), "log1");
             var log2 = Expression.Parameter(typeof(Log), "log2");

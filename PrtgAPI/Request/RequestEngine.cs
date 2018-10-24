@@ -8,8 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
@@ -405,7 +405,7 @@ namespace PrtgAPI.Request
             {
                 var errorUrl = responseMessage.RequestMessage.RequestUri.ToString();
 
-                var queries = UrlHelpers.CrackUrl(errorUrl);
+                var queries = UrlUtilities.CrackUrl(errorUrl);
                 var errorMsg = queries["errormsg"];
 
                 errorMsg = errorMsg.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ");

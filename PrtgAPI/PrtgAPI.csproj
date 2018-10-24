@@ -131,20 +131,19 @@
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />
     <Compile Include="Exceptions\InvalidStateException.cs" />
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
-    <Compile Include="Helpers\FluentExpressions.cs" />
-    <Compile Include="Helpers\ObjectExtensions.cs" />
-    <Compile Include="Helpers\Async\SerialObjectGenerator.cs" />
-    <Compile Include="Helpers\DictionaryHelpers.cs" />
-    <Compile Include="Helpers\WaitHandleHelpers.cs" />
+    <Compile Include="Utilities\FluentExpressions.cs" />
+    <Compile Include="Utilities\ObjectExtensions.cs" />
+    <Compile Include="Linq\SerialObjectGenerator.cs" />
+    <Compile Include="Utilities\DictionaryExtensions.cs" />
+    <Compile Include="Utilities\WaitHandleExtensions.cs" />
     <Compile Include="Linq\Expressions\ElseIfExpression.cs" />
     <Compile Include="Linq\Expressions\ExpressionHelpers.cs" />
-    <Compile Include="Helpers\ILazyExtensions.cs" />
-    <Compile Include="Helpers\StringExtensions.cs" />
+    <Compile Include="Utilities\ILazyExtensions.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Linq\EnumerableEx.cs" />
-    <Compile Include="Helpers\ParameterHelpers.cs" />
-    <Compile Include="Helpers\IObjectExtensions.cs" />
-    <Compile Include="Helpers\PSObjectHelpers.cs" />
-    <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="Utilities\IObjectExtensions.cs" />
+    <Compile Include="Utilities\PSObjectUtilities.cs" />
+    <Compile Include="Utilities\ReflectionExtensions.cs" />
     <Compile Include="Linq\Expressions\CallCounter.cs" />
     <Compile Include="Linq\Expressions\ConsecutiveCallManager.cs" />
     <Compile Include="Linq\Expressions\Pretty\CSharpWriter.cs" />
@@ -176,7 +175,7 @@
     <Compile Include="Linq\Expressions\Linq\SelectManyLinqExpression.cs" />
     <Compile Include="Linq\Expressions\Linq\SkipLinqExpression.cs" />
     <Compile Include="Linq\Expressions\Linq\TakeLinqExpression.cs" />
-    <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Linq\Expressions\SearchFilterToExpression.cs" />
     <Compile Include="Linq\Expressions\Visitors\ConditionUnwrapper.cs" />
     <Compile Include="Linq\Expressions\Visitors\MethodReplacer.cs" />
@@ -267,7 +266,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PrtgClient.Methods.Generated.tt</DependentUpon>
     </Compile>
-    <Compile Include="Request\Serialization\Cache\EnumNameCache.cs" />
+    <Compile Include="Utilities\Cache\EnumNameCache.cs" />
     <Compile Include="Request\Serialization\CodeGen\ProxyBuilder.cs" />
     <Compile Include="Request\Serialization\CodeGen\ProxyExpression.cs" />
     <Compile Include="Request\Serialization\CodeGen\ProxyFactory.cs" />
@@ -292,8 +291,8 @@
     <Compile Include="Request\StreamManager.cs" />
     <Compile Include="Request\StringEnum.cs" />
     <Compile Include="Parameters\ObjectData\PrtgObjectParameters.cs" />
-    <Compile Include="Request\Serialization\Cache\AttributeCache.cs" />
-    <Compile Include="Request\Serialization\Cache\EnumCache.cs" />
+    <Compile Include="Utilities\Cache\AttributeCache.cs" />
+    <Compile Include="Utilities\Cache\EnumCache.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\FavoriteFilterHandler.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\FilterHandler.cs" />
     <Compile Include="Request\Serialization\FilterHandlers\NotificationTypesHandler.cs" />
@@ -331,12 +330,12 @@
     <Compile Include="Request\IShallowCloneable.cs" />
     <Compile Include="Request\RequestParser.cs" />
     <Compile Include="Request\ResponseParser.cs" />
-    <Compile Include="Helpers\UrlHelpers.cs" />
-    <Compile Include="Request\Serialization\Cache\ReflectionCacheManager.cs" />
-    <Compile Include="Request\Serialization\Cache\EnumXmlCache.cs" />
-    <Compile Include="Request\Serialization\Cache\FieldCache.cs" />
-    <Compile Include="Request\Serialization\Cache\PropertyCache.cs" />
-    <Compile Include="Request\Serialization\Cache\TypeCache.cs" />
+    <Compile Include="Utilities\UrlUtilities.cs" />
+    <Compile Include="Utilities\Cache\ReflectionCacheManager.cs" />
+    <Compile Include="Utilities\Cache\EnumXmlCache.cs" />
+    <Compile Include="Utilities\Cache\FieldCache.cs" />
+    <Compile Include="Utilities\Cache\PropertyCache.cs" />
+    <Compile Include="Utilities\Cache\TypeCache.cs" />
     <Compile Include="Request\Serialization\LazyValue.cs" />
     <Compile Include="Objects\EventObjects\Log.cs" />
     <Compile Include="Objects\PrtgObjects\NotificationAction\BaseNotificationActionSettings.cs" />
@@ -565,8 +564,8 @@
     <Compile Include="Enums\Deserialization\ObjectSettings\WmiMode.cs" />
     <Compile Include="Enums\Functions\HtmlFunction.cs" />
     <Compile Include="Enums\Deserialization\HistoricValueMode.cs" />
-    <Compile Include="Helpers\Async\ParallelObjectGenerator.cs" />
-    <Compile Include="Helpers\TaskHelpers.cs" />
+    <Compile Include="Linq\ParallelObjectGenerator.cs" />
+    <Compile Include="Utilities\TaskExtensions.cs" />
     <Compile Include="Objects\Models\Html\DropDownList.cs" />
     <Compile Include="Objects\Models\Html\Input.cs" />
     <Compile Include="Objects\Models\Html\InputType.cs" />
@@ -574,7 +573,7 @@
     <Compile Include="Objects\SubObjects\Channel.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\PercentDisplay.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\DecimalMode.cs" />
-    <Compile Include="Request\Serialization\DeserializationHelpers.cs" />
+    <Compile Include="Request\Serialization\TypeHelpers.cs" />
     <Compile Include="Objects\PrtgObjects\Schedule.cs" />
     <Compile Include="Objects\Models\SensorTotals.cs" />
     <Compile Include="Objects\Models\ServerStatus.cs" />
@@ -625,8 +624,8 @@
     <Compile Include="Exceptions\Internal\MissingParameterTypeException.cs" />
     <Compile Include="Exceptions\PrtgRequestException.cs" />
     <Compile Include="Exceptions\XmlDeserializationException.cs" />
-    <Compile Include="Helpers\EnumHelpers.cs" />
-    <Compile Include="Helpers\XDocumentHelpers.cs" />
+    <Compile Include="Utilities\EnumExtensions.cs" />
+    <Compile Include="Utilities\XDocumentUtilities.cs" />
     <Compile Include="Objects\Models\NotificationTypes.cs" />
     <Compile Include="Objects\PrtgObjects\Probe.cs" />
     <Compile Include="Objects\PrtgObjects\Base\DeviceOrGroupOrProbe.cs" />

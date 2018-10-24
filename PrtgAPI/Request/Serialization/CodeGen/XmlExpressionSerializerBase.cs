@@ -209,7 +209,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             try
             {
-                return DeserializationHelpers.ConvertFromPrtgTimeSpan(XmlConvert.ToDouble(s));
+                return TypeHelpers.ConvertFromPrtgTimeSpan(XmlConvert.ToDouble(s));
             }
             catch (Exception ex)
             {
@@ -221,7 +221,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             try
             {
-                return DeserializationHelpers.ConvertFromPrtgDateTimeInternal(XmlConvert.ToDouble(s));
+                return TypeHelpers.ConvertFromPrtgDateTimeInternal(XmlConvert.ToDouble(s));
             }
             catch (Exception ex)
             {
@@ -241,7 +241,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             try
             {
-                return DeserializationHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(str));
+                return TypeHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(str));
             }
             catch (Exception ex)
             {

@@ -103,7 +103,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 else
                     Assert.IsTrue(prop.GetValue(parameters) == null, $"Property '{prop.Name}' was not null.");
 
-                var defaultValue = prop.PropertyType.Name == "TriggerChannel" ? new TriggerChannel(1234) : TestReflectionHelpers.GetDefaultUnderlying(prop.PropertyType);
+                var defaultValue = prop.PropertyType.Name == "TriggerChannel" ? new TriggerChannel(1234) : TestReflectionUtilities.GetDefaultUnderlying(prop.PropertyType);
 
                 prop.SetValue(parameters, defaultValue);
                 Assert.IsTrue(prop.GetValue(parameters) != null, $"Property '{prop.Name}' was null.");
@@ -193,7 +193,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         private void TriggerParameters_AllProperties_HaveDefault(TriggerParameters parameters, Func<PropertyInfo, bool> additionalChecks = null)
         {
-            TestReflectionHelpers.NullifyProperties(parameters);
+            TestReflectionUtilities.NullifyProperties(parameters);
 
             if (additionalChecks == null)
                 additionalChecks = p => false;

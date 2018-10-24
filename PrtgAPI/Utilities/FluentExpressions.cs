@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     internal static class FluentExpressions
     {

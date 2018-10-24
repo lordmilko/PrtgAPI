@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.ObjectData.Query;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.Serialization;
@@ -21,7 +22,6 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     [TestClass]
     public class SerializationTests
     {
-
         private string ExceptionException(string value, string type, string message)
         {
             return $"An error occurred while attempting to deserialize an object of type '{type}', possibly caused by the following XML: '<property>{value}</property>'. {message}";
@@ -191,7 +191,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         public void Serializer_Engine_DateTime_Normal() =>
-            DeserializeElementDummy(DeserializationHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
+            DeserializeElementDummy(TypeHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
 
         [TestMethod]
         public void Serializer_Engine_DateTime_Invalid() =>
@@ -211,7 +211,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         public void Serializer_Engine_NullableDateTime_Normal() =>
-            DeserializeElementDummy<DateTime?>(DeserializationHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
+            DeserializeElementDummy<DateTime?>(TypeHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
 
         [TestMethod]
         public void Serializer_Engine_NullableDateTime_Invalid() =>
@@ -594,7 +594,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                 var result = action(client);
 
-                if (ReflectionHelpers.IsSubclassOfRawGeneric(result.GetType(), typeof(Task<>)))
+                if (ReflectionExtensions.IsSubclassOfRawGeneric(result.GetType(), typeof(Task<>)))
                 {
                     var task = (Task)result;
                     await task;

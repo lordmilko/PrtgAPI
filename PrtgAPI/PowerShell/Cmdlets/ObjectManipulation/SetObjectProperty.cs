@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -154,16 +154,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else if (ParameterSetName == ParameterSet.Dynamic)
             {
-                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, PSObjectHelpers.CleanPSObject(v))).ToArray();
+                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, PSObjectUtilities.CleanPSObject(v))).ToArray();
             }
             else if (ParameterSetName == ParameterSet.RawProperty)
             {
-                RawValue = PSObjectHelpers.CleanPSObject(RawValue);
+                RawValue = PSObjectUtilities.CleanPSObject(RawValue);
             }
             else if (ParameterSetName == ParameterSet.Raw)
             {
                 parameters = RawParameters.Keys.Cast<object>()
-                    .Select(k => new CustomParameter(k.ToString(), PSObjectHelpers.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
+                    .Select(k => new CustomParameter(k.ToString(), PSObjectUtilities.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
                     .ToArray();
             }
 

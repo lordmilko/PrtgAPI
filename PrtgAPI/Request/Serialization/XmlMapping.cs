@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection.Cache;
 
 namespace PrtgAPI.Request.Serialization
 {

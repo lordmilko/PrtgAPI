@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace PrtgAPI.Tests.UnitTests.Support
 {
-    public static class TestReflectionHelpers
+    public static class TestReflectionUtilities
     {
         public static void NullifyProperties(object obj)
         {

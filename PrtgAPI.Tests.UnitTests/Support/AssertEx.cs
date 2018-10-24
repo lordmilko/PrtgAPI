@@ -5,10 +5,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -26,7 +27,7 @@ namespace PrtgAPI.Tests.UnitTests
             foreach (var prop in obj.GetType().GetProperties())
             {
                 if (!customHandler(prop))
-                    Assert.IsTrue(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' was not its default value");
+                    Assert.IsTrue(TestReflectionUtilities.IsDefaultValue(prop, obj), $"Property '{prop.Name}' was not its default value");
             }
         }
 
@@ -38,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests
             foreach (var prop in obj.GetType().GetProperties())
             {
                 if(!customHandler(prop))
-                    Assert.IsFalse(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
+                    Assert.IsFalse(TestReflectionUtilities.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
             }
         }
 
@@ -50,13 +51,13 @@ namespace PrtgAPI.Tests.UnitTests
             foreach (var prop in obj.GetType().GetProperties(flags).Where(p => !p.GetIndexParameters().Any()))
             {
                 if (!customHandler(prop))
-                    Assert.IsFalse(TestReflectionHelpers.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
+                    Assert.IsFalse(TestReflectionUtilities.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
             }
 
             foreach (var field in obj.GetType().GetFields(flags))
             {
                 if (!customHandler(field))
-                    Assert.IsFalse(TestReflectionHelpers.IsDefaultValue(field, obj), $"Property '{field.Name}' did not have a value.");
+                    Assert.IsFalse(TestReflectionUtilities.IsDefaultValue(field, obj), $"Property '{field.Name}' did not have a value.");
             }
         }
 
@@ -91,7 +92,7 @@ namespace PrtgAPI.Tests.UnitTests
                             AreEqualLists(originalList[i].ToIEnumerable().ToList(), newList[i].ToIEnumerable().ToList(), $"Lists of property {newProperty.Name} at index '{i}' were not equal");
                         else
                         {
-                            if (ReflectionHelpers.IsSubclassOfRawGeneric(newList[i].GetType(), typeof(KeyValuePair<,>)) && ReflectionHelpers.IsSubclassOfRawGeneric(originalList[i].GetType(), typeof(KeyValuePair<,>)))
+                            if (ReflectionExtensions.IsSubclassOfRawGeneric(newList[i].GetType(), typeof(KeyValuePair<,>)) && ReflectionExtensions.IsSubclassOfRawGeneric(originalList[i].GetType(), typeof(KeyValuePair<,>)))
                             {
                                 AllPropertiesAndFieldsAreEqual(originalList[i], newList[i]);
                             }
@@ -138,7 +139,7 @@ namespace PrtgAPI.Tests.UnitTests
                 }
                 else
                 {
-                    if (ReflectionHelpers.IsSubclassOfRawGeneric(newField.FieldType, typeof(IReadOnlyDictionary<,>)) && ReflectionHelpers.IsSubclassOfRawGeneric(originalField.FieldType, typeof(IReadOnlyDictionary<,>)))
+                    if (ReflectionExtensions.IsSubclassOfRawGeneric(newField.FieldType, typeof(IReadOnlyDictionary<,>)) && ReflectionExtensions.IsSubclassOfRawGeneric(originalField.FieldType, typeof(IReadOnlyDictionary<,>)))
                     {
                         AllPropertiesAndFieldsAreEqual(originalValue, originalValue);
                     }

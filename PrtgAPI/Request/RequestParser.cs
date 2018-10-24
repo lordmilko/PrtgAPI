@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {

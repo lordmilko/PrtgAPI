@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -241,7 +241,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (datetime != null)
             {
-                AddPipelineFilter(property, ParameterHelpers.DateToString(datetime.Value), false);
+                AddPipelineFilter(property, TypeHelpers.DateToString(datetime.Value), false);
             }
         }
 

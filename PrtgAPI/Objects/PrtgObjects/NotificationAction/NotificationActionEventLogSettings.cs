@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.NotificationActions
 {

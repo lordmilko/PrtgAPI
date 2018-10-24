@@ -5,8 +5,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using Microsoft.PowerShell.Commands;
-using PrtgAPI.Helpers;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Progress
 {

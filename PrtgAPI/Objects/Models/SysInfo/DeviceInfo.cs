@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI
 {
@@ -99,7 +99,7 @@ namespace PrtgAPI
 
         internal void SetDateDash(string value, ref string strField, ref DateTime? dateField)
         {
-            SetDateInternal(value, ref strField, ref dateField, s => ParameterHelpers.StringToDate(s));
+            SetDateInternal(value, ref strField, ref dateField, s => TypeHelpers.StringToDate(s));
         }
 
         internal void SetDateColon(string value, ref string strField, ref DateTime? dateField, string format = "yyyy-MM-dd HH:mm:ss")

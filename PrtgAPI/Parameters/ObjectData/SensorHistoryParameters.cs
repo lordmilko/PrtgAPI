@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.Parameters
 {
@@ -54,12 +54,12 @@ namespace PrtgAPI.Parameters
 
         private void SetDate(Parameter parameter, DateTime value)
         {
-            this[parameter] = ParameterHelpers.DateToString(value);
+            this[parameter] = TypeHelpers.DateToString(value);
         }
 
         private DateTime GetDate(Parameter parameter)
         {
-            return ParameterHelpers.StringToDate(this[parameter].ToString());
+            return TypeHelpers.StringToDate(this[parameter].ToString());
         }
 
         SensorHistoryParameters IShallowCloneable<SensorHistoryParameters>.ShallowClone()

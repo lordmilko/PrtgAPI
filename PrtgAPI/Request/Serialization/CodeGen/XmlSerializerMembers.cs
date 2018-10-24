@@ -39,8 +39,8 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         internal static MethodInfo XmlReader_Skip = typeof(XmlReader).GetMethod(nameof(XmlReader.Skip));
         internal static MethodInfo XmlReader_ReadToFollowing = typeof(XmlReader).GetMethod(nameof(XmlReader.ReadToFollowing), new[] { typeof(string) });
 
-        internal static MethodInfo DH_ConvertFromPrtgDateTimeInternal = typeof(DeserializationHelpers).GetMethod(nameof(DeserializationHelpers.ConvertFromPrtgDateTimeInternal), BindingFlags.Static | BindingFlags.NonPublic);
-        internal static MethodInfo DH_ConvertFromPrtgTimeSpan = typeof(DeserializationHelpers).GetMethod(nameof(DeserializationHelpers.ConvertFromPrtgTimeSpan), BindingFlags.Static | BindingFlags.NonPublic);
+        internal static MethodInfo TypeHelpers_ConvertFromPrtgDateTimeInternal = typeof(TypeHelpers).GetMethod(nameof(TypeHelpers.ConvertFromPrtgDateTimeInternal), BindingFlags.Static | BindingFlags.NonPublic);
+        internal static MethodInfo TypeHelpers_ConvertFromPrtgTimeSpan = typeof(TypeHelpers).GetMethod(nameof(TypeHelpers.ConvertFromPrtgTimeSpan), BindingFlags.Static | BindingFlags.NonPublic);
 
         internal static FieldInfo GetValueConverterInstance(Type type) => type.GetField("Instance", BindingFlags.Static | BindingFlags.NonPublic);
 

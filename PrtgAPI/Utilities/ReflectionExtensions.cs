@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection.Cache;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Reflection
 {
     /// <summary>
     /// Defines helper extension methods used for performing reflection.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    static class ReflectionHelpers
+    static class ReflectionExtensions
     {
         private static BindingFlags internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 
-        public static CacheValue<TypeCache> GetTypeCache(this Type type) => ReflectionCacheManager.GetTypeCache(type);
+        public static CacheValue<TypeCache> GetCacheValue(this Type type) => ReflectionCacheManager.GetTypeCache(type);
+
+        public static TypeCache GetTypeCache(this Type type) => ReflectionCacheManager.GetTypeCache(type).Cache;
 
         public static TypeCache GetTypeCache(this object obj) => ReflectionCacheManager.Get(obj.GetType());
 
@@ -36,7 +38,7 @@ namespace PrtgAPI.Helpers
         /// <returns></returns>
         public static Type GetUnderlyingType(this Type type)
         {
-            var cache = type.GetTypeCache();
+            var cache = type.GetCacheValue();
 
             if (cache.Underlying != null)
                 return cache.Underlying;
@@ -46,7 +48,7 @@ namespace PrtgAPI.Helpers
 
         public static bool IsNullable(this Type type)
         {
-            return type.GetTypeCache().Underlying != null;
+            return type.GetCacheValue().Underlying != null;
         }
 
         /// <summary>
@@ -147,7 +149,7 @@ namespace PrtgAPI.Helpers
         /// <returns></returns>
         public static IEnumerable<PropertyCache> GetNormalProperties(this Type type)
         {
-            return type.GetTypeCache().Cache.Properties.Where(p => !p.Property.GetIndexParameters().Any() && p.Property.CanWrite);
+            return type.GetTypeCache().Properties.Where(p => !p.Property.GetIndexParameters().Any() && p.Property.CanWrite);
         }
 
         //https://stackoverflow.com/questions/457676/check-if-a-class-is-derived-from-a-generic-class

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -43,7 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private string GetTableText(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             var content = MultiTypeResponse.GetContent(address);
 
@@ -67,7 +67,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private IWebResponse GetObjectDataResponse(string address)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
 
             var objectType = components["objecttype"].ToEnum<ObjectType>();
 

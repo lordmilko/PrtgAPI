@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Request;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters.Helpers
 {
@@ -221,7 +222,7 @@ namespace PrtgAPI.Parameters.Helpers
                     //If the enum represents a set of numeric values and our value was an integer,
                     int result;
 
-                    if (PropertyType.GetTypeCache().Cache.GetAttribute<NumericEnumAttribute>() != null && int.TryParse(Value.ToString(), out result))
+                    if (PropertyType.GetTypeCache().GetAttribute<NumericEnumAttribute>() != null && int.TryParse(Value.ToString(), out result))
                     {
                         var enumVal = Enum.Parse(PropertyType, Value.ToString());
 

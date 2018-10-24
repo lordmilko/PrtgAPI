@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using DH = PrtgAPI.Request.Serialization.DeserializationHelpers;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestItems
 {
@@ -36,7 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
 
         private string CalculateTotals(params string[] sensors)
         {
-            var total = sensors.Sum(DH.StrToInt);
+            var total = sensors.Sum(TypeHelpers.StrToInt);
 
             return total.ToString();
         }

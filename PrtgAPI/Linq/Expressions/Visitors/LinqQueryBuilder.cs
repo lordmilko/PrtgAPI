@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {

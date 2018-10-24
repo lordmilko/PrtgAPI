@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request.Serialization.ValueConverters;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -111,10 +111,10 @@ namespace PrtgAPI
             {
                 if (value is DateTime)
                 {
-                    val = DeserializationHelpers.ConvertToPrtgDateTime((DateTime) value).ToString(CultureInfo.InvariantCulture);
+                    val = TypeHelpers.ConvertToPrtgDateTime((DateTime) value).ToString(CultureInfo.InvariantCulture);
                 }
                 else if (value is TimeSpan)
-                    val = DeserializationHelpers.ConvertToPrtgTimeSpan((TimeSpan) value).ToString(CultureInfo.InvariantCulture);
+                    val = TypeHelpers.ConvertToPrtgTimeSpan((TimeSpan) value).ToString(CultureInfo.InvariantCulture);
                 else if (value is bool)
                     val = GetBool(property, value);
                 else if (value is IStringEnum)

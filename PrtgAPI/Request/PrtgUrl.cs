@@ -6,8 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Text;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
@@ -230,7 +231,7 @@ namespace PrtgAPI.Request
         {
             string str = string.Empty;
 
-            val = PSObjectHelpers.CleanPSObject(val);
+            val = PSObjectUtilities.CleanPSObject(val);
 
             if (val is string)
                 str = val.ToString();
@@ -282,7 +283,7 @@ namespace PrtgAPI.Request
             {
                 if (o != null)
                 {
-                    var obj = PSObjectHelpers.CleanPSObject(o);
+                    var obj = PSObjectUtilities.CleanPSObject(o);
 
                     string toEncode;
 
@@ -320,7 +321,7 @@ namespace PrtgAPI.Request
             {
                 if (e != null)
                 {
-                    var val = PSObjectHelpers.CleanPSObject(e);
+                    var val = PSObjectUtilities.CleanPSObject(e);
 
                     string query;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
@@ -277,7 +277,7 @@ namespace PrtgAPI.Parameters
         /// <param name="value">The value to store.</param>
         protected void SetCustomParameterInternal(string name, object value)
         {
-            value = PSObjectHelpers.CleanPSObject(value);
+            value = PSObjectUtilities.CleanPSObject(value);
 
             var parameter = new CustomParameter(name, value);
 

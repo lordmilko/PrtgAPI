@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace PrtgAPI.Request.Serialization.Cache
+namespace PrtgAPI.Reflection.Cache
 {
     [ExcludeFromCodeCoverage]
     class FieldCache : AttributeCache

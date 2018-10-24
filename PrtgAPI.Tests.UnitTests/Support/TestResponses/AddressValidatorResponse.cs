@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
@@ -96,8 +97,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private AssertFailedException GetDifference(string expected, string actual, AssertFailedException originalException)
         {
-            var expectedParts = PrtgAPI.Helpers.UrlHelpers.CrackUrl(expected);
-            var actualParts = PrtgAPI.Helpers.UrlHelpers.CrackUrl(actual);
+            var expectedParts = UrlUtilities.CrackUrl(expected);
+            var actualParts = UrlUtilities.CrackUrl(actual);
 
             foreach(var part in actualParts.AllKeys)
             {

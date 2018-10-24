@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -374,7 +374,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertAreEqual(name, obj.Name);
             AssertAreEqual(vendor, obj.Vendor);
             AssertAreEqual(Version.Parse(version), obj.Version);
-            AssertAreEqual(ParameterHelpers.StringToDate(date.Trim('"')), obj.InstallDate);
+            AssertAreEqual(TypeHelpers.StringToDate(date.Trim('"')), obj.InstallDate);
             AssertAreEqual(Convert.ToInt32(size), obj.Size);
             AssertAreEqual(DateTime.ParseExact(receiveTime, "dd-MM-yyyy HH:mm:ss.FFF", CultureInfo.InvariantCulture), obj.LastUpdated);
             AssertAreEqual(displayName, obj.DisplayName);

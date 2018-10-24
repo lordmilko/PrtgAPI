@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
 
             try
             {
-                return DeserializationHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(str));
+                return TypeHelpers.ConvertFromPrtgDateTime(XmlConvert.ToDouble(str));
             }
             catch (Exception ex)
             {

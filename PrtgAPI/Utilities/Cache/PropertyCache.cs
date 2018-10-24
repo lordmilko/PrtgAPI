@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace PrtgAPI.Request.Serialization.Cache
+namespace PrtgAPI.Reflection.Cache
 {
     class PropertyCache : AttributeCache
     {

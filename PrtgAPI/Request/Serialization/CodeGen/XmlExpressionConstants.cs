@@ -117,7 +117,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
         internal static MethodCallExpression ToDateTimeFromDouble(Expression @double)
         {
-            return Expression.Call(XmlSerializerMembers.DH_ConvertFromPrtgDateTimeInternal, @double);
+            return Expression.Call(XmlSerializerMembers.TypeHelpers_ConvertFromPrtgDateTimeInternal, @double);
         }
 
         internal static MethodCallExpression ToTimeSpan(Expression str)
@@ -127,7 +127,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
         internal static MethodCallExpression ToTimeSpanFromInt32(Expression integer)
         {
-            return Expression.Call(XmlSerializerMembers.DH_ConvertFromPrtgTimeSpan, Expression.Convert(integer, typeof(double)));
+            return Expression.Call(XmlSerializerMembers.TypeHelpers_ConvertFromPrtgTimeSpan, Expression.Convert(integer, typeof(double)));
         }
 
         internal static MethodCallExpression ToSplittableStringArray(Expression readStr, Expression ch)

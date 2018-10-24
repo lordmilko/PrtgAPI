@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PrtgAPI.Request.Serialization.Cache
+namespace PrtgAPI.Reflection.Cache
 {
     [ExcludeFromCodeCoverage]
     class EnumNameCache : TypeCache

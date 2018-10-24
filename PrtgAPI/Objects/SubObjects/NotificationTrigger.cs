@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -248,7 +248,7 @@ namespace PrtgAPI
         
         internal bool SetEnumChannel()
         {
-            var @enum = EnumHelpers.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
+            var @enum = EnumExtensions.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
 
             if(@enum != null)
             {

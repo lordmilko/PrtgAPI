@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {

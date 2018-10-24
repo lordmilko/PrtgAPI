@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     [ExcludeFromCodeCoverage]
-    static class TaskHelpers
+    static class TaskExtensions
     {
         //https://blogs.msdn.microsoft.com/pfxteam/2012/08/02/processing-tasks-as-they-complete/
         public static Task<Task<T>>[] WhenAnyForAll<T>(this IEnumerable<Task<T>> tasks)

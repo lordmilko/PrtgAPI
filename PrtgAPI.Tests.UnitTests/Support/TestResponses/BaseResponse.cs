@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -27,7 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private string GetResponseText(ref string address, List<T> list)
         {
-            var queries = UrlHelpers.CrackUrl(address);
+            var queries = UrlUtilities.CrackUrl(address);
 
             List<XElement> xmlList;
             var count = list.Count;
@@ -91,7 +91,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var addr = address.Substring(address.IndexOf('?')).Split('#')[0];
 
-            var queries = UrlHelpers.ParseQueryString(addr);
+            var queries = UrlUtilities.ParseQueryString(addr);
 
             if (queries["start"] == "0" || queries["start"] == null)
                 return 1;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
-    static class DictionaryHelpers
+    static class DictionaryExtensions
     {
         public static bool TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, out TValue value, bool ignoreCase, bool trimName = false)
         {

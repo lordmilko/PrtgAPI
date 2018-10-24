@@ -1,4 +1,4 @@
-﻿using PrtgAPI.Helpers;
+﻿using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {

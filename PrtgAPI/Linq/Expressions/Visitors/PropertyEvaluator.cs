@@ -6,8 +6,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {
@@ -75,7 +76,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
                     var settable = properties.Where(p => p.Property.GetSetMethod() != null).ToList();
                     var notSettable = properties.Where(p => p.Property.GetSetMethod() == null).ToList();
 
-                    var internalProperties = typeof(T).GetTypeCache().Cache.Properties.Where(p => p.Property.CanWrite && p.Property.GetSetMethod() == null).ToArray();
+                    var internalProperties = typeof(T).GetTypeCache().Properties.Where(p => p.Property.CanWrite && p.Property.GetSetMethod() == null).ToArray();
 
                     var internalSettable = notSettable.Select(p => GetInternalProperty(p, internalProperties)).ToList();
 
@@ -164,7 +165,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
                 baseType = baseType.BaseType;
             }
 
-            var properties = types.SelectMany(t => t.GetTypeCache().Cache.Properties.Where(p =>
+            var properties = types.SelectMany(t => t.GetTypeCache().Properties.Where(p =>
                 p.GetAttribute<UndocumentedAttribute>() == null &&
                 p.GetAttribute<PropertyParameterAttribute>() != null)).ToList();
 

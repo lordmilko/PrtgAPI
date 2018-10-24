@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request;
+using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.Parameters
 {
@@ -125,12 +125,12 @@ namespace PrtgAPI.Parameters
                 return (DateTime?) val;
 
             //We're retrieving a DateTime we serialized previously
-            return ParameterHelpers.StringToDate(val.ToString());
+            return TypeHelpers.StringToDate(val.ToString());
         }
 
         private void SetDateTime(Property property, DateTime? value)
         {
-            SetFilterValue(property, value == null ? null : ParameterHelpers.DateToString(value.Value));
+            SetFilterValue(property, value == null ? null : TypeHelpers.DateToString(value.Value));
         }
 
         LogParameters IShallowCloneable<LogParameters>.ShallowClone()

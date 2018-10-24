@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             if (function == nameof(XmlFunction.TableData))
             {
-                var components = UrlHelpers.CrackUrl(address);
+                var components = UrlUtilities.CrackUrl(address);
 
                 Content content = components["content"].DescriptionToEnum<Content>();
 
@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                         if (components["start"] != null)
                             components.Remove("start");
 
-                        var filtered = WebUtility.UrlDecode(UrlHelpers.QueryCollectionToString(components));
+                        var filtered = WebUtility.UrlDecode(UrlUtilities.QueryCollectionToString(components));
 
                         if (filtered != str)
                             Assert.Fail($"Address was '{filtered}' instead of '{str}'");

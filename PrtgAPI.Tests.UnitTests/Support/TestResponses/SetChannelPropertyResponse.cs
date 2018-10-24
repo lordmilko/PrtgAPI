@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             if (function == nameof(JsonFunction.GetStatus))
                 return new ServerStatusResponse(new ServerStatusItem());
 
-            var queries = UrlHelpers.CrackUrl(address);
+            var queries = UrlUtilities.CrackUrl(address);
             queries.Remove("id");
             queries.Remove("username");
             queries.Remove("passhash");

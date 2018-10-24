@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
 
 namespace PrtgAPI
 {
@@ -45,7 +45,7 @@ namespace PrtgAPI
         /// <returns>The type's name or description.</returns>
         internal static string GetTypeDescription(Type type)
         {
-            var attribute = type.GetTypeCache().Cache.GetAttribute<DescriptionAttribute>();
+            var attribute = type.GetTypeCache().GetAttribute<DescriptionAttribute>();
 
             if (attribute != null)
                 return attribute.Description;

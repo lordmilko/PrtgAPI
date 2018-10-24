@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Linq.Expressions.Visitors;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq
 {

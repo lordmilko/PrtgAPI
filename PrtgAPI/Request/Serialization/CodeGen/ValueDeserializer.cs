@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Request.Serialization.ValueConverters;
+using PrtgAPI.Utilities;
 using XmlMapping = PrtgAPI.Request.Serialization.XmlMapping;
 
 namespace PrtgAPI.Linq.Expressions.Serialization
@@ -163,7 +163,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     return GetNullableEnumSwitch(underlying, PropertyType);
             }
 
-            if(PropertyType.GetTypeCache().Cache.GetAttribute<XmlRootAttribute>() != null)
+            if(PropertyType.GetTypeCache().GetAttribute<XmlRootAttribute>() != null)
             {
                 var customTypeGenerator = new XmlSerializerGenerator(PropertyType, null, false);
 

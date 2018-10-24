@@ -1,5 +1,5 @@
 ﻿using System.Management.Automation;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -63,7 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void ProcessRecord()
         {
             if (Value is PSObject)
-                Value = PSObjectHelpers.CleanPSObject(Value);
+                Value = PSObjectUtilities.CleanPSObject(Value);
 
             FilterMode filterMode = FilterMode.Normal;
 

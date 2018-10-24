@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
     enum Indentation
     {

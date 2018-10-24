@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using PrtgAPI.Helpers;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -209,7 +210,7 @@ namespace PrtgAPI
         {
             var cache = typeof(TEnum).GetTypeCache();
 
-            foreach (var field in cache.Cache.Fields)
+            foreach (var field in cache.Fields)
             {
                 var attribute = field.GetAttribute<DescriptionAttribute>();
 
@@ -230,7 +231,7 @@ namespace PrtgAPI
             }
 
             //Failed to resolve value to DescriptionAttribute. Try XmlEnum
-            var val = EnumHelpers.XmlToEnum(str, typeof(TEnum), typeof(XmlEnumAttribute), false, true, false);
+            var val = EnumExtensions.XmlToEnum(str, typeof(TEnum), typeof(XmlEnumAttribute), false, true, false);
 
             if (val != null)
                 return val;

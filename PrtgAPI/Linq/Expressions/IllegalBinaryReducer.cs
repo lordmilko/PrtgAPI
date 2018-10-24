@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions.Visitors;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions
 {

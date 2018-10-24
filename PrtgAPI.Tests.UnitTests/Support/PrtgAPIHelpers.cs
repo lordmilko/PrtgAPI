@@ -4,10 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions.Visitors;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support
 {
@@ -28,13 +29,13 @@ namespace PrtgAPI.Tests.UnitTests.Support
             return EnumerableEx.ExceptBy(first, second, keySelector, comparer);
         }
 
-        public static IEnumerable<PropertyInfo> GetNormalProperties(this Type type) => ReflectionHelpers.GetNormalProperties(type).Where(p => p.Property.GetGetMethod() != null).Select(p => p.Property);
+        public static IEnumerable<PropertyInfo> GetNormalProperties(this Type type) => ReflectionExtensions.GetNormalProperties(type).Where(p => p.Property.GetGetMethod() != null).Select(p => p.Property);
 
-        public static object GetInternalField(this object obj, string name) => ReflectionHelpers.GetInternalField(obj, name);
+        public static object GetInternalField(this object obj, string name) => ReflectionExtensions.GetInternalField(obj, name);
 
-        public static object GetInternalProperty(this object obj, string name) => ReflectionHelpers.GetInternalProperty(obj, name);
+        public static object GetInternalProperty(this object obj, string name) => ReflectionExtensions.GetInternalProperty(obj, name);
 
-        public static PropertyInfo GetInternalPropertyInfo(this object obj, string name) => ReflectionHelpers.GetInternalPropertyInfo(obj, name);
+        public static PropertyInfo GetInternalPropertyInfo(this object obj, string name) => ReflectionExtensions.GetInternalPropertyInfo(obj, name);
 
         public static Expression ToClientExpression(this Expression expr)
         {
@@ -64,7 +65,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
 
         public static T ToEnum<T>(this string value)
         {
-            return EnumHelpers.ToEnum<T>(value);
+            return EnumExtensions.ToEnum<T>(value);
         }
 
         public static string GetPropertyCategory(ObjectProperty property)

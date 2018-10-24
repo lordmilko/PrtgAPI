@@ -7,11 +7,11 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions.Pretty;
 using PrtgAPI.Request.Serialization;
-using PrtgAPI.Request.Serialization.Cache;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Request.Serialization.CodeGen;
+using PrtgAPI.Utilities;
 using XmlMapping = PrtgAPI.Request.Serialization.XmlMapping;
 
 namespace PrtgAPI.Linq.Expressions.Serialization

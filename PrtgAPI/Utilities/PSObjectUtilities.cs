@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 
-namespace PrtgAPI.Helpers
+namespace PrtgAPI.Utilities
 {
-    internal static class PSObjectHelpers
+    internal static class PSObjectUtilities
     {
         internal static object CleanPSObject(object obj)
         {

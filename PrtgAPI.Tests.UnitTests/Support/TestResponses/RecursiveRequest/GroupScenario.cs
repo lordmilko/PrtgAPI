@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Helpers;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.TreeNodes;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
@@ -14,7 +14,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         public IWebResponse GetResponse(string address, string function)
         {
-            var components = UrlHelpers.CrackUrl(address);
+            var components = UrlUtilities.CrackUrl(address);
             Content content = components["content"].DescriptionToEnum<Content>();
             requestNum++;
             return GetResponse(address, content);

@@ -7,11 +7,12 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using PrtgAPI.Helpers;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Parameters;
+using PrtgAPI.Reflection;
 using PrtgAPI.Schedules;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
@@ -410,7 +411,7 @@ namespace PrtgAPI.Request
         {
             if (p.TargetUrl.StartsWith("addsensorfailed"))
             {
-                var parts = UrlHelpers.CrackUrl(p.TargetUrl);
+                var parts = UrlUtilities.CrackUrl(p.TargetUrl);
 
                 var message = parts["errormsg"];
 

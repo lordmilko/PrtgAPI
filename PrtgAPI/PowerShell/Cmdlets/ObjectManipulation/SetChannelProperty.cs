@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Helpers;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -106,10 +106,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void BeginProcessingEx()
         {
-            Value = PSObjectHelpers.CleanPSObject(Value);
+            Value = PSObjectUtilities.CleanPSObject(Value);
 
             if (DynamicSet())
-                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new ChannelParameter(p, PSObjectHelpers.CleanPSObject(v)));
+                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new ChannelParameter(p, PSObjectUtilities.CleanPSObject(v)));
 
             base.BeginProcessingEx();
         }

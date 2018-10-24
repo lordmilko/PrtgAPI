@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request.Serialization;
-using PrtgAPI.Helpers;
 using PrtgAPI.Linq.Expressions;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
@@ -1008,7 +1009,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         public void SearchFilterExpression_Types_NullableDateTimeProperty_NotEquals_Double() => ExecuteNullableDateTime(FilterOperator.NotEquals, 43236.4726273148, 1);
 
         [TestMethod]
-        public void SearchFilterExpression_Types_NullableDateTimeProperty_NotEquals_String() => ExecuteNullableDateTime(FilterOperator.NotEquals, DeserializationHelpers.ConvertToPrtgDateTime(Time.Today), 1);
+        public void SearchFilterExpression_Types_NullableDateTimeProperty_NotEquals_String() => ExecuteNullableDateTime(FilterOperator.NotEquals, TypeHelpers.ConvertToPrtgDateTime(Time.Today), 1);
 
         [TestMethod]
         public void SearchFilterExpression_Types_NullableDateTimeProperty_NotEquals_InvalidString() => ExecuteNullableDateTime(FilterOperator.NotEquals, "banana", -2);
