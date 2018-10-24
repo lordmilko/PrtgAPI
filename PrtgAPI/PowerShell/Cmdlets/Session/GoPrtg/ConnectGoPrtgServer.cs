@@ -56,6 +56,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Server { get; set; }
 
         /// <summary>
+        /// <para type="description">The type of events to log when -Verbose is specified.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public LogLevel[] LogLevel { get; set; }
+
+        /// <summary>
         /// Performs record-by-record processing for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
@@ -109,6 +115,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 Connect(server.Server, credential);
 
                 WriteColorOutput($"\nConnected to {server.Server} as {server.UserName}\n", ConsoleColor.Green);
+            }
+
+            if (LogLevel != null)
+            {
+                LogLevel level = PrtgAPI.LogLevel.None;
+
+                foreach (var l in LogLevel)
+                    level |= l;
+
+                PrtgSessionState.Client.LogLevel = level;
             }
         }
     }
