@@ -52,6 +52,35 @@ Describe "Get-ObjectProperty_IT" {
         $result.serviceurl | Should Be "http://$name"
     }
 
+    It "retrieves properties from a sub object" {
+
+        $sensorId = (Settings ChannelSensor)
+        $channelId = (Settings Channel)
+
+        $channel = Get-Channel -SensorId $sensorId -Id $channelId
+
+        $channel | Should Not BeNullOrEmpty
+        $channel.UpperErrorLimit | Should Not BeNullOrEmpty
+
+        $val = Get-ObjectProperty -Id $sensorId -SubId $channelId -RawSubType channel -RawProperty limitmaxerror
+
+        $val | Should Be $channel.UpperErrorLimit
+    }
+
+    It "returns 'Not found' retrieving properties from an invalid sub object type" {
+        
+        $result = Get-ObjectProperty -Id (Settings ChannelSensor) -SubId 1 -RawSubType "blah" -RawProperty "blahblah"
+
+        $result | Should Be "Not found"
+    }
+
+    it "returns 'Not found' retrieving properties from an invalid sub id" {
+
+        $result = Get-ObjectProperty -Id (Settings ChannelSensor) -SubId 1000 -RawSubType channel -RawProperty "limitmaxerror"
+
+        $result | Should Be "Not found"
+    }
+
     It "throws retrieving a raw inheritance flag" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 

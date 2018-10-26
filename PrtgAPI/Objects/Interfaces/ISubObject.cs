@@ -1,7 +1,7 @@
 ﻿namespace PrtgAPI
 {
     /// <summary>
-    /// Represents an object that may exist one or more times across different <see cref="IPrtgObject"/> instances.
+    /// Represents a child of a <see cref="IPrtgObject"/> that is not globally identifiable and may exist multiple times across different <see cref="IPrtgObject"/> instances.
     /// </summary>
     public interface ISubObject : IObject
     {

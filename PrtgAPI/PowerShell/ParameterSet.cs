@@ -93,6 +93,11 @@
 
         internal const string Force = "ForceSet";
 
+        internal const string PropertyManual = "PropertyManualSet";
+        internal const string RawPropertyManual = "RawPropertyManualSet";
+        internal const string RawSubPropertyManual = "RawSubPropertyManualSet";
+        internal const string RawManual = "RawManualSet";
+
         internal const string SensorToDestination = "SensorToDestinationSet";
         internal const string DeviceToDestination = "DeviceToDestinationSet";
         internal const string GroupToDestination = "GroupToDestinationSet";

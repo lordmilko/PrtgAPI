@@ -483,7 +483,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var components = UrlUtilities.CrackUrl(address);
 
-            var objectType = components["objecttype"].ToEnum<ObjectType>();
+            var objectType = components["objecttype"]?.ToEnum<ObjectType>() ?? ObjectType.Sensor;
 
             switch (objectType)
             {
@@ -503,6 +503,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         private IWebResponse GetRawObjectProperty(string address)
         {
             var components = UrlUtilities.CrackUrl(address);
+
+            if (components["subid"] != null)
+                return GetRawSubObjectProperty(components);
 
             if (components["name"] == "name")
                 return new RawPropertyResponse("testName");
@@ -533,6 +536,24 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             components.Remove("id");
 
             throw new NotImplementedException($"Unknown raw object property '{components[0]}' passed to {GetType().Name}");
+        }
+
+        private IWebResponse GetRawSubObjectProperty(NameValueCollection components)
+        {
+            if (components["name"] == "name")
+                return new RawPropertyResponse("testName");
+
+            if (components["name"] == "limitmaxerror")
+                return new RawPropertyResponse("90");
+
+            if (components["name"] == "limitminerror")
+                return new RawPropertyResponse("30");
+
+            components.Remove("username");
+            components.Remove("passhash");
+            components.Remove("id");
+
+            throw new NotImplementedException($"Unknown raw sub object property '{components[0]}' passed to {GetType().Name}");
         }
 
         private IWebResponse GetSensorTargetResponse()

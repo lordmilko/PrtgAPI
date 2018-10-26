@@ -50,6 +50,8 @@ for(int i = 0; i < 2; i++)
 
             var response = <#= CallFunction("ObjectEngine.GetObjectsXml", "new ChannelParameters(sensorId), token: token", i) #>;
 
+            response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
+
             var items = response.Descendants("item").ToList();
 
             items.Where(e => 

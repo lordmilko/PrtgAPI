@@ -23,7 +23,7 @@ namespace PrtgAPI.Parameters
         public GetObjectPropertyRawParameters(int objectId, string name, bool text) : base(objectId)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("name cannot be null or empty", nameof(name));
+                throw new ArgumentException($"{nameof(name)} cannot be null or empty", nameof(name));
 
             if (name.EndsWith("_"))
                 name = name.Substring(0, name.Length - 1);
@@ -32,6 +32,18 @@ namespace PrtgAPI.Parameters
 
             if (text)
                 this[Parameter.Show] = CustomValueFormat.Text;
+        }
+
+        public GetObjectPropertyRawParameters(int objectId, int subId, string subType, string name, bool text) : this(objectId, name, false)
+        {
+            if (string.IsNullOrEmpty(subType))
+                throw new ArgumentException($"{nameof(subType)} cannot be null or empty", nameof(subType));
+
+            this[Parameter.SubId] = subId;
+            this[Parameter.SubType] = subType;
+
+            if (!text)
+                this[Parameter.Show] = CustomValueFormat.NoHtmlEncode;
         }
 
         public string Name

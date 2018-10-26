@@ -20,12 +20,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When retrieving raw properties please note that PRTG does not support the retrieval of Inheritance related properties via raw lookups.</para>
     /// 
     /// <para type="description">By default raw properties will display their values in their "raw" format, i.e. their literal string
-    /// value or numeric representation (such as 0 or 1 for an "option" setting). If you attempt to retrieve a raw string property
-    /// containing an illegal XML character (&lt;, &gt;, &amp; or &apos;) you will receive an <see cref="XmlException"/> complaining
-    /// that the response could not be parsed. This can be rectified by specifying the -<see cref="Text"/> parameter, which
-    /// will cause PRTG to correctly escape any invalid characters before returning the response. If -<see cref="Text"/> is
-    /// specified when retrieving an "option" property, the property's "label" in the PRTG UI will be returned instead of its numeric
-    /// representation.</para> 
+    /// value or numeric representation (such as 0 or 1 for an "option" setting). If -<see cref="Text"/> is specified when retrieving an
+    /// "option" property, the property's "label" in the PRTG UI will be returned instead of its numeric representation.</para> 
+    /// 
+    /// <para type="description">Properties can be retrieved by piping in a <see cref="PrtgObject"/> or by specifying a single object ID.
+    /// When retrieving by -<see cref="Id"/> individual properties of sub objects (such as Channels and Notification Triggers) can be retrieved by specifying
+    /// a -<see cref="SubId"/> as well as -<see cref="RawSubType"/>. As sub objects typically include all properties known to them on their regular objects,
+    /// retrieval of individual sub object properties is generally not necessary.</para>
     /// 
     /// <para type="descrption">When retrieving individual properties, Get-ObjectProperty will throw a <see cref="PrtgRequestException"/> if the specified
     /// property is not present on the target object. If the PRTG Server is not in English however, Get-ObjectProperty will return
@@ -49,6 +50,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Device -Id 1001 | Get-ObjectProperty -RawProperty query_ -Text</code>
     ///     <para>Retrieve the "query" field of a REST Custom sensor.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-ObjectProperty -Id 1001 -Raw</code>
+    ///     <para>Retrieve all raw properties of the object with ID 1001</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-ObjectProperty -Id 1001 -SubId 1 -RawSubType channel -RawProperty limitmaxerror</code>
+    ///     <para>Retrieve the upper error limit property of the channel with ID 1 on the object with ID 1001</para>
     /// </example>
     /// 
     /// <para type="link">Set-ObjectProperty</para>
@@ -61,7 +72,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class GetObjectProperty : PrtgProgressCmdlet
     {
         /// <summary>
-        /// <para type="description">The object to retrieve properties of.</para>
+        /// <para type="description">The object to retrieve properties for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Property)]
@@ -70,9 +81,31 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public PrtgObject Object { get; set; }
 
         /// <summary>
+        /// <para type="description">The ID of the object to retrieve properties for.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.PropertyManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawPropertyManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawSubPropertyManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawManual)]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// <para type="description">The sub ID of the object to retrieve properties for.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawSubPropertyManual)]
+        public int SubId { get; set; }
+
+        /// <summary>
+        /// <para type="description">The type of the sub object to retrieve properties for.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawSubPropertyManual)]
+        public string RawSubType { get; set; }
+
+        /// <summary>
         /// <para type="description">The name of one or more properties to retrieve. Note: PRTG does not support retrieving inheritance settings in via direct API calls.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Property)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.PropertyManual)]
         public ObjectProperty[] Property { get; set; }
 
         /// <summary>
@@ -80,6 +113,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Note: PRTG does not support retrieving raw section inheritance settings.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawPropertyManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawSubPropertyManual)]
         public string[] RawProperty { get; set; }
 
         /// <summary>
@@ -87,13 +122,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Note: objects may have additional properties that cannot be retrieved via this method.
         /// For more information, see Get-Help about_ObjectProperty</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawManual)]
         public SwitchParameter Raw { get; set; }
 
         /// <summary>
         /// <para type="description">Specifies whether to display option properties using their label names instead their internal numeric values.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawPropertyManual)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawSubPropertyManual)]
         public SwitchParameter Text { get; set; }
 
         /// <summary>
@@ -108,87 +146,121 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Property)
+            switch(ParameterSetName)
             {
-                WriteProperties(Property, client.GetObjectProperty);
-
-                //todo: need tests for this
-            }
-            else if (ParameterSetName == ParameterSet.Raw)
-            {
-                var type = TypeFromBase();
-
-                var dictionary = type != null
-                    ? client.GetObjectPropertiesRaw(Object.Id, type.Value)
-                    : client.GetObjectPropertiesRaw(Object.Id);
-
-                var obj = new PSObject();
-
-                foreach (var val in dictionary)
-                {
-                    obj.Properties.Add(new PSNoteProperty(val.Key, val.Value));
-                }
-
-                WriteObject(obj);
-            }
-            else if (ParameterSetName == ParameterSet.RawProperty)
-            {
-                WriteProperties(RawProperty, (i, v) => client.GetObjectPropertyRaw(i, v, Text), p => p.ToLower().Replace("_", ""));
-            }
-            else
-            {
-                var knownObj = Object as SensorOrDeviceOrGroupOrProbe;
-
-                if (knownObj != null)
-                {
-                    TypeDescription = $"{knownObj.BaseType} Properties";
-
-                    switch (knownObj.BaseType)
-                    {
-                        case BaseType.Sensor:
-                            WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
-                            break;
-                        case BaseType.Device:
-                            WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
-                            break;
-                        case BaseType.Group:
-                            WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
-                            break;
-                        case BaseType.Probe:
-                            WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
-                            break;
-                        default:
-                            throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}");
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}");
-                }
+                case ParameterSet.Default:              //Object
+                    ProcessDefault();
+                    break;
+                case ParameterSet.Property:             //Object
+                case ParameterSet.PropertyManual:       //Id
+                    ProcessProperty();
+                    break;
+                case ParameterSet.Raw:                  //Object
+                case ParameterSet.RawManual:            //Id
+                    ProcessRaw();
+                    break;
+                case ParameterSet.RawProperty:          //Object
+                case ParameterSet.RawPropertyManual:    //Id
+                    ProcessRawProperty(p => client.GetObjectPropertyRaw(GetId(), p, Text));
+                    break;
+                case ParameterSet.RawSubPropertyManual: //Id
+                    ProcessRawProperty(p => client.GetObjectPropertyRaw(GetId(), SubId, RawSubType, p, Text));
+                    break;
+                default:
+                    throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
             }
         }
 
-        private void WriteProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName = null)
+        #region Parameter Sets
+
+        private void ProcessProperty()
+        {
+            WriteProperties(Property, v => client.GetObjectProperty(GetId(), v));
+        }
+
+        private void ProcessRawProperty(Func<string, object> getValue)
+        {
+            WriteProperties(RawProperty, getValue, p => p.ToLower().Replace("_", ""));
+        }
+
+        private void ProcessRaw()
+        {
+            var type = TypeFromBase();
+
+            var dictionary = type != null
+                ? client.GetObjectPropertiesRaw(GetId(), type.Value)
+                : client.GetObjectPropertiesRaw(GetId());
+
+            var obj = new PSObject();
+
+            foreach (var val in dictionary)
+            {
+                obj.Properties.Add(new PSNoteProperty(val.Key, val.Value));
+            }
+
+            WriteObject(obj);
+        }
+
+        private void ProcessDefault()
+        {
+            var knownObj = Object as SensorOrDeviceOrGroupOrProbe;
+
+            if (knownObj != null)
+            {
+                TypeDescription = $"{knownObj.BaseType} Properties";
+
+                switch (knownObj.BaseType)
+                {
+                    case BaseType.Sensor:
+                        WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
+                        break;
+                    case BaseType.Device:
+                        WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
+                        break;
+                    case BaseType.Group:
+                        WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
+                        break;
+                    case BaseType.Probe:
+                        WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
+                        break;
+                    default:
+                        throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}");
+                }
+            }
+            else
+            {
+                throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}");
+            }
+        }
+
+        #endregion
+
+        private void WriteProperties<TProperty>(TProperty[] properties, Func<TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName = null)
         {
             if (properties.Length == 1)
-                WriteObjectWithProgress(() => getValue(Object.Id, properties[0]));
+                WriteObjectWithProgress(() => getValue(properties[0]));
             else
                 WriteObjectWithProgress(() => GetMultipleProperties(properties, getValue, getPropertyName));
         }
 
-        private PSObject GetMultipleProperties<TProperty>(TProperty[] properties, Func<int, TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName)
+        private PSObject GetMultipleProperties<TProperty>(TProperty[] properties, Func<TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName)
         {
             var obj = new PSObject();
 
             foreach (var prop in properties)
             {
                 var name = getPropertyName != null ? getPropertyName(prop) : prop;
-                var val = getValue(Object.Id, prop);
+                var val = getValue(prop);
 
                 obj.Properties.Add(new PSNoteProperty(name.ToString(), val));
             }
 
             return obj;
+        }
+
+        private int GetId()
+        {
+            return Object?.Id ?? Id;
         }
 
         [ExcludeFromCodeCoverage]

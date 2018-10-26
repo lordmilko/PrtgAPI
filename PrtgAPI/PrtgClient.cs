@@ -624,10 +624,8 @@ namespace PrtgAPI
             #endregion
             #region Get Single Raw Property
 
-        private string GetObjectPropertyRawInternal(int objectId, string property, bool text)
+        private string GetObjectPropertyRawInternal(GetObjectPropertyRawParameters parameters, string property)
         {
-            var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
-
             var response = ObjectEngine.GetObjectsXml(
                 parameters,
                 responseParser: m => ResponseParser.ParseGetObjectPropertyResponse(
@@ -639,10 +637,8 @@ namespace PrtgAPI
             return ResponseParser.ValidateRawObjectProperty(response, parameters);
         }
 
-        private async Task<string> GetObjectPropertyRawInternalAsync(int objectId, string property, bool text, CancellationToken token)
+        private async Task<string> GetObjectPropertyRawInternalAsync(GetObjectPropertyRawParameters parameters, string property, CancellationToken token)
         {
-            var parameters = new GetObjectPropertyRawParameters(objectId, property, text);
-
             var response = await ObjectEngine.GetObjectsXmlAsync(
                 parameters,
                 responseParser: async m => ResponseParser.ParseGetObjectPropertyResponse(
