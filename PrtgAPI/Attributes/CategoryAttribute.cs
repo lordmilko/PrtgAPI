@@ -8,20 +8,25 @@ namespace PrtgAPI.Attributes
     /// </summary>
     [ExcludeFromCodeCoverage]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
-    sealed class CategoryAttribute : Attribute
+    internal sealed class CategoryAttribute : Attribute
     {
         /// <summary>
         /// Gets the name of the category this attribute's associated field belongs to.
         /// </summary>
-        public string Name { get; private set; }
+        public Enum Name { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryAttribute"/> class.
         /// </summary>
-        /// <param name="name">The name of the category this attribute's associated field belongs to.</param>
-        public CategoryAttribute(string name)
+        /// <param name="category">The name of the category this attribute's associated field belongs to.</param>
+        public CategoryAttribute(ObjectPropertyCategory category)
         {
-            Name = name;
+            Name = category;
+        }
+
+        public CategoryAttribute(SystemInfoType type)
+        {
+            Name = type;
         }
     }
 }

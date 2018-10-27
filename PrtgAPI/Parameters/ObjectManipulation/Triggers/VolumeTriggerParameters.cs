@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the channel of the sensor this trigger should apply to.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(TriggerProperty.Channel))]
+        [PropertyParameter(TriggerProperty.Channel)]
         public TriggerChannel Channel
         {
             get { return (TriggerChannel) GetCustomParameterValue(TriggerProperty.Channel); }
@@ -23,7 +23,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the value which, once reached, will cause this trigger will activate.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.Threshold))]
+        [PropertyParameter(TriggerProperty.Threshold)]
         public int? Threshold
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Threshold); }
@@ -33,7 +33,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the time component of the volume limit that causes this trigger to activate.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.Period))]
+        [PropertyParameter(TriggerProperty.Period)]
         public TriggerPeriod? Period
         {
             get { return (TriggerPeriod?) GetCustomParameterEnumInt<TriggerPeriod>(TriggerProperty.Period); }
@@ -43,7 +43,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the unit component of the volume limit that causes this trigger to activate.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.UnitSize))]
+        [PropertyParameter(TriggerProperty.UnitSize)]
         public DataVolumeUnit? UnitSize
         {
             get { return (DataVolumeUnit?) GetCustomParameterEnumXml<DataVolumeUnit>(TriggerProperty.UnitSize); }

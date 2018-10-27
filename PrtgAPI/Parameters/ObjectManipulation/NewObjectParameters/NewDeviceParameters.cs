@@ -67,7 +67,6 @@ namespace PrtgAPI.Parameters
                 }
 
                 SetCustomParameterEnumXml(ObjectPropertyInternal.IPVersion, value);
-
             }
         }
 
@@ -105,7 +104,7 @@ namespace PrtgAPI.Parameters
         /// <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticDetailed"/>  is specified, all templates will be used and this parameter will be ignored.<para/>
         /// If <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticTemplate"/> is specified, at least one template must be specified.
         /// </summary>
-        [DependentProperty(nameof(AutoDiscoveryMode), AutoDiscoveryMode.AutomaticTemplate)]
+        [DependentProperty(ObjectProperty.AutoDiscoveryMode, AutoDiscoveryMode.AutomaticTemplate)]
         public List<DeviceTemplate> DeviceTemplates
         {
             get { return (List<DeviceTemplate>) this[Parameter.DeviceTemplate]; }

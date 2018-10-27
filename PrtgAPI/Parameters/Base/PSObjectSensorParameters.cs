@@ -79,10 +79,8 @@ namespace PrtgAPI.Parameters
             if (attr == null)
                 return null;
 
-            TEnum prop;
-
-            if (Enum.TryParse(attr.Name, out prop))
-                return Tuple.Create(cache.Property, prop, attr);
+            if (attr.Property.GetType() == typeof(TEnum))
+                return Tuple.Create(cache.Property, (TEnum)(object)attr.Property, attr);
 
             return null;
         }
@@ -103,7 +101,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the type of sensor these parameters will create.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(Parameter.SensorType))]
+        [PropertyParameter(Parameter.SensorType)]
         public string SensorType
         {
             get { return this[Parameter.SensorType]?.ToString(); }

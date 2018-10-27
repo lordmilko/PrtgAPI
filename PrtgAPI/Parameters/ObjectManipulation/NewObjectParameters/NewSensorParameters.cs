@@ -14,7 +14,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the priority of the sensor, controlling how the sensor is displayed in table lists.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.Priority))]
+        [PropertyParameter(ObjectProperty.Priority)]
         public Priority? Priority
         {
             get { return (Priority?)GetCustomParameterEnumXml<Priority?>(ObjectProperty.Priority); }
@@ -24,7 +24,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether to inherit notification triggers from the parent object.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.InheritTriggers))]
+        [PropertyParameter(ObjectProperty.InheritTriggers)]
         public bool? InheritTriggers
         {
             get { return GetCustomParameterBool(ObjectProperty.InheritTriggers); }
@@ -34,7 +34,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether this sensor's scanning interval settings are inherited from its parent.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.InheritInterval))]
+        [PropertyParameter(ObjectProperty.InheritInterval)]
         public bool? InheritInterval
         {
             get { return GetCustomParameterBool(ObjectProperty.InheritInterval); }
@@ -44,7 +44,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.Interval))]
+        [PropertyParameter(ObjectProperty.Interval)]
         public ScanningInterval Interval
         {
             get { return (ScanningInterval)GetCustomParameter(ObjectProperty.Interval); }
@@ -54,7 +54,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.IntervalErrorMode))]
+        [PropertyParameter(ObjectProperty.IntervalErrorMode)]
         public IntervalErrorMode? IntervalErrorMode
         {
             get { return (IntervalErrorMode?)GetCustomParameterEnumXml<IntervalErrorMode?>(ObjectProperty.IntervalErrorMode); }

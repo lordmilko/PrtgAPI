@@ -322,7 +322,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
                     if(attrib != null && attrib.Property != null)
                     {
-                        if (attrib.Property == Property.Name || attrib.Property == Property.Id)
+                        if (attrib.Property.Equals(Property.Name) || attrib.Property.Equals(Property.Id))
                             return false;
                     }
 

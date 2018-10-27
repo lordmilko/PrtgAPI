@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Runtime.Serialization;
 using PrtgAPI.Attributes;
 
@@ -9,7 +8,7 @@ namespace PrtgAPI
     /// Represents a process running on a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(SystemInfoType.Processes))]
+    [Category(SystemInfoType.Processes)]
     public class DeviceProcessInfo : DeviceInfo
     {
         /// <summary>

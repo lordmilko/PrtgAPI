@@ -8,7 +8,7 @@ namespace PrtgAPI
     /// Represents an application installed on a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(SystemInfoType.Software))]
+    [Category(SystemInfoType.Software)]
     public class DeviceSoftwareInfo : DeviceInfo
     {
         /// <summary>

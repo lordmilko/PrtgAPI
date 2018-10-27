@@ -298,11 +298,9 @@ namespace PrtgAPI.Request.Serialization
 
             if (attrib != null)
             {
-                Enum prop;
-
-                if (ReflectionCacheManager.GetEnumName(typeof(Property)).Cache.NameCache.TryGetValue(attrib.Name, out prop))
+                if(attrib.Property.GetType() == typeof(Property))
                 {
-                    var converter = prop.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
+                    var converter = attrib.Property.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
 
                     if (converter != null)
                     {

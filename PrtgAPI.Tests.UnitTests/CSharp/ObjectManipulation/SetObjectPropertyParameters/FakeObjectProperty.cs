@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         MissingTypeLookup,
 
         [TypeLookup(typeof(FakeSettings))]
-        [SecondaryProperty(nameof(SecondaryProperty))]
+        [SecondaryProperty(nameof(SecondaryProperty), typeof(FakeObjectProperty))]
         HasSecondaryProperty,
 
         SecondaryProperty,
@@ -31,34 +31,34 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         ParentProperty,
 
         [TypeLookup(typeof(FakeSettings))]
-        [DependentProperty(nameof(ParentProperty), "value")]
+        [DependentProperty(nameof(ParentProperty), typeof(FakeObjectProperty), "value")]
         ChildProperty,
 
         [TypeLookup(typeof(FakeSettings))]
         ParentOfWrongType,
 
-        [DependentProperty(nameof(ParentOfWrongType), true)]
+        [DependentProperty(nameof(ParentOfWrongType), typeof(FakeObjectProperty), true)]
         ChildWithWrongType,
 
         [TypeLookup(typeof(FakeSettings))]
         ParentOfReverseDependencyMissingTypeLookup,
 
-        [DependentProperty(nameof(ParentOfReverseDependencyMissingTypeLookup), "value", true)]
+        [DependentProperty(nameof(ParentOfReverseDependencyMissingTypeLookup), typeof(FakeObjectProperty), "value", true)]
         ChildPropertyWithReverseDependencyAndIsMissingTypeLookup,
 
         [TypeLookup(typeof(FakeSettings))]
         ParentOfReverseDependency,
 
         [TypeLookup(typeof(FakeSettings))]
-        [DependentProperty(nameof(ParentOfReverseDependency), "value", true)]
+        [DependentProperty(nameof(ParentOfReverseDependency), typeof(FakeObjectProperty), "value", true)]
         ChildPropertyWithReverseDependency,
 
         [TypeLookup(typeof(FakeSettings))]
-        [DependentProperty(nameof(ParentOfReverseDependency), "value1", true)]
+        [DependentProperty(nameof(ParentOfReverseDependency), typeof(FakeObjectProperty), "value1", true)]
         ChildPropertyWithReverseDependencyAndWrongValue,
 
         [TypeLookup(typeof(FakeSettings))]
-        [DependentProperty(nameof(ChildPropertyWithReverseDependencyAndWrongValue), "blah", true)]
+        [DependentProperty(nameof(ChildPropertyWithReverseDependencyAndWrongValue), typeof(FakeObjectProperty), "blah", true)]
         GrandChildProperty,
 
         PropertyParameterProperty,
@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         IntegerProperty,
 
         [TypeLookup(typeof(FakeSettings))]
-        [DependentProperty(nameof(Status), Status.Up)]
+        [DependentProperty(nameof(Status.Up), typeof(Status), Status.Up)]
         ChildOfEnum
 
         #endregion

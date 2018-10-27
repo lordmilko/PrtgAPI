@@ -104,7 +104,7 @@ namespace PrtgAPI.Request
         {
             var val = property.GetValue(parameters);
 
-            var dependentStr = attrib != null ? $" when property '{attrib.Name}' is value '{attrib.RequiredValue}'" : "";
+            var dependentStr = attrib != null ? $" when property '{attrib.Property}' is value '{attrib.RequiredValue}'" : "";
 
             if (string.IsNullOrEmpty(val?.ToString()))
             {
@@ -124,7 +124,7 @@ namespace PrtgAPI.Request
 
         private static void ValidateDependentProperty(DependentPropertyAttribute attrib, PropertyInfo property, NewObjectParameters parameters)
         {
-            var target = parameters.GetType().GetProperty(attrib.Name).GetValue(parameters);
+            var target = parameters.GetType().GetProperty(attrib.Property.ToString()).GetValue(parameters);
 
             if (target.ToString() == attrib.RequiredValue.ToString())
                 ValidateRequiredValue(property, parameters, attrib);

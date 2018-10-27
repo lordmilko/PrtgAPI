@@ -63,7 +63,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             if (attrib != null && attrib.Property != null)
             {
-                var converter = attrib.Property.Value.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
+                var converter = attrib.Property.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
 
                 if (converter != null)
                 {

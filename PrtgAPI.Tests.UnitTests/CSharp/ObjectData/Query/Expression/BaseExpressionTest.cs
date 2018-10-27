@@ -44,7 +44,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             var prop = typeof(Sensor)
                 .GetProperties().First(e => e.GetCustomAttributes(typeof(PropertyParameterAttribute), false)
                     .Cast<PropertyParameterAttribute>()
-                    .Any(p => ((Property)Enum.Parse(typeof(Property), p.Name, true)) == property));
+                    .Any(p => p.Property.Equals(property)));
 
             var parameter = Expr.Parameter(typeof(Sensor), "s");
 

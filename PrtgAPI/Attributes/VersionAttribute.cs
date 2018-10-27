@@ -20,9 +20,9 @@ namespace PrtgAPI.Attributes
         /// Initializes a new instance of the <see cref="VersionAttribute"/> class.
         /// </summary>
         /// <param name="version">The PRTG version this attribute pertains to.</param>
-        internal VersionAttribute(string version)
+        internal VersionAttribute(RequestVersion version)
         {
-            Version = version.ToEnum<RequestVersion>();
+            Version = version;
         }
 
         internal bool IsActive(Version version)

@@ -95,7 +95,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
 
         private PropertyCache GetInternalProperty(PropertyCache cache, PropertyCache[] internalProperties)
         {
-            var property = cache.GetAttribute<PropertyParameterAttribute>().Name.ToEnum<Property>();
+            var property = (Property)cache.GetAttribute<PropertyParameterAttribute>().Property;
 
             var description = property.GetDescription().ToLower();
 

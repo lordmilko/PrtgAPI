@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.Serialization;
 using PrtgAPI.Attributes;
 
@@ -9,7 +8,7 @@ namespace PrtgAPI
     /// Represents core system snformation of a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(SystemInfoType.System))]
+    [Category(SystemInfoType.System)]
     [DebuggerDisplay("{Property,nq} = {Value,nq}")]
     public class DeviceSystemInfo : DeviceInfo
     {

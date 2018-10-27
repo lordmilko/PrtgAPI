@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// Represents a user that is logged into a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(SystemInfoType.Users))]
+    [Category(SystemInfoType.Users)]
     public class DeviceUserInfo : DeviceInfo
     {
         /// <summary>

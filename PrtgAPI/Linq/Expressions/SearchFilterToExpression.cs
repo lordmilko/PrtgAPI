@@ -37,7 +37,7 @@ namespace PrtgAPI.Linq.Expressions
             {
                 var typeProps = ReflectionCacheManager.Get(typeof(T)).Properties;
                 var property = typeProps.FirstOrDefault(
-                    p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Name.ToEnum<Property>() == filter.Property)
+                    p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Property.Equals(filter.Property))
                 );
 
                 if (property == null)

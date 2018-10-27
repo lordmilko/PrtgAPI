@@ -34,7 +34,7 @@ namespace PrtgAPI
         /// Corresponds to Basic Settings -> Status.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.BasicSettings))]
+        [Category(ObjectPropertyCategory.BasicSettings)]
         Active,
 
         #endregion
@@ -46,7 +46,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.Location))]
+        [Category(ObjectPropertyCategory.Location)]
         InheritLocation,
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace PrtgAPI
         /// </summary>
         [Type(typeof(Location))]
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLocation), false)]
-        [SecondaryProperty(nameof(ObjectPropertyInternal.LonLat))]
-        [Category(nameof(ObjectPropertyCategory.Location))]
+        [DependentProperty(InheritLocation, false)]
+        [SecondaryProperty(ObjectPropertyInternal.LonLat)]
+        [Category(ObjectPropertyCategory.Location)]
         Location,
 
         #endregion
@@ -69,7 +69,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForWindows))]
+        [Category(ObjectPropertyCategory.CredentialsForWindows)]
         InheritWindowsCredentials,
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Windows Systems -> Domain or Computer Name.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritWindowsCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForWindows))]
+        [DependentProperty(InheritWindowsCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForWindows)]
         WindowsDomain,
 
         /// <summary>
@@ -86,8 +86,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Windows Systems -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritWindowsCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForWindows))]
+        [DependentProperty(InheritWindowsCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForWindows)]
         WindowsUserName,
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("windowsloginpassword")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(InheritWindowsCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForWindows))]
+        [DependentProperty(InheritWindowsCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForWindows)]
         WindowsPassword,
 
         #endregion
@@ -109,7 +109,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         InheritLinuxCredentials,
 
         /// <summary>
@@ -117,8 +117,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         LinuxUserName,
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Login.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         LinuxLoginMode,
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("linuxloginpassword")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(LinuxLoginMode), PrtgAPI.LinuxLoginMode.Password)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(LinuxLoginMode, PrtgAPI.LinuxLoginMode.Password)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         LinuxPassword,
 
         /// <summary>
@@ -146,8 +146,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("privatekey")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(LinuxLoginMode), PrtgAPI.LinuxLoginMode.Password)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(LinuxLoginMode, PrtgAPI.LinuxLoginMode.Password)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         LinuxPrivateKey,
 
         /// <summary>
@@ -155,8 +155,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> For WBEM Use Protocol.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         WbemProtocolMode,
 
         /// <summary>
@@ -164,8 +164,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> For WBEM Use Port.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         WbemPortMode,
 
         /// <summary>
@@ -173,8 +173,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> WBEM Port.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(WbemPortMode), AutoMode.Manual, true)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(WbemPortMode, AutoMode.Manual, true)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         WbemPort,
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Port.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHPort,
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Rights Elevation.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHElevationMode,
 
         /// <summary>
@@ -200,8 +200,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(SSHElevationMode), PrtgAPI.SSHElevationMode.RunAsAnotherViaSu)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(SSHElevationMode, PrtgAPI.SSHElevationMode.RunAsAnotherViaSu)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHElevationSuUser,
 
         /// <summary>
@@ -211,8 +211,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> Target User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHElevationSudoUser,
 
         /// <summary>
@@ -223,8 +223,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("elevationpass")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHElevationPassword,
 
         /// <summary>
@@ -232,8 +232,8 @@ namespace PrtgAPI
         /// Credentials for Linux/Solaris/Mac OS (SSH/WBEM) Systems -> SSH Engine.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritLinuxCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForLinux))]
+        [DependentProperty(InheritLinuxCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForLinux)]
         SSHEngine,
 
         #endregion
@@ -245,7 +245,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForVMware))]
+        [Category(ObjectPropertyCategory.CredentialsForVMware)]
         InheritVMwareCredentials,
 
         /// <summary>
@@ -253,8 +253,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for VMware/XenServer -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritVMwareCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForVMware))]
+        [DependentProperty(InheritVMwareCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForVMware)]
         VMwareUserName,
 
         /// <summary>
@@ -263,8 +263,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("esxpassword")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(InheritVMwareCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForVMware))]
+        [DependentProperty(InheritVMwareCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForVMware)]
         VMwarePassword,
 
         /// <summary>
@@ -272,8 +272,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for VMware/XenServer -> VMware Protocol.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritVMwareCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForVMware))]
+        [DependentProperty(InheritVMwareCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForVMware)]
         VMwareProtocol,
 
         /// <summary>
@@ -281,8 +281,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for VMware/XenServer -> Session Pool.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritVMwareCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForVMware))]
+        [DependentProperty(InheritVMwareCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForVMware)]
         VMwareSessionMode,
 
         #endregion
@@ -294,7 +294,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         InheritSNMPCredentials,
 
         /// <summary>
@@ -302,8 +302,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> SNMP Version.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPVersion,
 
         /// <summary>
@@ -311,8 +311,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Community String (SNMP v1).
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPCommunityStringV1,
 
         /// <summary>
@@ -320,8 +320,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Community String (SNMP v2c).
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPCommunityStringV2,
 
         /// <summary>
@@ -329,8 +329,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Authentication Type.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(SNMPVersion, PrtgAPI.SNMPVersion.v3)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3AuthType,
 
         /// <summary>
@@ -338,8 +338,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(SNMPVersion, PrtgAPI.SNMPVersion.v3)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3UserName,
 
         /// <summary>
@@ -348,8 +348,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("snmpauthpass")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(SNMPVersion, PrtgAPI.SNMPVersion.v3)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3Password,
 
         /// <summary>
@@ -357,8 +357,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Encryption Type.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(SNMPVersion, PrtgAPI.SNMPVersion.v3)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3EncryptionType,
 
         /// <summary>
@@ -367,8 +367,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("snmpencpass")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(SNMPVersion), PrtgAPI.SNMPVersion.v3)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(SNMPVersion, PrtgAPI.SNMPVersion.v3)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3EncryptionKey,
 
         /// <summary>
@@ -376,8 +376,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> Context Name.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPv3Context,
 
         /// <summary>
@@ -385,8 +385,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> SNMP Port.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPPort,
 
         /// <summary>
@@ -394,8 +394,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for SNMP Devices -> SNMP Timeout.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForSNMP))]
+        [DependentProperty(InheritSNMPCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForSNMP)]
         SNMPTimeout,
 
         #endregion
@@ -407,7 +407,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         InheritDBCredentials,
 
         /// <summary>
@@ -415,8 +415,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Database Management Systems -> Port for Databases.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritDBCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(InheritDBCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBPortMode,
 
         /// <summary>
@@ -424,8 +424,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Database Management Systems -> Custom Database Port.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(DBPortMode), AutoMode.Manual, true)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(DBPortMode, AutoMode.Manual, true)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBPort,
 
         /// <summary>
@@ -433,8 +433,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Database Management Systems -> Authentication Mode.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritDBCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(InheritDBCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBAuthMode,
 
         /// <summary>
@@ -442,8 +442,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Database Management Systems -> User.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(DBAuthMode), PrtgAPI.DBAuthMode.SQL, true)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(DBAuthMode, PrtgAPI.DBAuthMode.SQL, true)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBUserName,
 
         /// <summary>
@@ -452,8 +452,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("dbpassword")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(DBAuthMode), PrtgAPI.DBAuthMode.SQL, true)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(DBAuthMode, PrtgAPI.DBAuthMode.SQL, true)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBPassword,
 
         /// <summary>
@@ -461,8 +461,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Database Management Systems -> Timeout.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritDBCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForDatabases))]
+        [DependentProperty(InheritDBCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForDatabases)]
         DBTimeout,
 
         #endregion
@@ -474,7 +474,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForAmazon))]
+        [Category(ObjectPropertyCategory.CredentialsForAmazon)]
         InheritAmazonCredentials,
 
         /// <summary>
@@ -482,8 +482,8 @@ namespace PrtgAPI
         /// Corresponds to Credentials for Amazon Cloudwatch -> Access Key.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritAmazonCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForAmazon))]
+        [DependentProperty(InheritAmazonCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForAmazon)]
         AmazonAccessKey,
 
         /// <summary>
@@ -492,8 +492,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("awssk")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(InheritAmazonCredentials), false)]
-        [Category(nameof(ObjectPropertyCategory.CredentialsForAmazon))]
+        [DependentProperty(InheritAmazonCredentials, false)]
+        [Category(ObjectPropertyCategory.CredentialsForAmazon)]
         AmazonSecretKey,
 
         #endregion
@@ -505,7 +505,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.WindowsCompatibility))]
+        [Category(ObjectPropertyCategory.WindowsCompatibility)]
         InheritWindowsCompatibility,
 
         /// <summary>
@@ -513,8 +513,8 @@ namespace PrtgAPI
         /// Corresponds to Windows Compatibility Options -> Preferred Data Source.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritWindowsCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.WindowsCompatibility))]
+        [DependentProperty(InheritWindowsCompatibility, false)]
+        [Category(ObjectPropertyCategory.WindowsCompatibility)]
         WmiDataSource,
 
         /// <summary>
@@ -522,8 +522,8 @@ namespace PrtgAPI
         /// Corresponds to Windows Compatibility Options -> Timeout Method.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritWindowsCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.WindowsCompatibility))]
+        [DependentProperty(InheritWindowsCompatibility, false)]
+        [Category(ObjectPropertyCategory.WindowsCompatibility)]
         WmiTimeoutMethod,
 
         /// <summary>
@@ -531,8 +531,8 @@ namespace PrtgAPI
         /// Corresponds to Windows Compatibility Options -> Timeout Value.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(WmiTimeoutMethod), PrtgAPI.WmiTimeoutMethod.Manual, true)]
-        [Category(nameof(ObjectPropertyCategory.WindowsCompatibility))]
+        [DependentProperty(WmiTimeoutMethod, PrtgAPI.WmiTimeoutMethod.Manual, true)]
+        [Category(ObjectPropertyCategory.WindowsCompatibility)]
         WmiTimeout,
 
         #endregion
@@ -544,7 +544,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(ContainerSettings))]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         InheritSNMPCompatibility,
 
         /// <summary>
@@ -552,8 +552,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> SNMP Delay.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPDelay,
 
         /// <summary>
@@ -561,8 +561,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Failed Requests.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPRetryMode,
 
         /// <summary>
@@ -570,8 +570,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Overflow Values.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPOverflowMode,
 
         /// <summary>
@@ -579,8 +579,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Zero Values.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPZeroValueMode,
 
         /// <summary>
@@ -588,8 +588,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> 32-bit/64-bit Counters.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPCounterMode,
 
         /// <summary>
@@ -597,8 +597,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Request Mode.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPRequestMode,
 
         /// <summary>
@@ -606,8 +606,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Port Name Template.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPPortNameTemplate,
 
         /// <summary>
@@ -615,8 +615,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Port Name Update.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPPortNameUpdateMode,
 
         /// <summary>
@@ -624,8 +624,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Port Identification.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPPortIdMode,
 
         /// <summary>
@@ -633,8 +633,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> Start Interface Index.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPInterfaceStartIndex,
 
         /// <summary>
@@ -642,8 +642,8 @@ namespace PrtgAPI
         /// Corresponds to SNMP Compatibility Options -> End Interface Index.
         /// </summary>
         [TypeLookup(typeof(ContainerSettings))]
-        [DependentProperty(nameof(InheritSNMPCompatibility), false)]
-        [Category(nameof(ObjectPropertyCategory.SNMPCompatibility))]
+        [DependentProperty(InheritSNMPCompatibility, false)]
+        [Category(ObjectPropertyCategory.SNMPCompatibility)]
         SNMPInterfaceEndIndex,
 
         #endregion
@@ -655,7 +655,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         InheritChannelUnit,
 
         /// <summary>
@@ -664,9 +664,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         BandwidthVolumeUnit,
 
         /// <summary>
@@ -675,9 +675,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         BandwidthSpeedUnit,
 
         /// <summary>
@@ -686,9 +686,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         BandwidthTimeUnit,
 
         /// <summary>
@@ -697,9 +697,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         MemoryUsageUnit,
 
         /// <summary>
@@ -708,9 +708,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         DiskSizeUnit,
         
         /// <summary>
@@ -719,9 +719,9 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritChannelUnit), false)]
-        [DependentProperty(nameof(ObjectPropertyInternal.ChannelUnit), "")]
-        [Category(nameof(ObjectPropertyCategory.ChannelUnit))]
+        [DependentProperty(InheritChannelUnit, false)]
+        [DependentProperty(ObjectPropertyInternal.ChannelUnit, "")]
+        [Category(ObjectPropertyCategory.ChannelUnit)]
         FileSizeUnit,
 
         #endregion
@@ -735,7 +735,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.AccessRights))]
+        [Category(ObjectPropertyCategory.AccessRights)]
         InheritAccess,
 
         #endregion
@@ -746,7 +746,7 @@ namespace PrtgAPI
         /// Corresponds to Basic Settings -> Name.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.BasicSensorSettings))]
+        [Category(ObjectPropertyCategory.BasicSensorSettings)]
         Name,
 
         //[TypeLookup(typeof(SensorSettings))]
@@ -757,7 +757,7 @@ namespace PrtgAPI
         /// Corresponds to Basic Settings -> Tags.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.BasicSensorSettings))]
+        [Category(ObjectPropertyCategory.BasicSensorSettings)]
         Tags,
 
         /// <summary>
@@ -765,7 +765,7 @@ namespace PrtgAPI
         /// Corresponds to Basic Settings -> Priority.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.BasicSensorSettings))]
+        [Category(ObjectPropertyCategory.BasicSensorSettings)]
         Priority,
 
         #endregion
@@ -778,7 +778,7 @@ namespace PrtgAPI
         ///     WMI Service Monitor -> Sensor Result
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.DebugOptions))]
+        [Category(ObjectPropertyCategory.DebugOptions)]
         DebugMode,
 
         #endregion
@@ -789,7 +789,7 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> URL.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         Url,
 
         /// <summary>
@@ -797,7 +797,7 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> Request Method.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         HttpRequestMethod,
 
         /// <summary>
@@ -805,8 +805,8 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> Postdata.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [DependentProperty(nameof(HttpRequestMethod), PrtgAPI.HttpRequestMethod.POST)]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [DependentProperty(HttpRequestMethod, PrtgAPI.HttpRequestMethod.POST)]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         PostData,
 
         /// <summary>
@@ -814,8 +814,8 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> Content Type.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [DependentProperty(nameof(HttpRequestMethod), PrtgAPI.HttpRequestMethod.POST)]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [DependentProperty(HttpRequestMethod, PrtgAPI.HttpRequestMethod.POST)]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         UseCustomPostContent,
 
         /// <summary>
@@ -823,8 +823,8 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> Custom Content Type.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [DependentProperty(nameof(UseCustomPostContent), true, true)]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [DependentProperty(UseCustomPostContent, true, true)]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         PostContentType,
 
         /// <summary>
@@ -832,7 +832,7 @@ namespace PrtgAPI
         /// Corresponds to HTTP Specific -> SNI Inheritance.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.HttpSpecific))]
+        [Category(ObjectPropertyCategory.HttpSpecific)]
         UseSNIFromUrl,
 
         #endregion
@@ -844,7 +844,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        [Category(ObjectPropertyCategory.ProxySettingsForHttp)]
         InheritProxy,
 
         /// <summary>
@@ -852,8 +852,8 @@ namespace PrtgAPI
         /// Corresponds to Proxy Settings for HTTP Sensors -> Name.
         /// </summary>
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritProxy), false)]
-        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        [DependentProperty(InheritProxy, false)]
+        [Category(ObjectPropertyCategory.ProxySettingsForHttp)]
         ProxyAddress,
 
         /// <summary>
@@ -861,8 +861,8 @@ namespace PrtgAPI
         /// Corresponds to Proxy Settings for HTTP Sensors -> Port.
         /// </summary>
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritProxy), false)]
-        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        [DependentProperty(InheritProxy, false)]
+        [Category(ObjectPropertyCategory.ProxySettingsForHttp)]
         ProxyPort,
 
         /// <summary>
@@ -870,8 +870,8 @@ namespace PrtgAPI
         /// Corresponds to Proxy Settings for HTTP Sensors -> User.
         /// </summary>
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritProxy), false)]
-        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        [DependentProperty(InheritProxy, false)]
+        [Category(ObjectPropertyCategory.ProxySettingsForHttp)]
         ProxyUser,
 
         /// <summary>
@@ -880,8 +880,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("proxypassword")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(InheritProxy), false)]
-        [Category(nameof(ObjectPropertyCategory.ProxySettingsForHttp))]
+        [DependentProperty(InheritProxy, false)]
+        [Category(ObjectPropertyCategory.ProxySettingsForHttp)]
         ProxyPassword,
 
         #endregion
@@ -895,7 +895,7 @@ namespace PrtgAPI
         ///     Sensor Settings (EXE/XML)     -> Timeout (Max 900)
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         Timeout,
 
         /// <summary>
@@ -903,7 +903,7 @@ namespace PrtgAPI
         /// Corresponds to Ping Settings -> Packet Size.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         PingPacketSize,
 
         /// <summary>
@@ -911,7 +911,7 @@ namespace PrtgAPI
         /// Corresponds to Ping Settings -> Ping Method.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         PingMode,
 
         /// <summary>
@@ -919,7 +919,7 @@ namespace PrtgAPI
         /// Corresponds to Ping Settings -> Ping Count.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         PingCount,
 
         /// <summary>
@@ -927,7 +927,7 @@ namespace PrtgAPI
         /// Corresponds to Ping Settings -> Ping Delay.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         PingDelay,
 
         /// <summary>
@@ -935,7 +935,7 @@ namespace PrtgAPI
         /// Corresponds to Ping Settings -> Auto Acknowledge.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.PingSettings))]
+        [Category(ObjectPropertyCategory.PingSettings)]
         AutoAcknowledge,
 
         #endregion
@@ -946,7 +946,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
+        [Category(ObjectPropertyCategory.ScanningInterval)]
         InheritInterval,
 
         /// <summary>
@@ -954,16 +954,16 @@ namespace PrtgAPI
         /// </summary>
         [Description("interval")]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritInterval), false)]
-        [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
+        [DependentProperty(InheritInterval, false)]
+        [Category(ObjectPropertyCategory.ScanningInterval)]
         Interval,
 
         /// <summary>
         /// The <see cref="PrtgAPI.IntervalErrorMode"/> indicating the number of scanning intervals to wait before setting a sensor to <see cref="Status.Down"/> when an error is reported.
         /// </summary>
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritInterval), false)]
-        [Category(nameof(ObjectPropertyCategory.ScanningInterval))]
+        [DependentProperty(InheritInterval, false)]
+        [Category(ObjectPropertyCategory.ScanningInterval)]
         IntervalErrorMode,
 
         #endregion
@@ -984,7 +984,7 @@ namespace PrtgAPI
         /// </summary>
         [LiteralValue]
         [TypeLookup(typeof(TableSettings))]
-        [Category(nameof(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance))]
+        [Category(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance)]
         InheritDependency,
 
         /// <summary>
@@ -995,8 +995,8 @@ namespace PrtgAPI
         [Description("schedule")]
         [Type(typeof(Schedule))]
         [TypeLookup(typeof(TableSettings))]
-        [DependentProperty(nameof(InheritDependency), false)]
-        [Category(nameof(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance))]
+        [DependentProperty(InheritDependency, false)]
+        [Category(ObjectPropertyCategory.SchedulesDependenciesAndMaintenance)]
         Schedule,*/
 
         ///// <summary>
@@ -1016,7 +1016,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Display -> Graph Type.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorDisplay))]
+        [Category(ObjectPropertyCategory.SensorDisplay)]
         GraphType,
 
         //StackUnit,
@@ -1030,7 +1030,7 @@ namespace PrtgAPI
         /// </summary>
         [Description("exefile")]
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
+        [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         ExeFile,
 
         /// <summary>
@@ -1038,7 +1038,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Settings -> Parameters.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
+        [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         ExeParameters,
 
         /// <summary>
@@ -1046,7 +1046,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Settings -> Environment
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
+        [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         SetExeEnvironmentVariables,
 
         /// <summary>
@@ -1054,7 +1054,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Settings -> Security Context.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
+        [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         UseWindowsAuthentication,
 
         /// <summary>
@@ -1062,7 +1062,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Settings -> Mutex Name.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
+        [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         Mutex,
 
         /// <summary>
@@ -1081,7 +1081,7 @@ namespace PrtgAPI
         /// Corresponds to WMI Alternative Query -> Alternative Query.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiAlternativeQuery))]
+        [Category(ObjectPropertyCategory.WmiAlternativeQuery)]
         WmiMode,
 
         #endregion
@@ -1091,7 +1091,7 @@ namespace PrtgAPI
         /// The DNS name or IP Address to target. Applies to: WMI Remote Ping
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiRemotePing))]
+        [Category(ObjectPropertyCategory.WmiRemotePing)]
         Target,
 
         /// <summary>
@@ -1099,7 +1099,7 @@ namespace PrtgAPI
         /// Corresponds to WMI remote Ping Configuration -> Packet Size.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiRemotePing))]
+        [Category(ObjectPropertyCategory.WmiRemotePing)]
         PingRemotePacketSize,
 
         #endregion
@@ -1110,7 +1110,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Factory Specific Settings -> Channel Definition
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorFactorySpecific))]
+        [Category(ObjectPropertyCategory.SensorFactorySpecific)]
         ChannelDefinition,
 
         /// <summary>
@@ -1118,7 +1118,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Factory Specific Settings -> Error Handling.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorFactorySpecific))]
+        [Category(ObjectPropertyCategory.SensorFactorySpecific)]
         FactoryErrorMode,
 
         /// <summary>
@@ -1128,8 +1128,8 @@ namespace PrtgAPI
         /// Corresponds to Sensor Factory Specific Settings -> Status Definition.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [DependentProperty(nameof(FactoryErrorMode), PrtgAPI.FactoryErrorMode.CustomFormula)]
-        [Category(nameof(ObjectPropertyCategory.SensorFactorySpecific))]
+        [DependentProperty(FactoryErrorMode, PrtgAPI.FactoryErrorMode.CustomFormula)]
+        [Category(ObjectPropertyCategory.SensorFactorySpecific)]
         FactoryErrorFormula,
 
         /// <summary>
@@ -1137,7 +1137,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Factory Specific Settings -> If a Sensor has No Data.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorFactorySpecific))]
+        [Category(ObjectPropertyCategory.SensorFactorySpecific)]
         FactoryMissingDataMode,
 
         #endregion
@@ -1148,7 +1148,7 @@ namespace PrtgAPI
         /// Corresponds to WMI Service Monitor -> If Service is Not Running.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiServiceMonitor))]
+        [Category(ObjectPropertyCategory.WmiServiceMonitor)]
         StartStopped,
 
         /// <summary>
@@ -1165,7 +1165,7 @@ namespace PrtgAPI
         /// Corresponds to WMI Service Monitor -> Monitoring.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiServiceMonitor))]
+        [Category(ObjectPropertyCategory.WmiServiceMonitor)]
         MonitorPerformance,
 
         #endregion
@@ -1176,7 +1176,7 @@ namespace PrtgAPI
         /// Corresponds to Database Specific -> Database.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        [Category(ObjectPropertyCategory.DatabaseSpecific)]
         Database,
 
         /// <summary>
@@ -1185,16 +1185,16 @@ namespace PrtgAPI
         /// Corresponds to Data Specific -> SQL Server Instance.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        [Category(ObjectPropertyCategory.DatabaseSpecific)]
         UseCustomInstance,
 
         /// <summary>
         /// The name of the custom instance of SQL Server to connect to.<para/>
         /// Corresponds to Database Specific -> Instance Name.
         /// </summary>
-        [DependentProperty(nameof(UseCustomInstance), true)]
+        [DependentProperty(UseCustomInstance, true)]
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        [Category(ObjectPropertyCategory.DatabaseSpecific)]
         InstanceName,
 
         /// <summary>
@@ -1202,7 +1202,7 @@ namespace PrtgAPI
         /// Corresponds to Database Specific -> Encryption.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.DatabaseSpecific))]
+        [Category(ObjectPropertyCategory.DatabaseSpecific)]
         SqlEncryptionMode,
 
         #endregion
@@ -1213,7 +1213,7 @@ namespace PrtgAPI
         /// Corresponds to Data -> SQL Query File.
         /// </summary>
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [Category(nameof(ObjectPropertyCategory.Data))]
+        [Category(ObjectPropertyCategory.Data)]
         SqlServerQuery,
 
         /// <summary>
@@ -1221,16 +1221,16 @@ namespace PrtgAPI
         /// Corresponds to Data -> Use Input Parameter.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.Data))]
+        [Category(ObjectPropertyCategory.Data)]
         UseSqlInputParameter,
 
         /// <summary>
         /// Parameters to pass to the specified <see cref="SqlServerQuery"/>.<para/>
         /// Corresponds to Data -> Input Parameter.
         /// </summary>
-        [DependentProperty(nameof(UseSqlInputParameter), true, true)]
+        [DependentProperty(UseSqlInputParameter, true, true)]
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.Data))]
+        [Category(ObjectPropertyCategory.Data)]
         SqlInputParameter,
 
         /// <summary>
@@ -1238,7 +1238,7 @@ namespace PrtgAPI
         /// Corresponds to Data -> Use Transaction.
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.Data))]
+        [Category(ObjectPropertyCategory.Data)]
         SqlTransactionMode,
 
         /// <summary>
@@ -1247,7 +1247,7 @@ namespace PrtgAPI
         /// Corresponds to Data -> Data Processing.
         /// </summary>
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [Category(nameof(ObjectPropertyCategory.Data))]
+        [Category(ObjectPropertyCategory.Data)]
         SqlProcessingMode,
 
         #endregion
@@ -1258,7 +1258,7 @@ namespace PrtgAPI
         /// To retrieve the value of this property, use <see cref="SensorOrDeviceOrGroupOrProbe.NotificationTypes"/> 
         /// </summary>
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [Category(nameof(ObjectPropertyCategory.Special))]
+        [Category(ObjectPropertyCategory.Special)]
         InheritTriggers,
 
         /// <summary>
@@ -1267,7 +1267,7 @@ namespace PrtgAPI
         /// </summary>
         [DescriptionAttribute("comments")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [Category(nameof(ObjectPropertyCategory.Special))]
+        [Category(ObjectPropertyCategory.Special)]
         Comments,
 
     #endregion
@@ -1279,8 +1279,8 @@ namespace PrtgAPI
         /// </summary>
         [Description("host")]
         [TypeLookup(typeof(SpecialPropertySettings))]
-        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv4, true)]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [DependentProperty(ObjectPropertyInternal.IPVersion, IPVersion.IPv4, true)]
+        [Category(ObjectPropertyCategory.Devices)]
         Host,
 
         /// <summary>
@@ -1288,8 +1288,8 @@ namespace PrtgAPI
         /// Corresponds to Basic Device Settings -> IPv4 Address/DNS Name.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
-        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv4, true)]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [DependentProperty(ObjectPropertyInternal.IPVersion, IPVersion.IPv4, true)]
+        [Category(ObjectPropertyCategory.Devices)]
         Hostv4,
 
         /// <summary>
@@ -1297,8 +1297,8 @@ namespace PrtgAPI
         /// Corresponds to Basic Device Settings -> IPv6 Address/DNS Name.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
-        [DependentProperty(nameof(ObjectPropertyInternal.IPVersion), IPVersion.IPv6, true)]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [DependentProperty(ObjectPropertyInternal.IPVersion, IPVersion.IPv6, true)]
+        [Category(ObjectPropertyCategory.Devices)]
         Hostv6,
 
         /// <summary>
@@ -1306,7 +1306,7 @@ namespace PrtgAPI
         /// Corresponds to Additional Device Information -> Service URL.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [Category(ObjectPropertyCategory.Devices)]
         ServiceUrl,
 
         /// <summary>
@@ -1314,7 +1314,7 @@ namespace PrtgAPI
         /// Corresponds to Device Type -> Sensor Management.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [Category(ObjectPropertyCategory.Devices)]
         AutoDiscoveryMode,
 
         /// <summary>
@@ -1322,7 +1322,7 @@ namespace PrtgAPI
         /// Corresponds to Device Type -> Discovery Schedule.
         /// </summary>
         [TypeLookup(typeof(DeviceSettings))]
-        [Category(nameof(ObjectPropertyCategory.Devices))]
+        [Category(ObjectPropertyCategory.Devices)]
         AutoDiscoverySchedule
 
     #endregion

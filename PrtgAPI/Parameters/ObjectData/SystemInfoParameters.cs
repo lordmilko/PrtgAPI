@@ -27,7 +27,7 @@ namespace PrtgAPI.Parameters
             if (category == null)
                 throw new MissingAttributeException(GetType(), typeof(CategoryAttribute));
 
-            this[Parameter.Category] = category.Name.ToEnum<SystemInfoType>().GetDescription().ToLower();
+            this[Parameter.Category] = category.Name.GetDescription().ToLower();
         }
 
         private SysInfoProperty[] GetProperties()

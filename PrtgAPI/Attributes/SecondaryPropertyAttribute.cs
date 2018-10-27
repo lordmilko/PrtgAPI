@@ -5,11 +5,16 @@ namespace PrtgAPI.Attributes
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     sealed class SecondaryPropertyAttribute : Attribute
     {
-        public string Name { get; private set; }
+        public Enum Property { get; private set; }
 
-        public SecondaryPropertyAttribute(string name)
+        public SecondaryPropertyAttribute(ObjectPropertyInternal property)
         {
-            this.Name = name;
+            Property = property;
+        }
+
+        public SecondaryPropertyAttribute(string property, Type type)
+        {
+            Property = (Enum)Enum.Parse(type, property);
         }
     }
 }

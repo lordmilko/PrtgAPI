@@ -79,7 +79,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private void SetProperty(TriggerParameters parameters)
         {
             //Get the TriggerParameters PropertyInfo that corresponds to the specified TriggerProperty
-            var property = parameters.GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Name == Property.ToString());
+            var property = parameters.GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(Property) == true);
 
             if (property == null)
                 throw new InvalidOperationException($"Property '{Property}' does not exist on triggers of type '{parameters.Type}'");

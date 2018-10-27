@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// Represents a service installed on a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(SystemInfoType.Services))]
+    [Category(SystemInfoType.Services)]
     public class DeviceServiceInfo : DeviceInfo
     {
         /// <summary>

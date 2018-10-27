@@ -68,7 +68,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
             return EnumExtensions.ToEnum<T>(value);
         }
 
-        public static string GetPropertyCategory(ObjectProperty property)
+        public static Enum GetPropertyCategory(ObjectProperty property)
         {
             return property.GetEnumAttribute<CategoryAttribute>().Name;
         }

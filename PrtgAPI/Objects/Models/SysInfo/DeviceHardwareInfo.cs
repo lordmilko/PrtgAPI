@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// Describes a hardware component found on a device.
     /// </summary>
     [DataContract]
-    [Category(nameof(DeviceInfoType.Hardware))]
+    [Category(SystemInfoType.Hardware)]
     public class DeviceHardwareInfo : DeviceInfo
     {
         /// <summary>

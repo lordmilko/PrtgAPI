@@ -12,7 +12,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger's active state clears.
         /// </summary>
         [RequireValue(false)]
-        [PropertyParameter(nameof(TriggerProperty.OffNotificationAction))]
+        [PropertyParameter(TriggerProperty.OffNotificationAction)]
         public NotificationAction OffNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OffNotificationAction); }
@@ -23,7 +23,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the <see cref="NotificationAction"/> to fire if this trigger remains in an active state for an extended period of time.
         /// </summary>
         [RequireValue(false)]
-        [PropertyParameter(nameof(TriggerProperty.EscalationNotificationAction))]
+        [PropertyParameter(TriggerProperty.EscalationNotificationAction)]
         public NotificationAction EscalationNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.EscalationNotificationAction); }
@@ -33,7 +33,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.Latency))]
+        [PropertyParameter(TriggerProperty.Latency)]
         public int? Latency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Latency); }
@@ -43,7 +43,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the delay (in seconds) this trigger should wait before executing its <see cref="EscalationNotificationAction"/>.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.EscalationLatency))]
+        [PropertyParameter(TriggerProperty.EscalationLatency)]
         public int? EscalationLatency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.EscalationLatency); }
@@ -54,7 +54,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the interval (in minutes) with which the <see cref="EscalationNotificationAction"/> should be re-executed.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.RepeatInterval))]
+        [PropertyParameter(TriggerProperty.RepeatInterval)]
         public int? RepeatInterval
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.RepeatInterval); }
@@ -65,7 +65,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the object state that will cause this trigger to activate.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(TriggerProperty.State))]
+        [PropertyParameter(TriggerProperty.State)]
         public TriggerSensorState? State
         {
             get { return (TriggerSensorState?) GetCustomParameterEnumInt<TriggerSensorState>(TriggerProperty.State); }

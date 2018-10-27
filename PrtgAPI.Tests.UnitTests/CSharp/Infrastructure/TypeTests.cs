@@ -1064,10 +1064,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 .Cast<PropertyParameterAttribute>()
                 .Select(a =>
                 {
-                    Property prop;
-
-                    if (Enum.TryParse(a.Name, true, out prop))
-                        return (Property?)prop;
+                    if(a.Property.GetType() == typeof(Property))
+                        return (Property?)a.Property;
 
                     return null;
                 })

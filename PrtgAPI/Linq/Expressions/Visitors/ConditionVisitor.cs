@@ -221,7 +221,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
         {
             var attrib = info.GetAttribute<PropertyParameterAttribute>();
 
-            return attrib.Name.ToEnum<Property>();
+            return (Property)attrib.Property;
         }
     }
 }

@@ -44,7 +44,7 @@ namespace PrtgAPI
         /// <summary>
         /// The line color to use for this channel in graphs. Applies when <see cref="ColorMode"/> is <see cref="AutoMode.Manual"/>.
         /// </summary>
-        [DependentProperty(nameof(ColorMode), AutoMode.Manual, true)]
+        [DependentProperty(ColorMode, AutoMode.Manual, true)]
         LineColor,
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace PrtgAPI
         /// <summary>
         /// The number of decimal places use to display the value of this channel. Applies when <see cref="DecimalMode"/> is <see cref="PrtgAPI.DecimalMode.Custom"/>.
         /// </summary>
-        [DependentProperty(nameof(DecimalMode), PrtgAPI.DecimalMode.Custom, true)]
+        [DependentProperty(DecimalMode, PrtgAPI.DecimalMode.Custom, true)]
         DecimalPlaces,
 
         /// <summary>
@@ -76,13 +76,13 @@ namespace PrtgAPI
         /// <summary>
         /// The maximum valid value of this channel. Results above this threshold will be rounded to this value.
         /// </summary>
-        [DependentProperty(nameof(SpikeFilterEnabled), true)]
+        [DependentProperty(SpikeFilterEnabled, true)]
         SpikeFilterMax,
 
         /// <summary>
         /// The minimum valid value of this channel. Results below this threshold will be rounded to this value.
         /// </summary>
-        [DependentProperty(nameof(SpikeFilterEnabled), true)]
+        [DependentProperty(SpikeFilterEnabled, true)]
         SpikeFilterMin,
 
         /// <summary>
@@ -93,59 +93,59 @@ namespace PrtgAPI
         /// <summary>
         /// The maximum to use for calculating the percentage to display this channel's value as. Applies when <see cref="PercentDisplay"/> is <see cref="PrtgAPI.PercentDisplay.PercentOfMax"/>.
         /// </summary>
-        [DependentProperty(nameof(PercentMode), PercentDisplay.PercentOfMax)]
+        [DependentProperty(PercentMode, PercentDisplay.PercentOfMax)]
         PercentValue,
 
         /*VerticalAxisScaling,
 
-        [DependentProperty(nameof(VerticalAxisScaling), AutoMode.Manual, true)]
+        [DependentProperty(VerticalAxisScaling, AutoMode.Manual, true)]
         VerticalAxisMax,
 
-        [DependentProperty(nameof(VerticalAxisScaling), AutoMode.Manual, true)]
+        [DependentProperty(VerticalAxisScaling, AutoMode.Manual, true)]
         VerticalAxisMin,*/
 
         /// <summary>
         /// Whether limits are enabled for this object. If limits are disabled, limit thresholds will be ignored.
         /// </summary>
-        [Version(nameof(RequestVersion.v18_1))]
+        [Version(RequestVersion.v18_1)]
         LimitsEnabled,
 
         /// <summary>
         /// The maximum value allowed before the sensor goes into an error state.
         /// </summary>
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [DependentProperty(LimitsEnabled, true)]
         UpperErrorLimit,
         
         /// <summary>
         /// The maximum value allowed before the sensor goes into a warning state.
         /// </summary>
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [DependentProperty(LimitsEnabled, true)]
         UpperWarningLimit,
 
         /// <summary>
         /// The minimum value allowed before the sensor goes into an error state.
         /// </summary>
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [DependentProperty(LimitsEnabled, true)]
         LowerErrorLimit,
 
         /// <summary>
         /// The minimum value allowed before the sensor goes into a warning state.
         /// </summary>
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [DependentProperty(LimitsEnabled, true)]
         LowerWarningLimit,
 
         /// <summary>
         /// The message to display when this channel causes the sensor to go into an error state.
         /// </summary>
-        [Version(nameof(RequestVersion.v18_1))]
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [Version(RequestVersion.v18_1)]
+        [DependentProperty(LimitsEnabled, true)]
         ErrorLimitMessage,
 
         /// <summary>
         /// The message to display when this channel causes the sensor to go into a warning state.
         /// </summary>
-        [Version(nameof(RequestVersion.v18_1))]
-        [DependentProperty(nameof(LimitsEnabled), true)]
+        [Version(RequestVersion.v18_1)]
+        [DependentProperty(LimitsEnabled, true)]
         WarningLimitMessage
     }
 }

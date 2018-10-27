@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         public string GrandChildProperty { get; set; }
 
         [XmlElement("propertyparameterproperty")]
-        [PropertyParameter(nameof(FakeObjectProperty.PropertyParameterProperty))]
+        [PropertyParameter(nameof(FakeObjectProperty.PropertyParameterProperty), typeof(FakeObjectProperty))]
         public string PropertyParameterProperty { get; set; }
 
         #endregion SetObjectPropertyParameters

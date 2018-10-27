@@ -3,12 +3,9 @@
 namespace PrtgAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
-    sealed class DependentPropertyAttribute : Attribute
+    internal sealed class DependentPropertyAttribute : Attribute
     {
-        /// <summary>
-        /// The name of the property to depend on.
-        /// </summary>
-        public string Name { get; private set; }
+        public Enum Property { get; set; }
 
         /// <summary>
         /// The value that should be assigned to the dependent property when this property is assigned a value.<para/>
@@ -23,9 +20,29 @@ namespace PrtgAPI.Attributes
         /// </summary>
         public bool ReverseDependency { get; private set; }
 
-        public DependentPropertyAttribute(string name, object requiredValue, bool reverseDependency = false)
+        public DependentPropertyAttribute(ObjectProperty property, object requiredValue, bool reverseDependency = false)
+            : this((Enum)property, requiredValue, reverseDependency)
         {
-            Name = name;
+        }
+
+        public DependentPropertyAttribute(ObjectPropertyInternal property, object requiredValue, bool reverseDependency = false)
+            : this((Enum)property, requiredValue, reverseDependency)
+        {
+        }
+
+        public DependentPropertyAttribute(ChannelProperty property, object requiredValue, bool reverseDependency = false)
+            : this((Enum)property, requiredValue, reverseDependency)
+        {
+        }
+
+        public DependentPropertyAttribute(string property, Type type, object requiredValue, bool reverseDependency = false)
+            : this((Enum)Enum.Parse(type, property), requiredValue, reverseDependency)
+        {
+        }
+
+        private DependentPropertyAttribute(Enum property, object requiredValue, bool reverseDependency = false)
+        {
+            Property = property;
             RequiredValue = requiredValue;
             ReverseDependency = reverseDependency;
         }

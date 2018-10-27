@@ -12,7 +12,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger's active state clears.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.OffNotificationAction))]
+        [PropertyParameter(TriggerProperty.OffNotificationAction)]
         public NotificationAction OffNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OffNotificationAction); }
@@ -22,7 +22,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the delay (in seconds) this trigger should wait before executing its <see cref="TriggerParameters.OnNotificationAction"/> once activated.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.Latency))]
+        [PropertyParameter(TriggerProperty.Latency)]
         public int? Latency
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Latency); }
@@ -36,7 +36,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the value which, once reached, will cause this trigger will activate. Used in conjunction with <see cref="Condition"/>.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.Threshold))]
+        [PropertyParameter(TriggerProperty.Threshold)]
         public int? Threshold
         {
             get { return (int?)GetCustomParameterValue(TriggerProperty.Threshold); }
@@ -47,7 +47,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the condition that controls when the <see cref="Threshold"/> is activated.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(TriggerProperty.Condition))]
+        [PropertyParameter(TriggerProperty.Condition)]
         public TriggerCondition? Condition
         {
             get { return (TriggerCondition?) GetCustomParameterEnumInt<TriggerCondition>(TriggerProperty.Condition); }
@@ -58,14 +58,14 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the channel of the sensor this trigger should apply to.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(TriggerProperty.Channel))]
+        [PropertyParameter(TriggerProperty.Channel)]
         public TriggerChannel Channel
         {
             get { return TriggerChannel.ParseForRequest(GetCustomParameterValue(TriggerProperty.Channel)); }
             set
             {
                 if(value == TriggerChannel.TrafficIn || value == TriggerChannel.TrafficOut)
-                    throw new InvalidOperationException($"Only '{nameof(TriggerChannel.Primary)}', '{nameof(TriggerChannel.Total)}' and sensor specific channels are valid for threshold triggers");
+                    throw new InvalidOperationException($"Only '{TriggerChannel.Primary}', '{TriggerChannel.Total}' and sensor specific channels are valid for threshold triggers");
 
                 UpdateCustomParameter(TriggerProperty.Channel, value, true);
             }

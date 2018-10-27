@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using PrtgAPI.Attributes;
 using PrtgAPI.Reflection;
-using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions.Visitors
 {
@@ -22,7 +21,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
         {
             var parameters = node.PropertyInfo.
                 GetAttributes<PropertyParameterAttribute>()
-                .Select(a => a.Name.ToEnum<Property>());
+                .Select(a => (Property)a.Property);
 
             if (parameters.Any(p => targets.Any(t => t == p)))
                 return new PropertyExpression((MemberExpression)node.Expression, node.PropertyInfo)

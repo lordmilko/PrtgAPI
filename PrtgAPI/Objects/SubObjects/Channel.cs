@@ -61,7 +61,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_factorm")]
-        [PropertyParameter(nameof(ChannelProperty.ScalingMultiplication))]
+        [PropertyParameter(ChannelProperty.ScalingMultiplication)]
         public double? ScalingMultiplication { get; set; }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_factord")]
-        [PropertyParameter(nameof(ChannelProperty.ScalingDivision))]
+        [PropertyParameter(ChannelProperty.ScalingDivision)]
         public double? ScalingDivision { get; set; }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_showchart")]
-        [PropertyParameter(nameof(ChannelProperty.ShowInGraph))]
+        [PropertyParameter(ChannelProperty.ShowInGraph)]
         public bool ShowInGraph { get; set; } //Show, Hide
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_colmode")]
-        [PropertyParameter(nameof(ChannelProperty.ColorMode))]
+        [PropertyParameter(ChannelProperty.ColorMode)]
         public AutoMode ColorMode { get; set; }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_color")]
-        [PropertyParameter(nameof(ChannelProperty.LineColor))]
+        [PropertyParameter(ChannelProperty.LineColor)]
         public string LineColor { get; set; } //Automatic or a value you specify in hex - todo
         //todo - need to validate input against doing a System.Drawing.ColorTranslator.FromHtml
 
@@ -115,7 +115,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_percent")]
-        [PropertyParameter(nameof(ChannelProperty.PercentMode))]
+        [PropertyParameter(ChannelProperty.PercentMode)]
         public PercentDisplay? PercentMode { get; set; }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_ref100percent")]
-        [PropertyParameter(nameof(ChannelProperty.PercentValue))]
+        [PropertyParameter(ChannelProperty.PercentValue)]
         public double? PercentValue { get; set; }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_linewidth")]
-        [PropertyParameter(nameof(ChannelProperty.LineWidth))]
+        [PropertyParameter(ChannelProperty.LineWidth)]
         public int LineWidth { get; set; }
 
         private string unit;
@@ -141,7 +141,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_customunit")]
-        [PropertyParameter(nameof(ChannelProperty.Unit))]
+        [PropertyParameter(ChannelProperty.Unit)]
         public string Unit
         {
             get { return unit; }
@@ -169,7 +169,7 @@ namespace PrtgAPI
         /// A standard or custom value lookup that allows this sensor's value to be displayed as text in a gauge or a switch.
         /// </summary>
         [Undocumented]
-        [PropertyParameter(nameof(ChannelProperty.ValueLookup))]
+        [PropertyParameter(ChannelProperty.ValueLookup)]
         public string ValueLookup => valueLookup?.Substring(valueLookup.IndexOf("|", StringComparison.Ordinal) + 1);
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_avgmode")]
-        [PropertyParameter(nameof(ChannelProperty.HistoricValueMode))]
+        [PropertyParameter(ChannelProperty.HistoricValueMode)]
         public HistoricValueMode? HistoricValueMode { get; set; }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_decimalmode")]
-        [PropertyParameter(nameof(ChannelProperty.DecimalMode))]
+        [PropertyParameter(ChannelProperty.DecimalMode)]
         public DecimalMode DecimalMode { get; set; }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_decimaldigits")]
-        [PropertyParameter(nameof(ChannelProperty.DecimalPlaces))]
+        [PropertyParameter(ChannelProperty.DecimalPlaces)]
         public double? DecimalPlaces { get; set; } //Automatic, All or a value you specify - todo
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_spikemode")]
-        [PropertyParameter(nameof(ChannelProperty.SpikeFilterEnabled))]
+        [PropertyParameter(ChannelProperty.SpikeFilterEnabled)]
         public bool? SpikeFilterEnabled { get; set; }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_spikemax")]
-        [PropertyParameter(nameof(ChannelProperty.SpikeFilterMax))]
+        [PropertyParameter(ChannelProperty.SpikeFilterMax)]
         public double? SpikeFilterMax { get; set; }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_spikemin")]
-        [PropertyParameter(nameof(ChannelProperty.SpikeFilterMin))]
+        [PropertyParameter(ChannelProperty.SpikeFilterMin)]
         public double? SpikeFilterMin { get; set; }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismode")]
-        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisScaling))]
+        //[PropertyParameter(ChannelProperty.VerticalAxisScaling)]
         public AutoMode VerticalAxisScaling { get; set; } //Automatic or Manual
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismax")]
-        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisMax))]
+        //[PropertyParameter(ChannelProperty.VerticalAxisMax)]
         public double? VerticalAxisMax { get; set; }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_axismin")]
-        //[PropertyParameter(nameof(ChannelProperty.VerticalAxisMin))]
+        //[PropertyParameter(ChannelProperty.VerticalAxisMin)]
         public double? VerticalAxisMin { get; set; }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitmode")]
-        [PropertyParameter(nameof(ChannelProperty.LimitsEnabled))]
+        [PropertyParameter(ChannelProperty.LimitsEnabled)]
         public bool? LimitsEnabled { get; set; }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitmaxerror")]
-        [PropertyParameter(nameof(ChannelProperty.UpperErrorLimit))]
+        [PropertyParameter(ChannelProperty.UpperErrorLimit)]
         public double? UpperErrorLimit { get; set; }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitmaxwarning")]
-        [PropertyParameter(nameof(ChannelProperty.UpperWarningLimit))]
+        [PropertyParameter(ChannelProperty.UpperWarningLimit)]
         public double? UpperWarningLimit { get; set; }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitminerror")]
-        [PropertyParameter(nameof(ChannelProperty.LowerErrorLimit))]
+        [PropertyParameter(ChannelProperty.LowerErrorLimit)]
         public double? LowerErrorLimit { get; set; }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitminwarning")]
-        [PropertyParameter(nameof(ChannelProperty.LowerWarningLimit))]
+        [PropertyParameter(ChannelProperty.LowerWarningLimit)]
         public double? LowerWarningLimit { get; set; }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limiterrormsg")]
-        [PropertyParameter(nameof(ChannelProperty.ErrorLimitMessage))]
+        [PropertyParameter(ChannelProperty.ErrorLimitMessage)]
         public string ErrorLimitMessage { get; set; }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace PrtgAPI
         /// </summary>
         [Undocumented]
         [XmlElement("injected_limitwarningmsg")]
-        [PropertyParameter(nameof(ChannelProperty.WarningLimitMessage))]
+        [PropertyParameter(ChannelProperty.WarningLimitMessage)]
         public string WarningLimitMessage { get; set; }
 
         /// <summary>

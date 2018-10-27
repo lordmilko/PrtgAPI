@@ -302,7 +302,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 var properties = ReflectionCacheManager.Get(typeof(TObject)).Properties.
                     Where(p => p.GetAttribute<PropertyParameterAttribute>() != null).
-                    Select(p => Tuple.Create(p.GetAttribute<PropertyParameterAttribute>().Name.ToEnum<Property>(), p)).ToList();
+                    Select(p => Tuple.Create((Property)p.GetAttribute<PropertyParameterAttribute>().Property, p)).ToList();
 
                 dynamicParameterSet = new DynamicParameterSet<Property>(
                     parameterSets,
@@ -324,7 +324,7 @@ namespace PrtgAPI.PowerShell.Base
             var typeProperties = typeof(TObject).GetTypeCache().Properties;
 
             //Filter value could in fact be an enum type. Lookup the property from the current cmdlet's type
-            var property = typeProperties.FirstOrDefault(p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Name == filter.Property.ToString()));
+            var property = typeProperties.FirstOrDefault(p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Property.Equals(filter.Property)));
 
             if (property == null)
                 return filter;
@@ -646,7 +646,7 @@ namespace PrtgAPI.PowerShell.Base
             var property = ReflectionCacheManager.Get(typeof(TObject))
                 .Properties
                 .First(
-                    p => p.GetAttribute<PropertyParameterAttribute>()?.Name.ToEnum<Property>() == filter.Item1
+                    p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(filter.Item1) == true
                 );
 
             if (property.Property.PropertyType.IsArray)

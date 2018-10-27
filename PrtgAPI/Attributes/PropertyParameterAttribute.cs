@@ -8,19 +8,36 @@ namespace PrtgAPI.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     sealed class PropertyParameterAttribute : Attribute
     {
-        public Property? Property { get; }
-
-        public string Name { get; }
-
-        public PropertyParameterAttribute(string name)
-        {
-            Name = name;
-        }
+        public Enum Property { get; }
 
         public PropertyParameterAttribute(Property property)
         {
             Property = property;
-            Name = property.ToString();
+        }
+
+        public PropertyParameterAttribute(Parameter parameter)
+        {
+            Property = parameter;
+        }
+
+        public PropertyParameterAttribute(ObjectProperty property)
+        {
+            Property = property;
+        }
+
+        public PropertyParameterAttribute(ChannelProperty property)
+        {
+            Property = property;
+        }
+
+        public PropertyParameterAttribute(TriggerProperty property)
+        {
+            Property = property;
+        }
+
+        public PropertyParameterAttribute(string property, Type type)
+        {
+            Property = (Enum)Enum.Parse(type, property);
         }
     }
 }

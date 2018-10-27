@@ -47,7 +47,7 @@ namespace PrtgAPI.Parameters
                 .Where(p => p.GetAttribute<UndocumentedAttribute>() == null)
                 .Select(e => e.GetAttribute<PropertyParameterAttribute>())
                 .Where(p => p != null)
-                .Select(e => e.Name.ToEnum<Property>())
+                .Select(e => (Property)e.Property)
                 .Distinct()
                 .OrderBy(p => p != Property.Id && p != Property.Name) //Id and Name come first (if applicable)
                 .ToArray();

@@ -19,7 +19,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the name to use for this object.
         /// </summary>
         [RequireValue(true)]
-        [PropertyParameter(nameof(ObjectProperty.Name))]
+        [PropertyParameter(ObjectProperty.Name)]
         public string Name
         {
             get { return GetCustomParameter(ObjectProperty.Name)?.ToString(); }
@@ -29,7 +29,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
         /// </summary>
-        [PropertyParameter(nameof(ObjectProperty.Tags))]
+        [PropertyParameter(ObjectProperty.Tags)]
         public string[] Tags
         {
             get { return GetCustomParameterArray(ObjectProperty.Tags, ' '); }

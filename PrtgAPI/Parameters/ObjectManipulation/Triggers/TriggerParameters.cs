@@ -38,7 +38,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the <see cref="NotificationAction"/> to execute when the trigger activates.
         /// </summary>
-        [PropertyParameter(nameof(TriggerProperty.OnNotificationAction))]
+        [PropertyParameter(TriggerProperty.OnNotificationAction)]
         public NotificationAction OnNotificationAction
         {
             get { return GetNotificationAction(TriggerProperty.OnNotificationAction); }

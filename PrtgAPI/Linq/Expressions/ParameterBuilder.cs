@@ -493,7 +493,7 @@ namespace PrtgAPI.Linq.Expressions
         {
             var attrib = member.PropertyInfo.GetAttribute<PropertyParameterAttribute>();
 
-            return attrib.Name.ToEnum<Property>();
+            return (Property)attrib.Property;
         }
     }
 }
