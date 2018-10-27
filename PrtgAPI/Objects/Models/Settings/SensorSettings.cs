@@ -186,7 +186,7 @@ namespace PrtgAPI
         #endregion
         #region Sensor Settings (EXE/XML)
 
-        //Duplicate properties: DebugMode, Timeout
+        //Duplicate properties: DebugMode, Timeout, NotifyChanged
 
         [XmlElement("injected_exefile")]
         internal string exeFileStr { get; set; }
@@ -229,13 +229,6 @@ namespace PrtgAPI
         //public ExeValueType? ExeValueType { get; set; } //todo: we're not currently retrieving this value property
 
         //todo: im pretty sure i saw this under exexml settings as well, but i cant seem to find it again
-
-        /// <summary>
-        /// Whether change triggers defined on this sensor will be activated when this sensor's value changes.<para/>
-        /// Corresponds to OID Values -> If Value Changes
-        /// </summary>
-        [XmlElement("injected_monitorchange")]
-        public bool? EnableChangeTriggers { get; set; }
 
         #endregion
         #region WMI Alternative Query
@@ -313,11 +306,13 @@ namespace PrtgAPI
         public bool? StartStopped { get; set; }
 
         /// <summary>
-        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object.<para/>
-        /// Corresponds to WMI Service Monitor -> If Service is Restarted.
+        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object or its value changes.<para/>
+        /// For specific trigger conditions see documentation for object type. Corresponds to<para/>
+        ///     Sensor Settings -> If Value Changes
+        ///     WMI Service Monitor -> If Service is Restarted.
         /// </summary>
         [XmlElement("injected_monitorchange")]
-        public bool? NotifyStarted { get; set; }
+        public bool? NotifyChanged { get; set; }
 
         /// <summary>
         /// Whether PRTG should monitor just basic information for the target of the sensor, or should also collect additional performance metrics.<para/>

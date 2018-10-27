@@ -720,7 +720,7 @@ Describe "New-SensorParameters" {
             SetValue $params "Priority" "Four"
             SetValue $params "Services" $services
             SetValue $params "StartStopped" $true
-            SetValue $params "NotifyStarted" $false
+            SetValue $params "NotifyChanged" $false
             SetValue $params "MonitorPerformance" $true
             SetValue $params "InheritTriggers" $false
         }

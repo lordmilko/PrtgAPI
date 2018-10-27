@@ -17,12 +17,12 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="service">The WMI Service to create a sensor for.</param>
         /// <param name="startStopped">Whether PRTG should automatically restart the service in the event it is stopped.</param>
-        /// <param name="notifyStarted">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensor in the event PRTG restarts it.</param>
+        /// <param name="notifyChanged">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensor in the event PRTG restarts it.</param>
         /// <param name="monitorPerformance">Whether to collect performance metrics for the service.</param>
         /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default values are "wmiservicesensor" and "servicesensor".</param>
         [ExcludeFromCodeCoverage]
-        public WmiServiceSensorParameters(WmiServiceTarget service, bool startStopped = false, bool notifyStarted = true, bool monitorPerformance = false, params string[] tags) :
-            this(new List<WmiServiceTarget> {service}, startStopped, notifyStarted, monitorPerformance, tags)
+        public WmiServiceSensorParameters(WmiServiceTarget service, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false, params string[] tags) :
+            this(new List<WmiServiceTarget> {service}, startStopped, notifyChanged, monitorPerformance, tags)
         {
         }
 
@@ -31,10 +31,10 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="services">One or more WMI Services to create sensors for.</param>
         /// <param name="startStopped">Whether PRTG should automatically restart the services in the event they are stopped.</param>
-        /// <param name="notifyStarted">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.</param>
+        /// <param name="notifyChanged">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.</param>
         /// <param name="monitorPerformance">Whether to collect performance metrics for each service.</param>
         /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default values are "wmiservicesensor" and "servicesensor".</param>
-        public WmiServiceSensorParameters(List<WmiServiceTarget> services, bool startStopped = false, bool notifyStarted = true, bool monitorPerformance = false,
+        public WmiServiceSensorParameters(List<WmiServiceTarget> services, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false,
             params string[] tags) : base("Service", SensorType.WmiService)
         {
             if (services == null)
@@ -45,7 +45,7 @@ namespace PrtgAPI.Parameters
 
             Services = services;
             StartStopped = startStopped;
-            NotifyStarted = notifyStarted;
+            NotifyChanged = notifyChanged;
             MonitorPerformance = monitorPerformance;
 
             SetCustomParameterBool(ObjectPropertyInternal.HasService, true);
@@ -73,10 +73,10 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.
         /// </summary>
-        public bool NotifyStarted
+        public bool NotifyChanged
         {
-            get { return (bool) GetCustomParameterBool(ObjectProperty.NotifyStarted); }
-            set { SetCustomParameterBool(ObjectProperty.NotifyStarted, value); }
+            get { return (bool) GetCustomParameterBool(ObjectProperty.NotifyChanged); }
+            set { SetCustomParameterBool(ObjectProperty.NotifyChanged, value); }
         }
 
         /// <summary>

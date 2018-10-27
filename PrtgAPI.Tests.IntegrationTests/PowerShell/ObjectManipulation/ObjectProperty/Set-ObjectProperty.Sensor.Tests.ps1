@@ -82,7 +82,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
         SetValue "SetExeEnvironmentVariables" $true
         SetValue "UseWindowsAuthentication" $true
         SetValue "Mutex" "Mutex1"
-        SetValue "EnableChangeTriggers" $true
+        SetValue "NotifyChanged" $true
         #GetValue "ExeValueType" #todo: need to test that setting readonly on exevaluetype still retrieves the value
         SetValue "DebugMode" "WriteToDiskWhenError"
     }
@@ -108,7 +108,7 @@ Describe "Set-ObjectProperty_Sensors_IT" {
 
         SetValue "StartStopped" $true
 
-        SetChild "NotifyStarted" $false "StartStopped" $true
+        SetChild "NotifyChanged" $false "StartStopped" $true
 
         SetValue "MonitorPerformance" $true
         SetValue "DebugMode" "WriteToDisk"

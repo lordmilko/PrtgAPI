@@ -1065,14 +1065,6 @@ namespace PrtgAPI
         [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         Mutex,
 
-        /// <summary>
-        /// Whether change triggers defined on this sensor will be activated when this sensor's value changes.<para/>
-        /// Corresponds to OID Values -> If Value Changes
-        /// </summary>
-        [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.SensorSettingsExeXml))]
-        EnableChangeTriggers,
-
         #endregion
         #region WMI Alternative Query
 
@@ -1152,13 +1144,15 @@ namespace PrtgAPI
         StartStopped,
 
         /// <summary>
-        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object.<para/>
-        /// Corresponds to WMI Service Monitor -> If Service is Restarted.
+        /// Whether PRTG should trigger any Change notification triggers defined on this object when PRTG starts the object or its value changes.<para/>
+        /// For specific trigger conditions see documentation for object type. Corresponds to<para/>
+        ///     Sensor Settings -> If Value Changes
+        ///     WMI Service Monitor -> If Service is Restarted.
         /// </summary>
-        [DependentProperty(nameof(StartStopped), true)]
+        [DependentProperty(StartStopped, true)]
         [TypeLookup(typeof(SensorSettings))]
-        [Category(nameof(ObjectPropertyCategory.WmiServiceMonitor))]
-        NotifyStarted,
+        [Category(ObjectPropertyCategory.WmiServiceMonitor)]
+        NotifyChanged,
 
         /// <summary>
         /// Whether PRTG should monitor just basic information for the target of the sensor, or should also collect additional performance metrics.<para/>

@@ -72,7 +72,7 @@ LONG DESCRIPTION
     | SetExeEnvironmentVariables |    Yes    | Whether to set PRTG variables as environment variables          |
     | UseWindowsAuthentication   |    Yes    | Whether run with credentials of Device or of Probe Service      |
     | Mutex                      |    Yes    | Mutex to execute related sensors sequentially                   |
-    | EnableChangeTriggers       |    Yes    | Whether change triggers applied to this sensor are active       |
+    | NotifyChanged              |    Yes    | Whether change triggers applied to this sensor are active       |
     | ExeValueType               |    No     | How the channel value is numerically represented                |
     | DebugMode                  |    Yes    | How debug data should be stored                                 |
 
@@ -98,7 +98,7 @@ LONG DESCRIPTION
     | -------------------------- | --------- | --------------------------------------------------------------- |
     | DebugMode                  |    Yes    | How debug data should be stored                                 |
     | StartStopped               |    Yes    | Whether PRTG should start the target service if stopped/crashed |
-    | NotifyStarted              |    Yes    | Whether to activate Change Triggers when starting services      |
+    | NotifyChanged              |    Yes    | Whether to activate Change Triggers when starting services      |
     | MonitorPerformance         |    Yes    | Whether to monitor additional performance metrics               |
     | ServiceName                | Read-Only | The name of the service being monitored                         |
 
