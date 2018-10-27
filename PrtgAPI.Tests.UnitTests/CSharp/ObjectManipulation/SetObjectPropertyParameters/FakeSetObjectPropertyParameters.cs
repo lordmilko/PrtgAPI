@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         protected override int[] ObjectIdsInternal { get; set; }
 
-        public FakeSetObjectPropertyParameters(Func<Enum, PropertyCache> getPropertyCache)
+        public FakeSetObjectPropertyParameters(Func<Enum, PropertyCache> getPropertyCache) : base(null)
         {
             this.getPropertyCache = getPropertyCache;
         }
@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AddTypeSafeValue(property, value, disableDependentsOnNotReqiuiredValue);
         }
 
-        protected override PropertyCache GetPropertyCache(Enum property)
+        public override PropertyCache GetPropertyCache(Enum property)
         {
             return getPropertyCache(property);
         }

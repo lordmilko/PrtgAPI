@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
@@ -42,16 +42,16 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
             if (typeof(TObjectProperty) == typeof(ObjectProperty))
             {
-                cache = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaTypeLookup((Enum) (object) property);
+                cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup((Enum) (object) property);
             }
             else if (typeof (TObjectProperty) == typeof (ChannelProperty))
             {
-                cache = BaseSetObjectPropertyParameters<TObjectProperty>.GetPropertyInfoViaPropertyParameter<Channel>((Enum) (object) property);
+                cache = ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>((Enum) (object) property);
             }
             else
                 throw new NotImplementedException($"Handler for object property type {nameof(TObjectProperty)} is not implemented");
 
-            var queryName = BaseSetObjectPropertyParameters<TObjectProperty>.GetParameterNameStatic((Enum) (object) property, cache);
+            var queryName = ObjectPropertyParser.GetObjectPropertyNameViaCache((Enum) (object) property, cache);
 
             if (typeof (TObjectProperty) == typeof (ChannelProperty))
                 queryName += "1"; //Channel ID used for tests

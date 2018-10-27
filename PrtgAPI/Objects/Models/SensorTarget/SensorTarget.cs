@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
@@ -87,7 +87,7 @@ namespace PrtgAPI.Targets
 
         internal static List<T> CreateFromDropDownOptions(string response, ObjectProperty name, Func<string, T> createObj)
         {
-            var val = SetObjectPropertyParameters.GetParameterName(name).TrimEnd('_');
+            var val = ObjectPropertyParser.GetObjectPropertyName(name).TrimEnd('_');
 
             return CreateFromDropDownOptions(response, val, createObj);
         }

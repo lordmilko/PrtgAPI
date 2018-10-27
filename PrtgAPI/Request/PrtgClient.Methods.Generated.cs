@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -3226,8 +3227,8 @@ namespace PrtgAPI
         /// <returns>A type safe representation of the specified property.</returns>
         public object GetObjectProperty(int objectId, ObjectProperty property)
         {
-            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
             var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
 
@@ -3252,8 +3253,8 @@ namespace PrtgAPI
         /// <returns>A type safe representation of the specified property.</returns>
         public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property, CancellationToken token)
         {
-            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
             var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
 

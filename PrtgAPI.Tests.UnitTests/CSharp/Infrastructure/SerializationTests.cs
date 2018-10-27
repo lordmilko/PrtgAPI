@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Parameters;
 using PrtgAPI.Reflection;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
@@ -832,8 +832,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private T DeserializeSinglePropertyReflection<T>(ObjectProperty property, string rawValue)
         {
-            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
             return (T)XmlReflectionSerializerImpl.DeserializeRawPropertyValue(property, rawName, rawValue);
         }

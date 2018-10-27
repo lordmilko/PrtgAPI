@@ -1,7 +1,7 @@
 ﻿using System;
-using PrtgAPI.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Exceptions.Internal;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -103,12 +103,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             ExecuteExceptionWithPropertyParameter<MissingAttributeException>(FakeObjectProperty.NormalProperty, "missing a PrtgAPI.Attributes.PropertyParameterAttribute");
         }
 
-        [TestMethod]
-        public void SetObjectPropertyParameters_Throws_SettingAChild_OfARandomEnum()
-        {
-            ExecuteExceptionWithTypeLookup<ArgumentException>(FakeObjectProperty.ChildOfEnum, "Requested value 'Status' was not found");
-        }
-
         #endregion SetObjectPropertyParameters
         #region DynamicPropertyTypeParser
 
@@ -159,7 +153,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         private void ExecuteWithTypeLookupInternal(FakeObjectProperty property, object value)
         {
-            var parameters = new FakeSetObjectPropertyParameters(BaseSetObjectPropertyParameters<FakeObjectProperty>.GetPropertyInfoViaTypeLookup);
+            var parameters = new FakeSetObjectPropertyParameters(e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e));
             parameters.AddValue(property, value, true);
         }
 
@@ -180,7 +174,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         private void ExecuteWithPropertyParameterInternal(FakeObjectProperty property, object value)
         {
-            var parameters = new FakeSetObjectPropertyParameters(BaseSetObjectPropertyParameters<FakeObjectProperty>.GetPropertyInfoViaPropertyParameter<FakeSettings>);
+            var parameters = new FakeSetObjectPropertyParameters(ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<FakeSettings>);
             parameters.AddValue(property, value, true);
         }
 

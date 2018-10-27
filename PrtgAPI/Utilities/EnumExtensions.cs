@@ -233,14 +233,13 @@ namespace PrtgAPI.Utilities
             throw new MissingParameterTypeException(element);
         }
 
-        public static T[] GetDependentProperties<T>(this Enum element)
+        public static Enum[] GetDependentProperties(this Enum element)
         {
             var elms = element.GetEnumTypeCache().ValueCache
                 .Where(e =>
-                    e.Value.GetAttribute<DependentPropertyAttribute>()?.Name == element.ToString()
+                    Equals(e.Value.GetAttribute<DependentPropertyAttribute>()?.Property, element)
                 )
                 .Select(e => e.Key)
-                .Cast<T>()
                 .OrderBy(e => e)
                 .ToArray();
 

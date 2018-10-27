@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
-using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 
 namespace PrtgAPI.Request.Serialization
 {
@@ -13,8 +13,8 @@ namespace PrtgAPI.Request.Serialization
 
         public object DeserializeObjectProperty(ObjectProperty property, string rawValue)
         {
-            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
-            var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, cache);
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
             return XmlReflectionSerializerImpl.DeserializeRawPropertyValue(property, rawName, rawValue);
         }

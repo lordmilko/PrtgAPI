@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Attributes;
+using PrtgAPI.Parameters.Helpers;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
@@ -9,11 +11,13 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Base class for all parameters that create new table objects.
     /// </summary>
-    public abstract class NewObjectParameters : BaseParameters, ICommandParameters
+    public abstract class NewObjectParameters : BaseParameters, ICommandParameters, ICustomParameterContainer, IPropertyCacheResolver
     {
         internal abstract CommandFunction Function { get; }
 
         CommandFunction ICommandParameters.Function => Function;
+
+        ObjectPropertyParser parser;
 
         /// <summary>
         /// Gets or sets the name to use for this object.
@@ -41,6 +45,8 @@ namespace PrtgAPI.Parameters
             if (string.IsNullOrEmpty(objectName))
                 throw new ArgumentException($"{nameof(objectName)} cannot be null or empty", nameof(objectName));
 
+            parser = new ObjectPropertyParser(this, this, ObjectPropertyParser.GetObjectPropertyNameViaCache);
+
             Name = objectName;
         }
 
@@ -56,7 +62,7 @@ namespace PrtgAPI.Parameters
 
         [ExcludeFromCodeCoverage]
         internal object GetCustomParameter(ObjectPropertyInternal property) =>
-            GetCustomParameterInternal(GetObjectPropertyInternalName(property));
+            GetCustomParameterInternal(GetObjectPropertyName(property));
 
         #endregion
         #region GetCustomParameterEnumXml
@@ -72,7 +78,7 @@ namespace PrtgAPI.Parameters
 
         [ExcludeFromCodeCoverage]
         internal object GetCustomParameterEnumXml<T>(ObjectPropertyInternal property) =>
-            GetCustomParameterEnumXml<T>(GetObjectPropertyInternalName(property));
+            GetCustomParameterEnumXml<T>(GetObjectPropertyName(property));
 
         /// <summary>
         /// Retrieves the original value of a serialized enum property from the underlying parameter set, using its raw serialized name.
@@ -103,7 +109,7 @@ namespace PrtgAPI.Parameters
 
         [ExcludeFromCodeCoverage]
         internal bool? GetCustomParameterBool(ObjectPropertyInternal property) =>
-            GetCustomParameterBool(GetObjectPropertyInternalName(property));
+            GetCustomParameterBool(GetObjectPropertyName(property));
 
         /// <summary>
         /// Retrieves the original value of a serialized boolean property from the underlying parameter set, using its raw serialized name.
@@ -134,7 +140,7 @@ namespace PrtgAPI.Parameters
 
         [ExcludeFromCodeCoverage]
         internal string[] GetCustomParameterArray(ObjectPropertyInternal property, char delim) =>
-            GetCustomParameterArray(GetObjectPropertyInternalName(property), delim);
+            GetCustomParameterArray(GetObjectPropertyName(property), delim);
 
         /// <summary>
         /// Retrieves the original value of a serialized array property from the underlying parameter set, using its raw serialized name.
@@ -176,11 +182,11 @@ namespace PrtgAPI.Parameters
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The value to serialize.</param>
         protected void SetCustomParameter(ObjectProperty property, object value) =>
-            SetCustomParameterInternal(GetObjectPropertyName(property), value);
+            SetCustomParameterInternal(SetDependenciesAndGetPropertyName(property), value);
 
         [ExcludeFromCodeCoverage]
         internal void SetCustomParameter(ObjectPropertyInternal property, object value) =>
-            SetCustomParameterInternal(GetObjectPropertyInternalName(property), value);
+            SetCustomParameterInternal(SetDependenciesAndGetPropertyName(property), value);
 
         #endregion
         #region SetCustomParameterEnumXml
@@ -192,11 +198,11 @@ namespace PrtgAPI.Parameters
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="enum">The enum to serialize.</param>
         protected void SetCustomParameterEnumXml<T>(ObjectProperty property, T @enum) =>
-            SetCustomParameterEnumXml(GetObjectPropertyName(property), @enum);
+            SetCustomParameterEnumXml(SetDependenciesAndGetPropertyName(property), @enum);
 
         [ExcludeFromCodeCoverage]
         internal void SetCustomParameterEnumXml<T>(ObjectPropertyInternal property, T @enum) =>
-            SetCustomParameterEnumXml(GetObjectPropertyInternalName(property), @enum);
+            SetCustomParameterEnumXml(SetDependenciesAndGetPropertyName(property), @enum);
 
         /// <summary>
         /// Stores the serialized value of an enum property in the underlying parameter set, using its raw serialized name.
@@ -225,11 +231,11 @@ namespace PrtgAPI.Parameters
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The bool to serialize.</param>
         protected void SetCustomParameterBool(ObjectProperty property, bool? value) =>
-            SetCustomParameterBool(GetObjectPropertyName(property), value);
+            SetCustomParameterBool(SetDependenciesAndGetPropertyName(property), value);
 
         [ExcludeFromCodeCoverage]
         internal void SetCustomParameterBool(ObjectPropertyInternal property, bool? value) =>
-            SetCustomParameterBool(GetObjectPropertyInternalName(property), value);
+            SetCustomParameterBool(SetDependenciesAndGetPropertyName(property), value);
 
         /// <summary>
         /// Stores the serialized value of a boolean property in the underlying parameter set, using its raw serialized name.
@@ -249,11 +255,11 @@ namespace PrtgAPI.Parameters
         /// <param name="value">The array to serialize.</param>
         /// <param name="delim">The character that should delimit each array entry.</param>
         protected void SetCustomParameterArray(ObjectProperty property, string[] value, char delim) =>
-            SetCustomParameterArray(GetObjectPropertyName(property), value, delim);
+            SetCustomParameterArray(SetDependenciesAndGetPropertyName(property), value, delim);
 
         [ExcludeFromCodeCoverage]
         internal void SetCustomParameterArray(ObjectPropertyInternal property, string[] value, char delim) =>
-            SetCustomParameterArray(GetObjectPropertyInternalName(property), value, delim);
+            SetCustomParameterArray(SetDependenciesAndGetPropertyName(property), value, delim);
 
         /// <summary>
         /// Stores the serialized value of an array property in the underlying parameter set, using its raw serialized name.
@@ -281,12 +287,7 @@ namespace PrtgAPI.Parameters
 
             var parameter = new CustomParameter(name, value);
 
-            var index = GetCustomParameterIndex(name);
-
-            if (index == -1)
-                InternalParameters.Add(parameter);
-            else
-                InternalParameters[index] = parameter;
+            ((ICustomParameterContainer)this).AddParameter(parameter);
         }
 
         #region RemoveCustomParameter
@@ -305,7 +306,7 @@ namespace PrtgAPI.Parameters
         /// <param name="property">The name of the parameter to remove.</param>
         /// <returns>True if the specified parameter was found and removed. Otherwise, false.</returns>
         internal bool RemoveCustomParameter(ObjectPropertyInternal property) =>
-            RemoveCustomParameterInternal(GetObjectPropertyInternalName(property));
+            RemoveCustomParameterInternal(GetObjectPropertyName(property));
 
         #endregion
 
@@ -327,18 +328,23 @@ namespace PrtgAPI.Parameters
 
         #region Helpers
 
-        private string GetObjectPropertyName(ObjectProperty property)
+        private string SetDependenciesAndGetPropertyName(Enum property)
         {
-            var info = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
-            var name = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic(property, info);
+            var name = GetObjectPropertyName(property);
+
+            //Don't set inherited properties when we first initialize the property
+            //(which should be being done in the constructur)
+            if (GetCustomParameterIndex(name) != -1)
+                parser.AddDependents<ObjectProperty>(property);
 
             return name;
         }
 
-        [ExcludeFromCodeCoverage]
-        private string GetObjectPropertyInternalName(ObjectPropertyInternal property)
+        private string GetObjectPropertyName(Enum property)
         {
-            return $"{property.GetDescription()}_";
+            var name = ObjectPropertyParser.GetObjectPropertyName(property);
+
+            return name;
         }
 
         private int GetCustomParameterIndex(string name)
@@ -349,6 +355,21 @@ namespace PrtgAPI.Parameters
         }
 
         #endregion
+
+        void ICustomParameterContainer.AddParameter(CustomParameter parameter)
+        {
+            var index = GetCustomParameterIndex(parameter.Name);
+
+            if (index == -1)
+                InternalParameters.Add(parameter);
+            else
+                InternalParameters[index] = parameter;
+        }
+
+        PropertyCache IPropertyCacheResolver.GetPropertyCache(Enum property)
+        {
+            return ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+        }
 
         internal List<CustomParameter> InternalParameters
         {

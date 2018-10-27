@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
 
 namespace PrtgAPI.Parameters
@@ -22,21 +23,14 @@ namespace PrtgAPI.Parameters
             set { SensorIds = value; }
         }
 
-        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelParameter[] parameters, Tuple<ChannelProperty, object> versionSpecific = null)
+        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelParameter[] parameters, Tuple<ChannelProperty, object> versionSpecific = null) : base(ValidateIds(sensorIds))
         {
-            if (sensorIds == null)
-                throw new ArgumentNullException(nameof(sensorIds));
-
-            if (sensorIds.Length == 0)
-                throw new ArgumentException("At least one Sensor ID must be specified.", nameof(sensorIds));
-
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
             if (parameters.Length == 0)
                 throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
 
-            SensorIds = sensorIds;
             this.channelId = channelId;
 
             foreach (var prop in parameters)
@@ -45,20 +39,33 @@ namespace PrtgAPI.Parameters
             }
 
             if (versionSpecific != null)
-                AddDependentProperty(versionSpecific.Item2, versionSpecific.Item1);
+                parser.AddDependentProperty(versionSpecific.Item2, versionSpecific.Item1);
 
             RemoveDuplicateParameters();
         }
 
-        protected override PropertyCache GetPropertyCache(Enum property)
+        private static int[] ValidateIds(int[] sensorIds)
         {
-            return GetPropertyInfoViaPropertyParameter<Channel>(property);
+            if (sensorIds == null)
+                throw new ArgumentNullException(nameof(sensorIds));
+
+            if (sensorIds.Length == 0)
+                throw new ArgumentException("At least one Sensor ID must be specified.", nameof(sensorIds));
+
+            return sensorIds;
+        }
+
+        public override PropertyCache GetPropertyCache(Enum property)
+        {
+            return ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>(property);
         }
 
         protected override string GetParameterName(Enum property, PropertyCache cache)
         {
-            //Underscore between property name and channelId is inserted by GetParameterNameStatic
-            return $"{GetParameterNameStatic(property, cache)}{channelId}";
+            //Underscore between property name and channelId is inserted by GetObjectPropertyNameViaCache
+            var str = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
+
+            return $"{str}{channelId}";            
         }
     }
 }

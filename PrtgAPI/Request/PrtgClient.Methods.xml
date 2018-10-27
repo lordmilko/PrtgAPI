@@ -1020,8 +1020,8 @@
                         <Parameter name="property" type="ObjectProperty" description="The well known property to retrieve."/>
 
                         <Body expression="false">
-                            var cache = BaseSetObjectPropertyParameters&lt;ObjectProperty&gt;.GetPropertyInfoViaTypeLookup(property);
-                            var rawName = BaseSetObjectPropertyParameters&lt;ObjectProperty&gt;.GetParameterNameStatic(property, cache);
+                            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+                            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
                             var rawValue = <Call name="GetObjectPropertyRaw" args="objectId, rawName, cache.Property.PropertyType == typeof(string)"/>;
 

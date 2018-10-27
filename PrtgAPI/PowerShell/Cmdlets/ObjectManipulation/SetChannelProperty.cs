@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
@@ -254,7 +255,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (dynamicParams == null)
                 dynamicParams = new DynamicParameterSet<ChannelProperty>(
                     new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual },
-                    e => BaseSetObjectPropertyParameters<ChannelProperty>.GetPropertyInfoViaPropertyParameter<Channel>(e).Property
+                    e => ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>(e).Property
                 );
 
             return dynamicParams.Parameters;

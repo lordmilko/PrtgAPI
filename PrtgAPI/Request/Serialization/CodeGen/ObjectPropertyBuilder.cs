@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
-using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
@@ -96,7 +96,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
 
             var mappings = ReflectionCacheManager.Map(typeLookup).Cache;
-            var cache = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(property);
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
             var xmlElement = cache.GetAttribute<XmlElementAttribute>(); //todo: what if this objectproperty doesnt point to a member with an xmlelementattribute?
 
             XmlMapping mapping = null;
@@ -110,7 +110,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 //We have a property like Interval which uses a backing property instead.
                 //Get the backing property so that we may extract the real value from the public
                 //property
-                var rawName = BaseSetObjectPropertyParameters<ObjectProperty>.GetParameterNameStatic((ObjectProperty)property, cache);
+                var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
                 var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
 
                 mapping = mappings.FirstOrDefault(m => m.AttributeValue[0] == elementName);

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
 
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>, IObjectInternalProperty<ObjectPropertyInternal>
+    internal sealed class SetObjectPropertyParameters : BaseSetObjectPropertyParameters<ObjectProperty>
     {
         public int[] ObjectIds
         {
@@ -19,21 +20,13 @@ namespace PrtgAPI.Parameters
             set { ObjectIds = value; }
         }
 
-        public SetObjectPropertyParameters(int[] objectIds, PropertyParameter[] parameters)
+        public SetObjectPropertyParameters(int[] objectIds, PropertyParameter[] parameters) : base(ValidateIds(objectIds))
         {
-            if (objectIds == null)
-                throw new ArgumentNullException(nameof(objectIds));
-
-            if (objectIds.Length == 0)
-                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
-
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
             if (parameters.Length == 0)
                 throw new ArgumentException("At least one parameter must be specified", nameof(parameters));
-
-            ObjectIds = objectIds;
 
             foreach (var param in parameters)
             {
@@ -43,14 +36,8 @@ namespace PrtgAPI.Parameters
             RemoveDuplicateParameters();
         }
 
-        public SetObjectPropertyParameters(int[] objectIds, CustomParameter[] parameters)
+        public SetObjectPropertyParameters(int[] objectIds, CustomParameter[] parameters) : base(ValidateIds(objectIds))
         {
-            if (objectIds == null)
-                throw new ArgumentNullException(nameof(objectIds));
-
-            if (objectIds.Length == 0)
-                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
-
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
@@ -61,9 +48,20 @@ namespace PrtgAPI.Parameters
             this[Parameter.Custom] = parameters;
         }
 
-        protected override PropertyCache GetPropertyCache(Enum property)
+        private static int[] ValidateIds(int[] objectIds)
         {
-            return GetPropertyInfoViaTypeLookup(property);
+            if (objectIds == null)
+                throw new ArgumentNullException(nameof(objectIds));
+
+            if (objectIds.Length == 0)
+                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
+
+            return objectIds;
+        }
+
+        public override PropertyCache GetPropertyCache(Enum property)
+        {
+            return ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
         }
     }
 }

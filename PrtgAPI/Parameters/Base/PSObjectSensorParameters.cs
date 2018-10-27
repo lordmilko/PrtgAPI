@@ -7,6 +7,7 @@ using System.Reflection;
 using PrtgAPI.Attributes;
 using PrtgAPI.Reflection;
 using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
@@ -47,7 +48,7 @@ namespace PrtgAPI.Parameters
 
         private static Dictionary<string, Tuple<ObjectProperty, PropertyInfo>> GetTypedProperties()
         {
-            return GetPropertyDictionary<ObjectProperty>(SetObjectPropertyParameters.GetParameterName);
+            return GetPropertyDictionary<ObjectProperty>(ObjectPropertyParser.GetObjectPropertyName);
         }
 
         private static Dictionary<string, Tuple<Parameter, PropertyInfo>> GetTypedParameters()

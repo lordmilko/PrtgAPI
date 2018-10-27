@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
@@ -223,7 +224,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ParseValue()
         {
-            var prop = BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(Property);
+            var prop = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(Property);
             Value = ParseValueIfRequired(prop.Property, Value);
         }
 
@@ -302,7 +303,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if(dynamicParams == null)
                 dynamicParams = new DynamicParameterSet<ObjectProperty>(
                     ParameterSet.Dynamic,
-                    e => BaseSetObjectPropertyParameters<ObjectProperty>.GetPropertyInfoViaTypeLookup(e).Property
+                    e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property
                 );
 
             return dynamicParams.Parameters;

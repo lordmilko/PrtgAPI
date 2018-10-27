@@ -296,6 +296,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<InvalidCastException>(() => parameters.RestartStage = 1, "Unable to cast object of type 'System.Int32' to type 'System.Enum'");
         }
 
+        [TestMethod]
+        public void NewSensorParameters_EnablesDependentProperties()
+        {
+            var parameters = new ExeXmlSensorParameters("test.ps1");
+            Assert.AreEqual(true, parameters.InheritInterval);
+
+            parameters.Interval = ScanningInterval.FiveMinutes;
+
+            Assert.AreEqual(ScanningInterval.FiveMinutes, parameters.Interval);
+            Assert.AreEqual(false, parameters.InheritInterval);
+        }
+
         #endregion
         #region RawSensorParameters
 

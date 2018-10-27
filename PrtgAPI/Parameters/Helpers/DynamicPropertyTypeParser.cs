@@ -25,7 +25,7 @@ namespace PrtgAPI.Parameters.Helpers
         public DynamicPropertyTypeParser(Enum property, PropertyCache cache, object value)
         {
             Property = property;
-            Value = value;
+            Value = PSObjectUtilities.CleanPSObject(value);
             Cache = cache;
 
             GetParameterTypes();
@@ -317,6 +317,11 @@ namespace PrtgAPI.Parameters.Helpers
             }
 
             throw new ArgumentException($"'{Value}' is not a valid value for enum {PropertyType.Name}. Please specify one of {builder}");
+        }
+
+        internal CustomParameter GetParameter(Func<Enum, PropertyCache, string> nameResolver)
+        {
+            return new CustomParameter(nameResolver(Property, Cache), ParseValue());
         }
     }
 }
