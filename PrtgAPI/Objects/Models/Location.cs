@@ -1,25 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using PrtgAPI.Request;
-using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
     [DataContract]
     internal class Location : IMultipleSerializable
     {
-        [DataMember(Name = "formatted_address")]
-        public string Address { get; set; }
+        public virtual string Address { get; set; }
 
-        public double Latitude => Geometry.Location.Latitude;
+        public virtual double Latitude { get; }
 
-        public double Longitude => Geometry.Location.Longitude;
-
-        [DataMember(Name = "geometry")]
-        private GeoResultGeometry Geometry { get; set; }
+        public virtual double Longitude { get; }
 
         public override string ToString()
         {
@@ -34,7 +25,7 @@ namespace PrtgAPI
         string[] IMultipleSerializable.GetSerializedFormats()
         {
             if (Address == null)
-                return new string[] {null, null};
+                return new string[] { null, null };
 
             return new[]
             {
@@ -42,70 +33,6 @@ namespace PrtgAPI
                 $"{Longitude},{Latitude}"
             };
         }
-
-        internal static Location Resolve(PrtgClient client, object value, CancellationToken token)
-        {
-            if (value == null)
-                return new Location();
-
-            List<Location> result = new List<Location>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                result = client.ResolveAddress(value.ToString());
-
-                if (result.Any())
-                    break;
-
-#if !DEBUG
-                token.WaitHandle.WaitOne(1000);
-#endif
-            }
-
-            if (!result.Any())
-                throw new PrtgRequestException($"Could not resolve '{value}' to an actual address");
-
-            return result.First();
-        }
-
-        internal static async Task<Location> ResolveAsync(PrtgClient client, object value, CancellationToken token)
-        {
-            if (value == null)
-                return new Location();
-
-            List<Location> result = new List<Location>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                result = await client.ResolveAddressAsync(value.ToString(), token).ConfigureAwait(false);
-
-                if (result.Any())
-                    break;
-
-#if !DEBUG
-                await token.WaitHandle.WaitOneAsync(1000, token).ConfigureAwait(false);
-#endif
-            }
-
-            if (!result.Any())
-                throw new PrtgRequestException($"Could not resolve '{value}' to an actual address");
-
-            return result.First();
-        }
-    }
-
-    [DataContract]
-    internal class GeoResult
-    {
-        [DataMember(Name = "results")]
-        internal Location[] Results { get; set; }
-    }
-
-    [DataContract]
-    internal class GeoResultGeometry
-    {
-        [DataMember(Name = "location")]
-        internal Coordinates Location { get; set; }
     }
 
     /// <summary>

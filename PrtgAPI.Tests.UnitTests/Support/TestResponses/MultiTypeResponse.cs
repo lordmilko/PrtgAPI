@@ -107,6 +107,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return GetSensorTargetResponse();
                 case nameof(XmlFunction.GetTreeNodeStats):
                     return new SensorTotalsResponse(new SensorTotalsItem());
+                case nameof(JsonFunction.GeoLocator):
+                    return new GeoLocatorResponse();
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
                 case nameof(CommandFunction.AddDevice2):

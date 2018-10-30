@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
@@ -28,7 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(JsonFunction.GetStatus):
                     return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(JsonFunction.GeoLocator):
-                    return new BasicResponse(GetLocationResponse(address));
+                    return new GeoLocatorResponse();
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -61,27 +60,6 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             Assert.IsTrue(val == expectedValue, $"The value of property '{property.ToString().ToLower()}' did not match the expected value. Expected '{expectedValue}', received: '{val}'");
 
             return "OK";
-        }
-
-        private string GetLocationResponse(string address)
-        {
-            var builder = new StringBuilder();
-
-            builder.Append("{");
-            builder.Append("   \"results\" : [");
-            builder.Append("      {");
-            builder.Append("         \"formatted_address\" : \"23 Fleet St, Boston, MA 02113, USA\",");
-            builder.Append("         \"geometry\" : {");
-            builder.Append("            \"location\" : {");
-            builder.Append("               \"lat\" : 42.3643847,");
-            builder.Append("               \"lng\" : -71.05279969999999");
-            builder.Append("            }");
-            builder.Append("         }");
-            builder.Append("      }");
-            builder.Append("   ]");
-            builder.Append("}");
-
-            return builder.ToString();
         }
     }
 }

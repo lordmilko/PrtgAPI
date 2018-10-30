@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
             AssertEx.AreNotEqual(initial.Location, newSettings.Location, "Initial and new location were the same");
 
-            AssertEx.AreEqual("23 Fleet St, Boston, MA 02113, USA", newSettings.Location, "Location was not set properly");
+            AssertEx.AreEqual("23 Fleet St, Boston, MA 02113, United States", newSettings.Location, "Location was not set properly");
 
             client.SetObjectProperty(Settings.Device, ObjectProperty.Location, null);
         }
@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
             AssertEx.AreNotEqual(initial.Location, newSettings.Location, "Initial and new location were the same");
 
-            AssertEx.AreEqual("23 Fleet St, Boston, MA 02113, USA", newSettings.Location, "Location was not set properly");
+            AssertEx.AreEqual("23 Fleet St, Boston, MA 02113, United States", newSettings.Location, "Location was not set properly");
 
             await client.SetObjectPropertyAsync(Settings.Device, ObjectProperty.Location, null);
         }

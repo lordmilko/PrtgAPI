@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
-using PrtgAPI.Reflection;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -103,46 +102,189 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             SetObjectProperty(ObjectProperty.Location, "23 Fleet Street, Boston", "23 Fleet St, Boston, MA 02113, USA");
         }
 
-        [TestMethod]
-        public void Location_ResolvesNothing()
-        {
-            var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
+        #region Google Location
 
-            SetObjectProperty(ObjectProperty.Location, null, "");
+        [TestMethod]
+        public void Location_Google_Deserializes()
+        {
+            var client = GetLocationClient(RequestVersion.v14_4);
+
+            var result = client.ResolveAddress("Google", CancellationToken.None);
+
+            Assert.AreEqual("23 Fleet St, Boston, MA 02113, USA", result.Address);
+            Assert.AreEqual(42.3643847, result.Latitude);
+            Assert.AreEqual(-71.0527997, result.Longitude);
         }
 
         [TestMethod]
-        public async Task Location_ResolvesNothingAsync()
+        public async Task Location_Google_DeserializesAsync()
         {
-            var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, ""));
+            var client = GetLocationClient(RequestVersion.v14_4);
 
-            var location = await Location.ResolveAsync(client, null, CancellationToken.None);
+            var result = await client.ResolveAddressAsync("Google", CancellationToken.None);
+
+            Assert.AreEqual("23 Fleet St, Boston, MA 02113, USA", result.Address);
+            Assert.AreEqual(42.3643847, result.Latitude);
+            Assert.AreEqual(-71.0527997, result.Longitude);
+        }
+
+        [TestMethod]
+        public void Location_Google_CorrectUrl()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=0&path=google%2Bgoogle&username"), RequestVersion.v14_4);
+
+            client.ResolveAddress("google google", CancellationToken.None);
+        }
+
+        [TestMethod]
+        public void Location_Google_ResolvesNothing()
+        {
+            var client = GetLocationClient(RequestVersion.v14_4);
+
+            var location = client.ResolveAddress(null, CancellationToken.None);
 
             Assert.AreEqual(null, location.ToString());
         }
 
         [TestMethod]
-        public void Location_FailsToResolve()
+        public async Task Location_Google_ResolvesNothingAsync()
         {
-            var client = Initialize_Client(new LocationUnresolvedResponse());
+            var client = GetLocationClient(RequestVersion.v14_4);
 
-            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something", CancellationToken.None), "Could not resolve 'something' to an actual address");
+            var location = await client.ResolveAddressAsync(null, CancellationToken.None);
+
+            Assert.AreEqual(null, location.ToString());
         }
 
         [TestMethod]
-        public async Task Location_FailsToResolveAsync()
+        public void Location_Google_FailsToResolve()
         {
-            var client = Initialize_Client(new LocationUnresolvedResponse());
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v14_4);
 
-            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await Location.ResolveAsync(client, "something", CancellationToken.None), "Could not resolve 'something' to an actual address");
+            AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "Could not resolve 'something' to an actual address");
         }
 
         [TestMethod]
-        public void Location_ProviderUnavailable()
+        public async Task Location_Google_FailsToResolveAsync()
         {
-            var client = Initialize_Client(new LocationUnresolvedResponse(true));
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v14_4);
 
-            AssertEx.Throws<PrtgRequestException>(() => Location.Resolve(client, "something", CancellationToken.None), "the PRTG map provider is not currently available");
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.ResolveAddressAsync("something", CancellationToken.None), "Could not resolve 'something' to an actual address");
+        }
+
+        [TestMethod]
+        public void Location_Google_ProviderUnavailable()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoProvider), RequestVersion.v14_4);
+
+            AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "the PRTG map provider is not currently available");
+        }
+
+        [TestMethod]
+        public void Location_Google_NoAPIKey()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoAPIKey), RequestVersion.v14_4);
+
+            AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("google", CancellationToken.None), "Could not resolve 'google' to an actual address: server responded with 'Keyless access to Google Maps Platform is deprecated. Please use an API key with all your API calls to avoid service interruption. For further details please refer to http://g.co/dev/maps-no-account. OVER_QUERY_LIMIT'");
+        }
+
+        [TestMethod]
+        public async Task Location_Google_NoAPIKeyAsync()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoAPIKey), RequestVersion.v14_4);
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.ResolveAddressAsync("google", CancellationToken.None), "Could not resolve 'google' to an actual address: server responded with 'Keyless access to Google Maps Platform is deprecated. Please use an API key with all your API calls to avoid service interruption. For further details please refer to http://g.co/dev/maps-no-account. OVER_QUERY_LIMIT'");
+        }
+
+        #endregion
+        #region Here Location
+
+        [TestMethod]
+        public void Location_Here_Deserializes()
+        {
+            var client = GetLocationClient(RequestVersion.v18_1);
+
+            var result = client.ResolveAddress("HERE", CancellationToken.None);
+
+            Assert.AreEqual("100 HERE Lane", result.Address);
+            Assert.AreEqual(62.3643847, result.Latitude);
+            Assert.AreEqual(-91.0527997, result.Longitude);
+        }
+
+        [TestMethod]
+        public async Task Location_Here_DeserializesAsync()
+        {
+            var client = GetLocationClient(RequestVersion.v18_1);
+
+            var result = await client.ResolveAddressAsync("HERE", CancellationToken.None);
+
+            Assert.AreEqual("100 HERE Lane", result.Address);
+            Assert.AreEqual(62.3643847, result.Latitude);
+            Assert.AreEqual(-91.0527997, result.Longitude);
+        }
+
+        [TestMethod]
+        public void Location_Here_CorrectUrl()
+        {
+            var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=2&path=here%2Bhere&username"), RequestVersion.v17_4);
+
+            client.ResolveAddress("here here", CancellationToken.None);
+        }
+
+        [TestMethod]
+        public void Location_Here_ResolvesNothing()
+        {
+            var client = GetLocationClient(RequestVersion.v17_4);
+
+            var location = client.ResolveAddress(null, CancellationToken.None);
+
+            Assert.AreEqual(null, location.ToString());
+        }
+
+        [TestMethod]
+        public async Task Location_Here_ResolvesNothingAsync()
+        {
+            var client = GetLocationClient(RequestVersion.v17_4);
+
+            var location = await client.ResolveAddressAsync(null, CancellationToken.None);
+
+            Assert.AreEqual(null, location.ToString());
+        }
+
+        [TestMethod]
+        public void Location_Here_FailsToResolve()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v18_1);
+
+            AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "Could not resolve 'something' to an actual address");
+        }
+
+        [TestMethod]
+        public async Task Location_Here_FailsToResolveAsync()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v18_1);
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.ResolveAddressAsync("something", CancellationToken.None), "Could not resolve 'something' to an actual address");
+        }
+
+        [TestMethod]
+        public void Location_Here_ProviderUnavailable()
+        {
+            var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoProvider), RequestVersion.v18_1);
+
+            AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "the PRTG map provider is not currently available");
+        }
+
+        #endregion
+
+        private PrtgClient GetLocationClient(RequestVersion version)
+        {
+            var client = Initialize_Client(
+                new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, null),
+                version
+            );
+
+            return client;
         }
 
         [TestMethod]
@@ -194,7 +336,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             if (expectedSerializedValue == null)
                 expectedSerializedValue = value.ToString();
 
-            var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(property, expectedSerializedValue));
+            var response = new SetObjectPropertyResponse<ObjectProperty>(property, expectedSerializedValue);
+
+            var client = Initialize_Client(response);
+
             client.SetObjectProperty(1, property, value);
         }
 
@@ -695,8 +840,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var property = ChannelProperty.ErrorLimitMessage;
             var val = "hello";
             
-            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
-            SetVersion(client, RequestVersion.v18_1);
+            var client = Initialize_Client(
+                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true),
+                RequestVersion.v18_1);
 
             client.GetVersionClient(new object[] {property}).SetChannelProperty(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
         }
@@ -709,16 +855,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var channels = matrix.Select(CreateChannel).ToList();
 
-            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
-            SetVersion(client, version);
+            var client = Initialize_Client(
+                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true),
+                version
+            );
 
             client.GetVersionClient(new object[] { property }).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, new [] {new ChannelParameter(property, val)});
-        }
-
-        private void SetVersion(PrtgClient client, RequestVersion version)
-        {
-            var f = client.GetInternalFieldInfo("version");
-            f.SetValue(client, new Version(version.ToString().TrimStart('v').Replace('_', '.')));
         }
 
         private Channel CreateChannel(int?[] limits, int i)
@@ -1111,8 +1253,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var property = ChannelProperty.ErrorLimitMessage;
             var val = "hello";
 
-            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true));
-            SetVersion(client, RequestVersion.v18_1);
+            var client = Initialize_Client(
+                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true),
+                RequestVersion.v18_1
+            );
 
             await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
         }
@@ -1125,8 +1269,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var channels = matrix.Select(CreateChannel).ToList();
 
-            var client = Initialize_Client(new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true));
-            SetVersion(client, version);
+            var client = Initialize_Client(
+                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true),
+                version
+            );
 
             await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
         }

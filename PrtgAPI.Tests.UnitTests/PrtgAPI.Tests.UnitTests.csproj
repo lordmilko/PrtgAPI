@@ -108,6 +108,7 @@
     <Compile Include="Support\Infrastructure\Progress\ProgressGrouper.cs" />
     <Compile Include="Support\Infrastructure\Progress\ProgressHierarchy.cs" />
     <Compile Include="Support\TestItems\SystemInfoItem.cs" />
+    <Compile Include="Support\TestResponses\GeoLocatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
@@ -260,7 +261,6 @@
     <Compile Include="Support\TestResponses\Objects\SensorSettingsResponse.cs" />
     <Compile Include="Support\TestResponses\FailedRequestResponse.cs" />
     <Compile Include="Support\TestResponses\FaultyTableResponse.cs" />
-    <Compile Include="Support\TestResponses\LocationUnresolvedResponse.cs" />
     <Compile Include="Support\TestResponses\LogAddressValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\MultiTypeResponse.cs" />
     <Compile Include="Support\TestResponses\RawPropertyResponse.cs" />

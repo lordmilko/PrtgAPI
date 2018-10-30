@@ -36,6 +36,19 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        public void AllRequestVersions_HaveVersionMaps()
+        {
+            var values = Enum.GetValues(typeof(RequestVersion)).Cast<RequestVersion>().ToList();
+
+            foreach(var value in values)
+            {
+                var version = VersionMap.Map[value];
+
+                Assert.AreEqual(version.ToString(), value.ToString().TrimStart('v').Replace("_", "."));
+            }
+        }
+
+        [TestMethod]
         public void ObjectPropertyFields_Have_ObjectPropertyCategories()
         {
             var values = Enum.GetValues(typeof (ObjectProperty)).Cast<ObjectProperty>().ToList();

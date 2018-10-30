@@ -6,7 +6,7 @@ using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
 {
-    internal partial class VersionClient18_1 : VersionClient
+    internal partial class VersionClient18_1 : VersionClient17_4
     {
         internal VersionClient18_1(PrtgClient client) : base(RequestVersion.v18_1, client)
         {

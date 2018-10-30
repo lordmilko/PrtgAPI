@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -178,18 +177,37 @@ namespace PrtgAPI
             var ver = attr?.Version ?? RequestVersion.v14_4;
 
             if (attr != null && attr.IsActive(Version))
-            {
-                switch (ver)
-                {
-                    case RequestVersion.v18_1:
-                        return new VersionClient18_1(this);
-
-                    default:
-                        return new VersionClient(ver, this);
-                }
-            }
+                return GetVersionClient(ver);
             else
                 return new VersionClient(ver, this);
+        }
+
+        internal VersionClient GetVersionClient()
+        {
+            RequestVersion max = RequestVersion.v14_4;
+
+            foreach(var pair in VersionMap.Map)
+            {
+                if (Version >= pair.Value)
+                    max = pair.Key;
+            }
+
+            return GetVersionClient(max);
+        }
+
+        internal VersionClient GetVersionClient(RequestVersion version)
+        {
+            switch (version)
+            {
+                case RequestVersion.v18_1:
+                    return new VersionClient18_1(this);
+
+                case RequestVersion.v17_4:
+                    return new VersionClient17_4(this);
+
+                default:
+                    return new VersionClient(version, this);
+            }
         }
 
         [ExcludeFromCodeCoverage]
@@ -669,19 +687,8 @@ namespace PrtgAPI
 
                 if (attrib != null)
                 {
-                    try
-                    {
-                        var method = attrib.Class.GetMethod("Resolve", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
-
-                        if (method != null)
-                        {
-                            prop.Value = method.Invoke(null, new[] { this, prop.Value, CancellationToken.None });
-                        }
-                    }
-                    catch (TargetInvocationException ex)
-                    {
-                        throw ex.InnerException;
-                    }
+                    if (attrib.Class == typeof(Location))
+                        prop.Value = ResolveAddress(prop.Value?.ToString(), CancellationToken.None);
                 }
             }
             
@@ -698,23 +705,8 @@ namespace PrtgAPI
 
                 if (attrib != null)
                 {
-                    try
-                    {
-                        var method = attrib.Class.GetMethod("ResolveAsync", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
-
-                        if (method != null)
-                        {
-                            var task = ((Task)method.Invoke(null, new[] { this, prop.Value, token }));
-
-                            await task.ConfigureAwait(false);
-
-                            prop.Value = task.GetType().GetProperty("Result").GetValue(task);
-                        }
-                    }
-                    catch (TargetInvocationException ex)
-                    {
-                        throw ex.InnerException;
-                    }
+                    if (attrib.Class == typeof(Location))
+                        prop.Value = await ResolveAddressAsync(prop.Value?.ToString(), token).ConfigureAwait(false);
                 }
             }
 
@@ -790,6 +782,7 @@ namespace PrtgAPI
 #endregion
 
 #region Internal
+    #region Address
 
         //todo: check all arguments we can in this file and make sure we validate input. when theres a chain of methods, validate on the inner most one except if we pass a parameter object, in which case validate both
 
@@ -797,9 +790,33 @@ namespace PrtgAPI
         /// Resolves an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
         /// </summary>
         /// <param name="address">The address to resolve.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns></returns>
-        internal List<Location> ResolveAddress(string address) =>
-            ObjectEngine.GetObject<GeoResult>(new ResolveAddressParameters(address), ResponseParser.ResolveParser).Results.ToList();
+        internal Location ResolveAddress(string address, CancellationToken token)
+        {
+            if (address == null)
+                return new Location();
+
+            List<Location> result = new List<Location>();
+            var client = GetVersionClient();
+
+            for (int i = 0; i < 10; i++)
+            {
+                result = client.ResolveAddressInternal(address, token, i == 9);
+
+                if (result.Any())
+                    break;
+
+#if !DEBUG
+                token.WaitHandle.WaitOne(1000);
+#endif
+            }
+
+            if (!result.Any())
+                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
+
+            return result.First();
+        }
 
         /// <summary>
         /// Asynchronously resolves an address to its latitudinal and longitudinal coordinates. May spuriously return no results.
@@ -807,8 +824,33 @@ namespace PrtgAPI
         /// <param name="address">The address to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns></returns>
-        internal async Task<List<Location>> ResolveAddressAsync(string address, CancellationToken token) =>
-            (await ObjectEngine.GetObjectAsync<GeoResult>(new ResolveAddressParameters(address), m => Task.FromResult(ResponseParser.ResolveParser(m)), token).ConfigureAwait(false)).Results.ToList();
+        internal async Task<Location> ResolveAddressAsync(string address, CancellationToken token)
+        {
+            if (address == null)
+                return new Location();
+
+            List<Location> result = new List<Location>();
+            var client = GetVersionClient();
+
+            for (int i = 0; i < 10; i++)
+            {
+                result = await client.ResolveAddressInternalAsync(address, token, i == 9).ConfigureAwait(false);
+
+                if (result.Any())
+                    break;
+
+#if !DEBUG
+                await token.WaitHandle.WaitOneAsync(1000, token).ConfigureAwait(false);
+#endif
+            }
+
+            if (!result.Any())
+                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
+
+            return result.First();
+        }
+
+        #endregion
 
         internal void FoldObject(int objectId, bool fold) =>
             RequestEngine.ExecuteRequest(new FoldParameters(objectId, fold));

@@ -24,7 +24,7 @@ Describe "Set-ObjectProperty_Containers_IT" {
 
         $object = (& $obj)
 
-        { SetChild "Location"        "1 Redmond Way, USA" "InheritLocation" $false } | Should Throw "7225 170th Ave Ne, 101, Redmond, WA 98052, United States"
+        { SetChild "Location"        "410 Terry Ave. North Seattle" "InheritLocation" $false } | Should Throw "410 Terry Ave N, Seattle, WA 98109, United States"
 
         $object | Set-ObjectProperty InheritLocation $true # InheritLocation doesn't get reverted because SetChild throws since the actual value is different after PRTG resolves it
 

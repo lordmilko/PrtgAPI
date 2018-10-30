@@ -131,9 +131,12 @@
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />
     <Compile Include="Exceptions\InvalidStateException.cs" />
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
+    <Compile Include="Objects\Models\Location.Google.cs" />
+    <Compile Include="Objects\Models\Location.Here.cs" />
     <Compile Include="Parameters\Helpers\IPropertyCacheResolver.cs" />
     <Compile Include="Parameters\Helpers\ObjectPropertyParser.cs" />
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
+    <Compile Include="Request\Version\VersionClient17_4.cs" />
     <Compile Include="Utilities\FluentExpressions.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />
     <Compile Include="Linq\SerialObjectGenerator.cs" />
