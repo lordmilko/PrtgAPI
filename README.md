@@ -8,7 +8,7 @@
 
 PrtgAPI is a C#/PowerShell library for managing and maintaining [PRTG Network Monitor](https://www.paessler.com/prtg).
 
-PrtgAPI abstracts away the complexity of interfacing with PRTG via a collection of type safe methods and cmdlets, enabling you to develop powerful applications for managing your installation.
+PrtgAPI abstracts away the complexity of interfacing with PRTG via a collection of type safe methods and cmdlets, enabling you to develop powerful applications for managing your network.
 
 Useful things you can do with PrtgAPI:
 * Generate reports based on custom queries
@@ -69,7 +69,7 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "password");
 
 When a `PrtgClient` is created, it will immediately attempt to retrieve your account's passhash (an alternative to using a password) from your PRTG Server. For added security, your PassHash is then used for all future PRTG Requests made during the life of your program.
 
-For further security, you are able to pass your passhash to `PrtgClient` instead of using your password. Simply extract your passhash from your `client` object's `PassHash` property, then tell the `PrtgClient` constructor to use the passhash instead.
+For further security, you are able to immediately pass your passhash to `PrtgClient` instead of using your password. Simply extract your passhash from your `client` object's `PassHash` property, then tell the `PrtgClient` constructor to use the passhash instead.
 
 ```c#
 var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", AuthMode.PassHash);
@@ -77,14 +77,14 @@ var client = new PrtgClient("prtg.mycoolsite.com", "username", "1234567890", Aut
 
 #### Objects
 
-[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices)(https://github.com/lordmilko/PrtgAPI/wiki/Groups) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
+[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
 
 ```c#
 //Get all devices present in your system
 var devices = client.GetDevices();
 ```
 
-PrtgAPI defines a variety of methods overloads for filtering requested objects, from simple to [complex](https://github.com/lordmilko/PrtgAPI/wiki/Filters#c) search criteria.
+PrtgAPI defines a variety of method overloads for filtering requested objects, from simple to [complex](https://github.com/lordmilko/PrtgAPI/wiki/Filters#c) search criteria.
 
 ```c#
 //List all sensors in a "down" or "down acknowledged" state.
@@ -146,7 +146,7 @@ foreach (var channel in channels)
 }
 ```
 
-Many operations will let you specify multiple Object IDs at once, allowing you to potentially modify thousands of objects in a single request
+Many operations will let you specify multiple Object IDs at once, allowing you to modify potentially thousands of objects in a single request
 
 ```c#
 //Acknowledge all down sensors indefinitely via a single request.
@@ -292,7 +292,7 @@ All cmdlets include complete `Get-Help` documentation, including a cmdlet overvi
 
 #### Objects
 
-[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices)(https://github.com/lordmilko/PrtgAPI/wiki/Groups) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
+[Many](https://github.com/lordmilko/PrtgAPI/wiki/Sensors) [types](https://github.com/lordmilko/PrtgAPI/wiki/Devices) [of](https://github.com/lordmilko/PrtgAPI/wiki/Probes) [objects](https://github.com/lordmilko/PrtgAPI/wiki/Channels) can be retrieved from PRTG.
 
 Get all ping [sensors](https://github.com/lordmilko/PrtgAPI/wiki/Sensors)
 
@@ -378,7 +378,7 @@ $sensors | Get-Channel perc* | Set-ChannelProperty UpperErrorLimit 100
 
 PowerShell makes it easy to construct complex object hierarchies
 
-```
+```powershell
 # Create a new group and a new device
 $device = Get-Probe contoso | Add-Group "Servers" | Add-Device "exch-1"
 
@@ -406,3 +406,4 @@ Notification triggers can be [retrieved, added and modified](https://github.com/
 * [PowerShell Property Binding](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#powershell-property-binding)
 * Dynamic PowerShell Formats
 * Hybrid IQueryable / IEnumerable requests
+* [Debugging Expression Trees as C#](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#debugging-expression-trees-as-c)
