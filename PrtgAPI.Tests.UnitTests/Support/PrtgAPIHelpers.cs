@@ -8,6 +8,7 @@ using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions.Visitors;
 using PrtgAPI.Parameters;
 using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support
@@ -40,6 +41,21 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static Expression ToClientExpression(this Expression expr)
         {
             return ClientTreeBuilder.Parse(expr);
+        }
+
+        public static Func<T, object> ToMemberAccessLambda<T>(Property property)
+        {
+            var typeProps = ReflectionCacheManager.Get(typeof(T)).Properties;
+            var propertyCache = typeProps.First(
+                p => p.GetAttributes<PropertyParameterAttribute>().Any(a => a.Property.Equals(property))
+            );
+
+            var obj = Expression.Parameter(typeof(T));
+            var memberAccess = Expression.MakeMemberAccess(obj, propertyCache.Property);
+
+            var lambda = Expression.Lambda<Func<T, object>>(Expression.Convert(memberAccess, typeof(object)), obj);
+
+            return lambda.Compile();
         }
 
         public static void FoldObject(PrtgClient client, int objectId, bool fold) => client.FoldObject(objectId, fold);

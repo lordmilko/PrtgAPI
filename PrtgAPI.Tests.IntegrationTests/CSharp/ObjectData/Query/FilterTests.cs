@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
@@ -1042,7 +1043,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             Retry(retry =>
             {
                 var upSensor = client.GetSensor(Settings.UpSensor);
-                ExecuteSensor(s => s.LastCheck < upSensor.LastCheck.Value.AddSeconds(20), Property.LastCheck, upSensor.LastCheck.Value.AddSeconds(20), FilterOperator.LessThan, s => s.DataCollectedSince == null);
+                ExecuteSensor(s => s.LastCheck < upSensor.LastCheck.Value.AddSeconds(20), Property.LastCheck, upSensor.LastCheck.Value.AddSeconds(20), FilterOperator.LessThan, s => s.LastCheck == null);
             });
         }
 
@@ -2023,6 +2024,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                 () => client.GetSensors(),
                 () => client.GetSensors(property, op, value),
                 strict => client.QuerySensors(predicate, strict),
+                new SearchFilter(property, op, value, FilterMode.Illegal),
                 ignoreFilterPredicate,
                 filterThrows: filterThrows,
                 filterUnsupported: filterUnsupported,
@@ -2037,6 +2039,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                 () => client.GetDevices(),
                 () => client.GetDevices(property, op, value),
                 strict => client.QueryDevices(predicate, strict),
+                new SearchFilter(property, op, value, FilterMode.Illegal),
                 ignoreFilterPredicate,
                 filterThrows: filterThrows
             );
@@ -2049,6 +2052,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                 () => client.GetGroups(),
                 () => client.GetGroups(property, op, value),
                 strict => client.QueryGroups(predicate, strict),
+                new SearchFilter(property, op, value, FilterMode.Illegal),
                 ignoreFilterPredicate
             );
         }
@@ -2060,6 +2064,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                 () => client.GetProbes(),
                 () => client.GetProbes(property, op, value),
                 strict => client.QueryProbes(predicate, strict),
+                new SearchFilter(property, op, value, FilterMode.Illegal),
                 ignoreFilterPredicate
             );
         }
@@ -2173,6 +2178,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             Func<List<T>> getLinqObjects,
             Func<List<T>> getFilterObjects,
             Func<bool, IQueryable<T>> getQueryObjects,
+            SearchFilter filter,
             Func<T, bool> ignoreFilterPredicate,
             bool allowEmpty = false,
             bool filterThrows = false,
@@ -2223,7 +2229,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             if (ignoreFilterPredicate != null)
                 extraFiltered = extraFiltered.Where(e => !ignoreFilterPredicate(e)).ToList();
 
-            var getError = FormatError(missingFiltered, missingQuery, extraFiltered, extraQuery);
+            var getError = FormatError(missingFiltered, missingQuery, extraFiltered, extraQuery, filter);
 
             if (getError != null)
             {
@@ -2301,12 +2307,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         private string FormatError<T>(List<T> missingFiltered, List<T> missingQuery, List<T> extraFiltered,
-            List<T> extraQuery)
+            List<T> extraQuery, SearchFilter filter = null) where T : IObject
         {
+            var lambda = filter == null ? null : PrtgAPIHelpers.ToMemberAccessLambda<T>(filter.Property);
+
             var missingFilteredStr = Join("Missing", missingFiltered);
-            var extraFilteredStr = Join("Extra:", extraFiltered);
+            var extraFilteredStr = Join("Extra:", extraFiltered, lambda, filter);
             var missingQueryStr = Join("Missing:", missingQuery);
-            var extraQueryStr = Join("Extra:", extraQuery);
+            var extraQueryStr = Join("Extra:", extraQuery, lambda, filter);
 
             var filteredStr = Join("Filtered:", missingFilteredStr, extraFilteredStr);
             var queryStr = Join("Query:", missingQueryStr, extraQueryStr);
@@ -2314,9 +2322,26 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             return Join(null, filteredStr, queryStr);
         }
 
-        private string Join<T>(string prefix, IEnumerable<T> str)
+        private string Join<T>(string prefix, List<T> str, Func<T, object> lambda = null, SearchFilter filter = null) where T : IObject
         {
-            return Join(prefix, str.Select(s => s.ToString()).ToArray());
+            var builder = new StringBuilder();
+
+            builder.Append(Join(prefix, str.Select(s => s.ToString()).ToArray()));
+
+            if(lambda != null && str.Count > 0)
+            {
+                builder.Append($". Expected: {filter.Value}\\r\n\r\nValues of each object:\r\n");
+                
+                for(var i = 0; i < str.Count; i++)
+                {
+                    builder.Append($"{str[i].Name}: '{lambda(str[i])}'");
+
+                    if (i < str.Count - 1)
+                        builder.Append("\r\n");
+                }
+            }
+
+            return builder.ToString();
         }
 
         private string Join(string prefix, params string[] str)
