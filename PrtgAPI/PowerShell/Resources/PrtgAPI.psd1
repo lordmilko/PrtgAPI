@@ -106,7 +106,7 @@ PrivateData = @{
         # ReleaseNotes of this module
         ReleaseNotes = 'PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG Network Monitor HTTP API.
 
-PrtgAPI abstracts away the complexity of interfacing with PRTG via a comprehensive type system, enabling you to develop powerful applications for managing your network.
+PrtgAPI implements comprehensive type system providing an extensive array of functionality, enabling you to develop powerful applications for managing your network.
 
 All cmdlets in PrtgAPI support some level of piping, allowing you to directly chain multiple cmdlets together to develop powerful one liners.
 

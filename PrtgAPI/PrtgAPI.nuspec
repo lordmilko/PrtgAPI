@@ -13,7 +13,7 @@
     <description>$description$</description>
     <releaseNotes>PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG Network Monitor API.
 
-PrtgAPI abstracts away the complexity of interfacing with PRTG via a comprehensive type system, enabling you to develop powerful applications for managing your network.
+PrtgAPI implements comprehensive type system providing an extensive array of functionality, enabling you to develop powerful applications for managing your network.
 
 Operations supported by PrtgAPI include enumerating channels, sensors, devices, groups and probes, modifying object properties, creating brand new sensors, devices, groups and notification triggers, pausing, unpausing and acknowledging objects, renaming and removing items, and more.
 
