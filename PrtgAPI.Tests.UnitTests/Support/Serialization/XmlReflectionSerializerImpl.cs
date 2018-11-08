@@ -182,7 +182,7 @@ namespace PrtgAPI.Request.Serialization
 
                 if (value != null)
                 {
-                    finalVal = value.Value.Trim().Split(attribute.Character);
+                    finalVal = value.Value.Trim().Split(new[] { attribute.Character }, StringSplitOptions.RemoveEmptyEntries);
                 }
 
                 mapping.PropertyCache.Property.SetValue(obj, finalVal);

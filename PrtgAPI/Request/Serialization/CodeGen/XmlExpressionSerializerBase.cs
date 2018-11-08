@@ -231,7 +231,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
         protected internal static string[] ToSplittableStringArray(string s, char ch)
         {
-            return ToNullableString(s)?.Split(ch);
+            return ToNullableString(s)?.Split(new[] { ch }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         #endregion
