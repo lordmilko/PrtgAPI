@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection;
 using PrtgAPI.Schedules;
 using PrtgAPI.Targets;
@@ -94,9 +95,17 @@ namespace PrtgAPI.Request
 
             var grouped = categorized.GroupBy(c => c.Category).ToList();
 
-            var newXml = grouped.Select(g => new XElement($"category_{g.Key.ToString().ToLower()}",
-                g.Select(i => new XElement(i.Name, i.Value)))
-            );
+            List<XElement> newXml = new List<XElement>();
+
+            foreach(var group in grouped)
+            {
+                if (group.Count() == 1 && group.Single().Name == "injected_active")
+                    continue;
+
+                newXml.Add(new XElement($"category_{group.Key.ToString().ToLower()}",
+                    group.Select(i => new XElement(i.Name, i.Value))
+                ));
+            }
 
             properties.Remove();
 
@@ -133,10 +142,10 @@ namespace PrtgAPI.Request
             return actions;
         }
 
-        internal static IEnumerable<IGrouping<int, NotificationAction>> GroupActionSchedules(List<NotificationAction> actions)
+        internal static IEnumerable<IGrouping<int?, NotificationAction>> GroupActionSchedules(List<NotificationAction> actions)
         {
             var actionsWithSchedules = actions
-                .GroupBy(a => PrtgObject.GetId(a.lazyScheduleStr)).ToList();
+                .GroupBy(a => a.lazyScheduleStr != null ? (int?)PrtgObject.GetId(a.lazyScheduleStr) : null).ToList();
 
             foreach (var group in actionsWithSchedules)
             {
@@ -157,7 +166,9 @@ namespace PrtgAPI.Request
         {
             var input = ObjectSettings.GetInput(response, ObjectSettings.backwardsMatchRegex).Where(i => i.Name == "timetable").ToList();
 
-            schedule.TimeTable = new TimeTable(input);
+            //If user is read only inputs is empty
+            if(input.Count > 0)
+                schedule.TimeTable = new TimeTable(input);
         }
 
         #endregion
@@ -249,6 +260,11 @@ namespace PrtgAPI.Request
                 return (T)val;
             }
 
+            if(typeof(T).IsArray && val == null)
+            {
+                return (T)Activator.CreateInstance(typeof(T), new object[] { 0 });
+            }
+
             var typeName = val?.GetType().Name ?? "null";
 
             throw new InvalidCastException($"Cannot convert a value of type '{typeName}' to type '{typeof(T)}'");
@@ -265,14 +281,24 @@ namespace PrtgAPI.Request
             return value;
         }
 
-        internal static T GetObjectProperties<T>(PrtgResponse response, XmlEngine xmlEngine)
+        internal static T GetObjectProperties<T>(PrtgResponse response, XmlEngine xmlEngine, ObjectProperty mandatoryProperty)
         {
             var xml = ObjectSettings.GetXml(response);
             var xDoc = new XDocument(xml);
 
-            var items = xmlEngine.DeserializeObject<T>(xDoc.CreateReader());
+            //If the response does not contain the mandatory property, we are executing as a read only user, and
+            //should return null
 
-            return items;
+            var name = ObjectSettings.prefix + ObjectPropertyParser.GetObjectPropertyName(mandatoryProperty).TrimEnd('_');
+
+            if(xDoc.Descendants(name).ToList().Count > 0)
+            {
+                var items = xmlEngine.DeserializeObject<T>(xDoc.CreateReader());
+
+                return items;
+            }
+
+            return default(T);
         }
 
         #endregion

@@ -6,4 +6,10 @@ Describe "Get-PrtgStatus_IT" {
 
         $status.GetType().Name | Should Be ServerStatus
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-PrtgStatus
+        }
+    }
 }

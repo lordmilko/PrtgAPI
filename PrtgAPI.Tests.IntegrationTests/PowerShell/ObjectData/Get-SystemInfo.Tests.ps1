@@ -31,4 +31,10 @@ Describe "Get-SystemInfo_IT" {
 
         $system.Count | Should BeGreaterThan 1
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-SystemInfo -Id (Settings Device)
+        }
+    }
 }

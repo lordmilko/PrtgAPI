@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support;
 
@@ -99,6 +100,24 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             {
                 client.RemoveObject(sensor.Id);
             }
+        }
+
+        [TestMethod]
+        public void DynamicSensorParameters_ReadOnlyUser_Throws()
+        {
+            AssertEx.Throws<PrtgRequestException>(
+                () => readOnlyClient.GetDynamicSensorParameters(Settings.Device, "exexml"),
+                "type was not valid or you do not have sufficient permissions"
+            );
+        }
+
+        [TestMethod]
+        public async Task DynamicSensorParameters_ReadOnlyUser_ThrowsAsync()
+        {
+            await AssertEx.ThrowsAsync<PrtgRequestException>(
+                async () => await readOnlyClient.GetDynamicSensorParametersAsync(Settings.Device, "exexml"),
+                "type was not valid or you do not have sufficient permissions"
+            );
         }
     }
 }

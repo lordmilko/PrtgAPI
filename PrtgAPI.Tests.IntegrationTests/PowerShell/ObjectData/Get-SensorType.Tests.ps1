@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
+﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
 Describe "Get-SensorType_IT" {
     It "retrieves all sensor types" {
@@ -15,5 +15,11 @@ Describe "Get-SensorType_IT" {
 
         $types.Count | Should BeGreaterThan 0
         $types.Count | Should BeLessThan 10
+    }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-SensorType
+        }
     }
 }

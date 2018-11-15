@@ -23,6 +23,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static ServerManager ServerManager = new ServerManager(() => new BasePrtgClientTest().client);
 
         private PrtgClient cachedClient;
+        private PrtgClient cachedReadOnlyClient;
 
         protected PrtgClient client
         {
@@ -32,6 +33,17 @@ namespace PrtgAPI.Tests.IntegrationTests
                     cachedClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
 
                 return cachedClient;
+            }
+        }
+
+        protected PrtgClient readOnlyClient
+        {
+            get
+            {
+                if (cachedReadOnlyClient == null)
+                    cachedReadOnlyClient = new PrtgClient(Settings.ServerWithProto, Settings.ReadOnlyUserName, Settings.ReadOnlyPassword);
+
+                return cachedReadOnlyClient;
             }
         }
 

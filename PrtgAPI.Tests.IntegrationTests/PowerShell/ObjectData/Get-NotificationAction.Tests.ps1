@@ -42,4 +42,10 @@ Describe "Get-NotificationAction_IT" {
 
         $actions.Count | Should Be 1
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-NotificationAction
+        }
+    }
 }

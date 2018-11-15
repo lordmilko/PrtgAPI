@@ -93,6 +93,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<PrtgRequestException>(() => faultyClient.Targets.GetExeXmlFiles(1001), "Failed to retrieve data from device; required credentials");
         }
 
+        [TestMethod]
+        public void SensorTarget_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            AssertEx.Throws<PrtgRequestException>(() => client.Targets.GetExeXmlFiles(1001), "Failed to resolve sensor targets for sensor type 'exexml': type was not valid or you do not have sufficient permissions on the specified object.");
+        }
+
+        [TestMethod]
+        public async Task SensorTarget_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.Targets.GetExeXmlFilesAsync(1001), "Failed to resolve sensor targets for sensor type 'exexml': type was not valid or you do not have sufficient permissions on the specified object.");
+        }
+
         private PrtgClient client => Initialize_Client(new ExeFileTargetResponse());
     }
 }

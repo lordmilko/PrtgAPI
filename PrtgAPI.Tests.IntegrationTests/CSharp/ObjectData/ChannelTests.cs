@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectData
@@ -19,6 +20,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             AssertEx.AreEqual(Settings.ChannelErrorMessage, channel.ErrorLimitMessage, nameof(Settings.ChannelErrorMessage));
             AssertEx.AreEqual(Settings.ChannelWarningLimit, channel.UpperWarningLimit, nameof(Settings.ChannelWarningLimit));
             AssertEx.AreEqual(Settings.ChannelWarningMessage, channel.WarningLimitMessage, nameof(Settings.ChannelWarningMessage));
+        }
+
+        [TestMethod]
+        public void Data_Channel_ReadOnlyUser()
+        {
+            var channel = readOnlyClient.GetChannel(Settings.ChannelSensor, Settings.Channel);
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
+        }
+
+        [TestMethod]
+        public async Task Data_Channel_ReadOnlyUserAsync()
+        {
+            var channel = await readOnlyClient.GetChannelAsync(Settings.ChannelSensor, Settings.Channel);
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -57,6 +58,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(-2, settings.Coordinates.Latitude);
 
             Assert.AreEqual("-2,-1", settings.Coordinates.ToString());
+        }
+
+        [TestMethod]
+        public void DeviceSettings_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(() => client.GetDeviceProperties(1001), "Cannot retrieve properties for read-only device with ID 1001.");
+        }
+
+        [TestMethod]
+        public async Task DeviceSettings_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.GetDevicePropertiesAsync(1001), "Cannot retrieve properties for read-only device with ID 1001.");
         }
     }
 }

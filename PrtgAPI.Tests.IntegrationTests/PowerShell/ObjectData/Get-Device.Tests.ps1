@@ -170,4 +170,10 @@ Describe "Get-Device_IT" {
 
         $devices.Count | Should Be (Settings DevicesInTestProbe)
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Device
+        }
+    }
 }

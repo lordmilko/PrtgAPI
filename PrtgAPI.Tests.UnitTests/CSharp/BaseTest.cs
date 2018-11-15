@@ -20,6 +20,11 @@ namespace PrtgAPI.Tests.UnitTests
             return client;
         }
 
+        public static PrtgClient Initialize_ReadOnlyClient(IWebResponse response)
+        {
+            return Initialize_Client(new ReadOnlyResponse(response));
+        }
+
         internal static PrtgClient Initialize_Client(IWebResponse response, RequestVersion version)
         {
             var client = Initialize_Client(response);

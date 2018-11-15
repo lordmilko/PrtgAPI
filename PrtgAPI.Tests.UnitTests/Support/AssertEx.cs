@@ -61,6 +61,14 @@ namespace PrtgAPI.Tests.UnitTests
             }
         }
 
+        public static void AllPropertiesRetrieveValues(object value)
+        {
+            var properties = value.GetType().GetProperties().Where(p => p.GetIndexParameters().Length == 0);
+
+            foreach (var prop in properties)
+                prop.GetValue(value);
+        }
+
         public static void AllPropertiesAndFieldsAreEqual<T>(T original, T clone)
         {
             var firstProperties = original.GetType().GetProperties(flags).Where(p => !p.GetIndexParameters().Any()).ToList();

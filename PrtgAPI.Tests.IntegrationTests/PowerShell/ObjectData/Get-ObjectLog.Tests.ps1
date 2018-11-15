@@ -154,4 +154,10 @@ Describe "Get-ObjectLog_IT" {
     It "throws retrieving a nonexistant object by ID" {
         { Get-ObjectLog -Id -9999 } | Should Throw "Sorry, there is no object with the specified id"
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-ObjectLog
+        }
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Tests.IntegrationTests.ObjectData.Query;
@@ -248,6 +249,24 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         public static IOrderedEnumerable<IGrouping<Log, Log>> OrderLogs(IEnumerable<IGrouping<Log, Log>> logs)
         {
             return logs.OrderByDescending(l => l.Key.DateTime).ThenBy(l => l.Key.Name).ThenBy(l => l.Key.Status);
+        }
+
+        [TestMethod]
+        public void Data_Log_ReadOnlyUser()
+        {
+            var logs = readOnlyClient.GetLogs();
+
+            foreach (var log in logs)
+                AssertEx.AllPropertiesRetrieveValues(log);
+        }
+
+        [TestMethod]
+        public async Task Data_Log_ReadOnlyUserAsync()
+        {
+            var logs = await readOnlyClient.GetLogsAsync();
+
+            foreach (var log in logs)
+                AssertEx.AllPropertiesRetrieveValues(log);
         }
     }
 }

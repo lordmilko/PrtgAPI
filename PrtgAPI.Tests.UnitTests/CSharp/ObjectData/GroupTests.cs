@@ -61,6 +61,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         public void Group_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [TestMethod]
+        public void Group_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var group = client.GetGroup(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(group);
+        }
+
+        [TestMethod]
+        public async Task Group_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var group = await client.GetGroupAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(group);
+        }
+
         protected override List<Group> GetObjects(PrtgClient client) => client.GetGroups();
 
         protected override Task<List<Group>> GetObjectsAsync(PrtgClient client) => client.GetGroupsAsync();

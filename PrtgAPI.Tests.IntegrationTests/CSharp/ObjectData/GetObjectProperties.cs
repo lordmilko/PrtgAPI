@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support;
 
@@ -120,6 +121,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             {
                 client.SetObjectPropertyRaw(Settings.UpSensor, "name_", originalValue);
             }
+        }
+
+        [TestMethod]
+        public void Data_ObjectProperties_ReadOnlyUser()
+        {
+            Action<Action> action = f => AssertEx.Throws<InvalidOperationException>(f, "Cannot retrieve properties for read-only");
+
+            action(() => readOnlyClient.GetSensorProperties(Settings.UpSensor));
+            action(() => readOnlyClient.GetDeviceProperties(Settings.Device));
+            action(() => readOnlyClient.GetGroupProperties(Settings.Group));
+            action(() => readOnlyClient.GetProbeProperties(Settings.Probe));
+        }
+
+        [TestMethod]
+        public async Task Data_ObjectProperties_ReadOnlyUserAsync()
+        {
+            Func<Func<Task>, Task> action = f => AssertEx.ThrowsAsync<InvalidOperationException>(f, "Cannot retrieve properties for read-only");
+
+            await action(async () => await readOnlyClient.GetSensorPropertiesAsync(Settings.UpSensor));
+            await action(async () => await readOnlyClient.GetDevicePropertiesAsync(Settings.Device));
+            await action(async () => await readOnlyClient.GetGroupPropertiesAsync(Settings.Group));
+            await action(async () => await readOnlyClient.GetProbePropertiesAsync(Settings.Probe));
         }
 
         private void TestIllegalCharacter(int objectId, ObjectProperty property, Func<Sensor, string> getValue)

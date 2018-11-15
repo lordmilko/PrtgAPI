@@ -533,6 +533,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             if (components["name"] == "banana")
                 return new RawPropertyResponse("(Property not found)");
 
+            if (components["name"] == "aggregationchannel")
+                return new RawPropertyResponse("#1:Channel\nchannel(4001, 0)\n#2:Channel\nchannel(4002, 0)");
+
             components.Remove("username");
             components.Remove("passhash");
             components.Remove("id");
@@ -587,27 +590,32 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             return Enumerable.Range(0, count).Select(func).ToArray();
         }
 
-        public static string GetFunction(string address)
+        public static Enum GetFunctionEnum(string address)
         {
             var page = GetPage(address);
 
             XmlFunction xmlFunc;
             if (TryParseEnumDescription(page, out xmlFunc))
-                return xmlFunc.ToString();
+                return xmlFunc;
 
             CommandFunction cmdFunc;
             if (TryParseEnumDescription(page, out cmdFunc))
-                return cmdFunc.ToString();
+                return cmdFunc;
 
             JsonFunction jsonFunc;
             if (TryParseEnumDescription(page, out jsonFunc))
-                return jsonFunc.ToString();
+                return jsonFunc;
 
             HtmlFunction htmlFunc;
             if (TryParseEnumDescription(page, out htmlFunc))
-                return htmlFunc.ToString();
+                return htmlFunc;
 
             throw new NotImplementedException($"Don't know what the type of function '{page}' is");
+        }
+
+        public static string GetFunction(string address)
+        {
+            return GetFunctionEnum(address).ToString();
         }
 
         private static string GetPage(string address)

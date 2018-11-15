@@ -48,7 +48,16 @@ namespace PrtgAPI.Request
             var thisDoc = new XDocument(normal);
             var items = thisDoc.Descendants("item");
             items.Where(i => i.Element("objid").Value != id.ToString()).Remove();
-            items.Single().Add(properties.Nodes());
+
+            var item = items.SingleOrDefault();
+
+            //No item when notification triggers tell us about a notification
+            //action we don't have permission to access
+            if (item == null)
+                return null;
+            else
+                item.Add(properties.Nodes());
+            
             return thisDoc;
         }
 

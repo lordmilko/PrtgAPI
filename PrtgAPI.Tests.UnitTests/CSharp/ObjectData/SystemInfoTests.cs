@@ -444,6 +444,32 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #endregion
 
+        [TestMethod]
+        public void SystemInfo_ReadOnlyUser()
+        {
+            var client = Initialize_Client(new SystemInfoResponse());
+
+            var info = client.GetSystemInfo(1001);
+
+            var properties = info.GetType().GetProperties();
+
+            foreach (var prop in properties)
+                AssertEx.AllPropertiesRetrieveValues(prop.GetValue(info));
+        }
+
+        [TestMethod]
+        public async Task SystemInfo_ReadOnlyUserAsync()
+        {
+            var client = Initialize_Client(new SystemInfoResponse());
+
+            var info = await client.GetSystemInfoAsync(1001);
+
+            var properties = info.GetType().GetProperties();
+
+            foreach (var prop in properties)
+                AssertEx.AllPropertiesRetrieveValues(prop.GetValue(info));
+        }
+
         private PrtgClient GetFullSummaryClient()
         {
             return GetSystemInfoClient(

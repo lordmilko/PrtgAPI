@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -38,6 +39,8 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             await ExecuteAssertAsync(async () => await UnitTests.AssertEx.ThrowsAsync<T>(action, message), "AssertEx.Throws");
         }
+
+        public static void AllPropertiesRetrieveValues(object value) => UnitTests.AssertEx.AllPropertiesRetrieveValues(value);
 
         private static void ExecuteAssert(Action assert, string assertName, bool retry = false)
         {

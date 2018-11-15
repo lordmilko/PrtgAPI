@@ -97,6 +97,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("PRTG Network Monitor (Failover)", result.ClusterNodeName);
         }
 
+        [TestMethod]
+        public void ServerStatus_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var result = client.GetStatus();
+
+            AssertEx.AllPropertiesRetrieveValues(result);
+        }
+
+        [TestMethod]
+        public async Task ServerStatus_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var result = (await client.GetStatusAsync());
+
+            AssertEx.AllPropertiesRetrieveValues(result);
+        }
+
         public ServerStatusItem GetItem() => new ServerStatusItem();
     }
 }

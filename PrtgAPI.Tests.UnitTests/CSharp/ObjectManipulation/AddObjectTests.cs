@@ -367,6 +367,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await AssertEx.ThrowsAsync<ObjectResolutionException>(async () => await client.AddDeviceAsync(1001, "newDevice", "localhost"), str);
         }
 
+        [TestMethod]
+        public void DeviceTemplate_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var templates = client.GetDeviceTemplates(300);
+
+            AssertEx.AllPropertiesRetrieveValues(templates);
+        }
+
+        [TestMethod]
+        public async Task DeviceTemplate_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var templates = await client.GetDeviceTemplatesAsync(300);
+
+            AssertEx.AllPropertiesRetrieveValues(templates);
+        }
+
         #endregion
         #region AddGroup
 

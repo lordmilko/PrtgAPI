@@ -279,4 +279,10 @@ Describe "Get-Sensor_IT" {
 
         $sensors.Id | Should Be (Settings SensorFactory)
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Sensor
+        }
+    }
 }

@@ -59,6 +59,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void Device_GetDevice_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetDevice(1001));
 
         [TestMethod]
+        public void Device_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var device = client.GetDevice(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(device);
+        }
+
+        [TestMethod]
+        public async Task Device_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var device = await client.GetDeviceAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(device);
+        }
+
+        [TestMethod]
         public void Device_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         protected override List<Device> GetObjects(PrtgClient client) => client.GetDevices();

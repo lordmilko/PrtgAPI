@@ -3050,113 +3050,137 @@ namespace PrtgAPI
                 #region Sensors
 
         /// <summary>
-        /// Retrieves properties and settings of a PRTG Sensor.
+        /// Retrieves properties and settings of a PRTG Sensor.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
-        /// <returns>All settings of the specified sensor.</returns>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
         public SensorSettings GetSensorProperties(int sensorId) =>
-            GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor);
+            GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Sensor.
+        /// Asynchronously retrieves properties and settings of a PRTG Sensor.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
-        /// <returns>All settings of the specified sensor.</returns>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
         public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId) =>
             await GetSensorPropertiesAsync(sensorId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Sensor with a specified cancellation token.
+        /// Asynchronously retrieves properties and settings of a PRTG Sensor with a specified cancellation token.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>All settings of the specified sensor.</returns>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
         public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor, token).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Devices
 
         /// <summary>
-        /// Retrieves properties and settings of a PRTG Device.
+        /// Retrieves properties and settings of a PRTG Device.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
-        /// <returns>All settings of the specified device.</returns>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
         public DeviceSettings GetDeviceProperties(int deviceId) =>
-            GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device);
+            GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Device.
+        /// Asynchronously retrieves properties and settings of a PRTG Device.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
-        /// <returns>All settings of the specified device.</returns>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
         public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId) =>
             await GetDevicePropertiesAsync(deviceId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Device with a specified cancellation token.
+        /// Asynchronously retrieves properties and settings of a PRTG Device with a specified cancellation token.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>All settings of the specified device.</returns>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
         public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device, token).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Groups
 
         /// <summary>
-        /// Retrieves properties and settings of a PRTG Group.
+        /// Retrieves properties and settings of a PRTG Group.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
-        /// <returns>All settings of the specified group.</returns>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
         public GroupSettings GetGroupProperties(int groupId) =>
-            GetObjectProperties<GroupSettings>(groupId, ObjectType.Group);
+            GetObjectProperties<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Group.
+        /// Asynchronously retrieves properties and settings of a PRTG Group.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
-        /// <returns>All settings of the specified group.</returns>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
         public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId) =>
             await GetGroupPropertiesAsync(groupId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Group with a specified cancellation token.
+        /// Asynchronously retrieves properties and settings of a PRTG Group with a specified cancellation token.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>All settings of the specified group.</returns>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
         public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group, token).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Probes
 
         /// <summary>
-        /// Retrieves properties and settings of a PRTG Probe.
+        /// Retrieves properties and settings of a PRTG Probe.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <returns>All settings of the specified probe.</returns>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
         public ProbeSettings GetProbeProperties(int probeId) =>
-            GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe);
+            GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Probe.
+        /// Asynchronously retrieves properties and settings of a PRTG Probe.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <returns>All settings of the specified probe.</returns>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
             await GetProbePropertiesAsync(probeId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
-        /// Asynchronously retrieves properties and settings of a PRTG Probe with a specified cancellation token.
+        /// Asynchronously retrieves properties and settings of a PRTG Probe with a specified cancellation token.<para/>
+        /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>All settings of the specified probe.</returns>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe, token).ConfigureAwait(false);
+            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
             #endregion

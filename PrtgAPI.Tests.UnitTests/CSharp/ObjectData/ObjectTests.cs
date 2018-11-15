@@ -79,6 +79,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         public void PrtgObject_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [TestMethod]
+        public void Object_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var @object = client.GetObject(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(@object);
+        }
+
+        [TestMethod]
+        public async Task Object_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var @object = await client.GetObjectAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(@object);
+        }
+
         protected override List<PrtgObject> GetObjects(PrtgClient client) => client.GetObjects();
 
         protected override async Task<List<PrtgObject>> GetObjectsAsync(PrtgClient client) => await client.GetObjectsAsync();

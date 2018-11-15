@@ -75,6 +75,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [TestMethod]
+        public void Probe_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var probe = client.GetProbe(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(probe);
+        }
+
+        [TestMethod]
+        public async Task Probe_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var probe = await client.GetProbeAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(probe);
+        }
+
         protected override List<Probe> GetObjects(PrtgClient client) => client.GetProbes();
 
         protected override Task<List<Probe>> GetObjectsAsync(PrtgClient client) => client.GetProbesAsync();

@@ -38,4 +38,10 @@ Describe "Get-NotificationTrigger_IT" {
 
         $triggers.Channel | Should Be "Total"
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Device (Settings Device) | Get-NotificationTrigger
+        }
+    }
 }

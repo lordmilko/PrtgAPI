@@ -19,7 +19,12 @@ namespace PrtgAPI.Utilities
                     if (lazy.LazyInitialized == false)
                     {
                         if (lazy.LazyXml != null)
-                            Serializer.Update(lazy.LazyXml.Value.CreateReader(), obj);
+                        {
+                            var xDoc = lazy.LazyXml.Value;
+
+                            if(xDoc != null)
+                                Serializer.Update(xDoc.CreateReader(), obj);
+                        }
 
                         lazy.LazyInitialized = true;
                     }

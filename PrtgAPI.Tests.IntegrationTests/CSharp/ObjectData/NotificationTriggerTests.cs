@@ -76,6 +76,36 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             }
         }
 
+        [TestMethod]
+        public void Data_NotificationTrigger_ReadOnlyUser()
+        {
+            var triggers = readOnlyClient.GetNotificationTriggers(Settings.Device);
+
+            foreach (var trigger in triggers)
+            {
+                AssertEx.AllPropertiesRetrieveValues(trigger);
+                Assert.IsNotNull(trigger.OnNotificationAction);
+
+                AssertEx.AllPropertiesRetrieveValues(trigger.OnNotificationAction);
+                Assert.IsNull(trigger.OnNotificationAction.Schedule);
+            }
+        }
+
+        [TestMethod]
+        public async Task Data_NotificationTrigger_ReadOnlyUserAsync()
+        {
+            var triggers = await readOnlyClient.GetNotificationTriggersAsync(Settings.Device);
+
+            foreach (var trigger in triggers)
+            {
+                AssertEx.AllPropertiesRetrieveValues(trigger);
+                Assert.IsNotNull(trigger.OnNotificationAction);
+
+                AssertEx.AllPropertiesRetrieveValues(trigger.OnNotificationAction);
+                Assert.IsNull(trigger.OnNotificationAction.Schedule);
+            }
+        }
+
         private void AddInvalidTrigger()
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;

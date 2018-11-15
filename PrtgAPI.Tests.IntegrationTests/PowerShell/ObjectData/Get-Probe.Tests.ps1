@@ -119,4 +119,10 @@ Describe "Get-Probe_IT" {
             $probe.Message | Should BeLike "*o*"
         }
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Probe
+        }
+    }
 }

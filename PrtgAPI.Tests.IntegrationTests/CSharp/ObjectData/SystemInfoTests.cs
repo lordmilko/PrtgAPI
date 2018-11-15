@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectData
@@ -101,6 +102,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
                 if (device != null)
                     client.RemoveObject(device.Id);
             }
+        }
+
+        [TestMethod]
+        public void Data_SystemInfo_ReadOnlyUser()
+        {
+            var info = readOnlyClient.GetSystemInfo(Settings.Device);
+
+            var properties = info.GetType().GetProperties();
+
+            foreach (var prop in properties)
+                AssertEx.AllPropertiesRetrieveValues(prop.GetValue(info));
+        }
+
+        [TestMethod]
+        public async Task Data_SystemInfo_ReadOnlyUserAsync()
+        {
+            var info = await readOnlyClient.GetSystemInfoAsync(Settings.Device);
+
+            var properties = info.GetType().GetProperties();
+
+            foreach (var prop in properties)
+                AssertEx.AllPropertiesRetrieveValues(prop.GetValue(info));
         }
 
         private void ClearNextObjectInfo()

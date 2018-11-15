@@ -96,5 +96,37 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 async c => await c.GetSensorHistoryAsync(1001)
             );
         }
+
+        [TestMethod]
+        public void SensorHistory_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var history = client.GetSensorHistory(1001).First();
+
+            AssertEx.AllPropertiesRetrieveValues(history);
+
+            Assert.IsTrue(history.ChannelRecords.Count > 0);
+
+            var channel = history.ChannelRecords.First();
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
+        }
+
+        [TestMethod]
+        public async Task SensorHistory_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var history = (await client.GetSensorHistoryAsync(1001)).First();
+
+            AssertEx.AllPropertiesRetrieveValues(history);
+
+            Assert.IsTrue(history.ChannelRecords.Count > 0);
+
+            var channel = history.ChannelRecords.First();
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
+        }
     }
 }

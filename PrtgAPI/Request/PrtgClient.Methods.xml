@@ -624,12 +624,15 @@
         </Template>
         <Template name="ObjectProperties">
             <MethodDef name="Get{type}Properties" returns="{type}Settings">
-                <Summary>Retrieves properties and settings of a PRTG {type}.</Summary>
-                <ReturnDescription>All settings of the specified {name}.</ReturnDescription>
+                <Summary>
+                    Retrieves properties and settings of a PRTG {type}.&lt;para/&gt;
+                    If the current user does not have write access to the specified object, an &lt;see cref="InvalidOperationException"/&gt; will be thrown.</Summary>
+                <Exception type="InvalidOperationException" description="The specified {name} is read only. To retrieve properties from read only {name}s, use &lt;see cref=&quot;GetObjectProperty(int, ObjectProperty)&quot;/&gt;."/>
+                <ReturnDescription>If the current user has write access, all settings of the specified {name}. Otherwise. null.</ReturnDescription>
 
                 <Parameter name="{name}Id" type="int" description="ID of the {name} to retrieve settings for."/>
                 <Body expression="true">
-                    <Call name="GetObjectProperties" genericArgs="{type}Settings" args="{name}Id, ObjectType.{type}"/>
+                    <Call name="GetObjectProperties" genericArgs="{type}Settings" args="{name}Id, ObjectType.{type}, ObjectProperty.Name"/>
                 </Body>
             </MethodDef>
         </Template>

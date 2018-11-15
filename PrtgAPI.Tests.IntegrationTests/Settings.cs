@@ -19,6 +19,9 @@ namespace PrtgAPI.Tests.IntegrationTests
         public static string UserName = null;
         public static string Password = null;
 
+        public static string ReadOnlyUserName = null;
+        public static string ReadOnlyPassword = null;
+
         //Local Server
         public static string WindowsUserName;
         public static string WindowsPassword;

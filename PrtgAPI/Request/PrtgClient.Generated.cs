@@ -675,7 +675,7 @@ namespace PrtgAPI
             int tmpId;
 
             if (!int.TryParse(tmpIdStr, out tmpId))
-                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid");
+                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
             var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback, token);
 
@@ -698,7 +698,7 @@ namespace PrtgAPI
             int tmpId;
 
             if (!int.TryParse(tmpIdStr, out tmpId))
-                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid");
+                throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
             var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback, token).ConfigureAwait(false);
 

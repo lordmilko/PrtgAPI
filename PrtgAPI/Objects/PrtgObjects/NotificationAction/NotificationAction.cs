@@ -45,12 +45,12 @@ namespace PrtgAPI
         #region Basic Notification Settings
 
         [XmlElement("injected_postpone")]
-        internal bool postpone { get; set; }
+        internal bool? postpone { get; set; }
 
         /// <summary>
         /// Whether alerts triggered outside of this notification's <see cref="Schedule"/> should be sent out when the scheduled pause ends.
         /// </summary>
-        public bool Postpone => Lazy(() => postpone);
+        public bool? Postpone => Lazy(() => postpone);
 
         [XmlElement("injected_comments")]
         internal string comments { get; set; }
@@ -76,12 +76,12 @@ namespace PrtgAPI
         #region Notification Summarization
 
         [XmlElement("injected_summode")]
-        internal SummaryMode summaryMode { get; set; }
+        internal SummaryMode? summaryMode { get; set; }
 
         /// <summary>
         /// Specifies how PRTG should summarize notifications when multiple alerts occur within quick succession.
         /// </summary>
-        public SummaryMode SummaryMode => Lazy(() => summaryMode);
+        public SummaryMode? SummaryMode => Lazy(() => summaryMode);
 
         [XmlElement("injected_summarysubject")]
         internal string summarySubject { get; set; }
@@ -92,12 +92,12 @@ namespace PrtgAPI
         public string SummarySubject => Lazy(() => summarySubject);
 
         [XmlElement("injected_summinutes")]
-        internal int summaryPeriod { get; set; }
+        internal int? summaryPeriod { get; set; }
 
         /// <summary>
         /// The timespan (in seconds) during which PRTG will gather new notifications before sending a summarization alert.
         /// </summary>
-        public int SummaryPeriod => Lazy(() => summaryPeriod);
+        public int? SummaryPeriod => Lazy(() => summaryPeriod);
 
         #endregion
         #region Wrappers

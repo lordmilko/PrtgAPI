@@ -13,6 +13,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// tab within the PRTG UI. Properties retrieved by Get-ObjectProperty may not necessarily be active depending on the value
     /// of their dependent property (e.g. the Interval will not take effect if InheritInterval is $true).</para>
     /// 
+    /// <para type="description">Get-ObjectProperty supports retrieving type safe and raw values. These values can be
+    /// retrieved as part of larger property collections (by specifying no parameters or -<see cref="Raw"/>) or as
+    /// individual values (-<see cref="Property"/> or -<see cref="RawProperty"/>). When retrieving property collections
+    /// Get-ObjectProperty will fail to retrieve the expected properties if the current user has read only access
+    /// to the specified object. To retrieve properties from read only objects a specific -<see cref="Property"/> or -<see cref="RawProperty"/> must be specified.<para/>
+    /// 
     /// <para type="description">Properties that are not currently supported by Get-ObjectProperty can be retrieved by specifying
     /// the -RawProperty parameter. Raw property names can be found by inspecting the "name" attribute of  the &lt;input/&gt; tag
     /// under the object's Settings page in the PRTG UI. Unlike Set-ObjectProperty, raw property names do not need to include
@@ -212,16 +218,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 switch (knownObj.BaseType)
                 {
                     case BaseType.Sensor:
-                        WriteObjectWithProgress(() => client.GetSensorProperties(Object.Id));
+                        WriteObjectWithProgress(() => WarnReadOnly(client.GetSensorProperties(Object.Id)));
                         break;
                     case BaseType.Device:
-                        WriteObjectWithProgress(() => client.GetDeviceProperties(Object.Id));
+                        WriteObjectWithProgress(() => WarnReadOnly(client.GetDeviceProperties(Object.Id)));
                         break;
                     case BaseType.Group:
-                        WriteObjectWithProgress(() => client.GetGroupProperties(Object.Id));
+                        WriteObjectWithProgress(() => WarnReadOnly(client.GetGroupProperties(Object.Id)));
                         break;
                     case BaseType.Probe:
-                        WriteObjectWithProgress(() => client.GetProbeProperties(Object.Id));
+                        WriteObjectWithProgress(() => WarnReadOnly(client.GetProbeProperties(Object.Id)));
                         break;
                     default:
                         throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}");
@@ -231,6 +237,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}");
             }
+        }
+
+        private object WarnReadOnly(object value)
+        {
+            if (value == null)
+                WriteError(new ErrorRecord(
+                    new InvalidOperationException($"Cannot retrieve properties for read only object '{Object}' (ID: {Object.Id}). Consider requesting a specific -{nameof(Property)}."),
+                    nameof(InvalidOperationException),
+                    ErrorCategory.InvalidOperation, null
+                ));
+
+            return value;
         }
 
         #endregion

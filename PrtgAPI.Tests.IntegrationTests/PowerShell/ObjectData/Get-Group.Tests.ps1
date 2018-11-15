@@ -161,4 +161,10 @@ Describe "Get-Group_IT" {
 
         $groups.Count | Should Be (Settings GroupsInTestProbe)
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Group
+        }
+    }
 }

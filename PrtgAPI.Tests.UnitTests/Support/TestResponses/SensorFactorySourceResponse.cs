@@ -27,6 +27,20 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return GetTableResponse(address);
                 case nameof(HtmlFunction.ObjectData):
                     return new SensorSettingsResponse(propertyChanger);
+                case nameof(XmlFunction.GetObjectProperty):
+                    var components = UrlUtilities.CrackUrl(address);
+
+                    if (components["name"] == "aggregationchannel")
+                    {
+                        var text = new SensorSettingsResponse(propertyChanger).GetResponseText(ref address);
+                        var xml = ObjectSettings.GetXml(text);
+
+                        var value = xml.Descendants("injected_aggregationchannel").First().Value;
+
+                        return new RawPropertyResponse(value);
+                    }
+
+                    throw new NotImplementedException($"Don't know how to handle object property '{components["name"]}'");
                 case nameof(HtmlFunction.ChannelEdit):
                     return new ChannelResponse(new ChannelItem());
                 default:

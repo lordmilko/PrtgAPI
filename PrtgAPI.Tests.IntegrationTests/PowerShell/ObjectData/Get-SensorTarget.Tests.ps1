@@ -83,4 +83,10 @@ Describe "Get-SensorTarget_IT" {
             CreateParameters "WmiService" $service "WmiServiceSensorParameters" "Services"
         }
     }
+
+    It "throws attempting to resolve sensor targets as a readonly user" {
+        ReadOnlyClient {
+            { $device | Get-SensorTarget ExeXml } | Should Throw "type was not valid or you do not have sufficient permissions on the specified object"
+        }
+    }
 }

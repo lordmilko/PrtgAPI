@@ -23,6 +23,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// all specified operands. For scenarios in which you wish to filter for notification actions containing ALL specified tags,
     /// the -Tags parameter can be used, performing a logical AND between all specified operands.</para>
     /// 
+    /// <para type="description">If you are currently signed in as a read only user, you may not be able to see all notification
+    /// actions or notification action properties.</para>
+    /// 
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger</code>
     ///     <para>Get all notification actions.</para>

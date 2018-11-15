@@ -90,6 +90,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("discards broadcast unknown", properties["trafficmode"]);
         }
 
+        [TestMethod]
+        public void GetObjectProperty_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var settings = client.GetObjectPropertiesRaw(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(settings);
+        }
+
+        [TestMethod]
+        public async Task GetObjectProperty_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var settings = await client.GetObjectPropertiesRawAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(settings);
+        }
+
         private void GetObjectProperty<T>(Func<PrtgClient, T> getProperty, string expected = "testName")
         {
             var client = Initialize_Client(new MultiTypeResponse());

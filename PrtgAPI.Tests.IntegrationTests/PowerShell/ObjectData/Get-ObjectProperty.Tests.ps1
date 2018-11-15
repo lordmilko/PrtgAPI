@@ -92,4 +92,68 @@ Describe "Get-ObjectProperty_IT" {
 
         { $device | Get-ObjectProperty -RawProperty "banana" } | Should Throw "A value for property 'banana' could not be found"
     }
+
+    $cases = @(
+        @{name = "Sensor"}
+        @{name = "Device"}
+        @{name = "Group"}
+        @{name = "Probe"}
+    )
+
+    It "throws retrieving typed properties as a readonly user" -TestCases $cases {
+
+        param($name)
+
+        ReadOnlyClient {
+
+            $obj = Invoke-Expression "Get-$name -Count 1"
+
+            $obj.Count | Should Be 1
+
+            { $obj | Get-ObjectProperty } | Should Throw "Cannot retrieve properties for read-only"
+        }
+    }
+
+    It "retrieves raw properties as a readonly user" -TestCases $cases {
+
+        param($name)
+
+        ReadOnlyClient {
+            $obj = Invoke-Expression "Get-$name -Count 1"
+
+            $obj.Count | Should Be 1
+
+            $obj | Get-ObjectProperty -Raw
+        }
+    }
+
+    It "retrieves individual typed properties as a readonly user" -TestCases $cases {
+
+        param($name)
+
+        ReadOnlyClient {
+             $obj = Invoke-Expression "Get-$name -Count 1"
+
+            $obj.Count | Should Be 1
+
+            $name = $obj | Get-ObjectProperty Name
+
+            $name | Should Be $obj.Name
+        }
+    }
+
+    It "retrieves individual raw properties as a readonly user" -TestCases $cases {
+
+        param($name)
+
+        ReadOnlyClient {
+            $obj = Invoke-Expression "Get-$name -Count 1"
+
+            $obj.Count | Should Be 1
+
+            $name = $obj | Get-ObjectProperty -RawProperty name_
+
+            $name | Should Be $obj.Name
+        }
+    }
 }

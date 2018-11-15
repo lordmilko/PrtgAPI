@@ -156,6 +156,30 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("PRTG System Administrator, PRTG Administrators", obj.Ticket.ToString(), "Ticket was not correcet");
         }
 
+        [TestMethod]
+        public void NotificationAction_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var action = client.GetNotificationAction(300);
+
+            Assert.IsNull(action.Email);
+
+            AssertEx.AllPropertiesRetrieveValues(action);
+        }
+
+        [TestMethod]
+        public async Task NotificationAction_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var action = await client.GetNotificationActionAsync(300);
+
+            Assert.IsNull(action.Email);
+
+            AssertEx.AllPropertiesRetrieveValues(action);
+        }
+
         protected override List<NotificationAction> GetObjects(PrtgClient client) => client.GetNotificationActions();
 
         protected override Task<List<NotificationAction>> GetObjectsAsync(PrtgClient client) => client.GetNotificationActionsAsync();

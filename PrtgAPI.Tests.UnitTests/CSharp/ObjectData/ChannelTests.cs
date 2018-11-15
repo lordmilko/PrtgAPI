@@ -111,6 +111,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(1, channels.Count);
         }
 
+        [TestMethod]
+        public void Channel_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var channel = client.GetChannel(1001, 1);
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
+        }
+
+        [TestMethod]
+        public async Task Channel_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var channel = await client.GetChannelAsync(1001, 1);
+
+            AssertEx.AllPropertiesRetrieveValues(channel);
+        }
+
         protected override List<Channel> GetObjects(PrtgClient client) => client.GetChannels(1234);
 
         protected override async Task<List<Channel>> GetObjectsAsync(PrtgClient client) => await client.GetChannelsAsync(1234);

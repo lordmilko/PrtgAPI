@@ -48,6 +48,30 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             return false;
         });
 
+        [TestMethod]
+        public void Schedule_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var schedule = client.GetSchedule(1001);
+
+            Assert.IsNull(schedule.TimeTable);
+
+            AssertEx.AllPropertiesRetrieveValues(schedule);
+        }
+
+        [TestMethod]
+        public async Task Schedule_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var schedule = await client.GetScheduleAsync(1001);
+
+            Assert.IsNull(schedule.TimeTable);
+
+            AssertEx.AllPropertiesRetrieveValues(schedule);
+        }
+
         protected override List<Schedule> GetObjects(PrtgClient client) => client.GetSchedules();
 
         protected override async Task<List<Schedule>> GetObjectsAsync(PrtgClient client) => await client.GetSchedulesAsync();

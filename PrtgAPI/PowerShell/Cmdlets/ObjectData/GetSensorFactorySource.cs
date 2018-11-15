@@ -68,14 +68,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         List<FactoryIds> GetSensorIds()
         {
-            var properties = client.GetSensorProperties(Sensor.Id);
+            var channelDefinition = client.GetObjectProperty<string[]>(Sensor.Id, ObjectProperty.ChannelDefinition);
 
-            if (properties.ChannelDefinition == null)
+            if (channelDefinition == null)
                 return new List<FactoryIds>();
 
             var regex = new Regex("(channel\\()(.+?)(,)(.+?)(\\))", RegexOptions.IgnoreCase);
 
-            var ids = properties.ChannelDefinition.SelectMany(def => regex.Matches(def).Cast<Match>().Select(m => new FactoryIds
+            var ids = channelDefinition.SelectMany(def => regex.Matches(def).Cast<Match>().Select(m => new FactoryIds
             {
                 SensorId = Convert.ToInt32(regex.Replace(m.Value, "$2")),
                 ChannelId = Convert.ToInt32(regex.Replace(m.Value, "$4"))

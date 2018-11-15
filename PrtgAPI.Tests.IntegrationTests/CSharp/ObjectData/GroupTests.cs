@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 {
@@ -19,6 +20,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         public void Data_Group_GetGroups_ReturnsJustGroups()
         {
             ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe - 2, BaseType.Group); //Subtract two for the child groups
+        }
+
+        [TestMethod]
+        public void Data_Group_ReadOnlyUser()
+        {
+            var group = readOnlyClient.GetGroup(Settings.Group);
+
+            AssertEx.AllPropertiesRetrieveValues(group);
+        }
+
+        [TestMethod]
+        public async Task Data_Group_ReadOnlyUserAsync()
+        {
+            var group = await readOnlyClient.GetGroupAsync(Settings.Group);
+
+            AssertEx.AllPropertiesRetrieveValues(group);
         }
     }
 }

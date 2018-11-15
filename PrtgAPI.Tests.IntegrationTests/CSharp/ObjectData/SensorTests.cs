@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 
@@ -221,6 +222,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             var middleManualSensors = manualSensors.Take(manualSensors.Count - 1).ToList();
 
             AssertEx.AreEqualLists(middleNormalSensors, middleManualSensors, new PrtgObjectComparer(), "The middle of the normal and manual lists were not equal");
+        }
+
+        [TestMethod]
+        public void Data_Sensor_ReadOnlyUser()
+        {
+            var sensor = readOnlyClient.GetSensor(Settings.UpSensor);
+
+            AssertEx.AllPropertiesRetrieveValues(sensor);
+        }
+
+        [TestMethod]
+        public async Task Data_Sensor_ReadOnlyUserAsync()
+        {
+            var sensor = await readOnlyClient.GetSensorAsync(Settings.UpSensor);
+
+            AssertEx.AllPropertiesRetrieveValues(sensor);
         }
     }
 }

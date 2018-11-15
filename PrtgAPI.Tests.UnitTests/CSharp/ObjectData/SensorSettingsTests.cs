@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -67,6 +68,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 return false;
             });
+        }
+
+        [TestMethod]
+        public void SensorSettings_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(() => client.GetSensorProperties(1001), "Cannot retrieve properties for read-only sensor with ID 1001.");
+        }
+
+        [TestMethod]
+        public async Task SensorSettings_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.GetSensorPropertiesAsync(1001), "Cannot retrieve properties for read-only sensor with ID 1001.");
         }
     }
 }

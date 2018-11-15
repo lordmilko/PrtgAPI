@@ -84,14 +84,14 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_showchart")]
         [PropertyParameter(ChannelProperty.ShowInGraph)]
-        public bool ShowInGraph { get; set; } //Show, Hide
+        public bool? ShowInGraph { get; set; } //Show, Hide
 
         /// <summary>
         /// Whether this channel should be shown in tables and API responses. If this value is set to false you will be unable to restore visibility without manual intervention or an existing reference to this object.
         /// </summary>
         [Undocumented]
         [XmlElement("injected_show")]
-        public bool ShowInTable { get; set; }
+        public bool? ShowInTable { get; set; }
 
         /// <summary>
         /// Whether the line color of this channel in graphs should be automatically chosen or defined manually.
@@ -99,7 +99,7 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_colmode")]
         [PropertyParameter(ChannelProperty.ColorMode)]
-        public AutoMode ColorMode { get; set; }
+        public AutoMode? ColorMode { get; set; }
 
         /// <summary>
         /// The line color to use for this channel in graphs. Applies when <see cref="ColorMode"/> is <see cref="AutoMode.Manual"/>.
@@ -132,7 +132,7 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_linewidth")]
         [PropertyParameter(ChannelProperty.LineWidth)]
-        public int LineWidth { get; set; }
+        public int? LineWidth { get; set; }
 
         private string unit;
 
@@ -186,7 +186,7 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_decimalmode")]
         [PropertyParameter(ChannelProperty.DecimalMode)]
-        public DecimalMode DecimalMode { get; set; }
+        public DecimalMode? DecimalMode { get; set; }
 
         /// <summary>
         /// The number of decimal places use to display the value of this channel. Applies when <see cref="DecimalMode"/> is <see cref="PrtgAPI.DecimalMode.Custom"/>.
@@ -226,7 +226,7 @@ namespace PrtgAPI
         [Undocumented]
         [XmlElement("injected_axismode")]
         //[PropertyParameter(ChannelProperty.VerticalAxisScaling)]
-        public AutoMode VerticalAxisScaling { get; set; } //Automatic or Manual
+        public AutoMode? VerticalAxisScaling { get; set; } //Automatic or Manual
 
         /// <summary>
         /// Maximum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.

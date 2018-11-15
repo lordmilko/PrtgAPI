@@ -130,7 +130,7 @@ function InitializePrtgClient
     try
     {
         Log "Connecting to PRTG Server"
-        Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force
+        ConnectToServer UserName Password
     }
     catch [exception]
     {
@@ -145,7 +145,7 @@ function InitializePrtgClient
 
             try
             {
-                Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force
+                ConnectToServer UserName Password
 
                 Log "Connection successful"
             }
@@ -170,12 +170,35 @@ function InitializePrtgClient
     }
 }
 
+function ConnectToServer($usernameSetting, $passwordSetting)
+{
+    $server = (Settings ServerWithProto)
+    $username = (Settings $usernameSetting)
+    $password = (Settings $passwordSetting)
+
+    Connect-PrtgServer $server (New-Credential $username $password) -Force
+}
+
 function Shutdown
 {
     Log "Performing cleanup tasks"
     (ServerManager).Cleanup()
 
     $global:PreviousTest = $true
+}
+
+function ReadOnlyClient($script)
+{
+    try
+    {
+        ConnectToServer ReadOnlyUserName ReadOnlyPassword
+
+        & $script
+    }
+    finally
+    {
+        ConnectToServer UserName Password
+    }
 }
 
 function Settings($property)

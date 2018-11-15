@@ -331,7 +331,7 @@ namespace PrtgAPI
             return xml;
         }
 
-        private void UpdateActionSchedules(List<IGrouping<int, NotificationAction>> actions, CancellationToken token)
+        private void UpdateActionSchedules(List<IGrouping<int?, NotificationAction>> actions, CancellationToken token)
         {
             if (actions.Count > 0)
             {
@@ -339,15 +339,19 @@ namespace PrtgAPI
 
                 foreach (var group in actions)
                 {
-                    foreach (var action in group)
-                        action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key), LazyThreadSafetyMode.PublicationOnly);
+                    //Key is null when we're a read only user
+                    if(group.Key != null)
+                    {
+                        foreach (var action in group)
+                            action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key), LazyThreadSafetyMode.PublicationOnly);
+                    }
                 }
             }
         }
 
-        private async Task UpdateActionSchedulesAsync(List<IGrouping<int, NotificationAction>> actions, CancellationToken token)
+        private async Task UpdateActionSchedulesAsync(List<IGrouping<int?, NotificationAction>> actions, CancellationToken token)
         {
-            if (actions.Count > 0)
+            if (actions.Count > 0 && actions.Any(a => a.Key != null))
             {
                 var schedules = await GetSchedulesAsync(Property.Id, actions.Select(a => a.Key), token).ConfigureAwait(false);
 
@@ -426,7 +430,7 @@ namespace PrtgAPI
                                 return GetSchedule(new Schedule(action.lazyScheduleStr).Id, token);
                             }
 
-                            return new Schedule(action.lazyScheduleStr);
+                            return action.lazyScheduleStr == null ? null : new Schedule(action.lazyScheduleStr);
                         }, LazyThreadSafetyMode.PublicationOnly);
                 }
             }
@@ -477,8 +481,6 @@ namespace PrtgAPI
                         else
                             action.schedule = new Lazy<Schedule>(() => new Schedule(action.lazyScheduleStr));
                     }
-                    else
-                        action.schedule = new Lazy<Schedule>(() => new Schedule(action.lazyScheduleStr));
                 }
             }
         }
@@ -576,11 +578,11 @@ namespace PrtgAPI
         #region Get Object Properties
             #region Get Typed Properties
 
-        private T GetObjectProperties<T>(int objectId, ObjectType objectType)
+        private T GetObjectProperties<T>(int objectId, ObjectType objectType, ObjectProperty mandatoryProperty)
         {
             var response = GetObjectPropertiesRawInternal(objectId, objectType);
 
-            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine);
+            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine, mandatoryProperty);
 
             if (data is TableSettings)
             {
@@ -598,14 +600,16 @@ namespace PrtgAPI
                 }
             }
 
+            ValidateTypedProperties(objectId, objectType, data);
+
             return data;
         }
 
-        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType, CancellationToken token)
+        private async Task<T> GetObjectPropertiesAsync<T>(int objectId, ObjectType objectType, ObjectProperty mandatoryProperty, CancellationToken token)
         {
             var response = await GetObjectPropertiesRawInternalAsync(objectId, objectType, token).ConfigureAwait(false);
 
-            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine);
+            var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine, mandatoryProperty);
 
             if (data is TableSettings)
             {
@@ -621,7 +625,15 @@ namespace PrtgAPI
                 }
             }
 
+            ValidateTypedProperties(objectId, objectType, data);
+
             return data;
+        }
+
+        private void ValidateTypedProperties(int objectId, ObjectType type, object data)
+        {
+            if (data == null)
+                throw new InvalidOperationException($"Cannot retrieve properties for read-only {type.ToString().ToLower()} with ID {objectId}.");
         }
 
             #endregion

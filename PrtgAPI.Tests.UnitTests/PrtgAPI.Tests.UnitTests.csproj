@@ -112,6 +112,7 @@
     <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
+    <Compile Include="Support\TestResponses\ReadOnlyResponse.cs" />
     <Compile Include="Support\TestResponses\SystemInfoResponse.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientForceStreamScenario.cs" />

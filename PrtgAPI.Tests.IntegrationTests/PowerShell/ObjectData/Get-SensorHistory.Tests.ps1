@@ -327,5 +327,13 @@ Describe "Get-SensorHistory_IT" {
 
             { $sensor | Get-SensorHistory -Average 0 -Downtime } | Should Throw "Cannot retrieve downtime with an Average of 0"
         }
+
+        It "retrieves as a readonly user" {
+            ReadOnlyClient {
+                $sensor = Get-Sensor -Id (Settings UpSensor)
+
+                $sensor | Get-SensorHistory
+            }
+        }
     }
 }

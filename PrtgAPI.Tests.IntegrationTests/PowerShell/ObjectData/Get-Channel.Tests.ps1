@@ -4,4 +4,10 @@ Describe "Get-Channel_IT" {
     It "retrieves all channels" {
         (Get-Sensor -Id (Settings ChannelSensor) | Get-Channel).Count | Should Be (Settings ChannelsInTestSensor)
     }
+
+    It "retrieves all channels from a read only user" {
+        ReadOnlyClient {
+            Get-Sensor -Id (Settings ChannelSensor) | Get-Channel
+        }
+    }
 }

@@ -18,6 +18,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         public void ModificationHistory_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [TestMethod]
+        public void ModificationHistory_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var history = client.GetModificationHistory(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(history);
+        }
+
+        [TestMethod]
+        public async Task ModificationHistory_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var history = await client.GetModificationHistoryAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(history);
+        }
+
         protected override List<ModificationEvent> GetObjects(PrtgClient client) => client.GetModificationHistory(1234);
 
         protected override async Task<List<ModificationEvent>> GetObjectsAsync(PrtgClient client) => await client.GetModificationHistoryAsync(1234);

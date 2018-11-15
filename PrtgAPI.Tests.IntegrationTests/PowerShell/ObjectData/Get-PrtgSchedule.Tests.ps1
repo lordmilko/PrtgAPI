@@ -21,4 +21,10 @@ Describe "Get-PrtgSchedule_IT" {
         $schedule.Count | Should Be 1
         $schedule.Id | Should Be (Settings Schedule)
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-PrtgSchedule
+        }
+    }
 }

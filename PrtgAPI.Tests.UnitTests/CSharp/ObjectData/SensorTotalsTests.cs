@@ -6,13 +6,13 @@ using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
-    public class SensorTotalsTests
+    public class SensorTotalsTests : BaseTest
     {
         [TestMethod]
         public void SensorTotals_AllFields_HaveValues()
         {
-            var webClient = new MockWebClient(new SensorTotalsResponse(new SensorTotalsItem()));
-            var client = new PrtgClient("prtg.example.com", "username", "12345678", AuthMode.PassHash, webClient);
+            var client = Initialize_Client(new SensorTotalsResponse(new SensorTotalsItem()));
+
             var result = client.GetSensorTotals();
 
             AssertEx.AllPropertiesAreNotDefault(result);
@@ -21,9 +21,31 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         public async Task SensorTotals_CanExecuteAsync()
         {
-            var webClient = new MockWebClient(new SensorTotalsResponse(new SensorTotalsItem()));
-            var client = new PrtgClient("prtg.example.com", "username", "12345678", AuthMode.PassHash, webClient);
-            await client.GetSensorTotalsAsync();
+            var client = Initialize_Client(new SensorTotalsResponse(new SensorTotalsItem()));
+
+            var result = await client.GetSensorTotalsAsync();
+
+            AssertEx.AllPropertiesAreNotDefault(result);
+        }
+
+        [TestMethod]
+        public void SensorTotals_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new SensorTotalsResponse(new SensorTotalsItem()));
+
+            var result = client.GetSensorTotals();
+
+            AssertEx.AllPropertiesRetrieveValues(result);
+        }
+
+        [TestMethod]
+        public async Task SensorTotals_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new SensorTotalsResponse(new SensorTotalsItem()));
+
+            var result = await client.GetSensorTotalsAsync();
+
+            AssertEx.AllPropertiesRetrieveValues(result);
         }
     }
 }

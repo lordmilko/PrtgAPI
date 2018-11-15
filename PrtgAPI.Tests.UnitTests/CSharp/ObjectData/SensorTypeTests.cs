@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -33,6 +34,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
             Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
             Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
+        }
+
+        [TestMethod]
+        public void SensorType_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var result = client.GetSensorTypes(1001).First();
+
+            AssertEx.AllPropertiesRetrieveValues(result);
+        }
+
+        [TestMethod]
+        public async Task SensorType_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var result = (await client.GetSensorTypesAsync(1001)).First();
+
+            AssertEx.AllPropertiesRetrieveValues(result);
         }
     }
 }

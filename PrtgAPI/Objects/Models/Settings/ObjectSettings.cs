@@ -19,6 +19,9 @@ namespace PrtgAPI
         internal static string basicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
         internal static string backwardsMatchRegex = "<input.+?value=\".*?\".+?name=\".*?\".*?>";
         internal static string standardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
+        internal static string dropDownListRegex = "<select.+?>.*?<\\/select>";
+        internal static string textAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
+        internal static string dependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
         internal static XElement GetXml(PrtgResponse response)
         {
@@ -44,9 +47,7 @@ namespace PrtgAPI
 
         internal static XElement GetDependency(string response)
         {
-            var basicMatch = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
-
-            var match = Regex.Match(response, basicMatch);
+            var match = Regex.Match(response, dependencyDiv);
 
             if (match.Success)
             {
@@ -144,7 +145,7 @@ namespace PrtgAPI
             if (nameRegex == null)
                 nameRegex = standardNameRegex;
 
-            var ddl = Regex.Matches(response, "<select.+?>.*?<\\/select>", RegexOptions.Singleline);
+            var ddl = Regex.Matches(response, dropDownListRegex, RegexOptions.Singleline);
             var lists = ddl.Cast<Match>().Select(match => match.Value).ToList();
 
             var listObjs = GetLists(lists, nameRegex, nameTransformer);
@@ -176,17 +177,15 @@ namespace PrtgAPI
             if (nameRegex == null)
                 nameRegex = standardNameRegex;
 
-            var pattern = "(<textarea.+?>)(.*?)(<\\/textarea>)";
-
             //todo: what if there are none: will that cause an exception? (e.g. when doing sensor settings properties)
 
-            var text = Regex.Matches(response, pattern, RegexOptions.Singleline);
+            var text = Regex.Matches(response, textAreaRegex, RegexOptions.Singleline);
             var matches = (text.Cast<Match>().Select(match => match.Value)).ToList();
 
             var namesAndValues = matches.Select(m => new
             {
                 Name = Regex.Replace(m, nameRegex, "$2", RegexOptions.Singleline),
-                Value = Regex.Replace(m, pattern, "$2", RegexOptions.Singleline)
+                Value = Regex.Replace(m, textAreaRegex, "$2", RegexOptions.Singleline)
             }).ToDictionary(i => i.Name, i => i.Value);
 
             return namesAndValues;

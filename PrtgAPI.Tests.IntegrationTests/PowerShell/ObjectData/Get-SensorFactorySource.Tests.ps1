@@ -16,4 +16,14 @@ Describe "Get-SensorFactorySource_IT" {
 
         $channels.GetType().Name | Should Be "Channel"
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            $sensors = Get-Sensor -Id (Settings SensorFactory) | Get-SensorFactorySource
+
+            $sensors.Count | Should Be 1
+
+            $sensors.GetType().Name | Should Be "Sensor"
+        }
+    }
 }

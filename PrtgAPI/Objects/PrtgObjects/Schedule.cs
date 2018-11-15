@@ -26,7 +26,8 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Specifies the times monitoring is active.
+        /// Specifies the times monitoring is active.<para/>
+        /// If this object was retrieved from a read only user, this value is null.
         /// </summary>
         public TimeTable TimeTable { get; set; }
 

@@ -149,5 +149,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             Assert.AreEqual(7, logs.Count);
         }
+
+        [TestMethod]
+        public void Log_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var log = client.GetLogs(1001).First();
+
+            AssertEx.AllPropertiesRetrieveValues(log);
+        }
+
+        [TestMethod]
+        public async Task Log_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var log = (await client.GetLogsAsync(1001)).First();
+
+            AssertEx.AllPropertiesRetrieveValues(log);
+        }
     }
 }

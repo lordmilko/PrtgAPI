@@ -304,4 +304,11 @@ Describe "Add-Sensor_IT" {
 
         $sensor | Remove-Object -Force
     }
+    
+    It "throws attempting to create dynamic parameters as a read only user" {
+
+        ReadOnlyClient {
+            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType exexml } | Should Throw "type was not valid or you do not have sufficient permissions"
+        }
+    }
 }

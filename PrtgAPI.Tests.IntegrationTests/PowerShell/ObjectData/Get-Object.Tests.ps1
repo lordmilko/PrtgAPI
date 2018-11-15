@@ -24,4 +24,10 @@ Describe "Get-Object_IT" {
 
         $objects | Assert-All { $_.Type -eq "ping" -or $_.Type -eq "System" }
     }
+
+    It "retrieves as a readonly user" {
+        ReadOnlyClient {
+            Get-Object
+        }
+    }
 }

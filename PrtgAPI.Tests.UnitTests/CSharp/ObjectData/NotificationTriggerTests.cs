@@ -438,6 +438,40 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [TestMethod]
+        public void NotificationTrigger_ReadOnlyUser()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var triggers = client.GetNotificationTriggers(1001);
+
+            foreach (var trigger in triggers)
+            {
+                AssertEx.AllPropertiesRetrieveValues(trigger);
+                Assert.IsNotNull(trigger.OnNotificationAction);
+
+                AssertEx.AllPropertiesRetrieveValues(trigger.OnNotificationAction);
+                Assert.IsNull(trigger.OnNotificationAction.Schedule);
+            }
+        }
+
+        [TestMethod]
+        public async Task NotificationTrigger_ReadOnlyUserAsync()
+        {
+            var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
+
+            var triggers = await client.GetNotificationTriggersAsync(1001);
+
+            foreach (var trigger in triggers)
+            {
+                AssertEx.AllPropertiesRetrieveValues(trigger);
+                Assert.IsNotNull(trigger.OnNotificationAction);
+
+                AssertEx.AllPropertiesRetrieveValues(trigger.OnNotificationAction);
+                Assert.IsNull(trigger.OnNotificationAction.Schedule);
+            }
+        }
+
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)
         {
             switch (propertyName)

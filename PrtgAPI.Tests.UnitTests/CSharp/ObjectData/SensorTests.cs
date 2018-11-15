@@ -113,6 +113,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(1600, items.Count);
         }
 
+        [TestMethod]
+        public void Sensor_ReadOnly()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var device = client.GetSensor(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(device);
+        }
+
+        [TestMethod]
+        public async Task Sensor_ReadOnlyAsync()
+        {
+            var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
+
+            var device = await client.GetSensorAsync(1001);
+
+            AssertEx.AllPropertiesRetrieveValues(device);
+        }
+
         protected override List<Sensor> GetObjects(PrtgClient client) => client.GetSensors();
 
         protected override Task<List<Sensor>> GetObjectsAsync(PrtgClient client) => client.GetSensorsAsync();
