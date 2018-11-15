@@ -62,6 +62,12 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
+        /// Specifies whether the resulting sensor type is dynamically determined by the parameters included in the request.<para/>
+        /// If this property is true, PrtgAPI will relax its sensor resolution mechanism to ensure the resultant object is retrieved.
+        /// </summary>
+        public bool DynamicType { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NewSensorParameters"/> class.
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>

@@ -304,6 +304,24 @@ Describe "Add-Sensor_IT" {
 
         $sensor | Remove-Object -Force
     }
+
+    It "resolves a sensor with a dynamic type" {
+
+        $device = Get-Device -Id (Settings Device)
+
+        $table = @{
+            name_ = "Base Sensor"
+            sensortype = "snmplibrary"
+            library_="C:\Program Files (x86)\PRTG Network Monitor\snmplibs\Basic Linux Library (UCD-SNMP-MIB).oidlib"
+            interfacenumber_ = 1
+            interfacenumber__check = "1.3.6.1.4.1.2021.2.1.100.1|Basic Linux Library (UCD-SNMP-MIB)|Processes: 1|Processes Error Flag|#|0|0|Processes Error Flag|2|1|0|1|A Error flag to indicate trouble with a process. It goes to 1 if there is an error, 0 if no error.|0|0|0|0||1.3.6.1.4.1.2021.2.1.100|prErrorFlag|1.3.6.1.4.1.2021.2||ASN_INTEGER|0|ASN_INTEGER||Basic Linux Library (UCD-SNMP-MIB)|Processes: #[1.3.6.1.4.1.2021.2.1.1]|100|||||||||||||||||||||||||||||||||||"
+        }
+
+        $params = New-SensorParameters $table -DynamicType
+        $sensor = $device | Add-Sensor $params
+
+        $sensor.Type.StringValue | Should Be "snmpcustomtable"
+    }
     
     It "throws attempting to create dynamic parameters as a read only user" {
 

@@ -69,6 +69,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// that at a minimum the 'name_' and 'sensortype' parameters are specified. If either of these two are missing,
     /// New-SensorParameters will generate an exception.</para>
     /// 
+    /// <para type="description">When sensor parameters are created via the Add-Sensor cmdlet, if the -Resolve parameter is specified
+    /// PrtgAPI will attempt to resolve the resultant sensors based on the sensor type specified in the sensor parameters. If the resulting sensor
+    /// type is capable of changing based on the specified parameters, you can instruct PrtgAPI to broaden its sensor resolution search by specifying
+    /// the -<see cref="DynamicType"/> parameter when creating your parameters object. <see cref="DynamicType"/> property can also be modified on the resulting
+    /// <see cref="NewSensorParameters"/> object that is returned from the New-SensorParameters cmdlet.
+    /// </para>
+    /// 
     /// <para type="description">All sensor parameter types support specifying common sensor parameters (Inherit Triggers, Interval, Priority, etc)
     /// via well typed properties. If these properties are not set, PRTG will automatically use the default values for these fields based on the
     /// type of sensor being created.</para>
@@ -143,6 +150,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
+    ///     <code>C:\> $params = New-SensorParameters $raw -DynamicType</code>
+    ///     <para>Create a set of parameters for creating a sensor with a dynamic type (such as snmplibrary).</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
     ///     <code>C:\> Set-StrictMode -Version 3</code>
     ///     <para>Set the Strict Mode to version 3 for the current PowerShell session.</para>
     /// </example>
@@ -204,6 +216,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Empty)]
         public SwitchParameter Empty { get; set; }
+
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public SwitchParameter DynamicType { get; set; }
 
         private bool ignoreName;
 
@@ -282,6 +298,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 parameters[param.Name] = param.Value;
             }
 
+            if (DynamicType)
+                parameters.DynamicType = true;
+
             return parameters;
         }
 
@@ -310,6 +329,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     throw new InvalidOperationException("Cannot filter targets as multiple target fields are present. Please filter targets manually after parameter creation");
                 }
             }
+
+            if (DynamicType)
+                dynamicParamters.DynamicType = true;
 
             return dynamicParamters;
         }

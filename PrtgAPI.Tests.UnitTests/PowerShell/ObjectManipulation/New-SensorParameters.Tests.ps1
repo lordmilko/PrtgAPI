@@ -76,6 +76,21 @@ Describe "New-SensorParameters" {
             $params.GetType().Name | Should Be "RawSensorParameters"
             $params.Name | Should Be "custom name"
             $params.SensorType | Should Be "custom type"
+            $params.DynamicType | Should Be $false
+        }
+
+        It "creates parameters with a -DynamicType" {
+            $raw =@{
+                "name_" = "custom name"
+                "sensortype" = "custom type"
+            }
+        
+            $params = New-SensorParameters $raw -DynamicType
+
+            $params.GetType().Name | Should Be "RawSensorParameters"
+            $params.Name | Should Be "custom name"
+            $params.SensorType | Should Be "custom type"
+            $params.DynamicType | Should Be $true
         }
 
         It "throws when a raw name isn't specified" {
@@ -281,6 +296,7 @@ Describe "New-SensorParameters" {
 
             $params[$name] | Should Be $expected
             $params.Name | Should Be $expected
+            $params.DynamicType | Should Be $false
         }
 
         It "gets a real parameter CLR property" {
@@ -613,6 +629,14 @@ Describe "New-SensorParameters" {
         }
 
         #endregion
+
+        It "creates parameters with a -DynamicType" {
+            $params = WithResponse "MultiTypeResponse" {
+                $device | New-SensorParameters -RawType exexml -DynamicType
+            }
+
+            $params.DynamicType | Should Be $true
+        }
         
         It "pipes parameters to Add-Sensor" {
 

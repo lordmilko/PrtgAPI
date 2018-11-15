@@ -79,7 +79,8 @@ namespace PrtgAPI.Request
 
                 var str = sensorType is SensorType ? ((Enum)sensorType).EnumToXml() : sensorType?.ToString();
 
-                filters.Add(new SearchFilter(Property.Type, str?.ToLower() ?? string.Empty));
+                if(!((NewSensorParameters)parameters).DynamicType)
+                    filters.Add(new SearchFilter(Property.Type, str?.ToLower() ?? string.Empty));
             }
             else
                 filters.Add(new SearchFilter(Property.Name, parameters.Name));

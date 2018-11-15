@@ -17,7 +17,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// retrieved as part of larger property collections (by specifying no parameters or -<see cref="Raw"/>) or as
     /// individual values (-<see cref="Property"/> or -<see cref="RawProperty"/>). When retrieving property collections
     /// Get-ObjectProperty will fail to retrieve the expected properties if the current user has read only access
-    /// to the specified object. To retrieve properties from read only objects a specific -<see cref="Property"/> or -<see cref="RawProperty"/> must be specified.<para/>
+    /// to the specified object. To retrieve properties from read only objects a specific -<see cref="Property"/> or -<see cref="RawProperty"/> must be specified.</para>
     /// 
     /// <para type="description">Properties that are not currently supported by Get-ObjectProperty can be retrieved by specifying
     /// the -RawProperty parameter. Raw property names can be found by inspecting the "name" attribute of  the &lt;input/&gt; tag
