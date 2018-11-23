@@ -26,23 +26,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// If the new trigger's type is incompatible with the target object, PrtgAPI will throw an exception alerting you to this error.</para>
     /// 
     /// <example>
-    ///     <code>Get-Probe | Get-NotificationTrigger</code>
+    ///     <code>C:\> Get-Probe | Get-NotificationTrigger</code>
     ///     <para>Get all notification triggers defined on all probes</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Device | Get-NotificationTrigger *pager* -Inherited $false</code>
+    ///     <code>C:\> Get-Device | Get-NotificationTrigger *pager* -Inherited $false</code>
     ///     <para>Get all notification triggers from all devices whose OnNotificationAction action name contains "pager"
     /// in the name and are not inherited from any parent objects.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Probe -Id 2001 | Get-NotificationTrigger -Type State</code>
+    ///     <code>C:\> Get-Probe -Id 2001 | Get-NotificationTrigger -Type State</code>
     ///     <para>Get all State notification triggers from the sensor with ID 2001</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>Get-Sensor -Id 1001 | Get-NotificationTrigger -Types</code>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Get-NotificationTrigger -Types</code>
     ///     <para>Get all notification trigger types supported by the object with ID 1001.</para>
     /// </example>
     /// 

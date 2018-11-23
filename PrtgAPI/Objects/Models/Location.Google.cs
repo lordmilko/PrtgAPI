@@ -2,6 +2,7 @@
 
 namespace PrtgAPI
 {
+#pragma warning disable 0649 //Field is never assigned to, and will alwayas have its default value null
     [DataContract]
     internal class GoogleGeoResult
     {
@@ -37,4 +38,5 @@ namespace PrtgAPI
         [DataMember(Name = "location")]
         internal Coordinates Location { get; set; }
     }
+#pragma warning restore 0649
 }

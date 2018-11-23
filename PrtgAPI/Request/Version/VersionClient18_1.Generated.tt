@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 
@@ -19,7 +20,13 @@ namespace PrtgAPI.Request
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal override <#= GetSignature("SetChannelProperty", "void", i) #>(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null)
+        internal override <#= GetAsyncTokenSpecificSignature(
+            "SetChannelProperty",
+            "void",
+            "int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, Tuple<ChannelProperty, object> versionSpecific = null",
+            "int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, CancellationToken token, Tuple<ChannelProperty, object> versionSpecific = null",
+            i
+        ) #>
         {
             if (NeedsLimit(@params))
             {
@@ -45,11 +52,21 @@ for(int i = 0; i < 2; i++)
 
                 foreach (var group in groups)
                 {
-                    <#= CallFunction("base.SetChannelProperty", "group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1)", i) #>;
+                    <#= CallAsyncTokenSpecificFunction(
+                        "base.SetChannelProperty",
+                        "group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, Tuple.Create(group.Item3, (object)group.Item1)",
+                        "group.Item2.Select(c => c.SensorId).ToArray(), channelId, null, @params, token, Tuple.Create(group.Item3, (object)group.Item1)",
+                        i
+                    ) #>;
                 }
             }
             else
-                <#= CallFunction("base.SetChannelProperty", "sensorIds, channelId, null, @params", i) #>;
+                <#= CallAsyncTokenSpecificFunction(
+                    "base.SetChannelProperty",
+                    "sensorIds, channelId, null, @params, versionSpecific",
+                    "sensorIds, channelId, null, @params, token, versionSpecific",
+                    i
+                ) #>;
         }
 <#
 if(i == 0)

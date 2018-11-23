@@ -217,6 +217,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Empty)]
         public SwitchParameter Empty { get; set; }
 
+        /// <summary>
+        /// <para type="description">Specifies whether the resulting sensor type is dynamically determined by the parameters included in the request.
+        /// If this property is true, PrtgAPI will relax its sensor resolution mechanism to ensure the resultant object is retrieved.</para>
+        /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
         public SwitchParameter DynamicType { get; set; }

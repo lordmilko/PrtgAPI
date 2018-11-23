@@ -78,6 +78,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Group -Count 1</code>
     ///     <para>Get only 1 group from PRTG.</para>
+    ///     <para/>
     /// </example>
     /// <example>
     ///     <code>C:\> Get-Group -Id 2001 | Get-Group -Recurse:$false</code>

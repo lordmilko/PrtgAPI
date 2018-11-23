@@ -14,7 +14,7 @@ namespace PrtgAPI.Attributes
         public object RequiredValue { get; private set; }
 
         /// <summary>
-        /// Indicates whether the property specified by <see cref="Name"/> has a dependency on this field when its value is <see cref="RequiredValue"/><para/>
+        /// Indicates whether the property specified by <see cref="Property"/> has a dependency on this field when its value is <see cref="RequiredValue"/><para/>
         /// For example, if a value can have automatic and manual modes, the manual value depends on the mode being manual, however when the mode is manual
         /// the manual value must also be specified.
         /// </summary>

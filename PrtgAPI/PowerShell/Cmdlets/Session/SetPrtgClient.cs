@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// to modify these settings after the session has already been created, such as when you've connected to a GoPrtg Server.</para>
     /// 
     /// <example>
-    ///     <code>Set-PrtgClient -RetryCount 5 -LogLevel Trace,Response</code>
+    ///     <code>C:\> Set-PrtgClient -RetryCount 5 -LogLevel Trace,Response</code>
     ///     <para>Update the RetryCount and LogLevel on the current session's PrtgClient.</para>
     /// </example>
     /// 

@@ -43,7 +43,7 @@ namespace PrtgAPI.Request
                 }
             }
             else
-                base.SetChannelProperty(sensorIds, channelId, null, @params);
+                base.SetChannelProperty(sensorIds, channelId, null, @params, versionSpecific);
         }
 
         internal override async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, List<Channel> channels, ChannelParameter[] @params, CancellationToken token, Tuple<ChannelProperty, object> versionSpecific = null)
@@ -76,7 +76,7 @@ namespace PrtgAPI.Request
                 }
             }
             else
-                await base.SetChannelPropertyAsync(sensorIds, channelId, null, @params, token).ConfigureAwait(false);
+                await base.SetChannelPropertyAsync(sensorIds, channelId, null, @params, token, versionSpecific).ConfigureAwait(false);
         }
     }
 }
