@@ -660,6 +660,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             cmdlet.ProgressManagerEx.CurrentRecord = CurrentRecord;
             cmdlet.ProgressManagerEx.PreviousRecord = PreviousRecord;
+            cmdlet.ProgressManagerEx.RestoreRecordState();
 
             EntirePipeline = CacheManager.GetPipelineInput();
             CmdletPipeline = CacheManager.GetCmdletPipelineInput();
@@ -753,6 +754,8 @@ namespace PrtgAPI.PowerShell.Progress
         {
             if (disposed)
                 return;
+
+            cmdlet.ProgressManagerEx.CmdletOwnsRecord = CurrentRecord.CmdletOwnsRecord;
 
             if (disposing)
             {

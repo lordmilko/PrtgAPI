@@ -20,5 +20,23 @@ namespace PrtgAPI.PowerShell.Progress
         internal long? lastSourceId { get; set; }
 
         internal bool PipeFromSingleVariable { get; set; }
+
+        private bool? cmdletOwnsRecord;
+
+        internal bool CmdletOwnsRecord
+        {
+            get { return cmdletOwnsRecord ?? CurrentRecord.CmdletOwnsRecord; }
+            set
+            {
+                cmdletOwnsRecord = value;
+                CurrentRecord.CmdletOwnsRecord = value;
+            }
+        }
+
+        internal void RestoreRecordState()
+        {
+            if (cmdletOwnsRecord != null)
+                CurrentRecord.CmdletOwnsRecord = cmdletOwnsRecord.Value;
+        }
     }
 }

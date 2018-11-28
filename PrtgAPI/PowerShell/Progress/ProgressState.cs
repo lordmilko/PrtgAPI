@@ -6,7 +6,6 @@ namespace PrtgAPI.PowerShell.Progress
     {
         public ProgressRecordEx ProgressRecord { get; }
 
-
         public void Add(object obj)
         {
             Records.Add(obj);

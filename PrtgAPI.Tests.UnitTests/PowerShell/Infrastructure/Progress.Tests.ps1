@@ -10874,5 +10874,44 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+    It "Action in First -> Second -> Action -Batch:`$true retains ownership of progress record after first seized" {
+        # 1. First will always emit an object.
+        # 2. Second will emit an object the first time it is called
+        # 3. First time Action is called it will seize ownership of Second's object
+        # 4. Second does not emit any additional objects
+
+        # Second's ProcessRecord will open and close several times. Action should always be declared owner
+        # on all subsequent calls
+
+        WithResponse "ProgressOwnershipResponse" {
+            Get-Device | Get-Sensor "Volume IO _Total0" | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total0' (1/1)" 100)
+
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+        ))
+    }
+
     #endregion
 }
