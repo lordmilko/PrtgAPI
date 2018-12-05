@@ -6,21 +6,19 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 #if !DEBUG
-[assembly: AssemblyProduct("PrtgAPI")]
+[assembly: AssemblyProduct("PrtgAPI.PowerShell")]
 #else
-[assembly: AssemblyProduct("PrtgAPI (Debug)")]
+[assembly: AssemblyProduct("PrtgAPI.PowerShell (Debug)")]
 #endif
 
-[assembly: AssemblyDescription(".NET interface for PRTG Network Monitor")]
+[assembly: AssemblyDescription("PowerShell interface for PRTG Network Monitor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyTitle(".NET interface for PRTG Network Monitor")]
+[assembly: AssemblyTitle("PowerShell interface for PRTG Network Monitor")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: InternalsVisibleTo("PrtgAPI.GeneratedCode")]
-[assembly: InternalsVisibleTo("PrtgAPI.PowerShell")]
 [assembly: InternalsVisibleTo("PrtgAPI.Tests.UnitTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -29,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0f6f773a-7053-424e-89f8-43467a695433")]
+[assembly: Guid("c55d8f50-71de-42c6-a758-5eff855f318d")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -42,5 +40,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 //[assembly: AssemblyVersion("1.0.0.0")]
-
 //[assembly: AssemblyFileVersion("1.0.0.0")]

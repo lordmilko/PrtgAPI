@@ -72,7 +72,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "zen");
 
-            var properties = parameters.GetType().GetNormalProperties().Where(p => p.Name != "Targets");
+            var properties = parameters.GetType().GetNormalProperties().Where(p => p.Name != "Targets" && p.Name != "DynamicType");
 
             foreach (var prop in properties)
             {

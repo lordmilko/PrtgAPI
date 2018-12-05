@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.PowerShell", "PrtgAPI.PowerShell\PrtgAPI.PowerShell.csproj", "{C55D8F50-71DE-42C6-A758-5EFF855F318D}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C4572A75-AC79-4E5E-B253-1A545446220A} = {C4572A75-AC79-4E5E-B253-1A545446220A}
@@ -22,6 +24,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F6F773A-7053-424E-89F8-43467A695433}.Release|Any CPU.ActiveCfg = Release|Any CPU

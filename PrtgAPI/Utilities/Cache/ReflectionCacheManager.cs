@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using PrtgAPI.PowerShell;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Reflection.Cache
 {

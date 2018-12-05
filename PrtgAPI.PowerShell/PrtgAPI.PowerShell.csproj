@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C55D8F50-71DE-42C6-A758-5EFF855F318D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PrtgAPI</RootNamespace>
+    <AssemblyName>PrtgAPI.PowerShell</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\PrtgAPI\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\PrtgAPI\PrtgAPI.PowerShell.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\PrtgAPI\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\PrtgAPI\PrtgAPI.PowerShell.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PowerShell\Base\AddObject.cs" />
+    <Compile Include="PowerShell\Base\GoPrtgCmdlet.cs" />
+    <Compile Include="PowerShell\Base\IPrtgMultiPassThruCmdlet.cs" />
+    <Compile Include="PowerShell\Base\IPrtgPassThruCmdlet.cs" />
+    <Compile Include="PowerShell\Base\IStreamableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\IWatchableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\NewObjectCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgMultiOperationCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgObjectCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgOperationCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgPassThruCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgPostProcessCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgProgressCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableFilterCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableStatusCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PrtgTableTagCmdlet.cs" />
+    <Compile Include="PowerShell\Base\StreamableCmdletProvider.cs" />
+    <Compile Include="PowerShell\ChannelUnitMap.cs" />
+    <Compile Include="PowerShell\CloneCmdletConfig.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetChannel.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetDeviceTemplate.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetModificationHistory.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationAction.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetObjectLog.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetObjectProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetProbe.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetPrtgSchedule.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetPrtgStatus.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorFactorySource.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorHistory.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTarget.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorTotals.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSensorType.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\GetSystemInfo.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\NewSearchFilter.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectData\NewSensorFactoryDefinition.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AcknowledgeSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddDevice.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\BackupPrtgConfig.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ClearPrtgCache.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\CloneObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\EditNotificationTriggerProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\LoadPrtgConfigFile.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\MoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewDeviceParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewGroupParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewSensorParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\OpenPrtgObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\PauseObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RefreshObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RefreshSystemInfo.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveNotificationTrigger.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RemoveObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RenameObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RestartProbe.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\RestartPrtgCore.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ResumeObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetChannelProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectPosition.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetObjectProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SimulateErrorStatus.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SortPrtgObject.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\StartAutoDiscovery.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\ConnectPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\DisablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\DisconnectPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\EnablePrtgProgress.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GetPrtgClient.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\ConnectGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\GetGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\InstallGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\SetGoPrtgAlias.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UninstallGoPrtgServer.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UpdateGoPrtgCredential.cs" />
+    <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
+    <Compile Include="PowerShell\DynamicParameterSet.cs" />
+    <Compile Include="PowerShell\Either.cs" />
+    <Compile Include="PowerShell\EventManager.cs" />
+    <Compile Include="PowerShell\FormatGenerator.cs" />
+    <Compile Include="PowerShell\GoPrtg\GoPrtgProfile.cs" />
+    <Compile Include="PowerShell\GoPrtg\GoPrtgServer.cs" />
+    <Compile Include="PowerShell\NameOrObject.cs" />
+    <Compile Include="PowerShell\NameOrScriptBlock.cs" />
+    <Compile Include="PowerShell\ParameterSet.cs" />
+    <Compile Include="PowerShell\Pipeline.cs" />
+    <Compile Include="PowerShell\Position.cs" />
+    <Compile Include="PowerShell\Progress\AbortProgressParser.cs" />
+    <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
+    <Compile Include="PowerShell\Progress\ProcessingOption.cs" />
+    <Compile Include="PowerShell\Progress\ProgressManager.cs" />
+    <Compile Include="PowerShell\Progress\ProgressManager.SelectObject.cs" />
+    <Compile Include="PowerShell\Progress\ProgressManagerEx.cs" />
+    <Compile Include="PowerShell\Progress\ProgressPipeline.cs" />
+    <Compile Include="PowerShell\Progress\ProgressPipelineStack.cs" />
+    <Compile Include="PowerShell\Progress\ProgressRecordEx.cs" />
+    <Compile Include="PowerShell\Progress\ProgressScenario.cs" />
+    <Compile Include="PowerShell\Progress\ProgressStage.cs" />
+    <Compile Include="PowerShell\Progress\ProgressState.cs" />
+    <Compile Include="PowerShell\Progress\ProgressTask.cs" />
+    <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
+    <Compile Include="PowerShell\Progress\ReadyParser.cs" />
+    <Compile Include="PowerShell\Progress\RecordAnalyzer.cs" />
+    <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
+    <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
+    <Compile Include="PowerShell\PrtgSessionState.cs" />
+    <Compile Include="PowerShell\PSObjectParameterContainer.cs" />
+    <Compile Include="PowerShell\PSObjectUtilities.cs" />
+    <Compile Include="PowerShell\PSRawSensorParameters.cs" />
+    <Compile Include="PowerShell\PSVariableEx.cs" />
+    <Compile Include="PowerShell\SensorHistoryFormatter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Version.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Version.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="PowerShell\Functions\New-Credential.ps1" />
+    <None Include="PowerShell\Resources\PrtgAPI.cmd" />
+    <None Include="PowerShell\Resources\PrtgAPI.Format.ps1xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PowerShell\Resources\PrtgAPI.psd1">
+      <DependentUpon>PrtgAPI.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </None>
+    <None Include="PowerShell\Resources\PrtgAPI.psm1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PowerShell\Resources\about_ChannelSettings.help.txt" />
+    <Content Include="PowerShell\Resources\about_ObjectSettings.help.txt" />
+    <Content Include="PowerShell\Resources\about_PrtgAPI.help.txt" />
+    <Content Include="PowerShell\Resources\about_SensorParameters.help.txt" />
+    <Content Include="PowerShell\Resources\about_SensorSettings.help.txt" />
+    <Content Include="PowerShell\Resources\PrtgAPI.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PrtgAPI.psd1</LastGenOutput>
+    </Content>
+    <Content Include="Properties\Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Version.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PrtgAPI\PrtgAPI.csproj">
+      <Project>{0f6f773a-7053-424e-89f8-43467a695433}</Project>
+      <Name>PrtgAPI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)PowerShell\Resources\*.*" "$(TargetDir)"
+xcopy /Y "$(ProjectDir)PowerShell\Functions\*.*" "$(TargetDir)Functions\"
+del "$(TargetDir)\*.tt"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if "$(ConfigurationName)" == "Release" goto :release
+goto :exit
+
+:release
+set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
+%25textTemplatingPath%25 "$(ProjectDir)Properties\Version.tt"
+%25textTemplatingPath%25 "$(ProjectDir)PowerShell\Resources\PrtgAPI.tt"
+
+:exit</PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets" Condition="Exists('..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

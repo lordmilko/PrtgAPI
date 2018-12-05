@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Management.Automation;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -7,7 +6,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents raw parameters used to construct a <see cref="PrtgUrl"/> for creating a new sensor.
     /// </summary>
-    public class RawSensorParameters : PSObjectSensorParameters
+    public class RawSensorParameters : ContainerSensorParameters
     {
         /// <summary>
         /// Determines whether a parameter is in the underlying parameter set.
@@ -35,7 +34,6 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets the underlying custom parameters of this object.
         /// </summary>
-        [Hidden]
         public List<CustomParameter> Parameters
         {
             get

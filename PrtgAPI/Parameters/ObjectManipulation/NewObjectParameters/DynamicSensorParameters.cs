@@ -15,7 +15,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents a dynamic set of raw parameters used to construct a <see cref="PrtgUrl"/> for creating a new sensor.
     /// </summary>
-    public class DynamicSensorParameters : PSObjectSensorParameters, IDynamicMetaObjectProvider, ISourceParameters<Device>
+    public class DynamicSensorParameters : ContainerSensorParameters, IDynamicMetaObjectProvider, ISourceParameters<Device>
     {
         private const string TempName = "TEMP_NAME";
 

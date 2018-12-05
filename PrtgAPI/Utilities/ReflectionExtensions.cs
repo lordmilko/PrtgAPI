@@ -111,9 +111,9 @@ namespace PrtgAPI.Reflection
         /// <returns>The field info of the specified field. If the field cannot be found or is not internal, this method returns null.</returns>
         public static FieldInfo GetInternalFieldInfo(this object obj, string name)
         {
-            var field = obj.GetType().GetField(name, internalFlags);
+            var info = obj.GetType().GetField(name, internalFlags);
 
-            return field;
+            return info;
         }
 
         public static FieldInfo GetInternalFieldInfo(this Type type, string name)
@@ -121,11 +121,29 @@ namespace PrtgAPI.Reflection
             return type.GetField(name, internalFlags);
         }
 
-        public static FieldInfo GetInternalStaticField(this object obj, string name)
+        public static FieldInfo GetInternalStaticFieldInfo(this Type type, string name)
         {
-            var field = obj.GetType().GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+            return type.GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+        }
 
-            return field;
+        public static object GetInternalStaticField(this object obj, string name)
+        {
+            var info = obj.GetType().GetInternalStaticFieldInfo(name);
+
+            if (info == null)
+                throw new MissingMemberException(obj.GetType().Name, name);
+
+            return info.GetValue(null);
+        }
+
+        public static object GetInternalStaticField(this Type type, string name)
+        {
+            var info = type.GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (info == null)
+                throw new MissingMemberException(type.Name, name);
+
+            return info.GetValue(null);
         }
 
         /// <summary>

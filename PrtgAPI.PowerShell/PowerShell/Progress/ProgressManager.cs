@@ -841,7 +841,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (!PrtgSessionState.EnableProgress)
                 return -1;
 
-            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId").GetValue(null));
+            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId"));
 
             if (PipeFromVariableWithProgress && FirstInChain)
             {

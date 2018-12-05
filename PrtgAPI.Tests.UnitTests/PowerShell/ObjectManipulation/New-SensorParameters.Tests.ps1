@@ -73,7 +73,7 @@ Describe "New-SensorParameters" {
         
             $params = New-SensorParameters $raw
 
-            $params.GetType().Name | Should Be "RawSensorParameters"
+            $params.GetType().Name | Should Be "PSRawSensorParameters"
             $params.Name | Should Be "custom name"
             $params.SensorType | Should Be "custom type"
             $params.DynamicType | Should Be $false
@@ -87,7 +87,7 @@ Describe "New-SensorParameters" {
         
             $params = New-SensorParameters $raw -DynamicType
 
-            $params.GetType().Name | Should Be "RawSensorParameters"
+            $params.GetType().Name | Should Be "PSRawSensorParameters"
             $params.Name | Should Be "custom name"
             $params.SensorType | Should Be "custom type"
             $params.DynamicType | Should Be $true

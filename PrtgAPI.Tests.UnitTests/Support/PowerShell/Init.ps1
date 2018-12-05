@@ -66,7 +66,7 @@ function ImportModules($testProject, $scriptRoot)
 
     # Get Module Path
 
-    $module = $rootFolder + "PrtgAPI\bin\" + $configuration + "\PrtgAPI"
+    $module = $rootFolder + "PrtgAPI.PowerShell\bin\" + $configuration + "\PrtgAPI"
     
     if($testModuleDir -ne $null)
     {

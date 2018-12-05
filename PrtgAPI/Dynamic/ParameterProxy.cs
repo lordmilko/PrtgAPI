@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
 using PrtgAPI.Parameters;
-using PrtgAPI.PowerShell;
 
 namespace PrtgAPI.Dynamic
 {
@@ -37,7 +36,7 @@ namespace PrtgAPI.Dynamic
                 var customParameters = instance[Parameter.Custom] as List<CustomParameter>;
 
                 if (customParameters != null)
-                    return customParameters.Where(p => p.Value is PSVariableEx).Select(p => ((PSVariableEx)p.Value).Name);
+                    return customParameters.Where(p => p.Value is IParameterContainerValue).Select(p => ((IParameterContainerValue)p.Value).Name);
 
                 return base.GetDynamicMemberNames(instance);
             }

@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters;
 using PrtgAPI.Targets;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Infrastructure;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -221,6 +225,46 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var val = parameters.FAKE_PARAMETER;
 
             Assert.AreEqual("test", val, "Value was not correct");
+        }
+
+        [TestMethod]
+        public void DynamicSensorParameters_WithoutPSObjectUtilities_SingleObject()
+        {
+            TestHelpers.WithPSObjectUtilities(() =>
+            {
+                var parameters = client.GetDynamicSensorParameters(1001, "exexml");
+
+                var val = true;
+
+                parameters["mutexname"] = val;
+                Assert.AreEqual(val, parameters["mutexname"]);
+
+                Assert.IsInstanceOfType(((List<CustomParameter>)(parameters.GetParameters()[Parameter.Custom])).First(p => p.Name == "mutexname_").Value, typeof(SimpleParameterContainerValue));
+
+                var url = PrtgUrlTests.CreateUrl(parameters);
+
+                Assert.IsTrue(url.Contains("mutexname_=True"));
+            }, new DefaultPSObjectUtilities());
+        }
+
+        [TestMethod]
+        public void DynamicSensorParameters_WithoutPSObjectUtilities_ObjectArray()
+        {
+            TestHelpers.WithPSObjectUtilities(() =>
+            {
+                var parameters = client.GetDynamicSensorParameters(1001, "exexml");
+
+                var arr = new[] { 1, 2 };
+
+                parameters["mutexname"] = arr;
+                Assert.AreEqual(arr, parameters["mutexname"]);
+
+                Assert.IsInstanceOfType(((List<CustomParameter>)(parameters.GetParameters()[Parameter.Custom])).First(p => p.Name == "mutexname_").Value, typeof(SimpleParameterContainerValue));
+
+                var url = PrtgUrlTests.CreateUrl(parameters);
+
+                Assert.IsTrue(url.Contains("mutexname_=1&mutexname_=2"));
+            }, new DefaultPSObjectUtilities());
         }
 
         private PrtgClient client => Initialize_Client(new ExeFileTargetResponse());

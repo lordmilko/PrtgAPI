@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Infrastructure;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
@@ -350,6 +351,46 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             {
                 var val = parameters["customParam_"];
             }, "Parameter with name 'customParam_' does not exist.");
+        }
+
+        [TestMethod]
+        public void RawSensorParameters_WithoutPSObjectUtilities_SingleObject()
+        {
+            TestHelpers.WithPSObjectUtilities(() =>
+            {
+                var parameters = new RawSensorParameters("first", "second");
+
+                var val = true;
+
+                parameters["third"] = val;
+                Assert.AreEqual(val, parameters["third"]);
+
+                Assert.IsInstanceOfType(parameters.Parameters.First(p => p.Name == "third").Value, typeof(SimpleParameterContainerValue));
+
+                var url = PrtgUrlTests.CreateUrl(parameters);
+
+                Assert.AreEqual("name_=first&third=True&sensortype=second", url);
+            }, new DefaultPSObjectUtilities());
+        }
+
+        [TestMethod]
+        public void RawSensorParameters_WithoutPSObjectUtilities_ObjectArray()
+        {
+            TestHelpers.WithPSObjectUtilities(() =>
+            {
+                var parameters = new RawSensorParameters("first", "second");
+
+                var arr = new[] { 1, 2 };
+
+                parameters["third"] = arr;
+                Assert.AreEqual(arr, parameters["third"]);
+
+                Assert.IsInstanceOfType(parameters.Parameters.First(p => p.Name == "third").Value, typeof(SimpleParameterContainerValue));
+
+                var url = PrtgUrlTests.CreateUrl(parameters);
+
+                Assert.AreEqual("name_=first&third=1&third=2&sensortype=second", url);
+            }, new DefaultPSObjectUtilities());
         }
 
         #endregion

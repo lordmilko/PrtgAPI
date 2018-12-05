@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support
 {
@@ -127,6 +129,22 @@ namespace PrtgAPI.Tests.UnitTests.Support
             var t = obj.GetType();
 
             return t.IsClass && t.Namespace.StartsWith("PrtgAPI");
+        }
+
+        internal static void WithPSObjectUtilities(Action action, IPSObjectUtilities utilities)
+        {
+            var instance = typeof(PSObjectUtilities).GetInternalStaticFieldInfo("instance");
+
+            try
+            {
+                instance.SetValue(null, new DefaultPSObjectUtilities());
+
+                action();
+            }
+            finally
+            {
+                instance.SetValue(null, null);
+            }
         }
     }
 }

@@ -2,13 +2,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell
 {
     [ExcludeFromCodeCoverage]
-    class PSVariableEx : PSVariable, IMultipleSerializable
+    class PSVariableEx : PSVariable, IMultipleSerializable, IParameterContainerValue
     {
         internal string RawName { get; set; }
 
@@ -32,10 +33,10 @@ namespace PrtgAPI.PowerShell
         public override object Value
         {
             get { return base.Value; }
-            set { SetValue(value, false); }
+            set { ((IParameterContainerValue)this).SetValue(value, false); }
         }
 
-        internal void SetValue(object value, bool safe)
+        void IParameterContainerValue.SetValue(object value, bool safe)
         {
             if (safe)
                 base.Value = value;

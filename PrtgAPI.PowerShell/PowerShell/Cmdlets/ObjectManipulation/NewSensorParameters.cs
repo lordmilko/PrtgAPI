@@ -264,7 +264,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             if (ParameterSetName == ParameterSet.Empty)
             {
-                parameters = new RawSensorParameters("fake_name", "fake_sensortype")
+                parameters = new PSRawSensorParameters("fake_name", "fake_sensortype")
                 {
                     Parameters = new List<CustomParameter>()
                 };
@@ -290,7 +290,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (!RawParameters.ContainsKey(SensorTypeParameter))
                 throw new InvalidOperationException($"Hashtable record '{SensorTypeParameter}' is mandatory, however a value was not specified'");
 
-            var parameters = new RawSensorParameters(RawParameters[NameParameter]?.ToString(), RawParameters[SensorTypeParameter]?.ToString());
+            var parameters = new PSRawSensorParameters(RawParameters[NameParameter]?.ToString(), RawParameters[SensorTypeParameter]?.ToString());
 
             var toAdd = RawParameters.Keys.Cast<object>()
                     .Where(k => k.ToString() != SensorTypeParameter)

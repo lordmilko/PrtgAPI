@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Management.Automation;
 using System.Reflection;
 using PrtgAPI.Attributes;
 using PrtgAPI.Reflection;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Parameters.Helpers;
-using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
 using PrtgAPI.Utilities;
@@ -17,14 +15,11 @@ namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects,
-    /// capable of functioning as both a <see cref="Dictionary{TKey, TValue}"/>  and a <see cref="PSObject"/>.</para>
+    /// capable of functioning as both a <see cref="Dictionary{TKey, TValue}"/> and a secondary container type.</para>
     /// </summary>
-    public abstract class PSObjectSensorParameters : NewSensorParameters, IDynamicParameters
+    public abstract class ContainerSensorParameters : NewSensorParameters, IDynamicParameters
     {
-        //We create a PSObject that wraps ourselves and append our PSVariableProperty values to it.
-        //When we write to the pipeline, PowerShell will wrap us in a PSObject and add our previous
-        //members from the PSObject._instanceMembersResurrectionTable
-        internal PSObject psObject;
+        IParameterContainer container;
 
         private bool trimName;
 
@@ -87,14 +82,15 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PSObjectSensorParameters"/> class.
+        /// Initializes a new instance of the <see cref="ContainerSensorParameters"/> class.
         /// </summary>
         /// <param name="sensorName">The name to use for this sensor.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
         /// <param name="trimName">Whether to trim trailing underscores when doing parameter name lookups.</param>
-        protected PSObjectSensorParameters(string sensorName, string sensorType, bool trimName) : base(sensorName, sensorType)
+        protected ContainerSensorParameters(string sensorName, string sensorType, bool trimName) : base(sensorName, sensorType)
         {
-            psObject = new PSObject(this);
+            container = PSObjectUtilities.Instance.GetContainer();
+            container.Initialize(this);
             this.trimName = trimName;
         }
 
@@ -136,13 +132,16 @@ namespace PrtgAPI.Parameters
             if (TypedProperties.TryGetValue(name, out prop, true, trimName))
                 return prop.Item2.GetValue(this);            
 
-            var matches = InternalParameters.Where(p => HasName(p, name, trimName)).Select(p =>
-            {
-                if (p.Value is PSVariable)
-                    return ((PSVariableEx)p.Value).Value;
+            var matches = InternalParameters
+                .Where(p => HasName(p, name, trimName))
+                .Select(p =>
+                {
+                    if (p.Value is IParameterContainerValue)
+                        return ((IParameterContainerValue)p.Value).Value;
 
-                return p.Value;
-            }).ToList();
+                    return p.Value;
+                })
+                .ToList();
 
             if (matches.Count == 1)
                 return matches.First();
@@ -196,10 +195,10 @@ namespace PrtgAPI.Parameters
             {
                 var singleProp = prop.First();
 
-                var ps = singleProp.Value as PSVariableEx;
+                var cv = singleProp.Value as IParameterContainerValue;
 
-                if (ps != null) //We're a custom parameter, like exeparams
-                    ps.SetValue(value, true);
+                if (cv != null) //We're a custom parameter, like exeparams
+                    cv.SetValue(value, true);
                 else
                 {
                     if (TrySet(TypedProperties, name, value, (v, t) => t.Item2.SetValue(this, v)))
@@ -216,19 +215,12 @@ namespace PrtgAPI.Parameters
         {
             var param = new CustomParameter(name, null, ParameterType.MultiParameter);
 
-            var var = new PSVariableEx(
-                name,
-                value,
-                v => this[name] = v,
-                trimName
-            );
+            var parameterValue = container.CreateValue(name, value, trimName);
 
-            param.Value = var;
+            param.Value = parameterValue;
 
             InternalParameters.Add(param);
-
-            //Add will replace the existing property value if a member with the same name already exists
-            psObject.Properties.Add(new PSVariableProperty(var));
+            container.Add(parameterValue);
         }
 
         internal bool HasName(CustomParameter param, string name, bool ignoreUnderscore = true)

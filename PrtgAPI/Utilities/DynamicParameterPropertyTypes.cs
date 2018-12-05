@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace PrtgAPI.PowerShell
+namespace PrtgAPI.Utilities
 {
     [ExcludeFromCodeCoverage]
     class DynamicParameterPropertyTypes

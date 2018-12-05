@@ -54,7 +54,7 @@ namespace PrtgAPI.PowerShell.Base
 
             //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
             //Only parse types that are defined in the PrtgAPI assembly.
-            if (property.PropertyType.Assembly.FullName == GetType().Assembly.FullName && !property.PropertyType.IsEnum)
+            if (IsPrtgAPIProperty(property) && !property.PropertyType.IsEnum)
             {
                 var method = property.PropertyType.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
 
@@ -87,6 +87,15 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             return value;
+        }
+
+        private bool IsPrtgAPIProperty(PropertyInfo property)
+        {
+            var propertyAssembly = property.PropertyType.Assembly.FullName;
+            var thisAssembly = GetType().Assembly.FullName;
+            var prtgAPIAssembly = typeof(PrtgClient).Assembly.FullName;
+
+            return propertyAssembly == thisAssembly || propertyAssembly == prtgAPIAssembly;
         }
 
         private void CompleteOperationProgress()
