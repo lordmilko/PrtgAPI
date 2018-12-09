@@ -63,5 +63,14 @@ namespace PrtgAPI.Request.Serialization
             return ((Func<XmlExpressionSerializerImpl, ObjectProperty, string, object>)lambda)(this, property, rawValue);
 #endif
         }
+
+        public object DeserializeObjectProperty(ObjectPropertyInternal property, string rawValue)
+        {
+#if DEBUG && DEBUG_SERIALIZATION
+            return ((Func<XmlExpressionSerializerImpl, ObjectPropertyInternal, string, TypeBuilder, object>)lambda)(this, property, rawValue, typeBuilder);
+#else
+            return ((Func<XmlExpressionSerializerImpl, ObjectPropertyInternal, string, object>)lambda)(this, property, rawValue);
+#endif
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System.Xml.Serialization;
+
 namespace PrtgAPI
 {
     /// <summary>
@@ -15,6 +17,14 @@ namespace PrtgAPI
 
         [XmlElement("injected_restartoptions")]
         public ProbeRestartOption RestartOption { get; set; }*/
+
+        /// <summary>
+        /// Whether this probe has been confirmed for use within this PRTG Core.<para/>If this value is false,
+        /// the probe has neither been approved nor denied.<para/>If a probe is denied, its GID will be blacklisted
+        /// and it will be removed from PRTG.
+        /// </summary>
+        [XmlElement("injected_authorized")]
+        public bool ProbeApproved { get; set; }
     }
 }
 

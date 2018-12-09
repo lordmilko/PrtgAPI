@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Xml.Linq;
 using PrtgAPI.Parameters.Helpers;
 
@@ -11,7 +12,13 @@ namespace PrtgAPI.Request.Serialization
             return (T)new XmlReflectionSerializerImpl(typeof(T)).Deserialize(XDocument.Load(reader), null, validateValueTypes);
         }
 
-        public object DeserializeObjectProperty(ObjectProperty property, string rawValue)
+        public object DeserializeObjectProperty(ObjectProperty property, string rawValue) =>
+            DeserializeObjectPropertyInternal(property, rawValue);
+
+        public object DeserializeObjectProperty(ObjectPropertyInternal property, string rawValue) =>
+            DeserializeObjectPropertyInternal(property, rawValue);
+
+        private object DeserializeObjectPropertyInternal(Enum property, string rawValue)
         {
             var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
             var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);

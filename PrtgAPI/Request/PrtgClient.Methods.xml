@@ -1022,13 +1022,8 @@
                         <Parameter name="objectId" type="int" description="The ID of the object to retrieve the property from."/>
                         <Parameter name="property" type="ObjectProperty" description="The well known property to retrieve."/>
 
-                        <Body expression="false">
-                            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
-                            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
-
-                            var rawValue = <Call name="GetObjectPropertyRaw" args="objectId, rawName, cache.Property.PropertyType == typeof(string)"/>;
-
-                            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
+                        <Body expression="true">
+                            <Call name="GetObjectPropertyInternal" args="objectId, property"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="GetObjectProperty" returns="T">
@@ -1350,6 +1345,22 @@
 
                     <Body expression="true">
                         <Call name="RestartCoreInternal" args="waitForRestart, progressCallback, token"/>
+                    </Body>
+                </InlineMethodDef>
+                <InlineMethodDef name="ApproveProbe" returns="void">
+                    <Summary>Approves or denies a newly installed probe for use within PRTG.</Summary>
+                    <Exception type="InvalidOperationException" description="The specified object ID is not a probe or is a probe that has already been approved."/>
+                    
+                    <Parameter name="probeId" type="int" description="The ID of the probe to set the approval status of."/>
+                    <Parameter name="action" type="ProbeApproval" description="The approval action to perform for the probe."/>
+
+                    <Body expression="false">
+                        var approved = <Call name="GetProbeApprovalStatus" args="probeId"/>;
+
+                        if (approved)
+                            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+
+                        <Call name="ApproveProbeInternal" args="probeId, action"/>;
                     </Body>
                 </InlineMethodDef>
             </Region>

@@ -20,5 +20,12 @@ namespace PrtgAPI.Request.Serialization
 
             return serializer.DeserializeObjectProperty(property, rawValue);
         }
+
+        public object DeserializeObjectProperty(ObjectPropertyInternal property, string rawValue)
+        {
+            var serializer = new XmlExpressionSerializerImpl(typeof(ObjectPropertyInternal), null);
+
+            return serializer.DeserializeObjectProperty(property, rawValue);
+        }
     }
 }

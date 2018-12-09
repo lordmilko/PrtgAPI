@@ -8,6 +8,8 @@ namespace PrtgAPI.Request.Serialization
 
         object DeserializeObjectProperty(ObjectProperty property, string rawValue);
 
+        object DeserializeObjectProperty(ObjectPropertyInternal property, string rawValue);
+
         void Update<T>(XmlReader reader, T target);
     }
 }

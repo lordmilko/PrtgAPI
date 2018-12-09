@@ -121,6 +121,12 @@ namespace PrtgAPI
         [Description("addgroup2.htm")]
         AddGroup2,
 
+        /// <summary>
+        /// Approve/Deny new probes
+        /// </summary>
+        [Description("probestate.htm")]
+        ProbeState,
+
         [Description("restartprobes.htm")]
         RestartProbes,
 

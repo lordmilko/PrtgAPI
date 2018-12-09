@@ -89,6 +89,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddGroup.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\AddSensor.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ApproveProbe.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\BackupPrtgConfig.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\ClearPrtgCache.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\CloneObject.cs" />

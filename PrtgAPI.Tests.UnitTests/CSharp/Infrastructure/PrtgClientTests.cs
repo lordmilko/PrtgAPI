@@ -534,6 +534,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return "1";
             if (t == typeof(Position))
                 return Position.Up;
+            if (t == typeof(ProbeApproval))
+                return ProbeApproval.Allow;
             if (t == typeof(SensorOrDeviceOrGroupOrProbe))
             {
                 return new Sensor

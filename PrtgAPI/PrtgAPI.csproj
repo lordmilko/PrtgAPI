@@ -112,6 +112,7 @@
     <Compile Include="Enums\Functions\CsvFunction.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Enums\NotificationType.cs" />
+    <Compile Include="Enums\ProbeApproval.cs" />
     <Compile Include="Enums\RestartCoreStage.cs" />
     <Compile Include="Enums\Serialization\SortDirection.cs" />
     <Compile Include="Enums\Serialization\ObjectPropertyCategory.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Parameters\Helpers\IPropertyCacheResolver.cs" />
     <Compile Include="Parameters\Helpers\ObjectPropertyParser.cs" />
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
+    <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Request\Version\VersionClient17_4.cs" />
     <Compile Include="Utilities\DynamicParameterPropertyTypes.cs" />
     <Compile Include="Utilities\FluentExpressions.cs" />

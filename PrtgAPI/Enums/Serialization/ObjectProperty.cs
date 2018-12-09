@@ -18,7 +18,10 @@ namespace PrtgAPI
         HasDeviceTemplate,
 
         [TypeLookup(typeof(SpecialPropertySettings))]
-        ChannelUnit
+        ChannelUnit,
+
+        [TypeLookup(typeof(ProbeSettings))]
+        ProbeApproved
     }
 
     /// <summary>

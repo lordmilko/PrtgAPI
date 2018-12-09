@@ -53,7 +53,7 @@ namespace PrtgAPI.Request.Serialization
             return Deserialize(type, obj, elm, properties);
         }
 
-        public static object DeserializeRawPropertyValue(ObjectProperty property, string rawName, string rawValue)
+        public static object DeserializeRawPropertyValue(Enum property, string rawName, string rawValue)
         {
             var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
             var deserializer = new XmlReflectionSerializerImpl(typeLookup);

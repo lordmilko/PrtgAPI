@@ -104,5 +104,10 @@
         internal const string TriggerToDestination = "TriggerToDestinationSet";
 
         internal const string TargetForSource = "TargetForSourceSet";
+
+        internal const string Deny = "DenySet";
+        internal const string DenyManual = "DenyManual";
+        internal const string AutoDiscover = "AutoDiscover";
+        internal const string AutoDiscoverManual = "AutoDiscoverManual";
     }
 }

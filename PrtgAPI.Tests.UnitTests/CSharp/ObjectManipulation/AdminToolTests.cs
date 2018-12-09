@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -160,5 +161,113 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             return customClient;
         }
+
+        #region Approve Probe
+
+        [TestMethod]
+        public void AdminTool_ApproveProbe_AllTypes()
+        {
+            Action<int, ProbeApproval, string> execute = (id, action, str) =>
+            {
+                var urls = new[]
+                {
+                    $"https://prtg.example.com/api/getobjectproperty.htm?id={id}&name=authorized&username=username&passhash=12345678",
+                    $"https://prtg.example.com/api/probestate.htm?id={id}&action={str}&username=username&passhash=12345678"
+                };
+
+                Execute(c => c.ApproveProbe(id, action), urls);
+            };
+
+            execute(1001, ProbeApproval.Allow, "allow");
+            execute(1001, ProbeApproval.Deny, "deny");
+            execute(1001, ProbeApproval.AllowAndDiscover, "allowanddiscover");
+        }
+
+        [TestMethod]
+        public async Task AdminTool_ApproveProbe_AllTypesAsync()
+        {
+            Func<int, ProbeApproval, string, Task> execute = async (id, action, str) =>
+            {
+                var urls = new[]
+                {
+                    $"https://prtg.example.com/api/getobjectproperty.htm?id={id}&name=authorized&username=username&passhash=12345678",
+                    $"https://prtg.example.com/api/probestate.htm?id={id}&action={str}&username=username&passhash=12345678"
+                };
+
+                await ExecuteAsync(async c => await c.ApproveProbeAsync(id, action), urls);
+            };
+
+            await execute(1001, ProbeApproval.Allow, "allow");
+            await execute(1001, ProbeApproval.Deny, "deny");
+            await execute(1001, ProbeApproval.AllowAndDiscover, "allowanddiscover");
+        }
+
+        [TestMethod]
+        public void AdminTool_ApproveProbe_AlreadyApproved()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.ApproveProbe(1002, ProbeApproval.Allow),
+                "probe has already been approved"
+            );
+        }
+
+        [TestMethod]
+        public async Task AdminTool_ApproveProbe_AlreadyApprovedAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.ApproveProbeAsync(1002, ProbeApproval.Allow),
+                "probe has already been approved"
+            );
+        }
+
+        [TestMethod]
+        public void AdminTool_ApproveProbe_NotAProbe()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.ApproveProbe(9001, ProbeApproval.Allow),
+                "does not appear to be a probe"
+            );
+        }
+
+        [TestMethod]
+        public async Task AdminTool_ApproveProbe_NotAProbeAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.ApproveProbeAsync(9001, ProbeApproval.Allow),
+                "does not appear to be a probe"
+            );
+        }
+
+        [TestMethod]
+        public void AdminTool_ApproveProbe_NotAProbe_NonEnglish()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.ApproveProbe(9002, ProbeApproval.Allow),
+                "does not appear to be a probe"
+            );
+        }
+
+        [TestMethod]
+        public async Task AdminTool_ApproveProbe_NotAProbe_NonEnglishAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.ApproveProbeAsync(9001, ProbeApproval.Allow),
+                "does not appear to be a probe"
+            );
+        }
+
+        #endregion
     }
 }

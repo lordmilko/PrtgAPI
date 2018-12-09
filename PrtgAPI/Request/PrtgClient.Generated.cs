@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
@@ -1274,6 +1275,92 @@ namespace PrtgAPI
                 Log(responseText, LogLevel.Response);
 
                 throw;
+            }
+        }
+
+        //######################################
+        // GetObjectPropertyRawInternal
+        //######################################
+
+        private string GetObjectPropertyRawInternal(int objectId, Enum property)
+        {
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
+
+            var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
+
+            return rawValue;
+        }
+
+        private async Task<string> GetObjectPropertyRawInternalAsync(int objectId, Enum property, CancellationToken token)
+        {
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
+
+            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
+
+            return rawValue;
+        }
+
+        //######################################
+        // GetObjectPropertyInternal
+        //######################################
+
+        private object GetObjectPropertyInternal(int objectId, Enum property)
+        {
+            var rawValue = GetObjectPropertyRawInternal(objectId, property);
+
+            if (property is ObjectProperty)
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectProperty) property, rawValue);
+            else
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectPropertyInternal) property, rawValue);
+        }
+
+        private async Task<object> GetObjectPropertyInternalAsync(int objectId, Enum property, CancellationToken token)
+        {
+            var rawValue = await GetObjectPropertyRawInternalAsync(objectId, property, token).ConfigureAwait(false);
+
+            if (property is ObjectProperty)
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectProperty) property, rawValue);
+            else
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectPropertyInternal) property, rawValue);
+        }
+
+        //######################################
+        // GetProbeApprovalStatus
+        //######################################
+
+        internal bool GetProbeApprovalStatus(int probeId)
+        {
+            try
+            {
+                var result = GetObjectPropertyRawInternal(probeId, ObjectPropertyInternal.ProbeApproved);
+
+                if (result != "0" && result != "1")
+                    throw new PrtgRequestException($"Probe authorization status was '{result}', however should have been '0' or '1'. Object is most likely not a probe.");
+
+                return result == "1";
+            }
+            catch(PrtgRequestException ex)
+            {
+                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
+            }
+        }
+
+        internal async Task<bool> GetProbeApprovalStatusAsync(int probeId, CancellationToken token)
+        {
+            try
+            {
+                var result = await GetObjectPropertyRawInternalAsync(probeId, ObjectPropertyInternal.ProbeApproved, token).ConfigureAwait(false);
+
+                if (result != "0" && result != "1")
+                    throw new PrtgRequestException($"Probe authorization status was '{result}', however should have been '0' or '1'. Object is most likely not a probe.");
+
+                return result == "1";
+            }
+            catch(PrtgRequestException ex)
+            {
+                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
             }
         }
     }

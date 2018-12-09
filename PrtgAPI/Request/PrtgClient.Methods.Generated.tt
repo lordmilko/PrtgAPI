@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
-using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI

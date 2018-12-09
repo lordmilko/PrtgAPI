@@ -654,6 +654,12 @@ namespace PrtgAPI
             #endregion
             #region Get Single Raw Property
 
+        private object GetObjectProperty(int objectId, ObjectPropertyInternal property) =>
+            GetObjectPropertyInternal(objectId, property);
+
+        private async Task<object> GetObjectPropertyAsync(int objectId, ObjectPropertyInternal property, CancellationToken token) =>
+            await GetObjectPropertyInternalAsync(objectId, property, token).ConfigureAwait(false);
+
         private string GetObjectPropertyRawInternal(GetObjectPropertyRawParameters parameters, string property)
         {
             var response = ObjectEngine.GetObjectsXml(
@@ -788,6 +794,12 @@ namespace PrtgAPI
             if (waitForRestart)
                 await WaitForCoreRestartAsync(restartTime.Value, progressCallback, token).ConfigureAwait(false);
         }
+
+        internal void ApproveProbeInternal(int probeId, ProbeApproval action) =>
+            RequestEngine.ExecuteRequest(new ApproveProbeParameters(probeId, action));
+
+        internal async Task ApproveProbeInternalAsync(int probeId, ProbeApproval action, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new ApproveProbeParameters(probeId, action)).ConfigureAwait(false);
 
         #endregion
     #endregion

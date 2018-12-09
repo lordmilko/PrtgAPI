@@ -14,15 +14,17 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 {
     class ObjectPropertyBuilder
     {
+        private Type propertyType;
         private Dictionary<Type, List<PropertyCache>> propertyMap = new Dictionary<Type, List<PropertyCache>>();
 
-        public ObjectPropertyBuilder()
+        public ObjectPropertyBuilder(Type propertyType)
         {
+            this.propertyType = propertyType;
         }
 
         public LambdaExpression BuildDeserializer()
         {
-            var property = Expression.Parameter(typeof(ObjectProperty), "property");
+            var property = Expression.Parameter(propertyType, "property");
             var rawValue = Expression.Parameter(typeof(string), "rawValue");
 
             var result = Expression.Variable(typeof(object), "result");
@@ -50,7 +52,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
         private LambdaExpression MakeSwitchLambda(ParameterExpression property, ParameterExpression rawValue)
         {
-            var c = ReflectionCacheManager.GetEnumCache(typeof(ObjectProperty)).Cache;
+            var c = ReflectionCacheManager.GetEnumCache(propertyType).Cache;
 
             var fields = c.Fields;
 
@@ -93,7 +95,10 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             var viaObject = false;
 
-            var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
+            var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>()?.Class; //ObjectPropertyInternal members don't necessarily have a type lookup
+
+            if (typeLookup == null)
+                return null;
 
             var mappings = ReflectionCacheManager.Map(typeLookup).Cache;
             var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);

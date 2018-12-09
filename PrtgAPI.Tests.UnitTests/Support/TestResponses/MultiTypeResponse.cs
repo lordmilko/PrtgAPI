@@ -119,6 +119,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(CommandFunction.DiscoverNow):
                 case nameof(CommandFunction.LoadLookups):
                 case nameof(CommandFunction.MoveObjectNow):
+                case nameof(CommandFunction.ProbeState):
                 case nameof(CommandFunction.RecalcCache):
                 case nameof(CommandFunction.Rename):
                 case nameof(CommandFunction.RestartServer):
@@ -535,6 +536,30 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
             if (components["name"] == "aggregationchannel")
                 return new RawPropertyResponse("#1:Channel\nchannel(4001, 0)\n#2:Channel\nchannel(4002, 0)");
+
+            if(components["name"] == "authorized")
+            {
+                var str = string.Empty;
+
+                switch(components["id"])
+                {
+                    case "1":
+                    case "1001": //Not approved yet
+                        str = "0";
+                        break;
+                    case "1002": //Already approved
+                        str = "1";
+                        break;
+                    case "9001": //Not a probe (English)
+                        str = "(Property not found)";
+                        break;
+                    default:
+                        str = "(Test)";
+                        break;
+                }
+
+                return new RawPropertyResponse(str);
+            }
 
             components.Remove("username");
             components.Remove("passhash");

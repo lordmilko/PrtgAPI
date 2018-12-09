@@ -209,11 +209,11 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (trueType == null)
                 trueType = delegateType;
 
-            if(trueType == typeof(ObjectProperty))
+            if(trueType == typeof(ObjectProperty) || trueType == typeof(ObjectPropertyInternal))
             {
                 //A single ObjectProperty doesn't actually bother with XML; it simply skips straight
                 //to deserializing the value
-                return MakeObjectPropertyLambda();
+                return MakeObjectPropertyLambda(trueType);
             }
 
             var generator = new XmlSerializerGenerator(delegateType, trueType, update);
@@ -297,9 +297,9 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 return new Expression[] { XmlExpressionConstants.Serializer, XmlExpressionConstants.XmlReader, Expression.Constant(true) };
         }
 
-        private static LambdaExpression MakeObjectPropertyLambda()
+        private static LambdaExpression MakeObjectPropertyLambda(Type trueType)
         {
-            var builder = new ObjectPropertyBuilder();
+            var builder = new ObjectPropertyBuilder(trueType);
 
             return builder.BuildDeserializer();
         }

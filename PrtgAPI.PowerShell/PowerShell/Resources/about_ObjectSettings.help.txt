@@ -175,6 +175,12 @@ LONG DESCRIPTION
     | --------------------------- | --------- | -------------------------------------------------------------------- |
     | AutoDiscoverySchedule       |    Yes    | How often auto-discovery operations should periodically be performed |
 
+    Probe Settings
+
+    | Special                     | Get | Set | Description                                                          |
+    | --------------------------- | --------- | -------------------------------------------------------------------- |
+    | ProbeApproved               | Yes | No  | Whether the probe has been confirmed for use in PRTG yet             |
+
     Group Settings
 
     | Group Type                  | Get | Set | Description                                                          |

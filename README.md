@@ -224,6 +224,7 @@ Add-Device
 Add-Group
 Add-Sensor
 Acknowledge-Sensor
+Approve-Probe
 Backup-PrtgConfig
 Clear-PrtgCache
 Clone-Object

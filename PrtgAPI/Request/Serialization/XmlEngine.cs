@@ -25,5 +25,10 @@ namespace PrtgAPI.Request.Serialization
         {
             return serializer.DeserializeObjectProperty(property, rawValue);
         }
+
+        internal object DeserializeObjectProperty(ObjectPropertyInternal property, string rawValue)
+        {
+            return serializer.DeserializeObjectProperty(property, rawValue);
+        }
     }
 }

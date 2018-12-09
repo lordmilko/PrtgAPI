@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
+using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Linq;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Request;
@@ -812,6 +813,76 @@ for(int i = 0; i < 2; i++)
                 Log(responseText, LogLevel.Response);
 
                 throw;
+            }
+        }
+
+<#
+}
+#>
+        //######################################
+        // GetObjectPropertyRawInternal
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetAsyncTokenSignature("GetObjectPropertyRawInternal", "string", "int objectId, Enum property", "token", i) #>
+        {
+            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
+            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
+
+            var rawValue = <#= CallAsyncTokenFunction("GetObjectPropertyRaw", "objectId, rawName, cache.Property.PropertyType == typeof(string)", "token", i) #>;
+
+            return rawValue;
+        }
+
+<#
+}
+#>
+        //######################################
+        // GetObjectPropertyInternal
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetAsyncTokenSignature("GetObjectPropertyInternal", "object", "int objectId, Enum property", "token", i) #>
+        {
+            var rawValue = <#= CallAsyncTokenFunction("GetObjectPropertyRawInternal", "objectId, property", "token", i) #>;
+
+            if (property is ObjectProperty)
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectProperty) property, rawValue);
+            else
+                return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectPropertyInternal) property, rawValue);
+        }
+
+<#
+}
+#>
+        //######################################
+        // GetProbeApprovalStatus
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetAsyncTokenSignature("GetProbeApprovalStatus", "bool", "int probeId", "token", i) #>
+        {
+            try
+            {
+                var result = <#= CallAsyncTokenFunction("GetObjectPropertyRawInternal", "probeId, ObjectPropertyInternal.ProbeApproved", "token", i) #>;
+
+                if (result != "0" && result != "1")
+                    throw new PrtgRequestException($"Probe authorization status was '{result}', however should have been '0' or '1'. Object is most likely not a probe.");
+
+                return result == "1";
+            }
+            catch(PrtgRequestException ex)
+            {
+                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
             }
         }
 <#

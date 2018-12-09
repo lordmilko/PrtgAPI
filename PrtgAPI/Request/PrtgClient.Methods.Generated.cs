@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
-using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Request;
 
 namespace PrtgAPI
@@ -3249,15 +3248,8 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <returns>A type safe representation of the specified property.</returns>
-        public object GetObjectProperty(int objectId, ObjectProperty property)
-        {
-            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
-            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
-
-            var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
-
-            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
-        }
+        public object GetObjectProperty(int objectId, ObjectProperty property) =>
+            GetObjectPropertyInternal(objectId, property);
 
         /// <summary>
         /// Asynchronously retrieves a type safe property from a PRTG Server.
@@ -3275,15 +3267,8 @@ namespace PrtgAPI
         /// <param name="property">The well known property to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A type safe representation of the specified property.</returns>
-        public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property, CancellationToken token)
-        {
-            var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
-            var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
-
-            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
-
-            return ObjectEngine.XmlEngine.DeserializeObjectProperty(property, rawValue);
-        }
+        public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property, CancellationToken token) =>
+            await GetObjectPropertyInternalAsync(objectId, property, token).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieves a type safe property from a PRTG Server, cast to its actual type. If the deserialized value is not of the type specified,
@@ -3935,6 +3920,48 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token to use when waiting for the Core Service to restart. If cancellation is requested, this method will abort waiting for the core to restart.</param>
         public async Task RestartCoreAsync(bool waitForRestart = false, Func<RestartCoreStage, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
             await RestartCoreInternalAsync(waitForRestart, progressCallback, token).ConfigureAwait(false);
+
+        /// <summary>
+        /// Approves or denies a newly installed probe for use within PRTG.
+        /// </summary>
+        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="action">The approval action to perform for the probe.</param>
+        /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
+        public void ApproveProbe(int probeId, ProbeApproval action)
+        {
+            var approved = GetProbeApprovalStatus(probeId);
+
+            if (approved)
+                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+
+            ApproveProbeInternal(probeId, action);
+        }
+
+        /// <summary>
+        /// Asynchronously approves or denies a newly installed probe for use within PRTG.
+        /// </summary>
+        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="action">The approval action to perform for the probe.</param>
+        /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
+        public async Task ApproveProbeAsync(int probeId, ProbeApproval action) =>
+            await ApproveProbeAsync(probeId, action, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously approves or denies a newly installed probe for use within PRTG with a specified cancellation token.
+        /// </summary>
+        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="action">The approval action to perform for the probe.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
+        public async Task ApproveProbeAsync(int probeId, ProbeApproval action, CancellationToken token)
+        {
+            var approved = await GetProbeApprovalStatusAsync(probeId, token).ConfigureAwait(false);
+
+            if (approved)
+                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+
+            await ApproveProbeInternalAsync(probeId, action, token).ConfigureAwait(false);
+        }
 
         #endregion
         #region Organization

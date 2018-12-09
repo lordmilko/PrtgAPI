@@ -344,6 +344,7 @@
     <None Include="PowerShell\ObjectManipulation\Add-Group.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-NotificationTrigger.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-Sensor.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\Approve-Probe.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Backup-PrtgConfig.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Clear-PrtgCache.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Clone-Object.Tests.ps1" />
