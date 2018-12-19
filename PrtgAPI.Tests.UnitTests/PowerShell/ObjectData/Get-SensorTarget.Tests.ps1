@@ -153,6 +153,15 @@ Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    It "specifies a timeout" {
+
+        SetResponseAndClient "ExeFileTargetResponse"
+
+        $files = $device | Get-SensorTarget ExeXml -Timeout 3
+
+        $files.Count | Should BeGreaterThan 1
+    }
+
     It "retrieves targets from an unsupported sensor type" {
         { $device | Get-SensorTarget Http } | Should Throw "Sensor type 'Http' is not currently supported"
     }

@@ -822,13 +822,16 @@
                 <InlineMethodDef name="GetDynamicSensorParameters" returns="DynamicSensorParameters" tokenMode="MandatoryDefault">
                     <Summary>Creates a set of dynamic sensor parameters for creating a new sensor of a specified type.</Summary>
                     <ReturnDescription>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</ReturnDescription>
+                    
+                    <Exception type="TimeoutException" description="Sensor parameters failed to resolve within the specified timespan."/>
 
                     <Parameter name="deviceId" type="int" description="The ID of a device that supports the specified sensor type."/>
                     <Parameter name="sensorType" type="string" description="The type of sensor to create sensor paramters for.&lt;para/&gt;\nNote: sensor parameters cannot be created for types that require additional information\nto be added before interrogating the target device."/>
                     <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null."/>
+                    <Parameter name="timeout" type="int" default="60" description="Duration (in seconds) to wait for sensor parameters to resolve."/>
 
                     <Body expression="true">
-                        new DynamicSensorParameters(<Call name="GetSensorTargetsResponse" args="deviceId, sensorType, progressCallback"/>, sensorType)
+                        new DynamicSensorParameters(<Call name="GetSensorTargetsResponse" args="deviceId, sensorType, progressCallback, timeout"/>, sensorType)
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">

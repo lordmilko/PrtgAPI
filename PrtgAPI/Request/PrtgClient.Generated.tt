@@ -404,7 +404,7 @@ for(int i = 0; i < 2; i++)
                     <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams, token: token", i) #>;
             }
             else
-                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}.");
         }
 
 <#
@@ -418,23 +418,23 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, token, parser", i) #>;
+            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, timeout, token, parser", i) #>;
         }
 
-        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, token, parser", i) #>;
+            return <#= CallFunction("ResolveSensorTargets", "deviceId, parameters, progressCallback, timeout, token, parser", i) #>;
         }
 
-        private <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        private <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var response = <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback, token", i) #>;
+            var response = <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback, timeout, token", i) #>;
 
             if (response == null)
                 return null;
@@ -453,14 +453,14 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token)
+        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback, token", i) #>;
+            return <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback, timeout, token", i) #>;
         }
 
-        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
+        private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "PrtgResponse", "ResponseParser.GetSensorTargetTmpId", i) #>;
 
@@ -471,7 +471,7 @@ for(int i = 0; i < 2; i++)
             if (!int.TryParse(tmpIdStr, out tmpId))
                 throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
-            var response = <#= CallFunction("WaitForSensorTargetResolution", "deviceId, tmpId, progressCallback, token", i) #>;
+            var response = <#= CallFunction("WaitForSensorTargetResolution", "deviceId, tmpId, progressCallback, timeout, token", i) #>;
 
             return response;
         }
@@ -487,7 +487,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("WaitForSensorTargetResolution", "string", i) #>(int deviceId, int tmpId, Func<int, bool> progressCallback, CancellationToken token)
+        private <#= GetSignature("WaitForSensorTargetResolution", "string", i) #>(int deviceId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
 
@@ -495,7 +495,7 @@ for(int i = 0; i < 2; i++)
             bool continueQuery = true;
 
             var stopwatch = new Stopwatch();
-            var timeout = TimeSpan.FromSeconds(60);
+            var timeoutTimeSpan = TimeSpan.FromSeconds(timeout);
 
             stopwatch.Start();
 
@@ -511,8 +511,8 @@ for(int i = 0; i < 2; i++)
                     if (!continueQuery)
                         break;
 
-                        if (stopwatch.Elapsed > timeout)
-                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
+                        if (stopwatch.Elapsed > timeoutTimeSpan)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied.");
 
 #if !DEBUG
                     <#= WaitOne("1000", "token", i) #>
@@ -624,7 +624,7 @@ for(int i = 0; i < 2; i++)
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);
@@ -785,7 +785,7 @@ for(int i = 0; i < 2; i++)
                 case SystemInfoType.Users:
                     return (<#= CallGenericAsyncTokenFunction("GetSystemInfo", "deviceId", "DeviceUserInfo", "token", i) #>).Cast<IDeviceInfo>().ToList();
                 default:
-                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'.");
             }
         }
 

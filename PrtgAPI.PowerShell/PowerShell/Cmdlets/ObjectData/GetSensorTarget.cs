@@ -120,6 +120,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Table { get; set; }
 
         /// <summary>
+        /// <para type="description">Duration (in seconds) to wait for sensor targets to resolve.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public int Timeout { get; set; } = 60;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GetSensorTarget"/> class.
         /// </summary>
         public GetSensorTarget() : base("Sensor Target")
@@ -143,7 +149,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 GetTargets(
                    str,
-                   (d, c, t) => client.Targets.GetSensorTargets(d, RawType, Table, c, t),
+                   (d, c, ti, to) => client.Targets.GetSensorTargets(d, RawType, Table, c, ti, to),
                    ParametersNotSupported,
                     e => e.Name
                 );
@@ -210,7 +216,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void GetTargets<T>(
             string typeDescription,
-            Func<int, Func<int, bool>, CancellationToken, List<T>> getItems,
+            Func<int, Func<int, bool>, int, CancellationToken, List<T>> getItems,
             Func<List<T>, SensorParametersInternal> createParams,
             params Func<T, string>[] nameProperties)
         {
@@ -220,7 +226,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             TypeDescription = typeDescription;
 
             WriteProcessProgressRecords(
-                f => ParseItems(getItems(Device.Id, i => f(i, $"Probing target device ({i}%)"), CancellationToken), createParams, nameProperties)
+                f => ParseItems(getItems(Device.Id, i => f(i, $"Probing target device ({i}%)"), Timeout, CancellationToken), createParams, nameProperties)
             );
         }
 

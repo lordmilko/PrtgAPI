@@ -89,4 +89,8 @@ Describe "Get-SensorTarget_IT" {
             { $device | Get-SensorTarget ExeXml } | Should Throw "type was not valid or you do not have sufficient permissions on the specified object"
         }
     }
+
+    It "specifies a timeout" {
+        { $device | Get-SensorTarget WmiService -Timeout 0 } | Should Throw "Failed to retrieve sensor information within a reasonable period of time."
+    }
 }

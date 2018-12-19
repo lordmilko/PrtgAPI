@@ -704,6 +704,16 @@ Describe "New-SensorParameters" {
 
             $filterParams.exefile.ToString() | Should Be "testScript.bat"
         }
+
+        It "specifies a timeout" {
+            $device = Run Device { Get-Device }
+
+            $normalParams = WithResponse "MultiTypeResponse" {
+                $device | New-SensorParameters -RawType exexml -Timeout 3
+            }
+
+            $normalParams.exefile.ToString() | Should Be "Demo Batchfile - Returns static values in four channels.bat"
+        }
     }
 
     Context "ExeXmlSensorParameters" {

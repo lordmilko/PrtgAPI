@@ -571,7 +571,7 @@ namespace PrtgAPI
                     RequestEngine.ExecuteRequest(internalParams, token: token);
             }
             else
-                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}.");
         }
 
         private async Task AddObjectWithExcessiveValueAsync(List<KeyValuePair<Parameter, object>> lengthLimit, ICommandParameters internalParams, CancellationToken token)
@@ -601,30 +601,30 @@ namespace PrtgAPI
                     await RequestEngine.ExecuteRequestAsync(internalParams, token: token).ConfigureAwait(false);
             }
             else
-                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}");
+                throw new NotImplementedException($"Don't know how to handle {nameof(LengthLimitAttribute)} applied to value of type {limitParam.Value.GetType()}.");
         }
 
         //######################################
         // ResolveSensorTargets
         //######################################
 
-        internal List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return ResolveSensorTargets(deviceId, parameters, progressCallback, token, parser);
+            return ResolveSensorTargets(deviceId, parameters, progressCallback, timeout, token, parser);
         }
 
-        internal List<T> ResolveSensorTargets<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal List<T> ResolveSensorTargets<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return ResolveSensorTargets(deviceId, parameters, progressCallback, token, parser);
+            return ResolveSensorTargets(deviceId, parameters, progressCallback, timeout, token, parser);
         }
 
-        private List<T> ResolveSensorTargets<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        private List<T> ResolveSensorTargets<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var response = GetSensorTargetsResponse(deviceId, parameters, progressCallback, token);
+            var response = GetSensorTargetsResponse(deviceId, parameters, progressCallback, timeout, token);
 
             if (response == null)
                 return null;
@@ -632,23 +632,23 @@ namespace PrtgAPI
             return parser(response);
         }
 
-        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, token, parser).ConfigureAwait(false);
+            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
         }
 
-        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, token, parser).ConfigureAwait(false);
+            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
         }
 
-        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token, Func<string, List<T>> parser)
+        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var response = await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, token).ConfigureAwait(false);
+            var response = await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
 
             if (response == null)
                 return null;
@@ -660,14 +660,14 @@ namespace PrtgAPI
         // GetSensorTargetsResponse
         //######################################
 
-        private string GetSensorTargetsResponse(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token)
+        private string GetSensorTargetsResponse(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return GetSensorTargetsResponse(deviceId, parameters, progressCallback, token);
+            return GetSensorTargetsResponse(deviceId, parameters, progressCallback, timeout, token);
         }
 
-        private string GetSensorTargetsResponse(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
+        private string GetSensorTargetsResponse(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             Func<HttpResponseMessage, PrtgResponse> getSensorTargetTmpId = ResponseParser.GetSensorTargetTmpId;
 
@@ -678,19 +678,19 @@ namespace PrtgAPI
             if (!int.TryParse(tmpIdStr, out tmpId))
                 throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
-            var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback, token);
+            var response = WaitForSensorTargetResolution(deviceId, tmpId, progressCallback, timeout, token);
 
             return response;
         }
 
-        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, string sensorType, Func<int, bool> progressCallback, CancellationToken token)
+        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
-            return await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, token).ConfigureAwait(false);
+            return await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
         }
 
-        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, CancellationToken token)
+        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, SensorTargetParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             Func<HttpResponseMessage, Task<PrtgResponse>> getSensorTargetTmpId = o => Task.FromResult(ResponseParser.GetSensorTargetTmpId(o));
 
@@ -701,7 +701,7 @@ namespace PrtgAPI
             if (!int.TryParse(tmpIdStr, out tmpId))
                 throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
-            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback, token).ConfigureAwait(false);
+            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId, progressCallback, timeout, token).ConfigureAwait(false);
 
             return response;
         }
@@ -710,7 +710,7 @@ namespace PrtgAPI
         // WaitForSensorTargetResolution
         //######################################
 
-        private string WaitForSensorTargetResolution(int deviceId, int tmpId, Func<int, bool> progressCallback, CancellationToken token)
+        private string WaitForSensorTargetResolution(int deviceId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
 
@@ -718,7 +718,7 @@ namespace PrtgAPI
             bool continueQuery = true;
 
             var stopwatch = new Stopwatch();
-            var timeout = TimeSpan.FromSeconds(60);
+            var timeoutTimeSpan = TimeSpan.FromSeconds(timeout);
 
             stopwatch.Start();
 
@@ -734,8 +734,8 @@ namespace PrtgAPI
                     if (!continueQuery)
                         break;
 
-                        if (stopwatch.Elapsed > timeout)
-                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
+                        if (stopwatch.Elapsed > timeoutTimeSpan)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied.");
 
 #if !DEBUG
                     token.WaitHandle.WaitOne(1000, true);
@@ -753,7 +753,7 @@ namespace PrtgAPI
             return page;
         }
 
-        private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback, CancellationToken token)
+        private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var parameters = new SensorTargetProgressParameters(deviceId, tmpId);
 
@@ -761,7 +761,7 @@ namespace PrtgAPI
             bool continueQuery = true;
 
             var stopwatch = new Stopwatch();
-            var timeout = TimeSpan.FromSeconds(60);
+            var timeoutTimeSpan = TimeSpan.FromSeconds(timeout);
 
             stopwatch.Start();
 
@@ -777,8 +777,8 @@ namespace PrtgAPI
                     if (!continueQuery)
                         break;
 
-                        if (stopwatch.Elapsed > timeout)
-                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied");
+                        if (stopwatch.Elapsed > timeoutTimeSpan)
+                            throw new TimeoutException("Failed to retrieve sensor information within a reasonable period of time. Check target device is accessible and that valid credentials have been supplied.");
 
 #if !DEBUG
                     await token.WaitHandle.WaitOneAsync(1000, token).ConfigureAwait(false);
@@ -883,7 +883,7 @@ namespace PrtgAPI
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);
@@ -1016,7 +1016,7 @@ namespace PrtgAPI
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually");
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);
@@ -1203,7 +1203,7 @@ namespace PrtgAPI
                 case SystemInfoType.Users:
                     return (GetSystemInfo<DeviceUserInfo>(deviceId)).Cast<IDeviceInfo>().ToList();
                 default:
-                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'.");
             }
         }
 
@@ -1238,7 +1238,7 @@ namespace PrtgAPI
                 case SystemInfoType.Users:
                     return (await GetSystemInfoAsync<DeviceUserInfo>(deviceId, token).ConfigureAwait(false)).Cast<IDeviceInfo>().ToList();
                 default:
-                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'");
+                    throw new NotImplementedException($"Don't know how to get system info for device info type '{type}'.");
             }
         }
 

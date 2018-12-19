@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectData
@@ -22,6 +23,24 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         public void SensorTargets_Throws_Retrieving_FromSensorWithoutTargets()
         {
             AssertEx.Throws<ArgumentException>(() => client.Targets.GetSensorTargets(Settings.Device, "http"), "Cannot guess sensor target table. Please specify tableName");
+        }
+
+        [TestMethod]
+        public void SensorTargets_Timeout_CustomTimeout()
+        {
+            AssertEx.Throws<TimeoutException>(
+                () => client.Targets.GetWmiServices(Settings.Device, timeout: 0),
+                "Failed to retrieve sensor information within a reasonable period of time."
+            );
+        }
+
+        [TestMethod]
+        public async Task SensorTargets_Timeout_CustomTimeoutAsync()
+        {
+            await AssertEx.ThrowsAsync<TimeoutException>(
+                async () => await client.Targets.GetWmiServicesAsync(Settings.Device, timeout: 0),
+                "Failed to retrieve sensor information within a reasonable period of time."
+            );
         }
     }
 }

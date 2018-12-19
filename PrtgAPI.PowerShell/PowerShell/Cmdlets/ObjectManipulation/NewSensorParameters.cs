@@ -211,6 +211,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string Target { get; set; }
 
         /// <summary>
+        /// <para type="description">Duration (in seconds) to wait for dynamic sensor parameters to resolve.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public int Timeout { get; set; } = 60;
+
+        /// <summary>
         /// <para type="description">Specifies that an empty set of <see cref="RawSensorParameters"/> should be returned to allow constructing
         /// a parameter set manually.</para>
         /// </summary>
@@ -310,7 +316,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private DynamicSensorParameters CreateDynamicParameters(Func<int, bool> progressCallback)
         {
-            var dynamicParamters = client.GetDynamicSensorParameters(Device.Id, RawType, progressCallback, CancellationToken);
+            var dynamicParamters = client.GetDynamicSensorParameters(Device.Id, RawType, progressCallback, Timeout, CancellationToken);
             dynamicParamters.Source = Device;
 
             if (!string.IsNullOrEmpty(Target) && dynamicParamters.Targets.Count > 0)

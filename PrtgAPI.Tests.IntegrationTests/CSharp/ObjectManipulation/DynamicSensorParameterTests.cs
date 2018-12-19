@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support;
@@ -117,6 +118,24 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             await AssertEx.ThrowsAsync<PrtgRequestException>(
                 async () => await readOnlyClient.GetDynamicSensorParametersAsync(Settings.Device, "exexml"),
                 "type was not valid or you do not have sufficient permissions"
+            );
+        }
+
+        [TestMethod]
+        public void DynamicSensorParameters_Timeout_CustomTimeout()
+        {
+            AssertEx.Throws<TimeoutException>(
+                () => client.GetDynamicSensorParameters(Settings.Device, "exexml", timeout: 0),
+                "Failed to retrieve sensor information within a reasonable period of time."
+            );
+        }
+
+        [TestMethod]
+        public async Task DynamicSensorParameters_Timeout_CustomTimeoutAsync()
+        {
+            await AssertEx.ThrowsAsync<TimeoutException>(
+                async () => await client.GetDynamicSensorParametersAsync(Settings.Device, "exexml", timeout: 0),
+                "Failed to retrieve sensor information within a reasonable period of time."
             );
         }
     }
