@@ -93,7 +93,7 @@ namespace PrtgAPI
         /// <summary>
         /// The maximum to use for calculating the percentage to display this channel's value as. Applies when <see cref="PercentDisplay"/> is <see cref="PrtgAPI.PercentDisplay.PercentOfMax"/>.
         /// </summary>
-        [DependentProperty(PercentMode, PercentDisplay.PercentOfMax)]
+        [DependentProperty(PercentMode, PercentDisplay.PercentOfMax, true)]
         PercentValue,
 
         /*VerticalAxisScaling,

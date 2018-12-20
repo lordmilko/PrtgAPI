@@ -168,9 +168,10 @@ Describe "Set-ChannelProperty_IT" {
 
         SetChild "PercentValue" "30" "PercentMode" "PercentOfMax"
         
-        #Logically this should throw, however in PRTG if you set the PercentDisplay to PercentOfMax, it doesn't make you specify a value
-        #As such, we do not create a reverse dependency on PercentValue
-        SetValue "PercentMode" "PercentOfMax"
+        # Logically this should throw, however prior to PRTG 18.4.1962 if you set the PercentDisplay to PercentOfMax, it doesn't make you specify a value
+        # As such, we do not create a reverse dependency on PercentValue
+        # In PRTG 18.4.1962 this now throws properly
+        { SetValue "PercentMode" "PercentOfMax" } | Should Throw "Required field, not defined"
 
         (& $channel) | Set-ChannelProperty PercentValue 40
 

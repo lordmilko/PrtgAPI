@@ -403,7 +403,8 @@ namespace PrtgAPI.Request
 
             if (responseMessage.RequestMessage?.RequestUri?.AbsolutePath == "/error.htm")
             {
-                var errorUrl = responseMessage.RequestMessage.RequestUri.ToString();
+                var errorUrl = responseMessage.RequestMessage.RequestUri.ToString()
+                    .Replace("&%2339;", "\""); //Strange text found when setting ChannelProperty.PercentMode in PRTG 18.4.47.1962
 
                 var queries = UrlUtilities.CrackUrl(errorUrl);
                 var errorMsg = queries["errormsg"];
