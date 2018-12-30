@@ -18,6 +18,50 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{873CF2EE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CodeGenerator", "Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj", "{C4572A75-AC79-4E5E-B253-1A545446220A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{4A599C3C-C62C-47DA-86A5-8D5C6068B4D2}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Build\Appveyor.psm1 = Tools\Build\Appveyor.psm1
+		Tools\Build\build.psm1 = Tools\Build\build.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{953A9D05-7BEE-4B49-924C-CED689324FEE}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Build\Functions\Get-CodeCoverage.ps1 = Tools\Build\Functions\Get-CodeCoverage.ps1
+		Tools\Build\Functions\Get-PrtgVersion.ps1 = Tools\Build\Functions\Get-PrtgVersion.ps1
+		Tools\Build\Functions\Get-SolutionRoot.ps1 = Tools\Build\Functions\Get-SolutionRoot.ps1
+		Tools\Build\Functions\Import-ModuleFunctions.ps1 = Tools\Build\Functions\Import-ModuleFunctions.ps1
+		Tools\Build\Functions\Invoke-Process.ps1 = Tools\Build\Functions\Invoke-Process.ps1
+		Tools\Build\Functions\Write-Log.ps1 = Tools\Build\Functions\Write-Log.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CC5048BE-AE0C-4B90-93B6-70259E24EAA0}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Build\Tests\Appveyor.Tests.ps1 = Tools\Build\Tests\Appveyor.Tests.ps1
+		Tools\Build\Tests\Build.Tests.ps1 = Tools\Build\Tests\Build.Tests.ps1
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{BAFBB49C-7077-4438-80F6-DA909DD6D9D0}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\Build\appveyor.local.json = Tools\Build\appveyor.local.json
+		appveyor.yml = appveyor.yml
+		Tools\Build\Appveyor\Clear-AppveyorBuild.ps1 = Tools\Build\Appveyor\Clear-AppveyorBuild.ps1
+		Tools\Build\Appveyor\Get-AppveyorLocalConfig.ps1 = Tools\Build\Appveyor\Get-AppveyorLocalConfig.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorAfterBuild.ps1 = Tools\Build\Appveyor\Invoke-AppveyorAfterBuild.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorAfterTest.ps1 = Tools\Build\Appveyor\Invoke-AppveyorAfterTest.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorBeforeBuild.ps1 = Tools\Build\Appveyor\Invoke-AppveyorBeforeBuild.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorBeforeTest.ps1 = Tools\Build\Appveyor\Invoke-AppveyorBeforeTest.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorBuild.ps1 = Tools\Build\Appveyor\Invoke-AppveyorBuild.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorInstall.ps1 = Tools\Build\Appveyor\Invoke-AppveyorInstall.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorNuGet.ps1 = Tools\Build\Appveyor\Invoke-AppveyorNuGet.ps1
+		Tools\Build\Appveyor\Invoke-AppveyorTest.ps1 = Tools\Build\Appveyor\Invoke-AppveyorTest.ps1
+		Tools\Build\Appveyor\Measure-AppveyorCoverage.ps1 = Tools\Build\Appveyor\Measure-AppveyorCoverage.ps1
+		Tools\Build\Appveyor\Set-AppveyorVersion.ps1 = Tools\Build\Appveyor\Set-AppveyorVersion.ps1
+		Tools\Build\Appveyor\Simulate-Appveyor.ps1 = Tools\Build\Appveyor\Simulate-Appveyor.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,5 +94,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C4572A75-AC79-4E5E-B253-1A545446220A} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
+		{4A599C3C-C62C-47DA-86A5-8D5C6068B4D2} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
+		{953A9D05-7BEE-4B49-924C-CED689324FEE} = {4A599C3C-C62C-47DA-86A5-8D5C6068B4D2}
+		{CC5048BE-AE0C-4B90-93B6-70259E24EAA0} = {4A599C3C-C62C-47DA-86A5-8D5C6068B4D2}
+		{BAFBB49C-7077-4438-80F6-DA909DD6D9D0} = {4A599C3C-C62C-47DA-86A5-8D5C6068B4D2}
 	EndGlobalSection
 EndGlobal

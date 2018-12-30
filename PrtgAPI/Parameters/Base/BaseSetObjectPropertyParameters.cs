@@ -12,8 +12,6 @@ namespace PrtgAPI.Parameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
 
-        private bool paramsInitialized;
-
         public List<CustomParameter> CustomParameters
         {
             get { return (List<CustomParameter>)this[Parameter.Custom]; }

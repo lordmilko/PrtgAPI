@@ -209,22 +209,22 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterResolveReferences">
+    <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; goto :release
+goto :exit
+
+:release
+set textTemplatingPath=&quot;%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;
+if %25textTemplatingPath%25==&quot;\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot; set textTemplatingPath=&quot;%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;
+%25textTemplatingPath%25 &quot;$(ProjectDir)Properties\Version.tt&quot;
+%25textTemplatingPath%25 &quot;$(ProjectDir)PowerShell\Resources\PrtgAPI.tt&quot;
+
+:exit"/>
+  </Target>
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)PowerShell\Resources\*.*" "$(TargetDir)"
 xcopy /Y "$(ProjectDir)PowerShell\Functions\*.*" "$(TargetDir)Functions\"
 del "$(TargetDir)\*.tt"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>if "$(ConfigurationName)" == "Release" goto :release
-goto :exit
-
-:release
-set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
-if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
-%25textTemplatingPath%25 "$(ProjectDir)Properties\Version.tt"
-%25textTemplatingPath%25 "$(ProjectDir)PowerShell\Resources\PrtgAPI.tt"
-
-:exit</PreBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets" Condition="Exists('..\packages\XmlDoc2CmdletDoc.0.2.7\build\XmlDoc2CmdletDoc.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

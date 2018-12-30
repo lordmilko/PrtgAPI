@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.PowerShell.dll'
 
 # Version number of this module.
-ModuleVersion = '0.9.2'
+ModuleVersion = '0.9.3'
 
 # ID used to uniquely identify this module
 GUID = '81d4380f-31ff-42c7-9d64-1678dc5cd978'
@@ -104,7 +104,11 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG Network Monitor HTTP API.
+        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/releases/tag/v0.9.3
+
+---
+
+PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG Network Monitor HTTP API.
 
 PrtgAPI implements comprehensive type system providing an extensive array of functionality, enabling you to develop powerful applications for managing your network.
 

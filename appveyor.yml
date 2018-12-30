@@ -1,0 +1,45 @@
+version: 'Build #{build}'
+image: Visual Studio 2017
+configuration: Release
+environment:
+  # Don't bother setting up a cache
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  
+cache:
+  - '%userprofile%\.nuget\packages -> appveyor.yml'
+install:
+  # Install NuGet Provider, Chocolatey dependencies
+  - ps: |
+      Import-Module .\tools\build\Appveyor.psm1 -DisableNameChecking
+
+      Set-AppveyorBuildMode -IsCore:$false
+
+      Invoke-AppveyorInstall
+before_build:
+  # Restore NuGet packages
+  - ps: Invoke-AppveyorBeforeBuild
+build_script:
+  # Build all target frameworks
+  - ps: Invoke-AppveyorBuild
+after_build:
+  # Set Appveyor build from PrtgAPI version
+  - ps: Invoke-AppveyorAfterBuild 
+before_test:
+  # Build NuGet packages
+  - ps: Invoke-AppveyorBeforeTest
+test_script:
+  # Test all target frameworks
+  - ps: Invoke-AppveyorTest    
+after_test:
+  # Calculate .NET coverage
+  - ps: Invoke-AppveyorAfterTest
+artifacts:
+  - path: PrtgAPI.PowerShell\bin\Release\PrtgAPI
+  - path: '*.nupkg'
+skip_commits:
+  files:
+    - README.md
+    - '**/*.nuspec'
+    - assets/*
+    - tools/*
+skip_tags: true

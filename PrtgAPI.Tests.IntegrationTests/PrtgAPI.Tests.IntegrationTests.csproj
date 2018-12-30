@@ -116,6 +116,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Tools\Build\Tests\Appveyor.Tests.ps1">
+      <Link>PowerShell\Infrastructure\Appveyor.Tests.ps1</Link>
+    </None>
+    <None Include="..\Tools\Build\Tests\Build.Tests.ps1">
+      <Link>PowerShell\Infrastructure\Build.Tests.ps1</Link>
+    </None>
     <None Include="New-TestSettings.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-Device.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Add-Group.Tests.ps1" />
