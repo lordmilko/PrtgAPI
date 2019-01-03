@@ -141,7 +141,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/releases/tag/v<#= major #>.<#= minor #>.<#= build #>
+        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v<#= major #>.<#= minor #>.<#= build #>
 
 ---
 

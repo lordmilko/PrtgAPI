@@ -224,7 +224,7 @@ function Test-CSharpPackageDefinition($extractFolder)
         throw "Expected package to have version '$version' but instead had version '$($metadata.version)'"
     }
 
-    $expectedUrl = "https://github.com/lordmilko/releases/tag/v$version"
+    $expectedUrl = "https://github.com/lordmilko/PrtgAPI/releases/tag/v$version"
 
     if(!$metadata.releaseNotes.Contains($expectedUrl))
     {
@@ -406,7 +406,7 @@ function Test-PowerShellPackageDefinition($extractFolder)
 
     $version = Get-PrtgVersion
 
-    $expectedUrl = "https://github.com/lordmilko/releases/tag/v$version"
+    $expectedUrl = "https://github.com/lordmilko/PrtgAPI/releases/tag/v$version"
 
     if(!$psd1.PrivateData.PSData.ReleaseNotes.Contains($expectedUrl))
     {
