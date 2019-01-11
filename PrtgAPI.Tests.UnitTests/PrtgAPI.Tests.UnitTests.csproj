@@ -79,6 +79,7 @@
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
     <Compile Include="CSharp\ObjectData\SystemInfoTests.cs" />
     <Compile Include="Support\AssertEx.cs" />
+    <Compile Include="Support\EventValidator.cs" />
     <Compile Include="Support\Serialization\DummyAttributeSerializerManual.cs" />
     <Compile Include="Support\Serialization\DummyRootSerializerManual.cs" />
     <Compile Include="Support\Serialization\DummyElementSerializerManual.cs" />

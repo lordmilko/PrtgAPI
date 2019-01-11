@@ -504,7 +504,7 @@ namespace PrtgAPI
 
         internal Tuple<List<SensorHistoryData>, int> GetSensorHistoryInternal(SensorHistoryParameters parameters)
         {
-            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel));
+            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
 
             var data = ResponseParser.ParseSensorHistoryResponse(raw.Items, parameters.SensorId);
 
@@ -513,7 +513,7 @@ namespace PrtgAPI
 
         internal async Task<List<SensorHistoryData>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters, CancellationToken token)
         {
-            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponseAsync(m, LogLevel), token: token).ConfigureAwait(false);
+            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponseAsync(m, LogLevel, RequestEngine.IsDirty), token: token).ConfigureAwait(false);
 
             return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
@@ -533,7 +533,7 @@ namespace PrtgAPI
         {
             parameters.Count = 0;
 
-            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel));
+            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
 
             parameters.GetParameters().Remove(Parameter.Count);
 

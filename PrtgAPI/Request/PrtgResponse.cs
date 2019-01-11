@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Xml;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
@@ -13,6 +14,8 @@ namespace PrtgAPI.Request
 
     class PrtgResponse : IDisposable
     {
+        bool isDirty;
+
         private string stringValue;
 
         public string StringValue
@@ -47,13 +50,14 @@ namespace PrtgAPI.Request
             Type = PrtgResponseType.Stream;
         }
 
-        public PrtgResponse(string str)
+        public PrtgResponse(string str, bool isDirty)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
             stringValue = str;
             Type = PrtgResponseType.String;
+            this.isDirty = isDirty;
         }
 
         public XmlReader ToXmlReader()
@@ -64,7 +68,13 @@ namespace PrtgAPI.Request
                     return XmlReader.Create(streamValue);
 
                 case PrtgResponseType.String:
-                    return XmlReader.Create(new StringReader(stringValue));
+
+                    var str = stringValue;
+
+                    if (isDirty)
+                        str = XDocumentUtilities.SanitizeStr(stringValue);
+
+                    return XmlReader.Create(new StringReader(str));
 
                 default:
                     throw new NotImplementedException($"Don't know how to create XmlReader for response of type '{Type}'");
@@ -83,7 +93,8 @@ namespace PrtgAPI.Request
             if (str == null)
                 return null;
 
-            return new PrtgResponse(str);
+            //Implicit conversions to string occur when returning string literals; as such, no need to parse dirty
+            return new PrtgResponse(str, false);
         }
 
         public void Dispose()

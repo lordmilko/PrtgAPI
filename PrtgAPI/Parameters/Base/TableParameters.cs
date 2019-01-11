@@ -14,7 +14,7 @@ namespace PrtgAPI.Parameters
     public class TableParameters<T> : ContentParameters<T> where T : ITableObject, IObject
     {
         /// <summary>
-        /// Gets or sets a collection of search filters used to limit search results to those that match certain criteria.
+        /// Gets or sets a collection of search filters used to limit search results to those that match certain criteria. This property is self initializing.
         /// </summary>
         [ExcludeFromCodeCoverage]
         public List<SearchFilter> SearchFilters
@@ -49,7 +49,7 @@ namespace PrtgAPI.Parameters
             if (filters == null)
                 throw new ArgumentNullException(nameof(filters));
 
-            if (SearchFilters == null)
+            if (this[Parameter.FilterXyz] == null)
                 SearchFilters = filters.ToList();
             else
             {
@@ -67,7 +67,7 @@ namespace PrtgAPI.Parameters
             if (filters == null)
                 throw new ArgumentNullException(nameof(filters));
 
-            if (SearchFilters == null)
+            if (this[Parameter.FilterXyz] == null)
                 return false;
 
             bool anyMatch = false;
@@ -85,7 +85,7 @@ namespace PrtgAPI.Parameters
 
             return anyMatch;
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TableParameters{T}"/> class.
         /// </summary>

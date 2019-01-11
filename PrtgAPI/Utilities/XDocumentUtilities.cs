@@ -8,7 +8,7 @@ namespace PrtgAPI.Utilities
     [ExcludeFromCodeCoverage]
     static class XDocumentUtilities
     {
-        public static XDocument SanitizeXml(string str)
+        internal static XDocument SanitizeXml(string str)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace PrtgAPI.Utilities
             }
         }
 
-        private static string SanitizeStr(string str)
+        internal static string SanitizeStr(string str)
         {
             var builder = new StringBuilder();
 

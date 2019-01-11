@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
@@ -51,10 +52,13 @@ namespace PrtgAPI.Request
             bool validateValueTypes = true,
             CancellationToken token = default(CancellationToken))
         {
-            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token: token))
+            return ParseInvalidXml(() =>
             {
-                return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
-            }
+                using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token: token))
+                {
+                    return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
+                }
+            });
         }
 
         internal async Task<List<T>> GetObjectsAsync<T>(
@@ -72,26 +76,35 @@ namespace PrtgAPI.Request
             bool validateValueTypes = true,
             CancellationToken token = default(CancellationToken))
         {
-            using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token: token).ConfigureAwait(false))
+            return await ParseInvalidXmlAsync(async () =>
             {
-                return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
-            }
+                using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token: token).ConfigureAwait(false))
+                {
+                    return SetVersion(XmlEngine.DeserializeTable<T>(response, validateValueTypes));
+                }
+            }).ConfigureAwait(false);
         }
 
         internal T GetObject<T>(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null)
         {
-            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator))
+            return ParseInvalidXml(() =>
             {
-                return XmlEngine.DeserializeObject<T>(response);
-            }
+                using (var response = requestEngine.ExecuteRequest(parameters, responseValidator))
+                {
+                    return XmlEngine.DeserializeObject<T>(response);
+                }
+            });
         }
 
         internal async Task<T> GetObjectAsync<T>(IXmlParameters parameters, CancellationToken token = default(CancellationToken))
         {
-            using (var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false))
+            return await ParseInvalidXmlAsync(async () =>
             {
-                return XmlEngine.DeserializeObject<T>(response);
-            }
+                using (var response = await requestEngine.ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false))
+                {
+                    return XmlEngine.DeserializeObject<T>(response);
+                }
+            }).ConfigureAwait(false);
         }
 
         internal T GetObject<T>(IJsonParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
@@ -127,18 +140,24 @@ namespace PrtgAPI.Request
 
         internal XDocument GetObjectsXml(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token))
+            return ParseInvalidXml(() =>
             {
-                return XDocument.Load(response);
-            }
+                using (var response = requestEngine.ExecuteRequest(parameters, responseValidator, responseParser, token))
+                {
+                    return XDocument.Load(response);
+                }
+            });
         }
 
         internal async Task<XDocument> GetObjectsXmlAsync(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token).ConfigureAwait(false))
+            return await ParseInvalidXmlAsync(async () =>
             {
-                return XDocument.Load(response);
-            }
+                using (var response = await requestEngine.ExecuteRequestAsync(parameters, responseValidator, responseParser, token).ConfigureAwait(false))
+                {
+                    return XDocument.Load(response);
+                }
+            }).ConfigureAwait(false);
         }
 
         #endregion
@@ -268,6 +287,46 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+
+        T ParseInvalidXml<T>(Func<T> action)
+        {
+            //Sometimes PRTG may return invalid characters in their responses (e.g. \0). Assume the request is valid by default
+
+            try
+            {
+                return action();
+            }
+            catch(XmlException ex)
+            {
+                if (requestEngine.IsDirty)
+                    throw;
+
+                prtgClient.Log($"XmlSerializer encountered exception '{ex.Message}' while processing request. Retrying request and flagging engine as dirty.", LogLevel.Trace);
+
+                requestEngine.IsDirty = true;
+                return action();
+            }
+        }
+
+        async Task<T> ParseInvalidXmlAsync<T>(Func<Task<T>> action)
+        {
+            //Sometimes PRTG may return invalid characters in their responses (e.g. \0). Assume the request is valid by default
+
+            try
+            {
+                return await action().ConfigureAwait(false);
+            }
+            catch (XmlException ex)
+            {
+                if (requestEngine.IsDirty)
+                    throw;
+
+                prtgClient.Log($"XmlSerializer encountered exception '{ex.Message}' while processing request. Retrying request and flagging engine as dirty.", LogLevel.Trace);
+
+                requestEngine.IsDirty = true;
+                return await action().ConfigureAwait(false);
+            }
+        }
     }
 #pragma warning restore 618
 }

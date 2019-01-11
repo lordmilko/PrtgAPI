@@ -38,7 +38,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             response = Regex.Replace(response, ObjectSettings.dropDownListRegex, string.Empty, RegexOptions.Singleline);
             response = Regex.Replace(response, ObjectSettings.dependencyDiv, string.Empty, RegexOptions.Singleline);
 
-            var xml = ObjectSettings.GetXml(new Request.PrtgResponse(response));
+            var xml = ObjectSettings.GetXml(new Request.PrtgResponse(response, false));
 
             var descendents = xml.Descendants().ToList();
 

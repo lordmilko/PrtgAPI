@@ -341,31 +341,31 @@ namespace PrtgAPI.Request
         #endregion
         #region Sensor History
 
-        internal static PrtgResponse GetSensorHistoryResponse(HttpResponseMessage responseMessage, LogLevel logLevel)
+        internal static PrtgResponse GetSensorHistoryResponse(HttpResponseMessage responseMessage, LogLevel logLevel, bool isDirty)
         {
-            if(RequestEngine.NeedsStringResponse(responseMessage, logLevel))
+            if(RequestEngine.NeedsStringResponse(responseMessage, logLevel, isDirty))
             {
                 var response = responseMessage.Content.ReadAsStringAsync().Result;
 
                 if (!response.Contains("<"))
                     throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
 
-                return new PrtgResponse(response);
+                return new PrtgResponse(response, isDirty);
             }
 
             return new PrtgResponse(new SensorHistoryStream(responseMessage.Content.ReadAsStreamAsync().Result));
         }
 
-        internal static async Task<PrtgResponse> GetSensorHistoryResponseAsync(HttpResponseMessage responseMessage, LogLevel logLevel)
+        internal static async Task<PrtgResponse> GetSensorHistoryResponseAsync(HttpResponseMessage responseMessage, LogLevel logLevel, bool isDirty)
         {
-            if (RequestEngine.NeedsStringResponse(responseMessage, logLevel))
+            if (RequestEngine.NeedsStringResponse(responseMessage, logLevel, isDirty))
             {
                 var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (!response.Contains("<"))
                     throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
 
-                return new PrtgResponse(response);
+                return new PrtgResponse(response, isDirty);
             }
 
             return new PrtgResponse(new SensorHistoryStream(await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false)));

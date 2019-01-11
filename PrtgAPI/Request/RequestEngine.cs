@@ -25,6 +25,12 @@ namespace PrtgAPI.Request
 
         internal CancellationToken DefaultCancellationToken { get; set; }
 
+        /// <summary>
+        /// Indicates whether a response has been received containing an invalid character (e.g. \0 in XML)
+        /// and that future requests should use safe parsing heuristics.
+        /// </summary>
+        internal bool IsDirty { get; set; }
+
         internal RequestEngine(PrtgClient prtgClient, IWebClient webClient)
         {
             this.prtgClient = prtgClient;
@@ -307,23 +313,23 @@ namespace PrtgAPI.Request
 
         private PrtgResponse GetAppropriateResponse(HttpResponseMessage message, LogLevel logLevel)
         {
-            if (NeedsStringResponse(message, logLevel))
-                return new PrtgResponse(message.Content.ReadAsStringAsync().Result);
+            if (NeedsStringResponse(message, logLevel, IsDirty))
+                return new PrtgResponse(message.Content.ReadAsStringAsync().Result, IsDirty);
 
             return new PrtgResponse(message.Content.ReadAsStreamAsync().Result);
         }
 
         private async Task<PrtgResponse> GetAppropriateResponseAsync(HttpResponseMessage message, LogLevel logLevel)
         {
-            if (NeedsStringResponse(message, logLevel))
-                return new PrtgResponse(await message.Content.ReadAsStringAsync().ConfigureAwait(false));
+            if (NeedsStringResponse(message, logLevel, IsDirty))
+                return new PrtgResponse(await message.Content.ReadAsStringAsync().ConfigureAwait(false), IsDirty);
 
             return new PrtgResponse(await message.Content.ReadAsStreamAsync().ConfigureAwait(false));
         }
 
-        internal static bool NeedsStringResponse(HttpResponseMessage message, LogLevel logLevel)
+        internal static bool NeedsStringResponse(HttpResponseMessage message, LogLevel logLevel, bool isDirty)
         {
-            return (logLevel & LogLevel.Response) == LogLevel.Response || !PrtgResponse.IsSafeDataFormat(message);
+            return (logLevel & LogLevel.Response) == LogLevel.Response || isDirty || !PrtgResponse.IsSafeDataFormat(message);
         }
 
         private void HandleSocketException(Exception ex, string url)

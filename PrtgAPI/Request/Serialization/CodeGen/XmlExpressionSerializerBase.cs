@@ -23,6 +23,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 AttributeName = null;
             }
         }
+
         protected internal object AttributeName;
         private string PreviousElementValue;
         private string LastElementValue;
@@ -85,7 +86,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (string.IsNullOrEmpty(s))
             {
                 //Value types cant be null
-                throw new XmlDeserializationException(string.Format(NullException, ElementName ?? AttributeName, type.Name));
+                throw new XmlDeserializationException(string.Format(NullException, AttributeName ?? ElementName, type.Name));
             }
 
             var xml = new StringBuilder();
@@ -129,7 +130,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             builder.Append($"<{elementName}");
 
-            if(allowAttribute && AttributeName != null && allowAttribute)
+            if(allowAttribute && AttributeName != null)
             {
                 builder.Append($" {AttributeName}=\"{LastAttributeValue}\"");
             }

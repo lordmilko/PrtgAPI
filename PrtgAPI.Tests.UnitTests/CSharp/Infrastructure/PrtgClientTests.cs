@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Reflection;
-using PrtgAPI.Utilities;
+using PrtgAPI.Tests.UnitTests.Support;
+using PrtgAPI.Tests.UnitTests.Support.Serialization;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -137,13 +140,13 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var syncMethods = methods.Where(m => !m.Name.EndsWith("Async") && !skipStartsWith.Any(m.Name.StartsWith) && !skipFull.Any(m.Name.StartsWith)).ToList();
 
-            var methodFullNames = methods.Select(m => m.GetInternalProperty("FullName")).ToList();
+            var methodFullNames = methods.Select(m => ReflectionExtensions.GetInternalProperty(m, "FullName")).ToList();
 
             var missingAsync = new List<MethodInfo>();
 
             foreach (var s in syncMethods)
             {
-                var fullName = (string)s.GetInternalProperty("FullName");
+                var fullName = (string)ReflectionExtensions.GetInternalProperty(s, "FullName");
 
                 var asyncName = fullName.Replace($"{s.Name}(", $"{s.Name}Async(");
 
@@ -157,7 +160,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 }
             }
 
-            Assert.AreEqual(0, missingAsync.Count, $"Async counterparts of the following methods are missing: {string.Join(", ", missingAsync.Select(m => m.GetInternalProperty("FullName").ToString().Substring("PrtgAPI.PrtgClient.".Length)))}");
+            Assert.AreEqual(0, missingAsync.Count, $"Async counterparts of the following methods are missing: {string.Join(", ", missingAsync.Select(m => ReflectionExtensions.GetInternalProperty(m, "FullName").ToString().Substring("PrtgAPI.PrtgClient.".Length)))}");
         }
 
         [TestMethod]
@@ -226,13 +229,177 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
-        public void PrtgClient_ParsesInvalidXml()
+        public void PrtgClient_ParsesInvalidXml_List()
         {
-            var xml = "<prtg\0>value!</prtg>";
+            var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
 
-            var xDoc = XDocumentUtilities.SanitizeXml(xml);
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
 
-            Assert.AreEqual("value!", xDoc.Element("prtg").Value);
+            var result = client.ObjectEngine.GetObjects<DummyElement<DummyElementRoot>>(new SensorParameters());
+
+            Assert.AreEqual(true, result.Single().Property.Value);
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_ParsesInvalidXml_ListAsync()
+        {
+            var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = await client.ObjectEngine.GetObjectsAsync<DummyElement<DummyElementRoot>>(new SensorParameters());
+
+            Assert.AreEqual(true, result.Single().Property.Value);
+        }
+
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml_Object()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = client.ObjectEngine.GetObject<DummyElementRoot>(new SensorParameters());
+
+            Assert.AreEqual(true, result.Value);
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_ParsesInvalidXml_ObjectAsync()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = await client.ObjectEngine.GetObjectAsync<DummyElementRoot>(new SensorParameters());
+
+            Assert.AreEqual(true, result.Value);
+        }
+
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml_XDocument()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = client.ObjectEngine.GetObjectsXml(new SensorParameters());
+
+            Assert.AreEqual("<property><value>1</value></property>", result.ToString(SaveOptions.DisableFormatting));
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_ParsesInvalidXml_XDocumentAsync()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = await client.ObjectEngine.GetObjectsXmlAsync(new SensorParameters());
+
+            Assert.AreEqual("<property><value>1</value></property>", result.ToString(SaveOptions.DisableFormatting));
+        }
+
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml_RetainsDirty()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var validator = new EventValidator<string>(new[]
+            {
+                //First - retry a dirty response
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                "XmlSerializer encountered exception ''.', hexadecimal value 0x00, is an invalid character. Line 1, position 18.' while processing request. Retrying request and flagging engine as dirty.",
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+
+                //Second - engine should be already marked as dirty
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678"
+            });
+
+            client.LogVerbose += (s, e) =>
+            {
+                var message = e.Message;
+
+                if(message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
+                {
+                    message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
+                }
+
+                Assert.AreEqual(validator.Get(message), message);
+            };
+
+            validator.MoveNext(3);
+            var result = client.ObjectEngine.GetObject<DummyElementRoot>(new PrtgObjectParameters());
+
+            validator.MoveNext();
+            result = client.ObjectEngine.GetObject<DummyElementRoot>(new PrtgObjectParameters());
+
+            Assert.IsTrue(validator.Finished, "Did not process all requests");
+        }
+
+        [TestMethod]
+        public async Task PrtgClient_ParsesInvalidXml_RetainsDirtyAsync()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var validator = new EventValidator<string>(new[]
+            {
+                //First - retry a dirty response
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                "XmlSerializer encountered exception ''.', hexadecimal value 0x00, is an invalid character. Line 1, position 18.' while processing request. Retrying request and flagging engine as dirty.",
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+
+                //Second - engine should be already marked as dirty
+                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678"
+            });
+
+            client.LogVerbose += (s, e) =>
+            {
+                var message = e.Message;
+
+                if (message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
+                {
+                    message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
+                }
+
+                Assert.AreEqual(validator.Get(message), message);
+            };
+
+            validator.MoveNext(3);
+            var result = await client.ObjectEngine.GetObjectAsync<DummyElementRoot>(new PrtgObjectParameters());
+
+            validator.MoveNext();
+            result = await client.ObjectEngine.GetObjectAsync<DummyElementRoot>(new PrtgObjectParameters());
+
+            Assert.IsTrue(validator.Finished, "Did not process all requests");
+        }
+
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml_Name()
+        {
+            var xml = "<property><value>\01</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = client.ObjectEngine.GetObject<DummyElementRoot>(new SensorParameters());
+
+            Assert.AreEqual(true, result.Value);
+        }
+
+        [TestMethod]
+        public void PrtgClient_ParsesInvalidXml_Value()
+        {
+            var xml = "<property\0><value>1</value></property>";
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+
+            var result = client.ObjectEngine.GetObjectsXml(new SensorParameters());
+
+            Assert.AreEqual("<property><value>1</value></property>", result.ToString(SaveOptions.DisableFormatting));
         }
 
         private int prtgClientLogVerboseHit;
