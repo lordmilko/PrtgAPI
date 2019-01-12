@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Pause-Object_IT" {
+Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "can pause indefinitely" {
 

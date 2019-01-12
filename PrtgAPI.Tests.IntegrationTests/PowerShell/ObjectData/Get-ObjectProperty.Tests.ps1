@@ -7,7 +7,7 @@ function RetrieveProperties([ScriptBlock]$getObjects)
     $properties.Count | Should BeGreaterThan 1
 }
 
-Describe "Get-ObjectProperty_IT" {
+Describe "Get-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves all sensor properties" {
         RetrieveProperties { Get-Sensor }
     }

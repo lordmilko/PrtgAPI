@@ -12,6 +12,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Serial
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_WithStartOffset_SinglePage()
         {
             StreamLogsSerial(
@@ -22,6 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_WithStartOffset_MultiplePages()
         {
             StreamLogsSerial(
@@ -34,6 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Start
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Start_SinglePage()
         {
             //Count (10) > (Total (10) - Start (3))
@@ -45,6 +48,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Start_MultiplePages()
         {
             //Count (500) > (Total (1005) - Start (503))
@@ -60,6 +64,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Start_AndStartOffset_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -69,6 +74,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Start_AndStartOffset_MultiplePages()
         {
             StreamLogsSerial(
@@ -83,6 +89,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Count
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_SinglePage()
         {
             //Total Objects is not known, so we ask for Count many
@@ -93,6 +100,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_MultiplePages()
         {
             StreamSerial(
@@ -104,6 +112,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_LessThanAvailable_SinglePage()
         {
             StreamSerial(new SensorParameters
@@ -113,6 +122,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_LessThanAvailable_MultiplePages()
         {
             StreamSerial(
@@ -124,6 +134,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_EqualsAvailable_SinglePage()
         {
             var count = 20;
@@ -135,6 +146,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_EqualsAvailable_MultiplePages()
         {
             var count = 20;
@@ -148,6 +160,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_MoreThanAvailable_SinglePage()
         {
             StreamSerial(new SensorParameters
@@ -157,6 +170,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_MoreThanAvailable_MultiplePages()
         {
             StreamSerial(
@@ -168,6 +182,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -177,6 +192,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_MultiplePages()
         {
             StreamLogsSerial(
@@ -188,6 +204,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -197,6 +214,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
             StreamLogsSerial(
@@ -208,6 +226,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_EqualsAvailable_SinglePage()
         {
             var count = 20;
@@ -219,6 +238,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_EqualsAvailable_MultiplePages()
         {
             var count = 20;
@@ -232,6 +252,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_MoreThanAvailable_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -241,6 +262,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_Count_AndStartOffset_MoreThanAvailable_MultiplePages()
         {
             StreamLogsSerial(
@@ -255,6 +277,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region StartAndCount
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_SinglePage()
         {
             StreamSerial(new SensorParameters
@@ -265,6 +288,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_MultiplePages()
         {
             StreamSerial(
@@ -276,6 +300,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountLessThanAvailable_SinglePage()
         {
             StreamSerial(new SensorParameters
@@ -286,6 +311,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountLessThanAvailable_MultiplePages()
         {
             StreamSerial(
@@ -297,6 +323,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountEqualsAvailable_SinglePage()
         {
             var count = 10;
@@ -309,6 +336,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountEqualsAvailable_MultiplePages()
         {
             var count = 25;
@@ -322,6 +350,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountMoreThanAvailable_SinglePage()
         {
             StreamSerial(new SensorParameters
@@ -332,6 +361,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_CountMoreThanAvailable_MultiplePages()
         {
             StreamSerial(
@@ -343,6 +373,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -353,6 +384,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_MultiplePages()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -363,6 +395,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountLessThanAvailable_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -373,6 +406,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountLessThanAvailable_MultiplePages()
         {
             StreamLogsSerial(
@@ -384,6 +418,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountEqualsAvailable_SinglePage()
         {
             var count = 20;
@@ -396,6 +431,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountEqualsAvailable_MultiplePages()
         {
             var count = 25;
@@ -409,6 +445,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountMoreThanAvailable_SinglePage()
         {
             StreamLogsSerial(new LogParameters(null)
@@ -419,6 +456,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Serially_StartAndCount_AndStartOffset_CountMoreThanAvailable_MultiplePages()
         {
             StreamLogsSerial(
@@ -434,6 +472,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Parallel
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_WithStartOffset_SinglePage()
         {
             StreamLogs(
@@ -443,6 +482,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_WithStartOffset_MultiplePages()
         {
             StreamLogs(
@@ -454,6 +494,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Start
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Start_SinglePage()
         {
             Stream(new SensorParameters
@@ -463,6 +504,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Start_MultiplePages()
         {
             Stream(
@@ -473,6 +515,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Start_AndStartOffset_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -482,6 +525,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Start_AndStartOffset_MultiplePages()
         {
             StreamLogs(
@@ -495,6 +539,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Count
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_SinglePage()
         {
             //Total Objects is retrieved, which is lower than Count so Count is ignored
@@ -505,6 +550,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_MultiplePages()
         {
             StreamLogs(
@@ -515,6 +561,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_LessThanAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -524,6 +571,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_LessThanAvailable_MultiplePages()
         {
             Stream(
@@ -534,6 +582,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_EqualsAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -543,6 +592,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_EqualsAvailable_MultiplePages()
         {
             Stream(
@@ -553,6 +603,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_MoreThanAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -562,6 +613,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_MoreThanAvailable_MultiplePages()
         {
             Stream(
@@ -572,6 +624,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -581,6 +634,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_MultiplePages()
         {
             StreamLogs(
@@ -591,6 +645,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -600,6 +655,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
             StreamLogs(
@@ -610,6 +666,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_EqualsAvailable_SinglePage()
         {
             var count = 20;
@@ -621,6 +678,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_EqualsAvailable_MultiplePages()
         {
             var count = 20;
@@ -633,6 +691,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_MoreThanAvailable_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -642,6 +701,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_Count_AndStartOffset_MoreThanAvailable_MultiplePages()
         {
             StreamLogs(
@@ -655,6 +715,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region StartAndCount
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_SinglePage()
         {
             Stream(new SensorParameters
@@ -665,6 +726,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_MultiplePages()
         {
             Stream(
@@ -675,6 +737,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountLessThanAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -685,6 +748,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountLessThanAvailable_MultiplePages()
         {
             Stream(
@@ -695,6 +759,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountEqualsAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -705,6 +770,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountEqualsAvailable_MultiplePages()
         {
             Stream(
@@ -715,6 +781,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountMoreThanAvailable_SinglePage()
         {
             Stream(new SensorParameters
@@ -725,6 +792,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_CountMoreThanAvailable_MultiplePages()
         {
             Stream(
@@ -735,6 +803,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -745,6 +814,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_MultiplePages()
         {
             StreamLogs(new LogParameters(null)
@@ -755,6 +825,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountLessThanAvailable_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -765,6 +836,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountLessThanAvailable_MultiplePages()
         {
             StreamLogs(
@@ -775,6 +847,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountEqualsAvailable_SinglePage()
         {
             var count = 20;
@@ -787,6 +860,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountEqualsAvailable_MultiplePages()
         {
             var count = 25;
@@ -799,6 +873,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountMoreThanAvailable_SinglePage()
         {
             StreamLogs(new LogParameters(null)
@@ -809,6 +884,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_Parallel_StartAndCount_AndStartOffset_CountMoreThanAvailable_MultiplePages()
         {
             StreamLogs(
@@ -822,6 +898,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Stream_HasAllTests()
         {
             var types = new[] { "Serially", "Parallel" };

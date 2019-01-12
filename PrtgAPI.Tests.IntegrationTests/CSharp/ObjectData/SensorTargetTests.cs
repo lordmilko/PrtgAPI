@@ -8,6 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class SensorTargetTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void SensorTargets_Retrieves_FromSensorWithTargets()
         {
             var targets = client.Targets.GetSensorTargets(Settings.Device, "wmivolume");
@@ -20,12 +21,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void SensorTargets_Throws_Retrieving_FromSensorWithoutTargets()
         {
             AssertEx.Throws<ArgumentException>(() => client.Targets.GetSensorTargets(Settings.Device, "http"), "Cannot guess sensor target table. Please specify tableName");
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void SensorTargets_Timeout_CustomTimeout()
         {
             AssertEx.Throws<TimeoutException>(
@@ -35,6 +38,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task SensorTargets_Timeout_CustomTimeoutAsync()
         {
             await AssertEx.ThrowsAsync<TimeoutException>(

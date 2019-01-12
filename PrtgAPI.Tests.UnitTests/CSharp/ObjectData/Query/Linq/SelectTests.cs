@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Overload
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_Overload_TSourceTResult_SingleProperty()
         {
             Execute(q => q.Select(s => s.Name), "content=sensors&columns=name&count=500", s =>
@@ -21,6 +22,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_Overload_TSourceIntTResult_SelectIndex()
         {
             Execute(q => q.Select((s, i) => i), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
@@ -32,6 +34,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_Overload_TSourceIntTResult_SelectIndexAndProperty()
         {
             Execute(q => q.Select((s, i) => new
@@ -53,6 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Illegal Predecessors
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_FromUnsupported()
         {
             Execute(q => q.SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
@@ -63,6 +67,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_FromUnsupported_FromSupported()
         {
             Execute(q => q.Where(s => s.Active).SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500&filter_active=-1", s =>
@@ -73,6 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_ToUnsupported()
         {
             Execute(q => q.Select(s => s.Name).SkipWhile((s, i) => i == 0), "content=sensors&columns=name&count=500", s =>
@@ -86,6 +92,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Anonymous Type
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType()
         {
             Execute(q => q.Select(s => new
@@ -106,6 +113,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_Where()
         {
             Execute(q => q.Select(s => new
@@ -122,6 +130,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_WithPropertyMember_ToWhere()
         {
             Execute(q => q.Select(s => new
@@ -148,6 +157,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Type Constraints
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Select_TypeConstraints_CastType_ToSelect()
         {
             Execute(q => q.Select(s => (ITableObject)s).Select(v => v.Tags), "content=sensors&columns=tags&count=500", s => Assert.AreEqual(3, s.Count));
@@ -156,6 +166,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_PropertyMember_ToWhere()
         {
             Execute(q => q.Select(s => s.NotificationTypes.ChangeTriggers).Where(a => a == 0),
@@ -171,6 +182,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousLiteral_ToWhere()
         {
             Execute(q => q.Select(s => new
@@ -180,6 +192,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_Anonymous_Where_ToAnonymous()
         {
             Execute(q => q.Select(s => new
@@ -189,6 +202,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnotherQuery()
         {
             var urls = new[]
@@ -208,6 +222,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnotherQuery_InAnAnonymousType()
         {
             var urls = new[]
@@ -231,6 +246,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnotherSelectQuery()
         {
             var urls = new[]
@@ -250,6 +266,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_From_AnonymousType()
         {
             Execute(q => q.Select(s => new
@@ -271,6 +288,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_FromRealTypeViaProperty()
         {
             Execute(q => q.Select(s =>
@@ -294,6 +312,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_FromRealTypeViaConstructor()
         {
             Execute(q => q.Select(s => new RealTypeConstructor(s.Name, s.BaseType)
@@ -312,6 +331,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_FromRealTypeViaConstructorGetOnly()
         {
             Execute(q => q.Select(s =>
@@ -331,6 +351,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_FromRealTypeViaConstructorAndProperty()
         {
             Execute(q => q.Select(s =>
@@ -353,6 +374,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_ArrayOfAnonymousType_From_ArrayOfAnonymousType()
         {
             Execute(q => q.Select(s => new[] {new
@@ -374,6 +396,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_ListOfAnonymousType_From_ListOfAnonymousType()
         {
             Execute(q => q.Select(s => new[] {new
@@ -395,6 +418,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_From_AnonymousType_WithLiteral()
         {
             Execute(q => q.Select(s => new
@@ -418,6 +442,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_From_AnonymousTypeWithTwoLevels()
         {
             Execute(q => q.Select(s => new
@@ -444,6 +469,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_AnonymousType_From_AnonymousType_IncludingGetOnlyProperty()
         {
             Execute(q => q.Select(s => new
@@ -472,6 +498,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_IncludeAllPropertyExpressions()
         {
             Execute(
@@ -482,18 +509,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_ToWhere()
         {
             Execute(q => q.Select(s => s.Name).Where(n => n.Contains("Vol")), "content=sensors&columns=name&count=500&filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_SubMemberCondition()
         {
             Execute(q => q.Select(s => s.LastUp.Value.Day == 30), "content=sensors&columns=lastup&count=500", s => Assert.IsTrue(s.All(v => v == false)));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensor_FromSource()
         {
             Execute(q => q.Select(s => new Sensor {Message = s.Name}), "content=sensors&columns=name&count=500", s =>
@@ -507,6 +537,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensorProperty_FromSource()
         {
             Execute(q => q.Select(s => new Sensor { Message = s.Name }.Message), "content=sensors&columns=name&count=500", s =>
@@ -519,6 +550,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_Anonymous_FromNewSensor_FromAnonymous_FromSource()
         {
             Execute(q => q.Select(s => new
@@ -536,6 +568,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensor_Where_FromSource()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -546,6 +579,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensor_WhereInternalProperty_FromSource()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -556,6 +590,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensor_Where_FromNothing()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -566,6 +601,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Select_NewSensor_Where_FromOperation()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor

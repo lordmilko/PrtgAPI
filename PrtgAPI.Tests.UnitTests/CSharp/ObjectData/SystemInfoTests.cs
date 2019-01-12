@@ -14,6 +14,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SystemInfoTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_CanDeserialize_FullSummary()
         {
             var client = GetFullSummaryClient();            
@@ -24,6 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SystemInfo_CanDeserialize_FullSummaryAsync()
         {
             var client = GetFullSummaryClient();
@@ -34,6 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_CorrectAddresses()
         {
             Execute(
@@ -50,6 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_CanDeserialize_Generic()
         {
             var client = GetFullSummaryClient();
@@ -69,6 +73,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SystemInfo_CanDeserialize_GenericAsync()
         {
             var client = GetFullSummaryClient();
@@ -88,6 +93,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_CanDeserialize_NonGeneric()
         {
             var client = GetFullSummaryClient();
@@ -107,6 +113,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SystemInfo_CanDeserialize_NonGenericAsync()
         {
             var client = GetFullSummaryClient();
@@ -126,6 +133,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_ReturnsNoitems()
         {
             var client = Initialize_Client(new SystemInfoResponse());
@@ -136,6 +144,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SystemInfo_ReturnsNoitemsAsync()
         {
             var client = Initialize_Client(new SystemInfoResponse());
@@ -146,6 +155,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_AllPropertiesHaveValues()
         {
             AssertAllSystemInfoPropertiesHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem(), p =>
@@ -164,6 +174,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_AllPropertiesAreNull()
         {
             AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem(null, null, null, null, null, null));
@@ -175,6 +186,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_AllPropertiesAreEmpty()
         {
             AssertAllSystemInfoPropertiesDontHaveValues<DeviceSystemInfo>(SystemInfoItem.SystemItem("\"\"", "\"\"", "\"\"", "\"\"", "01-02-2003 21:10:13.425", "\"\""));
@@ -186,6 +198,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_NoPropertiesAreStrings()
         {
             GetSystemInfoResponse<DeviceSystemInfo>(SystemInfoItem.SystemItem("1", "2", "3", "4", "01-02-2003 21:10:13.425", "5"));
@@ -197,6 +210,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_NotSupported_AllLanguages()
         {
             var english = "{\"prtg-version\":\"14.4.12.3283\",\"treesize\":3,\"sysinfo\":[{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"},{\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\",\"\":\"Not found\",\"_raw\":\"\"}]}";
@@ -213,6 +227,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_Software_Version_MajorNumberOnly()
         {
             var obj = GetSystemInfoResponse<DeviceSoftwareInfo>(SystemInfoItem.SoftwareItem(version: "5"));
@@ -223,6 +238,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Escape Quotes
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_FirstObject_FirstProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -232,6 +248,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_FirstObject_MiddleProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -241,6 +258,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_FirstObject_LastProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -250,6 +268,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_LastObject_FirstProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -259,6 +278,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_LastObject_MiddleProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -268,6 +288,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_LastObject_LastProperty()
         {
             var normal = SystemInfoItem.UserItem();
@@ -277,6 +298,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_EscapesQuotes_Numbers()
         {
             var item = SystemInfoItem.ProcessItem("\"2002\"");
@@ -305,6 +327,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Property Map
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_System_PropertiesMapCorrectly()
         {
             var key = "\"Key / Adapter\"";
@@ -327,6 +350,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_Hardware_PropertiesMapCorrectly()
         {
             var name = "\"Name\"";
@@ -357,6 +381,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_Software_PropertiesMapCorrectly()
         {
             var name = "\"Name\"";
@@ -381,6 +406,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_Process_PropertiesMapCorrectly()
         {
             var processId = "3";
@@ -401,6 +427,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_Service_PropertiesMapCorrectly()
         {
             var name = "\"Name\"";
@@ -425,6 +452,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_User_PropertiesMapCorrectly()
         {
             var domain = "\"Domain\"";
@@ -445,6 +473,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SystemInfo_ReadOnlyUser()
         {
             var client = Initialize_Client(new SystemInfoResponse());
@@ -458,6 +487,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SystemInfo_ReadOnlyUserAsync()
         {
             var client = Initialize_Client(new SystemInfoResponse());

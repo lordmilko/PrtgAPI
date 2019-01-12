@@ -8,6 +8,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     public class OrderByTests : BaseQueryTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_MultipleProperties()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Id).OrderBy(s => s.Name), "sortby=name", s =>
@@ -19,6 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_ThreeTimes()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Id).OrderBy(s => s.Name).OrderBy(s => s.Id), "sortby=objid", s =>
@@ -30,6 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_ForwardsThenBackwards()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Id).OrderByDescending(s => s.Name), "sortby=-name", s =>
@@ -41,18 +44,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_KeyComparer()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Name, StringComparer.CurrentCulture), "sortby=name", s => s.ToList());
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_WithComparer_ToOrderBy_WithoutComparer()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Name, StringComparer.CurrentCulture).OrderBy(s => s.Id), "sortby=objid", s => s.ToList());
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_OrderBy_WithoutComparer_ToOrderBy_WithComparer()
         {
             ExecuteQuery(q => q.OrderBy(s => s.Id).OrderBy(s => s.Name, StringComparer.CurrentCulture), "sortby=name", s => s.ToList());

@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SensorTargetTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_CanExecute()
         {
             var files = client.Targets.GetExeXmlFiles(1001);
@@ -18,6 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTarget_CanExecuteAsync()
         {
             var files = await client.Targets.GetExeXmlFilesAsync(1001);
@@ -26,6 +28,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_CanAbort()
         {
             var result = client.Targets.GetExeXmlFiles(1001, f => false);
@@ -34,6 +37,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_CanExecute()
         {
             var files = client.Targets.GetSensorTargets(1001, "exexml");
@@ -42,6 +46,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTarget_Generic_CanExecuteAsync()
         {
             var files = await client.Targets.GetSensorTargetsAsync(1001, "exexml");
@@ -50,6 +55,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_Resolves_WithTable()
         {
             var files = client.Targets.GetSensorTargets(1001, "exexml", "exefile");
@@ -58,6 +64,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_Throws_WithInvalidTable()
         {
             AssertEx.Throws<ArgumentException>(
@@ -67,6 +74,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_HasCorrectProperties()
         {
             var file = client.Targets.GetSensorTargets(1001, "exexml").First();
@@ -78,6 +86,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTarget_CanAbortAsync()
         {
             var result = await client.Targets.GetExeXmlFilesAsync(1001, f => false);
@@ -86,6 +95,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_FailedRequest()
         {
             var faultyClient = Initialize_Client(new FaultySensorTargetResponse(FaultySensorTargetResponse.Scenario.Credentials));
@@ -94,6 +104,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTarget_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -102,6 +113,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTarget_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

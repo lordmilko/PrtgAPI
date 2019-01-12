@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Add-Group_IT" {
+Describe "Add-Group_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "adds a new group" {
         
         $name = "newGroup"

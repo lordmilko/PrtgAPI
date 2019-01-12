@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-SensorHistory_IT" {
+Describe "Get-SensorHistory_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves records for the previous hour" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Sensor_IT" {
+Describe "Get-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has correct number of sensors" {
         $sensors = Get-Sensor
         $sensors.Count | Should Be (Settings SensorsInTestServer)

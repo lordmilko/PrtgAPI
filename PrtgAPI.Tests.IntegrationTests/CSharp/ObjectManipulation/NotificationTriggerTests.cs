@@ -157,18 +157,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Add From Existing
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_State()
         {
             AddRemoveTriggerFromExisting(TriggerType.State, trigger => new StateTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Device()
         {
             AddRemoveTriggerFromExisting(TriggerType.Threshold, trigger => new ThresholdTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Sensor()
         {
             //Create the initial trigger
@@ -254,6 +257,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region TriggerChannel
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -262,12 +266,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnContainer()
         {
             TestTriggerChannel(Settings.Probe, TriggerChannel.Total);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_Channel_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -277,6 +283,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_Channel_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -286,6 +293,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -309,6 +317,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First(); ;
@@ -318,6 +327,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -326,12 +336,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnContainer()
         {
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, new TriggerChannel(99)), "Channel ID '99' is not a valid channel");
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -341,6 +353,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -453,24 +466,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddNotificationTrigger_Resolves()
         {
             Resolves(true);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddNotificationTrigger_DoesntResolve()
         {
             Resolves(false);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddNotificationTrigger_ResolvesAsync()
         {
             await ResolvesAsync(true);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddNotificationTrigger_DoesntResolveAsync()
         {
             await ResolvesAsync(false);

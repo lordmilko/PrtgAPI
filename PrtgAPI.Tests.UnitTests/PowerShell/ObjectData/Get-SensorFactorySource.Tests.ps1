@@ -13,7 +13,7 @@ function SetFactorySourceResponse($channelDefinition)
     SetResponseAndClientWithArguments "SensorFactorySourceResponse" $propertyChanger
 }
 
-Describe "Get-SensorFactorySource" {
+Describe "Get-SensorFactorySource" -Tag @("PowerShell", "UnitTest") {
     It "parses a factory with one channel" {
 
         SetFactorySourceResponse @(

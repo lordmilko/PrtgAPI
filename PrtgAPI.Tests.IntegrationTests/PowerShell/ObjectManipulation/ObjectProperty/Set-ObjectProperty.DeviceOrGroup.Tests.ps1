@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\ObjectProperty.ps1
 
-Describe "Set-ObjectProperty_DeviceOrGroup_IT" {
+Describe "Set-ObjectProperty_DeviceOrGroup_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "Device Type" {
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Connect-PrtgServer_IT" {
+Describe "Connect-PrtgServer_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "can retry request" {
 
         Connect-PrtgServer (Settings ServerWithProto) (New-Credential prtgadmin prtgadmin) -Force -RetryCount 3

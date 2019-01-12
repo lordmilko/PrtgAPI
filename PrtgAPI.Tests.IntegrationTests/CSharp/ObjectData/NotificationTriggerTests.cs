@@ -13,6 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class NotificationTriggerTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_NotificationTrigger_GetNotificationTriggers_HasExpectedCount()
         {
             var triggers = client.GetNotificationTriggers(Settings.Device);
@@ -21,6 +22,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_NotificationTrigger_GetNotificationTriggers_Sensor_ThrowsWithInvalidChannel()
         {
             try
@@ -49,6 +51,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_NotificationTrigger_GetNotificationTriggers_Sensor_ThrowsWithInvalidChannelAsync()
         {
             try
@@ -77,6 +80,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_NotificationTrigger_ReadOnlyUser()
         {
             var triggers = readOnlyClient.GetNotificationTriggers(Settings.Device);
@@ -92,6 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_NotificationTrigger_ReadOnlyUserAsync()
         {
             var triggers = await readOnlyClient.GetNotificationTriggersAsync(Settings.Device);

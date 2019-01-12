@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\ObjectProperty.ps1
 
-Describe "Set-ObjectProperty_Devices_IT" {
+Describe "Set-ObjectProperty_Devices_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $object = Get-Device -Id (Settings Device)
 

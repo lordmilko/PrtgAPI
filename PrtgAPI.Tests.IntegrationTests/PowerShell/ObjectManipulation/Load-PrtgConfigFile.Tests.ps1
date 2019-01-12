@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Load-PrtgConfigFile_IT" {
+Describe "Load-PrtgConfigFile_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "loads general files" {
         Load-PrtgConfigFile General
     }

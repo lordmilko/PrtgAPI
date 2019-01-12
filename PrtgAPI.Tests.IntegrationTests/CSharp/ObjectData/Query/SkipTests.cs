@@ -9,6 +9,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
     public class SkipTests : BaseQueryTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_Standalone()
         {
             var sensors = client.GetSensors().Skip(1).ToList();
@@ -17,6 +18,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_Twice()
         {
             var sensors = client.GetSensors();
@@ -25,12 +27,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_ThreeTimes()
         {
             ExecuteClient(q => q.QueryDevices().Skip(1).Skip(1).Skip(1), s => Assert.AreEqual(1, s.Count()));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_Logs()
         {
             var logs = client.GetLogs(Settings.UpSensor, RecordAge.All, null);
@@ -39,6 +43,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_ToTake()
         {
             var sensor = client.GetSensors().Skip(1).First();
@@ -47,6 +52,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_FromTake()
         {
             var sensor = client.GetSensors().Skip(1).First();
@@ -55,6 +61,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_ToWhere()
         {
             var sensors = client.GetSensors().Skip(1).Where(s => s.Name.Contains("Ping")).ToList();
@@ -63,12 +70,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_FromWhere()
         {
             ExecuteQuery(q => q.Where(s => s.Name.Contains("Volume")).Skip(1), s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_OnePage()
         {
             //the start should be offset by 2
@@ -80,6 +89,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_TwoPages()
         {
             //the start should be offset by 2
@@ -91,6 +101,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_All()
         {
             ExecuteNow(q => q.Skip(1200).ToList(), s =>
@@ -100,6 +111,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_All_WithCount()
         {
             var parameters = new SensorParameters
@@ -111,6 +123,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Skip_MoreThanAll()
         {
             ExecuteNow(q => q.Skip(1300).ToList(), s =>
@@ -120,6 +133,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_SkipTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.SkipTests));

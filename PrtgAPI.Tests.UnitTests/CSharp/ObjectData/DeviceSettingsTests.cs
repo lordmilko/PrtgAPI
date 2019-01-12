@@ -9,6 +9,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class DeviceSettingsTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DeviceSettings_CanDeserialize()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -19,6 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task DeviceSettings_CanDeserializeAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -29,6 +31,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task DeviceSettings_RawAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -39,6 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DeviceSettings_Coordinates()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -61,6 +65,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DeviceSettings_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -69,6 +74,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task DeviceSettings_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

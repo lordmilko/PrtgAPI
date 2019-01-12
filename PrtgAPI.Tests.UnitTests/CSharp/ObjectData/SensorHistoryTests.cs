@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SensorHistoryTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_CanExecute()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -20,6 +21,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorHistory_CanExecuteAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -30,6 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_CanStream()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -40,6 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_CanProcess_TrafficSensorsWithDuplicateChannelNames()
         {
             var channels = new[]
@@ -74,6 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_NoData_AllLanguages()
         {
             AssertEx.AssertErrorResponseAllLanguages<PrtgRequestException>(
@@ -86,6 +91,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorHistory_NoData_AllLanguagesAsync()
         {
             await AssertEx.AssertErrorResponseAllLanguagesAsync<PrtgRequestException>(
@@ -98,6 +104,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -114,6 +121,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorHistory_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

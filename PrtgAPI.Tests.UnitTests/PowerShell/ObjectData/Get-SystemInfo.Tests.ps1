@@ -15,7 +15,7 @@ function SetSystemTypeResponse
 
 #todo: c# needs some address validation
 
-Describe "Get-SystemInfo" {
+Describe "Get-SystemInfo" -Tag @("PowerShell", "UnitTest") {
 
     $typeCases = @(
         @{name="System"; type="DeviceSystemInfo"}

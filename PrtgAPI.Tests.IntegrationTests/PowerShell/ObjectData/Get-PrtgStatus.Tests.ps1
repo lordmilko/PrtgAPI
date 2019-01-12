@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-PrtgStatus_IT" {
+Describe "Get-PrtgStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "can execute" {
         $status = Get-PrtgStatus
 

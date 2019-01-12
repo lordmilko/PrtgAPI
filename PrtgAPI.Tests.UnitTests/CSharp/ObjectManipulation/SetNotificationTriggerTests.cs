@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     public class SetNotificationTriggerTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetNotificationTrigger_CanExecute()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -20,6 +21,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetNotificationTrigger_CanExecuteAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -30,6 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetNotificationTrigger_SetsAChannel_OnASensor()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -43,6 +46,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetNotificationTrigger_SetsAChannel_OnASensorAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());

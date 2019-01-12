@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "Get-ObjectProperty" {
+Describe "Get-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
     SetMultiTypeResponse
 

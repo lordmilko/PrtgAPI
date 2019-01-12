@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
 
-Describe "Set-GoPrtgAlias" {
+Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
     BeforeAll { GoPrtgBeforeAll    }
 
     BeforeEach { GoPrtgBeforeEach }

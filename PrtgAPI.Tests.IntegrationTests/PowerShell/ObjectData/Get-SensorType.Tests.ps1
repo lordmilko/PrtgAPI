@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-SensorType_IT" {
+Describe "Get-SensorType_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves all sensor types" {
         (Get-SensorType).Count | Should BeGreaterThan 200
     }

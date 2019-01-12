@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\ObjectProperty.ps1
 
-Describe "Set-ObjectProperty_Containers_IT" {
+Describe "Set-ObjectProperty_Containers_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $testCases = @(
         @{name = "Devices"; obj = { Get-Device -Id (Settings Device) }}

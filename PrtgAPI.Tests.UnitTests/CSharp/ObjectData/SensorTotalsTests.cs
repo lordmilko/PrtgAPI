@@ -9,6 +9,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SensorTotalsTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTotals_AllFields_HaveValues()
         {
             var client = Initialize_Client(new SensorTotalsResponse(new SensorTotalsItem()));
@@ -19,6 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTotals_CanExecuteAsync()
         {
             var client = Initialize_Client(new SensorTotalsResponse(new SensorTotalsItem()));
@@ -29,6 +31,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorTotals_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new SensorTotalsResponse(new SensorTotalsItem()));
@@ -39,6 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorTotals_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new SensorTotalsResponse(new SensorTotalsItem()));

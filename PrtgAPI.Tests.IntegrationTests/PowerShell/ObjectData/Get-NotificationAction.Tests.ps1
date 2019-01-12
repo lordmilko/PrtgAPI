@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-NotificationAction_IT" {
+Describe "Get-NotificationAction_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has correct number of actions" {
         $actions = Get-NotificationAction
 

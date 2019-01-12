@@ -8,6 +8,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     public class CloneTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Clone_CanClone()
         {
             var client = Initialize_Client(new CloneResponse());
@@ -16,6 +17,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Clone_CanCloneAsync()
         {
             var client = Initialize_Client(new CloneResponse());
@@ -24,6 +26,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Clone_CanCloneDeviceAsync()
         {
             var client = Initialize_Client(new CloneResponse());
@@ -32,6 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Clone_CanGetId_WhenObjectIsInvalid()
         {
             var client = Initialize_Client(new CloneResponse("https://prtg.example.com/error.htm?errormsg=the object is currently not valid&errorurl=/object.htm?id=9999"));

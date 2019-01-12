@@ -11,15 +11,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class NotificationActionTests : StandardObjectTests<NotificationAction, NotificationActionItem, NotificationActionResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationAction_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_GetObjectsOverloads_CanExecute()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -41,6 +45,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_NotificationTypes_AllFields_HaveValues()
         {
             var obj = GetSingleItem();
@@ -61,6 +66,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_FiltersByProperty()
         {
             var client = Initialize_Client(new AddressValidatorResponse(new object[]
@@ -79,6 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationAction_FiltersByPropertyAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse(new object[]
@@ -99,6 +106,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
         
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_LoadsSchedule_Lazy_AllPropertiesSet()
         {
             var client = Initialize_Client(new NotificationActionResponse(
@@ -119,6 +127,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationAction_LoadsSchedule_Lazy_AllPropertiesSetAsync()
         {
             var client = Initialize_Client(new NotificationActionResponse(
@@ -140,6 +149,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_Types_ToString()
         {
             var obj = GetSingleItem();
@@ -157,6 +167,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationAction_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -169,6 +180,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationAction_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

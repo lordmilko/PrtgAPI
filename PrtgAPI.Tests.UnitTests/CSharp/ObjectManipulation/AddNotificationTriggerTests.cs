@@ -13,6 +13,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     public class AddNotificationTriggerTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_SupportedType()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -26,6 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_SupportedTypeAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -39,6 +41,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_UnsupportedType()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -49,6 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_UnsupportedTypeAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -59,6 +63,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_ChannelToContainer()
         {
             var dictionary = new Dictionary<Content, int>
@@ -77,6 +82,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_ChannelToContainerAsync()
         {
             var dictionary = new Dictionary<Content, int>
@@ -95,6 +101,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_EnumToSensor()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -105,6 +112,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_EnumToSensorAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -115,6 +123,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_ResolveScenarios()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -133,6 +142,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_ResolveScenariosAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -151,6 +161,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_Throws_ResolvingMultiple()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true));
@@ -166,6 +177,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_Throws_ResolvingMultipleAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true));
@@ -181,6 +193,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_StandardTriggerChannel_OnSensor()
         {
             var urls = new[]
@@ -193,6 +206,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_StandardTriggerChannel_OnContainer()
         {
             var urls = new[]
@@ -206,6 +220,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_OnSensor()
         {
             var urls = new[]
@@ -227,6 +242,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_OnContainer()
         {
             var urls = new[]
@@ -245,6 +261,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_ChannelId_OnSensor()
         {
             var urls = new[]
@@ -259,6 +276,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_ChannelId_OnContainer()
         {
             var urls = new[]
@@ -271,6 +289,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_InvalidChannelId_OnSensor()
         {
             var urls = new[]
@@ -284,6 +303,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_InvalidChannelId_OnContainer()
         {
             var urls = new[]
@@ -296,6 +316,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnSensor()
         {
             var urls = new[]
@@ -317,6 +338,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnContainer()
         {
             var urls = new[]

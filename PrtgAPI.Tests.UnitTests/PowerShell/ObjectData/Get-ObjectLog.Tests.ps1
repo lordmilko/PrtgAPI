@@ -12,7 +12,7 @@ function SetLogAddressValidatorResponseWithCount($str, $hashtable)
     SetResponseAndClientWithArguments "LogAddressValidatorResponse" @($str, $dictionary)
 }
 
-Describe "Get-ObjectLog" {
+Describe "Get-ObjectLog" -Tag @("PowerShell", "UnitTest") {
 
     It "retrieves logs from an unspecified object" {
         SetLogAddressValidatorResponse "count=500&filter_drel=today"

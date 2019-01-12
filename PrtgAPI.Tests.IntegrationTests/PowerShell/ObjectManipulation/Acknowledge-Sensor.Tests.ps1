@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Acknowledge-Sensor_IT" {
+Describe "Acknowledge-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $message = "Unit Testing FTW!"
     

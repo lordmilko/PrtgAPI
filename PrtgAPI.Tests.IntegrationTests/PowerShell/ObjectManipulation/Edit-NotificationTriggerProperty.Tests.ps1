@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Edit-NotificationTriggerProperty_IT" {
+Describe "Edit-NotificationTriggerProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "can edit OnNotificationAction" {
         $trigger = Get-Device -Id (Settings Device) | Get-NotificationTrigger -Type State -Inherited $false
         $action = Get-NotificationAction *ticket*

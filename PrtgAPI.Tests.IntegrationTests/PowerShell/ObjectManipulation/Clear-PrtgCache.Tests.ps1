@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Clear-PrtgCache_IT" {
+Describe "Clear-PrtgCache_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "clears general caches" {
         Clear-PrtgCache General
     }

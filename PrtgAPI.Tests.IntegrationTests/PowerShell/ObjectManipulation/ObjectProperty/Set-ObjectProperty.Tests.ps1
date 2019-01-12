@@ -14,7 +14,7 @@ function TestScanningInterval($expectedString, $value)
     $newInterval | Should Be $expectedString
 }
 
-Describe "Set-ObjectProperty_IT" {
+Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     
     Context "TableSettings" {
         $testCases = @(

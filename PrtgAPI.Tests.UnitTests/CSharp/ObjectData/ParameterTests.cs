@@ -29,6 +29,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region TableParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_CanSetSortDirection()
         {
             var parameters = new SensorParameters();
@@ -65,6 +66,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_AddsAndRemovesFilters()
         {
             var parameters = new SensorParameters();
@@ -84,6 +86,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_AddRemoveFilters_ThrowsSpecifyingNull()
         {
             var parameters = new SensorParameters();
@@ -93,6 +96,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_AddFilters_ToSearchFiltersProperty()
         {
             var parameters = new SensorParameters();
@@ -109,6 +113,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultiParameterFilterValues_SameProperty()
         {
             var sensor = new SensorParameters
@@ -128,6 +133,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultiParameterFilterValues_IgnoresDifferentProperty()
         {
             var sensor = new SensorParameters
@@ -146,6 +152,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultipleParameterFilterValues_AddsInvalidValue()
         {
             var sensor = new SensorParameters
@@ -165,6 +172,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region CustomParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void CustomParameter_ToString_FormatsCorrectly()
         {
             var parameter = new CustomParameter("name", "val");
@@ -176,6 +184,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region SensorParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorParameters_Status_CanBeGetAndSet()
         {
             var parameters = new SensorParameters();
@@ -194,6 +203,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorParameters_HttpSensor_CanBeGetAndSet()
         {
             var parameters = new HttpSensorParameters();
@@ -225,6 +235,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region LogParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void LogParameters_Date_CanBeGetAndSet()
         {
             var parameters = new LogParameters(null);
@@ -245,6 +256,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void LogParameters_SetsRecordAge_InConstructor()
         {
             var parameters = new LogParameters(1001, RecordAge.LastSixMonths);
@@ -253,6 +265,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void LogParameters_SetsStartAndEnd_InConstructor()
         {
             var start = DateTime.Now;
@@ -268,6 +281,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region NewSensorParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_CanBeSet()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1")
@@ -279,6 +293,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_CanBeSetToNull()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1")
@@ -290,6 +305,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_Throws_WhenSetNotEnum()
         {
             var parameters = new FakeSensorParameters();
@@ -298,6 +314,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewSensorParameters_EnablesDependentProperties()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
@@ -313,6 +330,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region RawSensorParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void RawSensorParameters_Parameters_InitializesIfNull()
         {
             var parameters = new RawSensorParameters("testName", "sensorType")
@@ -324,6 +342,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void RawSensorParameters_CanBeUsedAsDictionary()
         {
             var parameters = new RawSensorParameters("testName", "sensorType");
@@ -354,6 +373,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void RawSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -374,6 +394,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void RawSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -397,6 +418,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region SensorHistoryParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistoryParameters_GetsProperties()
         {
             var start = DateTime.Now;
@@ -408,6 +430,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistoryParameters_Throws_WhenAverageIsLessThanZero()
         {
             AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null, null), "Average must be greater than or equal to 0");
@@ -417,6 +440,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region NewDeviceParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewDeviceParameters_SwapsHostWithIPVersion()
         {
             var parameters = new NewDeviceParameters("device", "dc-1");
@@ -435,6 +459,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewDeviceParameters_AssignsHostToCorrectProperty()
         {
             var parameters = new NewDeviceParameters("device", "dc-1");
@@ -451,6 +476,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewDeviceParameters_SetsAutomaticTemplate_WhenTemplatesAssigned()
         {
             var templates = Execute(c => c.GetDeviceTemplates());
@@ -464,6 +490,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewDeviceParameters_DoesNotChangeAutoDiscoveryMode_WhenNoTemplatesAssigned()
         {
             var parameters = new NewDeviceParameters("dc-1");
@@ -477,6 +504,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NewDeviceParameters_ClearsTemplates_WhenAutoDiscoveryModeChanged()
         {
             var templates = Execute(c => c.GetDeviceTemplates());
@@ -499,6 +527,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region PageableParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PageableParameters_IncreasesPage_StartAtZero()
         {
             var parameters = new SensorParameters();
@@ -531,6 +560,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PageableParameters_IncreasesPage_StartAtOne()
         {
             var parameters = new LogParameters(null);
@@ -566,6 +596,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region ProbeParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_0()
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, 0));
@@ -576,6 +607,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_NotEquals_0()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -585,6 +617,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_1()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -594,6 +627,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0()
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, new[] {0}));
@@ -604,6 +638,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWithout_0()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -613,6 +648,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0_AndSomethingElse()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -625,6 +661,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region GetObjectPropertyRawParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void GetObjectPropertyRawParameters_SpecifiesShow_WithStringProperty()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&name=name&show=text&username=username"));
@@ -633,6 +670,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void GetObjectPropertyRawParameters_DoesNotSpecifyShow_WithNonStringProperty()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&name=active&username=username"));
@@ -644,6 +682,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region SetChannelPropertyParameters
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelPropertyParameters_ConstructorValidation()
         {
             var settings = new[] { new ChannelParameter(ChannelProperty.LimitsEnabled, true) };
@@ -666,6 +705,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Parameters_ReplacesCounterpart()
         {
             var parameters = new BaseParameters

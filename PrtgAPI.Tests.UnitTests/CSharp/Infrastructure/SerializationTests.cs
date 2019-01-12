@@ -41,240 +41,306 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region String
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_String_Normal() => DeserializeElementDummy("test", "test");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_String_Null() => DeserializeElementDummy<string>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_String_EmptyString() => DeserializeElementDummy<string>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_String_Missing() => DeserializeElementDummy<string>(null, null, false);
 
         #endregion
         #region Integer
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_Normal() => DeserializeElementDummy("3", 3);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_Double() => DeserializeElementInvalid<int, XmlDeserializationException>("4.5", ExceptionException("4.5", "Int32", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_Invalid() => DeserializeElementInvalid<int, XmlDeserializationException>("banana", ExceptionException("banana", "Int32", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_Null() => DeserializeElementInvalid<int, XmlDeserializationException>(null, NullException("Int32"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_EmptyString() => DeserializeElementInvalid<int, XmlDeserializationException>(string.Empty, NullException("Int32"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Integer_Missing() => DeserializeElementInvalid<int, XmlDeserializationException>(null, NullException("Int32"), false);
 
         #endregion
         #region Nullable Integer
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_Normal() => DeserializeElementDummy<int?>("3", 3);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_Double() => DeserializeElementInvalid<int?, XmlDeserializationException>("4.5", ExceptionException("4.5", "Int32", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_Invalid() => DeserializeElementInvalid<int?, XmlDeserializationException>("banana", ExceptionException("banana", "Int32", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_Null() => DeserializeElementDummy<int?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_EmptyString() => DeserializeElementDummy<int?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableInteger_Missing() => DeserializeElementDummy<int?>(null, null, false);
 
         #endregion
         #region Double
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_Normal() => DeserializeElementDummy("4.5", 4.5);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_Integer() => DeserializeElementDummy<double>("4", 4);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_Invalid() => DeserializeElementInvalid<double, XmlDeserializationException>("banana", ExceptionException("banana", "Double", "Input string was not in a correct format"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_Null() => DeserializeElementInvalid<double, XmlDeserializationException>(null, NullException("Double"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_EmptyString() => DeserializeElementInvalid<double, XmlDeserializationException>(string.Empty, NullException("Double"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Double_Missing() => DeserializeElementInvalid<double, XmlDeserializationException>(null, NullException("Double"), false);
 
         #endregion
         #region Nullable Double
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_Normal() => DeserializeElementDummy<double?>("4.5", 4.5);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_Integer() => DeserializeElementDummy<double?>("4", 4);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_Invalid() => DeserializeElementInvalid<double?, XmlDeserializationException>("banana", ExceptionException("banana", "Double", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_Null() => DeserializeElementDummy<double?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_EmptyString() => DeserializeElementDummy<double?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDouble_Missing() => DeserializeElementDummy<double?>(null, null, false);
 
         #endregion
         #region Bool
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_True() => DeserializeElementDummy("1", true);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_False() => DeserializeElementDummy("0", false);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_NegativeTrue() => DeserializeElementDummy("-1", true);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_Invalid() =>
             DeserializeElementInvalid<bool, XmlDeserializationException>("banana", ExceptionException("banana", "Boolean", "The string 'banana' is not a valid Boolean value."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_EmptyString() => DeserializeElementInvalid<bool, XmlDeserializationException>(string.Empty, NullException("Boolean"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_Null() => DeserializeElementInvalid<bool, XmlDeserializationException>(null, NullException("Boolean"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Bool_Missing() => DeserializeElementInvalid<bool, XmlDeserializationException>(null, NullException("Boolean"), false);
 
         #endregion
         #region Nullable Bool
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_True() => DeserializeElementDummy<bool?>("1", true);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_False() => DeserializeElementDummy<bool?>("0", false);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_NegativeTrue() => DeserializeElementDummy("-1", true);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_Invalid() =>
             DeserializeElementInvalid<bool?, XmlDeserializationException>("banana", ExceptionException("banana", "Boolean", "The string 'banana' is not a valid Boolean value."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_Null() => DeserializeElementDummy<bool?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_EmptyString() => DeserializeElementDummy<bool?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableBool_Missing() => DeserializeElementDummy<bool?>(null, null, false);
 
         #endregion
         #region DateTime
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_DateTime_Normal() =>
             DeserializeElementDummy(TypeHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_DateTime_Invalid() =>
             DeserializeElementInvalid<DateTime, XmlDeserializationException>("banana", ExceptionException("banana", "DateTime", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_DateTime_Null() => DeserializeElementInvalid<DateTime, XmlDeserializationException>(null, NullException("DateTime"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_DateTime_EmptyString() => DeserializeElementInvalid<DateTime, XmlDeserializationException>(string.Empty, NullException("DateTime"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_DateTime_Missing() => DeserializeElementInvalid<DateTime, XmlDeserializationException>(null, NullException("DateTime"), false);
 
         #endregion
         #region Nullable DateTime
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDateTime_Normal() =>
             DeserializeElementDummy<DateTime?>(TypeHelpers.ConvertToPrtgDateTime(Time.Today).ToString(), Time.Today.ToLocalTime());
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDateTime_Invalid() =>
             DeserializeElementInvalid<DateTime?, XmlDeserializationException>("banana", ExceptionException("banana", "DateTime", "Input string was not in a correct format."));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDateTime_Null() => DeserializeElementDummy<DateTime?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDateTime_EmptyString() => DeserializeElementDummy<DateTime?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableDateTime_Missing() => DeserializeElementDummy<DateTime?>(null, null);
 
         #endregion
         #region TimeSpan
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_TimeSpan_Normal() => DeserializeElementDummy("60", TimeSpan.FromSeconds(60));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_TimeSpan_Invalid() => DeserializeElementInvalid<TimeSpan, XmlDeserializationException>("banana", "Input string was not in a correct format.");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_TimeSpan_Null() => DeserializeElementInvalid<TimeSpan, XmlDeserializationException>(null, NullException("TimeSpan"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_TimeSpan_EmptyString() => DeserializeElementInvalid<TimeSpan, XmlDeserializationException>(string.Empty, NullException("TimeSpan"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_TimeSpan_Missing() => DeserializeElementInvalid<TimeSpan, XmlDeserializationException>(null, NullException("TimeSpan"), false);
 
         #endregion
         #region Nullable TimeSpan
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableTimeSpan_Normal() => DeserializeElementDummy<TimeSpan?>("60", TimeSpan.FromSeconds(60));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableTimeSpan_Invalid() => DeserializeElementInvalid<TimeSpan?, XmlDeserializationException>("banana", "Input string was not in a correct format.");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableTimeSpan_Null() => DeserializeElementDummy<TimeSpan?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableTimeSpan_EmptyString() => DeserializeElementDummy<TimeSpan?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableTimeSpan_Missing() => DeserializeElementDummy<TimeSpan?>(null, null, false);
 
         #endregion
         #region Enum
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_Normal() => DeserializeElementDummy("3", Status.Up);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_AlternateName() => DeserializeAttributeDummy("https", HttpMode.HTTPS);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_NoAttribute() => DeserializeElementInvalid<AuthMode, XmlDeserializationException>("Password", EnumException("Password", "PrtgAPI.AuthMode"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_NoAttribute_AmongstHasAttribute()
         {
             DeserializeElementDummy("WithAttribute", PartialMissingXmlEnum.WithAttribute);
@@ -282,87 +348,109 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_Invalid() => DeserializeElementInvalid<Status, XmlDeserializationException>("banana", EnumException("banana", "PrtgAPI.Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_Null() => DeserializeElementInvalid<Status, XmlDeserializationException>(null, NullException("Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_EmptyString() => DeserializeElementInvalid<Status, XmlDeserializationException>(string.Empty, NullException("Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Enum_Missing() => DeserializeElementInvalid<Status, XmlDeserializationException>(null, NullException("Status"), false);
 
         #endregion
         #region Nullable Enum
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableEnum_Normal() => DeserializeElementDummy<Status?>("3", Status.Up);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableEnum_Invalid() => DeserializeElementInvalid<Status?, XmlDeserializationException>("banana", EnumException("banana", "PrtgAPI.Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableEnum_Null() => DeserializeElementDummy<Status?>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableEnum_EmptyString() => DeserializeElementDummy<Status?>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_NullableEnum_Missing() => DeserializeElementDummy<Status?>(null, null, false);
 
         #endregion
         #region Splittable String
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_StringArray_Normal() => DeserializeElementDummy("first second", new[] { "first", "second" });
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_StringArray_Null() => DeserializeElementDummy<string[]>(null, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_StringArray_EmptyString() => DeserializeElementDummy<string[]>(string.Empty, null);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_StringArray_Missing() => DeserializeElementDummy<string[]>(null, null, false);
 
         #endregion
         #region Attribute
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_Normal() => DeserializeAttributeDummy("3", Status.Up);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_Invalid() => DeserializeAttributeInvalid<int, XmlDeserializationException>("banana", $"An error occurred while attempting to deserialize an object of type 'Int32', possibly caused by the following XML: '<item property=\"banana\" />'. Input string was not in a correct format");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_InvalidEnum() => DeserializeAttributeInvalid<Status?, XmlDeserializationException>("banana", "Could not deserialize value 'banana' as it is not a valid member of type 'PrtgAPI.Status'. Could not process XML '<item property=\"banana\" />'");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_Null() => DeserializeElementInvalid<Status, XmlDeserializationException>(null, NullException("Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_EmptyString() => DeserializeElementInvalid<Status, XmlDeserializationException>(string.Empty, NullException("Status"));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Attribute_Missing() => DeserializeElementInvalid<Status, XmlDeserializationException>(null, NullException("Status"), false);
 
         #endregion
         #region Text
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Text_Normal()
         {
             DeserializeText("1", true);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Text_Null_NonNullable()
         {
             DeserializeTextInvalid<bool, XmlDeserializationException>(null, NullException("Boolean", "item"));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Text_EmptyString_NonNullable()
         {
             DeserializeTextInvalid<bool, XmlDeserializationException>(string.Empty, NullException("Boolean", "item"));
@@ -372,6 +460,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Root
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_Root()
         {
             var xml = new XDocument(new XElement("sensors",
@@ -392,36 +481,42 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Object Settings
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_Single_Normal()
         {
             DeserializeSingleObjectProperty(ObjectProperty.InheritWindowsCredentials, "1", true);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_Single_Null_Nullable()
         {
             DeserializeSingleObjectProperty<bool?>(ObjectProperty.InheritWindowsCredentials, null, null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_BackingProperty()
         {
             DeserializeSingleObjectProperty(ObjectProperty.Interval, "60|60 seconds", ScanningInterval.SixtySeconds);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_Single_Null_NonNullable()
         {
             DeserializeSingleObjectProperty_InvalidNull<bool>(ObjectProperty.Active, null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_Single_EmptyString_Nullable()
         {
             DeserializeSingleObjectProperty<bool?>(ObjectProperty.InheritWindowsCredentials, string.Empty, null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ObjectProperty_Single_EmptyString_NonNullable()
         {
             DeserializeSingleObjectProperty_InvalidNull<bool?>(ObjectProperty.Active, string.Empty);
@@ -431,12 +526,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Value Converter
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ValueConverter_DeserializesValue()
         {
             Serializer_Engine_ValueConverter_Internal<double>();
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ValueConverter_DeserializesNullableValue()
         {
             Serializer_Engine_ValueConverter_Internal<double?>();
@@ -464,6 +561,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_ValueConverter_ProcessesConvertableAndUnConvertable()
         {
             var xml = new XDocument(new XElement("sensors",
@@ -492,6 +590,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Update Existing Object
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_UpdateExisting_Normal()
         {
             DeserializeUpdateDummy(
@@ -502,6 +601,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_Engine_UpdateExisting_MissingMandatory()
         {
             DeserializeUpdateInvalid<int, int, XmlDeserializationException>(
@@ -516,6 +616,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Engine Equality
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Serializer_Engine_ReflectionExpression_Equal()
         {
             var actions = new Func<PrtgClient, object>[]
@@ -910,6 +1011,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AllPrtgObjectTypes_HaveSerializerTests()
         {
             //Normal, Invalid, Null, EmptyString, MissingTag
@@ -991,6 +1093,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Serializer_ThrowsInvalidEnum()
         {
             var webClient = new MockWebClient(new SensorResponse(new SensorItem(status: "banana", statusRaw: "8765")));
@@ -1009,6 +1112,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_ParsesCustomTimeSpanSerializedString()
         {
             var interval = ScanningInterval.Parse("20|20 seconds");
@@ -1017,6 +1121,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_SerializesTimeSpanCorrectly()
         {
             CheckScanningIntervalSerializedValue(new TimeSpan(0, 0, 1), "1|1 second (Not officially supported)");
@@ -1036,6 +1141,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_SerializesEnumToTimeSpan()
         {
             ParseScanningIntervalAndCheckSerializedValue(StandardScanningInterval.ThirtySeconds, "30|30 seconds");
@@ -1052,6 +1158,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_From_ScanningInterval()
         {
             var interval = ScanningInterval.FiveMinutes;
@@ -1062,6 +1169,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_From_Int()
         {
             var interval = ScanningInterval.Parse(300);
@@ -1070,6 +1178,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
         
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ScanningInterval_From_TimeSpan()
         {
             var interval = ScanningInterval.Parse(new TimeSpan(0, 5, 0));
@@ -1078,6 +1187,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Object_DeserializesSchedule()
         {
             var webClient = new MockWebClient(new MultiTypeResponse());
@@ -1090,6 +1200,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Object_Deserializes_PropertyWithMultipleAttributes_WhenOneValueIsSet()
         {
             var xDoc = new XDocument(
@@ -1105,6 +1216,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Object_Deserializes_PropertyWithMultipleAttributes_WhenBothValuesAreSet()
         {
             var xDoc = new XDocument(

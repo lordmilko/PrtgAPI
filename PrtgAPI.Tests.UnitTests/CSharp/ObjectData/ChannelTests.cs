@@ -12,9 +12,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class ChannelTests : StandardObjectTests<Channel, ChannelItem, ChannelResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_GetObjectsOverloads_CanExecute()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -33,30 +35,36 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Channel_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_SetProperty_Enable_LimitsEnabled_UrlCorrect()
         {
             Channel_SetProperty(ChannelProperty.LimitsEnabled, true);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_SetProperty_Disable_LimitsEnabled_UrlCorrect()
         {
             Channel_SetProperty(ChannelProperty.LimitsEnabled, false);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_SetProperty_Enable_UpperErrorLimit_UrlCorrect()
         {
             Channel_SetProperty(ChannelProperty.UpperErrorLimit, 100);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_SetProperty_Disable_UpperErrorLimit_UrlCorrect()
         {
             Channel_SetProperty(ChannelProperty.UpperErrorLimit, string.Empty);
@@ -72,6 +80,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_Unit_CalculatesProperly()
         {
             Func<ChannelItem, Channel> func = i => GetObjects(Initialize_Client_WithItems(i)).First();
@@ -92,6 +101,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_Filter_ByName_NoMatches()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -102,6 +112,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_Filter_ByName_Match()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -112,6 +123,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Channel_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -122,6 +134,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Channel_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

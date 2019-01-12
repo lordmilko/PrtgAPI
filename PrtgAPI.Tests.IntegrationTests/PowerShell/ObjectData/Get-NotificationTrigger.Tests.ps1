@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-NotificationTrigger_IT" {
+Describe "Get-NotificationTrigger_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "can retrieve all triggers" {
         $triggers = Get-Device -Id (Settings Device) | Get-NotificationTrigger
 

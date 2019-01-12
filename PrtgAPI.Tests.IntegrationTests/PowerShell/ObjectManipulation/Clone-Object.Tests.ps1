@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Clone-Object_IT" {
+Describe "Clone-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     Context "Sensor" {
         It "clones a sensor" {

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-PrtgSchedule_IT" {
+Describe "Get-PrtgSchedule_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has the correct number of schedules" {
 
         $schedules = Get-PrtgSchedule

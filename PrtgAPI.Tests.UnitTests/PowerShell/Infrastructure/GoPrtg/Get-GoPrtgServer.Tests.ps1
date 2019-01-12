@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
 
-Describe "Get-GoPrtgServer" {
+Describe "Get-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     BeforeAll { GoPrtgBeforeAll    }
 

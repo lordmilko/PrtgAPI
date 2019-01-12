@@ -9,6 +9,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SensorTypeTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorType_CanExecute()
         {
             var client = Initialize_Client(new AddressValidatorResponse("api/sensortypes.json?id=3002"));
@@ -23,6 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorType_CanExecuteAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("api/sensortypes.json?id=3002"));
@@ -37,6 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorType_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -47,6 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SensorType_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

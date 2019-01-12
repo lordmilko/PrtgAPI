@@ -22,6 +22,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     public class AssemblyTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgCmdletTypes_DontImplement_ProcessRecord()
         {
             var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
@@ -36,6 +37,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AllRequestVersions_HaveVersionMaps()
         {
             var values = Enum.GetValues(typeof(RequestVersion)).Cast<RequestVersion>().ToList();
@@ -49,6 +51,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ObjectPropertyFields_Have_ObjectPropertyCategories()
         {
             var values = Enum.GetValues(typeof (ObjectProperty)).Cast<ObjectProperty>().ToList();
@@ -60,6 +63,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void InjectedProperties_On_ILazy_AreMarkedInternal()
         {
             var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
@@ -134,6 +138,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AllReflection_UsesCacheManagers()
         {
             WithTree((file, tree, model) =>
@@ -147,6 +152,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AllPublicAsyncMethods_AcceptACancellationToken_OrHaveAnOverloadThatDoes()
         {
             var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));

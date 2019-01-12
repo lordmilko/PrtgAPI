@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
     public class DynamicSensorParameterTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void DynamicSensorParameters_Adds_ObjectWithTargets()
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "wmivolume");
@@ -35,6 +36,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void DynamicSensorParameters_Gets_ObjectWithoutTargets()
         {
             dynamic parameters = client.GetDynamicSensorParameters(Settings.Device, "http");
@@ -69,6 +71,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void DynamicSensorParameters_Adds_ObjectWithoutParameters()
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "zen");
@@ -104,6 +107,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void DynamicSensorParameters_ReadOnlyUser_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -113,6 +117,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task DynamicSensorParameters_ReadOnlyUser_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -122,6 +127,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("Unreliable")]
+        [TestCategory("IntegrationTest")]
         public void DynamicSensorParameters_Timeout_CustomTimeout()
         {
             AssertEx.Throws<TimeoutException>(
@@ -131,6 +138,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task DynamicSensorParameters_Timeout_CustomTimeoutAsync()
         {
             await AssertEx.ThrowsAsync<TimeoutException>(

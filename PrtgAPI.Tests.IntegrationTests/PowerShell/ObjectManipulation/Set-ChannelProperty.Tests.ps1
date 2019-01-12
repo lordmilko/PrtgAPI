@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Set-ChannelProperty_IT" {
+Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     
     $channel = $null
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Simulate-ErrorStatus_IT" {
+Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "simulates an error status" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Backup-PrtgConfig_IT" {
+Describe "Backup-PrtgConfig_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "can execute" {
         $originalFiles = [PrtgAPI.Tests.IntegrationTests.ObjectManipulation.AdminToolTests]::GetBackupFiles() | select -ExpandProperty FullName
 

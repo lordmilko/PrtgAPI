@@ -12,9 +12,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class DeviceTests : QueryableObjectTests<Device, DeviceItem, DeviceResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Device_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
@@ -22,6 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void Device_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
             (c1, c2) => new List<Func<int, object>>                              { c1.GetDevice, c2.GetDeviceAsync },
             (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetDevices, c2.GetDevicesAsync },
@@ -30,6 +33,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
             client => client.StreamDevices,
             client => client.StreamDevices,
@@ -38,6 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamDevices,
             c => c.StreamDevices,
@@ -45,6 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
             client => client.QueryDevices,
             client => client.QueryDevices,
@@ -53,12 +59,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_GetDevice_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetDevice(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_GetDevice_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetDevice(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -69,6 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Device_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -79,6 +89,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Device_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         protected override List<Device> GetObjects(PrtgClient client) => client.GetDevices();

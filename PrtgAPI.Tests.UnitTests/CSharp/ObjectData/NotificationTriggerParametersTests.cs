@@ -168,6 +168,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new VolumeTriggerParameters(1, 1);
@@ -176,6 +177,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new SpeedTriggerParameters(1, 1);
@@ -184,6 +186,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new ThresholdTriggerParameters(1, 1);
@@ -218,6 +221,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     #region All Properties Have Values
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StateTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new StateTriggerParameters(1)

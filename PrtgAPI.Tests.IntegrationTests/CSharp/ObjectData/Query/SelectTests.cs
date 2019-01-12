@@ -10,6 +10,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Overload
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_Overload_TSourceTResult_SingleProperty()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -18,6 +19,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_Overload_TSourceIntTResult_SelectIndex()
         {
             Execute(q => q.Select((s, i) => i), s =>
@@ -28,6 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_Overload_TSourceIntTResult_SelectIndexAndProperty()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -50,6 +53,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Illegal Predecessors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_FromUnsupported()
         {
             var names = client.GetSensors().Select(s => s.Name).Skip(1).ToList();
@@ -61,6 +65,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_FromUnsupported_FromSupported()
         {
             var names = client.GetSensors().Where(s => s.Active).Select(s => s.Name).Skip(1).ToList();
@@ -72,6 +77,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_ToUnsupported()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).Skip(1).ToList();
@@ -86,6 +92,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Anonymous Type
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -105,6 +112,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_Where()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -122,6 +130,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_WithPropertyMember_ToWhere()
         {
             Execute(q => q.Select(s => new
@@ -144,6 +153,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Type Constraints
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Select_TypeConstraints_CastType_ToSelect()
         {
             Execute(q => q.Select(s => (ITableObject)s).Select(v => v.Tags), s => Assert.AreEqual(Settings.SensorsInTestServer, s.Count));
@@ -152,6 +162,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #endregion
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_PropertyMember_ToWhere()
         {
             Execute(q => q.Select(s => s.NotificationTypes.ChangeTriggers).Where(a => a == 0),
@@ -164,6 +175,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousLiteral_ToWhere()
         {
             Execute(
@@ -180,6 +192,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_Anonymous_Where_ToAnonymous()
         {
             Execute(q => q.Select(s => new
@@ -189,6 +202,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnotherQuery()
         {
             ExecuteClient(
@@ -198,6 +212,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnotherQuery_InAnAnonymousType()
         {
             ExecuteClient(
@@ -211,6 +226,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnotherSelectQuery()
         {
             ExecuteClient(
@@ -220,6 +236,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_From_AnonymousType()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -236,6 +253,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_FromRealTypeViaProperty()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -255,6 +273,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_FromRealTypeViaConstructor()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -269,6 +288,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_FromRealTypeViaConstructorGetOnly()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -284,6 +304,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_FromRealTypeViaConstructorAndProperty()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -302,6 +323,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_ArrayOfAnonymousType_From_ArrayOfAnonymousType()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -319,6 +341,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_ListOfAnonymousType_From_ListOfAnonymousType()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -336,6 +359,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_From_AnonymousType_WithLiteral()
         {
             var names = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -355,6 +379,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_From_AnonymousTypeWithTwoLevels()
         {
             var ids = client.GetSensors().Select(s => s.Id).ToList();
@@ -377,6 +402,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_AnonymousType_From_AnonymousType_IncludingGetOnlyProperty()
         {
             var triggers = client.GetSensors().Select(s => s.NotificationTypes.ToString()).OrderBy(v => v).ToList();
@@ -402,6 +428,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_IncludeAllPropertyExpressions()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -413,6 +440,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_ToWhere()
         {
             var count = client.GetSensors().Count(s => s.Name.Contains("Pi"));
@@ -421,12 +449,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_SubMemberCondition()
         {
             Execute(q => q.Select(s => s.LastUp != null && s.LastUp.Value.Day == 32), s => Assert.IsTrue(s.All(v => v == false)));
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensor_FromSource()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -440,6 +470,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensorProperty_FromSource()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -451,6 +482,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_Anonymous_FromNewSensor_FromAnonymous_FromSource()
         {
             Execute(q => q.Select(s => new
@@ -468,6 +500,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensor_Where_FromSource()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -478,6 +511,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensor_WhereInternalProperty_FromSource()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -488,6 +522,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensor_Where_FromNothing()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -498,6 +533,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Query_Select_NewSensor_Where_FromOperation()
         {
             ExecuteClient(c => c.QuerySensors().Select(s => new Sensor
@@ -508,6 +544,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_SelectTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.SelectTests));

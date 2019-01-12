@@ -13,6 +13,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     public class CancellationTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Cancellation_CancelsSynchronous()
         {
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
@@ -27,6 +28,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsAsynchronous()
         {
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
@@ -41,6 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsWaitOneAsync()
         {
             var cts = new CancellationTokenSource();
@@ -55,6 +58,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Cancellation_CancelsLazy()
         {
             var client = BaseTest.Initialize_Client(new NotificationActionResponse(new NotificationActionItem())
@@ -75,6 +79,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsLazyAsync()
         {
             var client = BaseTest.Initialize_Client(new NotificationActionResponse(new NotificationActionItem())

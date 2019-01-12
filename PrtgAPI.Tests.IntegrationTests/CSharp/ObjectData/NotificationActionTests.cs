@@ -7,6 +7,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class NotificationActionTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_NotificationAction_ReadOnlyUser()
         {
             var action = readOnlyClient.GetNotificationAction(Settings.NotificationAction);
@@ -15,6 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_NotificationAction_ReadOnlyUserAsync()
         {
             var action = await readOnlyClient.GetNotificationActionAsync(Settings.NotificationAction);

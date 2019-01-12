@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Add-Sensor_IT" {
+Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     Context "ExeXml" {
         It "adds a new sensor" {

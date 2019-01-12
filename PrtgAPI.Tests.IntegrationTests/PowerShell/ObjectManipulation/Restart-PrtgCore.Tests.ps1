@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Restart-PrtgCore_IT" {
+Describe "Restart-PrtgCore_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "waits for PRTG to restart" {
         Restart-PrtgCore

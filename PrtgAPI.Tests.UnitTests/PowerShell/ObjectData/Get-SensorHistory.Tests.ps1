@@ -64,7 +64,7 @@ function ValidateChannels($file, $labels, $properties)
     }
 }
 
-Describe "Get-SensorHistory" {
+Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
 
     SetSensorHistoryResponse
     

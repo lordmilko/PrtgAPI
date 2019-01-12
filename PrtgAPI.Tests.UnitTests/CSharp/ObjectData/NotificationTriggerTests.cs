@@ -13,12 +13,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class NotificationTriggerTests : NotificationTriggerBaseTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_CanDeserialize() => Object_CanDeserialize_Multiple();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_CanDeserializeAsync() => await Object_CanDeserializeAsync_Multiple();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_AllFields_HaveValues()
         {
             var objs = GetMultipleItems();
@@ -54,6 +57,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_ResolvesASensorChannel()
         {
             var client = GetResolvesASensorChannelResponseClient();
@@ -64,6 +68,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_ResolvesASensorChannelAsync()
         {
             var client = GetResolvesASensorChannelResponseClient();
@@ -84,6 +89,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_Throws_WhenChannelCantBeResolved()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")));
@@ -95,6 +101,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_Throws_WhenChannelCantBeResolvedAsync()
         {
             var client = Initialize_Client(
@@ -110,6 +117,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_CanRemove()
         {
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
@@ -121,6 +129,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_CanRemoveAsync()
         {
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
@@ -132,6 +141,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTriggerTypes_CanExecuteAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -140,6 +150,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsAction_Lazy()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -177,6 +188,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsAction_Efficiently_WhenAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -212,6 +224,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsSchedule_Lazy()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -273,6 +286,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsSchedule_LazyAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -326,6 +340,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSet()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -337,6 +352,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSetAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -348,6 +364,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSet()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -369,6 +386,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSetAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -390,6 +408,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void NotificationTrigger_ReadOnlyUser()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -407,6 +426,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_ReadOnlyUserAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

@@ -18,6 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region AddSensor
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_CanExecute()
         {
             var builder = new StringBuilder();
@@ -34,6 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddSensor_CanExecuteAsync()
         {
             var builder = new StringBuilder();
@@ -50,6 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_AddsExcessiveItems()
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
@@ -65,6 +68,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddSensor_AddsExcessiveItemsAsync()
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
@@ -102,6 +106,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_Throws_WhenMissingRequiredValue()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
@@ -115,6 +120,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_Throws_WhenMissingRequiredValue_WithEmptyList()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
@@ -125,6 +131,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_Throws_MissingSensorName()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
@@ -133,6 +140,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_Throws_MissingSensorType()
         {
             var client = Initialize_Client(new BasicResponse(string.Empty));
@@ -141,6 +149,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_ResolveScenarios()
         {
             var resolveClient = Initialize_Client(new DiffBasedResolveResponse());
@@ -154,6 +163,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddSensor_ResolveScenariosAsync()
         {
             var resolveMultipleClient = Initialize_Client(new DiffBasedResolveResponse());
@@ -171,6 +181,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddSensor_CleansLeadingSpaces()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true) {LeadingSpace = true});
@@ -183,6 +194,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddSensor_CleansLeadingSpacesAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true) { LeadingSpace = true });
@@ -198,6 +210,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region AddDevice
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_CanExecute()
         {
             var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001";
@@ -210,6 +223,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_Light_CanExecute()
         {
             var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=1&discoveryschedule_=0&id=1001";
@@ -220,6 +234,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_CanExecuteAsync()
         {
             var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001";
@@ -232,6 +247,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_Light_CanExecuteAsync()
         {
             var url = "adddevice2.htm?name_=device&host_=host&ipversion_=0&discoverytype_=1&discoveryschedule_=0&id=1001";
@@ -242,6 +258,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_WithTemplates_CanExecute()
         {
             var templateClient = Initialize_Client(new MultiTypeResponse());
@@ -265,6 +282,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_WithTemplates_Throws_WhenNoTemplatesSpecified()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -281,6 +299,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_WithTemplates_CanExecuteAsync()
         {
             var templateClient = Initialize_Client(new MultiTypeResponse());
@@ -304,6 +323,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_WithTemplates_Throws_WhenNoTemplatesSpecifiedAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -320,6 +340,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_ResolveScenarios()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -334,6 +355,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddDevice_Throws_ResolvingMultiple()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse());
@@ -344,6 +366,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_ResolveScenariosAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -358,6 +381,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddDevice_Throws_ResolvingMultipleAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse());
@@ -368,6 +392,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DeviceTemplate_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -378,6 +403,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task DeviceTemplate_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -391,6 +417,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region AddGroup
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddGroup_CanExecute()
         {
             var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
@@ -401,6 +428,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddGroup_Light_CanExecute()
         {
             var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
@@ -409,6 +437,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddGroup_CanExecuteAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
@@ -419,6 +448,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddGroup_Light_CanExecuteAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("addgroup2.htm?name_=group&id=1001"));
@@ -427,6 +457,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddGroup_ResolveScenarios()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -441,6 +472,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddGroup_Throws_ResolvingMultiple()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse());
@@ -449,6 +481,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddGroup_ResolveScenariosAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -463,6 +496,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddGroup_Throws_ResolvingMultipleAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse());
@@ -473,6 +507,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AddObject_Throws_FailingToResolve()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -481,6 +516,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AddObject_Throws_FailingToResolveAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());

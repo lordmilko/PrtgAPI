@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Restart-Probe_IT" {
+Describe "Restart-Probe_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "waits for all probes to restart" {
         Restart-Probe
 

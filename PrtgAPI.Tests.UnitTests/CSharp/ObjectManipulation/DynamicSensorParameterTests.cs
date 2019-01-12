@@ -19,6 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         const string exefile = "exefile";
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_CanExecute()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -29,6 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_CanExecuteAsync()
         {
             var parameters = await client.GetDynamicSensorParametersAsync(1001, "exexml");
@@ -39,6 +41,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_SetTarget_ForTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -82,6 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_SetMultipleTargets_ForTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -100,6 +104,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Index_SetsNormal()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -112,6 +117,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Index_SetsTyped()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -127,6 +133,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_Throws_SetMultiple_ForNonTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -140,6 +147,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_NewProperty_Throws_WhenLocked()
         {
             var name = "FAKE_PARAMETER";
@@ -153,6 +161,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_NewProperty_Adds_WhenUnlocked()
         {
             var name = "FAKE_PARAMETER";
@@ -170,6 +179,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_CanUse_DynamicProperties()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -183,6 +193,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_CanUse_NormalProperties()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -191,6 +202,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_NewProperty_AsLowerCase_SameAsNormalProperty()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -202,6 +214,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_Throws_WhenLocked()
         {
             dynamic parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -213,6 +226,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_NewProperty_Adds_WhenUnlocked()
         {
             dynamic parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -228,6 +242,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -248,6 +263,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {
             TestHelpers.WithPSObjectUtilities(() =>

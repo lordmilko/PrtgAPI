@@ -12,7 +12,7 @@ function GetTrigger($type)
     return $trigger
 }
 
-Describe "Edit-NotificationTriggerProperty" {
+Describe "Edit-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
 
     SetResponseAndClient "SetNotificationTriggerResponse"
 

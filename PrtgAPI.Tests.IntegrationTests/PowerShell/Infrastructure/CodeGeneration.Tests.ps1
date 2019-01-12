@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Add Missing Sensor Types" {
+Describe "Add Missing Sensor Types" -Tag @("PowerShell", "IntegrationTest") {
     It "generates missing sensor types" {
 
         $types = Get-MissingSensorTypes

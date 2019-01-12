@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Resume-Object_IT" {
+Describe "Resume-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "resumes a paused object" {
         $sensor = Get-Sensor -Id (Settings PausedSensor)
         $sensor.Status | Should Be PausedByUser

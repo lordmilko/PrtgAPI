@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "Add-NotificationTrigger" {
+Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
 
     SetResponseAndClient "SetNotificationTriggerResponse"
 

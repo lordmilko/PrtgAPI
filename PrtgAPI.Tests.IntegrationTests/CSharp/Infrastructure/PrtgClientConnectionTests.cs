@@ -16,6 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
     public class PrtgClientConnectionTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_NullCredentials()
         {
             var server = $"http://{Settings.Server}";
@@ -29,6 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_InvalidCredentials()
         {
             var server = $"http://{Settings.Server}";
@@ -54,6 +56,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_NullServer()
         {
             string server = null;
@@ -65,6 +68,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_InvalidServer()
         {
             string server = "a";
@@ -81,6 +85,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_InvalidRequest()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
@@ -88,6 +93,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Logic_Client_InvalidRequestAsync()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
@@ -95,6 +101,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_ConnectWithHttp()
         {
             var server = $"http://{Settings.Server}";
@@ -103,6 +110,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_ConnectWithHttps()
         {
             var server = $"https://{Settings.Server}";
@@ -121,6 +129,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Logic_Client_ConnectWithHttps_Async()
         {
             var server = $"https://{Settings.Server}";
@@ -150,12 +159,14 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_RetryRequest()
         {
             Logic_Client_RetryRequestInternal(localClient => localClient.GetSensors(), false);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_RetryRequest_Async()
         {
             Logic_Client_RetryRequestInternal(localClient =>
@@ -165,6 +176,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_Timeout()
         {
             var localClient = GetTimeoutClient();
@@ -173,6 +185,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Logic_Client_Timeout_Async()
         {
             var localClient = GetTimeoutClient();
@@ -256,6 +269,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Logic_Client_CancelsSynchronous()
         {
             var cts = new CancellationTokenSource();
@@ -268,6 +282,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Logic_Client_CancelsAsynchronous()
         {
             var cts = new CancellationTokenSource();

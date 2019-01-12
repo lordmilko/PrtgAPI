@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Add-NotificationTrigger_IT" {
+Describe "Add-NotificationTrigger_IT" -Tag @("PowerShell", "IntegrationTest") {
     Context "Create from scratch" {
 
         function AddRemoveTrigger($type) {

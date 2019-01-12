@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Channel_IT" {
+Describe "Get-Channel_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves all channels" {
         (Get-Sensor -Id (Settings ChannelSensor) | Get-Channel).Count | Should Be (Settings ChannelsInTestSensor)
     }

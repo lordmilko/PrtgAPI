@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "Acknowledge-Sensor" {
+Describe "Acknowledge-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     SetActionResponse
 

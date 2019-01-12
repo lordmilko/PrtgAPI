@@ -12,6 +12,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class GetObjectProperties : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_RetrievesAllRawProperties()
         {
             var dictionary = client.GetObjectPropertiesRaw(0, ObjectType.Group);
@@ -22,6 +23,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_CanGetIndividualProperties()
         {
             var blacklist = new[]
@@ -75,6 +77,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_Throws_RetrievingAnInvalidProperty()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -84,18 +87,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_IllegalCharacter_NormalEndpoint()
         {
             TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Name, s => s.Name);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_IllegalCharacter_AlternateEndpoint()
         {
             TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Comments, s => s.Comments);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_IllegalCharacter_RawProperty()
         {
             var originalProperty = client.GetObjectPropertyRaw(Settings.UpSensor, "name_");
@@ -124,6 +130,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_ObjectProperties_ReadOnlyUser()
         {
             Action<Action> action = f => AssertEx.Throws<InvalidOperationException>(f, "Cannot retrieve properties for read-only");
@@ -135,6 +142,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_ObjectProperties_ReadOnlyUserAsync()
         {
             Func<Func<Task>, Task> action = f => AssertEx.ThrowsAsync<InvalidOperationException>(f, "Cannot retrieve properties for read-only");

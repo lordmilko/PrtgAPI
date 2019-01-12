@@ -14,54 +14,63 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     public class TakeTests : BaseQueryTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_ThenCount_NoPredicate()
         {
             ExecuteNow(q => q.Take(2).Count(), "count=2", r => Assert.AreEqual(2, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_Smaller_ThenBigger()
         {
             ExecuteNow(q => q.Take(2).Take(3).Count(), "count=2", r => Assert.AreEqual(2, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_Bigger_ThenSmaller()
         {
             ExecuteNow(q => q.Take(3).Take(2).Count(), "count=2", r => Assert.AreEqual(2, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_ThreeTimes()
         {
             ExecuteNow(q => q.Take(3).Take(1).Take(2).Count(), "count=1", r => Assert.AreEqual(1, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_ThenWhere()
         {
             ExecuteNow(q => q.Take(2).Where(s => s.Id == 4001).Count(), "count=2", r => Assert.AreEqual(1, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_ThenCount_WithPredicate()
         {
             ExecuteNow(q => q.Take(2).Count(s => s.Id == 4001), "count=2", r => Assert.AreEqual(1, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ThenTake_LegalPredicate()
         {
             ExecuteNow(q => q.Where(s => s.Id == 4001).Take(2).Count(), "count=2&filter_objid=4001", r => Assert.AreEqual(1, r), UrlFlag.Columns);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ThenTake_IllLegalPredicate_And()
         {
             ExecuteNow(q => q.Where(s => s.Id == 4001 && s.Id == 4002).Take(2).Count(), "filter_objid=4001", r => Assert.AreEqual(0, r));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ThenTake_IllLegalPredicate_Or()
         {
             ExecuteNow(
@@ -72,6 +81,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_Until_Matched()
         {
             var client = GetUntilMatchedClient();
@@ -82,6 +92,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_Until_Matched_Manual()
         {
             var client = GetUntilMatchedClient(1);
@@ -98,6 +109,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Take_Until_Matched_TakeIterator()
         {
             var items = new List<BaseItem>();

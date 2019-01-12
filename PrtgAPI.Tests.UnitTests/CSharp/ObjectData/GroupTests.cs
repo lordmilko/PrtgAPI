@@ -12,9 +12,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class GroupTests : QueryableObjectTests<Group, GroupItem, GroupResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Group_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
@@ -22,6 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void Group_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
             (c1, c2) => new List<Func<int, object>>                              { c1.GetGroup, c2.GetGroupAsync },
             (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetGroups, c2.GetGroupsAsync },
@@ -30,6 +33,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
             client => client.StreamGroups,
             client => client.StreamGroups,
@@ -38,6 +42,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamGroups,
             c => c.StreamGroups,
@@ -45,6 +50,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
             client => client.QueryGroups,
             client => client.QueryGroups,
@@ -53,15 +59,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_GetGroup_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetGroup(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_GetGroup_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetGroup(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Group_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -72,6 +82,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Group_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Device_IT" {
+Describe "Get-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has correct number of devices" {
         $devices = Get-Device
 

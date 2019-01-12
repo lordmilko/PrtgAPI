@@ -15,6 +15,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region AddSensor
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_AddsWithRawParameters()
         {
             var parameters = new RawSensorParameters("raw c# sensor", "exexml");
@@ -41,6 +42,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_AddsWithDictionaryParameters()
         {
             var parameters = new RawSensorParameters("raw c# sensor", "exexml")
@@ -64,6 +66,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_AddsWithTypedRawParameters()
         {
             var parameters = new ExeXmlRawSensorParameters("raw c# sensor", "exexml", "test.ps1")
@@ -124,24 +127,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_Throws_AddingToASensor()
         {
             AddToInvalidObject(Settings.UpSensor);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_Throws_AddingToAGroup()
         {
             AddToInvalidObject(Settings.Group);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_Throws_AddingToAProbe()
         {
             AddToInvalidObject(Settings.Probe);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_Throws_AddingToANonExistentObject()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
@@ -163,6 +170,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_ResolvesSingle()
         {
             var name = "resolvesSingle";
@@ -184,6 +192,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_ResolvesMultiple()
         {
             var services = client.Targets.GetWmiServices(Settings.Device).Where(s => s.Name.Contains("PRTG")).ToList();
@@ -212,6 +221,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddSensor_DoesntResolve()
         {
             var name = "doesntResolveSingle";
@@ -235,6 +245,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddSensor_ResolvesAsync()
         {
             var name = "resolvesSingle";
@@ -256,6 +267,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddSensor_ResolvesMultipleAsync()
         {
             var services = (await client.Targets.GetWmiServicesAsync(Settings.Device)).Where(s => s.Name.Contains("PRTG")).ToList();
@@ -284,6 +296,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddSensor_DoesntResolveAsync()
         {
             var name = "doesntResolveSingle";
@@ -311,6 +324,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             #region Synchronous
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddDevice_AddsWithLightParameters()
         {
             var host = "exch-1";
@@ -323,6 +337,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddDevice_AddsWithRealParameters()
         {
             AddsWithRealParameters(
@@ -341,6 +356,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddDevice_Resolves()
         {
             Resolves(
@@ -353,6 +369,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddDevice_DoesntResolve()
         {
             Resolves(
@@ -368,6 +385,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             #region Asynchronous
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddDevice_AddsWithLightParametersAsync()
         {
             await AddsWithLightParametersAsync(
@@ -378,6 +396,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddDevice_AddsWithRealParametersAsync()
         {
             await AddsWithRealParametersAsync(
@@ -396,6 +415,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddDevice_ResolvesAsync()
         {
             await ResolvesAsync(
@@ -408,6 +428,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddDevice_DoesntResolveAsync()
         {
             await ResolvesAsync(
@@ -425,6 +446,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             #region Synchronous
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddGroup_AddsWithLightParameters()
         {
             AddsWithLightParameters(
@@ -435,12 +457,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddGroup_AddsWithRealParameters()
         {
             AddsWithRealParameters(new NewGroupParameters("realParameters"), client.AddGroup, client.GetGroups, null);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddGroup_Resolves()
         {
             Resolves(
@@ -453,6 +477,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void AddGroup_DoesntResolve()
         {
             Resolves(
@@ -468,6 +493,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             #region Asynchronous
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddGroup_AddsWithLightParametersAsync()
         {
             await AddsWithLightParametersAsync(
@@ -478,12 +504,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddGroup_AddsWithRealParametersAsync()
         {
             await AddsWithRealParametersAsync(new NewGroupParameters("realParameters"), client.AddGroupAsync, client.GetGroupsAsync, null);
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddGroup_ResolvesAsync()
         {
             await ResolvesAsync(
@@ -496,6 +524,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task AddGroup_DoesntResolveAsync()
         {
             await ResolvesAsync(

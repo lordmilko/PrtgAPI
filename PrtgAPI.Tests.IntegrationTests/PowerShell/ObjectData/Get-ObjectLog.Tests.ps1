@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-ObjectLog_IT" {
+Describe "Get-ObjectLog_IT" -Tag @("PowerShell", "IntegrationTest") {
     
     It "retrieves all logs from an unspecified object" {
         Get-ObjectLog -Period All

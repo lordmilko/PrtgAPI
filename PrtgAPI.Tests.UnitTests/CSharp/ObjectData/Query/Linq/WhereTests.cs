@@ -56,6 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Overloads
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceBool_SingleCondition()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total1", "filter_name=Volume+IO+_Total1", s =>
@@ -66,6 +67,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_SingleCondition_IgnoreIndex()
         {
             ExecuteQuery(q => q.Where((s, i) => s.Name == "Volume IO _Total1"), "filter_name=Volume+IO+_Total1", s =>
@@ -76,6 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_SingleCondition_UseIndex()
         {
             ExecuteQuery(q => q.Where((s, i) => s.Id == 4000 + i), string.Empty, s =>
@@ -85,6 +88,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_FirstConditionIgnoreIndex_SecondConditionUseIndex()
         {
             ExecuteQuery(q => q.Where((s, i) => s.Name == "Volume IO _Total1" && s.Id == 4000 + i), "filter_name=Volume+IO+_Total1", s =>
@@ -95,6 +99,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_YesNo()
         {
             ExecuteQuery(
@@ -105,6 +110,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_NoYes()
         {
             ExecuteQuery(
@@ -115,6 +121,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_YesYes()
         {
             ExecuteQuery(
@@ -125,6 +132,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesNoNo()
         {
             ExecuteQuery(
@@ -137,6 +145,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoYesNo()
         {
             ExecuteQuery(
@@ -149,6 +158,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoNoYes()
         {
             ExecuteQuery(
@@ -161,6 +171,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesYesNo()
         {
             ExecuteQuery(
@@ -173,6 +184,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoYesYes()
         {
             ExecuteQuery(
@@ -185,6 +197,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesNoYes()
         {
             ExecuteQuery(
@@ -197,6 +210,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesYesYes()
         {
             ExecuteQuery(
@@ -212,18 +226,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Serialization
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Serialize_TimeSpan()
         {
             ExecuteFilter(s => s.TotalDowntime > new TimeSpan(0, 20, 21), "filter_downtimetime=@above(000000000001221)", s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Serialize_DateTime()
         {
             ExecuteFilter(s => s.LastUp > new DateTime(2000, 10, 2, 19, 2, 1, DateTimeKind.Utc), "filter_lastup=@above(36801.7930671296)", s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Serialize_NullableValue()
         {
             ExecuteFilter(s => s.LastUp.Value == new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc), "filter_lastup=36801.5070023148", s => Assert.AreEqual(0, s.Count));
@@ -233,6 +250,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Operators
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total1",      "filter_name=Volume+IO+_Total1", s => Assert.AreEqual("Volume IO _Total1", s.Single().Name));
@@ -246,6 +264,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Backwards()
         {
             ExecuteFilter(s => "Volume IO _Total1" == s.Name,        "filter_name=Volume+IO+_Total1", s => Assert.AreEqual("Volume IO _Total1", s.Single().Name));
@@ -259,30 +278,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Equals_EmptyString()
         {
             ExecuteFilter(s => s.Name == string.Empty, string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Contains_IntToString()
         {
             ExecuteFilter(s => s.Id.ToString().Contains("40"), "filter_objid=@sub(40)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Equals_IntToString()
         {
             ExecuteFilter(s => s.Id.ToString() == "4000", "filter_objid=4000", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Equals_NullableDoubleToString()
         {
             ExecuteFilter(s => s.LastValue.ToString() == "3", "filter_lastvalue=0000000000000030.0000", s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Contains_StructToString()
         {
             ExecuteFilter(s => s.LastUp.ToString().Contains("2018"), string.Empty, s => Assert.AreEqual(0, s.Count));
@@ -290,30 +314,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Contains_ClassToString()
         {
             ExecuteFilter(s => s.NotificationTypes.ToString().Contains("Volume"), string.Empty, s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Contains_EnumToString()
         {
             ExecuteFilter(s => s.Status.ToString().Contains("Up"), string.Empty, s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_StartsWith()
         {
             ExecuteFilter(s => s.Name.StartsWith("Vol"), "filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Fake_EndsWith()
         {
             ExecuteFilter(s => s.Name.EndsWith("0"), "filter_name=@sub(0)", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Fake_StartsWith_Take()
         {
             ExecuteClient(
@@ -324,6 +353,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Operators_Fake_EndsWith_Take()
         {
             ExecuteClient(
@@ -337,6 +367,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Server Logic
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_DifferentProperties_And_SingleQuery()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total1" && s.ParentId == 2193,
@@ -348,6 +379,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_DifferentProperties_Or()
         {
             ExecuteFilter(
@@ -361,6 +393,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_SameProperty_And_SingleQuery()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total0" && s.Name == "Volume IO _Total1",
@@ -377,6 +410,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_SameProperty_Or()
         {
             ExecuteFilter(
@@ -392,6 +426,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_SamePropertyOr_AndDifferentProperty()
         {
             ExecuteFilter(
@@ -407,6 +442,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_SameProperty_And_TwoQueries()
         {
             ExecuteQuery(
@@ -421,6 +457,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_DifferentProperties_And_TwoQueries()
         {
             ExecuteQuery(
@@ -435,6 +472,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_ServerLogic_DifferentProperties_And_ThreeQueries()
         {
             ExecuteQuery(
@@ -452,60 +490,70 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Boolean Property Logic
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsExplicitlyTrue()
         {
             ExecuteFilter(s => s.Active == true, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_BooleanExpression_IsExplicitlyTrue_OnLeft()
         {
             ExecuteFilter(s => true == (s.Id == 4000), "filter_objid=4000", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsExplicitlyFalse()
         {
             ExecuteFilter(s => s.Active == false, "filter_active=0", s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsImplicitlyTrue()
         {
             ExecuteFilter(s => s.Active, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsImplicitlyTrue_AndCondition()
         {
             ExecuteFilter(s => s.Active && s.Id == 4001, "filter_active=-1&filter_objid=4001", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsImplicitlyTrue_OrCondition()
         {
             ExecuteFilter(s => s.Active || !s.Active, "filter_active=-1&filter_active=0", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_NotEqualsTrue()
         {
             ExecuteFilter(s => s.Active != true, "filter_active=@neq(-1)", s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_NotEqualsFalse()
         {
             ExecuteFilter(s => s.Active != false, "filter_active=@neq(0)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsNotTrue()
         {
             ExecuteFilter(s => s.Active == !true, "filter_active=0", s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Boolean_IsNotNotTrue()
         {
             ExecuteFilter(s => s.Active == !!true, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
@@ -515,30 +563,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Enum Property Logic
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_Normal()
         {
             ExecuteFilter(s => s.Status == Status.Up, "filter_status=3", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_ToString()
         {
             ExecuteFilter(s => s.Status.ToString() == "Up", string.Empty, s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_ToString_IllegalString()
         {
             ExecuteFilter(s => s.Status.ToString() == "Banana", string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_DifferentNumber()
         {
             ExecuteFilter(s => ((Enum)s.Status).Equals((Enum)RetryMode.Retry), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_ManualExpression()
         {
             var lambda = BaseExpressionTest.CreateLambda(Property.Status, s =>
@@ -555,18 +608,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_DifferentNumber_RightToLeft()
         {
             ExecuteFilter(s => ((Enum)RetryMode.Retry).Equals((Enum)s.BaseType), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_Method()
         {
             ExecuteFilter(s => ((Enum)s.Status).Equals(SomeEnum(s)), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_NoCast()
         {
             ExecuteFilter(s => s.Status.Equals(RetryMode.Retry), string.Empty, s => Assert.AreEqual(0, s.Count));
@@ -578,12 +634,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_SameNumber()
         {
             ExecuteFilter(s => ((Enum)s.BaseType).Equals((Enum)AuthMode.PassHash), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Enum_AgainstDifferentEnumType_ToString()
         {
             ExecuteFilter(s => (((Enum)s.Status).ToString()).Equals(((Enum)RetryMode.Retry).ToString()), string.Empty, s => Assert.AreEqual(0, s.Count));
@@ -593,12 +651,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Illegal Logic
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_Property_EqualsNull()
         {
             ExecuteFilter(s => s.LastUp == null, string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_PropertyOrDifferent_And_Property()
         {
             //Cannot OR different properties, cannot AND the same property
@@ -614,6 +674,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_PropertyAndProperty_Or_Different()
         {
             //Cannot AND the same property, cannot OR different properties
@@ -625,18 +686,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_Property1_Against_Property2()
         {
             ExecuteFilter(s => s.Name == s.Message, string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_IllegalMethod_EqualsValue()
         {
             ExecuteFilter(s => s.Name.Substring(0, 3) == "Vol", string.Empty, s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_InternalLambda()
         {
             ExecuteFilter(s => s.Tags.Where(t => t.Contains("wmi")).Any(), string.Empty, s =>
@@ -646,12 +710,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_PropertyMember()
         {
             ExecuteFilter(s => s.LastUp.Value.DayOfWeek == DayOfWeek.Tuesday, string.Empty, s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_IllegalLogic_PropertyMethod()
         {
             ExecuteFilter(s => s.LastUp.Value.AddHours(1) == DateTime.Now, string.Empty, s => Assert.AreEqual(0, s.Count));
@@ -661,6 +727,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Negated Conditions
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_EqualsFalse_Supported()
         {
             ExecuteFilter(s => s.Id == 4000 == false,                       "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
@@ -674,18 +741,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_EqualsFalse_RightToLeft()
         {
             ExecuteFilter(s => false == (s.Id == 4000), "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotContains_EqualsFalse()
         {
             ExecuteFilter(s => !s.Name.Contains("Vol") == false, "filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotContains_EqualsCastedFalse()
         {
             //Construct an expression like s => !s.Contains("Vol") == (bool)false
@@ -708,24 +778,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotNotContains_EqualsFalse()
         {
             ExecuteFilter(s => !!s.Name.Contains("Vol") == false, string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotNotContains_EqualsFalse_RightToLeft()
         {
             ExecuteFilter(s => false == !!s.Name.Contains("Vol"), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_EqualsFalse_Twice_Supported()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total1" == false == false, "filter_name=Volume+IO+_Total1", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_Not_Supported()
         {
             ExecuteFilter(s => !(s.Id == 4000),                       "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
@@ -739,6 +813,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotEqualsTrue_Supported()
         {
             ExecuteFilter(s => s.Id == 4000 != true,                       "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
@@ -752,6 +827,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotEqualsFalse_Supported()
         {
             ExecuteFilter(s => s.Name == "Volume IO _Total1" != false,        "filter_name=Volume+IO+_Total1", s => Assert.AreEqual(1, s.Count));
@@ -765,6 +841,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Negation_NotEqualsFalse_RightToLeft()
         {
             ExecuteFilter(s => false != (s.Name == "Volume IO _Total1"), "filter_name=Volume+IO+_Total1", s => Assert.AreEqual(1, s.Count));
@@ -774,6 +851,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Nested Queries
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Sensors_MatchAnyDevices()
         {
             var urls = new List<string>
@@ -805,99 +883,122 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Cast
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Enum_To_TypedEnum() => ExecuteFilter(s => s.Status == (Status)Status.Up, "filter_status=3", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Enum_To_UntypedEnum() => ExecuteFilter(s => ((Enum)s.Status).Equals((Enum)Status.Up), "filter_status=3", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Int_To_Enum() => ExecuteFilter(s => s.Status == (Status)8, "filter_status=3", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_NullableDouble_To_Int() => ExecuteFilter(s => (int)s.LastValue == 69, "filter_lastvalue=0000000000000690.0000", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Int_To_Double() => ExecuteFilter(s => (double)s.Id == 4000.0, "filter_objid=4000", s => Assert.AreEqual(1, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Int_To_Illegal() => ExecuteFilter(s => (IllegalInt)s.Id == 4000, string.Empty, s => Assert.AreEqual(1, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Int_To_NullableInt() => ExecuteFilter(s => (int?) s.Id == 4000, "filter_objid=4000", s => Assert.AreEqual(1, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_NullableBool_To_Bool() => ExecuteFilter(s => (bool)s.Active == true, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Object_To_Type() => ExecuteFilter(s => (bool)(object)s.Active == true, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Object_To_NullableType() => ExecuteFilter(s => (int?)(object)s.Id == 4001, "filter_objid=4001", s => Assert.AreEqual(1, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Type_To_Object() => ExecuteFilter(s => ((object)s.Id).Equals((object)4001), "filter_objid=4001", s => Assert.AreEqual(1, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Type_To_Object_OperatorEquality() => ExecuteFilter(s => (object)s.Id == (object)4001, "filter_objid=4001", s => Assert.AreEqual(0, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_NullableType_To_Object() => ExecuteFilter(s => ((object) s.LastValue).Equals((object) 69.0), "filter_lastvalue=0000000000000690.0000", s => Assert.AreEqual(3, s.Count));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_IsImplicitlyTrue()
         {
             ExecuteFilter(s => (bool)(object)s.Active, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_EqualsFalse()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)) == false, "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_EqualsTrue()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)) == true, "filter_objid=4000", s => Assert.AreEqual(1, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Property_EqualsFalse()
         {
             ExecuteFilter(s => ((bool)(object)(s.Active)) == false, "filter_active=0", s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Property_EqualsTrue()
         {
             ExecuteFilter(s => ((bool)(object)(s.Active)) == true, "filter_active=-1", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_ToNullableBool()
         {
             ExecuteFilter(s => ((bool?)(object)(s.Id == 4000)) == false, string.Empty, s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_Bool()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)) == false, "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_EqualsBool()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)).Equals(false), "filter_objid=@neq(4000)", s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_EqualsInt()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)).Equals(3), string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_ContainsString()
         {
             //Can't reduce further since Contains("False") would require the FALSE ones, which could
@@ -906,12 +1007,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Condition_ContainsCondition()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == 4000)).ToString().Contains((s.ParentId == 4000).ToString()), string.Empty, s => Assert.AreEqual(2, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Cast_Property_Enum()
         {
             ExecuteFilter(s => ((Enum)(object)(s.Status)).Equals((Enum)Status.Up), "filter_status=3", s => Assert.AreEqual(3, s.Count));
@@ -921,6 +1024,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region AsEnumerable / AsQueryable
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_WrapProperty_Add()
         {
             ExecuteFilter(s => s.Id + 3 == 4, string.Empty, s =>
@@ -930,6 +1034,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_AsEnumerable_AsQueryable()
         {
             ExecuteClient(
@@ -940,6 +1045,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_AsEnumerable_AsQueryable_QueryableMethod()
         {
             ExecuteClient(
@@ -950,6 +1056,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_AsEnumerable_EnumerableMethod_AsQueryable()
         {
             ExecuteClient(
@@ -960,6 +1067,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_AsEnumerable_EnumerableMethod_AsQueryable_QueryableMethod()
         {
             ExecuteClient(
@@ -976,24 +1084,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Null Access
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_BoolMethod_OnNullProperty()
         {
             ExecuteNullable(q => q.Where(s => s.Message.Contains("Test")), "filter_message=@sub(Test)", i => i.MessageRaw = null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_NonBoolMethod_OnNullProperty()
         {
             ExecuteNullable(q => q.Where(s => s.Message.ToString() == "Test"), string.Empty, i => i.MessageRaw = null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_BoolMethod_OnMethod_OnNullProperty()
         {
             ExecuteNullable(q => q.Where(s => s.Message.ToString().Contains("Test")), string.Empty, i => i.MessageRaw = null);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_NonBoolMethod_OnMethod_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1004,6 +1116,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_NonBoolPropertyAccess_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1013,6 +1126,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_NonBoolPropertyAccess_OnMethod_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1022,6 +1136,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_NullAccess_Value_OfNullProperty()
         {
             AssertEx.Throws<InvalidOperationException>(() =>
@@ -1039,6 +1154,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Intermediate Types
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Intermediate_AnonymousType()
         {
             ExecuteFilter(s => new
@@ -1048,6 +1164,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Intermediate_NewSensorType_Single()
         {
             ExecuteFilter(s => new Sensor
@@ -1057,6 +1174,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Intermediate_NewSensor_ToWhere()
         {
             ExecuteClient(c => c.QuerySensors().Where(s => new Sensor
@@ -1066,6 +1184,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_Intermediate_NewSensor_Select_FromSource()
         {
             ExecuteClient(c => c.QuerySensors().Where(s => new Sensor
@@ -1078,6 +1197,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Split Requests
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_SplitRequests_Logs_Select_SingleSet_ReduceParameters()
         {
             ExecuteClient(
@@ -1088,6 +1208,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_SplitRequests_Logs_Select_MultipleSets_AllParameters()
         {
             ExecuteClient(
@@ -1098,6 +1219,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_SplitRequests_OmitsId_WithSingleRequest()
         {
             ExecuteClient(
@@ -1108,6 +1230,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_Where_SplitRequests_IncludesId_WithMultipleRequests()
         {
             ExecuteClient(
@@ -1125,18 +1248,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Type Constraints
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Where_TypeConstraints_SinglePredicate_ConstraintPropertiesOnly()
         {
             ExecuteFilter(s => ((IObject) s).Name.Contains("Vol"), "filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Where_TypeConstraints_SinglePredicate_BaseType()
         {
             ExecuteFilter(s => ((SensorOrDeviceOrGroupOrProbe)s).Name.Contains("Vol"), "filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Where_TypeConstraints_TwoInterfaces()
         {
             Execute(q => q.Where(s => ((IObject) s).Name.Contains("Vol")).Select(s => ((ITableObject) s).Id), "content=sensors&columns=objid,name&count=500&filter_name=@sub(Vol)", s => Assert.AreEqual(3, s.Count));

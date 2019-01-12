@@ -21,7 +21,7 @@ function ValidateParams($params, $address)
     }
 }
 
-Describe "New-SensorParameters" {
+Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
     $device = Run Device { Get-Device }
 

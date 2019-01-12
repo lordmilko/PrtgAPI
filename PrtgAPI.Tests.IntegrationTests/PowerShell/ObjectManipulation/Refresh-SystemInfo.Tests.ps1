@@ -28,7 +28,7 @@ function RefreshAndValidate($deviceId, $type)
     $newLastUpdated | Should BeGreaterThan $originalLastUpdated
 }
 
-Describe "Refresh-SystemInfo_IT" {
+Describe "Refresh-SystemInfo_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $cases = @(
         @{name="system"}

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-SensorFactorySource_IT" {
+Describe "Get-SensorFactorySource_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves all sensors" {
         $sensors = Get-Sensor -Id (Settings SensorFactory) | Get-SensorFactorySource
 

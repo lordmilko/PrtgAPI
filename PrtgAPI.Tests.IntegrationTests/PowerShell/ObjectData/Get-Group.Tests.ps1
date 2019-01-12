@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Group_IT" {
+Describe "Get-Group_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has correct number of groups" {
         $groups = Get-Group
 

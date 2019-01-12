@@ -17,9 +17,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         };
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Probe_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
@@ -27,6 +29,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void Probe_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
             (c1, c2) => new List<Func<int, object>>                              { c1.GetProbe, c2.GetProbeAsync },
             (c1, c2) => new List<Func<Property, object, object>>                 { c1.GetProbes, c2.GetProbesAsync },
@@ -35,6 +38,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
             client => client.StreamProbes,
             client => client.StreamProbes,
@@ -43,6 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamProbes,
             c => c.StreamProbes,
@@ -50,6 +55,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
             client => client.QueryProbes,
             client => client.QueryProbes,
@@ -58,12 +64,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_GetProbe_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetProbe(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_GetProbe_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetProbe(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_AllFields_HaveValues()
         {
             Object_AllFields_HaveValues(prop =>
@@ -76,6 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Probe_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -86,6 +96,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Probe_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

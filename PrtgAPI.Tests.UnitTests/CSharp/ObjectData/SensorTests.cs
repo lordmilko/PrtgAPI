@@ -14,9 +14,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class SensorTests : QueryableObjectTests<Sensor, SensorItem, SensorResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Sensor_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
@@ -24,6 +26,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void Sensor_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_GetObjectsOverloads_CanExecute()
         {
             Object_GetObjectsOverloads_CanExecute
@@ -48,12 +51,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_GetSensor_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetSensor(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_GetSensor_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetSensor(1001));
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
             client => client.StreamSensors,
             client => client.StreamSensors,
@@ -63,6 +69,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamSensors,
             c => c.StreamSensors,
@@ -70,6 +77,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_GetObjectsOverloads_Query_CanExecute() => Object_GetObjectsOverloads_Query_CanExecute(
             client => client.QuerySensors,
             client => client.QuerySensors,
@@ -78,6 +86,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_AllFields_HaveValues()
         {
             Object_AllFields_HaveValues(prop =>
@@ -90,6 +99,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_Stream_WithCorrectPageSize()
         {
             var urls = new object[]
@@ -114,6 +124,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Sensor_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -124,6 +135,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Sensor_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

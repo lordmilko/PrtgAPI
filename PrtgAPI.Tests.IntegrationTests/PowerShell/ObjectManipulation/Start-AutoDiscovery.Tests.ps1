@@ -20,7 +20,7 @@ function WaitForAutoDiscovery($device)
     return (Get-Device -Id $device.Id)
 }
 
-Describe "Start-AutoDiscovery" {
+Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "performs an auto-discovery" {
 
         $probe = Get-Probe -Id (Settings Probe)

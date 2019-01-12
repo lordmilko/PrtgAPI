@@ -13,6 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region Serial
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_WithStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -23,6 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_WithStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -39,6 +41,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         //todo: what to do about count being 0 when requesting page count?
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Start_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -54,6 +57,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Start_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -75,6 +79,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Start_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -89,6 +94,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Start_AndStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -107,6 +113,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region Count
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -123,6 +130,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -140,6 +148,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_LessThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -155,6 +164,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_LessThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -171,6 +181,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_EqualsAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -182,6 +193,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_EqualsAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -194,6 +206,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_MoreThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -205,6 +218,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_MoreThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -217,6 +231,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -229,6 +244,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -242,6 +258,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -258,6 +275,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -275,6 +293,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_EqualsAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -287,6 +306,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_EqualsAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -300,6 +320,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_MoreThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -312,6 +333,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_MoreThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -328,6 +350,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region StartAndCount
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -343,6 +366,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -359,6 +383,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountLessThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -376,6 +401,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountLessThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -394,6 +420,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountEqualsAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -409,6 +436,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountEqualsAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -425,6 +453,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountMoreThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -440,6 +469,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_CountMoreThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -456,6 +486,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -472,6 +503,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -489,6 +521,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountLessThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -507,6 +540,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountLessThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -526,6 +560,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountEqualsAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -541,6 +576,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountEqualsAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -557,6 +593,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountMoreThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -572,6 +609,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_StartAndCount_AndStartOffset_CountMoreThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -592,6 +630,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region Parallel
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_WithStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -602,6 +641,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_WithStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -616,6 +656,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region Start
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Start_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -629,6 +670,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Start_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -643,6 +685,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Start_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.Today, null);
@@ -657,6 +700,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Start_AndStartOffset_MultiplePages()
         {
             FilterTests.Retry(retry =>
@@ -678,6 +722,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region Count
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -692,6 +737,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -706,6 +752,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_LessThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -719,6 +766,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_LessThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -736,6 +784,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_EqualsAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -747,6 +796,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_EqualsAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -762,6 +812,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_MoreThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -775,6 +826,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_MoreThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -789,6 +841,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -801,6 +854,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -814,6 +868,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -830,6 +885,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -847,6 +903,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_EqualsAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -859,6 +916,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_EqualsAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -872,6 +930,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_MoreThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -884,6 +943,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_MoreThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -900,6 +960,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #region StartAndCount
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -915,6 +976,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -931,6 +993,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountLessThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -946,6 +1009,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountLessThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -965,6 +1029,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountEqualsAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -979,6 +1044,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountEqualsAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -998,6 +1064,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountMoreThanAvailable_SinglePage()
         {
             var sensors = client.GetSensors();
@@ -1011,6 +1078,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_CountMoreThanAvailable_MultiplePages()
         {
             var sensors = client.GetSensors();
@@ -1027,6 +1095,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1042,6 +1111,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1059,6 +1129,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountLessThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1077,6 +1148,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountLessThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1096,6 +1168,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountEqualsAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1111,6 +1184,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountEqualsAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1127,6 +1201,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountMoreThanAvailable_SinglePage()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1142,6 +1217,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_StartAndCount_AndStartOffset_CountMoreThanAvailable_MultiplePages()
         {
             var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
@@ -1161,6 +1237,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         #endregion
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_HasAllStreamTests()
         {
             var expected = TestHelpers.GetTests(typeof(UnitTests.ObjectData.StreamTests)).Where(m => m.Name != "Stream_HasAllTests").Select(m => $"Data_{m.Name}").ToList();

@@ -24,6 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     public class PrtgClientTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_RetrievesPassHash()
         {
             var webClient = new MockWebClient(new PassHashResponse());
@@ -34,6 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_CantRetrievePassHash()
         {
             var webClient = new MockWebClient(new PassHashResponse("PRTG Network Monitor is starting"));
@@ -45,24 +47,28 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_ServerCannotBeNull()
         {
             AssertEx.Throws<ArgumentNullException>(() => new PrtgClient(null, "username", "password"), "Value cannot be null.\r\nParameter name: server");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_UsernameCannotBeNull()
         {
             AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", null, "password"), "Value cannot be null.\r\nParameter name: username");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_PasswordCannotBeNull()
         {
             AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", "username", null), "Value cannot be null.\r\nParameter name: pass");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_RetriesWhileStreaming()
         {
             var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());
@@ -86,6 +92,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         private int prtgClientRetriesNormally;
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_RetriesNormally()
         {
             prtgClientRetriesNormally = 0;
@@ -115,6 +122,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_SyncAsync_Counterparts()
         {
             var methods = typeof (PrtgClient).GetMethods().ToList();
@@ -189,6 +197,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ThrowsWithBadRequest()
         {
             var xml = new XElement("prtg",
@@ -200,6 +209,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ThrowsWithErrorUrl()
         {
             var address = "http://prtg.example.com/error.htm?errormsg=Something+bad+happened";
@@ -208,6 +218,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ThrowsWithHtml()
         {
             var html = new XElement("div",
@@ -229,6 +240,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_List()
         {
             var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
@@ -241,6 +253,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_ParsesInvalidXml_ListAsync()
         {
             var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
@@ -253,6 +266,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_Object()
         {
             var xml = "<property><value>\01</value></property>";
@@ -265,6 +279,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_ParsesInvalidXml_ObjectAsync()
         {
             var xml = "<property><value>\01</value></property>";
@@ -277,6 +292,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_XDocument()
         {
             var xml = "<property><value>\01</value></property>";
@@ -289,6 +305,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_ParsesInvalidXml_XDocumentAsync()
         {
             var xml = "<property><value>\01</value></property>";
@@ -301,6 +318,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_RetainsDirty()
         {
             var xml = "<property><value>\01</value></property>";
@@ -340,6 +358,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_ParsesInvalidXml_RetainsDirtyAsync()
         {
             var xml = "<property><value>\01</value></property>";
@@ -379,6 +398,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_Name()
         {
             var xml = "<property><value>\01</value></property>";
@@ -391,6 +411,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_ParsesInvalidXml_Value()
         {
             var xml = "<property\0><value>1</value></property>";
@@ -405,6 +426,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         private int prtgClientLogVerboseHit;
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_LogVerbose()
         {
             prtgClientLogVerboseHit = 0;
@@ -442,12 +464,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_HandlesTimeoutSocketException()
         {
             AssertEx.Throws<TimeoutException>(() => ExecuteSocketException(SocketError.TimedOut), "Connection timed out while communicating with remote server");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_SplitsRequests_BatchingOver1500Items()
         {
             var range = Enumerable.Range(1, 2000).ToArray();
@@ -468,6 +492,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_HandlesConnectionRefusedSocketException()
         {
             AssertEx.Throws<WebException>(() => ExecuteSocketException(SocketError.ConnectionRefused), "Server rejected HTTPS connection");
@@ -496,6 +521,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #region Execute With Log Response
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_AllMethodsExecute_WithLogResponse()
         {
             var methods = GetMethods(false);
@@ -514,6 +540,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void PrtgClient_AllMethodsExecute_WithoutLogResponse()
         {
             var methods = GetMethods(false);
@@ -532,6 +559,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_AllMethodsExecute_WithLogResponseAsync()
         {
             var methods = GetMethods(true);
@@ -550,6 +578,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task PrtgClient_AllMethodsExecute_WithoutLogResponseAsync()
         {
             var methods = GetMethods(true);

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "New-SearchFilter" {
+Describe "New-SearchFilter" -Tag @("PowerShell", "UnitTest") {
     Context "Enum Transformation" {
 
         It "transforms a string to an enum" {

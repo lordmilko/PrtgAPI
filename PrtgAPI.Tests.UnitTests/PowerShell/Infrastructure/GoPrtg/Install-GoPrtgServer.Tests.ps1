@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
 
-Describe "Install-GoPrtgServer" {
+Describe "Install-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`n`r`n" + 
                     "function __goPrtgGetServers {@(`r`n    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n)}`r`n`r`n" + 

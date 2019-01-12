@@ -11,6 +11,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Overloads
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_Overload_TSourceTResult_SingleProperty()
         {
             Execute(q => q.SelectMany(s => s.Tags), "content=sensors&columns=tags&count=500", s =>
@@ -26,6 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_Overload_TSourceIntTResult_SelectIndex()
         {
             Execute(q => q.SelectMany((s, i) => new[] { i }), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
@@ -37,6 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_Overload_TSourceIntTResult_SelectIndexAndProperty()
         {
             Execute(q => q.SelectMany((s, i) => new[] {new
@@ -57,6 +60,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType()
         {
             Execute(q => q.SelectMany(s => new[] { new
@@ -79,6 +83,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ArrayOfAnonymousType_From_CastedArrayOfAnonymousType()
         {
             Execute(q => q.SelectMany(s => new RealTypeProperty[] { new RealTypeProperty
@@ -101,6 +106,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType_WithSubMember()
         {
             Execute(q => q.SelectMany(s => new[] { new
@@ -123,6 +129,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ListOfRealType_From_ListOfRealType()
         {
             Execute(q => q.SelectMany(s => new List<RealTypeProperty> { new RealTypeProperty
@@ -145,6 +152,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ListOfRealType_From_CastedListOfRealType()
         {
             Execute(q => q.SelectMany(s => (IEnumerable<object>)new List<RealTypeProperty> { new RealTypeProperty
@@ -167,6 +175,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType_WithMultipleArrayElements()
         {
             Execute(q => q.SelectMany(s => new[] {
@@ -198,6 +207,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfRealType_WithRandom()
         {
             Execute(q => q.SelectMany(s => new object[] {
@@ -226,12 +236,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_WithResultSelector_ToSelect()
         {
             Execute(q => q.SelectMany(s => s.Tags, (s, c) => s.Id).Select(s => s), "content=sensors&columns=objid,tags&count=500", s => s.ToList());
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_WithResultSelector_UsingBothArgs_ToSelect()
         {
             Execute(q => q.SelectMany(s => s.Tags, (s, c) => new
@@ -251,6 +263,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_SelectMany_WithResultSelector_UsingBothArgs_ToWhere()
         {
             Execute(q => q.SelectMany(s => s.Tags, (s, c) => new

@@ -34,7 +34,7 @@ function CreateParameters($sensorType, $goodFilter, $paramsType, $criticalValue)
     $params.$criticalValue.Name | Should Be $goodFilter
 }
 
-Describe "Get-SensorTarget_IT" {
+Describe "Get-SensorTarget_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $device = Get-Device -Id (Settings Device)
 

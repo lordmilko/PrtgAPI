@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\..\Support\PowerShell\ObjectProperty.ps1
 
-Describe "Set-ObjectProperty_Sensors_IT" {
+Describe "Set-ObjectProperty_Sensors_IT" -Tag @("PowerShell", "IntegrationTest") {
   
     It "Basic Sensor Settings" {
 

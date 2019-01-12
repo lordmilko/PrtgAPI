@@ -28,6 +28,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class StringEnumTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesEnum_WithoutAttribute()
         {
             var e = new StringEnum<SimpleEnum>(SimpleEnum.First);
@@ -37,12 +38,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Throws_WithInvalidEnumValue()
         {
             AssertEx.Throws<ArgumentException>(() => new StringEnum<SimpleEnum>((SimpleEnum)3), "'3' is not a valid value for type 'SimpleEnum'.");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesString_WithoutCorrespondingAttribute()
         {
             var e = new StringEnum<SimpleEnum>("first");
@@ -54,6 +57,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesEnum_WithDescription()
         {
             var e = new StringEnum<DescriptionEnum>(DescriptionEnum.First);
@@ -65,6 +69,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesString_ForDescription()
         {
             var e = new StringEnum<DescriptionEnum>("CustomFirst");
@@ -76,6 +81,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesEnum_WithXmlEnum()
         {
             var e = new StringEnum<XmlEnum>(XmlEnum.First);
@@ -87,6 +93,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesString_ForXmlEnum()
         {
             var e = new StringEnum<XmlEnum>("XmlFirst");
@@ -98,6 +105,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ParsesString_Invalid()
         {
             var e = new StringEnum<SimpleEnum>("invalid");
@@ -107,6 +115,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Assigns_FromEnum()
         {
             StringEnum<SimpleEnum> e = SimpleEnum.Second;
@@ -115,6 +124,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Assigns_FromString()
         {
             StringEnum<SimpleEnum> e = "second";
@@ -123,6 +133,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_StringEnum_SameEnumType()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -132,6 +143,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_StringEnum_SameEnumType_DifferentValues()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -141,6 +153,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_StringEnum_DifferentEnumType()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -150,6 +163,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_NotEquals_StringEnum_SameEnumType()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -159,6 +173,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_Null()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -185,6 +200,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_MatchingString()
         {
             StringEnum<DescriptionEnum> first = DescriptionEnum.First;
@@ -193,6 +209,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_NotEquals_MatchingString()
         {
             StringEnum<DescriptionEnum> first = DescriptionEnum.First;
@@ -201,6 +218,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Equals_InvalidString()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -209,6 +227,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_NotEquals_InvalidString()
         {
             StringEnum<SimpleEnum> first = SimpleEnum.First;
@@ -217,6 +236,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_ChangesString_WhenStringDoesntMatchDescription()
         {
             var e = new StringEnum<ObjectType>("probe");
@@ -225,6 +245,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void StringEnum_Validates_ConstructorArguments()
         {
             AssertEx.Throws<ArgumentNullException>(() => new StringEnum<SimpleEnum>(null), "Value cannot be null.");

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Object_IT" {
+Describe "Get-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "filters by enum types" {
 

@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-Probe_IT" {
+Describe "Get-Probe_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "has correct number of probes" {
         $probes = Get-Probe
 

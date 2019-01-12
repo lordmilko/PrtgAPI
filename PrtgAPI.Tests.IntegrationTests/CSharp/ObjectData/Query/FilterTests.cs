@@ -34,22 +34,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Name
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Name_Equals() =>
             ExecuteSensor(s => s.Name == "Ping", Property.Name, "Ping");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Name_NotEquals() =>
             ExecuteSensor(s => s.Name != "Ping", Property.Name, "Ping", FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Name_GreaterThan() =>
             ExecuteUnsupported(Property.Name, FilterOperator.GreaterThan, "Ping");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Name_LessThan() =>
             ExecuteUnsupported(Property.Name, FilterOperator.LessThan, "Ping");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Name_Contains() =>
             ExecuteSensor(s => s.Name.Contains("Ping"), Property.Name, "Ping", FilterOperator.Contains);
 
@@ -57,22 +62,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Id
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Id_Equals() =>
             ExecuteSensor(s => s.Id == Settings.UpSensor, Property.Id, Settings.UpSensor);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Id_NotEquals() =>
             ExecuteSensor(s => s.Id != Settings.UpSensor, Property.Id, Settings.UpSensor, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Id_GreaterThan() =>
             ExecuteSensor(s => s.Id > Settings.UpSensor, Property.Id, Settings.UpSensor, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Id_LessThan() =>
             ExecuteSensor(s => s.Id < Settings.UpSensor, Property.Id, Settings.UpSensor, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Id_Contains() =>
             ExecuteSensor(s => s.Id.ToString().Contains(Settings.UpSensor.ToString()), Property.Id, Settings.UpSensor, FilterOperator.Contains);
 
@@ -80,22 +90,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Active
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Active_Equals() =>
             ExecuteSensor(s => s.Active, Property.Active, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Active_NotEquals() =>
             ExecuteSensor(s => !s.Active, Property.Active, true, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Active_GreaterThan() =>
             ExecuteSerialized(Property.Active, FilterOperator.GreaterThan, true); //Active True is -1
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Active_LessThan() =>
             ExecuteSerialized(Property.Active, FilterOperator.LessThan, false); //Active True is -1
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Active_Contains() =>
             ExecuteSensor(s => s.Active.ToString().Contains(true.ToString()), Property.Active, true, FilterOperator.Contains);
 
@@ -103,6 +118,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region DisplayType
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_DisplayType_Equals()
         {
             var querySensors = client.QuerySensors(s => s.DisplayType == "Ping").ToList();
@@ -112,6 +128,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_DisplayType_NotEquals()
         {
             var querySensors = client.QuerySensors(s => s.DisplayType != "Ping").ToList();
@@ -121,6 +138,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_DisplayType_Contains()
         {
             var querySensors = client.QuerySensors(s => s.DisplayType.Contains("Ping")).ToList();
@@ -133,22 +151,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Type
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Type_Equals() =>
             ExecuteSensor(s => s.Type == "exe", Property.Type, "exe");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Type_NotEquals() =>
             ExecuteSensor(s => s.Type != "exe", Property.Type, "exe", FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Type_GreaterThan() =>
             ExecuteUnsupported(Property.Type, FilterOperator.GreaterThan, "exe");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Type_LessThan() =>
             ExecuteUnsupported(Property.Type, FilterOperator.LessThan, "exe");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Type_Contains() =>
             ExecuteSensor(s => s.Type.ToString().Contains("exe"), Property.Type, "exe", FilterOperator.Contains);
 
@@ -156,30 +179,37 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Tags
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_Equals() =>
             Data_QueryFilter_PrtgObjectProperties_Tags_Index_Equals();
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_Index_Equals() =>
             ExecuteSensor(s => s.Tags[0] == "pingsensor", Property.Tags, "pingsensor");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_Contains_Equals() =>
             ExecuteSensor(s => s.Tags.Contains(Settings.DeviceTag), Property.Tags, Settings.DeviceTag);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_NotEquals() =>
             ExecuteUnsupported(Property.Tags, FilterOperator.NotEquals, "pingsensor");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_GreaterThan() =>
             ExecuteUnsupported(Property.Tags, FilterOperator.GreaterThan, "pingsensor");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_LessThan() =>
             ExecuteUnsupported(Property.Tags, FilterOperator.LessThan, "pingsensor");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_PrtgObjectProperties_Tags_Contains() =>
             ExecuteSensor(s => s.Tags.Contains("pingsensor"), Property.Tags, "pingsensor", FilterOperator.Contains);
 
@@ -189,22 +219,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Access
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access_Equals() =>
             ExecuteSensor(s => s.Access == Access.Full, Property.Access, Access.Full);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access_NotEquals() =>
             ExecuteSensor(s => s.Access != Access.Read, Property.Access, Access.Read, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access_GreaterThan() =>
             ExecuteSensor(s => s.Access > Access.Read, Property.Access, Access.Read, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access_LessThan() =>
             ExecuteSerialized(Property.Access, FilterOperator.LessThan, 800);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access_Contains() =>
             ExecuteSensor(s => s.Access.ToString().Contains(Access.Full.ToString()), Property.Access, Access.Full, FilterOperator.Contains);
 
@@ -212,22 +247,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region BaseType
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType_Equals() =>
             ExecuteSensor(s => s.BaseType == BaseType.Sensor, Property.BaseType, BaseType.Sensor);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType_NotEquals() =>
             ExecuteSensor(s => s.BaseType != BaseType.Device, Property.BaseType, BaseType.Device, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType_GreaterThan() =>
             ExecuteUnsupported(Property.BaseType, FilterOperator.GreaterThan, BaseType.Device);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType_LessThan() =>
             ExecuteUnsupported(Property.BaseType, FilterOperator.LessThan, BaseType.Device);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType_Contains() =>
             ExecuteSensor(s => s.BaseType.ToString().Contains(BaseType.Sensor.ToString()), Property.BaseType, BaseType.Sensor, FilterOperator.Contains);
 
@@ -235,22 +275,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Comments
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments_Equals() =>
             ExecuteSensor(s => s.Comments == Settings.Comment, Property.Comments, Settings.Comment);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments_NotEquals() =>
             ExecuteSensor(s => s.Comments != Settings.Comment, Property.Comments, Settings.Comment, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments_GreaterThan() =>
             ExecuteUnsupported(Property.Comments, FilterOperator.GreaterThan, Settings.Comment);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments_LessThan() =>
             ExecuteUnsupported(Property.Comments, FilterOperator.LessThan, Settings.Comment);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments_Contains() =>
             ExecuteSensor(s => s.Comments.Contains(Settings.Comment), Property.Comments, Settings.Comment, FilterOperator.Contains);
 
@@ -258,22 +303,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Dependency
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency_Equals() =>
             ExecuteSensor(s => s.Dependency == Settings.DeviceName, Property.Dependency, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency_NotEquals() =>
             ExecuteSensor(s => s.Dependency != Settings.DeviceName, Property.Dependency, Settings.DeviceName, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency_GreaterThan() =>
             ExecuteUnsupported(Property.Dependency, FilterOperator.GreaterThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency_LessThan() =>
             ExecuteUnsupported(Property.Dependency, FilterOperator.LessThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency_Contains() =>
             ExecuteSensor(s => s.Dependency.Contains(Settings.DeviceName), Property.Dependency, Settings.DeviceName, FilterOperator.Contains);
 
@@ -281,30 +331,37 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Interval
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_Equals() =>
             ExecuteSensor(s => s.Interval == TimeSpan.FromSeconds(60), Property.Interval, TimeSpan.FromSeconds(60));
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_Integer_Equals() =>
             ExecuteSensor(s => s.Interval.TotalSeconds == 60, Property.Interval, 60);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_Device_Equals() =>
             ExecuteDevice(d => d.Interval.TotalSeconds == 60, Property.Interval, 60);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_NotEquals() =>
             ExecuteSensor(s => s.Interval != TimeSpan.FromSeconds(60), Property.Interval, TimeSpan.FromSeconds(60), FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_GreaterThan() =>
             ExecuteSensor(s => s.Interval > TimeSpan.FromSeconds(60), Property.Interval, TimeSpan.FromSeconds(60), FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_LessThan() =>
             ExecuteSensor(s => s.Interval < TimeSpan.FromSeconds(60), Property.Interval, TimeSpan.FromSeconds(60), FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval_Contains() =>
             ExecuteSensor(s => s.Interval.TotalSeconds.ToString().Contains(60.ToString()), Property.Interval, 60, FilterOperator.Contains);
 
@@ -312,22 +369,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region NotificationTypes
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_Equals() =>
             ExecuteSensor(s => s.NotificationTypes == new NotificationTypes(string.Empty), Property.NotificationTypes, "State", filterThrows: true, filterUnsupported: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_NotEquals() =>
             ExecuteSensor(s => s.NotificationTypes != new NotificationTypes(string.Empty), Property.NotificationTypes, "State", FilterOperator.NotEquals, filterThrows: true, filterUnsupported: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_GreaterThan() =>
             ExecuteUnsupported(Property.NotificationTypes, FilterOperator.GreaterThan, "State", unsupported: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_LessThan() =>
             ExecuteUnsupported(Property.NotificationTypes, FilterOperator.LessThan, "State", unsupported: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_Contains() =>
             ExecuteUnsupported(Property.NotificationTypes, FilterOperator.Contains, "State", unsupported: true);
 
@@ -335,22 +397,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region ParentId
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_Equals() =>
             ExecuteSensor(s => s.ParentId == Settings.Device, Property.ParentId, Settings.Device);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_NotEquals() =>
             ExecuteSensor(s => s.ParentId != Settings.Device, Property.ParentId, Settings.Device, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_GreaterThan() =>
             ExecuteSensor(s => s.ParentId > Settings.Device, Property.ParentId, Settings.Device, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_LessThan() =>
             ExecuteSensor(s => s.ParentId < Settings.Device, Property.ParentId, Settings.Device, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_Contains() =>
             ExecuteSensor(s => s.ParentId.ToString().Contains(Settings.Device.ToString()), Property.ParentId, Settings.Device, FilterOperator.Contains);
 
@@ -358,22 +425,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Position
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position_Equals() =>
             ExecuteSensor(s => s.Position == 4, Property.Position, 4);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position_NotEquals() =>
             ExecuteSensor(s => s.Position != 4, Property.Position, 4, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position_GreaterThan() =>
             ExecuteSensor(s => s.Position > 4, Property.Position, 4, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position_LessThan() =>
             ExecuteSensor(s => s.Position < 4, Property.Position, 4, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position_Contains() =>
             ExecuteSensor(s => s.Position.ToString().Contains(10.ToString()), Property.Position, 10, FilterOperator.Contains);
 
@@ -381,6 +453,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Schedule
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule_Equals()
         {
             PrepareSchedule(schedule =>
@@ -390,6 +463,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule_NotEquals()
         {
             PrepareSchedule(schedule =>
@@ -399,6 +473,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule_GreaterThan()
         {
             PrepareSchedule(schedule =>
@@ -408,6 +483,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule_LessThan()
         {
             PrepareSchedule(schedule =>
@@ -417,6 +493,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule_Contains()
         {
             PrepareSchedule(schedule =>
@@ -466,22 +543,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Status
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status_Equals() =>
             ExecuteSensor(s => s.Status == Status.Down, Property.Status, Status.Down);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status_NotEquals() =>
             ExecuteSensor(s => s.Status != Status.Down, Property.Status, Status.Down, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status_GreaterThan() =>
             ExecuteSensor(s => s.Status > Status.Down, Property.Status, Status.Down, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status_LessThan() =>
             ExecuteSensor(s => s.Status < Status.Down, Property.Status, Status.Down, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status_Contains() =>
             ExecuteSensor(s => s.Status.ToString().Contains(Status.Warning.ToString()), Property.Status, Status.Warning, FilterOperator.Contains);
 
@@ -489,10 +571,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Url
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_Equals() =>
             ExecuteSensor(s => s.Url == $"/sensor.htm?id={Settings.UpSensor}", Property.Url, $"/sensor.htm?id={Settings.UpSensor}");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_Equals_Id()
         {
             var full = client.GetSensors(Property.Url, $"/sensor.htm?id={Settings.UpSensor}");
@@ -504,18 +588,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_NotEquals() =>
             ExecuteSensor(s => s.Url != $"/sensor.htm?id={Settings.UpSensor}", Property.Url, $"/sensor.htm?id={Settings.UpSensor}", FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_GreaterThan() =>
             ExecuteSerialized(Property.Url, FilterOperator.GreaterThan, $"/sensor.htm?id={Settings.UpSensor}");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_LessThan() =>
             ExecuteSerialized(Property.Url, FilterOperator.LessThan, $"/sensor.htm?id={Settings.UpSensor}");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url_Contains() =>
             ExecuteSensor(s => s.Url.Contains($"/sensor.htm?id={Settings.UpSensor}"), Property.Url, $"/sensor.htm?id={Settings.UpSensor}", FilterOperator.Contains);
 
@@ -525,22 +613,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Priority
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority_Equals() =>
             ExecuteSensor(s => s.Priority == Priority.Five, Property.Priority, Priority.Five);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority_NotEquals() =>
             ExecuteSensor(s => s.Priority != Priority.Five, Property.Priority, Priority.Five, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority_GreaterThan() =>
             ExecuteSensor(s => s.Priority > Priority.Four, Property.Priority, Priority.Four, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority_LessThan() =>
             ExecuteSensor(s => s.Priority < Priority.Five, Property.Priority, Priority.Five, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority_Contains() =>
             ExecuteSensor(s => s.Priority.ToString().Contains(Priority.Five.ToString()), Property.Priority, Priority.Five, FilterOperator.Contains);
 
@@ -550,22 +643,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Message
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_Equals() =>
             ExecuteSensor(s => s.Message == "OK", Property.Message, "OK");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_NotEquals() =>
             ExecuteSensor(s => s.Message != "OK", Property.Message, "OK", FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_GreaterThan() =>
             ExecuteUnsupported(Property.Message, FilterOperator.GreaterThan, "OK");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_LessThan() =>
             ExecuteUnsupported(Property.Message, FilterOperator.LessThan, "OK");
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_Contains() =>
             ExecuteSensor(s => s.Message.Contains("OK"), Property.Message, "OK", FilterOperator.Contains, s => s.Message == "ok");
 
@@ -575,22 +673,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region DownAcknowledgedSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors_Equals() =>
             ExecuteDevice(d => d.DownAcknowledgedSensors == 1, Property.DownAcknowledgedSensors, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors_NotEquals() =>
             ExecuteDevice(d => d.DownAcknowledgedSensors != 1, Property.DownAcknowledgedSensors, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors_GreaterThan() =>
             ExecuteDevice(d => d.DownAcknowledgedSensors > 0, Property.DownAcknowledgedSensors, 0, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors_LessThan() =>
             ExecuteDevice(d => d.DownAcknowledgedSensors < 1, Property.DownAcknowledgedSensors, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors_Contains() =>
             ExecuteDevice(d => d.DownAcknowledgedSensors.ToString().Contains(1.ToString()), Property.DownAcknowledgedSensors, 1, FilterOperator.Contains);
 
@@ -598,22 +701,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region DownSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors_Equals() =>
             ExecuteDevice(d => d.DownSensors == 1, Property.DownSensors, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors_NotEquals() =>
             ExecuteDevice(d => d.DownSensors != 1, Property.DownSensors, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors_GreaterThan() =>
             ExecuteDevice(d => d.DownSensors > 0, Property.DownSensors, 0, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors_LessThan() =>
             ExecuteDevice(d => d.DownSensors < 1, Property.DownSensors, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors_Contains() =>
             ExecuteDevice(d => d.DownSensors.ToString().Contains(1.ToString()), Property.DownSensors, 1, FilterOperator.Contains);
 
@@ -621,22 +729,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region PausedSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors_Equals() =>
             ExecuteDevice(d => d.PausedSensors == 2, Property.PausedSensors, 2);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors_NotEquals() =>
             ExecuteDevice(d => d.PausedSensors != 2, Property.PausedSensors, 2, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors_GreaterThan() =>
             ExecuteDevice(d => d.PausedSensors > 1, Property.PausedSensors, 1, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors_LessThan() =>
             ExecuteDevice(d => d.PausedSensors < 2, Property.PausedSensors, 2, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors_Contains() =>
             ExecuteDevice(d => d.PausedSensors.ToString().Contains(2.ToString()), Property.PausedSensors, 2, FilterOperator.Contains);
 
@@ -644,22 +757,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors_Equals() =>
             ExecuteDevice(d => d.TotalSensors == Settings.SensorsInTestDevice, Property.TotalSensors, Settings.SensorsInTestDevice);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors_NotEquals() =>
             ExecuteDevice(d => d.TotalSensors != Settings.SensorsInTestDevice, Property.TotalSensors, Settings.SensorsInTestDevice, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors_GreaterThan() =>
             ExecuteDevice(d => d.TotalSensors > Settings.SensorsInTestDevice - 1, Property.TotalSensors, Settings.SensorsInTestDevice - 1, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors_LessThan() =>
             ExecuteDevice(d => d.TotalSensors < Settings.SensorsInTestDevice, Property.TotalSensors, Settings.SensorsInTestDevice, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors_Contains() =>
             ExecuteDevice(d => d.TotalSensors.ToString().Contains(Settings.SensorsInTestDevice.ToString()), Property.TotalSensors, Settings.SensorsInTestDevice, FilterOperator.Contains);
 
@@ -667,22 +785,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region UnknownSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors_Equals() =>
             ExecuteDevice(d => d.UnknownSensors == 1, Property.UnknownSensors, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors_NotEquals() =>
             ExecuteDevice(d => d.UnknownSensors != 1, Property.UnknownSensors, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors_GreaterThan() =>
             ExecuteDevice(d => d.UnknownSensors > 0, Property.UnknownSensors, 0, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors_LessThan() =>
             ExecuteDevice(d => d.UnknownSensors < 1, Property.UnknownSensors, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors_Contains() =>
             ExecuteDevice(d => d.UnknownSensors.ToString().Contains(1.ToString()), Property.UnknownSensors, 1, FilterOperator.Contains);
 
@@ -690,22 +813,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region UpSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors_Equals() =>
             ExecuteDevice(d => d.UpSensors == 5, Property.UpSensors, 5);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors_NotEquals() =>
             ExecuteDevice(d => d.UpSensors != 5, Property.UpSensors, 5, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors_GreaterThan() =>
             ExecuteDevice(d => d.UpSensors > 5, Property.UpSensors, 5, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors_LessThan() =>
             ExecuteDevice(d => d.UpSensors < 5 + 1, Property.UpSensors, 5 + 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors_Contains() =>
             ExecuteDevice(d => d.UpSensors.ToString().Contains(5.ToString()), Property.UpSensors, 5, FilterOperator.Contains);
 
@@ -713,22 +841,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region WarningSensors
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors_Equals() =>
             ExecuteDevice(d => d.WarningSensors == 1, Property.WarningSensors, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors_NotEquals() =>
             ExecuteDevice(d => d.WarningSensors != 1, Property.WarningSensors, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors_GreaterThan() =>
             ExecuteDevice(d => d.WarningSensors > 0, Property.WarningSensors, 0, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors_LessThan() =>
             ExecuteDevice(d => d.WarningSensors < 1, Property.WarningSensors, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors_Contains() =>
             ExecuteDevice(d => d.WarningSensors.ToString().Contains(1.ToString()), Property.WarningSensors, 1, FilterOperator.Contains);
 
@@ -738,18 +871,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Collapsed
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_Collapsed_Equals() =>
             ExecuteGroup(g => !g.Collapsed, Property.Collapsed, false);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_Collapsed_NotEquals() =>
             ExecuteGroup(g => !g.Collapsed, Property.Collapsed, true, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_Collapsed_GreaterThan() =>
             ExecuteGroupSerialized(Property.Collapsed, FilterOperator.GreaterThan, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_Collapsed_LessThan()
         {
             PrepareCollapse(group =>
@@ -759,6 +896,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_Collapsed_Contains()
         {
             PrepareCollapse(group =>
@@ -800,22 +938,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalDevices
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalDevices_Equals() =>
             ExecuteGroup(g => g.TotalDevices == 1, Property.TotalDevices, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalDevices_NotEquals() =>
             ExecuteGroup(g => g.TotalDevices != 1, Property.TotalDevices, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalDevices_GreaterThan() =>
             ExecuteGroup(g => g.TotalDevices > 1, Property.TotalDevices, 1, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalDevices_LessThan() =>
             ExecuteGroup(g => g.TotalDevices < 1, Property.TotalDevices, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalDevices_Contains() =>
             ExecuteGroup(g => g.TotalDevices.ToString().Contains(1.ToString()), Property.TotalDevices, 1, FilterOperator.Contains);
 
@@ -823,22 +966,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalGroups
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalGroups_Equals() =>
             ExecuteGroup(g => g.TotalGroups == 1, Property.TotalGroups, 1);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalGroups_NotEquals() =>
             ExecuteGroup(g => g.TotalGroups != 1, Property.TotalGroups, 1, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalGroups_GreaterThan() =>
             ExecuteGroup(g => g.TotalGroups > 1, Property.TotalGroups, 1, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalGroups_LessThan() =>
             ExecuteGroup(g => g.TotalGroups < 1, Property.TotalGroups, 1, FilterOperator.LessThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_GroupOrProbeProperties_TotalGroups_Contains() =>
             ExecuteGroup(g => g.TotalGroups.ToString().Contains(1.ToString()), Property.TotalGroups, 1, FilterOperator.Contains);
 
@@ -848,6 +996,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region DataCollectedSince
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_Equals()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -855,6 +1004,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_NotEquals()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -862,6 +1012,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_GreaterThan()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -869,6 +1020,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_LessThan()
         {
             var sensor = client.GetSensors().OrderByDescending(s => s.DataCollectedSince).First();
@@ -876,6 +1028,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DataCollectedSince_Contains()
         {
             var upSensor = client.GetSensors(Property.Name, "System Health").First();
@@ -886,22 +1039,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Device
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Device_Equals() =>
             ExecuteSensor(s => s.Device == Settings.DeviceName, Property.Device, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Device_NotEquals() =>
             ExecuteSensor(s => s.Device != Settings.DeviceName, Property.Device, Settings.DeviceName, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Device_GreaterThan() =>
             ExecuteUnsupported(Property.Device, FilterOperator.GreaterThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Device_LessThan() =>
             ExecuteUnsupported(Property.Device, FilterOperator.LessThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Device_Contains() =>
             ExecuteSensor(s => s.Device.Contains(Settings.DeviceName), Property.Device, Settings.DeviceName, FilterOperator.Contains);
 
@@ -909,6 +1067,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region DownDuration
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DownDuration_Equals()
         {
             Retry(retry =>
@@ -919,6 +1078,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DownDuration_NotEquals()
         {
             Retry(retry =>
@@ -929,6 +1089,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DownDuration_GreaterThan()
         {
             Retry(retry =>
@@ -939,6 +1100,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DownDuration_LessThan()
         {
             Retry(retry =>
@@ -949,6 +1111,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_DownDuration_Contains()
         {
             Retry(retry =>
@@ -962,6 +1125,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Downtime
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Downtime_Equals()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
@@ -970,6 +1134,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Downtime_NotEquals()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
@@ -978,6 +1143,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Downtime_GreaterThan()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
@@ -986,6 +1152,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Downtime_LessThan()
         {
             var downtime = client.GetSensor(Settings.DownSensor).Downtime.Value + 10;
@@ -994,6 +1161,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Downtime_Contains()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1007,6 +1175,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region LastCheck
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastCheck_Equals()
         {
             Retry(retry =>
@@ -1018,6 +1187,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastCheck_NotEquals()
         {
             Retry(retry =>
@@ -1028,6 +1198,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastCheck_GreaterThan()
         {
             Retry(retry =>
@@ -1038,6 +1209,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastCheck_LessThan()
         {
             Retry(retry =>
@@ -1048,6 +1220,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastCheck_Contains()
         {
             Retry(retry =>
@@ -1061,6 +1234,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region LastUp
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastUp_Equals()
         {
             Retry(retry =>
@@ -1071,6 +1245,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastUp_NotEquals()
         {
             Retry(retry =>
@@ -1081,6 +1256,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastUp_GreaterThan()
         {
             Retry(retry =>
@@ -1091,6 +1267,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastUp_LessThan()
         {
             Retry(retry =>
@@ -1101,6 +1278,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastUp_Contains()
         {
             Retry(retry =>
@@ -1114,6 +1292,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region LastDown
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastDown_Equals()
         {
             Retry(retry =>
@@ -1124,6 +1303,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastDown_NotEquals()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
@@ -1131,6 +1311,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastDown_GreaterThan()
         {
             var lastDown = client.GetSensor(Settings.DownSensor).LastDown.Value.AddDays(-1);
@@ -1138,6 +1319,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastDown_LessThan()
         {
             var lastDown = client.GetSensor(Settings.DownSensor).LastDown.Value.AddDays(1);
@@ -1145,6 +1327,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastDown_Contains()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
@@ -1155,6 +1338,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region LastValue
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_Equals()
         {
             var sensor = GetLastValueSensor(Property.Id, Settings.UpSensor);
@@ -1165,6 +1349,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_Equals_WithDecimalPlaces()
         {
             var sensor = GetLastValueSensor(Property.Name, "Uptime");
@@ -1175,6 +1360,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_NotEquals()
         {
             var sensor = GetLastValueSensor(Property.Id, Settings.UpSensor);
@@ -1183,6 +1369,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_GreaterThan()
         {
             var sensor = GetLastValueSensor(Property.Name, "Uptime");
@@ -1193,6 +1380,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_LessThan()
         {
             var sensor = GetLastValueSensor(Property.Name, "Uptime");
@@ -1203,6 +1391,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_LastValue_Contains()
         {
             var sensor = GetLastValueSensor(Property.Name, "Uptime");
@@ -1233,6 +1422,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region MiniGraph
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_MiniGraph_Equals()
         {
             var sensor = client.GetSensors().First(s => s.MiniGraph != null);
@@ -1241,6 +1431,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_MiniGraph_NotEquals()
         {
             var sensor = client.GetSensors().First(s => s.MiniGraph != null);
@@ -1249,6 +1440,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_MiniGraph_GreaterThan()
         {
             var sensor = client.GetSensors().First(s => s.MiniGraph != null);
@@ -1257,6 +1449,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_MiniGraph_LessThan()
         {
             var sensor = client.GetSensors().First(s => s.MiniGraph != null);
@@ -1265,6 +1458,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_MiniGraph_Contains()
         {
             var sensor = client.GetSensors().First(s => s.MiniGraph != null);
@@ -1276,6 +1470,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalDowntime
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalDowntime_Equals()
         {
             var downtime = client.GetSensor(Settings.DownSensor).TotalDowntime;
@@ -1286,6 +1481,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalDowntime_NotEquals()
         {
             var downtime = client.GetSensor(Settings.DownSensor).TotalDowntime;
@@ -1296,6 +1492,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalDowntime_GreaterThan()
         {
             var downtime = client.GetSensor(Settings.DownSensor).TotalDowntime - TimeSpan.FromMinutes(1);
@@ -1306,6 +1503,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalDowntime_LessThan()
         {
             var downtime = client.GetSensor(Settings.DownSensor).TotalDowntime;
@@ -1316,6 +1514,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalDowntime_Contains()
         {
             var downtime = client.GetSensor(Settings.DownSensor).TotalDowntime;
@@ -1329,6 +1528,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalMonitorTime
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_Equals()
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
@@ -1339,6 +1539,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_NotEquals()
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
@@ -1349,6 +1550,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_GreaterThan()
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
@@ -1359,6 +1561,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_LessThan()
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
@@ -1369,6 +1572,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_Contains()
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
@@ -1382,6 +1586,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region TotalUptime
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalUptime_Equals()
         {
             var uptime = client.GetSensor(Settings.UpSensor).TotalUptime;
@@ -1392,6 +1597,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalUptime_NotEquals()
         {
             var uptime = client.GetSensor(Settings.UpSensor).TotalUptime;
@@ -1402,6 +1608,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalUptime_GreaterThan()
         {
             var uptime = client.GetSensor(Settings.UpSensor).TotalUptime;
@@ -1412,6 +1619,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalUptime_LessThan()
         {
             var uptime = client.GetSensor(Settings.UpSensor).TotalUptime;
@@ -1422,6 +1630,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_TotalUptime_Contains()
         {
             var uptime = client.GetSensor(Settings.UpSensor).TotalUptime;
@@ -1435,6 +1644,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region UpDuration
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_UpDuration_Equals()
         {
             Retry(retry =>
@@ -1448,6 +1658,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_UpDuration_NotEquals()
         {
             Retry(retry =>
@@ -1461,6 +1672,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_UpDuration_GreaterThan()
         {
             Retry(retry =>
@@ -1474,6 +1686,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_UpDuration_LessThan()
         {
             Retry(retry =>
@@ -1492,6 +1705,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_UpDuration_Contains()
         {
             Retry(retry =>
@@ -1508,6 +1722,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Uptime
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Uptime_Equals()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1516,6 +1731,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Uptime_NotEquals()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1524,6 +1740,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Uptime_GreaterThan()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1532,6 +1749,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Uptime_LessThan()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1540,6 +1758,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorProperties_Uptime_Contains()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1553,6 +1772,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Condition
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Condition_Equals()
         {
             PrepareCondition(device =>
@@ -1562,6 +1782,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Condition_NotEquals()
         {
             PrepareCondition(device =>
@@ -1571,6 +1792,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("Unreliable")]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Condition_GreaterThan()
         {
             PrepareCondition(device =>
@@ -1580,6 +1803,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Condition_LessThan()
         {
             PrepareCondition(device =>
@@ -1589,6 +1813,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Condition_Contains()
         {
             PrepareCondition(device =>
@@ -1634,22 +1859,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Favorite
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Favorite_Equals() =>
             ExecuteDevice(d => d.Favorite, Property.Favorite, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Favorite_NotEquals() =>
             ExecuteDevice(d => d.Favorite, Property.Favorite, false, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Favorite_GreaterThan() =>
             ExecuteUnsupported(Property.Favorite, FilterOperator.GreaterThan, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Favorite_LessThan() =>
             ExecuteUnsupported(Property.Favorite, FilterOperator.LessThan, false);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Favorite_Contains() =>
             ExecuteDevice(d => d.Favorite.ToString().Contains(true.ToString()), Property.Favorite, true, FilterOperator.Contains);
 
@@ -1657,22 +1887,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Host
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Host_Equals() =>
             ExecuteDevice(d => d.Host == Settings.DeviceName, Property.Host, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Host_NotEquals() =>
             ExecuteDevice(d => d.Host != Settings.DeviceName, Property.Host, Settings.DeviceName, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Host_GreaterThan() =>
             ExecuteDeviceUnsupported(Property.Host, FilterOperator.GreaterThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Host_LessThan() =>
             ExecuteDeviceUnsupported(Property.Host, FilterOperator.LessThan, Settings.DeviceName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Host_Contains() =>
             ExecuteDevice(d => d.Host.Contains(Settings.DeviceName), Property.Host, Settings.DeviceName, FilterOperator.Contains);
 
@@ -1680,22 +1915,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Group
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Group_Equals() =>
             ExecuteDevice(d => d.Group == Settings.GroupName, Property.Group, Settings.GroupName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Group_NotEquals() =>
             ExecuteDevice(d => d.Group != Settings.GroupName, Property.Group, Settings.GroupName, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Group_GreaterThan() =>
             ExecuteDeviceUnsupported(Property.Group, FilterOperator.GreaterThan, Settings.GroupName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Group_LessThan() =>
             ExecuteDeviceUnsupported(Property.Group, FilterOperator.LessThan, Settings.GroupName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Group_Contains() =>
             ExecuteDevice(d => d.Group.Contains(Settings.GroupName), Property.Group, Settings.GroupName, FilterOperator.Contains);
 
@@ -1703,22 +1943,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Location
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Location_Equals() =>
             ExecuteDevice(d => d.Location == Settings.Location, Property.Location, Settings.Location);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Location_NotEquals() =>
             ExecuteDevice(d => d.Location != Settings.Location, Property.Location, Settings.Location, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Location_GreaterThan() =>
             ExecuteDeviceUnsupported(Property.Location, FilterOperator.GreaterThan, Settings.Location);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Location_LessThan() =>
             ExecuteDeviceUnsupported(Property.Location, FilterOperator.LessThan, Settings.Location);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Location_Contains() =>
             ExecuteDevice(d => d.Location.Contains(Settings.Location), Property.Location, Settings.Location, FilterOperator.Contains);
 
@@ -1726,22 +1971,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Probe
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Probe_Equals() =>
             ExecuteDevice(d => d.Probe == Settings.ProbeName, Property.Probe, Settings.ProbeName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Probe_NotEquals() =>
             ExecuteDevice(d => d.Probe != Settings.ProbeName, Property.Probe, Settings.ProbeName, FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Probe_GreaterThan() =>
             ExecuteDeviceUnsupported(Property.Probe, FilterOperator.GreaterThan, Settings.ProbeName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Probe_LessThan() =>
             ExecuteDeviceUnsupported(Property.Probe, FilterOperator.LessThan, Settings.ProbeName);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_DeviceProperties_Probe_Contains() =>
             ExecuteDevice(d => d.Probe.Contains(Settings.ProbeName), Property.Probe, Settings.ProbeName, FilterOperator.Contains);
 
@@ -1751,22 +2001,27 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region ProbeStatus
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_ProbeProperties_ProbeStatus_Equals() =>
             ExecuteProbe(p => p.ProbeStatus == ProbeStatus.Connected, Property.ProbeStatus, ProbeStatus.Connected);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_ProbeProperties_ProbeStatus_NotEquals() =>
             ExecuteProbe(p => p.ProbeStatus != ProbeStatus.Disconnected, Property.ProbeStatus, ProbeStatus.Disconnected, FilterOperator.NotEquals);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_ProbeProperties_ProbeStatus_GreaterThan() =>
             ExecuteProbe(p => p.ProbeStatus > ProbeStatus.Disconnected, Property.ProbeStatus, ProbeStatus.Disconnected, FilterOperator.GreaterThan);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_ProbeProperties_ProbeStatus_LessThan() =>
             ExecuteSerialized(Property.ProbeStatus, FilterOperator.LessThan, 2);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_ProbeProperties_ProbeStatus_Contains() =>
             ExecuteProbe(p => p.ProbeStatus.ToString().Contains(ProbeStatus.Connected.ToString()), Property.ProbeStatus, ProbeStatus.Connected, FilterOperator.Contains);
 
@@ -1777,6 +2032,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Date Ranges
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_Equals() => ExecuteLog(
             l => l.DateTime == Time.Yesterday,
             c => c.GetLogs(Time.Yesterday, Time.Yesterday, null),
@@ -1784,18 +2040,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleEquals() => ExecuteIllegalLog<InvalidOperationException>(
             l => l.DateTime == Time.Yesterday || l.DateTime == Time.Today,
             "At least one end of a valid date range must be specified"
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_NotEquals() => ExecuteIllegalLog<InvalidOperationException>(
             l => l.DateTime != Time.Yesterday,
             "At least one end of a valid date range must be specified"
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_BackwardsAndForwards()
         {
             var forwards = LogTests.OrderLogs(client.QueryLogs(l => l.DateTime < DateTime.Now).Take(200).AsEnumerable()).ToList();
@@ -1805,24 +2064,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_Illegal_WithRange() => ExecuteLog(
             l => l.DateTime > Time.LastWeek && l.DateTime != Time.TwoDaysAgo && l.DateTime < Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek).Where(l => l.DateTime != Time.TwoDaysAgo).ToList()
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_GreaterThan() => ExecuteLog(
             l => l.DateTime > Time.Yesterday && l.Id == Settings.UpSensor,
             c => c.GetLogs(Settings.UpSensor, null, Time.Yesterday, null)
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_LessThan() => ExecuteLog(
             l => l.DateTime < Time.Yesterday,
             l => l.StreamLogs(Time.Yesterday)
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleGreaterThan() => ExecuteLog(
             l => l.DateTime > Time.TwoDaysAgo && l.DateTime > Time.Yesterday,
             c => c.StreamLogs(null, Time.TwoDaysAgo),
@@ -1830,6 +2093,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleGreaterThan_LessThan() => ExecuteLog(
             l => l.DateTime > Time.LastWeek && l.DateTime > Time.TwoDaysAgo && l.DateTime < Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek),
@@ -1837,6 +2101,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleLessThan() => ExecuteLog(
             l => l.DateTime < Time.Yesterday && l.DateTime < Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Yesterday),
@@ -1844,6 +2109,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleLessThan_GreaterThan() => ExecuteLog(
             l => l.DateTime < Time.Yesterday && l.DateTime < Time.TwoDaysAgo && l.DateTime > Time.LastWeek,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek),
@@ -1851,12 +2117,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_Range() => ExecuteLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.StreamLogs(Time.Today, Time.Yesterday)
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_DoubleRange() => ExecuteLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime > Time.TwoWeeksAgo && l.DateTime < Time.LastWeek,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true).Union(c.StreamLogs(Time.LastWeek, Time.TwoWeeksAgo, serial: true)).ToList(),
@@ -1864,6 +2132,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_Range_Or_PartialRangeStart() => ExecuteLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime > Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Today, Time.Yesterday).Union(c.StreamLogs(null, Time.TwoDaysAgo)).ToList(),
@@ -1871,6 +2140,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_Range_Or_PartialRangeEnd() => ExecuteLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime < Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true).Union(c.StreamLogs(Time.TwoDaysAgo, serial: true)).ToList(),
@@ -1878,6 +2148,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("Unreliable")]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_PartialRange_WithId()
         {
             var sensor = client.GetSensors(Property.Tags, "systemhealthsensor").Single();
@@ -1891,6 +2163,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             #endregion
         
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Name() => ExecuteLog(
             l => l.Name == Settings.DeviceName && l.DateTime > DateTime.Now.AddDays(-1),
             c => c.GetLogs(DateTime.Now, DateTime.Now.AddDays(-1), null),
@@ -1898,6 +2171,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Device() => ExecuteLog(
             l => l.Device == "Probe Device" && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.GetLogs(Time.Today, Time.Yesterday, null),
@@ -1905,6 +2179,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Group() => ExecuteLog(
             l => l.Group == Settings.GroupName && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.GetLogs(Time.Today, Time.Yesterday, null),
@@ -1912,6 +2187,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Parent() => ExecuteLog(
             l => l.Parent == "Probe Device" && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.GetLogs(Time.Today, Time.Yesterday, null),
@@ -1919,6 +2195,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Probe() => ExecuteLog(
             l => l.Probe == Settings.ProbeName && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.GetLogs(Time.Today, Time.Yesterday, null),
@@ -1926,6 +2203,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Message() => ExecuteLog(
             l => l.Message.Contains("Performance") && l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.GetLogs(Time.Today, Time.Yesterday, null),
@@ -1933,6 +2211,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Sensor()
         {
             var sensors = client.GetSensors();
@@ -1959,12 +2238,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_Status() => ExecuteLog(
             l => l.Status == LogStatus.Connected || l.Status == LogStatus.Disconnected,
             l => l.GetLogs(RecordAge.All, 3000, LogStatus.Connected, LogStatus.Disconnected)
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void QueryFilter_LogProperties_IdOrId() => ExecuteLog(
             l => l.Id == Settings.UpSensor || l.Id == Settings.DownSensor,
             c => c.StreamLogs(Settings.UpSensor).Union(c.StreamLogs(Settings.DownSensor)).ToList(),
@@ -1972,6 +2253,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void QueryFilter_LogProperties_IdAndId() => ExecuteLog(
             l => l.Id == Settings.UpSensor && l.Id == Settings.DownSensor,
             c => c.StreamLogs(Settings.UpSensor),
@@ -1983,12 +2265,15 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Boolean
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Active_True() => ExecuteSensor(s => s.Active, Property.Active, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Active_False() => ExecuteSensor(s => !s.Active, Property.Active, false);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Collapsed_True()
         {
             var hasCollapsed = client.GetGroups().Any(g => g.Collapsed);
@@ -2003,12 +2288,15 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Collapsed_False() => ExecuteGroup(g => !g.Collapsed, Property.Collapsed, false);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Favorite_True() => ExecuteSensor(s => s.Favorite, Property.Favorite, true);
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_BooleanProperties_Favorite_False()
         {
             AssertEx.Throws<NotSupportedException>(() => ExecuteSensor(s => !s.Favorite, Property.Favorite, false), "Cannot filter where property 'Favorite' equals '0'");
@@ -2360,6 +2648,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_AllFilterOperators_HaveTests_ForAllProperties()
         {
             var operators = Enum.GetNames(typeof(FilterOperator));
@@ -2371,6 +2660,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_AllLogDateTimeScenarios_HaveTests()
         {
             var sourceMethods = typeof(PrtgObjectFilterTests).GetMethods().Where(
@@ -2388,6 +2678,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_AllBooleanProperties_HaveTrueFalseTests()
         {
             var properties = PrtgObjectFilterTests.GetPrtgObjectProperties().Where(

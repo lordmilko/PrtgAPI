@@ -14,15 +14,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #region Supported
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Call() => Execute(s => s.LastUp.Value.AddDays(1).Ticks == 3, string.Empty, ExpressionType.Call);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Conditional() => Execute(s => s.Id > 3 ? 1 > 2 : 2 < 1, string.Empty, ExpressionType.Conditional);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Constant() => Execute(s => s.Id == 3, "filter_objid=3", ExpressionType.Constant);
 
         /*[TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_DebugInfo()
         {
             var doc = Expr.SymbolDocument("PrtgClient.cs");
@@ -32,6 +36,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }*/
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Default() => ExecuteExpr(Property.Id, id =>
         {
             var d = Expr.Default(typeof(int));
@@ -42,6 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         //public void MiscellaneousExpression_Extension() => Execute(s => s.Id == 3, string.Empty, ExpressionType.Extension);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Index()
         {
             var list = Enumerable.Range(0, 5000).ToList();
@@ -57,6 +63,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Invoke()
         {
             Func<Sensor, bool> lambda = s => s.Name == "Volume IO _Total1";
@@ -65,15 +72,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Lambda() => Execute(s => s.Id == 3, "filter_objid=3", ExpressionType.Lambda);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_ListInit() => Execute(s => s.Name == new List<string> {"test"}.First(), "filter_name=test", ExpressionType.ListInit);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_MemberAccess() => Execute(s => s.Id == 3, "filter_objid=3", ExpressionType.MemberAccess);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_MemberInit() => Execute(s =>
             new RealTypeProperty { RealName = s.Name }.RealName == "test", 
             "filter_name=test",
@@ -81,12 +92,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         );
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_New() => Execute(s => s.Name == new string(new[] {'a'}), "filter_name=a", ExpressionType.New);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_NewArrayInit() => Execute(s => s.Name == new string(new[] { 'a' }), "filter_name=a", ExpressionType.NewArrayInit);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_NewArrayBounds() => ExecuteExpr(Property.Tags, tags =>
         {
             var ar = Expr.NewArrayBounds(typeof(string), Expr.Constant(3));
@@ -95,15 +109,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }, ExpressionType.NewArrayBounds);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Parameter() => Execute(s => s.Id == 3, "filter_objid=3", ExpressionType.Parameter);
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_TypeIs() => Execute(s => s is Sensor, string.Empty, ExpressionType.TypeIs);
 
         #endregion
         #region Unsupported
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Block()
         {
             var variable = Expr.Variable(typeof(bool));
@@ -114,6 +131,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Switch()
         {
             var switchCase = Expr.SwitchCase(Expr.Constant(true), Expr.Constant(4001));
@@ -122,6 +140,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_Try()
         {
             var tryCatch = Expr.TryCatch(Expr.Constant(false), Expr.Catch(typeof(Exception), Expr.Constant(false)));
@@ -130,6 +149,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void MiscellaneousExpression_TypeEqual()
         {
             ExecuteExpr(Property.Id, id => Expr.TypeEqual(id, typeof(Sensor)), ExpressionType.TypeEqual);
@@ -138,6 +158,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ExpressionType_TestAllTypes()
         {
             var types = typeof(ExpressionType).GetEnumValues().Cast<ExpressionType>().ToList();

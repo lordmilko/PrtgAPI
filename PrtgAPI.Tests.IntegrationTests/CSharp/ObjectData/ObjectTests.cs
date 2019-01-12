@@ -6,6 +6,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class ObjectTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Object_ReadOnlyUser()
         {
             var objects = readOnlyClient.GetObjects();
@@ -15,6 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_Object_ReadOnlyUserAsync()
         {
             var objects = await readOnlyClient.GetObjectsAsync();

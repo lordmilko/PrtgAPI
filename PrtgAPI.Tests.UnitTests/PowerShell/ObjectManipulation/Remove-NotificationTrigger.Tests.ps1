@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-Describe "Remove-NotificationTrigger" {
+Describe "Remove-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
 
     SetResponseAndClient "SetNotificationTriggerResponse"
 

@@ -6,6 +6,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class ScheduleTests : BasePrtgClientTest
     {
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public void Data_Schedule_ReadOnlyUser()
         {
             var schedule = readOnlyClient.GetSchedule(Settings.Schedule);
@@ -14,6 +15,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTest")]
         public async Task Data_Schedule_ReadOnlyUserAsync()
         {
             var schedule = await readOnlyClient.GetScheduleAsync(Settings.Schedule);

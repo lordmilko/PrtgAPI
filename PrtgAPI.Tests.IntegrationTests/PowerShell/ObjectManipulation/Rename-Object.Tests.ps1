@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Rename-Object_IT" {
+Describe "Rename-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     $testCases = @(
         @{name = "Sensor"; query = { Get-Sensor -Id (Settings UpSensor) }}

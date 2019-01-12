@@ -9,14 +9,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     public class AdminToolTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_BackupConfig_CanExecute() =>
             Execute(c => c.BackupConfigDatabase(), "api/savenow.htm");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_BackupConfig_CanExecuteAsync() =>
             await ExecuteAsync(async c => await c.BackupConfigDatabaseAsync(), "api/savenow.htm");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_ClearCache_CanExecute()
         {
             Execute(c => c.ClearSystemCache(SystemCacheType.General), "api/clearcache.htm");
@@ -24,6 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_ClearCache_CanExecuteAsync()
         {
             await ExecuteAsync(async c => await c.ClearSystemCacheAsync(SystemCacheType.General), "api/clearcache.htm");
@@ -31,6 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_LoadConfigFiles_CanExecute()
         {
             Execute(c => c.LoadConfigFiles(ConfigFileType.General), "api/reloadfilelists.htm");
@@ -38,6 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_LoadConfigFiles_CanExecuteAsync()
         {
             await ExecuteAsync(async c => await c.LoadConfigFilesAsync(ConfigFileType.General), "api/reloadfilelists.htm");
@@ -45,16 +51,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartCore_CanExecute()
         {
             Execute(c => c.RestartCore(), "api/restartserver.htm");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartCore_CanExecuteAsync() =>
             await ExecuteAsync(c => c.RestartCoreAsync(), "api/restartserver.htm");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartCore_CanWait()
         {
             var standardClient = Initialize_Client(new BasicResponse(string.Empty));
@@ -77,6 +86,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartCore_CanWaitAsync()
         {
             var standardClient = Initialize_Client(new BasicResponse(string.Empty));
@@ -88,14 +98,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartProbe_CanExecute() =>
             Execute(c => c.RestartProbe(1001), "api/restartprobes.htm?id=1001");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartProbe_CanExecuteAsync() =>
             await ExecuteAsync(c => c.RestartProbeAsync(1001), "api/restartprobes.htm?id=1001");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartProbe_CanWait()
         {
             var customClient = GetRestartProbeClient();
@@ -113,6 +126,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartProbe_CanWaitAsync()
         {
             var customClient = GetRestartProbeClient();
@@ -130,24 +144,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartProbe_NoArguments()
         {
             Execute(c => c.RestartProbe(), "restartprobes.htm?username");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartProbe_NoArgumentsAsync()
         {
             await ExecuteAsync(async c => await c.RestartProbeAsync(), "restartprobes.htm?username");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_RestartProbe_EmptyArray()
         {
             Execute(c => c.RestartProbe(new int[] {}), "restartprobes.htm?username");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_RestartProbe_EmptyArrayAsync()
         {
             await ExecuteAsync(async c => await c.RestartProbeAsync(new int[] {}), "restartprobes.htm?username");
@@ -165,6 +183,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Approve Probe
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_ApproveProbe_AllTypes()
         {
             Action<int, ProbeApproval, string> execute = (id, action, str) =>
@@ -184,6 +203,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_ApproveProbe_AllTypesAsync()
         {
             Func<int, ProbeApproval, string, Task> execute = async (id, action, str) =>
@@ -203,6 +223,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_ApproveProbe_AlreadyApproved()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -214,6 +235,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_ApproveProbe_AlreadyApprovedAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -225,6 +247,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_ApproveProbe_NotAProbe()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -236,6 +259,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_ApproveProbe_NotAProbeAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -247,6 +271,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void AdminTool_ApproveProbe_NotAProbe_NonEnglish()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -258,6 +283,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task AdminTool_ApproveProbe_NotAProbe_NonEnglishAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());

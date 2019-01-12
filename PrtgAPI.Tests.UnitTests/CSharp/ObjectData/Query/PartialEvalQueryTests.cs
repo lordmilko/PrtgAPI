@@ -12,6 +12,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     public class PartialEvalQueryTests : BaseQueryTests
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_FromVariable()
         {
             var val = "Volume IO _Total0";
@@ -24,6 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_AnonymousType_WithVariable()
         {
             var val = "Volume IO _Total0";
@@ -44,6 +46,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_FromArray()
         {
             var arr = new[]
@@ -59,6 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_FromConst()
         {
             const string var = "Volume IO _Total0";
@@ -73,6 +77,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         private string value = "Volume IO _Total0";
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_FromThis()
         {
             ExecuteFilter(
@@ -83,6 +88,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_LocalLambda()
         {
             Func<Sensor, bool> lambda = s => s.Name == "Volume IO _Total1";
@@ -91,6 +97,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_LocalMethod()
         {
             ExecuteFilter(s => LocalMethod(s), string.Empty, s => Assert.AreEqual("Volume IO _Total1", s.Single().Name));
@@ -102,18 +109,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_CastToSpecific()
         {
             ExecuteFilter(s => (DateTime)(object)s.LastUp > (DateTime)(object)new DateTime(2000, 10, 2, 19, 2, 1, DateTimeKind.Utc), "filter_lastup=@above(36801.7930671296)", s => Assert.AreEqual("Volume IO _Total2", s.Single().Name));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_CastToObject()
         {
             ExecuteFilter(s => ((object)s.Name).Equals((object)"Volume IO _Total1"), "filter_name=Volume+IO+_Total1", s => Assert.AreEqual("Volume IO _Total1", s.Single().Name));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_WithVariableLambda()
         {
             Expression<Func<Sensor, bool>> expr = s => s.Name == "Volume IO _Total0";
@@ -137,6 +147,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_WithVariableMember()
         {
             Sensor t = new Sensor { Name = "test" };
@@ -144,6 +155,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Query_PartialEval_AgainstVariableMember()
         {
             Sensor t = new Sensor { Name = "Volume IO _Total2" };

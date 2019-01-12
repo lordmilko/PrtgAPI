@@ -16,6 +16,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Type Parsing
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Enum_With_Int()
         {
             AssertEx.Throws<ArgumentException>(
@@ -25,24 +26,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Enum_With_Enum()
         {
             SetObjectProperty(ObjectProperty.IntervalErrorMode, IntervalErrorMode.DownImmediately, ((int)IntervalErrorMode.DownImmediately).ToString());
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Bool_With_Bool()
         {
             SetObjectProperty(ObjectProperty.InheritInterval, false, "0");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Bool_With_Int()
         {
             SetObjectProperty(ObjectProperty.InheritInterval, true, "1");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Int_With_Enum()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -52,18 +57,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Int_With_Int()
         {
             SetObjectProperty(ObjectProperty.DBPort, 8080);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Double_With_Int()
         {
             SetObjectProperty(ChannelProperty.ScalingDivision, 10);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Int_With_Double()
         {
             double val = 8080.0;
@@ -71,6 +79,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Int_With_Bool()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -83,12 +92,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Normal
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_ReverseDependencyProperty()
         {
             SetObjectProperty(ChannelProperty.ColorMode, AutoMode.Manual, "1");
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetObjectProperty_CanExecuteAsync()
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.DBPort, "8080"));
@@ -97,6 +108,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_CanSetLocation()
         {
             SetObjectProperty(ObjectProperty.Location, "23 Fleet Street, Boston", "23 Fleet St, Boston, MA 02113, USA");
@@ -105,6 +117,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Google Location
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_Deserializes()
         {
             var client = GetLocationClient(RequestVersion.v14_4);
@@ -117,6 +130,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Google_DeserializesAsync()
         {
             var client = GetLocationClient(RequestVersion.v14_4);
@@ -129,6 +143,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_CorrectUrl()
         {
             var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=0&path=google%2Bgoogle&username"), RequestVersion.v14_4);
@@ -137,6 +152,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_ResolvesNothing()
         {
             var client = GetLocationClient(RequestVersion.v14_4);
@@ -147,6 +163,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Google_ResolvesNothingAsync()
         {
             var client = GetLocationClient(RequestVersion.v14_4);
@@ -157,6 +174,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_FailsToResolve()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v14_4);
@@ -165,6 +183,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Google_FailsToResolveAsync()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v14_4);
@@ -173,6 +192,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_ProviderUnavailable()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoProvider), RequestVersion.v14_4);
@@ -181,6 +201,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Google_NoAPIKey()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoAPIKey), RequestVersion.v14_4);
@@ -189,6 +210,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Google_NoAPIKeyAsync()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoAPIKey), RequestVersion.v14_4);
@@ -200,6 +222,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Here Location
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Here_Deserializes()
         {
             var client = GetLocationClient(RequestVersion.v18_1);
@@ -212,6 +235,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Here_DeserializesAsync()
         {
             var client = GetLocationClient(RequestVersion.v18_1);
@@ -224,6 +248,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Here_CorrectUrl()
         {
             var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=2&path=here%2Bhere&username"), RequestVersion.v17_4);
@@ -232,6 +257,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Here_ResolvesNothing()
         {
             var client = GetLocationClient(RequestVersion.v17_4);
@@ -242,6 +268,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Here_ResolvesNothingAsync()
         {
             var client = GetLocationClient(RequestVersion.v17_4);
@@ -252,6 +279,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Here_FailsToResolve()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v18_1);
@@ -260,6 +288,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Location_Here_FailsToResolveAsync()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoResults), RequestVersion.v18_1);
@@ -268,6 +297,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Location_Here_ProviderUnavailable()
         {
             var client = Initialize_Client(new GeoLocatorResponse(GeoLocatorResponseType.NoProvider), RequestVersion.v18_1);
@@ -288,14 +318,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_CanExecute() =>
             Execute(c => c.SetObjectPropertyRaw(1001, "name_", "testName"), "editsettings?id=1001&name_=testName");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetObjectPropertyRaw_CanExecuteAsync() =>
             await ExecuteAsync(async c => await c.SetObjectPropertyRawAsync(1001, "name_", "testName"), "editsettings?id=1001&name_=testName");
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_CanExecuteAsync()
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ChannelProperty>(ChannelProperty.LimitsEnabled, "1"));
@@ -304,12 +337,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_CanNullifyValue()
         {
             SetObjectProperty(ChannelProperty.UpperErrorLimit, null, string.Empty);
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetObjectProperty_CanSetLocationAsync()
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ObjectProperty>(ObjectProperty.Location, "23 Fleet St, Boston, MA 02113, USA"));
@@ -318,6 +353,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Array()
         {
             var channels = new[]
@@ -353,12 +389,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_DecimalPoint_AmericanCulture()
         {
             TestCustomCulture(() => SetObjectProperty(ChannelProperty.ScalingDivision, "1.1", "1.1"), new CultureInfo("en-US"));
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_DecimalPoint_EuropeanCulture()
         {
             TestCustomCulture(() =>
@@ -388,6 +426,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region Multiple
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Modifies_MultipleProperties()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
@@ -400,6 +439,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetObjectProperty_Modifies_MultiplePropertiesAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
@@ -412,6 +452,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_Modifies_MultipleProperties()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
@@ -425,6 +466,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_Modifies_MultiplePropertiesAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
@@ -438,6 +480,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetObjectProperty_Modifies_MultipleRawProperties()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
@@ -451,6 +494,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetObjectProperty_Modifies_MultipleRawPropertiesAsync()
         {
             var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
@@ -468,6 +512,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Single
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyUpperErrorLimit()
         {
             var matrix = new[]
@@ -487,6 +532,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyLowerErrorLimit()
         {
             var matrix = new[]
@@ -506,6 +552,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyUpperWarningLimit()
         {
             var matrix = new[]
@@ -525,6 +572,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyLowerWarningLimit()
         {
             var matrix = new[]
@@ -547,6 +595,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Multiple
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyUpperErrorLimit()
         {
             var matrix = new[]
@@ -571,6 +620,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyLowerErrorLimit()
         {
             var matrix = new[]
@@ -597,6 +647,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyUpperWarningLimit()
         {
             var matrix = new[]
@@ -621,6 +672,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyLowerWarningLimit()
         {
             var matrix = new[]
@@ -649,6 +701,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Version Properties
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_ErrorLimitMessage()
         {
             var matrix = new[]
@@ -668,6 +721,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_WarningLimitMessage()
         {
             var matrix = new[]
@@ -687,6 +741,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_LimitsEnabled_True()
         {
             var matrix = new[]
@@ -706,6 +761,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_LimitsEnabled_False()
         {
             var matrix = new[]
@@ -725,6 +781,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_NormalProperty()
         {
             var matrix = new[]
@@ -746,6 +803,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_ThreeValues()
         {
             var matrix = new[]
@@ -774,6 +832,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_SomeNull()
         {
             var matrix = new[]
@@ -801,6 +860,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_AllNull()
         {
             var matrix = new[]
@@ -828,6 +888,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionSpecific_ResolvesChannels()
         {
             var addresses = new[]
@@ -881,6 +942,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Single
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_SingleValue_OnlyUpperErrorLimitAsync()
         {
             var matrix = new[]
@@ -900,6 +962,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_SingleValue_OnlyLowerErrorLimitAsync()
         {
             var matrix = new[]
@@ -919,6 +982,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_SingleValue_OnlyUpperWarningLimitAsync()
         {
             var matrix = new[]
@@ -938,6 +1002,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_SingleValue_OnlyLowerWarningLimitAsync()
         {
             var matrix = new[]
@@ -960,6 +1025,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Multiple
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_MultipleValues_OnlyUpperErrorLimitAsync()
         {
             var matrix = new[]
@@ -984,6 +1050,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_MultipleValues_OnlyLowerErrorLimitAsync()
         {
             var matrix = new[]
@@ -1010,6 +1077,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_MultipleValues_OnlyUpperWarningLimitAsync()
         {
             var matrix = new[]
@@ -1034,6 +1102,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_MultipleValues_OnlyLowerWarningLimitAsync()
         {
             var matrix = new[]
@@ -1062,6 +1131,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #region Version Properties
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionProperty_ErrorLimitMessageAsync()
         {
             var matrix = new[]
@@ -1081,6 +1151,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionProperty_WarningLimitMessageAsync()
         {
             var matrix = new[]
@@ -1100,6 +1171,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionProperty_LimitsEnabled_TrueAsync()
         {
             var matrix = new[]
@@ -1119,6 +1191,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionProperty_LimitsEnabled_FalseAsync()
         {
             var matrix = new[]
@@ -1138,6 +1211,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionProperty_NormalPropertyAsync()
         {
             var matrix = new[]
@@ -1159,6 +1233,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             #endregion
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_ThreeValuesAsync()
         {
             var matrix = new[]
@@ -1187,6 +1262,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_SomeNullAsync()
         {
             var matrix = new[]
@@ -1214,6 +1290,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_AllNullAsync()
         {
             var matrix = new[]
@@ -1241,6 +1318,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task SetChannelProperty_VersionSpecific_ResolvesChannelsAsync()
         {
             var addresses = new[]

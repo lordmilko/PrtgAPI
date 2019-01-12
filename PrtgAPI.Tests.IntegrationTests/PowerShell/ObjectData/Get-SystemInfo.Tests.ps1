@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTestSafe.ps1
 
-Describe "Get-SystemInfo_IT" {
+Describe "Get-SystemInfo_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "retrieves info from a device" {
 
         $device = Get-Device -Id (Settings Device)

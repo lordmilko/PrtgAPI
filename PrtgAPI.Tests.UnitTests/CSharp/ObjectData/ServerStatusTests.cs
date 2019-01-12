@@ -9,6 +9,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class ServerStatusTests : BaseTest
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ServerStatus_CanExecute()
         {
             var client = Initialize_Client(new ServerStatusResponse(GetItem()));
@@ -19,6 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task ServerStatus_CanExecuteAsync()
         {
             var client = Initialize_Client(new ServerStatusResponse(GetItem()));
@@ -29,6 +31,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ServerStatus_CanDeserializeEmpty()
         {
             var item = new ServerStatusItem(
@@ -85,6 +88,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ServerStatus_AlternateValues()
         {
             var item = new ServerStatusItem(commercialExpiryDays: "-999999", clusterNodeName: "Cluster Node \\\"PRTG Network Monitor (Failover)\\\" (Failover Node)");
@@ -98,6 +102,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void ServerStatus_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -108,6 +113,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task ServerStatus_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

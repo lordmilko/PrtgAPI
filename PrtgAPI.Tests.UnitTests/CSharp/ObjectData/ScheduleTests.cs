@@ -13,12 +13,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     public class ScheduleTests : StandardObjectTests<Schedule, ScheduleItem, ScheduleResponse>
     {
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_CanDeserialize() => Object_CanDeserialize();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Schedule_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_GetObjectsOverloads_CanExecute()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -40,6 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_AllFields_HaveValues() => Object_AllFields_HaveValues(p =>
         {
             if (p.Name == "Tags")
@@ -49,6 +53,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         });
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -61,6 +66,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public async Task Schedule_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -83,6 +89,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region TimeTable
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_TimeTable_UsesIndexers()
         {
             var timetable = GetTimeTable();
@@ -100,6 +107,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+        [TestCategory("UnitTest")]
         public void Schedule_TimeTable_Rows_MatchSlots()
         {
             var timetable = GetTimeTable();

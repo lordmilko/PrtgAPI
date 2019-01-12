@@ -1,6 +1,6 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\IntegrationTest.ps1
 
-Describe "Add-Device_IT" {
+Describe "Add-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "adds a new device" {
 
         $name = "newDevice"
