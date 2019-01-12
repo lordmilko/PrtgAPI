@@ -39,7 +39,10 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $newDevice.Condition | Should BeLike "Auto-Discovery*"
 
-        $newDevice | Remove-Object -Force
+        Unsafe {
+            $newDevice | Should Not BeNullOrEmpty
+            $newDevice | Remove-Object -Force
+        }
     }
 
     It "performs an auto-discovery with a specified template" {
@@ -60,7 +63,10 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $newDevice.Condition | Should BeLike "Auto-Discovery*"
 
-        $newDevice | Remove-Object -Force
+        Unsafe {
+            $newDevice | Should Not BeNullOrEmpty
+            $newDevice | Remove-Object -Force
+        }
     }
 
     It "performs an auto-discovery with a specified template name" {
@@ -81,6 +87,9 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
         
         $newDevice.Condition | Should BeLike "Auto-Discovery*"
 
-        $newDevice | Remove-Object -Force
+        Unsafe {
+            $newDevice | Should Not BeNullOrEmpty
+            $newDevice | Remove-Object -Force
+        }
     }
 }

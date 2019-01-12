@@ -1050,11 +1050,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [TestCategory("IntegrationTest")]
         public void Data_Query_Where_Cast_NullableDouble_To_Int()
         {
-            var sensor = new FilterTests().GetLastValueSensor(Property.Id, Settings.UpSensor);
+            FilterTests.Retry(retry =>
+            {
+                var sensor = new FilterTests().GetLastValueSensor(Property.Id, Settings.UpSensor);
 
-            int value = (int)sensor.LastValue;
+                int value = (int)sensor.LastValue;
 
-            ExecuteFilter(s => (int)s.LastValue == value, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
+                ExecuteFilter(s => (int)s.LastValue == value, s => AssertEx.AreEqual(1, s.Count, $"Did not return correct number of sensors with value '{value}'"));
+            });
         }
 
         [TestMethod]

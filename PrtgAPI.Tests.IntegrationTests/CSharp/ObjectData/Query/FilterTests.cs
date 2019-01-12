@@ -1828,7 +1828,18 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             {
                 var device = client.GetDevice(Settings.Device);
 
-                AssertEx.AreEqual(null, device.Condition, "Expected device condition to be null");
+                if(device.Condition != null && device.Condition.Contains("recommendation in progress"))
+                {
+                    Logger.LogTestDetail("Sensor recommendation in progress. Pausing device");
+                    client.PauseObject(device.Id);
+                    client.RefreshObject(device.Id);
+                    Thread.Sleep(5000);
+                    client.ResumeObject(device.Id);
+                }
+                else
+                {
+                    AssertEx.AreEqual(null, device.Condition, "Expected device condition to be null");
+                }
 
                 client.AutoDiscover(Settings.Device);
 
@@ -2152,7 +2163,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_LogProperties_DateTime_PartialRange_WithId()
         {
-            var sensor = client.GetSensors(Property.Tags, "systemhealthsensor").Single();
+            var sensor = client.GetSensors(Property.Tags, "wmimemorysensor").Single();
 
             ExecuteLog(
                 l => l.DateTime > Time.TwoDaysAgo && l.Id == sensor.Id,

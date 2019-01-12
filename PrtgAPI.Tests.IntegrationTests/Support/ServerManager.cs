@@ -416,7 +416,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private ServiceController GetProbeService() => new ServiceController("PRTGProbeService", Settings.Server);
 
-        public void StartServices()
+        public void StartServices(bool restoreConfig = true)
         {
             Impersonator.ExecuteAction(() =>
             {
@@ -424,16 +424,16 @@ namespace PrtgAPI.Tests.IntegrationTests
                 var probeService = GetProbeService();
 
                 if (coreService.Status != ServiceControllerStatus.Running)
-                    StartService(coreService, "Core Service");
+                    StartService(coreService, "Core Service", restoreConfig);
 
                 if (probeService.Status != ServiceControllerStatus.Running)
-                    StartService(probeService, "Probe Service");
+                    StartService(probeService, "Probe Service", restoreConfig);
             });
         }
 
-        private void StartService(ServiceController service, string friendlyName)
+        private void StartService(ServiceController service, string friendlyName, bool restoreConfig = true)
         {
-            if (File.Exists(PrtgConfigBackup))
+            if (File.Exists(PrtgConfigBackup) && restoreConfig)
             {
                 Logger.LogTest($"Restoring leftover PRTG config");
                 RestorePrtgConfig(true);
@@ -451,7 +451,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             if (service.Status == ServiceControllerStatus.Stopped)
             {
-                Logger.LogTest($"{service.ServiceName} is not running. Starting service", true);
+                Logger.LogTest($"{service.ServiceName} is not running. Starting service");
                 service.Start();
                 service.WaitForStatus(ServiceControllerStatus.Running);
 

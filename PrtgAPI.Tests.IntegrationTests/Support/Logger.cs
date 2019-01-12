@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private static string PSTestStr(string engine)
         {
-            if (!string.IsNullOrEmpty(PSTestName) && engine == "C#")
+            if (!string.IsNullOrEmpty(PSTestName))
                 return PSTestName + ": ";
 
             return string.Empty;

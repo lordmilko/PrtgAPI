@@ -47,7 +47,9 @@ Describe "Add-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $device.Condition | Should BeLike "Auto-Discovery*"
 
-        $device | Remove-Object -Force
+        Unsafe {
+            $device | Remove-Object -Force
+        }
     }
 
     It "adds a new device and performs an auto-discovery with a specified set of device templates" {
@@ -57,6 +59,9 @@ Describe "Add-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $device.Condition | Should BeLike "Auto-Discovery*"
 
-        $device | Remove-Object -Force
+        Unsafe {
+            $device | Should Not BeNullOrEmpty
+            $device | Remove-Object -Force
+        }
     }
 }

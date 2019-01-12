@@ -30,7 +30,7 @@
 
             major = int.Parse(maj);
             minor = int.Parse(min);
-            build = int.Parse(b) + 1;
+            build = int.Parse(b);
             revision = int.Parse(r);
         }
     }

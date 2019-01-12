@@ -106,6 +106,11 @@ function StartupSafe($testName)
 
 function SetTestName($name)
 {
+    if($name.EndsWith("_IT"))
+    {
+        $name = $name.Substring(0, $name.Length - 3)
+    }
+
     [PrtgAPI.Tests.IntegrationTests.Logger]::PSTestName = $name
 }
 
@@ -139,19 +144,19 @@ function InitializePrtgClient
         if(!($Global:FirstRun))
         {
             $Global:FirstRun = $true
-            Log "Sleeping for 30 seconds as its our first test and we couldn't connect..."
+            LogTest "Sleeping for 30 seconds as its our first test and we couldn't connect..."
             Sleep 30
-            Log "Attempting second connection"
+            LogTest "Attempting second connection"
 
             try
             {
                 ConnectToServer UserName Password
 
-                Log "Connection successful"
+                LogTest "Connection successful"
             }
             catch [exception]
             {
-                Log $_.Exception.Message $true
+                LogTest $_.Exception.Message $true
                 throw
             }
 
