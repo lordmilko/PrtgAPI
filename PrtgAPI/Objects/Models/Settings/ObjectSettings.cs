@@ -208,7 +208,8 @@ namespace PrtgAPI
                 Value = WebUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")), //todo: should we maybe be decoding the value for all other input types? (text, ddl). test put \\ and " in a sensor factor definition and see if prtg encoded it
                 Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
-                Hidden = Regex.Match(input, "type=\"hidden\"").Success
+                Hidden = Regex.Match(input, "type=\"hidden\"").Success,
+                Html = input
             }).ToList();
             
             return properties; //todo: allow hidden items, and in the filter if theres a conflict overwrite the hidden one
@@ -216,9 +217,9 @@ namespace PrtgAPI
 
         private static InputType GetInputType(string input)
         {
-            if (Regex.Match(input, "radio").Success)
+            if (Regex.Match(input, "type=\"radio\"").Success)
                 return InputType.Radio;
-            if (Regex.Match(input, "checkbox").Success)
+            if (Regex.Match(input, "type=\"checkbox\"").Success)
                 return InputType.Checkbox;
             return InputType.Other;
         }
@@ -235,7 +236,8 @@ namespace PrtgAPI
                 DropDownList ddl = new DropDownList
                 {
                     Name = nameTransformer(Regex.Replace(list, nameRegex, "$2", RegexOptions.Singleline)),
-                    Options = new List<Option>()
+                    Options = new List<Option>(),
+                    Html = list
                 };
 
                 var matches = Regex.Matches(list, "<option.+?>.+?<\\/option>", RegexOptions.Singleline)
@@ -247,7 +249,8 @@ namespace PrtgAPI
                     ddl.Options.Add(new Option
                     {
                         Value = Regex.Replace(match, "(.+?value=\")(.*?)(\".+)", "$2"),
-                        Selected = Regex.Match(match, "selected").Success
+                        Selected = Regex.Match(match, "selected").Success,
+                        Html = match
                     });
                 }
 
@@ -255,23 +258,6 @@ namespace PrtgAPI
             }
 
             return ddls.Where(ddl => ddl.Name != "channel").ToList();
-
-           /*var properties = lists.Select(list => new DropDownList
-            {
-                //Name = Regex.Replace(list, "(.+?name=\")(.+?)(_*\".+)", "$2", RegexOptions.Singleline), //we might need to leave underscores afterall
-                Options = Regex.Matches(list, "<option.+?>.+?<\\/option>", RegexOptions.Singleline)
-                    .Cast<Match>()
-                    .Select(m => m.Value)
-                    .Select(option =>
-                        new Option
-                        {
-                            Value = Regex.Replace(option, "(.+?value=\")(.*?)(\".+)", "$2"),
-                            Selected = Regex.Match(option, "selected").Success
-                        }
-                    ).ToList()
-            }).ToList();*/
-
-            //return properties;
         }
 
         static Dictionary<string, Input> FilterInputTags(List<Input> properties)
@@ -332,7 +318,7 @@ namespace PrtgAPI
                     //Don't care
                 }
                 else
-                    throw new NotImplementedException($"Two properties were found with the same name but had different types: '{prop.Type}', '{dictionary[prop.Name]}'");
+                    throw new NotImplementedException($"Two properties were found with the name '{prop.Name}' but had different types: '{prop.Type}' ({prop.Html}), '{dictionary[prop.Name].Type}' ({dictionary[prop.Name].Html})");
             }
         }
     }

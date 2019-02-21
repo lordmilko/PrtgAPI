@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -1229,6 +1230,23 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var val = new XmlExpressionSerializer().Deserialize<CustomType>(xDoc.CreateReader());
 
             Assert.AreEqual(3, val.Property);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Object_Throws_DeserializingHtmlWithDuplicateInputTags()
+        {
+            var builder = new StringBuilder();
+
+            builder.Append("<input name=\"propertyName\" type=\"checkbox\" value=\"1\"/>");
+            builder.Append("<input name=\"propertyName\" type=\"radio\" value=\"1\"/>");
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(builder.ToString()));
+
+            AssertEx.Throws<NotImplementedException>(
+                () => client.GetSensorProperties(1001),
+                "Two properties were found with the name 'propertyName' but had different types: 'Radio' (<input name=\"propertyName\" type=\"radio\" value=\"1\"/>), 'Checkbox' (<input name=\"propertyName\" type=\"checkbox\" value=\"1\"/>)"
+            );
         }
 
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)

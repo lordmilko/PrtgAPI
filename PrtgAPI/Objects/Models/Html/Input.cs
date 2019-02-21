@@ -10,5 +10,6 @@ namespace PrtgAPI.Html
         public InputType Type { get; set; }
         public bool Checked { get; set; }
         public bool Hidden { get; set; }
+        public string Html { get; set; }
     }
 }

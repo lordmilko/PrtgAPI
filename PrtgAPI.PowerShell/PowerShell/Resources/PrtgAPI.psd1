@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.PowerShell.dll'
 
 # Version number of this module.
-ModuleVersion = '0.9.4'
+ModuleVersion = '0.9.5'
 
 # ID used to uniquely identify this module
 GUID = '81d4380f-31ff-42c7-9d64-1678dc5cd978'
@@ -104,7 +104,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v0.9.4
+        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v0.9.5
 
 ---
 

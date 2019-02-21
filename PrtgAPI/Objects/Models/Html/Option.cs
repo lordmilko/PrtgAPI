@@ -8,5 +8,7 @@ namespace PrtgAPI.Html
         public string Value { get; set; }
 
         public bool Selected { get; set; }
+
+        public string Html { get; set; }
     }
 }
