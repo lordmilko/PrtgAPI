@@ -317,7 +317,7 @@
     <Compile Include="Support\Infrastructure\IWebResponse.cs" />
     <Compile Include="Support\Infrastructure\MockWebClient.cs" />
     <Compile Include="CSharp\Infrastructure\PrtgClientTests.cs" />
-    <Compile Include="CSharp\Infrastructure\PrtgUrlTests.cs" />
+    <Compile Include="CSharp\Infrastructure\PrtgRequestMessageTests.cs" />
     <Compile Include="CSharp\Infrastructure\SearchFilterTests.cs" />
     <Compile Include="Support\TestResponses\PassHashResponse.cs" />
     <Compile Include="Support\TestItems\SensorItem.cs" />

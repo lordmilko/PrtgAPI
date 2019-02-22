@@ -8,7 +8,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Probe"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Probe"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class ProbeParameters : TableParameters<Probe>, IShallowCloneable<ProbeParameters>

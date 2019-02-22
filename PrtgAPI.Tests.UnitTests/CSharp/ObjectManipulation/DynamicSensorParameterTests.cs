@@ -58,7 +58,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Assert.AreEqual(newTarget, parameters[exefile], "New target was not installed correctly");
 
-            var url = PrtgUrlTests.CreateUrl(parameters);
+            var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
             var builder = new StringBuilder();
 
@@ -256,7 +256,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
                 Assert.IsInstanceOfType(((List<CustomParameter>)(parameters.GetParameters()[Parameter.Custom])).First(p => p.Name == "mutexname_").Value, typeof(SimpleParameterContainerValue));
 
-                var url = PrtgUrlTests.CreateUrl(parameters);
+                var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
                 Assert.IsTrue(url.Contains("mutexname_=True"));
             }, new DefaultPSObjectUtilities());
@@ -277,7 +277,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
                 Assert.IsInstanceOfType(((List<CustomParameter>)(parameters.GetParameters()[Parameter.Custom])).First(p => p.Name == "mutexname_").Value, typeof(SimpleParameterContainerValue));
 
-                var url = PrtgUrlTests.CreateUrl(parameters);
+                var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
                 Assert.IsTrue(url.Contains("mutexname_=1&mutexname_=2"));
             }, new DefaultPSObjectUtilities());

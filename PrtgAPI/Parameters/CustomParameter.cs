@@ -49,7 +49,7 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Returns a string representation of the current object based on how it will be likely formatted when used in a <see cref="PrtgUrl"/>.
+        /// Returns a string representation of the current object based on how it will be likely formatted when used in a <see cref="PrtgRequestMessage"/>.
         /// </summary>
         /// <returns>The formatted representation of this parameter.</returns>
         public override string ToString()

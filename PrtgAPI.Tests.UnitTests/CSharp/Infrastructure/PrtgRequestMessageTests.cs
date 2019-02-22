@@ -8,32 +8,32 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
-    public class PrtgUrlTests
+    public class PrtgRequestMessageTests
     {
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Server_Prefix_Http()
+        public void PrtgRequestMessage_Server_Prefix_Http()
         {
             Server_Prefix("http://prtg.example.com", "http://prtg.example.com");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Server_Prefix_Https()
+        public void PrtgRequestMessage_Server_Prefix_Https()
         {
             Server_Prefix("https://prtg.example.com", "https://prtg.example.com");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Server_Prefix_None()
+        public void PrtgRequestMessage_Server_Prefix_None()
         {
             Server_Prefix("prtg.example.com", "https://prtg.example.com");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SpecifiedNoPass_Yields_PassHash()
+        public void PrtgRequestMessage_SpecifiedNoPass_Yields_PassHash()
         {
             var url = CreateUrl(new BaseParameters(), false);
 
@@ -43,7 +43,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SpecifiedPassHash_Yields_PassHash()
+        public void PrtgRequestMessage_SpecifiedPassHash_Yields_PassHash()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -56,7 +56,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SpecifiedPassword_Yields_Password()
+        public void PrtgRequestMessage_SpecifiedPassword_Yields_Password()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -69,7 +69,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiParameter_WithoutIEnumerable_Equals_WithIEnumerable()
+        public void PrtgRequestMessage_MultiParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
             {
@@ -88,7 +88,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiValue_WithoutIEnumerable_Equals_WithIEnumerable()
+        public void PrtgRequestMessage_MultiValue_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
             {
@@ -107,7 +107,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_CustomParameter_WithoutIEnumerable_Equals_WithIEnumerable()
+        public void PrtgRequestMessage_CustomParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
             {
@@ -126,7 +126,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SearchFilter_FromParameters_With_EnumFlags()
+        public void PrtgRequestMessage_SearchFilter_FromParameters_With_EnumFlags()
         {
             var flagsParameters = new SensorParameters
             {
@@ -161,7 +161,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_FilterValue_With_EnumFlags()
+        public void PrtgRequestMessage_FilterValue_With_EnumFlags()
         {
             //Specifying FilterXyz doesn't actually make sense here (we should be using a SearchFilter) however
             //the point of the test is to validate flag parsing
@@ -188,7 +188,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SearchFilter_With_EnumFlags()
+        public void PrtgRequestMessage_SearchFilter_With_EnumFlags()
         {
             var flagsUrl = CreateUrl(new BaseParameters
             {
@@ -213,7 +213,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SearchFilter_With_TimeSpan()
+        public void PrtgRequestMessage_SearchFilter_With_TimeSpan()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -225,7 +225,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Parameter_WithBool()
+        public void PrtgRequestMessage_Parameter_WithBool()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -244,7 +244,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_SearchFilter_With_DateTime()
+        public void PrtgRequestMessage_SearchFilter_With_DateTime()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -256,7 +256,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Throws_WhenCustomParameterValueIsWrongType()
+        public void PrtgRequestMessage_Throws_WhenCustomParameterValueIsWrongType()
         {
             AssertEx.Throws<ArgumentException>(() =>
             {
@@ -269,7 +269,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsNull()
+        public void PrtgRequestMessage_IgnoresCustomParameterValue_WhenValueIsNull()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -281,7 +281,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_IgnoresCustomParameterValue_WhenValueIsEmptyList()
+        public void PrtgRequestMessage_IgnoresCustomParameterValue_WhenValueIsEmptyList()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -293,7 +293,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiValue_CustomParameter_FormatsCorrectly()
+        public void PrtgRequestMessage_MultiValue_CustomParameter_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -305,7 +305,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiParameter_CustomParameter_FormatsCorrectly()
+        public void PrtgRequestMessage_MultiParameter_CustomParameter_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -317,7 +317,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiValue_CustomParameterList_FormatsCorrectly()
+        public void PrtgRequestMessage_MultiValue_CustomParameterList_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -333,7 +333,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiParameter_CustomParameterList_FormatsCorrectly()
+        public void PrtgRequestMessage_MultiParameter_CustomParameterList_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -349,7 +349,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiParameter_With_Enum()
+        public void PrtgRequestMessage_MultiParameter_With_Enum()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -363,7 +363,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_MultiParameter_With_EnumFlags()
+        public void PrtgRequestMessage_MultiParameter_With_EnumFlags()
         {
             var url = CreateUrl(new BaseParameters
             {
@@ -377,7 +377,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Throws_UsingList_With_SingleParameter()
+        public void PrtgRequestMessage_Throws_UsingList_With_SingleParameter()
         {
             AssertEx.Throws<ArgumentException>(() =>
             {
@@ -390,7 +390,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Null_SearchFilter()
+        public void PrtgRequestMessage_Null_SearchFilter()
         {
             var url = CreateUrl(new SensorParameters
             {
@@ -403,7 +403,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void PrtgUrl_Empty_SearchFilters()
+        public void PrtgRequestMessage_Empty_SearchFilters()
         {
             var url = CreateUrl(new SensorParameters
             {
@@ -416,7 +416,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         public static string CreateUrl(IParameters parameters, bool truncate = true)
         {
-            var url = new PrtgUrl(new ConnectionDetails("prtg.example.com", "username", "12345678"), XmlFunction.TableData, parameters);
+            var request = new PrtgRequestMessage(new ConnectionDetails("prtg.example.com", "username", "12345678"), XmlFunction.TableData, parameters);
 
             if (truncate)
             {
@@ -424,30 +424,30 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 var prefix = $"&username=username&passhash=12345678";
                 try
                 {
-                    Assert.IsTrue(url.Url.StartsWith(suffix), "URL did not start with suffix");
+                    Assert.IsTrue(request.Url.StartsWith(suffix), "URL did not start with suffix");
                 }
                 catch
                 {
-                    Assert.IsTrue(url.Url.StartsWith(suffix.Substring(0, suffix.Length - 1) + "&"));
+                    Assert.IsTrue(request.Url.StartsWith(suffix.Substring(0, suffix.Length - 1) + "&"));
                 }
-                Assert.IsTrue(url.Url.EndsWith(prefix), "URL did not end with prefix");
+                Assert.IsTrue(request.Url.EndsWith(prefix), "URL did not end with prefix");
 
-                var length = url.Url.Length - (suffix.Length + prefix.Length);
+                var length = request.Url.Length - (suffix.Length + prefix.Length);
 
                 if (length == -1)
                     return string.Empty;
 
-                return url.Url.Substring(suffix.Length, length);
+                return request.Url.Substring(suffix.Length, length);
             }
 
-            return url.Url;
+            return request.Url;
         }
 
         private void Server_Prefix(string server, string prefixedServer)
         {
-            var url = new PrtgUrl(new ConnectionDetails(server, "username", "password"), XmlFunction.TableData, new BaseParameters());
+            var request = new PrtgRequestMessage(new ConnectionDetails(server, "username", "password"), XmlFunction.TableData, new BaseParameters());
 
-            Assert.IsTrue(url.Url.StartsWith(prefixedServer));
+            Assert.IsTrue(request.Url.StartsWith(prefixedServer));
         }
     }
 }

@@ -5,7 +5,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for adding/modifying <see cref="TriggerType.Threshold"/> <see cref="NotificationTrigger"/> objects.
     /// </summary>
     public class ThresholdTriggerParameters : TriggerParameters
     {

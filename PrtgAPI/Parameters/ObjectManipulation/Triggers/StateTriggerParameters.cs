@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for adding/modifying <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/> objects.
     /// </summary>
     public class StateTriggerParameters : TriggerParameters
     {

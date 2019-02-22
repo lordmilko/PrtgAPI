@@ -8,7 +8,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving data stored in tables.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving data stored in tables.
     /// </summary>
     /// <typeparam name="T">The type of PRTG Object to retrieve.</typeparam>
     public class TableParameters<T> : ContentParameters<T> where T : ITableObject, IObject

@@ -6,8 +6,8 @@ namespace PrtgAPI.Request
 {
     internal interface IWebClient
     {
-        Task<HttpResponseMessage> GetSync(string address, CancellationToken token);
+        Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token);
 
-        Task<HttpResponseMessage> GetAsync(string address, CancellationToken token);
+        Task<HttpResponseMessage> SendAsync(PrtgRequestMessage request, CancellationToken token);
     }
 }

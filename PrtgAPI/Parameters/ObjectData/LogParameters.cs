@@ -6,7 +6,7 @@ using PrtgAPI.Request.Serialization;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Log"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Log"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class LogParameters : TableParameters<Log>, IShallowCloneable<LogParameters>

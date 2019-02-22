@@ -5,7 +5,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="NotificationAction"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="NotificationAction"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public sealed class NotificationActionParameters : TableParameters<NotificationAction>

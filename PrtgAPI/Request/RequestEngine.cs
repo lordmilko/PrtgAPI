@@ -41,7 +41,7 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(ICsvParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
 
@@ -53,7 +53,7 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
 
@@ -62,7 +62,7 @@ namespace PrtgAPI.Request
 
         internal async Task<PrtgResponse> ExecuteRequestAsync(IJsonParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
@@ -75,7 +75,7 @@ namespace PrtgAPI.Request
         [Obsolete("XmlReader ExecuteRequest() should not be used directly. Use ObjectEngine.GetObjectsXml() instead")]
         internal XmlReader ExecuteRequest(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
 
@@ -87,7 +87,7 @@ namespace PrtgAPI.Request
         [Obsolete("Task<XmlReader> ExecuteRequest() should not be used directly. Use ObjectEngine.GetObjectsXml() instead")]
         internal async Task<XmlReader> ExecuteRequestAsync(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
@@ -102,9 +102,9 @@ namespace PrtgAPI.Request
         internal PrtgResponse ExecuteRequest(ICommandParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             if (parameters is IMultiTargetParameters)
-                return ExecuteMultiRequest(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser);
+                return ExecuteMultiRequest(p => GetRequestMessage((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser);
 
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
 
@@ -114,9 +114,9 @@ namespace PrtgAPI.Request
         internal async Task<PrtgResponse> ExecuteRequestAsync(ICommandParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
             if (parameters is IMultiTargetParameters)
-                return await ExecuteMultiRequestAsync(p => GetPrtgUrl((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser).ConfigureAwait(false);
+                return await ExecuteMultiRequestAsync(p => GetRequestMessage((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser).ConfigureAwait(false);
 
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
@@ -128,7 +128,7 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(IHtmlParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
 
@@ -137,7 +137,7 @@ namespace PrtgAPI.Request
 
         internal async Task<PrtgResponse> ExecuteRequestAsync(IHtmlParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
-            var url = GetPrtgUrl(parameters);
+            var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
 
@@ -160,7 +160,7 @@ namespace PrtgAPI.Request
 
         #endregion
 
-        private PrtgResponse ExecuteMultiRequest(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
+        private PrtgResponse ExecuteMultiRequest(Func<IParameters, PrtgRequestMessage> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -181,7 +181,7 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-        internal async Task<PrtgResponse> ExecuteMultiRequestAsync(Func<IParameters, PrtgUrl> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
+        internal async Task<PrtgResponse> ExecuteMultiRequestAsync(Func<IParameters, PrtgRequestMessage> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -202,9 +202,9 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-        private PrtgResponse ExecuteRequest(PrtgUrl url, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
+        private PrtgResponse ExecuteRequest(PrtgRequestMessage request, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
         {
-            prtgClient.Log($"Synchronously executing request {url.Url}", LogLevel.Request);
+            prtgClient.Log($"Synchronously executing request {request}", LogLevel.Request);
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -215,7 +215,7 @@ namespace PrtgAPI.Request
                     if (token == CancellationToken.None && DefaultCancellationToken != CancellationToken.None)
                         token = DefaultCancellationToken;
 
-                    var responseMessage = webClient.GetSync(url.Url, token).Result;
+                    var responseMessage = webClient.SendSync(request, token).Result;
 
                     PrtgResponse responseContent = null;
 
@@ -247,7 +247,7 @@ namespace PrtgAPI.Request
                         innerException = new TimeoutException($"The server timed out while executing request.", ex.InnerException);
                     }
 
-                    var result = HandleRequestException(ex.InnerException?.InnerException, innerException, url, ref retriesRemaining, () =>
+                    var result = HandleRequestException(ex.InnerException?.InnerException, innerException, request, ref retriesRemaining, () =>
                     {
                         if (innerException != null)
                             throw innerException;
@@ -259,9 +259,9 @@ namespace PrtgAPI.Request
             } while (true); //Keep retrying as long as we have retries remaining
         }
 
-        private async Task<PrtgResponse> ExecuteRequestAsync(PrtgUrl url, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
+        private async Task<PrtgResponse> ExecuteRequestAsync(PrtgRequestMessage request, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
         {
-            prtgClient.Log($"Asynchronously executing request {url.Url}", LogLevel.Request);
+            prtgClient.Log($"Asynchronously executing request {request}", LogLevel.Request);
 
             int retriesRemaining = prtgClient.RetryCount;
 
@@ -272,7 +272,7 @@ namespace PrtgAPI.Request
                     if (token == CancellationToken.None && DefaultCancellationToken != CancellationToken.None)
                         token = DefaultCancellationToken;
 
-                    var responseMessage = await webClient.GetAsync(url.Url, token).ConfigureAwait(false);
+                    var responseMessage = await webClient.SendAsync(request, token).ConfigureAwait(false);
 
                     PrtgResponse responseContent = null;
 
@@ -294,7 +294,7 @@ namespace PrtgAPI.Request
                 {
                     var inner = ex.InnerException as WebException;
 
-                    var result = HandleRequestException(inner, ex, url, ref retriesRemaining, null);
+                    var result = HandleRequestException(inner, ex, request, ref retriesRemaining, null);
 
                     if (!result)
                         throw;
@@ -332,7 +332,7 @@ namespace PrtgAPI.Request
             return (logLevel & LogLevel.Response) == LogLevel.Response || isDirty || !PrtgResponse.IsSafeDataFormat(message);
         }
 
-        private void HandleSocketException(Exception ex, string url)
+        private void HandleSocketException(Exception ex, PrtgRequestMessage request)
         {
             var socketException = ex?.InnerException as SocketException;
 
@@ -340,28 +340,28 @@ namespace PrtgAPI.Request
             {
                 var port = socketException.Message.Substring(socketException.Message.LastIndexOf(':') + 1);
 
-                var protocol = url.Substring(0, url.IndexOf(':')).ToUpper();
+                var protocol = request.Url.Substring(0, request.Url.IndexOf(':')).ToUpper();
 
                 if (socketException.SocketErrorCode == SocketError.TimedOut)
                 {
-                    throw new TimeoutException($"Connection timed out while communicating with remote server via {protocol} on port {port}. Confirm server address and port are valid and PRTG Service is running", ex);
+                    throw new TimeoutException($"Connection timed out while communicating with remote server via {protocol} on port {port}. Confirm server address and port are valid and PRTG Service is running.", ex);
                 }
                 else if (socketException.SocketErrorCode == SocketError.ConnectionRefused)
                 {
-                    throw new WebException($"Server rejected {protocol} connection on port {port}. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted", ex);
+                    throw new WebException($"Server rejected {protocol} connection on port {port}. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted.", ex);
                 }
             }
         }
 
-        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgUrl url, ref int retriesRemaining, Action thrower)
+        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgRequestMessage request, ref int retriesRemaining, Action thrower)
         {
             if (innerMostEx != null) //Synchronous + Asynchronous
             {
                 if (retriesRemaining > 0)
-                    prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(innerMostEx, url.Url, retriesRemaining));
+                    prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(innerMostEx, request.Url, retriesRemaining));
                 else
                 {
-                    HandleSocketException(innerMostEx, url.Url);
+                    HandleSocketException(innerMostEx, request);
 
                     throw innerMostEx;
                 }
@@ -369,7 +369,7 @@ namespace PrtgAPI.Request
             else
             {
                 if (fallbackHandlerEx != null && retriesRemaining > 0)
-                    prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(fallbackHandlerEx, url.Url, retriesRemaining));
+                    prtgClient.HandleEvent(prtgClient.retryRequest, new RetryRequestEventArgs(fallbackHandlerEx, request.Url, retriesRemaining));
                 else
                 {
                     thrower?.Invoke();
@@ -438,20 +438,20 @@ namespace PrtgAPI.Request
             }
         }
 
-        private PrtgUrl GetPrtgUrl(ICommandParameters parameters) =>
-            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+        private PrtgRequestMessage GetRequestMessage(ICommandParameters parameters) =>
+            new PrtgRequestMessage(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(ICsvParameters parameters) =>
-            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+        private PrtgRequestMessage GetRequestMessage(ICsvParameters parameters) =>
+            new PrtgRequestMessage(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(IHtmlParameters parameters) =>
-            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+        private PrtgRequestMessage GetRequestMessage(IHtmlParameters parameters) =>
+            new PrtgRequestMessage(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(IJsonParameters parameters) =>
-            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+        private PrtgRequestMessage GetRequestMessage(IJsonParameters parameters) =>
+            new PrtgRequestMessage(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
-        private PrtgUrl GetPrtgUrl(IXmlParameters parameters) =>
-            new PrtgUrl(prtgClient.ConnectionDetails, parameters.Function, parameters);
+        private PrtgRequestMessage GetRequestMessage(IXmlParameters parameters) =>
+            new PrtgRequestMessage(prtgClient.ConnectionDetails, parameters.Function, parameters);
 
         internal static void SetErrorUrlAsRequestUri(HttpResponseMessage response)
         {

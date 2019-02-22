@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Group"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Group"/> objects.
     /// </summary>
     public class GroupParameters : TableParameters<Group>, IShallowCloneable<GroupParameters>
     {

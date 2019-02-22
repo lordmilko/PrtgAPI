@@ -7,7 +7,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving data with a known <see cref="Content"/> type.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving data with a known <see cref="Content"/> type.
     /// </summary>
     /// <typeparam name="T">The type of PRTG Object to retrieve.</typeparam>
     public class ContentParameters<T> : PageableParameters, IXmlParameters

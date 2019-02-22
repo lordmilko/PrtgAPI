@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents raw parameters used to construct a <see cref="PrtgUrl"/> for creating a new sensor.
+    /// Represents raw parameters used to construct a <see cref="PrtgRequestMessage"/> for creating a new sensor.
     /// </summary>
     public class RawSensorParameters : ContainerSensorParameters
     {

@@ -13,7 +13,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents a dynamic set of raw parameters used to construct a <see cref="PrtgUrl"/> for creating a new sensor.
+    /// Represents a dynamic set of raw parameters used to construct a <see cref="PrtgRequestMessage"/> for creating a new sensor.
     /// </summary>
     public class DynamicSensorParameters : ContainerSensorParameters, IDynamicMetaObjectProvider, ISourceParameters<Device>
     {

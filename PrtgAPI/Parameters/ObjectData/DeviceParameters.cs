@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Device"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Device"/> objects.
     /// </summary>
     public class DeviceParameters : TableParameters<Device>, IShallowCloneable<DeviceParameters>
     {

@@ -8,7 +8,7 @@ using PrtgAPI.Targets;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for creating a new WMI Service sensor.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for creating a new WMI Service sensor.
     /// </summary>
     public class WmiServiceSensorParameters : SensorParametersInternal
     {

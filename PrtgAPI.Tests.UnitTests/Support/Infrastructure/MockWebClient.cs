@@ -17,8 +17,10 @@ namespace PrtgAPI.Tests.UnitTests
             this.response = response;
         }
 
-        public Task<HttpResponseMessage> GetSync(string address, CancellationToken token)
+        public Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token)
         {
+            var address = request.ToString();
+
             var statusCode = GetStatusCode();
 
             if (token.IsCancellationRequested)
@@ -38,8 +40,10 @@ namespace PrtgAPI.Tests.UnitTests
             return Task.FromResult(message);
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
+        public async Task<HttpResponseMessage> SendAsync(PrtgRequestMessage request, CancellationToken token)
         {
+            var address = request.ToString();
+
             var statusCode = GetStatusCode();
 
             if (token.IsCancellationRequested)

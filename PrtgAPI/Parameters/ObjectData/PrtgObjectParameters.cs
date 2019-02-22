@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving generic <see cref="PrtgObject"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving generic <see cref="PrtgObject"/> objects.
     /// </summary>
     public class PrtgObjectParameters : TableParameters<PrtgObject>, IShallowCloneable<PrtgObjectParameters>
     {

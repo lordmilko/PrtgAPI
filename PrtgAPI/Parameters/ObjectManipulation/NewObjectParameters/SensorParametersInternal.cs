@@ -6,7 +6,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    ///Base class for defining type-safe parameter types used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects.
+    ///Base class for defining type-safe parameter types used to construct a <see cref="PrtgRequestMessage"/> for adding new <see cref="Sensor"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public abstract class SensorParametersInternal : NewSensorParameters, ISourceParameters<Device>

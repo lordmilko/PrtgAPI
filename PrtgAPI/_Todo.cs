@@ -47,7 +47,7 @@
 
     GetSensor
     -tags always need to filter using "contains. we're fine for the powershell version, but i think we need some sort of filteroperator override for the c# api. perhaps
-        a filteroperatoroverrideattribute. we can override it during the prtgurl construction, but then we need to filter the results once the request has completed
+        a filteroperatoroverrideattribute. we can override it during the PrtgRequestMessage construction, but then we need to filter the results once the request has completed
     -should the LastValue property be a number? if so, when sensors are paused they are "-" so clearly it should be a nullable double or something?
     -there is a "listend" property when you make a request. 1 means you've gotten all the sensors now. i dont think this will help considering previously we asked for the remaining ones and we got more than we expected
     -when getsensors fails it throws an aggregateexception. i think we should unwrap the inner exception, or count how many there were and iterate through them?

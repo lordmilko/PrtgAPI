@@ -12,48 +12,42 @@ using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
-    class PrtgUrl
+    internal class PrtgRequestMessage
     {
         bool usernameFound;
         bool passFound;
         bool hasQueries;
 
-        private string url;
+        public string Url { get; }
 
-        public string Url
-        {
-            get { return url; }
-            private set { url = value; }
-        }
-
-        public PrtgUrl(ConnectionDetails connectionDetails, XmlFunction function, IParameters parameters) :
+        internal PrtgRequestMessage(ConnectionDetails connectionDetails, XmlFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, JsonFunction function, IParameters parameters) :
+        internal PrtgRequestMessage(ConnectionDetails connectionDetails, JsonFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, CsvFunction function, IParameters parameters) :
+        internal PrtgRequestMessage(ConnectionDetails connectionDetails, CsvFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, CommandFunction function, IParameters parameters) :
+        internal PrtgRequestMessage(ConnectionDetails connectionDetails, CommandFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        public PrtgUrl(ConnectionDetails connectionDetails, HtmlFunction function, IParameters parameters) :
+        internal PrtgRequestMessage(ConnectionDetails connectionDetails, HtmlFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
         }
 
-        private PrtgUrl(ConnectionDetails connectionDetails, string function, IParameters parameters)
+        private PrtgRequestMessage(ConnectionDetails connectionDetails, string function, IParameters parameters)
         {
-            StringBuilder urlBuilder = new StringBuilder();
+            var urlBuilder = new StringBuilder();
 
             urlBuilder.Append(AddUrlPrefix(connectionDetails.Server));
 
@@ -117,7 +111,7 @@ namespace PrtgAPI.Request
             var component = GetUrlComponent(parameter, value);
 
             if (!string.IsNullOrWhiteSpace(component))
-                urlBuilder.Append(delim + component);
+                urlBuilder.Append(delim).Append(component);
         }
 
         private string GetUrlComponent(Parameter parameter, object value)
@@ -425,7 +419,7 @@ namespace PrtgAPI.Request
         [ExcludeFromCodeCoverage]
         public override string ToString()
         {
-            return url;
+            return Url;
         }
     }
 }

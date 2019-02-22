@@ -4,7 +4,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/>.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/>.
     /// </summary>
     public interface IParameters
     {
@@ -15,7 +15,7 @@ namespace PrtgAPI.Parameters
         bool Cookie { get; }
 
         /// <summary>
-        /// Gets or sets a <see cref="Parameter"/> for use in a <see cref="PrtgUrl"/>.
+        /// Gets or sets a <see cref="Parameter"/> for use in a <see cref="PrtgRequestMessage"/>.
         /// </summary>
         /// <param name="parameter">The parameter to retrieve or modify.</param>
         /// <returns>The value of the specified parameter. If the parameter does not exist, null.</returns>

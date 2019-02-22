@@ -7,7 +7,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding/modifying <see cref="NotificationTrigger"/> objects.</para>
+    /// <para type="description">Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for adding/modifying <see cref="NotificationTrigger"/> objects.</para>
     /// </summary>
     public abstract class TriggerParameters : BaseParameters, IHtmlParameters
     {

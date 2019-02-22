@@ -14,7 +14,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Sensor"/> objects,
+    /// <para type="description">Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for adding new <see cref="Sensor"/> objects,
     /// capable of functioning as both a <see cref="Dictionary{TKey, TValue}"/> and a secondary container type.</para>
     /// </summary>
     public abstract class ContainerSensorParameters : NewSensorParameters, IDynamicParameters

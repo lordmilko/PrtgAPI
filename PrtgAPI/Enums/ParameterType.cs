@@ -3,7 +3,7 @@
 namespace PrtgAPI
 {
     /// <summary>
-    /// Specifies how <see cref="Parameter"/> values can be formatted when inserted in a <see cref="PrtgUrl"/>.
+    /// Specifies how <see cref="Parameter"/> values can be formatted when inserted in a <see cref="PrtgRequestMessage"/>.
     /// </summary>
     public enum ParameterType
     {

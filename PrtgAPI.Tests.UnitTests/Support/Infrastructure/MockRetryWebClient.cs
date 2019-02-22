@@ -23,10 +23,10 @@ namespace PrtgAPI.Tests.UnitTests
             this.synchronous = synchronous;
         }
 
-        public Task<HttpResponseMessage> GetSync(string address, CancellationToken token)
+        public Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token)
         {
             if (!synchronous)
-                return realWebClient.GetSync(address, token);
+                return realWebClient.SendSync(request, token);
             else
             {
                 var exception = new HttpRequestException("Outer Exception", new WebException("Inner Exception"));
@@ -35,23 +35,23 @@ namespace PrtgAPI.Tests.UnitTests
             }
         }
 
-        public Task<HttpResponseMessage> GetAsync(string address, CancellationToken token)
+        public Task<HttpResponseMessage> SendAsync(PrtgRequestMessage request, CancellationToken token)
         {
             if (successfulUrls.Count < 1)
             {
-                successfulUrls.Add(address);
-                return realWebClient.GetAsync(address, token);
+                successfulUrls.Add(request.Url);
+                return realWebClient.SendAsync(request, token);
             }
             else
             {
                 if (ignoreUrls.Count < 2)
                 {
-                    if (!ignoreUrls.Contains(address))
-                        ignoreUrls.Add(address);
+                    if (!ignoreUrls.Contains(request.Url))
+                        ignoreUrls.Add(request.Url);
                 }
                 else
                 {
-                    Assert.IsTrue(ignoreUrls.Contains(address), $"IgnoreUrls did not contain address '{address}'");
+                    Assert.IsTrue(ignoreUrls.Contains(request.Url), $"IgnoreUrls did not contain address '{request.ToString()}'");
                 }
 
                 var exception = new HttpRequestException("Outer Exception", new WebException("Inner Exception"));

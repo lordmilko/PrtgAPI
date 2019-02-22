@@ -5,7 +5,7 @@ using PrtgAPI.Request;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving <see cref="Schedule"/> objects.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Schedule"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public sealed class ScheduleParameters : TableParameters<Schedule>

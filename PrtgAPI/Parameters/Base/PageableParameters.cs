@@ -6,7 +6,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents parameters used to construct a <see cref="PrtgUrl"/> for retrieving a large number of objects over a series of smaller requests.
+    /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving a large number of objects over a series of smaller requests.
     /// </summary>
     public class PageableParameters : BaseParameters
     {

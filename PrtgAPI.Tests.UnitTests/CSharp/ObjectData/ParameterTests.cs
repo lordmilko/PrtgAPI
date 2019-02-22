@@ -387,7 +387,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 Assert.IsInstanceOfType(parameters.Parameters.First(p => p.Name == "third").Value, typeof(SimpleParameterContainerValue));
 
-                var url = PrtgUrlTests.CreateUrl(parameters);
+                var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
                 Assert.AreEqual("name_=first&third=True&sensortype=second", url);
             }, new DefaultPSObjectUtilities());
@@ -408,7 +408,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 Assert.IsInstanceOfType(parameters.Parameters.First(p => p.Name == "third").Value, typeof(SimpleParameterContainerValue));
 
-                var url = PrtgUrlTests.CreateUrl(parameters);
+                var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
                 Assert.AreEqual("name_=first&third=1&third=2&sensortype=second", url);
             }, new DefaultPSObjectUtilities());
@@ -601,7 +601,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, 0));
 
-            var url = PrtgUrlTests.CreateUrl(parameters, false);
+            var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
             Assert.AreEqual(TestHelpers.RequestProbe("count=*&filter_parentid=0", UrlFlag.Columns), url);
         }
@@ -632,7 +632,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, new[] {0}));
 
-            var url = PrtgUrlTests.CreateUrl(parameters, false);
+            var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
             Assert.AreEqual(TestHelpers.RequestProbe("count=*&filter_parentid=0", UrlFlag.Columns), url);
         }

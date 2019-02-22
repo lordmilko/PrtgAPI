@@ -3,7 +3,7 @@
 namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// <para type="description">Represents parameters used to construct a <see cref="PrtgUrl"/> for adding new <see cref="Group"/> objects.</para>
+    /// <para type="description">Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for adding new <see cref="Group"/> objects.</para>
     /// </summary>
     public class NewGroupParameters : NewObjectParameters
     {

@@ -68,7 +68,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ExecuteOperation(PrtgObject obj, string url)
         {
-            var server = PrtgUrl.AddUrlPrefix(client.Server);
+            var server = PrtgRequestMessage.AddUrlPrefix(client.Server);
 
             ExecuteOperation(() => Process.Start($"{server}{url}"), $"Opening {obj.GetTypeDescription()} '{obj.Name}'");
         }
