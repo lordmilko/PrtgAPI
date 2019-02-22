@@ -705,8 +705,14 @@ namespace PrtgAPI
 
                 if (attrib != null)
                 {
-                    if (attrib.Class == typeof(Location))
-                        prop.Value = ResolveAddress(prop.Value?.ToString(), CancellationToken.None);
+                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
+                    {
+                        string str = prop.Value != null && prop.Value.IsIEnumerable()
+                            ? string.Join(", ", prop.Value.ToIEnumerable())
+                            : prop.Value?.ToString();
+
+                        prop.Value = ResolveAddress(str, CancellationToken.None);
+                    }
                 }
             }
             
@@ -723,8 +729,14 @@ namespace PrtgAPI
 
                 if (attrib != null)
                 {
-                    if (attrib.Class == typeof(Location))
-                        prop.Value = await ResolveAddressAsync(prop.Value?.ToString(), token).ConfigureAwait(false);
+                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
+                    {
+                        string str = prop.Value != null && prop.Value.IsIEnumerable()
+                            ? string.Join(", ", prop.Value.ToIEnumerable())
+                            : prop.Value?.ToString();
+
+                        prop.Value = await ResolveAddressAsync(str, token).ConfigureAwait(false);
+                    }
                 }
             }
 
@@ -821,6 +833,11 @@ namespace PrtgAPI
             if (address == null)
                 return new Location();
 
+            Location longLat;
+
+            if (RequestParser.IsLongLat(address, out longLat))
+                return longLat;
+
             List<Location> result = new List<Location>();
             var client = GetVersionClient();
 
@@ -852,6 +869,11 @@ namespace PrtgAPI
         {
             if (address == null)
                 return new Location();
+
+            Location longLat;
+
+            if (RequestParser.IsLongLat(address, out longLat))
+                return longLat;
 
             List<Location> result = new List<Location>();
             var client = GetVersionClient();

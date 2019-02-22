@@ -3,6 +3,20 @@ using PrtgAPI.Request;
 
 namespace PrtgAPI
 {
+    internal class GpsLocation : Location
+    {
+        public override double Latitude { get; }
+
+        public override double Longitude { get; }
+
+        internal GpsLocation(double latitude, double longitude)
+        {
+            Address = $"{latitude}, {longitude}";
+            Latitude = latitude;
+            Longitude = longitude;
+        }
+    }
+
     [DataContract]
     internal class Location : IMultipleSerializable
     {

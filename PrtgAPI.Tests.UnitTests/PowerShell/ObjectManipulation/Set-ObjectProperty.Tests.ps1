@@ -134,9 +134,30 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $newSensor | Should Be $sensor
         }
+
+        $locationCases = @(
+            @{type = "string"; value = "1.234, 5.678"}
+            @{type = "Object[]"; value = 1.234, 5.678}
+        )
+
+        It "sets a <type> location" -TestCases $locationCases {
+            param($value, $type)
+
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $value.GetType().Name | Should Be $type
+
+            SetAddressValidatorResponse "id=4000&location_=1.234%2C+5.678&lonlat_=5.678%2C1.234&locationgroup=0"
+
+            $sensor | Set-ObjectProperty Location $value
+        }
     }
 
     Context "Raw" {
+        SetMultiTypeResponse
+
         It "sets a raw property" {
             $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName" -Force
         }

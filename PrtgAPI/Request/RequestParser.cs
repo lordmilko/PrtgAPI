@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
@@ -169,5 +170,29 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+
+        internal static bool IsLongLat(string address, out Location location)
+        {
+            var str = Regex.Replace(address, "\\r\\n|\\r|\\n", " ", RegexOptions.Singleline);
+            str = Regex.Replace(str, "\\{(.*)\\}", string.Empty);
+
+            var matches = Regex.Matches(str, "-?\\d+\\.\\d+");
+
+            if (matches.Count == 2)
+            {
+                double latitude;
+                double longitude;
+
+                if(double.TryParse(matches[0].Value, out latitude) && double.TryParse(matches[1].Value, out longitude))
+                {
+                    location = new GpsLocation(latitude, longitude);
+
+                    return true;
+                }
+            }
+
+            location = null;
+            return false;
+        }
     }
 }

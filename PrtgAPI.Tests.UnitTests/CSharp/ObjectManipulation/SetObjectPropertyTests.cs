@@ -306,6 +306,161 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         #endregion
+        #region Coordinates Location
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Matches_InputString()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username";
+
+            Execute(c =>
+            {
+                var location = c.ResolveAddress($"{lat}, {lon}", CancellationToken.None);
+
+                Assert.AreEqual(lat, location.Latitude.ToString(), "Latitude was incorrect");
+                Assert.AreEqual(lon, location.Longitude.ToString(), "Longitude was incorrect");
+                Assert.AreEqual($"{lat}, {lon}", location.Address, "Address was incorrect");
+
+                c.SetObjectProperty(1001, ObjectProperty.Location, location);
+            }, url);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Coordinates_Matches_InputStringAsync()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username";
+
+            await ExecuteAsync(async c =>
+            {
+                var location = await c.ResolveAddressAsync($"{lat}, {lon}", CancellationToken.None);
+
+                Assert.AreEqual(lat, location.Latitude.ToString(), "Latitude was incorrect");
+                Assert.AreEqual(lon, location.Longitude.ToString(), "Longitude was incorrect");
+                Assert.AreEqual($"{lat}, {lon}", location.Address, "Address was incorrect");
+
+                await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, location);
+            }, url);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Array()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] {40.71455, -74.00714}),
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Coordinates_ArrayAsync()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Removes_InvalidCharacters()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            Action<string, string> validate = (str, expected) =>
+            {
+                var location = client.ResolveAddress(str, CancellationToken.None);
+
+                Assert.AreEqual(expected, location.Address);
+            };
+
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            var expectedStr = $"{lat}, {lon}";
+
+            validate($"{lat}\r{lon}",          expectedStr);
+            validate($"{lat}\n{lon}",          expectedStr);
+            validate($"{lat}\r\n{lon}",        expectedStr);
+            validate($"{lat}\r\n\r{lon}",      expectedStr);
+            validate($"{lat}, {lon} {{blah}}", expectedStr);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Truncates_MultiplePeriods()
+        {
+            var lat = "40.7145.5";
+            var lon = "-74.00714";
+
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var location = client.ResolveAddress($"{lat}, {lon}", CancellationToken.None);
+
+            Assert.AreEqual("40.7145", location.Latitude.ToString(), "Latitude was incorrect");
+            Assert.AreEqual(lon, location.Longitude.ToString(), "Longitude was incorrect");
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Matches_WithoutComma()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, $"{lat} {lon}"),
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Matches_WithoutCommaOrSpace()
+        {
+            var lat = "40.71455";
+            var lon = "-74.00714";
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, $"{lat}{lon}"),
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Coordinates_Ignores_ThreeOrMoreGroups()
+        {
+            var lat = "40.7145";
+            var lon = "-74.00714";
+            var other = "101.6262";
+
+            Execute(
+                c => c.ResolveAddress($"{lat}, {lon}, {other}", CancellationToken.None),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=40.7145%2C%2B-74.00714%2C%2B101.6262&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        #endregion
 
         private PrtgClient GetLocationClient(RequestVersion version)
         {
