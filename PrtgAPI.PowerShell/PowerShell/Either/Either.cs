@@ -7,7 +7,7 @@ namespace PrtgAPI.PowerShell
     /// </summary>
     /// <typeparam name="TLeft">The first type the value may be.</typeparam>
     /// <typeparam name="TRight">The second type the value may be.</typeparam>
-    public class Either<TLeft, TRight>
+    public abstract class Either<TLeft, TRight>
     {
         /// <summary>
         /// The first value that may be specified.
