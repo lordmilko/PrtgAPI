@@ -91,12 +91,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         internal override string ProgressActivity => "Acknowledge PRTG Sensors";
 
         /// <summary>
-        /// Provides a one-time, preprocessing functionality for the cmdlet.
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void BeginProcessingEx()
         {
-            base.BeginProcessing();
-
             switch (ParameterSetName)
             {
                 case ParameterSet.Default:

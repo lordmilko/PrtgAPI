@@ -82,12 +82,7 @@ namespace PrtgAPI.PowerShell.Base
             if(PostProcess)
                 ExecuteWithCoreState(EndProcessingEx);
 
-            base.EndProcessing();
+            EndProcessing(false);
         }
-
-        /// <summary>
-        /// Provides an enhanced one-time, postprocessing functionality for the cmdlet.
-        /// </summary>
-        protected abstract void EndProcessingEx();
     }
 }
