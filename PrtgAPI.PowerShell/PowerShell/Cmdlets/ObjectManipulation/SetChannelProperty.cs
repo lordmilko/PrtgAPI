@@ -98,7 +98,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override string ProgressActivity => "Modify PRTG Channel Settings";
 
-        private DynamicParameterSet<ChannelProperty> dynamicParams;
+        private PropertyDynamicParameterSet<ChannelProperty> dynamicParams;
 
         private List<ChannelParameter> dynamicParameters;
 
@@ -253,7 +253,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object GetDynamicParameters()
         {
             if (dynamicParams == null)
-                dynamicParams = new DynamicParameterSet<ChannelProperty>(
+                dynamicParams = new PropertyDynamicParameterSet<ChannelProperty>(
                     new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual },
                     e => ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>(e).Property
                 );

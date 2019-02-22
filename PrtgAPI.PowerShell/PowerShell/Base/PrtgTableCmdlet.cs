@@ -55,7 +55,7 @@ namespace PrtgAPI.PowerShell.Base
         /// The search filters that were specified via dynamic parameters.
         /// </summary>
         private List<SearchFilter> dynamicParameters;
-        private DynamicParameterSet<Property> dynamicParameterSet;
+        private PropertyDynamicParameterSet<Property> dynamicParameterSet;
 
         private List<SearchFilter> filters;
 
@@ -304,7 +304,7 @@ namespace PrtgAPI.PowerShell.Base
                     Where(p => p.GetAttribute<PropertyParameterAttribute>() != null).
                     Select(p => Tuple.Create((Property)p.GetAttribute<PropertyParameterAttribute>().Property, p)).ToList();
 
-                dynamicParameterSet = new DynamicParameterSet<Property>(
+                dynamicParameterSet = new PropertyDynamicParameterSet<Property>(
                     parameterSets,
                     e => ReflectionCacheManager.GetArrayPropertyInfo(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
                     this

@@ -131,6 +131,7 @@
     <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
     <Compile Include="PowerShell\DynamicParameterSet.cs" />
     <Compile Include="PowerShell\Either.cs" />
+    <Compile Include="PowerShell\PropertyDynamicParameterSet.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
     <Compile Include="PowerShell\FormatGenerator.cs" />
     <Compile Include="PowerShell\GoPrtg\GoPrtgProfile.cs" />

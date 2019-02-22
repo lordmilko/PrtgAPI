@@ -10,7 +10,11 @@ using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell
 {
-    class DynamicParameterSet<T> where T : struct
+    /// <summary>
+    /// Represents an object used for constructing dynamic parameters from objects whose properties correspond to values defined in an enum type.
+    /// </summary>
+    /// <typeparam name="T">The type of enum that corresponds to the object's properties.</typeparam>
+    class PropertyDynamicParameterSet<T> where T : struct
     {
         public RuntimeDefinedParameterDictionary Parameters { get; set; } = new RuntimeDefinedParameterDictionary();
 
@@ -20,11 +24,11 @@ namespace PrtgAPI.PowerShell
 
         private string[] staticParameters;
 
-        public DynamicParameterSet(string parameterSet, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null) : this(new[] {parameterSet}, getPropertyInfo, excludeStaticParameters)
+        public PropertyDynamicParameterSet(string parameterSet, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null) : this(new[] {parameterSet}, getPropertyInfo, excludeStaticParameters)
         {
         }
 
-        public DynamicParameterSet(string[] parameterSets, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null)
+        public PropertyDynamicParameterSet(string[] parameterSets, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null)
         {
             ParameterSetNames = parameterSets;
             this.excludeStaticParameters = excludeStaticParameters;

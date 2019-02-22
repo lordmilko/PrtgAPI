@@ -134,7 +134,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override string ProgressActivity => "Modify PRTG Object Settings";
 
-        private DynamicParameterSet<ObjectProperty> dynamicParams;
+        private PropertyDynamicParameterSet<ObjectProperty> dynamicParams;
 
         private PropertyParameter[] dynamicParameters;
 
@@ -301,7 +301,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public object GetDynamicParameters()
         {
             if(dynamicParams == null)
-                dynamicParams = new DynamicParameterSet<ObjectProperty>(
+                dynamicParams = new PropertyDynamicParameterSet<ObjectProperty>(
                     ParameterSet.Dynamic,
                     e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property
                 );
