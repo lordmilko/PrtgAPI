@@ -23,6 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [TestMethod]
         [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
         public void Sensor_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]

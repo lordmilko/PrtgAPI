@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -173,6 +172,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
         public void PrtgClient_StreamsSerial_WhenRequestingOver20000Items()
         {
             var count = 20001;

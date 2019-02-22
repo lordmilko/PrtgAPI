@@ -90,6 +90,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void AllTextFiles_UseSpaces_AndCRLF()
         {
             var path = TestHelpers.GetProjectRoot(true);
@@ -241,6 +242,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
         public void AllAwaits_Call_ConfigureAwaitFalse()
         {
             WithTree((file, tree, model) =>

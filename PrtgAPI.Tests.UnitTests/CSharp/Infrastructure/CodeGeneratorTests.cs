@@ -12,6 +12,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     {
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Generates_Synchronous()
         {
             var expected = @"
@@ -31,6 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Generates_Asynchronous()
         {
             var expected = @"
@@ -50,6 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Generates_Stream()
         {
             var expected = @"
@@ -69,6 +72,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Region_WithCancellationToken_Generates_SyncAndAsync_NonTokenRegion()
         {
             var expected = @"
@@ -106,6 +110,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Region_WithCancellationToken_Generates_SyncAndAsync_TokenRegion()
         {
             var expected = @"
@@ -133,6 +138,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [TestMethod]
         [TestCategory("SkipCI")]
+        [TestCategory("UnitTest")]
         public void CodeGen_PrtgClient_Region_WithoutCancellationToken_Generates_Async()
         {
             var doc = GetDocument();
