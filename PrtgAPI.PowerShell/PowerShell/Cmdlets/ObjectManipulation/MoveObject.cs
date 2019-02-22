@@ -54,6 +54,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 case ParameterSet.Group:
                     ExecuteOperation(Group);
                     break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
         }
 

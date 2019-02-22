@@ -63,6 +63,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 case ParameterSet.Schedule:
                     ExecuteOperation(Schedule, Schedule.Url);
                     break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
         }
 

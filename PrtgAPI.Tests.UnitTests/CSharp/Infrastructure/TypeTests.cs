@@ -154,7 +154,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 new Parsee(new TimeSpan(0, 0, 10),             "00:00:10",      "10|10 seconds"),
                 new Parsee(StandardScanningInterval.FourHours, "FourHours",     "14400|4 hours"),
                 new Parsee(20,                                 "20",            "20|20 seconds"),
-                new Throws<InvalidCastException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
+                new Throws<ArgumentException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
             );
         }
 
@@ -204,7 +204,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 new Parsee(StandardTriggerChannel.Primary, "Primary", "-999"),
                 new Parsee(new Channel { Id = 3 },         "3",       "3"),
                 new Parsee(1,                              "1",       "1"),
-                new Throws<InvalidCastException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
+                new Throws<ArgumentException>(21.1, "21.1", v => $"Cannot convert value '21.1' of type '{v.GetType().FullName}'")
             );
         }
 
@@ -1016,10 +1016,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
 
             AssertEx.Throws<ArgumentNullException>(() => parse(null), "Value cannot be null");
-            AssertEx.Throws<InvalidCastException>(() => parse(string.Empty), "Cannot convert value '' of type 'System.String'");
+            AssertEx.Throws<ArgumentException>(() => parse(string.Empty), "Cannot convert value '' of type 'System.String'");
 
             if(typeof(IEnumEx).IsAssignableFrom(typeof(T)))
-                AssertEx.Throws<InvalidCastException>(() => parse("abc123"), "Cannot convert value 'abc123' of type 'System.String'");
+                AssertEx.Throws<ArgumentException>(() => parse("abc123"), "Cannot convert value 'abc123' of type 'System.String'");
         }
 
         [TestMethod]

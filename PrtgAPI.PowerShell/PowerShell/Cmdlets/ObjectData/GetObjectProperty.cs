@@ -151,7 +151,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            switch(ParameterSetName)
+            switch (ParameterSetName)
             {
                 case ParameterSet.Default:              //Object
                     ProcessDefault();
@@ -172,7 +172,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     ProcessRawProperty(p => client.GetObjectPropertyRaw(GetId(), SubId, RawSubType, p, Text));
                     break;
                 default:
-                    throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
         }
 

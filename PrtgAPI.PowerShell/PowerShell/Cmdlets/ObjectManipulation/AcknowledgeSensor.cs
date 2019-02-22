@@ -109,6 +109,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 case ParameterSet.Forever:
                     break;
+
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
 
             if (duration < 1 && ParameterSetName != ParameterSet.Forever)

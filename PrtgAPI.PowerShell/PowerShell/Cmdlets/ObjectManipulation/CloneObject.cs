@@ -271,7 +271,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     parameters = new CloneCmdletConfig(sourceObj, sourceObj.Name, sourceObjResolver);
                     break;
                 default:
-                    throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
 
             if (ParameterSetName != ParameterSet.TriggerToDestination)

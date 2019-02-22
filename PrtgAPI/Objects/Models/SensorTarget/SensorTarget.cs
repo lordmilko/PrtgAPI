@@ -62,27 +62,27 @@ namespace PrtgAPI.Targets
         }
 
         [ExcludeFromCodeCoverage]
-        internal static T ParseStringCompatible(object obj)
+        internal static T ParseStringCompatible(object value)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
 
-            if (obj is T)
-                return (T) obj;
+            if (value is T)
+                return (T)value;
 
-            if (obj is string)
+            if (value is string)
             {
-                if ((string) obj == string.Empty)
+                if ((string)value == string.Empty)
                     goto Throw;
 
-                if (!((string) obj).Contains("|"))
-                    obj = ToDropDownOption(obj.ToString());
+                if (!((string)value).Contains("|"))
+                    value = ToDropDownOption(value.ToString());
 
-                return (T)Activator.CreateInstance(typeof(T), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { obj }, null);
+                return (T)Activator.CreateInstance(typeof(T), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { value }, null);
             }
 
         Throw:
-            throw new InvalidCastException($"Cannot convert value '{obj}' of type '{obj.GetType().FullName}' to type '{typeof(T).FullName}'. Value type must be convertable to type {typeof(T).FullName}.");
+            throw new ArgumentException($"Cannot convert value '{value}' of type '{value.GetType().FullName}' to type '{typeof(T).FullName}'. Value type must be convertable to type {typeof(T).FullName}.", nameof(value));
         }
 
         internal static List<T> CreateFromDropDownOptions(string response, ObjectProperty name, Func<string, T> createObj)

@@ -40,6 +40,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\UnknownParameterSetException.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
     <Compile Include="PowerShell\Base\GoPrtgCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPrtgMultiPassThruCmdlet.cs" />

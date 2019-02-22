@@ -80,7 +80,7 @@ namespace PrtgAPI
             ScanningInterval interval;
 
             if(!TryParse(value, out interval))
-                throw new InvalidCastException($"Cannot convert value '{value}' of type '{value.GetType()}' to type '{nameof(ScanningInterval)}'. Value type must be convertable to one of {typeof(StandardScanningInterval).FullName}, {typeof(TimeSpan).FullName} or {typeof(int).FullName}.");
+                throw new ArgumentException($"Cannot convert value '{value}' of type '{value.GetType()}' to type '{nameof(ScanningInterval)}'. Value type must be convertable to one of {typeof(StandardScanningInterval).FullName}, {typeof(TimeSpan).FullName} or {typeof(int).FullName}.", nameof(value));
 
             return interval;
         }
