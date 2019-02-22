@@ -44,7 +44,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-NotificationTrigger -Tags PagerDuty</code>
     ///     <para>Get all notification actions tagged with "PagerDuty"</para>
-    ///     <para/>
     /// </example>
     /// 
     /// <para type="link">Get-NotificationTrigger</para>

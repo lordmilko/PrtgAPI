@@ -286,9 +286,78 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
-        private void WithTree(Action<string, SyntaxTree, SemanticModel> action)
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
+        public void AllPowerShellExamples_Have_ProperSpacingBetweenEachOne()
+        {
+            WithTree((file, tree, model) =>
+            {
+                if (!file.Contains("Cmdlets"))
+                    return;
+
+                foreach (var item in tree.GetRoot().DescendantNodes())
+                {
+                    if (item.IsKind(SyntaxKind.ClassDeclaration))
+                    {
+                        var trivia = item.GetLeadingTrivia().Select(t => t.GetStructure()).OfType<DocumentationCommentTriviaSyntax>().FirstOrDefault();
+
+                        if (trivia == null)
+                            return;
+
+                        var summary = trivia.ChildNodes().OfType<XmlElementSyntax>().FirstOrDefault();
+
+                        if (summary != null && summary.StartTag.Name.ToString() == "summary")
+                        {
+                            var examples = summary.ChildNodes().OfType<XmlElementSyntax>().Where(c => c.StartTag.Name.ToString() == "example").ToList();
+
+                            for (var i = 0; i < examples.Count; i++)
+                            {
+                                var exampleChildren = examples[i].ChildNodes().Where(n => n is XmlElementSyntax || n is XmlEmptyElementSyntax).ToList();
+
+                                var code = exampleChildren.First();
+                                var para = exampleChildren.Skip(1).Take(exampleChildren.Count - 2);
+                                var last = exampleChildren.Last();
+
+                                Assert.IsInstanceOfType(code, typeof(XmlElementSyntax), $"File '{file}' contains an example with a <code> block of an invalid type. Example is '{examples[i]}'");
+                                Assert.AreEqual("code", ((XmlElementSyntax)code).StartTag.Name.ToString(), $"File '{file}' contains an example that does not start with <code>...</code>. Example is '{examples[i]}'");
+
+                                foreach (var p in para)
+                                {
+                                    Assert.IsInstanceOfType(p, typeof(XmlElementSyntax), $"File '{file}' contains an example with a <para> block of an invalid type. Example is '{examples[i]}'");
+                                    Assert.AreEqual("para", ((XmlElementSyntax) p).StartTag.Name.ToString(), $"File '{file}' contains an example with an invalid tag where a <para> should be. Example is '{examples[i]}'");
+                                }
+
+                                if (i < examples.Count - 1)
+                                {
+                                    //If this is NOT the last example, it SHOULD end with an empty <para/>
+
+                                    //first should be xmlelementsyntax with code
+                                    //after first, all but last should be xmlelementsyntax with para
+                                    //last should be empty xmlelementsyntax
+
+                                    Assert.IsInstanceOfType(last, typeof(XmlEmptyElementSyntax), $"File '{file}' does not contain a trailing <para/> in example '{examples[i]}'");
+                                    Assert.AreEqual("para", ((XmlEmptyElementSyntax)last).Name.ToString(), $"File '{file}' has an empty trailing tag of the wrong type instead of <para/> in example '{examples[i]}'");
+                                }
+                                else
+                                {
+                                    //If this IS the last example, it should NOT end with an empty <para/>
+                                    Assert.IsNotInstanceOfType(last, typeof(XmlEmptyElementSyntax), $"The last example in file '{file}' contained an empty <para/>, but it shouldn't have");
+                                    Assert.AreEqual("para", ((XmlElementSyntax)last).StartTag.Name.ToString(), $"The last example in file '{file}' did not end with a <para>...</para>, but it should have");
+                                }
+                            }
+                        }
+                    }
+                }
+            }, true);
+        }
+
+        private void WithTree(Action<string, SyntaxTree, SemanticModel> action, bool powerShell = false)
         {
             var path = TestHelpers.GetProjectRoot();
+
+            if (powerShell)
+                path += ".PowerShell";
 
             var files = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 

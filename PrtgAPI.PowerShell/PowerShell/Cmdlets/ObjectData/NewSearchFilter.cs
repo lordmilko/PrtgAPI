@@ -8,7 +8,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The New-SearchFilter cmdlet allows you to filter the results returned by a cmdlet by a custom property.
     /// Each object returned from New-SearchFilter defines a single filter rule. Multiple filters can often be passed to compatible
-    /// cmdlets to filter on multiple values.</para>
+    /// cmdlets to filter on multiple values. As a shorthand, you can access the New-SearchFilter cmdlet via the alias 'flt'.</para>
+    /// 
     /// <para type="description">To view all properties that can be filtered on for on objects, see the SYNTAX or PARAMETERS section of this cmdlet's help page.</para> 
     /// 
     /// <example>
