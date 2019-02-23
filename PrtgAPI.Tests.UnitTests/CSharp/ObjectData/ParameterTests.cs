@@ -217,6 +217,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             SetAndGet(parameters, nameof(HttpSensorParameters.UseSNIFromUrl), true);
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SensorParameters_FactorySensor_CanBeGetAndSet()
+        {
+            var parameters = new FactorySensorParameters(Enumerable.Empty<string>());
+            SetAndGetArray(parameters, nameof(FactorySensorParameters.ChannelDefinition), "first", "second");
+            SetAndGet(parameters, nameof(FactorySensorParameters.FactoryErrorMode), FactoryErrorMode.WarnOnError);
+            SetAndGet(parameters, nameof(FactorySensorParameters.FactoryErrorFormula), "test");
+            SetAndGet(parameters, nameof(FactorySensorParameters.FactoryMissingDataMode), FactoryMissingDataMode.CalculateWithZero);
+        }
+
         private void SetAndGet(IParameters parameters, string property, object value)
         {
             var prop = parameters.GetType().GetProperty(property);
@@ -229,6 +240,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var val = prop.GetValue(parameters);
 
             Assert.AreEqual(value, val);
+        }
+
+        private void SetAndGetArray<T>(IParameters parameters, string property, params T[] value)
+        {
+            var prop = parameters.GetType().GetProperty(property);
+
+            if (prop == null)
+                throw new ArgumentException($"Could not find property '{property}'");
+
+            prop.SetValue(parameters, value);
+
+            var val = prop.GetValue(parameters);
+
+            AssertEx.AreEqualLists(value?.ToList(), val?.ToIEnumerable().Cast<T>().ToList(), $"Property '{property}' was incorrect");
         }
 
         #endregion

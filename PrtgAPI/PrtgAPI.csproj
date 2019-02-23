@@ -140,6 +140,7 @@
     <Compile Include="Parameters\Helpers\ObjectPropertyParser.cs" />
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
     <Compile Include="Request\Version\VersionClient17_4.cs" />
     <Compile Include="Utilities\DynamicParameterPropertyTypes.cs" />
     <Compile Include="Utilities\FluentExpressions.cs" />

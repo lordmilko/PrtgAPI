@@ -17,11 +17,12 @@ LONG DESCRIPTION
     are not filled in by the time the parameters are passed to the Add-Sensor cmdlet, Add-Sensor will throw an
     exception specifying the fields that were missing values
 
-    | Sensor Type | First    | Second   | Description                                                                |
-    | ----- ----- | -------- | -------- | -------------------------------------------------------------------------- |
-    | ExeXml      | Name     | EXE Name | EXE/Script Advanced sensor. EXE Name is mandatory.                         |
-    | WmiService  | Services |          | WMI Service sensor. Name dynamic. See also: Get-SensorTarget -WmiService   |
-    | Http        | Name     | Url      | HTTP sensor. Default Url: http://localhost                                 |
+    | SensorType | First    | Second            | Description                                        |
+    | ---------- | -------- | ----------------- | -------------------------------------------------- |
+    | ExeXml     | Name     | EXE Name          | EXE/Script Advanced sensor. EXE Name is mandatory. |
+    | WmiService | Services |                   | WMI Service sensor target. Name dynamic.           |
+    | Http       | Name     | Url               | HTTP sensor. Default Url: http://localhost         |
+    | Factory    | Name     | ChannelDefinition | Sensor Factory. ChannelDefinition is mandatory.    |
 
 EXAMPLES
     Create an EXE/Script Advanced sensor named "test" against script "testScript.ps1"

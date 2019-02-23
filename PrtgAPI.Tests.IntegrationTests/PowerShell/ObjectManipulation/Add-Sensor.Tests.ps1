@@ -105,24 +105,29 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
             $newSensor = $newSensors | where name -EQ $table."name_"
             $newSensor.Count | Should Be 1
 
-            $properties = $newSensor | Get-ObjectProperty
+            try
+            {
+                $properties = $newSensor | Get-ObjectProperty
 
-            $properties.Name | Should Be "my raw sensor"
-            $properties.Tags | Should Be "xmlexesensor"
-            $properties.Priority | Should Be "Four"
-            $properties.ExeFile | Should Be "test.ps1"
-            $properties.ExeParameters | Should Be "arg1 arg2 arg3"
-            $properties.SetExeEnvironmentVariables | Should Be $true
-            $properties.UseWindowsAuthentication | Should Be $true
-            $properties.Mutex | Should Be "testMutex"
-            $properties.Timeout | Should Be 70
-            $properties.DebugMode | Should Be "WriteToDisk"
-            $properties.InheritInterval | Should Be $false
-            $properties.Interval | Should Be "00:00:30"
-            $properties.IntervalErrorMode | Should Be "TwoWarningsThenDown"
-            $newSensor.NotificationTypes.InheritTriggers | Should Be $false
-
-            $newSensor | Remove-Object -Force
+                $properties.Name | Should Be "my raw sensor"
+                $properties.Tags | Should Be "xmlexesensor"
+                $properties.Priority | Should Be "Four"
+                $properties.ExeFile | Should Be "test.ps1"
+                $properties.ExeParameters | Should Be "arg1 arg2 arg3"
+                $properties.SetExeEnvironmentVariables | Should Be $true
+                $properties.UseWindowsAuthentication | Should Be $true
+                $properties.Mutex | Should Be "testMutex"
+                $properties.Timeout | Should Be 70
+                $properties.DebugMode | Should Be "WriteToDisk"
+                $properties.InheritInterval | Should Be $false
+                $properties.Interval | Should Be "00:00:30"
+                $properties.IntervalErrorMode | Should Be "TwoWarningsThenDown"
+                $newSensor.NotificationTypes.InheritTriggers | Should Be $false
+            }
+            finally
+            {
+                $newSensor | Remove-Object -Force
+            }
         }
 
         It "resolves a new sensor" {
@@ -161,10 +166,15 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
             $sensors.Count | Should Be 2
 
-            $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
-            $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
-
-            $sensors | Remove-Object -Force
+            try
+            {
+                $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
+                $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+            }
+            finally
+            {
+                $sensors | Remove-Object -Force
+            }
         }
     }
 
@@ -178,13 +188,49 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
             $newSensor.Count | Should Be 1
 
-            $properties = $newSensor | Get-ObjectProperty
+            try
+            {
+                $properties = $newSensor | Get-ObjectProperty
 
-            $properties.Name | Should Be "HTTPS"
-            $properties.Url | Should Be "https://"
-
-            $newSensor | Remove-Object -Force
+                $properties.Name | Should Be "HTTPS"
+                $properties.Url | Should Be "https://"
+            }
+            finally
+            {
+                $newSensor | Remove-Object -Force
+            }
         }
+    }
+
+    Context "Factory" {
+        It "adds a new sensor" {
+
+            $device = Get-Device -Id (Settings Device)
+
+            $params = New-SensorParameters Factory "Custom Factory" "#1:Total CPU","channel($(Settings UpSensor), 0)"
+
+            $newSensor = $device | Add-Sensor $params
+
+            $newSensor.Count | Should Be 1
+
+            try
+            {
+                $properties = $newSensor | Get-ObjectProperty
+
+                $properties.Name | Should Be "Custom Factory"
+                $properties.ChannelDefinition[0] | Should Be "#1:Total CPU"
+                $properties.ChannelDefinition[1] | Should Be "#1:Total CPU","channel($(Settings UpSensor), 0)"
+            }
+            finally
+            {
+                $newSensor | Remove-Object -Force
+            }
+        }
+    }
+
+    It "has contexts for all sensor types" {
+
+        GetSensorTypeContexts $PSCommandPath
     }
 
     It "adds sensor parameters piped from Get-SensorTarget" {

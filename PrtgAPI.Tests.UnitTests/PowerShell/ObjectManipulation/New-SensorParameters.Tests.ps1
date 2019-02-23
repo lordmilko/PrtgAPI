@@ -47,12 +47,33 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
         $params.ExeFile | Should Be "blah.ps1"
     }
 
+    It "has contexts for all sensor parameter types" {
+
+        $contextNames = GetScriptContexts $PSCommandPath
+
+        $baseType = [PrtgAPI.Parameters.SensorParametersInternal]
+
+        $allTypes = $baseType.Assembly.GetTypes()
+
+        $sensorParametersTypes = $allTypes | where { $baseType.IsAssignableFrom($_) -and $_ -ne $baseType } | select -ExpandProperty Name
+
+        $missingContexts = $sensorParametersTypes | where { $_ -notin $contextNames }
+
+        if($missingContexts)
+        {
+            $str = $missingContexts -join "`n"
+
+            throw "Contexts/tests are missing for the following parameter types: $str. Make sure you also add the sensor type to `$parameterTypes under the Types context!"
+        }
+    }
+
     Context "Types" {
 
         $parameterTypes = @(
             @{name = "ExeXml"}
             @{name = "WmiService"}
             @{name = "Http"}
+            @{name = "Factory"}
         )
 
         It "creates a set of <name> parameters" -TestCases $parameterTypes {
@@ -785,6 +806,20 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             SetValue $params "UseCustomPostContent" $true
             SetValue $params "PostContentType" "customType"
             SetValue $params "UseSNIFromUrl" $true
+        }
+    }
+
+    Context "FactorySensorParameters" {
+
+        It "can set a value on each property" {
+            SetMultiTypeResponse
+
+            $params = New-SensorParameters Factory
+
+            SetValue $params "ChannelDefinition" "a","b"
+            SetValue $params "FactoryErrorMode" "WarnOnError"
+            SetValue $params "FactoryErrorFormula" "test"
+            SetValue $params "FactoryMissingDataMode" "CalculateWithZero"
         }
     }
 }

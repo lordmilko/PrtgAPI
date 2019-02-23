@@ -461,4 +461,17 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         $sensors.Count | Should Be 1
         $sensors.Type.StringValue | Should Be "aggregation"
     }
+
+    It "filters by a supported sensor type" {
+        SetAddressValidatorResponse "filter_type=@sub(aggregation)&filter_type=@sub(ping)"
+
+        Get-Sensor -Type factory,ping
+
+        SetResponseAndClient "SensorFactorySourceResponse"
+
+        $sensors = Get-Sensor -Type factory
+
+        $sensors.Count | Should Be 1
+        $sensors.Type.StringValue | Should Be "aggregation"
+    }
 }

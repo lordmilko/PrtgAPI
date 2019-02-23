@@ -349,6 +349,14 @@ namespace PrtgAPI.PowerShell.Base
             if (result != null)
                 return result;
 
+            if (filter.Property == Property.Type)
+            {
+                SensorType type;
+
+                if (Enum.TryParse(filter.Value.ToString(), true, out type))
+                    return new SearchFilter(filter.Property, filter.Operator, type);
+            }
+
             return filter;
         }
 
@@ -689,7 +697,7 @@ namespace PrtgAPI.PowerShell.Base
 
                         if (newFilter.Value != originalFilter.Value)
                         {
-                            return ((SensorTypeInternal)newFilter.Value).EnumToXml();
+                            return ((Enum)newFilter.Value).EnumToXml();
                         }
                     }
 

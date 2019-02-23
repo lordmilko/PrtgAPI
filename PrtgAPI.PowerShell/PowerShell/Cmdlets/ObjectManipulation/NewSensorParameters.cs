@@ -365,6 +365,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     ignoreName = true;
                     parameters = new WmiServiceSensorParameters(new List<WmiServiceTarget>()) { Services = GetList<WmiServiceTarget>(First) };
                     break;
+                case SensorType.Factory:
+                    parameters = new FactorySensorParameters(Enumerable.Empty<string>())
+                    {
+                        ChannelDefinition = GetList<string>(Second)?.ToArray()
+                    };
+                    break;
                 default:
                     throw new NotImplementedException($"Sensor type '{Type}' is currently not supported");
             }

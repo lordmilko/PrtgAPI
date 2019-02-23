@@ -96,3 +96,72 @@ function SetState($objectType, $items)
 
     return $tester
 }
+
+function GetSensorTypeContexts($filePath, $allowEnhancedDescription)
+{
+    $contextNames = GetScriptContexts $filePath | foreach { $_.ToLower() }
+
+    $sensorTypes = [enum]::GetNames([PrtgAPI.SensorType]) | foreach { $_.ToLower() }
+
+    $excludedTypes = @("SqlServerDb") | foreach { $_.ToLower() }
+
+    $sensorTypes = $sensorTypes|where { $_ -notin $excludedTypes }
+
+    $missingTypes = $null
+
+    if($allowEnhancedDescription)
+    {
+        $missingTypes = @()
+
+        foreach($type in $sensorTypes)
+        {
+            $found = $false
+
+            foreach($context in $contextNames)
+            {
+                if($context -eq $type -or $context -like "$($type):*")
+                {
+                    $found = $true
+                    break
+                }
+            }
+
+            if(!$found)
+            {
+                $missingTypes += $type
+            }
+        }
+    }
+    else
+    {
+        $missingTypes = $sensorTypes|where { $_ -notin $contextNames }
+    }
+
+    if($missingTypes)
+    {
+        $str = $missingTypes -join ", "
+
+        throw "Missing contexts/tests for the following sensor types: $str"
+    }
+}
+
+function GetScriptContexts($filePath)
+{
+    $ast = [System.Management.Automation.Language.Parser]::ParseFile(
+        $filePath,
+        [ref]$null,
+        [ref]$null
+    )
+
+    $commands = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.CommandAst] }, $true)
+
+    $contexts = $commands|where {
+        $_.CommandElements.Count -ge 2 -and $_.CommandElements[0].Value -eq "Context"
+    }
+
+    $contextNames = $contexts | foreach {
+        $_.FindAll({ $args[0] -is [System.Management.Automation.Language.StringConstantExpressionAst] -and $args[0].StringConstantType -ne "BareWord" }, $false) | select -ExpandProperty Value
+    }
+
+    return $contextNames
+}
