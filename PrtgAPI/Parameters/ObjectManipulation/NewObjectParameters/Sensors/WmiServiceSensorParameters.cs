@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
@@ -12,6 +13,8 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class WmiServiceSensorParameters : SensorParametersInternal
     {
+        internal override string[] DefaultTags => new[] { "wmiservicesensor", "servicesensor" };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WmiServiceSensorParameters"/> class for creating a new set of parameters specifying a single service.
         /// </summary>
@@ -19,10 +22,9 @@ namespace PrtgAPI.Parameters
         /// <param name="startStopped">Whether PRTG should automatically restart the service in the event it is stopped.</param>
         /// <param name="notifyChanged">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensor in the event PRTG restarts it.</param>
         /// <param name="monitorPerformance">Whether to collect performance metrics for the service.</param>
-        /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default values are "wmiservicesensor" and "servicesensor".</param>
         [ExcludeFromCodeCoverage]
-        public WmiServiceSensorParameters(WmiServiceTarget service, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false, params string[] tags) :
-            this(new List<WmiServiceTarget> {service}, startStopped, notifyChanged, monitorPerformance, tags)
+        public WmiServiceSensorParameters(WmiServiceTarget service, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false) :
+            this(new List<WmiServiceTarget> {service}, startStopped, notifyChanged, monitorPerformance)
         {
         }
 
@@ -33,17 +35,12 @@ namespace PrtgAPI.Parameters
         /// <param name="startStopped">Whether PRTG should automatically restart the services in the event they are stopped.</param>
         /// <param name="notifyChanged">Whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.</param>
         /// <param name="monitorPerformance">Whether to collect performance metrics for each service.</param>
-        /// <param name="tags">Tags that should be applied to this sensor. If this value is null or no tags are specified, default values are "wmiservicesensor" and "servicesensor".</param>
-        public WmiServiceSensorParameters(List<WmiServiceTarget> services, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false,
-            params string[] tags) : base("Service", SensorType.WmiService)
+        public WmiServiceSensorParameters(IEnumerable<WmiServiceTarget> services, bool startStopped = false, bool notifyChanged = true, bool monitorPerformance = false) : base("Service", SensorType.WmiService)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            if (tags == null || tags.Length == 0)
-                Tags = new[] { "wmiservicesensor", "servicesensor" };
-
-            Services = services;
+            Services = services as List<WmiServiceTarget> ?? services.ToList();
             StartStopped = startStopped;
             NotifyChanged = notifyChanged;
             MonitorPerformance = monitorPerformance;
@@ -55,6 +52,7 @@ namespace PrtgAPI.Parameters
         /// Gets or sets a list of services to create sensors for.
         /// </summary>
         [RequireValue(true)]
+        [PropertyParameter(Parameter.Service)]
         public List<WmiServiceTarget> Services
         {
             get { return (List<WmiServiceTarget>) this[Parameter.Service]; }
@@ -64,6 +62,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether PRTG should automatically restart the services in the event they are stopped.
         /// </summary>
+        [PropertyParameter(ObjectProperty.StartStopped)]
         public bool StartStopped
         {
             get { return (bool) GetCustomParameterBool(ObjectProperty.StartStopped); }
@@ -73,6 +72,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether PRTG should trigger any <see cref="TriggerType.Change"/> notification triggers defined on the sensors in the event PRTG restarts them.
         /// </summary>
+        [PropertyParameter(ObjectProperty.NotifyChanged)]
         public bool NotifyChanged
         {
             get { return (bool) GetCustomParameterBool(ObjectProperty.NotifyChanged); }
@@ -82,6 +82,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether to collect performance metrics for each service.
         /// </summary>
+        [PropertyParameter(ObjectProperty.MonitorPerformance)]
         public bool MonitorPerformance
         {
             get { return (bool) GetCustomParameterBool(ObjectProperty.MonitorPerformance); }

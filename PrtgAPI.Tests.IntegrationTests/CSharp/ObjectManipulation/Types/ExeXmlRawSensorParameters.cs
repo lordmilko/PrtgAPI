@@ -8,18 +8,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation.Types
     {
         public ExeXmlRawSensorParameters(string sensorName, string sensorType, string exeFile) : base(sensorName, sensorType)
         {
-            ExeFile = exeFile;
+            using (ConstructorScope)
+            {
+                ExeFile = exeFile;
 
-            Tags = new[] {"xmlexesensor"};
-            ExeParameters = null;
-            SetExeEnvironmentVariables = false;
-            UseWindowsAuthentication = false;
-            Mutex = null;
-            Timeout = 60;
-            DebugMode = DebugMode.Discard;
-            InheritInterval = true;
-            Interval = ScanningInterval.SixtySeconds;
-            IntervalErrorMode = PrtgAPI.IntervalErrorMode.OneWarningThenDown;
+                Tags = new[] { "xmlexesensor" };
+                ExeParameters = null;
+                SetExeEnvironmentVariables = false;
+                UseWindowsAuthentication = false;
+                Mutex = null;
+                Timeout = 60;
+                DebugMode = DebugMode.Discard;
+                InheritInterval = true;
+                Interval = ScanningInterval.SixtySeconds;
+                IntervalErrorMode = PrtgAPI.IntervalErrorMode.OneWarningThenDown;
+            }
         }
 
         public new string[] Tags

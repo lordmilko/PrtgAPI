@@ -410,6 +410,11 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
+                "priority_=3"
+                "inherittriggers_=1"
+                "intervalgroup=1"
+                "interval_=60%7C60+seconds"
+                "errorintervalsdown_=1"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -418,12 +423,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
                 "mutexname_="
                 "timeout_=60"
                 "writeresult_=0"
-                "intervalgroup=1"
-                "inherittriggers_=1"
-                "priority_=3"
                 "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
-                "interval_=60%7C60+seconds"
-                "errorintervalsdown_=1"
                 "test_=hello"
                 "sensortype=exexml"
             )
@@ -491,6 +491,11 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
+                "priority_=3"
+                "inherittriggers_=1"
+                "intervalgroup=0"
+                "interval_=60%7C60+seconds"
+                "errorintervalsdown_=1"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -499,12 +504,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
                 "mutexname_="
                 "timeout_=60"
                 "writeresult_=0"
-                "intervalgroup=0"
-                "inherittriggers_=1"
-                "priority_=3"
                 "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
-                "interval_=60%7C60+seconds"
-                "errorintervalsdown_=1"
                 "sensortype=exexml"
             )
 
@@ -520,6 +520,11 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
+                "priority_=3"
+                "inherittriggers_=1"
+                "intervalgroup=0"
+                "interval_=300%7C5+minutes"
+                "errorintervalsdown_=1"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -528,12 +533,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
                 "mutexname_="
                 "timeout_=60"
                 "writeresult_=0"
-                "intervalgroup=0"
-                "inherittriggers_=1"
-                "priority_=3"
                 "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
-                "interval_=300%7C5+minutes"
-                "errorintervalsdown_=1"
                 "sensortype=exexml"
             )
 
@@ -586,6 +586,11 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
+                "priority_=3"
+                "inherittriggers_=1"
+                "intervalgroup=1"
+                "interval_=60%7C60+seconds"
+                "errorintervalsdown_=1"
                 "tags_=xmlexesensor"
                 "exefilelabel="
                 "exeparams_="
@@ -594,11 +599,6 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
                 "mutexname_="
                 "timeout_=60"
                 "writeresult_=0"
-                "intervalgroup=1"
-                "inherittriggers_=1"
-                "priority_=3"
-                "interval_=60%7C60+seconds"
-                "errorintervalsdown_=1"
                 "exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C"
                 "exefile_=testScript.bat%7CtestScript.bat%7C%7C"
                 "sensortype=exexml"
@@ -646,6 +646,11 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $addAddressParts = @(
                 "name_=HTTP"
+                "priority_=3"
+                "inherittriggers_=1"
+                "intervalgroup=1"
+                "interval_=60%7C60+seconds"
+                "errorintervalsdown_=1"
                 "tags_=httpsensor"
                 "timeout_=60"
                 "httpurl_=http%3A%2F%2F"
@@ -659,11 +664,6 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
                 "proxyport_=8080"
                 "proxyuser_="
                 "proxypassword_="
-                "intervalgroup=1"
-                "inherittriggers_=1"
-                "priority_=3"
-                "interval_=60%7C60+seconds"
-                "errorintervalsdown_=1"
                 "postdata_="
                 "sensortype=http"
                 "id=40"

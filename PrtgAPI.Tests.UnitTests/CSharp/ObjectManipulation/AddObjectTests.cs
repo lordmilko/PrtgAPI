@@ -23,9 +23,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&");
-            builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
-            builder.Append("&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
+            builder.Append("&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0");
+            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
@@ -40,9 +40,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&");
-            builder.Append("tags_=xmlexesensor&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0");
-            builder.Append("&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=exexml&id=1001");
+            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
+            builder.Append("&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0");
+            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001");
 
             var client = Initialize_Client(new AddressValidatorResponse(builder.ToString()));
 
@@ -95,7 +95,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
                 var str = string.Join("&", thisRequest);
 
-                var url = $"https://prtg.example.com/addsensor5.htm?name_=Service&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&{str}&id=1001&username=username&passhash=12345678";
+                var url = $"https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&{str}&id=1001&username=username&passhash=12345678";
 
                 urls.Add(url);
             }

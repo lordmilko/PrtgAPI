@@ -17,6 +17,21 @@ namespace PrtgAPI.Parameters
 
         CommandFunction ICommandParameters.Function => Function;
 
+        private ConstructorScope constructorScope;
+
+        /// <summary>
+        /// Protects the constructor from setting dependent properties when initializing the object.
+        /// </summary>
+        protected IDisposable ConstructorScope
+        {
+            get
+            {
+                constructorScope = new ConstructorScope();
+
+                return constructorScope;
+            }
+        }
+
         ObjectPropertyParser parser;
 
         /// <summary>
@@ -31,7 +46,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Gets or sets the tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.
+        /// Gets or sets the tags that should be applied to this object. Certain object types and subtypes (such as sensors) may have default tag values.<para/>
+        /// If this value is null, the default tags based on sensor type will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.Tags)]
         public string[] Tags
@@ -269,7 +285,7 @@ namespace PrtgAPI.Parameters
         /// <param name="delim">The character that should delimit each array entry.</param>
         protected void SetCustomParameterArray(string name, string[] value, char delim)
         {
-            var str = string.Join(delim.ToString(), value);
+            var str = value != null ? string.Join(delim.ToString(), value) : null;
 
             SetCustomParameterInternal(name, str);
         }
@@ -332,10 +348,18 @@ namespace PrtgAPI.Parameters
         {
             var name = GetObjectPropertyName(property);
 
-            //Don't set inherited properties when we first initialize the property
-            //(which should be being done in the constructur)
-            if (GetCustomParameterIndex(name) != -1)
-                parser.AddDependents<ObjectProperty>(property);
+            if (constructorScope != null)
+            {
+                if (constructorScope.Disposed)
+                    parser.AddDependents<ObjectProperty>(property);
+            }
+            else
+            {
+                //Don't set inherited properties when we first initialize the property
+                //(which should be being done in the constructur)
+                if (GetCustomParameterIndex(name) != -1)
+                    parser.AddDependents<ObjectProperty>(property);
+            }
 
             return name;
         }

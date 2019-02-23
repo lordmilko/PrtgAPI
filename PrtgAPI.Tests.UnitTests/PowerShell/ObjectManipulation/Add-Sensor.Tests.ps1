@@ -68,7 +68,7 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $params = New-SensorParameters WmiService $services
 
-        $base = "addsensor5.htm?name_=Service&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&"
+        $base = "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&"
         $end = "&id=40&"
 
         $first =   GetItemSubset 0   30

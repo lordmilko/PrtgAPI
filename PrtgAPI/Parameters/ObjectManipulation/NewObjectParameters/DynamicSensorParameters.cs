@@ -66,9 +66,12 @@ namespace PrtgAPI.Parameters
 
         internal DynamicSensorParameters(string response, string sensorType) : base(TempName, sensorType, true)
         {
-            ParseResponse(response);
+            using (ConstructorScope)
+            {
+                ParseResponse(response);
 
-            Debug.Assert(Name != TempName);
+                Debug.Assert(Name != TempName);
+            } 
         }
 
         private void ParseResponse(string response)

@@ -1,4 +1,5 @@
 ﻿using System;
+using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -8,11 +9,13 @@ namespace PrtgAPI.Parameters
     /// </summary>
     public class HttpSensorParameters : SensorParametersInternal
     {
+        internal override string[] DefaultTags => new[] { "httpsensor" };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpSensorParameters"/> class.
         /// </summary>
         /// <param name="url">The URL to monitor.</param>
-        /// <param name="sensorName">The name to use for this sensor.</param>
+        /// <param name="sensorName">The name to use for the sensor.</param>
         /// <param name="requestMethod">The HTTP request method to use.</param>
         /// <param name="timeout">The duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.</param>
         /// <param name="postData">Data to include in requests when the HTTP request method is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.</param>
@@ -39,6 +42,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the duration (in seconds) this sensor can run for before timing out. This value must be between 1-900.
         /// </summary>
+        [PropertyParameter(ObjectProperty.Timeout)]
         public int Timeout
         {
             get { return (int)GetCustomParameter(ObjectProperty.Timeout); }
@@ -57,6 +61,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the URL to monitor. If a protocol is not specified, HTTP is used.
         /// </summary>
+        [PropertyParameter(ObjectProperty.Url)]
         public string Url
         {
             get { return (string)GetCustomParameter(ObjectProperty.Url); }
@@ -66,6 +71,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the HTTP Request Method to use for requesting the <see cref="Url"/>.
         /// </summary>
+        [PropertyParameter(ObjectProperty.HttpRequestMethod)]
         public HttpRequestMethod HttpRequestMethod
         {
             get { return (HttpRequestMethod)GetCustomParameterEnumXml<HttpRequestMethod>(ObjectProperty.HttpRequestMethod); }
@@ -75,6 +81,7 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets the data to include in POST requests. Applies when <see cref="HttpRequestMethod"/> is <see cref="PrtgAPI.HttpRequestMethod.POST"/>.
         /// </summary>
+        [PropertyParameter(ObjectProperty.PostData)]
         public string PostData
         {
             get { return (string)GetCustomParameter(ObjectProperty.PostData); }
@@ -84,15 +91,17 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether POST requests should use a custom content type. If false, content type "application/x-www-form-urlencoded" will be used.
         /// </summary>
-        public bool? UseCustomPostContent
+        [PropertyParameter(ObjectProperty.UseCustomPostContent)]
+        public bool UseCustomPostContent
         {
-            get { return GetCustomParameterBool(ObjectProperty.UseCustomPostContent); }
+            get { return (bool) GetCustomParameterBool(ObjectProperty.UseCustomPostContent); }
             set { SetCustomParameterBool(ObjectProperty.UseCustomPostContent, value); }
         }
 
         /// <summary>
         /// Gets or sets a custom content type to use for POST requests.
         /// </summary>
+        [PropertyParameter(ObjectProperty.PostContentType)]
         public string PostContentType
         {
             get { return (string)GetCustomParameter(ObjectProperty.PostContentType); }
@@ -102,9 +111,10 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Gets or sets whether the Server Name Indication is inherited from the parent device, or derived from the specified <see cref="Url"/>.
         /// </summary>
-        public bool? UseSNIFromUrl
+        [PropertyParameter(ObjectProperty.UseSNIFromUrl)]
+        public bool UseSNIFromUrl
         {
-            get { return GetCustomParameterBool(ObjectProperty.UseSNIFromUrl); }
+            get { return (bool) GetCustomParameterBool(ObjectProperty.UseSNIFromUrl); }
             set { SetCustomParameterBool(ObjectProperty.UseSNIFromUrl, value); }
         }
     }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Parameters;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
@@ -76,20 +77,39 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "zen");
 
-            var properties = parameters.GetType().GetNormalProperties().Where(p => p.Name != "Targets" && p.Name != "DynamicType");
+            var properties = parameters.GetType().GetNormalProperties().Where(p => p.Name != nameof(DynamicSensorParameters.Targets) && p.Name != nameof(DynamicSensorParameters.DynamicType));
 
             foreach (var prop in properties)
             {
                 var val = prop.GetValue(parameters);
 
-                if (prop.Name == "Name")
-                    Assert.AreEqual("ZEN", val, "Name was not correct");
-                else if (prop.Name == "SensorType")
-                    Assert.AreEqual("zen", val, "SensorType was not correct");
-                else if (prop.Name == "InheritTriggers")
-                    Assert.AreEqual(true, val, "InheritTriggers was not correct");
-                else
-                    Assert.AreEqual(null, val, $"Property {prop.Name} was not null");
+                switch (prop.Name)
+                {
+                    case nameof(NewSensorParameters.Name):
+                        Assert.AreEqual("ZEN", val, "Name was not correct");
+                        break;
+                    case nameof(DynamicSensorParameters.SensorType):
+                        Assert.AreEqual("zen", val, "SensorType was not correct");
+                        break;
+                    case nameof(NewSensorParameters.InheritTriggers):
+                        Assert.AreEqual(true, val, "InheritTriggers was not correct");
+                        break;
+                    case nameof(NewSensorParameters.Priority):
+                        Assert.AreEqual(Priority.Three, val, "Priority was not correct");
+                        break;
+                    case nameof(NewSensorParameters.InheritInterval):
+                        Assert.AreEqual(true, val, "InheritInterval was not correct");
+                        break;
+                    case nameof(NewSensorParameters.Interval):
+                        Assert.AreEqual(ScanningInterval.SixtySeconds, val, "Interval was not correct");
+                        break;
+                    case nameof(NewSensorParameters.IntervalErrorMode):
+                        Assert.AreEqual(IntervalErrorMode.OneWarningThenDown, val, "IntervalErrorMode was not correct");
+                        break;
+                    default:
+                        Assert.AreEqual(null, val, $"Property {prop.Name} was not null");
+                        break;
+                }
             }
 
             var sensor = client.AddSensor(Settings.Device, parameters).First();
@@ -99,6 +119,10 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 Assert.AreEqual("ZEN", sensor.Name);
                 Assert.AreEqual(sensor.Type, "zen");
                 Assert.AreEqual(sensor.NotificationTypes.InheritTriggers, true);
+                Assert.AreEqual(Priority.None, sensor.Priority); //ZEN sensors don't have a priority
+                Assert.AreEqual(false, sensor.InheritInterval);  //ZEN sensors don't have an InheritInterval
+                Assert.AreEqual(ScanningInterval.TwentyFourHours, sensor.Interval); //ZEN sensors don't have an Interval. SensorSettings will report this value as null
+                Assert.AreEqual(null, client.GetSensorProperties(sensor.Id).IntervalErrorMode); //ZEN sensors don't have an InheritInterval
             }
             finally
             {

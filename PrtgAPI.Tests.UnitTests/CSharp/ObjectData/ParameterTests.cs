@@ -389,7 +389,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
-                Assert.AreEqual("name_=first&third=True&sensortype=second", url);
+                Assert.AreEqual("name_=first&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&third=True&sensortype=second", url);
             }, new DefaultPSObjectUtilities());
         }
 
@@ -410,7 +410,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 var url = PrtgRequestMessageTests.CreateUrl(parameters);
 
-                Assert.AreEqual("name_=first&third=1&third=2&sensortype=second", url);
+                Assert.AreEqual("name_=first&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&third=1&third=2&sensortype=second", url);
             }, new DefaultPSObjectUtilities());
         }
 

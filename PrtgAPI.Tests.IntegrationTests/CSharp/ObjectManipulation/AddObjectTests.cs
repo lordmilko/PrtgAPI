@@ -18,13 +18,18 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddSensor_AddsWithRawParameters()
         {
-            var parameters = new RawSensorParameters("raw c# sensor", "exexml");
+            var parameters = new RawSensorParameters("raw c# sensor", "exexml")
+            {
+                Priority = Priority.Four,
+                InheritTriggers = false,
+                InheritInterval = false,
+                Interval = ScanningInterval.ThirtySeconds,
+                IntervalErrorMode = IntervalErrorMode.TwoWarningsThenDown
+            };
             parameters.Parameters.AddRange(
                 new List<CustomParameter>
                 {
                     new CustomParameter("tags_", "xmlexesensor"),
-                    new CustomParameter("priority_", 4),
-                    new CustomParameter("inherittriggers_", 0),
                     new CustomParameter("exefile_", "test.ps1|test.ps1||"),
                     new CustomParameter("exeparams_", "arg1 arg2 arg3"),
                     new CustomParameter("environment_", 1),
@@ -32,9 +37,6 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     new CustomParameter("mutexname_", "testMutex"),
                     new CustomParameter("timeout_", 70),
                     new CustomParameter("writeresult_", 1),
-                    new CustomParameter("intervalgroup", 0),
-                    new CustomParameter("interval_", "30|30 seconds"),
-                    new CustomParameter("errorintervalsdown_", 2),
                 }
             );
 

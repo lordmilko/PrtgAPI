@@ -12,7 +12,8 @@ namespace PrtgAPI.Parameters
         internal override CommandFunction Function => CommandFunction.AddSensor5;
 
         /// <summary>
-        /// Gets or sets the priority of the sensor, controlling how the sensor is displayed in table lists.
+        /// Gets or sets the priority of the sensor, controlling how the sensor is displayed in table lists.<para/>
+        /// If this value is null, the default value <see cref="Priority.Three"/> will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.Priority)]
         public Priority? Priority
@@ -22,7 +23,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Gets or sets whether to inherit notification triggers from the parent object.
+        /// Gets or sets whether to inherit notification triggers from the parent object.<para/>
+        /// If this value is null, the default value "true" will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.InheritTriggers)]
         public bool? InheritTriggers
@@ -32,7 +34,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Gets or sets whether this sensor's scanning interval settings are inherited from its parent.
+        /// Gets or sets whether this sensor's scanning interval settings are inherited from its parent.<para/>
+        /// If this value is null, the default value "true" will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.InheritInterval)]
         public bool? InheritInterval
@@ -42,7 +45,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Gets or sets the scanning interval of the sensor. Applies only if <see cref="InheritInterval"/> is false.
+        /// Gets or sets the scanning interval of the sensor. Applies only when <see cref="InheritInterval"/> is false.<para/>
+        /// If this value is null, the default value <see cref="ScanningInterval.SixtySeconds"/> will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.Interval)]
         public ScanningInterval Interval
@@ -52,7 +56,8 @@ namespace PrtgAPI.Parameters
         }
 
         /// <summary>
-        /// Gets or sets the number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.
+        /// Gets or sets the number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.<para/>
+        /// If this value is null, the default value <see cref="IntervalErrorMode.OneWarningThenDown"/> will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.IntervalErrorMode)]
         public IntervalErrorMode? IntervalErrorMode
@@ -78,6 +83,13 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentException($"{nameof(sensorType)} cannot be null or empty", nameof(sensorType));
 
             this[Parameter.SensorType] = sensorType;
+
+            //All sensors default to these settings
+            Priority = PrtgAPI.Priority.Three;
+            InheritTriggers = true;
+            InheritInterval = true;
+            Interval = ScanningInterval.SixtySeconds;
+            IntervalErrorMode = PrtgAPI.IntervalErrorMode.OneWarningThenDown;
         }
     }
 }

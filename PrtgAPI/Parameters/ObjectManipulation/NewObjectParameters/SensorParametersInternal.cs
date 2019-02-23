@@ -11,6 +11,8 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     public abstract class SensorParametersInternal : NewSensorParameters, ISourceParameters<Device>
     {
+        internal abstract string[] DefaultTags { get; }
+
         /// <summary>
         /// Gets the source device these parameters were derived from. If these parameters were not derived from a specific device this value is null.
         /// </summary>
@@ -24,6 +26,9 @@ namespace PrtgAPI.Parameters
         internal SensorParametersInternal(string sensorName, SensorType sensorType) : base(sensorName, "fake_type")
         {
             SensorType = sensorType;
+
+            if (DefaultTags != null && DefaultTags.Length != 0)
+                Tags = DefaultTags;
         }
 
         /// <summary>

@@ -133,6 +133,7 @@
     <Compile Include="Exceptions\ObjectResolutionException.cs" />
     <Compile Include="Objects\Models\Location.Google.cs" />
     <Compile Include="Objects\Models\Location.Here.cs" />
+    <Compile Include="Parameters\ConstructorScope.cs" />
     <Compile Include="Parameters\Containers\IParameterContainer.cs" />
     <Compile Include="Parameters\Containers\IParameterContainerValue.cs" />
     <Compile Include="Parameters\Containers\SimpleParameterContainer.cs" />
@@ -321,7 +322,7 @@
     <Compile Include="Parameters\ChannelParameter.cs" />
     <Compile Include="Parameters\ObjectData\ScheduleParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AutoDiscoverParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\HttpSensorParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\HttpSensorParameters.cs" />
     <Compile Include="Parameters\PropertyParameter.cs" />
     <Compile Include="Request\IShallowCloneable.cs" />
     <Compile Include="Request\RequestParser.cs" />
@@ -392,10 +393,10 @@
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewDeviceParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewGroupParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewObjectParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\WmiServiceSensorParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\WmiServiceSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RenameParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RestartProbeParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\ExeXmlSensorParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\ExeXmlSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\RawSensorParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\SensorParametersInternal.cs" />
