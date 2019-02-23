@@ -26,6 +26,7 @@ New-Alias Uninstall-GoPrtg Uninstall-GoPrtgServer
 New-Alias GoPrtg Connect-GoPrtgServer
 
 New-Alias flt New-SearchFilter
+New-Alias fdef New-SensorFactoryDefinition
 
 New-Alias Restart-PrtgProbe Restart-Probe
 

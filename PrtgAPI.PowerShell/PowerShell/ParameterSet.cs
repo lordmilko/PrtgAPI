@@ -46,6 +46,7 @@
         internal const string DateTimeManual = "DateTimeManualSet";
 
         internal const string Aggregate = "AggregateSet";
+        internal const string Summary = "SummarySet";
 
         /// <summary>
         /// The parameter set that is used when performing an action whose effects will last until a specified <see cref="System.DateTime"/>.

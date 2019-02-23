@@ -40,6 +40,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShell\EventStack.cs" />
+    <Compile Include="PowerShell\EventState.cs" />
     <Compile Include="Exceptions\UnknownParameterSetException.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
     <Compile Include="PowerShell\Base\GoPrtgCmdlet.cs" />

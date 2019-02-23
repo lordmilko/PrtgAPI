@@ -1,5 +1,4 @@
 ﻿using System;
-using PrtgAPI.Events;
 
 namespace PrtgAPI.PowerShell
 {

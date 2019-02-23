@@ -1,4 +1,4 @@
-﻿namespace PrtgAPI.Events
+﻿namespace PrtgAPI.PowerShell
 {
     class EventState
     {

@@ -124,9 +124,7 @@
     <Compile Include="Enums\ConfigFileType.cs" />
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
-    <Compile Include="Events\EventStack.cs" />
-    <Compile Include="Events\EventState.cs" />
-    <Compile Include="Events\LogVerboseEventArgs.cs" />
+    <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />
     <Compile Include="Exceptions\InvalidStateException.cs" />
@@ -421,7 +419,7 @@
     <Compile Include="Enums\Serialization\TriggerProperty.cs" />
     <Compile Include="Enums\Serialization\TriggerSensorState.cs" />
     <Compile Include="Enums\Deserialization\ObjectSettings\DataVolumeUnit.cs" />
-    <Compile Include="Events\RetryRequestEventArgs.cs" />
+    <Compile Include="Request\RetryRequestEventArgs.cs" />
     <Compile Include="Exceptions\InvalidTriggerTypeException.cs" />
     <Compile Include="Exceptions\InvalidTypeException.cs" />
     <Compile Include="Request\ConnectionDetails.cs" />

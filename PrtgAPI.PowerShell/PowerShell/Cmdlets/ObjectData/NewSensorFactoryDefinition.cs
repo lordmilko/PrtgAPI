@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Reflection;
+using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -12,25 +13,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">The New-SensorFactoryDefinition cmdlet automatically defines a series of channel defitions for use in a Sensor Factory sensor.</para>
     /// 
     /// <para type="description">New-SensorFactoryDefinition can be used to create both individual channel definitions for a collection of sensors, as well as
-    /// aggregation sensors, using a complex formula that operates on all of the sensors in a set.</para>
+    /// aggregation channels, using a complex formula that operates on all of the sensors in a set. As a shorthand, you can access the New-SensorFactoryDefinition cmdlet
+    /// via the alias 'fdef'.</para>
     /// 
     /// <para type="description">When specifying an Expression, the default expression and current sensor can be accessed via the $expr and $_ automatic variables.
     /// Unless you wish to modify the sensor ID or channel ID to be used for a specific sensor, it is generally recommended to avoid recalculating
     /// the base channel definition and use the automatic $expr variable, which is defined as "channel(sensorId, channelID)" where sensorID is the ID of the current
-    /// sensor, and channelID is the value passed to -<see cref="ChannelId"/>.</para>
+    /// sensor, and channelID is the value passed to -<see cref="ChannelId"/>. If a -<see cref="ChannelId"/> is not specified, channel ID 0 will automatically be used.</para>
+    ///
+    /// <para type="description">Aggregation channels, representing values derived from multiple sensor channels, can be created using the -<see cref="Aggregator"/> and -<see cref="SummaryExpression"/> parameters.
+    /// When -<see cref="Aggregator"/> is specified, New-SensorFactoryDefinition creates a single channel based on all of the channels piped in to the -<see cref="Sensor"/> parameter. By contrast,
+    /// the -<see cref="SummaryExpression"/> parameter creates an aggregated summary channel _in addition to_ channels for each individual sensor. Both -<see cref="Aggregator"/> and -<see cref="SummaryExpression"/>
+    /// allow specifying well known summarization formulae (including Sum, Min, Max, Average, etc) as well as a custom <see cref="ScriptBlock"/> where a custom expression is required.</para>
     /// 
-    /// <para type="description">When specifying an -<see cref="Aggregator"/>, the running accumulator, default expression and current sensor can be accessed via the $acc, $expr and $_
+    /// <para type="description">When specifying an -<see cref="Aggregator"/> or custom -<see cref="SummaryExpression"/>, the running accumulator, default expression and current sensor can be accessed via the $acc, $expr and $_
     /// automatic variables respectively. Based on whether not the -<see cref="Expression"/> parameter is specified, $expr will either contain the custom or the
     /// default expression.</para>
+    ///
+    /// <para type="description">In the event your aggregation formula requires a "post-processing" step (such as dividing by the total number of items when calculating an average), this
+    /// can be performed via the -<see cref="Finalizer"/> and -<see cref="SummaryFinalizer"/> parameters (when creating a regular -<see cref="Aggregator"/> or -<see cref="SummaryExpression"/> respectively.</para> 
     /// 
-    /// <para type="description">While it is possible to override the expression evaluated in $expr in the -<see cref="Aggregator"/> by recalculating the channel definition
+    /// <para type="description">While it is possible to override the expression evaluated in $expr in the -<see cref="Aggregator"/> or -<see cref="SummaryExpression"/> by recalculating the channel definition
     /// (via the $_ automatic variable), if the channel ID specified in the new definition is different from the channel ID specified in the -<see cref="ChannelId"/> parameter,
     /// the first channel definition in the resulting output will have a different channel ID than all the rest. This is due to the fact when the Aggregator runs,
-    /// it initially sets the accumulator ($acc) to the expression of the first sensor. As such, if in the Aggregator you change the channel ID, you
+    /// it initially sets the accumulator ($acc) to the expression of the first sensor. As such, if in the -<see cref="Aggregator"/> you change the channel ID, you
     /// will also need to replace the channel ID of the initial value in the accumulator. Due to the complexity involved in managing this, it is
-    /// recommended to avoid modifying the channel ID in the aggregator, and either set the channel ID in an -Expression or in the -ChannelID.</para>
+    /// recommended to avoid modifying the channel ID in the aggregator, and either set the channel ID in an -<see cref="Expression"/> or in the -<see cref="ChannelId"/>.</para>
     /// 
-    /// <para type="description">Both -<see cref="Expression"/> and -<see cref="Aggregator"/> support the use of Sensor Factory formula functions (channel(), min(), max(), avg() and percent()),
+    /// <para type="description">All parameters that accept <see cref="ScriptBlock"/> values including -<see cref="Expression"/> and -<see cref="Aggregator"/> and
+    /// -<see cref="SummaryExpression"/> support the use of Sensor Factory formula functions (channel(), min(), max(), avg() and percent()),
     /// as well as all boolean and math operators. For more information, see the Sensor Factory documentation in the PRTG Manual.</para>
     /// 
     /// <para type="description">Horizontal lines can be generated by specifying the position the line should appear at to the -<see cref="Value"/> parameter. When
@@ -40,29 +51,45 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">To automatically copy the output of New-SensorFactoryDefinition to the clipboard, you can pipe the cmdlet to clip.exe.</para>
     /// 
     /// <example>
-    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | New-SensorFactoryDefinition { $_.Device } 0</code>
+    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | fdef { $_.Device }</code>
     ///     <para>Create a channel definition for the "Total" channel (ID: 0) of each WMI CPU Load sensor in the system</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor | New-SensorFactoryDefinition { $_.Device } -Expr { "100 - $expr" } 0</code>
+    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | fdef { $_.Device } 1</code>
+    ///     <para>Create a channel definition for the "Processor 1" channel (ID: 1) of each WMI CPU Load sensor in the system</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Tags wmimemorysensor | fdef { $_.Device } -Expr { "100 - $expr" } 0</code>
     ///     <para>Create a channel definition for the "Percent Available Memory" channel (ID: 0) of each WMI Memory Free sensor, modifying each channel to show the percent of memory "used" instead of free</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpuloadsensor</code>
-    ///     <para>C:\> $sensors | New-SensorFactoryDefinition "Max CPU Load" -Aggregator { "max($expr,$acc)" }</para>
-    ///     <para>C:\> $sensors | New-SensorFactoryDefinition { $_.Device } -StartId 2</para>
-    ///     <para>Create a channel definition for showing the highest CPU Load of all sensors as well as channel definitions for each individual sensor</para>
+    ///     <code>C:\> Get-Sensor -Tags wmicpu* | fdef { $_.Device } -sn "Max CPU Load" -se Max</code>
+    ///     <para>Create a channel definition showing the highest CPU Load of all devices as well as channel definitions for each individual device in a single command</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | New-SensorFactoryDefinition { "$($_.Device) [bananas]" } 0</code>
+    ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpu*</code>
+    ///     <para>C:\> $sensors | fdef { $_.Device } -sn "Average CPU Load" -se { "$acc + $expr" } -sf { "$acc / $($sensors.Count)" }</para>
+    ///     <para>Create a channel definition showing the average CPU Load of all devices as well as channel definitions for each individual device using a summary expression and finalizer formula</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpuloadsensor</code>
+    ///     <para>C:\> $sensors | fdef "Max CPU Load" -Aggregator { "max($expr,$acc)" }</para>
+    ///     <para>C:\> $sensors | fdef { $_.Device } -StartId 2</para>
+    ///     <para>Create two separate channel definitions showing the highest CPU Load of all devices as well as channel definitions for each individual device</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Tags wmicpuloadsensor | fdef { "$($_.Device) [bananas]" } 0</code>
     ///     <para>Create a channel definition for the "Total" channel (ID: 0) displaying all channels with the custom unit "bananas"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> New-SensorFactoryDefinition "Line at 40.2 [msec]" -Value 40.2 -StartId 3</code>
+    ///     <code>C:\> fdef "Line at 40.2 [msec]" -Value 40.2 -StartId 3</code>
     ///     <para>Create a channel definition for a horizontal line against channels that use the "msec" unit using a channel ID of 3.</para>
     /// </example>
     /// 
@@ -78,21 +105,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Summary)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">An string or an expression that resolves the name to use for a channel definition.</para>
         /// </summary>
+        [Alias("ChannelName")]
+        [Description("ChannelName")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Summary)]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Manual)]
         public NameOrScriptBlock Name { get; set; }
 
         /// <summary>
-        /// <para type="description">The channel ID to use. If a custom expression is provided, this value can be optionally overridden.</para>
+        /// <para type="description">The channel ID to use. If a custom expression is provided, this value can be optionally overridden.
+        /// If this value is not specified, Channel 0 will automatically be used.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = ParameterSet.Default)]
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Summary)]
         public int ChannelId { get; set; }
 
         /// <summary>
@@ -103,6 +136,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Summary)]
         public ScriptBlock Expression { get; set; }
 
         /// <summary>
@@ -110,6 +144,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Aggregate)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Summary)]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Manual)]
         public int StartId { get; set; } = 1;
 
@@ -120,12 +155,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">    '$expr' (for the default expression)</para>
         /// <para type="description">    '$_'    (the current sensor</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Aggregate)]
-        public ScriptBlock Aggregator { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Aggregate)]
+        public EnumOrScriptBlock<FactorySummaryMode> Aggregator { get; set; }
 
         /// <summary>
         /// <para type="description">A post-processing action to perform on an aggregated expresion before emititing to the pipeline.
-        /// If -<see cref="Aggregator"/> is not specified this parameter does nothing.</para>
+        /// If -<see cref="Aggregator"/> is not specified this parameter does nothing. If this parameter is specified but
+        /// -<see cref="Aggregator"/> is not a <see cref="ScriptBlock"/>, an exception will be thrown.</para>
         /// <para type="description">Provides the following automatic variables:</para>
         /// <para type="description">    '$acc' (the accumulated result)</para>
         /// </summary>
@@ -138,8 +174,33 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public string Value { get; set; }
 
+        /// <summary>
+        /// <para type="description">Name to use for the summary channel.</para> 
+        /// </summary>
+        [Alias("sn")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Summary)]
+        public string SummaryName { get; set; }
+
+        /// <summary>
+        /// <para type="description">Expression to use for the summary channel. May be a well known enum value or a custom <see cref="ScriptBlock"/> expression.
+        /// Functions identically to -<see cref="Aggregator"/>.</para> 
+        /// </summary>
+        [Alias("se", "sa", "SummaryAggregator")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Summary)]
+        public EnumOrScriptBlock<FactorySummaryMode> SummaryExpression { get; set; }
+
+        /// <summary>
+        /// <para type="description">A post-processing action to perform against -<see cref="SummaryExpression"/> when a custom <see cref="ScriptBlock"/> is specified.
+        /// If -<see cref="SummaryExpression"/> is not a custom expression, an exception will be thrown. Functions identically
+        /// to -<see cref="Finalizer"/>.</para>
+        /// </summary>
+        [Alias("sf")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Summary)]
+        public ScriptBlock SummaryFinalizer { get; set; }
+
         private int id;
         private readonly PSVariable accumulation = new PSVariable("acc");
+        private List<Sensor> summarySensors = new List<Sensor>();
 
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
@@ -147,6 +208,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void BeginProcessing()
         {
             id = StartId;
+
+            switch (ParameterSetName)
+            {
+                case ParameterSet.Summary:
+                    if (SummaryFinalizer != null && !SummaryExpression.IsScriptBlock)
+                        throw new ParameterBindingException($"Cannot specify -{nameof(SummaryFinalizer)} when -{nameof(SummaryExpression)} is not a {nameof(ScriptBlock)}.");
+                    break;
+                case ParameterSet.Aggregate:
+                    if (Finalizer != null && !Aggregator.IsScriptBlock)
+                        throw new ParameterBindingException($"Cannot specify -{nameof(Finalizer)} when -{nameof(Aggregator)} is not a {nameof(ScriptBlock)}.");
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -154,58 +229,42 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            var rows = new List<string>();
-
-            var expression = GetExpression();
-
-            if (Aggregator != null)
+            switch (ParameterSetName)
             {
-                ProcessAggregtor(expression);
-            }
-            else
-            {
-                var name = GetChannelName();
-                rows.Add($"#{id}:{name}");
-                rows.Add(expression);
-                WriteObject(rows, true);
-                id++;
+                case ParameterSet.Aggregate:
+                case ParameterSet.Summary:
+                    summarySensors.Add(Sensor);
+                    break;
+                case ParameterSet.Default:
+                case ParameterSet.Manual:
+                    ProcessNormal(Sensor);
+                    break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName); //todo: search for all default: in prtgapi.powershell and insert this
             }
         }
 
-        private string GetExpression()
+        private void ProcessNormal(Sensor sensor)
+        {
+            var expression = GetExpression(sensor);
+
+            var tuple = MakeChannel(Name, sensor, expression);
+
+            WriteObject(tuple.Item1);
+            WriteObject(tuple.Item2);
+        }
+
+        private string GetExpression(Sensor sensor)
         {
             if (Value != null)
                 return Value;
 
-            string expression = $"channel({Sensor.Id},{ChannelId})";
+            string expression = $"channel({sensor.Id},{ChannelId})";
 
             if (Expression != null)
-            {
-                expression = Expression.InvokeWithContext(null, new List<PSVariable>
-                {
-                    new PSVariable("expr", expression),
-                    new PSVariable("_", Sensor)
-                }).First().ToString();
-            }
+                expression = Expression.InvokeWithDollarUnder(sensor, new PSVariable("expr", expression)).FirstOrDefault()?.ToString();
 
             return expression;
-        }
-
-        private void ProcessAggregtor(string expression)
-        {
-            if (accumulation.Value == null)
-            {
-                accumulation.Value = expression;
-            }
-            else
-            {
-                accumulation.Value = Aggregator.InvokeWithContext(null, new List<PSVariable>
-                {
-                    accumulation,
-                    new PSVariable("_", Sensor),
-                    new PSVariable("expr", expression)
-                }).First();
-            }
         }
 
         /// <summary>
@@ -213,63 +272,136 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void EndProcessing()
         {
-            if (Aggregator != null)
+            switch (ParameterSetName)
             {
-                if (Finalizer != null)
+                case ParameterSet.Default:
+                case ParameterSet.Manual:
+                    break;
+                case ParameterSet.Aggregate:
+                    ProcessAggregator(Name, Aggregator, Finalizer);
+                    break;
+                case ParameterSet.Summary:
+                    ProcessSummary();
+                    break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
+            }
+        }
+
+        private void ProcessAggregator(NameOrScriptBlock name, EnumOrScriptBlock<FactorySummaryMode> aggregator, ScriptBlock finalizer)
+        {
+            if (summarySensors.Count == 0)
+                return;
+
+            var blocks = GetScriptBlockFromSummaryMode(aggregator, finalizer);
+
+            foreach (var sensor in summarySensors)
+            {
+                ProcessAggregatorInternal(sensor, blocks.Item1);
+            }
+
+            ProcessAggregatorEnd(name, summarySensors.LastOrDefault(), blocks.Item2);
+        }
+
+        private void ProcessAggregatorInternal(Sensor sensor, ScriptBlock aggregator)
+        {
+            var expression = GetExpression(sensor);
+
+            if (accumulation.Value == null)
+            {
+                //If we are processing the first object from the pipeline, simply set the accumulator
+                //to the initial expression.
+                accumulation.Value = expression;
+            }
+            else
+            {
+                //Otherwise, merge the accumulator and the expression via the Aggregator function
+                accumulation.Value = aggregator.InvokeWithDollarUnder(sensor, accumulation, new PSVariable("expr", expression)).FirstOrDefault();
+            }
+        }
+
+        private void ProcessAggregatorEnd(NameOrScriptBlock name, Sensor sensor, ScriptBlock finalizer)
+        {
+            if (finalizer != null)
+                accumulation.Value = finalizer.InvokeWithVariables(accumulation).FirstOrDefault();
+
+            var tuple = MakeChannel(name, sensor, accumulation.Value?.ToString()); //todo: try and break this by returning null to the accumulator...in fact, do that on every script block
+
+            WriteObject(tuple.Item1);
+            WriteObject(tuple.Item2);
+        }
+
+        private void ProcessSummary()
+        {
+            ProcessAggregator(new NameOrScriptBlock(SummaryName), SummaryExpression, SummaryFinalizer);
+
+            foreach (var sensor in summarySensors)
+                ProcessNormal(sensor);
+        }
+
+        private Tuple<ScriptBlock, ScriptBlock> GetScriptBlockFromSummaryMode(EnumOrScriptBlock<FactorySummaryMode> summary, ScriptBlock finalizer)
+        {
+            ScriptBlock agg = null;
+            ScriptBlock fin = finalizer;
+
+            if (!summary.IsScriptBlock)
+            {
+                switch (summary.Value)
                 {
-                    accumulation.Value = Finalizer.InvokeWithContext(null, new List<PSVariable>
-                    {
-                        accumulation
-                    }).First();
+                    case FactorySummaryMode.Max:
+                        agg = ScriptBlock.Create("\"max($acc, $expr)\"");
+                        break;
+                    case FactorySummaryMode.Min:
+                        agg = ScriptBlock.Create("\"min($acc, $expr)\"");
+                        break;
+                    case FactorySummaryMode.Sum:
+                        agg = ScriptBlock.Create("\"$acc + $expr\"");
+                        break;
+                    case FactorySummaryMode.Average:
+                        agg = ScriptBlock.Create("\"$acc + $expr\"");
+                        fin = ScriptBlock.Create($"\"($acc) / {summarySensors.Count}\"");
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
-
-                var name = GetChannelName();
-                WriteObject($"#{id}:{name}");
-                WriteObject(accumulation.Value);
             }
+            else
+                agg = summary.ScriptBlock;
+
+            return Tuple.Create(agg, fin);
         }
 
-        private string GetChannelName()
+        private static string GetChannelName(NameOrScriptBlock name, Sensor sensor)
         {
-            if (Name.IsScriptBlock)
-                return Name.ScriptBlock.InvokeWithDollarUnderscore(Sensor).ToString();
+            string finalName;
 
-            return Name.Name;
-        }
-    }
-
-    internal static class ScriptBlockHelpers
-    {
-        internal static object InvokeWithDollarUnderscore(this ScriptBlock scriptBlock, object args)
-        {
-            var method = scriptBlock.GetType().GetMethod("DoInvokeReturnAsIs", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            var result = method.Invoke(scriptBlock, new[]
+            if (name.IsScriptBlock)
             {
-                (object)true,                 //useLocalScope
-                (object)3,                    //errorhandlingBehavior - WriteToExternalErrorPipe
-                (object)args,                 //dollarUnder
-                (object)AutomationNull.Value, //input
-                (object)AutomationNull.Value, //scriptThis
-                (object)new [] { args }       //Args
-            });
-
-            if (result == null)
-                return null;
-
-            if (result is PSObject)
-            {
-                var psObj = (PSObject)result;
-
-                if (psObj.ToString() == string.Empty)
-                    return null;
-
-                var underlying = psObj.BaseObject;
-
-                return underlying;
+                if (sensor != null)
+                    finalName = name.ScriptBlock.InvokeWithDollarUnder(sensor)?.FirstOrDefault()?.ToString();
+                else
+                    finalName = name.ScriptBlock.InvokeWithVariables()?.FirstOrDefault()?.ToString();
             }
+            else
+                finalName = name.Name;
 
-            return result;
+            if (string.IsNullOrWhiteSpace(finalName))
+                throw new InvalidOperationException($"'{finalName}' is not a valid channel name. Name must not be null, empty or whitespace.");
+
+            return finalName;
+        }
+
+        private Tuple<string, string> MakeChannel(NameOrScriptBlock name, Sensor sensor, string value)
+        {
+            var processedName = GetChannelName(name, sensor);
+
+            if (string.IsNullOrWhiteSpace(value))
+                throw new InvalidOperationException($"'{value}' is not a valid channel expression. Expression must not be null, empty or whitespace.");
+
+            var tuple = Tuple.Create($"#{id}:{processedName}", value);
+            id++;
+
+            return tuple;
         }
     }
 }
