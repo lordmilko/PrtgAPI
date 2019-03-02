@@ -63,6 +63,14 @@ namespace PrtgAPI
         [Category(ObjectPropertyCategory.Location)]
         Location,
 
+        /// <summary>
+        /// The label to use for the location. Must be used in conjunction with <see cref="Location"/>.
+        /// </summary>
+        [Mergeable(Location)]
+        [TypeLookup(typeof(SpecialPropertySettings))]
+        [Category(ObjectPropertyCategory.Location)]
+        LocationName,
+
         #endregion
         #region Credentials for Windows Systems
 

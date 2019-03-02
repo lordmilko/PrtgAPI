@@ -171,8 +171,13 @@ namespace PrtgAPI.Request
 
         #endregion
 
-        internal static bool IsLongLat(string address, out Location location)
+        internal static bool IsLongLat(string address, out Location location) =>
+            IsLongLat(address, false, out location);
+
+        private static bool IsLongLat(string address, bool findLabel, out Location location)
         {
+            var label = findLabel ? GetLocationLabel(ref address) : null;
+
             var str = Regex.Replace(address, "\\r\\n|\\r|\\n", " ", RegexOptions.Singleline);
             str = Regex.Replace(str, "\\{(.*)\\}", string.Empty);
 
@@ -183,9 +188,23 @@ namespace PrtgAPI.Request
                 double latitude;
                 double longitude;
 
-                if(double.TryParse(matches[0].Value, out latitude) && double.TryParse(matches[1].Value, out longitude))
+                if (double.TryParse(matches[0].Value, out latitude) && double.TryParse(matches[1].Value, out longitude))
                 {
+                    if (!findLabel && address.Contains("\n"))
+                    {
+                        //There exists a set of coordinates in this address. Could we have acquired these same coordinates if we were looking
+                        //for labels?
+                        if (IsLongLat(address, true, out location))
+                            return true;
+                    }
+
+                    //Either there exists a set of coordinates in this address even when searching for a label (findLabel = true),
+                    //or we tried searching for a label but didn't find one (findLabel = false)
                     location = new GpsLocation(latitude, longitude);
+
+                    //Apply the label (if one was found)
+                    if (!string.IsNullOrWhiteSpace(label))
+                        location.Label = label;
 
                     return true;
                 }
@@ -193,6 +212,75 @@ namespace PrtgAPI.Request
 
             location = null;
             return false;
+        }
+
+        internal static string GetLocationLabel(ref string address)
+        {
+            var index = address.IndexOf("\n");
+
+            if (index != -1)
+            {
+                var label = address.Substring(0, index);
+
+                var proposedAddress = address.Substring(index + 1);
+
+                if (string.IsNullOrWhiteSpace(proposedAddress))
+                    return null;
+                else
+                    address = proposedAddress;
+
+                return label.Replace("\r", "");
+            }
+
+            return null;
+        }
+
+        internal static Tuple<PropertyParameter[], PropertyParameter[]> GetSetObjectPropertyParamLists(PropertyParameter[] @params)
+        {
+            var normalParams = new List<PropertyParameter>();
+            var mergeableParams = new List<PropertyParameter>();
+
+            foreach (var param in @params)
+            {
+                var attrib = param.Property.GetEnumAttribute<MergeableAttribute>();
+
+                if (attrib == null)
+                    normalParams.Add(param);
+                else
+                    mergeableParams.Add(param);
+            }
+
+            return Tuple.Create(normalParams.ToArray(), mergeableParams.ToArray());
+        }
+
+        internal static PropertyParameter[] MergeParameters(Tuple<PropertyParameter[], PropertyParameter[]> paramLists)
+        {
+            var originalParams = paramLists.Item1;
+            var mergeableParams = paramLists.Item2;
+
+            if (mergeableParams.Length > 0)
+            {
+                var newParams = originalParams.ToList();
+
+                foreach (var mergee in mergeableParams)
+                {
+                    var attrib = mergee.Property.GetEnumAttribute<MergeableAttribute>();
+
+                    var dependency = originalParams.FirstOrDefault(p => p.Property == attrib.Dependency);
+
+                    if (dependency == null)
+                        throw new InvalidOperationException($"{nameof(ObjectProperty)} '{mergee.Property}' must be used in conjunction with property '{attrib.Dependency}', however a value for property '{attrib.Dependency}' was not specified.");
+
+                    var replacement = attrib.Merge(mergee, dependency);
+
+                    var index = newParams.IndexOf(dependency);
+                    newParams[index] = replacement;
+                }
+
+                return newParams.ToArray();
+            }
+            else
+                return originalParams;
         }
     }
 }

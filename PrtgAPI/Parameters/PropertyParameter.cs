@@ -1,7 +1,7 @@
 ﻿namespace PrtgAPI.Parameters
 {
     /// <summary>
-    /// Represents a single parameter for modifying a <see cref="ObjectProperty"/>.
+    /// Represents a single parameter for modifying an <see cref="ObjectProperty"/>.
     /// </summary>
     public class PropertyParameter : PropertyParameter<ObjectProperty>
     {

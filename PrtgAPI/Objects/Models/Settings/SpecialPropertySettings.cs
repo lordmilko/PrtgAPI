@@ -43,5 +43,7 @@ namespace PrtgAPI
 
         [XmlElement("injected_unitconfig")]
         public string ChannelUnit { get; set; }
+
+        public string LocationName { get; set; }
     }
 }

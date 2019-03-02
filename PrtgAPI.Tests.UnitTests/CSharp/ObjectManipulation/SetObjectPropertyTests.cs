@@ -382,11 +382,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new MultiTypeResponse());
 
-            Action<string, string> validate = (str, expected) =>
+            Action<string, string, string> validate = (str, expected, message) =>
             {
                 var location = client.ResolveAddress(str, CancellationToken.None);
 
-                Assert.AreEqual(expected, location.Address);
+                Assert.AreEqual(expected, location.Address, message);
             };
 
             var lat = "40.71455";
@@ -394,11 +394,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var expectedStr = $"{lat}, {lon}";
 
-            validate($"{lat}\r{lon}",          expectedStr);
-            validate($"{lat}\n{lon}",          expectedStr);
-            validate($"{lat}\r\n{lon}",        expectedStr);
-            validate($"{lat}\r\n\r{lon}",      expectedStr);
-            validate($"{lat}, {lon} {{blah}}", expectedStr);
+            validate($"{lat}\r{lon}",          expectedStr, "\\r");
+            validate($"{lat}\n{lon}",          expectedStr, "\\n");
+            validate($"{lat}\r\n{lon}",        expectedStr, "\\r\\n");
+            validate($"{lat}\r\n\r{lon}",      expectedStr, "\\r\\n\\r");
+            validate($"{lat}, {lon} {{blah}}", expectedStr, "{{blah}}");
         }
 
         [TestMethod]
@@ -456,6 +456,307 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
                     "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=40.7145%2C%2B-74.00714%2C%2B101.6262&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        #endregion
+        #region Location Label
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_NewLine_Coordinates()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\n12.3456, -7.8910"),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_NewLine_CoordinatesAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n12.3456, -7.8910"),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_CarriageReturn_Coordinates()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
+                "editsettings?id=1001&location_=12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_CarriageReturn_CoordinatesAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
+                "editsettings?id=1001&location_=12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_NewLineCarriageReturn_Coordinates()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r\n12.3456, -7.8910"),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_NewLineCarriageReturn_CoordinatesAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r\n12.3456, -7.8910"),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_NewLine_Address()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\n23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_NewLine_AddressAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_CarriageReturn_Address()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=Headquarters%0D23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_CarriageReturn_AddressAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=Headquarters%0D23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_NewLineCarriageReturn_Address()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r\n23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_NewLineCarriageReturn_AddressAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n23 Fleet Street"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_Parameter_Coordinates()
+        {
+            Execute(
+                c => c.SetObjectProperty(
+                    1001,
+                    new PropertyParameter(ObjectProperty.Location, "12.3456, -7.8910"),
+                    new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
+                ),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_Parameter_CoordinatesAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(
+                    1001,
+                    new PropertyParameter(ObjectProperty.Location, "12.3456, -7.8910"),
+                    new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
+                ),
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_Parameter_Address()
+        {
+            Execute(
+                c => c.SetObjectProperty(
+                    1001,
+                    new PropertyParameter(ObjectProperty.Location, "23 Fleet Street"),
+                    new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
+                ),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_Parameter_AddressAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(
+                    1001,
+                    new PropertyParameter(ObjectProperty.Location, "23 Fleet Street"),
+                    new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
+                ),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_WithoutLocation()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.SetObjectProperty(1001, ObjectProperty.LocationName, "Test"),
+                "ObjectProperty 'LocationName' must be used in conjunction with property 'Location'"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_WithoutLocationAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.SetObjectPropertyAsync(1001, ObjectProperty.LocationName, "Test"),
+                "ObjectProperty 'LocationName' must be used in conjunction with property 'Location'"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_Coordinates_EndsWithNewline()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "1.1, 2.2\n"),
+                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_Coordinates_EndsWithNewlineAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "1.1, 2.2\n"),
+                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&username"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Location_Label_Address_EndsWithNewline()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Location, "23 Fleet Street\n"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet%0A&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task Location_Label_Address_EndsWithNewlineAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "23 Fleet Street\n"),
+                new[]
+                {
+                    "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet%0A&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
                 }
             );
         }

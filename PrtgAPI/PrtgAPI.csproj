@@ -48,6 +48,7 @@
     <Compile Include="Attributes\FilterHandlerAttribute.cs" />
     <Compile Include="Attributes\LengthLimitAttribute.cs" />
     <Compile Include="Attributes\LiteralValueAttribute.cs" />
+    <Compile Include="Attributes\MergeableAttribute.cs" />
     <Compile Include="Attributes\MutuallyExclusiveAttribute.cs" />
     <Compile Include="Attributes\NumericEnumAttribute.cs" />
     <Compile Include="Attributes\SecondaryPropertyAttribute.cs" />

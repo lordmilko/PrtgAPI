@@ -185,6 +185,25 @@ function Describe($name, $script) {
             $object | Set-ObjectProperty $dependentProperty $initialDependent
         }
 
+        function SetLabelLocation($query, $expected)
+        {
+            $object | Assert-True -Message "    Object was not initialized"
+
+            $prop = $object | Get-ObjectProperty
+            $prop.Location | Should Not BeLike "*TestLabel*"
+            $object | Set-ObjectProperty -Location $query -LocationName "TestLabel"
+
+            try
+            {
+                $newProp = $object | Get-ObjectProperty
+                $newProp.Location | Should Be "TestLabel`n$expected"
+            }
+            finally
+            {
+                $object | Set-ObjectProperty Location $prop.Location
+            }
+        }
+
         & $script
     }
 }

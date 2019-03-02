@@ -699,23 +699,29 @@ namespace PrtgAPI
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
         {
-            foreach (var prop in @params)
+            var paramLists = RequestParser.GetSetObjectPropertyParamLists(@params); //Item1: Normal items. Item2: Mergeable items
+
+            for (var i = 0; i < paramLists.Item1.Length; i++)
             {
+                var prop = paramLists.Item1[i];
+
                 var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
 
                 if (attrib != null)
                 {
                     if (attrib.Class == typeof(Location) && !(prop.Value is Location))
                     {
-                        string str = prop.Value != null && prop.Value.IsIEnumerable()
-                            ? string.Join(", ", prop.Value.ToIEnumerable())
-                            : prop.Value?.ToString();
+                        var str = Location.GetAddress(prop.Value);
 
-                        prop.Value = ResolveAddress(str, CancellationToken.None);
+                        var newValue = ResolveAddress(str, CancellationToken.None);
+
+                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
                     }
                 }
             }
-            
+
+            @params = RequestParser.MergeParameters(paramLists);
+
             var parameters = new SetObjectPropertyParameters(objectIds, @params);
 
             return parameters;
@@ -723,22 +729,28 @@ namespace PrtgAPI
 
         private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, PropertyParameter[] @params, CancellationToken token)
         {
-            foreach (var prop in @params)
+            var paramLists = RequestParser.GetSetObjectPropertyParamLists(@params); //Item1: Normal items. Item2: Mergeable items
+
+            for (var i = 0; i < paramLists.Item1.Length; i++)
             {
+                var prop = paramLists.Item1[i];
+
                 var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
 
                 if (attrib != null)
                 {
                     if (attrib.Class == typeof(Location) && !(prop.Value is Location))
                     {
-                        string str = prop.Value != null && prop.Value.IsIEnumerable()
-                            ? string.Join(", ", prop.Value.ToIEnumerable())
-                            : prop.Value?.ToString();
+                        var str = Location.GetAddress(prop.Value);
 
-                        prop.Value = await ResolveAddressAsync(str, token).ConfigureAwait(false);
+                        var newValue = await ResolveAddressAsync(str, token).ConfigureAwait(false);
+
+                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
                     }
                 }
             }
+
+            @params = RequestParser.MergeParameters(paramLists);
 
             var parameters = new SetObjectPropertyParameters(objectIds, @params);
 
@@ -830,13 +842,15 @@ namespace PrtgAPI
         /// <returns></returns>
         internal Location ResolveAddress(string address, CancellationToken token)
         {
-            if (address == null)
+            if (string.IsNullOrWhiteSpace(address))
                 return new Location();
 
             Location longLat;
 
             if (RequestParser.IsLongLat(address, out longLat))
                 return longLat;
+
+            var label = RequestParser.GetLocationLabel(ref address);
 
             List<Location> result = new List<Location>();
             var client = GetVersionClient();
@@ -853,10 +867,15 @@ namespace PrtgAPI
 #endif
             }
 
-            if (!result.Any())
+            if (result.Count == 0)
                 throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
 
-            return result.First();
+            var location = result.First();
+
+            if (!string.IsNullOrWhiteSpace(label))
+                location.Label = label;
+
+            return location;
         }
 
         /// <summary>
@@ -875,6 +894,8 @@ namespace PrtgAPI
             if (RequestParser.IsLongLat(address, out longLat))
                 return longLat;
 
+            var label = RequestParser.GetLocationLabel(ref address);
+
             List<Location> result = new List<Location>();
             var client = GetVersionClient();
 
@@ -890,10 +911,15 @@ namespace PrtgAPI
 #endif
             }
 
-            if (!result.Any())
+            if (result.Count == 0)
                 throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
 
-            return result.First();
+            var location = result.First();
+
+            if (!string.IsNullOrWhiteSpace(label))
+                location.Label = label;
+
+            return location;
         }
 
         #endregion

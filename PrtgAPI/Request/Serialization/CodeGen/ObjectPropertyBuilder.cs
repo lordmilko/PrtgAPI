@@ -112,6 +112,12 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             }
             else
             {
+                var mergeAttribute = property.GetEnumAttribute<MergeableAttribute>();
+
+                //If we're a property like LocationName, we don't exist server side - we're only used for constructing requests
+                if (mergeAttribute != null)
+                    return null;
+
                 //We have a property like Interval which uses a backing property instead.
                 //Get the backing property so that we may extract the real value from the public
                 //property

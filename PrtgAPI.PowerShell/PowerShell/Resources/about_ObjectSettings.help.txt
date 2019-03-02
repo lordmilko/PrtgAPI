@@ -75,6 +75,7 @@ LONG DESCRIPTION
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |
     | InheritLocation             |    Yes    |            Yes            | Whether to inherit Location Settings     |
     | Location                    |    Yes    |            Yes            | Location of the object                   |
+    | LocationName                |    Yes    |            Yes            | Label to use for the location            |
 
     | Credentials for Windows     | Get | Set | Devices | Groups | Probes | Description                              |
     | --------------------------- | --------- | ------------------------- | ---------------------------------------- |

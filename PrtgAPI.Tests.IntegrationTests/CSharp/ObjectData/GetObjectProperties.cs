@@ -48,7 +48,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
                 ObjectProperty.BandwidthTimeUnit,
                 ObjectProperty.MemoryUsageUnit,
                 ObjectProperty.DiskSizeUnit,
-                ObjectProperty.FileSizeUnit
+                ObjectProperty.FileSizeUnit,
+                ObjectProperty.LocationName
             }.ToList();
 
             var objectProperties = Enum.GetValues(typeof(ObjectProperty)).Cast<ObjectProperty>().Where(p => !blacklist.Contains(p)).ToList();
