@@ -82,10 +82,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">For information on how to quickly edit a single trigger property, see Edit-NotificationTriggerProperty.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $triggerParams = Get-Probe | Get-Trigger -Type State | New-TriggerParameters</code>
-    ///     <para>C:\> $triggerParams.RepeatInterval = 20</para>
-    ///     <para>C:\> $triggerParams.OffNotificationAction = $null</para>
-    ///     <para>C:\> $triggerParams | Set-NotificationTrigger</para>
+    ///     <code>
+    ///         C:\> $triggerParams = Get-Probe | Get-Trigger -Type State | New-TriggerParameters
+    ///         C:\> $triggerParams.RepeatInterval = 20
+    ///         C:\> $triggerParams.OffNotificationAction = $null
+    ///
+    ///         C:\> $triggerParams | Set-NotificationTrigger
+    ///     </code>
     ///     <para>Set the repeat interval of the notification to trigger to every 20 minutes, and remove the off notification action. This example
     /// assumes there is exactly one probe in the system with exactly one state notification trigger defined on it.</para>
     /// </example>

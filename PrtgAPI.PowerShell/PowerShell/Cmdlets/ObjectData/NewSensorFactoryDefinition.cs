@@ -71,15 +71,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpu*</code>
-    ///     <para>C:\> $sensors | fdef { $_.Device } -sn "Average CPU Load" -se { "$acc + $expr" } -sf { "$acc / $($sensors.Count)" }</para>
+    ///     <code>
+    ///          C:\> $sensors = Get-Sensor -Tags wmicpu*
+    ///
+    ///          C:\> $sensors | fdef { $_.Device } -sn "Average CPU Load" -se { "$acc + $expr" } -sf { "$acc / $($sensors.Count)" }
+    ///     </code>
     ///     <para>Create a channel definition showing the average CPU Load of all devices as well as channel definitions for each individual device using a summary expression and finalizer formula</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $sensors = Get-Sensor -Tags wmicpuloadsensor</code>
-    ///     <para>C:\> $sensors | fdef "Max CPU Load" -Aggregator { "max($expr,$acc)" }</para>
-    ///     <para>C:\> $sensors | fdef { $_.Device } -StartId 2</para>
+    ///     <code>
+    ///         C:\> $sensors = Get-Sensor -Tags wmicpuloadsensor
+    ///
+    ///         C:\> $sensors | fdef "Max CPU Load" -Aggregator { "max($expr,$acc)" }
+    ///         C:\> $sensors | fdef { $_.Device } -StartId 2
+    ///     </code>
     ///     <para>Create two separate channel definitions showing the highest CPU Load of all devices as well as channel definitions for each individual device</para>
     ///     <para/>
     /// </example>

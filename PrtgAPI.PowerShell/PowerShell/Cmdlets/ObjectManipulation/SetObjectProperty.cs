@@ -47,9 +47,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// by specifying -Batch:$false.</para>
     /// 
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval "00:00:30"</code>
-    ///     <para>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval ([TimeSpan]"00:00:30")</para>
-    ///     <para>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval ThirtySeconds</para>
+    ///     <code>
+    ///         C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval "00:00:30"
+    ///         C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval ([TimeSpan]"00:00:30")
+    ///         C:\> Get-Sensor -Id 1001 | Set-ObjectProperty Interval ThirtySeconds
+    ///     </code>
     ///     <para>Set the Scanning Interval of the sensor with ID 1001 to 30 seconds three different ways. Type "ScanningInterval"
     /// expected by property Interval will attempt to coerce strings, TimeSpans and enums into a ScanningInterval object. If the
     /// cmdlet succeeds, InheritInterval will also be set to false.</para>
@@ -66,11 +68,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $schedule = Get-PrtgSchedule -Id 621</code>
-    ///     <para>C:\> Get-Sensor -Id 2024 | Set-ObjectProperty -RawParameters @{</para>
-    ///     <para>C:\>     scheduledependency = 0</para>
-    ///     <para>C:\>     schedule_ = $schedule</para>
-    ///     <para>C:\> }</para>
+    ///     <code>
+    ///         C:\> $schedule = Get-PrtgSchedule -Id 621
+    ///
+    ///         C:\> Get-Sensor -Id 2024 | Set-ObjectProperty -RawParameters @{
+    ///         >>      scheduledependency = 0
+    ///         >>      schedule_ = $schedule
+    ///         >>   }
+    ///     </code>
     ///     <para>Apply the schedule with ID 621 to the sensor with ID 2024</para>
     /// </example>
     ///

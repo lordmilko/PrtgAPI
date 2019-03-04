@@ -40,45 +40,64 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// further use in your code.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $params = New-TriggerParameters 1234 State</code>
-    ///     <para>C:\> $params | Add-Trigger</para>
+    ///     <code>
+    ///         C:\> $params = New-TriggerParameters 1234 State
+    ///
+    ///         C:\> $params | Add-Trigger
+    ///     </code>
     ///     <para>Add a new state notification trigger with default values to object with ID 1234</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-TriggerParameters 1234 3 State</code>
-    ///     <para>C:\> $params.Latency = 40</para>
-    ///     <para>C:\> $params | Set-Trigger</para>
+    ///     <code>
+    ///         C:\> $params = New-TriggerParameters 1234 3 State
+    ///         C:\> $params.Latency = 40
+    ///
+    ///         C:\> $params | Set-Trigger
+    ///     </code>
     ///     <para>Edit the state notification trigger with sub ID 3 on the object with ID 1234, setting the Latency to 40 seconds</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters 1234</code>
-    ///     <para>C:\> $params.OffNotificationAction = $null</para>
-    ///     <para>C:\> $params | Add-Trigger</para>
+    ///     <code>
+    ///         C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters 1234
+    ///         C:\> $params.OffNotificationAction = $null
+    ///
+    ///         C:\> $params | Add-Trigger
+    ///     </code>
     ///     <para>Create a new notification trigger on the object with ID 1234 from the state trigger on the sensor with ID 1001, setting the OffNotificationAction to "None"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters</code>
-    ///     <para>C:\> $params.Latency = 30</para>
-    ///     <para>C:\> $params | Set-Trigger</para>
+    ///     <code>
+    ///         C:\> $params = Get-Sensor -Id 1001 | Get-Trigger -Type State -Inherited $false | New-TriggerParameters
+    ///         C:\> $params.Latency = 30
+    ///
+    ///         C:\> $params | Set-Trigger
+    ///     </code>
     ///     <para>Edit the notification trigger on the sensor with ID 1001, setting the latency to 30 seconds</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $sensor = Get-Sensor -Id 1001</code>
-    ///     <para>C:\> $channel = $sensor | Get-Channel "Available Memory"</para>
-    ///     <para>C:\> $params = $sensor | New-TriggerParameters Threshold</para>
-    ///     <para>C:\> $params.Channel = $channel</para>
-    ///     <para>C:\> $params | Add-Trigger</para>
+    ///     <code>
+    ///         C:\> $sensor = Get-Sensor -Id 1001
+    ///         C:\> $channel = $sensor | Get-Channel "Available Memory"
+    /// 
+    ///         C:\> $params = $sensor | New-TriggerParameters Threshold
+    ///         C:\> $params.Channel = $channel
+    ///
+    ///         C:\> $params | Add-Trigger
+    ///     </code>
     ///     <para>Create a new notification trigger on the sensor with ID 1001 that alerts based on the value of its "Available Memory" channel.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-TriggerParameters 1001 Threshold</code>
-    ///     <para>C:\> $params.Channel = 1</para>
-    ///     <para>C:\> $params | Add-Trigger</para>
+    ///     <code>
+    ///         C:\> $params = New-TriggerParameters 1001 Threshold
+    ///         C:\> $params.Channel = 1
+    ///
+    ///         C:\> $params | Add-Trigger
+    ///     </code>
     ///     <para>Create a new threshold notification trigger on the sensor with ID 1001 that alerts based on the value of the channel with ID 1.</para>
     /// </example>
     ///

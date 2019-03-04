@@ -47,8 +47,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $channels = Get-Sensor -Tags wmicpuloadsensor | Get-Channel Total</code>
-    ///     <para>C:\> $channels | Set-ChannelProperty -UpperErrorLimit 80 -LowerErrorLimit 20</para>
+    ///     <code>
+    ///         C:\> $channels = Get-Sensor -Tags wmicpuloadsensor | Get-Channel Total
+    ///
+    ///         C:\> $channels | Set-ChannelProperty -UpperErrorLimit 80 -LowerErrorLimit 20
+    ///     </code>
     ///     <para>Set the value of both the UpperErrorLimit and LowerErrorLimit in a single request.</para>
     /// </example>
     ///

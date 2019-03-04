@@ -36,8 +36,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $templates = Get-DeviceTemplate *wmi*</code>
-    ///     <para>C:\> Get-Device dc-1 | Start-AutoDiscovery $templates</para>
+    ///     <code>
+    ///         C:\> $templates = Get-DeviceTemplate *wmi*
+    ///
+    ///         C:\> Get-Device dc-1 | Start-AutoDiscovery $templates
+    ///     </code>
     ///     <para>Run auto-discovery against all devices named "dc-1" using WMI specific device templates</para>
     /// </example>
     ///

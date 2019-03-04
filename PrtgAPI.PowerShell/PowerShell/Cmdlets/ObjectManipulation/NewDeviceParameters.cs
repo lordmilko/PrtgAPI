@@ -20,29 +20,41 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// after the device has been created via the Set-ObjectProperty cmdlet.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters dc-1
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params
+    ///     </code>
     ///     <para>Create a new device named "dc-1" with hostname "dc-1" under the Contoso probe.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters exch-1 "2001:db8::ff00:42:8329"</code>
-    ///     <para>C:\> $params.IPVersion = "IPv6"</para>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters exch-1 "2001:db8::ff00:42:8329"
+    ///         C:\> $params.IPVersion = "IPv6"
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params
+    ///     </code>
     ///     <para>Create a new device named "dc-2" with an IPv6 address, specifying the Internet Protocol as IPv6.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
-    ///     <para>C:\> $params.AutoDiscoveryMode = "AutomaticTemplate"</para>
-    ///     <para>C:\> $params.DeviceTemplates = Get-DeviceTemplate *wmi*</para>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters dc-1
+    ///         C:\> $params.AutoDiscoveryMode = "AutomaticTemplate"
+    ///         C:\> $params.DeviceTemplates = Get-DeviceTemplate *wmi*
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params
+    ///     </code>
     ///     <para>Create a new device named "dc-1" that performs an auto-discovery for WMI sensors only.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params -PassThru | Set-ObjectProperty Location "23 Fleet Street"</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters dc-1
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params -PassThru | Set-ObjectProperty Location "23 Fleet Street"
+    ///     </code>
     ///     <para>Create a new device named "dc-1" and then set its location.</para>
     /// </example>
     ///

@@ -60,10 +60,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> if(!(Get-PrtgClient))</code>
-    ///     <para>C:\> {</para>
-    ///     <para>C:\>     Connect-PrtgServer prtg.example.com</para>
-    ///     <para>C:\> }</para>
+    ///     <code>
+    ///         if(!(Get-PrtgClient))
+    ///         {
+    ///             Connect-PrtgServer prtg.example.com
+    ///         }
+    ///     </code>
     ///     <para>Connect to a PRTG Server only if an existing connection is not active.</para>
     ///     <para/>
     /// </example>

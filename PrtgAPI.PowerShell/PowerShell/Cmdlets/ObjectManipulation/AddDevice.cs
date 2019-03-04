@@ -40,9 +40,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters sql-1 "2001:db8::ff00:42:8329"</code>
-    ///     <para>C:\> $params.IPVersion = "IPv6"</para>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters sql-1 "2001:db8::ff00:42:8329"
+    ///         C:\> $params.IPVersion = "IPv6"
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params
+    ///     </code>
     ///     <para>Add a device named sql-1 using an IPv6 Address to the probe Contoso probe.</para>
     /// </example>
     ///

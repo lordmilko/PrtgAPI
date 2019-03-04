@@ -18,15 +18,22 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// in their Name or Value properties.</para>
     ///
     /// <example>
-    ///     <code>C:\> $templates = Get-DeviceTemplate *wmi*</code>
-    ///     <para>C:\> Get-Device 1001 | Start-AutoDiscovery $templates</para>
+    ///     <code>
+    ///         C:\> $templates = Get-DeviceTemplate *wmi*
+    /// 
+    ///         C:\> Get-Device -Id 1001 | Start-AutoDiscovery $templates
+    ///     </code>
+    ///     <para>Perform an auto-discovery for WMI sensors on the device with ID 1001.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-DeviceParameters dc-1</code>
-    ///     <para>C:\> $params.AutoDiscoveryMode = "AutomaticTemplate"</para>
-    ///     <para>C:\> $params.DeviceTemplates = Get-DeviceTemplate *wmi*</para>
-    ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
+    ///     <code>
+    ///         C:\> $params = New-DeviceParameters dc-1
+    ///         C:\> $params.AutoDiscoveryMode = "AutomaticTemplate"
+    ///         C:\> $params.DeviceTemplates = Get-DeviceTemplate *wmi*
+    ///
+    ///         C:\> Get-Probe contoso | Add-Device $params
+    ///     </code>
     ///     <para>Create a new device named "dc-1" that performs an auto-discovery for WMI sensors only.</para>
     /// </example>
     ///

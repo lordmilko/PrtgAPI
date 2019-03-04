@@ -35,31 +35,38 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// disabled by specifying -Resolve:$false.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $params = New-SensorParameters ExeXml "Monitor Traffic" "TrafficMonitor.ps1"</code>
-    ///     <para>C:\> Get-Device *fw* | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $params = New-SensorParameters ExeXml "Monitor Traffic" "TrafficMonitor.ps1"
+    ///
+    ///         C:\> Get-Device *fw* | Add-Sensor $params
+    ///     </code>
     ///     <para>Add an EXE/Script Advanced sensor to all firewall devices, using the script "TrafficMonitor.ps1"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $raw = @{</code>
-    ///     <para>>>     name_ = "my raw sensor"</para>
-    ///     <para>>>     tags_ = "xmlexesensor"</para>
-    ///     <para>>>     priority_ = 4</para>
-    ///     <para>>>     exefile_ = "CustomScript.ps1|CustomScript.ps1||</para>
-    ///     <para>>>     exeparams_ = "arg1 arg2 arg3"</para>
-    ///     <para>>>     environment_ = 1</para>
-    ///     <para>>>     usewindowsauthentication_ = 1</para>
-    ///     <para>>>     mutexname_ = "testMutex"</para>
-    ///     <para>>>     timeout_ = 70</para>
-    ///     <para>>>     writeresult_ = 1</para>
-    ///     <para>>>     intervalgroup = 0</para>
-    ///     <para>>>     interval_ = "30|30 seconds"</para>
-    ///     <para>>>     errorintervalsdown_ = 2</para>
-    ///     <para>>>     sensortype = "exexml"</para>
-    ///     <para>>> }</para>
-    ///     <para>C:\> $params = New-SensorParameters $raw</para>
-    ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
-    ///     <para>Add a new EXE/Script Advanced sensor to the device named dc-1 using its raw parameters</para>
+    ///     <code>
+    ///         C:\> $raw = @{
+    ///         >>      name_ = "my raw sensor"
+    ///         >>      tags_ = "xmlexesensor"
+    ///         >>      priority_ = 4
+    ///         >>      exefile_ = "CustomScript.ps1|CustomScript.ps1||
+    ///         >>      exeparams_ = "arg1 arg2 arg3"
+    ///         >>      environment_ = 1
+    ///         >>      usewindowsauthentication_ = 1
+    ///         >>      mutexname_ = "testMutex"
+    ///         >>      timeout_ = 70
+    ///         >>      writeresult_ = 1
+    ///         >>      intervalgroup = 0
+    ///         >>      interval_ = "30|30 seconds"
+    ///         >>      errorintervalsdown_ = 2
+    ///         >>      sensortype = "exexml"
+    ///         >> }
+    /// 
+    ///         C:\> $params = New-SensorParameters $raw
+    /// 
+    ///         C:\> Get-Device dc-1 | Add-Sensor $params
+    ///     </code>
+    ///     <para>Add a new EXE/Script Advanced sensor to the device named dc-1 using a hashtable containing its raw parameters.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#creation">Online version:</para>

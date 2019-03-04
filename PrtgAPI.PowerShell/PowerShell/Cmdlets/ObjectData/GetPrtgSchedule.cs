@@ -24,11 +24,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $schedule = Get-PrtgSchedule -Id 621</code>
-    ///     <para>C:\> Get-Sensor -Id 2024 | Set-ObjectProperty -RawParameters @{</para>
-    ///     <para>C:\>     scheduledependency = 0</para>
-    ///     <para>C:\>     schedule_ = $schedule</para>
-    ///     <para>C:\> }</para>
+    ///     <code>
+    ///         C:\> $schedule = Get-PrtgSchedule -Id 621
+    ///
+    ///         C:\> Get-Sensor -Id 2024 | Set-ObjectProperty -RawParameters @{
+    ///         >>      scheduledependency = 0
+    ///         >>      schedule_ = $schedule
+    ///         >>   }
+    ///     </code>
     ///     <para>Apply the schedule with ID 621 to the sensor with ID 2024</para>
     /// </example>
     ///

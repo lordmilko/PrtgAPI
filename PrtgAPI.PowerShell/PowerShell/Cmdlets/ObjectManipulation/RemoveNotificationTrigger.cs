@@ -19,8 +19,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// the correct triggers and that PrtgAPI has interpreted your request in the way you intended.</para>
     /// 
     /// <example>
-    ///     <code>C:\> Get-Device dc-1 | Get-NotificationTrigger | Remove-NotificationTrigger -WhatIf</code>
-    ///     <para>"What if: Performing operation "Remove-NotificationTrigger" on target "'Email to Administrator' (Object ID: 2002, Sub ID: 1)""</para>
+    ///     <code>
+    ///         C:\> Get-Device dc-1 | Get-NotificationTrigger | Remove-NotificationTrigger -WhatIf
+    ///         "What if: Performing operation "Remove-NotificationTrigger" on target "'Email to Administrator' (Object ID: 2002, Sub ID: 1)""
+    ///     </code>
     ///     <para>Preview what will happen when you attempt all triggers from all devices with the name 'dc-1'</para>
     ///     <para/>
     /// </example>

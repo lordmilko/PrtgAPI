@@ -81,71 +81,94 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// type of sensor being created.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $params = New-SensorParameters ExeXml "Custom Script" "CustomScript.ps1"</code>
-    ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $params = New-SensorParameters ExeXml "Custom Script" "CustomScript.ps1"
+    ///
+    ///         C:\> Get-Device dc-1 | Add-Sensor $params
+    ///     </code>
     ///     <para>Create a new EXE/Script Advanced sensor on the device dc-1 using the name "Custom Script", that executes the file "CustomScript.ps1", specifying the script name in the optional -Value parameter</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-SensorParameters ExeXml "Custom Script"</code>
-    ///     <para>C:\> $params.ExeFile = "CustomScript.ps1"</para>
-    ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $params = New-SensorParameters ExeXml "Custom Script"
+    ///         C:\> $params.ExeFile = "CustomScript.ps1"
+    ///
+    ///         C:\> Get-Device dc-1 | Add-Sensor $params
+    ///     </code>
     ///     <para>Create a new EXE/Script Advanced sensor on the device dc-1 using the name "Custom Script", that executes the file "CustomScript.ps1", specifying the script name after the object has been created</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-SensorParameters ExeXml</code>
-    ///     <para>C:\> $params.ExeFile = "CheckStatus.ps1"</para>
-    ///     <para>C:\> Get-Device -Id 1001 | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $params = New-SensorParameters ExeXml
+    ///         C:\> $params.ExeFile = "CheckStatus.ps1"
+    ///
+    ///         C:\> Get-Device -Id 1001 | Add-Sensor $params
+    ///     </code>
     ///     <para>Create a new EXE/Script Advanced sensor on the device with ID 1001 using the name "XML Custom EXE/Script Sensor" that executes the file "CheckStatus.ps1"</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = Get-Device esxi-1 | New-SensorParameters -RawType vmwaredatastoreextern</code>
-    ///     <para>C:\> $params.datafieldlist__check = $params.Targets["datafieldlist__check"]</para>
-    ///     <para>C:\> $params | Add-Sensor</para>
+    ///     <code>
+    ///         C:\> $params = Get-Device esxi-1 | New-SensorParameters -RawType vmwaredatastoreextern
+    ///         C:\> $params.datafieldlist__check = $params.Targets["datafieldlist__check"]
+    ///
+    ///         C:\> $params | Add-Sensor
+    ///     </code>
     ///     <para>Dynamically create a new set of VMware Datastore credentials for the device named esxi-1 targeting all datastores that exist on the device.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\ $params = Get-Device esxi-1 | New-SensorParameters -RawType vmwaredatastoreextern</code>
-    ///     <para>C:\> $params[[PrtgAPI.Parameter]::Custom]</para>
+    ///     <code>
+    ///         C:\> $params = Get-Device esxi-1 | New-SensorParameters -RawType vmwaredatastoreextern
+    ///         C:\> $params[[PrtgAPI.Parameter]::Custom]
+    ///     </code>
     ///     <para>View the raw set of CustomParameters defined on an object.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = Get-Device esxi-1 | New-SensorParameters -RawType exchangepsdatabase</code>
-    ///     <para>C:\> $params.Unlock()</para>
-    ///     <para>C:\> $params.customparam_ = "some value"</para>
+    ///     <code>
+    ///         C:\> $params = Get-Device esxi-1 | New-SensorParameters -RawType exchangepsdatabase
+    ///         C:\> $params.Unlock()
+    /// 
+    ///         C:\> $params.customparam_ = "some value"
+    ///     </code>
     ///     <para>Create a new parameter named "customparam" on a set of Exchange Database sensor parameters.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $params = New-SensorParameters -Empty</code>
-    ///     <para>C:\> $params["name_"] = "My Sensor"</para>
-    ///     <para>C:\> $params["sensortype"] = "exexml"</para>
+    ///     <code>
+    ///         C:\> $params = New-SensorParameters -Empty
+    ///         C:\> $params["name_"] = "My Sensor"
+    ///         C:\> $params["sensortype"] = "exexml"
+    ///     </code>
     ///     <para>Create an empty set of sensor parameters to manually insert all raw parameters.</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $raw = @{</code>
-    ///     <para>>>     name_ = "my raw sensor"</para>
-    ///     <para>>>     tags_ = "xmlexesensor"</para>
-    ///     <para>>>     priority_ = 4</para>
-    ///     <para>>>     exefile_ = "CustomScript.ps1|CustomScript.ps1||</para>
-    ///     <para>>>     exeparams_ = "arg1 arg2 arg3"</para>
-    ///     <para>>>     environment_ = 1</para>
-    ///     <para>>>     usewindowsauthentication_ = 1</para>
-    ///     <para>>>     mutexname_ = "testMutex"</para>
-    ///     <para>>>     timeout_ = 70</para>
-    ///     <para>>>     writeresult_ = 1</para>
-    ///     <para>>>     intervalgroup = 0</para>
-    ///     <para>>>     interval_ = "30|30 seconds"</para>
-    ///     <para>>>     errorintervalsdown_ = 2</para>
-    ///     <para>>>     sensortype = "exexml"</para>
-    ///     <para>>> }</para>
-    ///     <para>C:\> $params = New-SensorParameters $raw</para>
-    ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $raw = @{
+    ///         >>      name_ = "my raw sensor"
+    ///         >>      tags_ = "xmlexesensor"
+    ///         >>      priority_ = 4
+    ///         >>      exefile_ = "CustomScript.ps1|CustomScript.ps1||
+    ///         >>      exeparams_ = "arg1 arg2 arg3"
+    ///         >>      environment_ = 1
+    ///         >>      usewindowsauthentication_ = 1
+    ///         >>      mutexname_ = "testMutex"
+    ///         >>      timeout_ = 70
+    ///         >>      writeresult_ = 1
+    ///         >>      intervalgroup = 0
+    ///         >>      interval_ = "30|30 seconds"
+    ///         >>      errorintervalsdown_ = 2
+    ///         >>      sensortype = "exexml"
+    ///         >> }
+    /// 
+    ///         C:\> $params = New-SensorParameters $raw
+    /// 
+    ///         C:\> Get-Device dc-1 | Add-Sensor $params
+    ///     </code>
     ///     <para>Add a new EXE/Script Advanced sensor to the device named dc-1 using a hashtable containing its raw parameters.</para>
     ///     <para/>
     /// </example>

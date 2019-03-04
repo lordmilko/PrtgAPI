@@ -26,8 +26,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// and that PrtgAPI has interpreted your request in the way you intended.</para>
     /// 
     /// <example>
-    ///     <code>C:\> Get-Device dc-1 | Remove-Object -WhatIf</code>
-    ///     <para>"What if: Performing the operation "Remove-Object" on target "'dc-1' (ID: 2001)""</para>
+    ///     <code>
+    ///         C:\> Get-Device dc-1 | Remove-Object -WhatIf
+    ///         "What if: Performing the operation "Remove-Object" on target "'dc-1' (ID: 2001)""
+    ///     </code>
     ///     <para>Preview what will happen when you attempt to remove all devices named 'dc-1'</para>
     ///     <para/>
     /// </example>

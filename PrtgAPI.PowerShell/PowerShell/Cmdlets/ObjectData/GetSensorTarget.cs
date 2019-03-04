@@ -43,17 +43,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// similar to what would happen if the sensor were created normally and then the sensor's target was deleted.</para>
     /// 
     /// <example>
-    ///     <code>C:\> $device = Get-Device -Id 1001</code>
-    ///     <para>C:\> $services = $device | Get-SensorTarget WmiService *exchange*</para>
-    ///     <para>C:\> $params = New-SensorParameters WmiService $services</para>
-    ///     <para>C:\> $device | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $device = Get-Device -Id 1001
+    ///
+    ///         C:\> $services = $device | Get-SensorTarget WmiService *exchange*
+    ///
+    ///         C:\> $params = New-SensorParameters WmiService $services
+    ///
+    ///         C:\> $device | Add-Sensor $params
+    ///     </code>
     ///     <para>Add all WMI Services whose name contains "Exchange" to the Device with ID 1001</para>
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $device = Get-Device -Id 1001</code>
-    ///     <para>C:\> $params = $device | Get-SensorTarget WmiService *exchange* -Params</para>
-    ///     <para>C:\> $device | Add-Sensor $params</para>
+    ///     <code>
+    ///         C:\> $device = Get-Device -Id 1001
+    ///
+    ///         C:\> $params = $device | Get-SensorTarget WmiService *exchange* -Params
+    ///
+    ///         C:\> $device | Add-Sensor $params
+    ///     </code>
     ///     <para>Add all WMI Services whose name contains "Exchange" to the Device with ID 1001, creating sensor parameters immediately.</para>
     ///     <para/>
     /// </example>
@@ -63,8 +72,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> $targets = Get-Device -Id 1001 | Get-SensorTarget -RawType wmivolume</code>
-    ///     <para>C:\> $targets | foreach { $_.Properties[3] }</para>
+    ///     <code>
+    ///         C:\> $targets = Get-Device -Id 1001 | Get-SensorTarget -RawType wmivolume
+    ///
+    ///         C:\> $targets | foreach { $_.Properties[3] }
+    ///     </code>
     ///     <para>List the disk type (Local Disk, Compact Disk etc) of all WMI Volume targets.</para>
     /// </example>
     ///
