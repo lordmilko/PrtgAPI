@@ -137,7 +137,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 ChannelId = Channel.Id;
             }
 
-            if (ShouldProcess(str, $"Set-ChannelProperty {Property} = '{Value}'"))
+            if (ShouldProcess(str, $"Set-ChannelProperty {GetShouldProcessMessage()}"))
             {
                 var desc = Channel != null ? Channel.Name : $"ID {ChannelId}";
 
@@ -147,6 +147,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 ExecuteOrQueue(Channel, $"Queuing channel '{desc}'");
             }
+        }
+
+        private string GetShouldProcessMessage()
+        {
+            if (DynamicSet())
+            {
+                var strActions = dynamicParameters.Select(p => $"{p.Property} = '{p.Value}'");
+                var str = string.Join(", ", strActions);
+
+                return str;
+            }
+
+            return $"{Property} = '{Value}'";
         }
 
         /// <summary>
