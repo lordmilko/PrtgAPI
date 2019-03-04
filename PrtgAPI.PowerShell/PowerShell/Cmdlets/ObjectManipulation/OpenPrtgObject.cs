@@ -19,7 +19,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Device dc-1 | Get-Sensor ping | Open-PrtgObject</code>
     ///     <para>Open all sensors named "ping" under devices named "dc-1" in the default web browser.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Miscellaneous#open-prtg-objects">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

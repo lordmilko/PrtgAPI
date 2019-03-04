@@ -13,6 +13,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-PrtgStatus</code>
     ///     <para>Retrieve the current system status.</para>
     /// </example>
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Miscellaneous#prtg-system-status-1">Online version:</para>
     /// </summary>
     [OutputType(typeof(ServerStatus))]
     [Cmdlet(VerbsCommon.Get, "PrtgStatus")]

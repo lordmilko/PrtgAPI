@@ -34,8 +34,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-SystemInfo -ID 1001 hardware,software</code>
     ///     <para>Retrieve hardware and software information for the device with ID 1001.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Devices#system-information-1">Online version:</para>
     /// <para type="link">Get-Device</para>
+    /// <para type="link">Refresh-SystemInfo</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "SystemInfo")]
     public class GetSystemInfo : PrtgProgressCmdlet

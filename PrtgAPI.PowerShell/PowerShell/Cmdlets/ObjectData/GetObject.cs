@@ -48,7 +48,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Object -Type wmivolume -Resolve</code>
     ///     <para>Get all WMI Volume sensor objects and resolve them to objects of type <see cref="Sensor"/>.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Other-Objects#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

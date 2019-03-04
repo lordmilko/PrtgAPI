@@ -81,7 +81,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> $params | Add-Trigger</para>
     ///     <para>Create a new threshold notification trigger on the sensor with ID 1001 that alerts based on the value of the channel with ID 1.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#add-1">Online version:</para>
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// <para type="link">Add-NotificationTrigger</para> 
     /// <para type="link">Set-NotificationTrigger</para>

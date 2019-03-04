@@ -102,7 +102,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-ObjectLog -Status Connected -Wait</code>
     ///     <para>Continuously poll PRTG for new Probe Connected events, requesting once every second.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information#logs-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

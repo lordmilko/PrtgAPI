@@ -81,7 +81,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Group -Id 2001 | Get-Device -Recurse:$false</code>
     ///     <para>Get all devices directly under the specified group, ignoring all child groups.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Devices#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>

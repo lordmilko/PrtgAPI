@@ -14,7 +14,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Sensor -Id 1001 | Get-ModificationHistory</code>
     ///     <para>Retrieve all modification events for the sensor with ID 1001</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information#modification-history-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

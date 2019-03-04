@@ -84,7 +84,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Group -Id 2001 | Get-Group -Recurse:$false</code>
     ///     <para>Get all groups directly under the group with ID 2001, ignoring all grandchildren.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Groups#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Probe</para>

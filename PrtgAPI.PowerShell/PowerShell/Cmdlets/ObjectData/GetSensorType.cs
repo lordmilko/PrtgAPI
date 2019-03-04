@@ -29,9 +29,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Device -Id 1001 | Get-SensorType</code>
     ///     <para>List all sensor types supported by the Device with Id 1001</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensors#sensor-types-1">Online version:</para>
     /// <para type="link">Get-SensorTarget</para>
-    /// <para type="link">New-SensorParameters</para> 
+    /// <para type="link">New-SensorParameters</para>
+    /// <para type="link">Get-Device</para>
     /// 
     /// </summary>
     [OutputType(typeof(SensorTypeDescriptor))]

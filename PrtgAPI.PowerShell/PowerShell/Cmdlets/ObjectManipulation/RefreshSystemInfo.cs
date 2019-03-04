@@ -25,6 +25,9 @@ namespace PrtgAPI.PowerShell.Cmdlets.ObjectManipulation
     ///     <code>C:\> Refresh-SystemInfo -Id 1001 -Type System,Users</code>
     ///     <para>Refresh the System and Users information types for the device with ID 1001</para>
     /// </example>
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Devices#system-information-1">Online version:</para>
+    /// <para type="link">Get-SystemInfo</para>
     /// </summary>
     [Cmdlet(VerbsData.Update, "SystemInfo")]
     public class RefreshSystemInfo : PrtgPassThruCmdlet

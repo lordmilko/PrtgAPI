@@ -61,7 +61,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> Get-Device dc-1 | Add-Sensor $params</para>
     ///     <para>Add a new EXE/Script Advanced sensor to the device named dc-1 using its raw parameters</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#creation">Online version:</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">New-SensorParameters</para>
     /// </summary>

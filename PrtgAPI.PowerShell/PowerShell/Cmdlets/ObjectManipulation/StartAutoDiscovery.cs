@@ -40,7 +40,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> Get-Device dc-1 | Start-AutoDiscovery $templates</para>
     ///     <para>Run auto-discovery against all devices named "dc-1" using WMI specific device templates</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#auto-discovery-1">Online version:</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-DeviceTemplate</para>
     /// </summary>
@@ -55,13 +56,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         /// <summary>
         /// <para type="description">One or more expressions used to identify device templates to use for the auto-discovery. If no templates
-        /// are specified, all templates will be used.</para>
+        /// are specified, only templates enabled on the device will be used.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, Position = 0)]
         public string[] TemplateName { get; set; }
 
         /// <summary>
-        /// <para type="description"></para>
+        /// <para type="description">One or more device templates to use for the auto-discovery. If no templates
+        /// are specified, only templates enabled on the device will be used.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Target, Position = 0)]
         public DeviceTemplate[] Template { get; set; }

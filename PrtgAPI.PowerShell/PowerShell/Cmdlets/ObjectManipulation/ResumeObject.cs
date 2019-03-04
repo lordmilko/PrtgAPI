@@ -23,7 +23,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Sensor -Status PausedByUser | Resume-Object</code>
     ///     <para>Resume all sensors that have been paused by the user. Note: if parent object has been manually paused, child objects will appear PausedByUser but will not be able to be unpaused.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#resume-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

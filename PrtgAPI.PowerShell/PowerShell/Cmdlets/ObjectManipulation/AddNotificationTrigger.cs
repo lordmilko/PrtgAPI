@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Threading;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 
@@ -34,7 +33,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Probe | Get-NotificationTrigger | New-TriggerParameters 2001 | Add-Trigger</code>
     ///     <para>Add all triggers on all probes directly to the object with ID 2001.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#add-1">Online version:</para>
     /// <para type="link">New-NotificationTriggerParameters</para>
     /// <para type="link">Set-NotificationTrigger</para>
     /// <para type="link">Edit-NotificationTriggerProperty</para>
@@ -89,9 +89,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Set the repeat interval of the notification to trigger to every 20 minutes, and remove the off notification action. This example
     /// assumes there is exactly one probe in the system with exactly one state notification trigger defined on it.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#modify-1">Online version:</para>
     /// <para type="link">New-NotificationTriggerParameters</para>
     /// <para type="link">Edit-NotificationTriggerProperty</para>
+    /// <para type="link">Get-NotificationTrigger</para> 
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "NotificationTrigger")]
     public class SetNotificationTrigger : PrtgOperationCmdlet

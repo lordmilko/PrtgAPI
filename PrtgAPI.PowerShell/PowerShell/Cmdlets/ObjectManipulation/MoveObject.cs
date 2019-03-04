@@ -16,7 +16,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Device dc-1 | Move-Object 5678</code>
     ///     <para>Move all devices named dc-1 to under the object with ID 5678</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#moving-1">Online version:</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>
     /// </summary>

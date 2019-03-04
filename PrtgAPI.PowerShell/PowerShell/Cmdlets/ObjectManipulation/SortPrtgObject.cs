@@ -14,7 +14,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Group -Id 0 | Sort-PrtgObject</code>
     ///     <para>Sort all probes under the root PRTG Group</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#sorting-1">Online version:</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>

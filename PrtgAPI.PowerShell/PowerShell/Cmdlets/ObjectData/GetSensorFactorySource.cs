@@ -24,7 +24,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> flt type eq "sensor factory" | Get-Sensor -Count 1 | Get-SensorFactorySource -Channels</code>
     ///     <para>Retrieve all source channels of a single sensor factory sensor</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories#get-sensor-factory-sources">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">New-SearchFilter</para>
     /// 

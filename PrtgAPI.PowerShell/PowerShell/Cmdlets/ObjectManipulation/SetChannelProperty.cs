@@ -51,7 +51,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> $channels | Set-ChannelProperty -UpperErrorLimit 80 -LowerErrorLimit 20</para>
     ///     <para>Set the value of both the UpperErrorLimit and LowerErrorLimit in a single request.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Property-Manipulation#modifying-properties-1">Online version:</para>
     /// <para type="link">Get-Help ChannelSettings</para>
     /// <para type="link">Get-Channel</para>
     /// <para type="link">Get-Sensor</para>

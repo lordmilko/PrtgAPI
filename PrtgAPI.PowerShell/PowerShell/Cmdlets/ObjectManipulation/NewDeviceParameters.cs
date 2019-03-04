@@ -45,10 +45,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> Get-Probe contoso | Add-Device $params -PassThru | Set-ObjectProperty Location "23 Fleet Street"</para>
     ///     <para>Create a new device named "dc-1" and then set its location.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#device-creation-1">Online version:</para>
     /// <para type="link">Add-Device</para>
     /// <para type="link">Get-DeviceTemplate</para>
     /// <para type="link">Set-ObjectProperty</para>
+    /// <para type="link">Get-Group</para>
+    /// <para type="link">Get-Probe</para>
     /// 
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DeviceParameters")]

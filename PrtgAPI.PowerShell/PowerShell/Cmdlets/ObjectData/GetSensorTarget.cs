@@ -67,7 +67,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> $targets | foreach { $_.Properties[3] }</para>
     ///     <para>List the disk type (Local Disk, Compact Disk etc) of all WMI Volume targets.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Targets#powershell">Online version:</para>
     /// <para type="link">New-SensorParameters</para>
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>

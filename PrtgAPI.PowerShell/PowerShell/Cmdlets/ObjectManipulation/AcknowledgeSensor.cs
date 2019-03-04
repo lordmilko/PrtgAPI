@@ -42,7 +42,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Sensor Ping -Status Down | Acknowledge-Sensor -Forever</code>
     ///     <para>Acknowledge all down ping sensors forever (or until they comes back up by themselves)</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#acknowledge-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Pause-Object</para>
     /// </summary>

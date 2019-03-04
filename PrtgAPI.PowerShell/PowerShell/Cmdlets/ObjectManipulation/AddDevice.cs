@@ -45,6 +45,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> Get-Probe contoso | Add-Device $params</para>
     ///     <para>Add a device named sql-1 using an IPv6 Address to the probe Contoso probe.</para>
     /// </example>
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#device-creation-1">Online version:</para>
+    /// <para type="link">New-DeviceParameters</para>
+    /// <para type="link">Get-Group</para>
+    /// <para type="link">Get-Probe</para>
     /// 
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Device", SupportsShouldProcess = true)]

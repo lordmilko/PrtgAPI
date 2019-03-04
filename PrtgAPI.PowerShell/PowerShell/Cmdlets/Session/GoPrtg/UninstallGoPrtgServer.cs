@@ -24,7 +24,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Uninstall-GoPrtgServer -Force</code>
     ///     <para>Uninstalls all GoPrtg servers.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#uninstallation">Online version:</para>
     /// <para type="link">Connect-GoPrtgServer</para>
     /// <para type="link">Get-GoPrtgServer</para>
     /// <para type="link">Install-GoPrtgServer</para>

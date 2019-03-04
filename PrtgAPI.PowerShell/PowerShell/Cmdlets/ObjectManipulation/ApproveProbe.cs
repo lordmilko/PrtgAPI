@@ -38,7 +38,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Probe | Approve-Probe -AutoDiscover</code>
     ///     <para>Approve all probes and immediately perform an auto-discovery. Any probes that have already been approved will be skipped.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Administrative-Tools#approvedeny-probes-1">Online version:</para>
     /// <para type="link">Get-Probe</para> 
     /// </summary>
     [Cmdlet(VerbsLifecycle.Approve, "Probe", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]

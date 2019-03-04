@@ -14,7 +14,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Enable-PrtgProgress</code>
     ///     <para>Enable PrtgAPI progress for the current session</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Progress">Online version:</para>
     /// <para type="link">Disable-PrtgProgress</para>
     /// <para type="link">Connect-PrtgServer</para>
     /// </summary>

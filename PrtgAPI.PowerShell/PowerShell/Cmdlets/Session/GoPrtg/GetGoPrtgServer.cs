@@ -21,7 +21,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-GoPrtgServer *dev*</code>
     ///     <para>List all GoPrtg servers whose server address or alias contains the word "dev".</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#enumeration">Online version:</para>
     /// <para type="link">Connect-GoPrtgServer</para>
     /// <para type="link">Install-GoPrtgServer</para>
     /// <para type="link">Set-GoPrtgAlias</para>

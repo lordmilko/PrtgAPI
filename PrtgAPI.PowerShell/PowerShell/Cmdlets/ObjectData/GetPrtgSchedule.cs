@@ -31,6 +31,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>C:\> }</para>
     ///     <para>Apply the schedule with ID 621 to the sensor with ID 2024</para>
     /// </example>
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Schedules#powershell">Online version:</para>
     /// </summary>
     [OutputType(typeof(Schedule))]
     [Cmdlet(VerbsCommon.Get, "PrtgSchedule")]

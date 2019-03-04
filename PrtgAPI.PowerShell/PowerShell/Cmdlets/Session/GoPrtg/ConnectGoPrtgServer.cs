@@ -36,7 +36,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> goprtg prtg.exam*</code>
     ///     <para>Connect to the GoPrtg server whose address starts with "prtg.exam".</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#connection">Online version:</para>
     /// <para type="link">Get-GoPrtgServer</para>
     /// <para type="link">Install-GoPrtgServer</para>
     /// <para type="link">Set-GoPrtgAlias</para>

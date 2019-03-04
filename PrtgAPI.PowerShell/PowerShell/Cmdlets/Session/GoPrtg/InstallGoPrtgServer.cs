@@ -41,7 +41,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Install-GoPrtg dev</code>
     ///     <para>Installs the currently active server with the alias "dev"</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#installation">Online version:</para>
     /// <para type="link">Connect-GoPrtgServer</para> 
     /// <para type="link">Get-GoPrtgServer</para> 
     /// <para type="link">Set-GoPrtgAlias</para> 

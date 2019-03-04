@@ -92,7 +92,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> fdef "Line at 40.2 [msec]" -Value 40.2 -StartId 3</code>
     ///     <para>Create a channel definition for a horizontal line against channels that use the "msec" unit using a channel ID of 3.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Factories#create-sensor-factory-definitions">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Channel</para> 
     /// <para type="link">https://www.paessler.com/manuals/prtg/sensor_factory_sensor</para> 

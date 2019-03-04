@@ -34,7 +34,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Restart-PrtgCore -Timeout 600</code>
     ///     <para>Restart the PRTG Core Service, waiting 10 minutes (600 seconds) for the service to restart.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Administrative-Tools#restart-core-service-1">Online version:</para>
     /// <para type="link">Restart-Probe</para>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "PrtgCore", SupportsShouldProcess = true)]

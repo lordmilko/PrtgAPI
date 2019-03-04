@@ -77,7 +77,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Connect to a PRTG Server, indicating that any requests that fail during the use of the PrtgClient should be attempted
     /// at most 3 times, with a delay of 5 seconds between each attempt.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Getting-Started#powershell">Online version:</para>
     /// <para type="link">Get-PrtgClient</para>
     /// <para type="link">Set-PrtgClient</para>
     /// <para type="link">Disconnect-PrtgServer</para>

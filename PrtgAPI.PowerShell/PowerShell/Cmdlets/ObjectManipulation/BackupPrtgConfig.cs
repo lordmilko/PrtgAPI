@@ -21,6 +21,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Backup-PrtgConfig</code>
     ///     <para>Trigger a backup of the PRTG Configuration Database.</para>
     /// </example>
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Administrative-Tools#backup-config-database-1">Online version:</para>
     /// </summary>
     [Cmdlet(VerbsData.Backup, "PrtgConfig", SupportsShouldProcess = true)]
     public class BackupPrtgConfig : PrtgCmdlet

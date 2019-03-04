@@ -12,7 +12,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-SensorTotals</code>
     ///     <para>Count the number of sensors in the system.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensors#sensor-totals-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// </summary>
     [OutputType(typeof(SensorTotals))]

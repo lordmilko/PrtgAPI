@@ -68,7 +68,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Sensor -Tags wmicpu* -count 1 | where Total -gt 90</code>
     ///     <para>Get historical values for all channels on a single WMI CPU Load sensor where the Total channel's value was greater than 90.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information#sensor-history-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Select-Object</para>
     /// <para type="link">Where-Object</para>

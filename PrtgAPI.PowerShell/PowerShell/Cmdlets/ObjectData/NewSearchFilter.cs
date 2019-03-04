@@ -16,7 +16,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> flt parentid eq 1001 | Get-Sensor</code>
     ///     <para>Get all sensors under the object with ID 1001</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Filters#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>

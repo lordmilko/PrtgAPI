@@ -28,7 +28,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Device dc-1 | Get-NotificationTrigger | Remove-NotificationTrigger -Force</code>
     ///     <para>Remove all notification triggers from devices named 'dc-1' without prompting for confirmation.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#remove-1">Online version:</para>
     /// <para type="link">Get-NotificationTrigger</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "NotificationTrigger", SupportsShouldProcess = true)]

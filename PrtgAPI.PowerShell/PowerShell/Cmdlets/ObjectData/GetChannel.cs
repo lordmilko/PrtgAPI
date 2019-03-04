@@ -37,7 +37,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Channel -SensorId 2001</code>
     ///     <para>Get all channels from the sensor with ID 2001</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Channels#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Set-ChannelProperty</para>
     /// </summary>

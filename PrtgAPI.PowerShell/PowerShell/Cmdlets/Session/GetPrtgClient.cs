@@ -24,7 +24,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> (Get-PrtgClient).GetSensors()</code>
     ///     <para>Invoke the GetSensors method of the PrtgClient</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Getting-Started#session-management-1">Online version:</para>
     /// <para type="link">Connect-PrtgServer</para>
     /// <para type="link">Disconnect-PrtgServer</para>
     /// <para type="link">Set-PrtgClient</para>

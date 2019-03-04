@@ -158,7 +158,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Set-StrictMode -Version 3</code>
     ///     <para>Set the Strict Mode to version 3 for the current PowerShell session.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#parameters">Online version:</para>
     /// <para type="link">Get-Help SensorParameters</para>
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>

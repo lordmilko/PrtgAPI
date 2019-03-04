@@ -147,7 +147,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 foreach (var item in tree.GetRoot().DescendantNodesAndTokens())
                 {
                     if (item.IsKind(SyntaxKind.InvocationExpression))
-                        InspectMethodCall(item, model);
+                        InspectMethodCall(item, model.Value);
                 }
             });
         }
@@ -352,7 +352,60 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }, true);
         }
 
-        private void WithTree(Action<string, SyntaxTree, SemanticModel> action, bool powerShell = false)
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
+        public void AllPowerShellCmdlets_HaveOnlineHelp()
+        {
+            WithTree((file, tree, model) =>
+            {
+                if (!file.Contains("Cmdlets"))
+                    return;
+
+                foreach (var item in tree.GetRoot().DescendantNodes())
+                {
+                    if (item.IsKind(SyntaxKind.ClassDeclaration))
+                    {
+                        var trivia = item.GetLeadingTrivia().Select(t => t.GetStructure()).OfType<DocumentationCommentTriviaSyntax>().FirstOrDefault();
+
+                        if (trivia == null)
+                            return;
+
+                        var summary = trivia.ChildNodes().OfType<XmlElementSyntax>().FirstOrDefault();
+
+                        if (summary != null && summary.StartTag.Name.ToString() == "summary")
+                        {
+                            var links = summary.ChildNodes().OfType<XmlElementSyntax>().Where(IsLinkPara).ToList();
+
+                            var firstLink = links.FirstOrDefault();
+
+                            if (firstLink == null)
+                                Assert.Fail($"File '{file}' is missing an Online version link (has no links at all)");
+                            else
+                            {
+                                var content = firstLink.Content.ToString();
+                                var uri = firstLink.StartTag.Attributes.OfType<XmlTextAttributeSyntax>().FirstOrDefault(a => a.Name.ToString() == "uri");
+
+                                Assert.AreEqual("Online version:", content, $"File '{file}' is missing an Online version link");
+                                Assert.IsTrue(uri != null && uri.TextTokens.ToString().StartsWith("https://github.com/lordmilko/PrtgAPI/wiki"), $"File '{file}' is missing an Online version URI");
+                            }
+                        }
+                    }
+                }
+            }, true);
+        }
+
+        private bool IsLinkPara(XmlElementSyntax elm)
+        {
+            if (elm.StartTag.Name.ToString() == "para")
+            {
+                return elm.StartTag.Attributes.OfType<XmlTextAttributeSyntax>().Any(a => a.TextTokens.ToString() == "link");
+            }
+
+            return false;
+        }
+
+        private void WithTree(Action<string, SyntaxTree, Lazy<SemanticModel>> action, bool powerShell = false)
         {
             var path = TestHelpers.GetProjectRoot();
 
@@ -365,10 +418,13 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 var tree = CSharpSyntaxTree.ParseText(File.ReadAllText(file));
 
-                var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-                var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
+                var model = new Lazy<SemanticModel>(() =>
+                {
+                    var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+                    var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
 
-                var model = compilation.GetSemanticModel(tree);
+                    return compilation.GetSemanticModel(tree);
+                });
 
                 action(file, tree, model);
             }

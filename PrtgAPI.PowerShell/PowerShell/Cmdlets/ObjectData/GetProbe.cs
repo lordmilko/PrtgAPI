@@ -7,7 +7,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Retrieves probes from a PRTG Server.</para>
-    /// </summary>
     /// 
     /// <para type="description">The Get-Probe cmdlet retrieves probes from a PRTG Server. Probes represent sites where the 
     /// PRTG Probe Service has been installed. Each PRTG Server has a single Core Probe. Additional probes may be installed
@@ -66,11 +65,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> flt totalsens greaterthan 100 | Get-Probe</code>
     ///     <para>Get all probes that contain more than 100 sensors.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Probes#powershell">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">Get-Group</para>
     /// <para type="link">New-SearchFilter</para>
+    /// <para type="link">Approve-Probe</para>
+    ///
+    /// </summary>
     [OutputType(typeof(Probe))]
     [Cmdlet(VerbsCommon.Get, "Probe", DefaultParameterSetName = LogicalAndTags)]
     public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>, IDynamicParameters

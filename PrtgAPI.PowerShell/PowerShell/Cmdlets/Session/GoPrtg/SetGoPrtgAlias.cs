@@ -24,7 +24,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Set-GoPrtgAlias</code>
     ///     <para>Removes the alias of the currently active GoPrtg server.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#modification">Online version:</para>
     /// <para type="link">Connect-GoPrtgServer</para>
     /// <para type="link">Get-GoPrtgServer</para>
     /// <para type="link">Install-GoPrtgServer</para>

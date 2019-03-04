@@ -45,7 +45,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-NotificationTrigger -Tags PagerDuty</code>
     ///     <para>Get all notification actions tagged with "PagerDuty"</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Actions#powershell">Online version:</para>
     /// <para type="link">Get-NotificationTrigger</para>
     /// <para type="link">New-TriggerParameters</para>
     /// </summary>

@@ -26,7 +26,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Get-Sensor -Id 1001 | Simulate-ErrorStatus</code>
     ///     <para>Force the sensor with ID to enter an error state.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#simulate-error-1">Online version:</para>
     /// <para type="link">Resume-Object</para>
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus", SupportsShouldProcess = true)]

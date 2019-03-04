@@ -25,7 +25,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <code>C:\> Update-GoPrtgCredential (New-Credential prtgadmin prtgadmin)</code>
     ///     <para>Update the credentials of the currently active Goprtg server with a specified username and password.</para>
     /// </example>
-    /// 
+    ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Store-Credentials#modification">Online version:</para>
     /// <para type="link">Connect-GoPrtgServer</para>
     /// <para type="link">Get-GoPrtgServer</para>
     /// <para type="link">Install-GoPrtgServer</para>
