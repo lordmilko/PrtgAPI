@@ -7,7 +7,7 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.AcknowledgeAlarm;
 
-        public AcknowledgeSensorParameters(int[] objectIds, int? duration, string message) : base(objectIds)
+        public AcknowledgeSensorParameters(int[] sensorIds, int? duration, string message) : base(sensorIds)
         {
             if (message != null)
                 Message = message;

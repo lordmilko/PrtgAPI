@@ -850,23 +850,23 @@
                     <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticDefault">
                         <Summary>Marks a &lt;see cref="Status.Down"/&gt; sensor as &lt;see cref="Status.DownAcknowledged"/&gt;. If an acknowledged sensor returns to &lt;see cref="Status.Up"/&gt;, it will not be acknowledged when it goes down again.</Summary>
 
-                        <Parameter name="objectId" type="int" description="ID of the sensor to acknowledge."/>
+                        <Parameter name="sensorId" type="int" description="ID of the sensor to acknowledge."/>
                         <Parameter name="duration" type="int?" default="null" description="Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely."/>
                         <Parameter name="message" type="string" default="null" description="Message to display on the acknowledged sensor."/>
 
                         <Body expression="true">
-                            <Call name="AcknowledgeSensor" args="new[] {objectId}, duration, message"/>
+                            <Call name="AcknowledgeSensor" args="new[] {sensorId}, duration, message"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticNamedDefault">
                         <Summary>Marks one or more &lt;see cref="Status.Down"/&gt; sensors as &lt;see cref="Status.DownAcknowledged"/&gt;. If an acknowledged sensor returns to &lt;see cref="Status.Up"/&gt;, it will not be acknowledged when it goes down again.</Summary>
 
-                        <Parameter name="objectIds" type="int[]" description="IDs of the sensors to acknowledge."/>
+                        <Parameter name="sensorIds" type="int[]" description="IDs of the sensors to acknowledge."/>
                         <Parameter name="duration" type="int?" default="null" description="Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely."/>
                         <Parameter name="message" type="string" default="null" description="Message to display on the acknowledged sensors."/>
 
                         <Body expression="true">
-                            <Call name="RequestEngine.ExecuteRequest" args="new AcknowledgeSensorParameters(objectIds, duration, message)"/>
+                            <Call name="RequestEngine.ExecuteRequest" args="new AcknowledgeSensorParameters(sensorIds, duration, message)"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>

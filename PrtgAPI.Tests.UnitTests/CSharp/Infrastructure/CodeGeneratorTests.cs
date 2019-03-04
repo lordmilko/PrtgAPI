@@ -152,21 +152,21 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         /// <summary>
         /// Marks a <see cref=""Status.Down""/> sensor as <see cref=""Status.DownAcknowledged""/>. If an acknowledged sensor returns to <see cref=""Status.Up""/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name=""objectId"">ID of the sensor to acknowledge.</param>
+        /// <param name=""sensorId"">ID of the sensor to acknowledge.</param>
         /// <param name=""duration"">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name=""message"">Message to display on the acknowledged sensor.</param>
-        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) =>
-            AcknowledgeSensor(new[] {objectId}, duration, message);
+        public void AcknowledgeSensor(int sensorId, int? duration = null, string message = null) =>
+            AcknowledgeSensor(new[] {sensorId}, duration, message);
 
         /// <summary>
         /// Asynchronously marks a <see cref=""Status.Down""/> sensor as <see cref=""Status.DownAcknowledged""/>. If an acknowledged sensor returns to <see cref=""Status.Up""/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name=""objectId"">ID of the sensor to acknowledge.</param>
+        /// <param name=""sensorId"">ID of the sensor to acknowledge.</param>
         /// <param name=""duration"">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name=""message"">Message to display on the acknowledged sensor.</param>
         /// <param name=""token"">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
-            await AcknowledgeSensorAsync(new[] {objectId}, duration, message, token).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(int sensorId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
+            await AcknowledgeSensorAsync(new[] {sensorId}, duration, message, token).ConfigureAwait(false);
 ";
 
             var actual = string.Join("\r\n", method.Select(m => m.Definition));

@@ -2777,40 +2777,40 @@ namespace PrtgAPI
         /// <summary>
         /// Marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="objectId">ID of the sensor to acknowledge.</param>
+        /// <param name="sensorId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public void AcknowledgeSensor(int objectId, int? duration = null, string message = null) =>
-            AcknowledgeSensor(new[] {objectId}, duration, message);
+        public void AcknowledgeSensor(int sensorId, int? duration = null, string message = null) =>
+            AcknowledgeSensor(new[] {sensorId}, duration, message);
 
         /// <summary>
         /// Marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
+        /// <param name="sensorIds">IDs of the sensors to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensors.</param>
-        public void AcknowledgeSensor(int[] objectIds, int? duration = null, string message = null) =>
-            RequestEngine.ExecuteRequest(new AcknowledgeSensorParameters(objectIds, duration, message));
+        public void AcknowledgeSensor(int[] sensorIds, int? duration = null, string message = null) =>
+            RequestEngine.ExecuteRequest(new AcknowledgeSensorParameters(sensorIds, duration, message));
 
         /// <summary>
         /// Asynchronously marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="objectId">ID of the sensor to acknowledge.</param>
+        /// <param name="sensorId">ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AcknowledgeSensorAsync(int objectId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
-            await AcknowledgeSensorAsync(new[] {objectId}, duration, message, token).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(int sensorId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
+            await AcknowledgeSensorAsync(new[] {sensorId}, duration, message, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="objectIds">IDs of the sensors to acknowledge.</param>
+        /// <param name="sensorIds">IDs of the sensors to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensors for. If null, sensors will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensors.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AcknowledgeSensorAsync(int[] objectIds, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
-            await RequestEngine.ExecuteRequestAsync(new AcknowledgeSensorParameters(objectIds, duration, message), token: token).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(int[] sensorIds, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
+            await RequestEngine.ExecuteRequestAsync(new AcknowledgeSensorParameters(sensorIds, duration, message), token: token).ConfigureAwait(false);
 
             #endregion
             #region Pause
