@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.GoPrtg;
@@ -100,6 +101,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return client;
         }
 
+        [ExcludeFromCodeCoverage]
         private PSCredential GetNewCredential(string username)
         {
             var credential = Host.UI.PromptForCredential(null, null, username, "targetname");

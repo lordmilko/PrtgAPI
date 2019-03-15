@@ -1,9 +1,12 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics;
+
+namespace PrtgAPI.Parameters
 {
     /// <summary>
     /// Base class for parameter types that modify object properties.
     /// </summary>
     /// <typeparam name="T">The type of property manipulated by this object.</typeparam>
+    [DebuggerDisplay("{Property,nq} = {Value}")]
     public abstract class PropertyParameter<T>
     {
         /// <summary>

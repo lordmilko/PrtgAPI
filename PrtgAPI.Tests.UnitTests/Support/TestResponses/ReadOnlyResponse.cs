@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    class ReadOnlyResponse : IWebResponse
+    public class ReadOnlyResponse : IWebResponse
     {
         IWebResponse normalResponse;
 

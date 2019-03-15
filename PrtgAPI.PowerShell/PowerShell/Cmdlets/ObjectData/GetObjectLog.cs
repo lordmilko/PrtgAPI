@@ -149,7 +149,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Only retrieve objects that match a specific status.</para>
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(Mandatory = false)]
         public LogStatus[] Status { get; set; }
 
         /// <summary>
@@ -274,8 +274,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 if (Unspecified(nameof(StartDate)))
                 {
-                    //Retrieve records for the last week. If this is the root node however, only retrieve
-                    //records for the past day.
+                    //Retrieve records for the last week. If this is a high traffic node (such as the root or a probe)
+                    //however, only retrieve records for the past day.
 
                     var duration = RecordAge.LastWeek;
 

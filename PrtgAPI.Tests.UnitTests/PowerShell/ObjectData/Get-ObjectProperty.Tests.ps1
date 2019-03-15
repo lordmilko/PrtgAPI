@@ -16,11 +16,19 @@ Describe "Get-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "can deserialize device settings" {
-            $sensor = Get-Device -Count 1
+            $device = Get-Device -Count 1
 
-            $properties = $sensor | Get-ObjectProperty
+            $properties = $device | Get-ObjectProperty
 
             $properties.GetType().Name | Should Be DeviceSettings
+        }
+
+        It "warns when an object is read-only" {
+            WithReadOnly {
+                $sensor = Get-Sensor -Count 1
+
+                { $sensor | Get-ObjectProperty } | Should Throw "Cannot retrieve properties for read-only sensor with ID 4000."
+            }
         }
     }
 

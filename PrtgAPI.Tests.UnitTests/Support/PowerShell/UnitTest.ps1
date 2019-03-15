@@ -154,6 +154,13 @@ function WithResponseArgs($responseName, $arguments, $scriptBlock) {
     }
 }
 
+function WithReadOnly($scriptBlock)
+{
+    $multiTypeResponse = New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.MultiTypeResponse
+
+    WithResponseArgs "ReadOnlyResponse" $multiTypeResponse $scriptBlock
+}
+
 function SetMultiTypeResponse
 {
     SetResponseAndClient "MultiTypeResponse"

@@ -223,7 +223,7 @@ Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "throws setting an empty value on a required property" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
-        $message = "failed due to the following: Sensor Name: Required field, not defined. The object has not been changed"
+        $message = "Sensor Name: Required field, not defined. The object has not been changed"
 
         { $sensor | Set-ObjectProperty Name $null } | Should Throw $message
     }

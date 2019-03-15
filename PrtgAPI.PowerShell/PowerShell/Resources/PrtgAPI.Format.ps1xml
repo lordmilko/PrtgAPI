@@ -493,7 +493,8 @@
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
-                            <TableColumnItems><TableColumnItem>
+                        <TableColumnItems>
+                            <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
@@ -532,7 +533,8 @@
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
-                            <TableColumnItems><TableColumnItem>
+                        <TableColumnItems>
+                            <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
@@ -572,7 +574,8 @@
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
-                            <TableColumnItems><TableColumnItem>
+                        <TableColumnItems>
+                            <TableColumnItem>
                                 <PropertyName>DateTime</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
@@ -598,6 +601,40 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
+                <TypeName>PrtgAPI.ModificationEvent</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader> <!-- ObjectId -->
+                        <Alignment>Right</Alignment>
+                    </TableColumnHeader>
+                    <TableColumnHeader/> <!-- DateTime -->                    
+                    <TableColumnHeader/> <!-- UserName -->                    
+                    <TableColumnHeader/> <!-- Message -->                    
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>ObjectId</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DateTime</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>UserName</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Message</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
                 <TypeName>PrtgAPI.ExeFileTarget</TypeName>
             </ViewSelectedBy>
             <TableControl>
@@ -607,7 +644,8 @@
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
-                            <TableColumnItems><TableColumnItem>
+                        <TableColumnItems>
+                            <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>

@@ -146,6 +146,7 @@ namespace PrtgAPI.PowerShell.Base
         /// Interrupts the currently running code to signal the cmdlet has been requested to stop.<para/>
         /// Do not override this method; override <see cref="StopProcessingEx"/> instead.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         protected override void StopProcessing()
         {
             StopProcessingEx();

@@ -177,7 +177,7 @@ We'll add a new sensor
 
 ```c#
 //Create a brand new Ping sensor and add it to our device
-var pingParams = client.DynamicSensorParameters(device.Id, "ping");
+var pingParams = client.GetDynamicSensorParameters(device.Id, "ping");
 var sensor = client.AddSensor(device.Id, pingParams).Single();
 ```
 
@@ -261,11 +261,12 @@ Load-PrtgConfigFile
 Move-Object
 New-Credential
 New-NotificationTriggerParameters
-New-SearchFilter # Alias: flt
+New-SearchFilter
+New-Sensor
 New-SensorFactoryDefinition
+New-SensorParameters
 New-DeviceParameters
 New-GroupParameters
-New-SensorParameters
 Open-PrtgObject
 Pause-Object
 Refresh-Object

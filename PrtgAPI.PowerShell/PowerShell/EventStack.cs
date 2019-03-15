@@ -32,7 +32,7 @@ namespace PrtgAPI.PowerShell
 
                     var events2 = getHandler()?.GetInvocationList().Cast<EventHandler<TEventArgs>>().ToList();
 
-                    Debug.Assert(events2 == null);
+                    Debug.Assert(events2 == null, "Events still existed but they shouldn't have");
                 }
             }
 

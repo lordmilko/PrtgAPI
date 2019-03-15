@@ -509,8 +509,18 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
             catch (Exception ex)
             {
-                Logger.Log(ex.Message, true);
-                throw;
+                if (ex.Message.Contains("probe is not connected"))
+                {
+                    Logger.Log("Cannot repair state as probe is not connected yet. Sleeping for 5 seconds");
+                    Thread.Sleep(5000);
+
+                    RepairState();
+                }
+                else
+                {
+                    Logger.Log(ex.Message, true);
+                    throw;
+                }
             }
         }
 
@@ -518,6 +528,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             Logger.Log("Restoring probe name");
             Client.RenameObject(Settings.Probe, Settings.ProbeName);
+            Client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
 
             var probe = Client.GetProbes(Property.Name, Settings.ProbeName);
 
@@ -525,6 +536,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 Logger.Log("Probe name didn't stick. Restoring probe name again");
                 Client.RenameObject(Settings.Probe, Settings.ProbeName);
+                Client.SetObjectProperty(Settings.Probe, ObjectProperty.Name, Settings.ProbeName);
 
                 probe = Client.GetProbes(Property.Name, Settings.ProbeName);
 

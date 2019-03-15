@@ -13,11 +13,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         {
             var targets = client.Targets.GetSensorTargets(Settings.Device, "wmivolume");
 
-            Assert.AreEqual(3, targets.Count, "Did not have expected number of targets");
+            Assert.AreEqual(4, targets.Count, "Did not have expected number of targets");
 
             Assert.AreEqual("System Reserved", targets[0].Properties[2]);
             Assert.AreEqual("Local Disk", targets[1].Properties[3]);
-            Assert.AreEqual("Compact Disk", targets[2].Properties[3]);
+            Assert.AreEqual("Local Disk", targets[2].Properties[3]);
+            Assert.AreEqual("Compact Disk", targets[3].Properties[3]);
         }
 
         [TestMethod]

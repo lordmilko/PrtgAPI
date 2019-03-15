@@ -20,15 +20,16 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
             parameters["deviceidlist__check"] = parameters.Targets.First().Value;
 
-            var sensors = client.AddSensor(Settings.Device, parameters);
+            var sensors = client.AddSensor(Settings.Device, parameters).OrderBy(s => s.Name).ToList();
 
             try
             {
-                AssertEx.AreEqual(3, sensors.Count, "Did not have expected number of sensors");
+                AssertEx.AreEqual(4, sensors.Count, "Did not have expected number of sensors");
 
-                AssertEx.IsTrue(sensors[0].Name.Contains("System Reserved"), "Sensor name was incorrect");
+                AssertEx.IsTrue(sensors[0].Name.Contains("System Reserved"), $"Sensor name was incorrect. Actual name: '{sensors[0].Name}'");
                 AssertEx.AreEqual("C:\\", sensors[1].Name, "Sensor name was incorrect");
-                AssertEx.AreEqual("D:\\", sensors[2].Name, "Sensor name was incorrect");
+                AssertEx.AreEqual("D:\\ [Storage]", sensors[2].Name, "Sensor name was incorrect");
+                AssertEx.AreEqual("E:\\", sensors[3].Name, "Sensor name was incorrect");
             }
             finally
             {

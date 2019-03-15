@@ -1822,7 +1822,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             });
         }
 
-        private void PrepareCondition(Action<Device> action)
+        private void PrepareCondition(Action<Device> action, bool inner = false)
         {
             try
             {
@@ -1855,14 +1855,22 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                     }
                 }
 
-                Assert.IsTrue(device.Condition?.Contains("Auto-Discovery") == true, $"Expected condition to contain the words 'Auto-Discovery', however instead contained '{device.Condition}'");
+                if (device.Condition.Contains("Sensor recommendation in progress"))
+                    PrepareCondition(action, true);
+                else
+                {
+                    Assert.IsTrue(device.Condition?.Contains("Auto-Discovery") == true, $"Expected condition to contain the words 'Auto-Discovery', however instead contained '{device.Condition}'");
 
-                action(device);
+                    action(device);
+                }
             }
             finally
             {
-                ServerManager.RepairConfig();
-                ServerManager.WaitForObjects();
+                if (!inner)
+                {
+                    ServerManager.RepairConfig();
+                    ServerManager.WaitForObjects();
+                }
             }
         }
 

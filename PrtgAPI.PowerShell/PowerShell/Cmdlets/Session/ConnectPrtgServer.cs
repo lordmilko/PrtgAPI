@@ -189,9 +189,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (PrtgSessionState.Client == null || Force.IsPresent)
             {
-                PrtgSessionState.Client = PassHash.IsPresent ?
-                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, AuthMode.PassHash, IgnoreSSL) :
-                    new PrtgClient(Server, Credential.GetNetworkCredential().UserName, Credential.GetNetworkCredential().Password, ignoreSSL: IgnoreSSL);
+                var cred = Credential.GetNetworkCredential();
+                var authMode = PassHash.IsPresent ? AuthMode.PassHash : AuthMode.Password;
+
+                PrtgSessionState.Client = new PrtgClient(Server, cred.UserName, cred.Password, authMode, IgnoreSSL);
 
                 if (RetryCount != null)
                     PrtgSessionState.Client.RetryCount = RetryCount.Value;

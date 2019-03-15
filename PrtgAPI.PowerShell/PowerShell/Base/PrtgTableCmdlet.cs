@@ -765,6 +765,7 @@ namespace PrtgAPI.PowerShell.Base
             return Tuple.Create(raw.Items, raw.TotalCount);
         }
 
+        [ExcludeFromCodeCoverage]
         async Task<List<TObject>> IStreamableCmdlet<PrtgTableCmdlet<TObject, TParam>, TObject, TParam>.GetStreamObjectsAsync(TParam parameters) =>
             await client.ObjectEngine.GetObjectsAsync<TObject>(parameters).ConfigureAwait(false);
 
