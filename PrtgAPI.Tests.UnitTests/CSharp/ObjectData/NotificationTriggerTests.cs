@@ -123,9 +123,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
             var trigger = triggerClient.GetNotificationTriggers(0).First();
 
-            var client = Initialize_Client(new AddressValidatorResponse("deletesub.htm?id=0&subid=1"));
-
-            client.RemoveNotificationTrigger(trigger);
+            Execute(
+                c => c.RemoveNotificationTrigger(trigger),
+                "deletesub.htm?id=0&subid=1"
+            );
         }
 
         [TestMethod]
@@ -135,9 +136,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
             var trigger = (await triggerClient.GetNotificationTriggersAsync(0)).First();
 
-            var client = Initialize_Client(new AddressValidatorResponse("deletesub.htm?id=0&subid=1"));
-
-            await client.RemoveNotificationTriggerAsync(trigger);
+            await ExecuteAsync(
+                async c => await c.RemoveNotificationTriggerAsync(trigger),
+                "deletesub.htm?id=0&subid=1"
+            );
         }
 
         [TestMethod]

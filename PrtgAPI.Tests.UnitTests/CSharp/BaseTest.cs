@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PrtgAPI.Reflection;
+using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests
@@ -46,11 +47,12 @@ namespace PrtgAPI.Tests.UnitTests
         /// <param name="action">Action to perform.</param>
         /// <param name="url">URL that should be created.</param>
         /// <param name="countOverride">Override for the number of objects that should be created.</param>
-        protected void Execute(Action<PrtgClient> action, string url, Dictionary<Content, int> countOverride = null)
+        /// <param name="version">The client version to use. If no version is specified, the default will be used.</param>
+        internal void Execute(Action<PrtgClient> action, string url, Dictionary<Content, int> countOverride = null, Dictionary<Content, BaseItem[]> itemOverride = null, RequestVersion? version = null)
         {
-            var response = GetValidator(url, countOverride);
+            var response = GetValidator(url, countOverride, itemOverride);
 
-            var client = Initialize_Client(response);
+            var client = version != null ? Initialize_Client(response, version.Value) : Initialize_Client(response);
 
             action(client);
 
@@ -63,33 +65,36 @@ namespace PrtgAPI.Tests.UnitTests
         /// <param name="action">Action to perform.</param>
         /// <param name="url">URLs that should be created.</param>
         /// <param name="countOverride">Override for the number of objects that should be created.</param>
-        protected void Execute(Action<PrtgClient> action, string[] url, Dictionary<Content, int> countOverride = null)
+        /// <param name="version">The client version to use. If no version is specified, the default will be used.</param>
+        internal void Execute(Action<PrtgClient> action, string[] url, Dictionary<Content, int> countOverride = null, Dictionary<Content, BaseItem[]> itemOverride = null, RequestVersion? version = null)
         {
-            var response = GetValidator(url, countOverride);
+            var response = GetValidator(url, countOverride, itemOverride);
 
-            var client = Initialize_Client(response);
+            var client = version != null ? Initialize_Client(response, version.Value) : Initialize_Client(response);
 
             action(client);
 
             response.AssertFinished();
         }
 
-        protected async Task ExecuteAsync(Func<PrtgClient, Task> action, string url, Dictionary<Content, int> countOverride = null)
+        internal async Task ExecuteAsync(Func<PrtgClient, Task> action, string url, Dictionary<Content, int> countOverride = null, Dictionary<Content, BaseItem[]> itemOverride = null, RequestVersion? version = null)
         {
-            var response = GetValidator(url, countOverride);
+            var response = GetValidator(url, countOverride, itemOverride);
 
-            var client = Initialize_Client(response);
+            var client = version != null ? Initialize_Client(response, version.Value) : Initialize_Client(response);
 
             await action(client);
 
             response.AssertFinished();
         }
 
-        protected async Task ExecuteAsync(Func<PrtgClient, Task> action, string[] url, Dictionary<Content, int> countOverride = null)
+        internal async Task ExecuteAsync(Func<PrtgClient, Task> action, string[] url, Dictionary<Content, int> countOverride = null, Dictionary<Content, BaseItem[]> itemOverride = null, RequestVersion? version = null, Action<AddressValidatorResponse> additionalItems = null)
         {
-            var response = GetValidator(url, countOverride);
+            var response = GetValidator(url, countOverride, itemOverride);
 
-            var client = Initialize_Client(response);
+            additionalItems?.Invoke(response);
+
+            var client = version != null ? Initialize_Client(response, version.Value) : Initialize_Client(response);
 
             await action(client);
 
@@ -103,12 +108,22 @@ namespace PrtgAPI.Tests.UnitTests
             return action(client);
         }
 
-        private AddressValidatorResponse GetValidator(object urls, Dictionary<Content, int> countOverride)
+        private AddressValidatorResponse GetValidator(object urls, Dictionary<Content, int> countOverride, Dictionary<Content, BaseItem[]> itemOverride)
         {
+#pragma warning disable 618
             if (urls is string[] || urls is object[])
-                return new AddressValidatorResponse(((IEnumerable)urls).Cast<object>().ToArray()) { CountOverride = countOverride };
+                return new AddressValidatorResponse(((IEnumerable)urls).Cast<object>().ToArray())
+                {
+                    CountOverride = countOverride,
+                    ItemOverride = itemOverride
+                };
             else
-                return new AddressValidatorResponse(urls?.ToString()) { CountOverride = countOverride };
+                return new AddressValidatorResponse(urls?.ToString())
+                {
+                    CountOverride = countOverride,
+                    ItemOverride = itemOverride
+                };
+#pragma warning restore 618
         }
     }
 }

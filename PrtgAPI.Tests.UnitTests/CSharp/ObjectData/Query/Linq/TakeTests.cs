@@ -86,9 +86,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var client = GetUntilMatchedClient();
 
-            var response = client.QuerySensors(s => s.Name.Contains("Ye") && s.Name == "Yes").Take(2).ToList();
+            var response = client.Item1.QuerySensors(s => s.Name.Contains("Ye") && s.Name == "Yes").Take(2).ToList();
 
             Assert.AreEqual(2, response.Count);
+
+            client.Item2.AssertFinished();
         }
 
         [TestMethod]
@@ -103,9 +105,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 SearchFilters = new List<SearchFilter> {new SearchFilter(Property.Name, FilterOperator.Contains, "Ye")}
             };
 
-            var response = client.StreamSensors(parameters, true).Where(s => s.Name == "Yes").Take(2).ToList();
+            var response = client.Item1.StreamSensors(parameters, true).Where(s => s.Name == "Yes").Take(2).ToList();
 
             Assert.AreEqual(2, response.Count);
+
+            client.Item2.AssertFinished();
         }
 
         [TestMethod]
@@ -120,7 +124,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             items.AddRange(GetPage("YeNo", 1));
             items.AddRange(GetPage("Yes", 1));
 
-            var urls = new object[]
+            var urls = new[]
             {
                 TestHelpers.RequestSensor("count=2&filter_name=@sub(Ye)", UrlFlag.Columns),          //Yes, YeNo
                 TestHelpers.RequestSensor("count=0&filter_name=@sub(Ye)", null),                     //Count
@@ -128,34 +132,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 TestHelpers.RequestSensor("count=3&filter_name=@sub(Ye)&start=3", UrlFlag.Columns) //Yes
             };
 
-            var client = Initialize_Client(new AddressValidatorResponse(urls)
+            var itemOverride = new Dictionary<Content, BaseItem[]>
             {
-                ItemOverride = new Dictionary<Content, BaseItem[]>
-                {
-                    [Content.Sensors] = items.ToArray()
-                }
-            });
-
-            Func<SensorParameters, Func<int>, IEnumerable<Sensor>> streamer = (p, c) => client.ObjectEngine.StreamObjects<Sensor, SensorParameters>(p, true, c);
-
-            var parameters = new SensorParameters
-            {
-                SearchFilters = new List<SearchFilter> {new SearchFilter(Property.Name, FilterOperator.Contains, "Ye")}
+                [Content.Sensors] = items.ToArray()
             };
 
-            var iterator = new TakeIterator<Sensor, SensorParameters>(
-                2,
-                parameters,
-                streamer,
-                () => client.GetTotalObjects(parameters.Content, parameters.SearchFilters?.ToArray()),
-                r => r.Where(s => s.Name == "Yes")
-            );
+            Execute(c =>
+            {
+                Func<SensorParameters, Func<int>, IEnumerable<Sensor>> streamer = (p, c1) => c.ObjectEngine.StreamObjects<Sensor, SensorParameters>(p, true, c1);
 
-            var response = iterator.ToList();
-            Assert.AreEqual(2, response.Count);
+                var parameters = new SensorParameters
+                {
+                    SearchFilters = new List<SearchFilter> { new SearchFilter(Property.Name, FilterOperator.Contains, "Ye") }
+                };
+
+                var iterator = new TakeIterator<Sensor, SensorParameters>(
+                    2,
+                    parameters,
+                    streamer,
+                    () => c.GetTotalObjects(parameters.Content, parameters.SearchFilters?.ToArray()),
+                    r => r.Where(s => s.Name == "Yes")
+                );
+
+                var response = iterator.ToList();
+                Assert.AreEqual(2, response.Count);
+
+            }, urls, itemOverride: itemOverride);
         }
 
-        private PrtgClient GetUntilMatchedClient(int pageSize = 500)
+        private Tuple<PrtgClient, AddressValidatorResponse> GetUntilMatchedClient(int pageSize = 500)
         {
             var items = new List<BaseItem>();
             items.AddRange(GetPage("Yes", pageSize));
@@ -167,21 +172,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new object[]
             {
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)", UrlFlag.Columns),            //Yes
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 1}", UrlFlag.Columns),  //YeNo
+                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)", UrlFlag.Columns),                      //Yes
+                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 1}", UrlFlag.Columns), //YeNo
                 TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 2}", UrlFlag.Columns), //YeNo
                 TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 3}", UrlFlag.Columns)  //Yes
             };
 
-            var client = Initialize_Client(new AddressValidatorResponse(urls)
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(urls)
             {
                 ItemOverride = new Dictionary<Content, BaseItem[]>
                 {
                     [Content.Sensors] = items.ToArray()
                 }
-            });
+            };
+#pragma warning restore 618
 
-            return client;
+            var client = Initialize_Client(response);
+
+            return Tuple.Create(client, response);
         }
 
         private List<SensorItem> GetPage(string target, int pageSize = 500)

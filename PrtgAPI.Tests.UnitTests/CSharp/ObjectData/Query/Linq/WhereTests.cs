@@ -874,9 +874,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var client = GetClient(urls.ToArray());
 
-            var sensors = client.QuerySensors().Where(s => client.QueryDevices().Any(d => d.Id == s.Id - 1000)).ToList();
+            var sensors = client.Item1.QuerySensors().Where(s => client.Item1.QueryDevices().Any(d => d.Id == s.Id - 1000)).ToList();
 
             Assert.AreEqual(3, sensors.Count);
+
+            client.Item2.AssertFinished();
         }
 
         #endregion

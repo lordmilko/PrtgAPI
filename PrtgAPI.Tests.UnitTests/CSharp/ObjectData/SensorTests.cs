@@ -103,7 +103,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void Sensor_Stream_WithCorrectPageSize()
         {
-            var urls = new object[]
+            var urls = new[]
             {
                 TestHelpers.RequestSensor("count=500", UrlFlag.Columns),
                 TestHelpers.RequestSensor("count=500&start=500", UrlFlag.Columns),
@@ -111,17 +111,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 TestHelpers.RequestSensor("count=100&start=1500", UrlFlag.Columns),
             };
 
-            var client = Initialize_Client(new AddressValidatorResponse(urls)
+            var countOverride = new Dictionary<Content, int>
             {
-                CountOverride = new Dictionary<Content, int>
-                {
-                    [Content.Sensors] = 1600
-                }
-            });
+                [Content.Sensors] = 1600
+            };
 
-            var items = client.StreamSensors(true).ToList();
+            Execute(c =>
+            {
+                var items = c.StreamSensors(true).ToList();
 
-            Assert.AreEqual(1600, items.Count);
+                Assert.AreEqual(1600, items.Count);
+            }, urls, countOverride);
         }
 
         [TestMethod]

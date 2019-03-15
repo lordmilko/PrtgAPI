@@ -12,30 +12,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void SensorType_CanExecute()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("api/sensortypes.json?id=3002"));
+            Execute(
+                c =>
+                {
+                    var types = c.GetSensorTypes(3002);
 
-            var types = client.GetSensorTypes(3002);
+                    Assert.AreEqual(3, types.Count, "Did not return expected number of types");
 
-            Assert.AreEqual(3, types.Count, "Did not return expected number of types");
-
-            Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
-            Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
-            Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
+                    Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
+                    Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
+                    Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
+                },
+                "api/sensortypes.json?id=3002"
+            );
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public async Task SensorType_CanExecuteAsync()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("api/sensortypes.json?id=3002"));
+            await ExecuteAsync(
+                async c =>
+                {
+                    var types = await c.GetSensorTypesAsync(3002);
 
-            var types = await client.GetSensorTypesAsync(3002);
+                    Assert.AreEqual(3, types.Count, "Did not return expected number of types");
 
-            Assert.AreEqual(3, types.Count, "Did not return expected number of types");
-
-            Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
-            Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
-            Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
+                    Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
+                    Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
+                    Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
+                },
+                "api/sensortypes.json?id=3002"
+            );
         }
 
         [TestMethod]

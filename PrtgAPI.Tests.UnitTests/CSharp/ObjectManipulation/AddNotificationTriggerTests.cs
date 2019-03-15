@@ -357,24 +357,29 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         private void TestTriggerChannel(TriggerChannel channel, string[] urls, bool isSensor, ChannelItem channelItem = null)
         {
-            var client = Initialize_Client(new AddressValidatorResponse(urls)
+            var countOverride = new Dictionary<Content, int>
             {
-                CountOverride = new Dictionary<Content, int>
-                {
-                    [Content.Sensors] = isSensor ? 2 : 0
-                },
-                ItemOverride = channelItem != null ? new Dictionary<Content, BaseItem[]>
+                [Content.Sensors] = isSensor ? 2 : 0
+            };
+
+            var itemOverride = channelItem != null
+                ? new Dictionary<Content, BaseItem[]>
                 {
                     [Content.Channels] = new[] {channelItem}
-                } : null
-            });
+                }
+                : null;
 
             var parameters = new ThresholdTriggerParameters(1001)
             {
                 Channel = channel
             };
 
-            client.AddNotificationTrigger(parameters, false);
+            Execute(
+                c => c.AddNotificationTrigger(parameters, false),
+                urls,
+                countOverride,
+                itemOverride
+            );
         }
     }
 }

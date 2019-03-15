@@ -13,9 +13,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetObjectProperty_SetsAChild_OfAnInternalProperty()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("editsettings?id=1001&hostv6_=dc-1&ipversion_=1"));
-
-            client.SetObjectProperty(1001, ObjectProperty.Hostv6, "dc-1");
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.Hostv6, "dc-1"),
+                "editsettings?id=1001&hostv6_=dc-1&ipversion_=1"
+            );
         }
 
         #region SetObjectPropertyParameters

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -146,9 +147,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void Location_Google_CorrectUrl()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=0&path=google%2Bgoogle&username"), RequestVersion.v14_4);
-
-            client.ResolveAddress("google google", CancellationToken.None);
+            Execute(
+                c => c.ResolveAddress("google google", CancellationToken.None),
+                "geolocator.htm?cache=false&dom=0&path=google%2Bgoogle&username",
+                version: RequestVersion.v14_4
+            );
         }
 
         [TestMethod]
@@ -251,9 +254,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void Location_Here_CorrectUrl()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("geolocator.htm?cache=false&dom=2&path=here%2Bhere&username"), RequestVersion.v17_4);
-
-            client.ResolveAddress("here here", CancellationToken.None);
+            Execute(
+                c => c.ResolveAddress("here here", CancellationToken.None),
+                "geolocator.htm?cache=false&dom=2&path=here%2Bhere&username",
+                version: RequestVersion.v17_4
+            );
         }
 
         [TestMethod]
@@ -885,12 +890,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetObjectProperty_Modifies_MultipleProperties()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
-
-            client.SetObjectProperty(
-                1001,
-                new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
-                new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+            Execute(
+                c => c.SetObjectProperty(
+                    1001,
+                    new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
+                    new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+                ),
+                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
             );
         }
 
@@ -898,12 +904,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public async Task SetObjectProperty_Modifies_MultiplePropertiesAsync()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
-
-            await client.SetObjectPropertyAsync(
-                1001,
-                new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
-                new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(
+                    1001,
+                    new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
+                    new PropertyParameter(ObjectProperty.WindowsPassword, "password")
+                ),
+                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
             );
         }
 
@@ -911,27 +918,40 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_Modifies_MultipleProperties()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
+            var urls = new[]
+            {
+                TestHelpers.RequestChannel(1001),
+                TestHelpers.RequestChannelProperties(1001, 1),
+                TestHelpers.SetChannelProperty("id=1001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=1&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+            };
 
-            client.SetObjectProperty(
+            Execute(c => c.SetObjectProperty(
                 1001,
-                2,
+                1,
                 new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
                 new ChannelParameter(ChannelProperty.LowerErrorLimit, 20)
-            );
+            ), urls);
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public async Task SetChannelProperty_Modifies_MultiplePropertiesAsync()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&limitmaxerror_2=100&limitminerror_2=20&limitmode_2=1"));
+            var urls = new[]
+            {
+                TestHelpers.RequestChannel(1001),
+                TestHelpers.RequestChannelProperties(1001, 1),
+                TestHelpers.SetChannelProperty("id=1001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=1&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+            };
 
-            await client.SetObjectPropertyAsync(
-                1001,
-                2,
-                new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
-                new ChannelParameter(ChannelProperty.LowerErrorLimit, 20)
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyAsync(
+                    1001,
+                    1,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 20)
+                ),
+                urls
             );
         }
 
@@ -939,13 +959,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetObjectProperty_Modifies_MultipleRawProperties()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
-
-            client.SetObjectPropertyRaw(
-                1001,
-                new CustomParameter("windowsloginusername_", "username"),
-                new CustomParameter("windowsloginpassword_", "password"),
-                new CustomParameter("windowsconnection", 0)
+            Execute(
+                c => c.SetObjectPropertyRaw(
+                    1001,
+                    new CustomParameter("windowsloginusername_", "username"),
+                    new CustomParameter("windowsloginpassword_", "password"),
+                    new CustomParameter("windowsconnection", 0)
+                ),
+                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
             );
         }
 
@@ -953,13 +974,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public async Task SetObjectProperty_Modifies_MultipleRawPropertiesAsync()
         {
-            var client = Initialize_Client(new AddressValidatorResponse("id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"));
-
-            await client.SetObjectPropertyRawAsync(
-                1001,
-                new CustomParameter("windowsloginusername_", "username"),
-                new CustomParameter("windowsloginpassword_", "password"),
-                new CustomParameter("windowsconnection", 0)
+            await ExecuteAsync(
+                async c => await c.SetObjectPropertyRawAsync(
+                    1001,
+                    new CustomParameter("windowsloginusername_", "username"),
+                    new CustomParameter("windowsloginpassword_", "password"),
+                    new CustomParameter("windowsconnection", 0)
+                ),
+                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
             );
         }
 
@@ -1356,12 +1378,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var property = ChannelProperty.ErrorLimitMessage;
             var val = "hello";
-            
-            var client = Initialize_Client(
-                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true),
-                RequestVersion.v18_1);
+
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true);
+#pragma warning restore 618
+
+            var client = Initialize_Client(response, RequestVersion.v18_1);
 
             client.GetVersionClient(new object[] {property}).SetChannelProperty(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
+
+            response.AssertFinished();
         }
 
         private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
@@ -1372,12 +1398,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var channels = matrix.Select(CreateChannel).ToList();
 
-            var client = Initialize_Client(
-                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true),
-                version
-            );
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true);
+#pragma warning restore 618
+
+            var client = Initialize_Client(response, version);
 
             client.GetVersionClient(new object[] { property }).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, new [] {new ChannelParameter(property, val)});
+
+            response.AssertFinished();
         }
 
         private Channel CreateChannel(int?[] limits, int i)
@@ -1787,12 +1816,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var property = ChannelProperty.ErrorLimitMessage;
             var val = "hello";
 
-            var client = Initialize_Client(
-                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true),
-                RequestVersion.v18_1
-            );
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/{a}&username=username&passhash=12345678").ToArray(), true);
+#pragma warning restore 618
+
+            var client = Initialize_Client(response, RequestVersion.v18_1);
 
             await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
+
+            response.AssertFinished();
         }
 
         private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
@@ -1803,10 +1835,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var channels = matrix.Select(CreateChannel).ToList();
 
-            var client = Initialize_Client(
-                new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true),
-                version
-            );
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true);
+#pragma warning restore 618
+
+            var client = Initialize_Client(response, version);
 
             await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
         }

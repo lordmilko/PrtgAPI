@@ -24,7 +24,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var client = GetClient(urls.ToArray());
 
-            var result = client.QuerySensors().Where(predicate).ToList();
+            var result = client.Item1.QuerySensors().Where(predicate).ToList();
+
+            client.Item2.AssertFinished();
         }
 
         protected void ExecuteBinaryExpr(Property property, Func<Expr, Expr> expr, ExpressionType nodeType, string url = "")

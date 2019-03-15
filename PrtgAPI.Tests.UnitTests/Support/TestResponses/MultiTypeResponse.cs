@@ -35,6 +35,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public Dictionary<Content, BaseItem[]> ItemOverride { get; set; }
         private Dictionary<string, int> hitCount = new Dictionary<string, int>();
 
+        public int[] HasSchedule { get; set; }
+
         public int? FixedCountOverride { get; set; }
 
         public string GetResponseText(ref string address)
@@ -98,7 +100,10 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditNotification):
-                    return new NotificationActionResponse(new NotificationActionItem());
+                    return new NotificationActionResponse(new NotificationActionItem())
+                    {
+                        HasSchedule = HasSchedule
+                    };
                 case nameof(JsonFunction.GetAddSensorProgress):
                     var progress = hitCount[function] % 2 == 0 ? 100 : 50;
 
@@ -495,7 +500,10 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case ObjectType.Device:
                     return new DeviceSettingsResponse();
                 case ObjectType.Notification:
-                    return new NotificationActionResponse(new NotificationActionItem());
+                    return new NotificationActionResponse(new NotificationActionItem())
+                    {
+                        HasSchedule = HasSchedule
+                    };
                 case ObjectType.Schedule:
                     return new ScheduleResponse();
                 default:

@@ -49,9 +49,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var client = GetClient(urls.ToArray(), propertyManipulator: propertyManipulator);
 
-            var result = func(client.QuerySensors()).ToList();
+            var result = func(client.Item1.QuerySensors()).ToList();
 
             validator(result);
+
+            client.Item2.AssertFinished();
         }
 
         protected void ExecuteNow<TResult>(Func<IQueryable<Sensor>, TResult> func, string url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
@@ -65,9 +67,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var client = GetClient(url, count);
 
-            var result = func(client.QuerySensors());
+            var result = func(client.Item1.QuerySensors());
 
             validator(result);
+
+            client.Item2.AssertFinished();
         }
 
         protected void ExecuteSkip<TResult>(Func<IQueryable<Sensor>, TResult> func, string url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
@@ -83,18 +87,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var client = GetClient(list.ToArray(), count);
 
-            var result = func(client.QuerySensors());
+            var result = func(client.Item1.QuerySensors());
 
             validator(result);
+
+            client.Item2.AssertFinished();
         }
 
         protected void ExecuteClient<TResult>(Func<PrtgClient, TResult> action, string[] urls, Action<TResult> validator)
         {
             var client = GetClient(urls);
 
-            var result = action(client);
+            var result = action(client.Item1);
 
             validator(result);
+
+            client.Item2.AssertFinished();
         }
 
         protected void ExecuteNullable<TResult>(Func<IQueryable<Sensor>, IQueryable<TResult>> func, string url, Action<SensorItem> manipulator)
@@ -128,9 +136,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             });
         }
 
-        protected PrtgClient GetClient(string[] urls, int sensorCount = 3, int deviceCount = 4, int logCount = 5, Dictionary<Content, Action<BaseItem>> propertyManipulator = null)
+        protected Tuple<PrtgClient, AddressValidatorResponse> GetClient(string[] urls, int sensorCount = 3, int deviceCount = 4, int logCount = 5, Dictionary<Content, Action<BaseItem>> propertyManipulator = null)
         {
-            var client = Initialize_Client(new AddressValidatorResponse(urls.Cast<object>().ToArray())
+#pragma warning disable 618
+            var response = new AddressValidatorResponse(urls.Cast<object>().ToArray())
             {
                 CountOverride = new Dictionary<Content, int>
                 {
@@ -139,9 +148,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                     [Content.Logs] = logCount,
                 },
                 PropertyManipulator = propertyManipulator
-            });
+            };
 
-            return client;
+            var client = Initialize_Client(response);
+#pragma warning restore 618
+
+            return Tuple.Create(client, response);
         }
 
         public static string Cast(string value, string type)

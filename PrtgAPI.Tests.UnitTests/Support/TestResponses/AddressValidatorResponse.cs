@@ -15,6 +15,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private int arrayPos;
 
+        [Obsolete("Do not create AddressValidatorResponse objects directly; use BaseTest.Execute instead")]
         public AddressValidatorResponse(string str)
         {
             if (string.IsNullOrEmpty(str))
@@ -24,6 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             exactMatch = false;
         }
 
+        [Obsolete("Do not create AddressValidatorResponse objects directly; use BaseTest.Execute instead")]
         public AddressValidatorResponse(object str, bool exactMatch)
         {
             if (string.IsNullOrEmpty(str?.ToString()))
@@ -37,6 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             this.exactMatch = exactMatch;
         }
 
+        [Obsolete("Do not create AddressValidatorResponse objects directly; use BaseTest.Execute instead")]
         public AddressValidatorResponse(object[] str) : this(str, true)
         {
         }

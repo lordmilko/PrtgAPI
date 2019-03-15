@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,7 +21,7 @@ using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
-    public class PrtgClientTests
+    public class PrtgClientTests : BaseTest
     {
         [TestMethod]
         [TestCategory("UnitTest")]
@@ -478,7 +479,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var server = "prtg.example.com";
             var username = "username";
-            var passhash = "1234567890";
+            var passhash = "12345678";
 
             string[] urls =
             {
@@ -486,9 +487,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 $"https://{server}/api/pause.htm?id={string.Join(",", Enumerable.Range(1501, 500))}&action=0&username={username}&passhash={passhash}"
             };
 
-            var client = new PrtgClient(server, username, passhash, AuthMode.PassHash, new MockWebClient(new AddressValidatorResponse(urls, true)));
-
-            client.PauseObject(range);
+            Execute(
+                c => c.PauseObject(range),
+                urls
+            );
         }
 
         [TestMethod]
@@ -659,7 +661,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             if (method.Name == "GetNotificationTriggers" || method.Name == "GetNotificationTriggersAsync")
             {
-                return BaseTest.Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
+                return Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
             }
 
             return defaultClient;

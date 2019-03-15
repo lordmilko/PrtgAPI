@@ -77,17 +77,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 TestHelpers.RequestLog("count=100&start=1501&filter_drel=7days", UrlFlag.Columns)
             };
 
-            var client = Initialize_Client(new AddressValidatorResponse(urls)
-            {
-                CountOverride = new Dictionary<Content, int>
+            Execute(
+                c => {
+                    var items = c.StreamLogs(serial: true).ToList();
+
+                    Assert.AreEqual(1600, items.Count);
+                },
+                urls,
+                new Dictionary<Content, int>
                 {
                     [Content.Logs] = 1600
                 }
-            });
-
-            var items = client.StreamLogs(serial: true).ToList();
-
-            Assert.AreEqual(1600, items.Count);
+            );
         }
 
         [TestMethod]

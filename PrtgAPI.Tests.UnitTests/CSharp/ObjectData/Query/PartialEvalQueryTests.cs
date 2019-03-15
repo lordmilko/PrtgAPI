@@ -128,22 +128,21 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             Expression<Func<Sensor, bool>> expr = s => s.Name == "Volume IO _Total0";
 
-            var urls = new object[]
+            var countOverride = new Dictionary<Content, int>
             {
-                TestHelpers.RequestSensor("filter_name=Volume+IO+_Total0")
+                [Content.Sensors] = 3
             };
 
-            var client = Initialize_Client(new AddressValidatorResponse(urls.ToArray())
-            {
-                CountOverride = new Dictionary<Content, int>
+            Execute(
+                c =>
                 {
-                    [Content.Sensors] = 3
-                }
-            });
+                    var result = c.QuerySensors().Where(expr).ToList();
 
-            var result = client.QuerySensors().Where(expr).ToList();
-
-            Assert.AreEqual(1, result.Count);
+                    Assert.AreEqual(1, result.Count);
+                },
+                TestHelpers.RequestSensor("filter_name=Volume+IO+_Total0"),
+                countOverride
+            );
         }
 
         [TestMethod]
