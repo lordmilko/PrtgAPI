@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Targets;
@@ -186,6 +187,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Help SensorParameters</para>
     /// <para type="link">Add-Sensor</para>
     /// <para type="link">Get-Device</para>
+    /// <para type="linl">New-Sensor</para>
     /// <para type="link">Set-StrictMode</para>
     /// </summary>
     [Cmdlet(VerbsCommon.New, "SensorParameters", DefaultParameterSetName = ParameterSet.Default)]
@@ -255,8 +257,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
         public SwitchParameter DynamicType { get; set; }
 
-        private bool ignoreName;
-
         private const string NameParameter = "name_";
         private const string SensorTypeParameter = "sensortype";
 
@@ -305,7 +305,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 parameters = ParameterSetName == ParameterSet.Raw ? CreateRawParameters() : CreateTypedParameters();
 
-                if (First != null && !ignoreName)
+                var attrib = Type.GetEnumAttribute<NewSensorAttribute>() ?? new NewSensorAttribute();
+
+                if (!string.IsNullOrWhiteSpace(First?.ToString()) && !attrib.DynamicName)
                     parameters.Name = First.ToString();
             }
 
@@ -377,17 +379,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (Type)
             {
                 case SensorType.ExeXml:
-                    parameters = new ExeXmlSensorParameters("FAKE_VALUE") { ExeFile = GetImplicit<ExeFileTarget>(Second) };
+                    parameters = new ExeXmlSensorParameters("FAKE_VALUE")
+                    {
+                        ExeFile = GetImplicit<ExeFileTarget>(Second)
+                    };
                     break;
                 case SensorType.Http:
                     var httpParameters = new HttpSensorParameters();
-                    MaybeSet(First, v => httpParameters.Name = v?.ToString());
                     MaybeSet(Second, v => httpParameters.Url = v?.ToString());
                     parameters = httpParameters;
                     break;
                 case SensorType.WmiService:
-                    ignoreName = true;
-                    parameters = new WmiServiceSensorParameters(new List<WmiServiceTarget>()) { Services = GetList<WmiServiceTarget>(First) };
+                    parameters = new WmiServiceSensorParameters(new List<WmiServiceTarget>())
+                    {
+                        Services = GetList<WmiServiceTarget>(First)
+                    };
                     break;
                 case SensorType.Factory:
                     parameters = new FactorySensorParameters(Enumerable.Empty<string>())

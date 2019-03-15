@@ -32,6 +32,7 @@
     <DocumentationFile>bin\Release\PrtgAPI\PrtgAPI.PowerShell.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation" />
@@ -40,10 +41,14 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShell\AlternateParameterSet.cs" />
+    <Compile Include="PowerShell\AlternateSensorTargetParameter.cs" />
+    <Compile Include="PowerShell\Base\IPSCmdletEx.cs" />
     <Compile Include="PowerShell\EventStack.cs" />
     <Compile Include="PowerShell\EventState.cs" />
     <Compile Include="Exceptions\UnknownParameterSetException.cs" />
     <Compile Include="PowerShell\Base\AddObject.cs" />
+    <Compile Include="PowerShell\Base\AddParametersObject.cs" />
     <Compile Include="PowerShell\Base\GoPrtgCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPrtgMultiPassThruCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPrtgPassThruCmdlet.cs" />
@@ -62,9 +67,11 @@
     <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableStatusCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableTagCmdlet.cs" />
+    <Compile Include="PowerShell\Base\PSCmdletEx.cs" />
     <Compile Include="PowerShell\Base\StreamableCmdletProvider.cs" />
     <Compile Include="PowerShell\ChannelUnitMap.cs" />
     <Compile Include="PowerShell\CloneCmdletConfig.cs" />
+    <Compile Include="PowerShell\FactorySummaryMode.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetChannel.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDevice.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectData\GetDeviceTemplate.cs" />
@@ -102,6 +109,7 @@
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewDeviceParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewGroupParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewNotificationTriggerParameters.cs" />
+    <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewSensor.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\NewSensorParameters.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\OpenPrtgObject.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\PauseObject.cs" />
@@ -131,18 +139,23 @@
     <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UninstallGoPrtgServer.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\GoPrtg\UpdateGoPrtgCredential.cs" />
     <Compile Include="PowerShell\Cmdlets\Session\SetPrtgClient.cs" />
-    <Compile Include="PowerShell\DynamicParameterSet.cs" />
-    <Compile Include="PowerShell\Either.cs" />
+    <Compile Include="PowerShell\Either\EnumOrScriptBlock.cs" />
+    <Compile Include="PowerShell\IAlternateParameter.cs" />
+    <Compile Include="PowerShell\NewSensorDestinationType.cs" />
+    <Compile Include="PowerShell\NewSensorDynamicParameterCategory.cs" />
+    <Compile Include="PowerShell\NewSensorDynamicParameterContainer.cs" />
+    <Compile Include="PowerShell\ParameterSetDescriptor.cs" />
     <Compile Include="PowerShell\PropertyDynamicParameterSet.cs" />
+    <Compile Include="PowerShell\Either\Either.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
     <Compile Include="PowerShell\FormatGenerator.cs" />
     <Compile Include="PowerShell\GoPrtg\GoPrtgProfile.cs" />
     <Compile Include="PowerShell\GoPrtg\GoPrtgServer.cs" />
-    <Compile Include="PowerShell\NameOrObject.cs" />
-    <Compile Include="PowerShell\NameOrScriptBlock.cs" />
+    <Compile Include="PowerShell\Either\NameOrObject.cs" />
+    <Compile Include="PowerShell\Either\NameOrScriptBlock.cs" />
     <Compile Include="PowerShell\ParameterSet.cs" />
     <Compile Include="PowerShell\Pipeline.cs" />
-    <Compile Include="PowerShell\Position.cs" />
+    <Compile Include="PowerShell\Either\Position.cs" />
     <Compile Include="PowerShell\Progress\AbortProgressParser.cs" />
     <Compile Include="PowerShell\Progress\IProgressWriter.cs" />
     <Compile Include="PowerShell\Progress\ProcessingOption.cs" />
@@ -163,7 +176,11 @@
     <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
     <Compile Include="PowerShell\PSObjectParameterContainer.cs" />
-    <Compile Include="PowerShell\PSObjectUtilities.cs" />
+    <Compile Include="PowerShell\RuntimeDefinedParameterEx.cs" />
+    <Compile Include="PowerShell\DummyRuntime.cs" />
+    <Compile Include="PowerShell\RuntimeDefinedParameterDictionaryEx.cs" />
+    <Compile Include="Utilities\PSCmdletInvoker.cs" />
+    <Compile Include="Utilities\PSObjectUtilities.cs" />
     <Compile Include="PowerShell\PSRawSensorParameters.cs" />
     <Compile Include="PowerShell\PSVariableEx.cs" />
     <Compile Include="PowerShell\SensorHistoryFormatter.cs" />
@@ -173,6 +190,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ScriptBlockUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -214,16 +232,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
-    <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; goto :release
-goto :exit
-
-:release
-set textTemplatingPath=&quot;%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;
-if %25textTemplatingPath%25==&quot;\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot; set textTemplatingPath=&quot;%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;
-%25textTemplatingPath%25 &quot;$(ProjectDir)Properties\Version.tt&quot;
-%25textTemplatingPath%25 &quot;$(ProjectDir)PowerShell\Resources\PrtgAPI.tt&quot;
-
-:exit"/>
+    <Exec Command="if &quot;$(ConfigurationName)&quot; == &quot;Release&quot; goto :release&#xD;&#xA;goto :exit&#xD;&#xA;&#xD;&#xA;:release&#xD;&#xA;set textTemplatingPath=&quot;%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;&#xD;&#xA;if %25textTemplatingPath%25==&quot;\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot; set textTemplatingPath=&quot;%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe&quot;&#xD;&#xA;%25textTemplatingPath%25 &quot;$(ProjectDir)Properties\Version.tt&quot;&#xD;&#xA;%25textTemplatingPath%25 &quot;$(ProjectDir)PowerShell\Resources\PrtgAPI.tt&quot;&#xD;&#xA;&#xD;&#xA;:exit" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)PowerShell\Resources\*.*" "$(TargetDir)"

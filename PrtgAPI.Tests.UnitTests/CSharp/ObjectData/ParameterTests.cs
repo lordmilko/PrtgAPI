@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Infrastructure;
@@ -19,7 +21,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public int RestartStage
         {
             get { return (int)GetCustomParameterEnumXml<int>(ObjectProperty.AutoDiscoverySchedule); }
-            set { SetCustomParameterEnumXml<int>(ObjectProperty.AutoDiscoverySchedule, value); }
+            set { SetCustomParameterEnumXml(ObjectProperty.AutoDiscoverySchedule, value); }
         }
     }
 
@@ -349,6 +351,40 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             Assert.AreEqual(ScanningInterval.FiveMinutes, parameters.Interval);
             Assert.AreEqual(false, parameters.InheritInterval);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void NewSensorParameters_AllPropertiesHavePropertyParameterAttributes()
+        {
+            var properties = typeof(NewSensorParameters).Assembly.GetTypes()
+                .Where(t => typeof(NewSensorParameters).IsAssignableFrom(t))
+                .SelectMany(t => t.GetNormalProperties())
+                .Where(p => p.ReflectedType == p.DeclaringType)
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            var propertiesWithoutAttributes =
+                properties.Where(p => p.GetCustomAttribute<PropertyParameterAttribute>() == null).OrderBy(p => p.DeclaringType.Name).ToList();
+
+            var excludedProperties = new[]
+            {
+                Tuple.Create(typeof(DynamicSensorParameters), nameof(DynamicSensorParameters.Targets)),
+                Tuple.Create(typeof(DynamicSensorParameters), nameof(DynamicSensorParameters.Source)),
+                Tuple.Create(typeof(NewSensorParameters), nameof(NewSensorParameters.DynamicType)),
+                Tuple.Create(typeof(RawSensorParameters), nameof(RawSensorParameters.Parameters)),
+                Tuple.Create(typeof(SensorParametersInternal), nameof(SensorParametersInternal.SensorType)),
+                Tuple.Create(typeof(SensorParametersInternal), nameof(SensorParametersInternal.Source))
+            };
+
+            propertiesWithoutAttributes = propertiesWithoutAttributes.Where(p => !excludedProperties.Any(e => p.DeclaringType == e.Item1 && p.Name == e.Item2)).ToList();
+
+            if (propertiesWithoutAttributes.Count > 0)
+            {
+                var str = string.Join(", ", propertiesWithoutAttributes.Select(p => $"{p.DeclaringType}.{p.Name}"));
+
+                Assert.Fail($"Properties {str} are missing a {nameof(PropertyParameterAttribute)}");
+            }
         }
 
         #endregion

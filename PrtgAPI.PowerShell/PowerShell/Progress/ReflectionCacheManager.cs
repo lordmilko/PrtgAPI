@@ -163,6 +163,9 @@ namespace PrtgAPI.PowerShell.Progress
                     return (PrtgCmdlet) commands[i];
             }
 
+            if (cmdlet.CommandRuntime is DummyRuntime)
+                return ((DummyRuntime) cmdlet.CommandRuntime).Owner;
+
             return null;
         }
 

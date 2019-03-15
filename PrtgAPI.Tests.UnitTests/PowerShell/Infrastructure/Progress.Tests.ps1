@@ -577,8 +577,6 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         # an extension of 3b. variable -> action -> table. Confirms that we can transform our setpreviousoperation into a
         # proper progress item when required
 
-        #BUG----------------we should have TWO sensors in our progress, but we're only showing 1???
-
         #RunCustomCount $counts {
             $devices = Get-Device
 
@@ -10562,7 +10560,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
     It "109a: Displays watch progress" {
 
         WithResponseArgs "InfiniteLogValidatorResponse" @((Get-Date).AddMinutes(-1), "id=0&start=1") {
-            Get-ObjectLog -Tail -Interval 0 | select -First 7
+            Get-ObjectLog -Tail -Interval 0 | Select -First 7
         }
 
         Validate(@(
@@ -10584,7 +10582,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         WithResponse "InfiniteLogResponse" {
 
-            Get-ObjectLog -Tail -Interval 0 | select -First $total
+            Get-ObjectLog -Tail -Interval 0 | Select -First $total
         }
 
         $progress = @()
@@ -10606,6 +10604,1525 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+    #endregion
+    #region 110: Table Inside Action
+        #region 110.1: Something -> Action (Table)
+
+    It "110.1a: Table -> Action (Table)" {
+        Get-Device -Count 2 | New-Sensor -WmiService *prtg* -Resolve:$false
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "110.1b: Variable -> Action (Table)" {
+        $devices = Get-Device -Count 2
+
+        $devices | New-Sensor -WmiService *prtg* -Resolve:$false
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.2: Something -> Action (Table) -> Table
+
+    It "110.2a: Table -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+        ))
+    }
+
+    It "110.2b: Variable -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+        #endregion
+        #region 110.3: Something -> Action (Table) -> Action
+
+    It "110.3a: Table -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+        ))
+    }
+
+    It "110.3b: Variable -> Action (Table) -> Action" {
+
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.4: Something -> Action (Table) -> Select -First -> Something
+
+    It "110.4a: Table -> Action (Table) -> Select -First -> Table" {
+
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -First 2 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.4b: Variable -> Action (Table) -> Select -First -> Table" {
+
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -First 2 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+
+            # Single progress message for retrieving channels from both sensors on the first device
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50 "Retrieving all channels")
+        ))
+    }
+
+    It "110.4c: Table -> Action (Table) -> Select -First -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -First 2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.4d: Variable -> Action (Table) -> Select -First -> Action" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -First 2 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.5: Something -> Action (Table) -> Select -Last -> Something
+
+    It "110.5a: Table -> Action (Table) -> Select -Last -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Last 2 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.5b: Variable -> Action (Table) -> Select -Last -> Table" {
+
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Last 2 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total2' (1/2)" 50 "Retrieving all channels")
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total3' (2/2)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total3' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.5c: Table -> Action (Table) -> Select -Last -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Last 2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.5d: Variable -> Action (Table) -> Select -Last -> Action" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Last 2 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.6: Something -> Action (Table) -> Skip -> Something
+
+    It "110.6a: Table -> Action (Table) -> Select -Skip -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Skip 2 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.6b: Variable -> Action (Table) -> Select -Skip -> Table" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Skip 2 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.6c: Table -> Action (Table) -> Select -Skip -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Skip 2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.6d: Variable -> Action (Table) -> Select -Skip -> Action" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Skip 2 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.7: Something -> Action (Table) -> Select -SkipLast -> Something
+
+    It "110.7a: Table -> Action (Table) -> Select -SkipLast -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -SkipLast 2 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.7b: Variable -> Action (Table) -> Select -SkipLast -> Table" {
+
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -SkipLast 2 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.7c: Table -> Action (Table) -> Select -SkipLast -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -SkipLast 2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.7d: Variable -> Action (Table) -> Select -SkipLast -> Action" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -SkipLast 2 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.8: Something -> Action (Table) -> Select -Index -> Something
+
+    It "110.8a: Table -> Action (Table) -> Select -Index -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Index 2,3 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.8b: Variable -> Action (Table) -> Select -Index -> Table" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Index 2,3 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.8c: Table -> Action (Table) -> Select -Index -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 2 | New-Sensor -WmiService *prtg*,netlogon | Select -Index 1,2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "110.8d: Variable -> Action (Table) -> Select -Index -> Action" {
+        $devices = Get-Device -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | New-Sensor -WmiService *prtg*,netlogon | Select -Index 1,2 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to Device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total3' and 'Volume IO _Total2' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total3' and 'Volume IO _Total2' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.9: Something -> Select -First -> Action (Table) -> Something
+
+    It "110.9a: Table -> Select -First -> Action (Table) -> Table" {
+
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -First 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/4)" 25)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25 "Retrieving all channels")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+        ))
+    }
+
+    It "110.9b: Variable -> Select -First -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -First 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25 "Retrieving all channels") # First two sensors
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50 "Retrieving all channels") # Second two sensors
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50 "Retrieving all channels")
+        ))
+    }
+
+    It "110.9c: Table -> Select -First -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -First 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/4)" 25)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+        ))
+    }
+
+    It "110.9d: Variable -> Select -First -> Action (Table) -> Action" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -First 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/4)" 25)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (1/4)" 25)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/4)" 50)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2', 'Volume IO _Total3', 'Volume IO _Total2' and 'Volume IO _Total3' forever (4/4)" 100)
+        ))
+    }
+
+        #endregion
+        #region 110.10: Something -> Select -Last -> Action (Table) -> Something
+
+    It "110.10a: Table -> Select -Last -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Last 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/4)" 25)
+
+            (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device3' (4/4)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50 "Retrieving all channels")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.10b: Variable -> Select -Last -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Last 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (1/2)" 50 "Retrieving all channels")
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device3' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.10c: Table -> Select -Last -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Last 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Last -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "110.10d: Variable -> Select -Last -> Action (Table) -> Action" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Last 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Last -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 110.11: Something -> Select -Skip -> Action (Table) -> Something
+
+    It "110.11a: Table -> Select -Skip -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Skip 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/4)" 25)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+        ))
+    }
+
+    It "110.11b: Variable -> Select -Skip -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Skip 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.11c: Table -> Select -Skip -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Skip 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Skip -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "110.11d: Variable -> Select -Skip -> Action (Table) -> Action" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Skip 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Skip -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 110.12: Something -> Select -SkipLast -> Action (Table) -> Something
+
+    It "110.12a: Table -> Select -SkipLast -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -SkipLast 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+            (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/4)" 25)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device0' (1/2)" 50 "Retrieving all channels")
+
+            ###################################################################
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100) +
+                    (Gen3 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100)
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+
+            (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device1' (2/2)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.12b: Variable -> Select -SkipLast -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Skip 2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device3' (4/4)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "110.12c: Table -> Select -SkipLast -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -SkipLast 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -SkipLast -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "110.12d: Variable -> Select -SkipLast -> Action (Table) -> Action" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -SkipLast 2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -SkipLast -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 110.13: Something -> Select -Index -> Action (Table) -> Something
+
+    It "110.13a: Table -> Select -Index -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Index 1,2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+        
+        Validate(@(
+            (Gen "PRTG Device Search" "Retrieving all devices")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50 "Retrieving all channels")
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (50%)" 50)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search" "Probing target device (100%)" 100)
+
+            (Gen1 "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75) +
+                (Gen2 "PRTG WMI Service Search (Completed)" "Probing target device (100%)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+        ))
+    }
+
+    It "110.13b: Variable -> Select -Index -> Action (Table) -> Table" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Index 1,2 | New-Sensor -WmiService *prtg* | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device1' (2/4)" 50 "Retrieving all channels")
+
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75)
+            (Gen "Adding PRTG Sensors" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding WmiService sensor to device 'Probe Device2' (3/4)" 75 "Retrieving all channels")
+        ))
+    }
+
+    It "110.13c: Table -> Select -Index -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Device -Count 4 | Select -Index 1,2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Index -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "110.13d: Variable -> Select -Index -> Action (Table) -> Action" {
+        $devices = Get-Device -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $devices | Select -Index 1,2 | New-Sensor -WmiService *prtg* | Pause-Object -Forever
+        }
+
+        # Select -Index -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+    #endregion
+    #region 111: Table Inside Action (End Processing)
+        #region 111.1: Something -> Action (Table)
+
+    It "111.1a: Table -> Action (Table)" {
+        Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 -Resolve:$false
+
+        # No New-Sensor progress because by the time we get to it "previous did not contain progress" cos it already ended
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+        ))
+    }
+
+    It "111.1b: Variable -> Action (Table)" {
+        $sensors = Get-Sensor -Count 2
+
+        $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 -Resolve:$false
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+        ))
+    }
+
+        #endregion
+        #region 111.2: Something -> Action (Table) -> Table
+
+    It "111.2a: Table -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+        ))
+    }
+
+    It "111.2b: Variable -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+        ))
+    }
+
+        #endregion
+        #region 111.3: Something -> Action (Table) -> Action
+
+    It "111.3a: Table -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+    It "111.3b: Variable -> Action (Table) -> Action" {
+
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.4: Something -> Action (Table) -> Select -First -> Something
+
+    It "111.4a: Table -> Action (Table) -> Select -First -> Table" {
+
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -First 1 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.4b: Variable -> Action (Table) -> Select -First -> Table" {
+
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -First 1 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.4c: Table -> Action (Table) -> Select -First -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -First 1 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.4d: Variable -> Action (Table) -> Select -First -> Action" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -First 1 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.5: Something -> Action (Table) -> Select -Last -> Something
+
+    It "111.5a: Table -> Action (Table) -> Select -Last -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Last 1 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.5b: Variable -> Action (Table) -> Select -Last -> Table" {
+
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Last 1 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+
+            (Gen "PRTG Channel Search" "Processing sensor 'Volume IO _Total3' (1/1)" 100 "Retrieving all channels")
+            (Gen "PRTG Channel Search (Completed)" "Processing sensor 'Volume IO _Total3' (1/1)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "111.5c: Table -> Action (Table) -> Select -Last -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Last 1 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.5d: Variable -> Action (Table) -> Select -Last -> Action" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Last 1 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (1/1)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (1/1)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.6: Something -> Action (Table) -> Skip -> Something
+
+    It "111.6a: Table -> Action (Table) -> Select -Skip -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Skip 1 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.6b: Variable -> Action (Table) -> Select -Skip -> Table" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Skip 2 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+        ))
+    }
+
+    It "111.6c: Table -> Action (Table) -> Select -Skip -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Skip 2 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.6d: Variable -> Action (Table) -> Select -Skip -> Action" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Skip 1 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (1/1)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.7: Something -> Action (Table) -> Select -SkipLast -> Something
+
+    It "111.7a: Table -> Action (Table) -> Select -SkipLast -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -SkipLast 1 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.7b: Variable -> Action (Table) -> Select -SkipLast -> Table" {
+
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -SkipLast 1 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.7c: Table -> Action (Table) -> Select -SkipLast -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -SkipLast 1 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.7d: Variable -> Action (Table) -> Select -SkipLast -> Action" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -SkipLast 1 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.8: Something -> Action (Table) -> Select -Index -> Something
+
+    It "111.8a: Table -> Action (Table) -> Select -Index -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Index 0 | Get-Channel
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.8b: Variable -> Action (Table) -> Select -Index -> Table" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Index 0 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.8c: Table -> Action (Table) -> Select -Index -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Index 0 | Pause-Object -Forever
+        }
+
+        Assert-NoProgress
+    }
+
+    It "111.8d: Variable -> Action (Table) -> Select -Index -> Action" {
+        $sensors = Get-Sensor -Count 2
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Select -Index 0 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/2)" 0)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Queuing sensor 'Volume IO _Total2' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total2' forever (1/1)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.9: Something -> Select -First -> Action (Table) -> Something
+
+    It "111.9a: Table -> Select -First -> Action (Table) -> Table" {
+
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -First 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/4)" 50)
+        ))
+    }
+
+    It "111.9b: Variable -> Select -First -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -First 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (2/4)" 50)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (2/4)" 50 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (2/4)" 50 "Retrieving all channels")
+        ))
+    }
+
+    It "111.9c: Table -> Select -First -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -First 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+    It "111.9d: Variable -> Select -First -> Action (Table) -> Action" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -First 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total2' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total3' (2/4)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensors 'Volume IO _Total2' and 'Volume IO _Total3' forever (2/2)" 100)
+        ))
+    }
+
+        #endregion
+        #region 111.10: Something -> Select -Last -> Action (Table) -> Something
+
+    It "111.10a: Table -> Select -Last -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Last 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total3' (4/4)" 100)
+
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "111.10b: Variable -> Select -Last -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Last 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.10c: Table -> Select -Last -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Last 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Last -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "111.10d: Variable -> Select -Last -> Action (Table) -> Action" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Last 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Last -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 111.11: Something -> Select -Skip -> Action (Table) -> Something
+
+    It "111.11a: Table -> Select -Skip -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Skip 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total3' (4/4)" 100)
+        ))
+    }
+
+    It "111.11b: Variable -> Select -Skip -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Skip 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.11c: Table -> Select -Skip -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Skip 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Skip -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "111.11d: Variable -> Select -Skip -> Action (Table) -> Action" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Skip 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Skip -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 111.12: Something -> Select -SkipLast -> Action (Table) -> Something
+
+    It "111.12a: Table -> Select -SkipLast -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -SkipLast 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/4)" 50)
+
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (1/1)" 100 "Retrieving all channels")
+        ))
+    }
+
+    It "111.12b: Variable -> Select -SkipLast -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Skip 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (0/4)" 0 "Retrieving all channels")
+        ))
+    }
+
+    It "111.12c: Table -> Select -SkipLast -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -SkipLast 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -SkipLast -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "111.12d: Variable -> Select -SkipLast -> Action (Table) -> Action" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -SkipLast 2 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -SkipLast -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
+        #region 111.13: Something -> Select -Index -> Action (Table) -> Something
+
+    It "111.13a: Table -> Select -Index -> Action (Table) -> Table" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Index 0 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+        
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+            (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total0' (1/4)" 25)
+        ))
+    }
+
+    It "111.13b: Variable -> Select -Index -> Action (Table) -> Table" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Index 0 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Get-Channel
+        }
+
+        Validate(@(
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/4)" 25)
+            (Gen "Adding PRTG Sensors" "Adding Factory sensor 'Test' to device ID '1001' (1/4)" 25 "Retrieving all channels")
+            (Gen "Adding PRTG Sensors (Completed)" "Adding Factory sensor 'Test' to device ID '1001' (1/4)" 25 "Retrieving all channels")
+        ))
+    }
+
+    It "111.13c: Table -> Select -Index -> Action (Table) -> Action" {
+        WithResponseArgs "DiffBasedResolveResponse" 2 {
+            Get-Sensor -Count 4 | Select -Index 0 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Index -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+    It "111.13d: Variable -> Select -Index -> Action (Table) -> Action" {
+        $sensors = Get-Sensor -Count 4
+
+        WithResponse "DiffBasedResolveResponse" {
+            $sensors | Select -Index 0 | New-Sensor -Factory "Test" { $_.Device } -DestinationId 1001 | Pause-Object -Forever
+        }
+
+        # Select -Index -> Action -> Action illegal
+        Assert-NoProgress
+    }
+
+        #endregion
     #endregion
     #region Sanity Checks
 

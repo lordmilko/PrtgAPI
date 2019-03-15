@@ -89,7 +89,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(SensorTarget<>))]
     [Cmdlet(VerbsCommon.Get, "SensorTarget", DefaultParameterSetName = ParameterSet.Default)]
-    public class GetSensorTarget : PrtgProgressCmdlet
+    public class GetSensorTarget : PrtgProgressCmdlet, IPSCmdletEx
     {
         /// <summary>
         /// <para type="description">The device to retrieve sensor targets from. While results returned by Get-SensorTarget are guaranteed to be compatible
@@ -108,7 +108,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">An expression used to filter returned results to those with a specified name.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 1)]
-        public string Name { get; set; }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// <para type="description">When present, specifies that Get-SensorTarget should automatically wrap the returned items up in a set of sensor
@@ -211,22 +211,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 s => s.Name
             );
 
-        private SensorParametersInternal ParametersNotSupported<T>(List<T> items)
-        {
-            throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported");
-        }
-
-        private T EnsureSingle<T>(List<T> items)
-        {
-            if (items.Count > 1)
-                throw new InvalidOperationException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters");
-
-            if (items.Count == 1)
-                return items.First();
-
-            return default(T);
-        }
-
         private void GetTargets<T>(
             string typeDescription,
             Func<int, Func<int, bool>, int, CancellationToken, List<T>> getItems,
@@ -262,12 +246,43 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Name != null)
             {
-                var wildcard = new WildcardPattern(Name, WildcardOptions.IgnoreCase);
-
-                items = items.Where(i => nameProperties.Any(getProp => wildcard.IsMatch(getProp(i)))).ToList();
+                items = items.Where(i => Name
+                    .Select(name => new WildcardPattern(name, WildcardOptions.IgnoreCase))
+                    .Any(filter =>
+                        nameProperties.Any(getProp => filter.IsMatch(getProp(i)))
+                    )
+                ).ToList();
             }
 
             return items;
         }
+
+        internal SensorParametersInternal ParametersNotSupported<T>(List<T> items)
+        {
+            throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported");
+        }
+
+        private T EnsureSingle<T>(List<T> items)
+        {
+            if (items.Count > 1)
+                throw new InvalidOperationException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters");
+
+            if (items.Count == 1)
+                return items.First();
+
+            return default(T);
+        }
+
+        #region IPSCmdletEx
+
+        void IPSCmdletEx.BeginProcessingInternal() => BeginProcessing();
+
+        void IPSCmdletEx.ProcessRecordInternal() => ProcessRecord();
+
+        void IPSCmdletEx.EndProcessingInternal() => EndProcessing();
+
+        void IPSCmdletEx.StopProcessingInternal() => StopProcessing();
+
+        #endregion
     }
 }

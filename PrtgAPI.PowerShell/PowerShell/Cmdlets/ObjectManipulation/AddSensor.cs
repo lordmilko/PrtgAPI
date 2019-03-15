@@ -72,9 +72,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#creation">Online version:</para>
     /// <para type="link">Get-Device</para>
     /// <para type="link">New-SensorParameters</para>
+    /// <para type="linl">New-Sensor</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Sensor", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
-    public class AddSensor : AddObject<NewSensorParameters, Sensor, Device>
+    public class AddSensor : AddParametersObject<NewSensorParameters, Sensor, Device>
     {
         /// <summary>
         /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
@@ -99,17 +100,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Default)
-                base.ProcessRecordEx();
-            else
+            switch (ParameterSetName)
             {
-                var internalParams = Parameters as ISourceParameters<Device>;
-
-                if (internalParams?.Source != null)
-                    AddObjectInternal(internalParams.Source);
-                else
-                    throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters");
+                case ParameterSet.Default:
+                    base.ProcessRecordEx();
+                    break;
+                case ParameterSet.Target:
+                    AddSensorToTarget();
+                    break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
+        }
+
+        private void AddSensorToTarget()
+        {
+            var internalParams = Parameters as ISourceParameters<Device>;
+
+            if (internalParams?.Source != null)
+                AddObjectInternal(internalParams.Source);
+            else
+                throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters");
         }
 
         /// <summary>

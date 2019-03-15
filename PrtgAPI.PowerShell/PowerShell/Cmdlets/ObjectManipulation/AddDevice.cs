@@ -56,7 +56,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Device", SupportsShouldProcess = true)]
-    public class AddDevice : AddObject<NewDeviceParameters, Device, GroupOrProbe>
+    public class AddDevice : AddParametersObject<NewDeviceParameters, Device, GroupOrProbe>
     {
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>

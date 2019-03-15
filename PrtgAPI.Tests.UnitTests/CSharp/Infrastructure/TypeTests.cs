@@ -900,6 +900,48 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         #endregion
+        #region SensorType
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SensorType_AllValues_HaveTypeAttributes()
+        {
+            //All SensorType values should have type attributes
+            //If a value has a null type attribute, further assert that there are no types derived from
+            //SensorParametersInternal that ISN'T defined on any SensorType
+
+            var missingParameter = false;
+
+            var knownTypes = new List<Type>();
+
+            foreach (SensorType value in Enum.GetValues(typeof(SensorType)))
+            {
+                var attribute = value.GetEnumAttribute<TypeAttribute>();
+
+                if (attribute == null)
+                    Assert.Fail($"SensorType '{value}' is missing a {nameof(TypeAttribute)}");
+
+                if (attribute.Class == null)
+                    missingParameter = true;
+                else
+                    knownTypes.Add(attribute.Class);
+
+            }
+
+            if (missingParameter)
+            {
+                var types = typeof(SensorParametersInternal).Assembly.GetTypes();
+
+                var filteredTypes = types.Where(t => typeof(SensorParametersInternal).IsAssignableFrom(t) && typeof(SensorParametersInternal) != t).ToList();
+
+                var missing = filteredTypes.Except(knownTypes).ToList();
+
+                if (missing.Count > 0)
+                    Assert.Fail($"Sensor parameter type '{missing[0].Name}' has not been assigned to a SensorType. Do these parameters belong to a SensorType whose parameter type is null?");
+            }
+        }
+
+        #endregion
         #region ToString
 
         [TestMethod]

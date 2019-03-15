@@ -35,7 +35,7 @@ function CreateParameters($sensorType, $goodFilter, $paramsType, $criticalValue)
 }
 
 Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
-    $device = Run Device { Get-Device }
+    $device = Run Device { Get-Device } | Select -First 1
 
     Context "ExeXml" {
 
@@ -164,5 +164,15 @@ Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
 
     It "retrieves targets from an unsupported sensor type" {
         { $device | Get-SensorTarget Http } | Should Throw "Sensor type 'Http' is not currently supported"
+    }
+
+    It "specifies a list of values" {
+        SetResponseAndClient "WmiServiceTargetResponse"
+
+        $targets = $device | Get-SensorTarget WmiService prtgcoreservice,prtgprobeservice
+        $targets.Count | Should Be 2
+
+        $targets[0].Name | Should Be "PRTGCoreService"
+        $targets[1].Name | Should Be "PRTGProbeService"
     }
 }

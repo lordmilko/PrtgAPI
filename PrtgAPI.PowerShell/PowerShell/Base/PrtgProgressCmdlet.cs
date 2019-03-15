@@ -169,6 +169,7 @@ namespace PrtgAPI.PowerShell.Base
                         ProgressManager.InitialDescription = $"Processing {prtgObj.GetTypeDescription().ToLower()}";
                     else
                         ProgressManager.InitialDescription = $"Processing all {IObjectExtensions.GetTypeDescription(obj.GetType()).ToLower()}s";
+
                     ProgressManager.CurrentRecord.CurrentOperation = currentOperation ?? $"Retrieving all {GetTypePlural()}";
 
                     ProgressManager.RemovePreviousOperation();

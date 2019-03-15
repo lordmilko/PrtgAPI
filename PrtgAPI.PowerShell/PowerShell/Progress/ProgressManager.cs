@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool PipeFromSingleVariable => EntirePipeline?.List.Count == 1 && HasMultiplePipelines;
 
-        public bool ProgressEnabled => PrtgSessionState.EnableProgress && !UnsupportedSelectObjectProgress;
+        public bool ProgressEnabled => PrtgSessionState.EnableProgress && !UnsupportedSelectObjectProgress && !UnsupportedNestedProgress;
 
         public bool GetRecordsWithVariableProgress => (PipeFromVariableWithProgress || CanUseSelectObjectProgress || PipelineUpstreamContainsBlockingCmdlet || PipeFromPrtgCmdletPostProcessMode) && ProgressEnabled;
 
@@ -388,6 +388,10 @@ namespace PrtgAPI.PowerShell.Progress
                 return unsupportedSelectObjectProgress.Value;
             }
         }
+
+        public bool IsNestedCmdlet => cmdlet.CommandRuntime is DummyRuntime;
+
+        public bool UnsupportedNestedProgress => PipeFromVariableWithProgress && IsNestedCmdlet;
 
         private bool CalculateIsUnsupportedSelectObjectProgress()
         {
@@ -691,7 +695,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private void CalculateProgressScenario()
         {
-            if (PipeFromBlockingSelectObjectCmdlet)
+            if (PipeFromBlockingSelectObjectCmdlet && operationUpstreamSelectObjectManager != null)
             {
                 if (operationUpstreamSelectObjectManager.HasLast)
                     Scenario = ProgressScenario.SelectLast;
@@ -841,7 +845,12 @@ namespace PrtgAPI.PowerShell.Progress
             if (!PrtgSessionState.EnableProgress)
                 return -1;
 
-            var val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId"));
+            long val;
+
+            if (cmdlet.CommandRuntime is DummyRuntime)
+                val = DummyRuntime._lastUsedSourceId;
+            else
+                val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId"));
 
             if (PipeFromVariableWithProgress && FirstInChain)
             {
@@ -1190,7 +1199,7 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress();
         }
 
-        public void ProcessOperationProgress(string activity, string progressMessage)
+        public void ProcessOperationProgress(string activity, string progressMessage, bool incrementRecord)
         {
             if (!ProgressEnabled)
                 return;
@@ -1204,7 +1213,7 @@ namespace PrtgAPI.PowerShell.Progress
                 //Variable -> Action -> Object
                 //Variable -> Object -> Action
                 //Variable -> Object -> Action -> Object
-                ProcessOperationProgressForVariable(activity, progressMessage);
+                ProcessOperationProgressForVariable(activity, progressMessage, incrementRecord);
             }
             else
             {
@@ -1247,7 +1256,7 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress(CurrentRecord, cache);
         }
 
-        private void ProcessOperationProgressForVariable(string activity, string progressMessage)
+        private void ProcessOperationProgressForVariable(string activity, string progressMessage, bool incrementRecord)
         {
             if (!PipelineIsProgressPure)
                 return;
@@ -1264,7 +1273,7 @@ namespace PrtgAPI.PowerShell.Progress
             {
                 //Variable -> Object -> Action
                 //Variable -> Object -> Action -> Object
-                ProcessOperationProgressFromCmdletFromVariable(activity, progressMessage);
+                ProcessOperationProgressFromCmdletFromVariable(activity, progressMessage, incrementRecord);
             }
         }
 
@@ -1277,12 +1286,19 @@ namespace PrtgAPI.PowerShell.Progress
             //Variable -> Action -> Object
             //    HOW DO WE TELL THE NEXT TABLE THE NUMBER OF ITEMS WE'VE PROCESSED????
 
-            TotalRecords = Pipeline.List.Count;
+            var pipeline = Pipeline ?? EntirePipeline;
+
+            TotalRecords = pipeline?.List.Count;
 
             if (PreviousCmdletIsSelectObject)
                 TotalRecords = GetSelectObjectOperationStraightFromVariableTotalRecords();
 
-            var count = Pipeline.CurrentIndex + 1;
+            //e.g. Get-Sensor | Select -First | New-Sensor -Factory. At the very least, we say there's 1 record so we have something to show
+            if (pipeline == null && TotalRecords == null)
+                TotalRecords = 1;
+
+            ////e.g. Get-Sensor | Select -First | New-Sensor -Factory. At the very least, we say there's 1 record so we have something to show
+            var count = pipeline?.CurrentIndex + 1 ?? 1;
 
             CurrentRecord.Activity = activity;
             CurrentRecord.PercentComplete = GetPercentComplete(count, TotalRecords.Value);
@@ -1291,7 +1307,7 @@ namespace PrtgAPI.PowerShell.Progress
             WriteProgress();
         }
 
-        private void ProcessOperationProgressFromCmdletFromVariable(string activity, string progressMessage)
+        private void ProcessOperationProgressFromCmdletFromVariable(string activity, string progressMessage, bool incrementRecord)
         {
             //5b: Variable -> Object -> Action
             //Variable -> Object -> Action -> Object
@@ -1318,6 +1334,9 @@ namespace PrtgAPI.PowerShell.Progress
             previousManager.RecordsProcessed++;
 
             var count = previousManager.RecordsProcessed;
+
+            if (!incrementRecord)
+                previousManager.RecordsProcessed--;
 
             CurrentRecord.Activity = activity;
             CurrentRecord.PercentComplete = GetPercentComplete(count, TotalRecords.Value);

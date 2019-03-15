@@ -151,6 +151,7 @@
     <None Include="PowerShell\ObjectData\Get-SensorType.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-SystemInfo.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Load-PrtgConfigFile.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\New-Sensor.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.Container.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.DeviceOrGroup.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\ObjectProperty\Set-ObjectProperty.Group.Tests.ps1" />

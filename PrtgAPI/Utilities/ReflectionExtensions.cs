@@ -121,6 +121,21 @@ namespace PrtgAPI.Reflection
             return type.GetField(name, internalFlags);
         }
 
+        public static FieldInfo GetInternalFieldInfoFromBase(this Type type, string name)
+        {
+            var info = GetInternalFieldInfo(type, name);
+
+            if (info != null)
+                return info;
+            else
+            {
+                if (type.BaseType != null)
+                    return type.BaseType.GetInternalFieldInfoFromBase(name);
+                else
+                    return null;
+            }
+        }
+
         public static FieldInfo GetInternalStaticFieldInfo(this Type type, string name)
         {
             return type.GetField(name, BindingFlags.Static | BindingFlags.NonPublic);

@@ -47,7 +47,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Probe</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Group", SupportsShouldProcess = true)]
-    public class AddGroup : AddObject<NewGroupParameters, Group, GroupOrProbe>
+    public class AddGroup : AddParametersObject<NewGroupParameters, Group, GroupOrProbe>
     {
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>

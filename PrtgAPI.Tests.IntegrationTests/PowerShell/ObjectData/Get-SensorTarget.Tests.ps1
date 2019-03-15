@@ -84,6 +84,14 @@ Describe "Get-SensorTarget_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
     }
 
+    It "specifies a list of values" {
+        $services = $device | Get-SensorTarget WmiService *prtg*,netlogon
+
+        $services[0].Name | Should Be "Netlogon"
+        $services[1].Name | Should Be "PRTGCoreService"
+        $services[2].Name | Should Be "PRTGProbeService"
+    }
+
     It "throws attempting to resolve sensor targets as a readonly user" {
         ReadOnlyClient {
             { $device | Get-SensorTarget ExeXml } | Should Throw "type was not valid or you do not have sufficient permissions on the specified object"

@@ -105,7 +105,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">https://www.paessler.com/manuals/prtg/sensor_factory_sensor</para> 
     /// </summary>
     [Cmdlet(VerbsCommon.New, "SensorFactoryDefinition", DefaultParameterSetName = ParameterSet.Default)]
-    public class NewSensorFactoryDefinition : PSCmdlet
+    public class NewSensorFactoryDefinition : PSCmdletEx
     {
         /// <summary>
         /// <para type="description">The sensor to create a channel definition for.</para>

@@ -36,7 +36,17 @@ namespace PrtgAPI.Parameters
             //todo: add a unit test for this to our existing test files that test on wmi service/exexml sensors
             //update about_sensorsettings to document the new objectproperty types
             //make a note to update wiki to say this type is now nataively supported
+        }
 
+        /// <summary>
+        /// Gets or sets the URL to monitor. If a protocol is not specified, HTTP is used.
+        /// </summary>
+        [RequireValue(true)]
+        [PropertyParameter(ObjectProperty.Url)]
+        public string Url
+        {
+            get { return (string)GetCustomParameter(ObjectProperty.Url); }
+            set { SetCustomParameter(ObjectProperty.Url, value); }
         }
 
         /// <summary>
@@ -56,16 +66,6 @@ namespace PrtgAPI.Parameters
 
                 SetCustomParameter(ObjectProperty.Timeout, value);
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the URL to monitor. If a protocol is not specified, HTTP is used.
-        /// </summary>
-        [PropertyParameter(ObjectProperty.Url)]
-        public string Url
-        {
-            get { return (string)GetCustomParameter(ObjectProperty.Url); }
-            set { SetCustomParameter(ObjectProperty.Url, value); }
         }
 
         /// <summary>

@@ -369,6 +369,7 @@
     <None Include="PowerShell\ObjectManipulation\Move-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectData\New-SearchFilter.Tests.ps1" />
     <None Include="PowerShell\ObjectData\New-SensorFactoryDefinition.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\New-Sensor.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\New-SensorParameters.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Pause-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Refresh-Object.Tests.ps1" />

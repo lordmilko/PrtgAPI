@@ -180,7 +180,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="name">The raw name of the parameter</param>
         /// <returns>The parameter's corresponding value. If the parameter was not found in the set, this value is null</returns>
-        protected object GetCustomParameterInternal(string name)
+        protected internal object GetCustomParameterInternal(string name)
         {
             var index = GetCustomParameterIndex(name);
 
