@@ -21,6 +21,7 @@ namespace PrtgAPI.Request
 
         public PrtgWebClient(bool ignoreSSL, string server)
         {
+            //PrtgWebClient will be initialized before PrtgClient has validated server value
             this.server = server?.ToLower();
 
             if (ignoreSSL)
@@ -31,7 +32,7 @@ namespace PrtgAPI.Request
             //.NET Core should use DefaultProxyCredentials
             var proxy = WebRequest.DefaultWebProxy;
 
-            if (proxy.Credentials == null)
+            if (proxy != null && proxy.Credentials == null)
                 proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
             
             asyncClient = new HttpClient(handler);
