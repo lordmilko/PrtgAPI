@@ -76,7 +76,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             var client = Initialize_Client(new SetChannelPropertyResponse(property, channelId, value));
 
-            client.SetObjectProperty(1234, channelId, property, value);
+            client.SetChannelProperty(1234, channelId, property, value);
         }
 
         [TestMethod]

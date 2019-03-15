@@ -1176,7 +1176,7 @@
                         <Parameter name="value" type="object" description="The value to set the channel's property to."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] {sensorId}, channelId, property, value"/>
+                            <Call name="SetChannelProperty" args="new[] {sensorId}, channelId, property, value"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectProperty" returns="void">
@@ -1188,10 +1188,10 @@
                         <Parameter name="value" type="object" description="The value to set each channel's property to."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectProperty" args="sensorIds, channelId, new ChannelParameter(property, value)"/>
+                            <Call name="SetChannelProperty" args="sensorIds, channelId, new ChannelParameter(property, value)"/>
                         </Body>
                         <TokenBody expression="true">
-                            <Call name="SetObjectProperty" args="sensorIds, channelId, new[]{new ChannelParameter(property, value)}"/>
+                            <Call name="SetChannelProperty" args="sensorIds, channelId, new[]{new ChannelParameter(property, value)}"/>
                         </TokenBody>
                     </InlineMethodDef>
                 </Region>
@@ -1204,7 +1204,7 @@
                         <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] { sensorId }, channelId, parameters"/>
+                            <Call name="SetChannelProperty" args="new[] { sensorId }, channelId, parameters"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectProperty" returns="void">

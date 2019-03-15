@@ -202,7 +202,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
 
-                action = () => client.SetObjectProperty(SensorId, ChannelId, Property, Value);
+                action = () => client.SetChannelProperty(SensorId, ChannelId, Property, Value);
             }
 
             ExecuteOperation(action, message);

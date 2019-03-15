@@ -3547,8 +3547,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public void SetObjectProperty(int sensorId, int channelId, ChannelProperty property, object value) =>
-            SetObjectProperty(new[] {sensorId}, channelId, property, value);
+        public void SetChannelProperty(int sensorId, int channelId, ChannelProperty property, object value) =>
+            SetChannelProperty(new[] {sensorId}, channelId, property, value);
 
         /// <summary>
         /// Modifies channel properties for one or more PRTG Sensors.
@@ -3557,8 +3557,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
         /// <param name="property">The property of each channel to modify.</param>
         /// <param name="value">The value to set each channel's property to.</param>
-        public void SetObjectProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            SetObjectProperty(sensorIds, channelId, new ChannelParameter(property, value));
+        public void SetChannelProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
+            SetChannelProperty(sensorIds, channelId, new ChannelParameter(property, value));
 
         /// <summary>
         /// Asynchronously modifies channel properties for a PRTG Sensor.
@@ -3567,8 +3567,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) =>
-            await SetObjectPropertyAsync(sensorId, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) =>
+            await SetChannelPropertyAsync(sensorId, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies channel properties for a PRTG Sensor with a specified cancellation token.
@@ -3578,8 +3578,8 @@ namespace PrtgAPI
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
-            await SetObjectPropertyAsync(new[] {sensorId}, channelId, property, value, token).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
+            await SetChannelPropertyAsync(new[] {sensorId}, channelId, property, value, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies channel properties for one or more PRTG Sensors.
@@ -3588,8 +3588,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
         /// <param name="property">The property of each channel to modify.</param>
         /// <param name="value">The value to set each channel's property to.</param>
-        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
-            await SetObjectPropertyAsync(sensorIds, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) =>
+            await SetChannelPropertyAsync(sensorIds, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies channel properties for one or more PRTG Sensors with a specified cancellation token.
@@ -3599,8 +3599,8 @@ namespace PrtgAPI
         /// <param name="property">The property of each channel to modify.</param>
         /// <param name="value">The value to set each channel's property to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value, CancellationToken token) =>
-            await SetObjectPropertyAsync(sensorIds, channelId, new[]{new ChannelParameter(property, value)}, token).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value, CancellationToken token) =>
+            await SetChannelPropertyAsync(sensorIds, channelId, new[]{new ChannelParameter(property, value)}, token).ConfigureAwait(false);
 
             #endregion
             #region Channel (Multiple)
@@ -3611,8 +3611,8 @@ namespace PrtgAPI
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public void SetObjectProperty(int sensorId, int channelId, params ChannelParameter[] parameters) =>
-            SetObjectProperty(new[] { sensorId }, channelId, parameters);
+        public void SetChannelProperty(int sensorId, int channelId, params ChannelParameter[] parameters) =>
+            SetChannelProperty(new[] { sensorId }, channelId, parameters);
 
         /// <summary>
         /// Modifies multiple channel properties for one or more PRTG Sensors.
@@ -3620,7 +3620,7 @@ namespace PrtgAPI
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public void SetObjectProperty(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
+        public void SetChannelProperty(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
             GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList()).SetChannelProperty(sensorIds, channelId, null, parameters);
 
         /// <summary>
@@ -3629,8 +3629,8 @@ namespace PrtgAPI
         /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, params ChannelParameter[] parameters) =>
-            await SetObjectPropertyAsync(sensorId, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int sensorId, int channelId, params ChannelParameter[] parameters) =>
+            await SetChannelPropertyAsync(sensorId, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple channel properties for a PRTG Sensor with a specified cancellation token.
@@ -3639,8 +3639,8 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int sensorId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
-            await SetObjectPropertyAsync(new[] { sensorId }, channelId, parameters, token).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
+            await SetChannelPropertyAsync(new[] { sensorId }, channelId, parameters, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple channel properties for one or more PRTG Sensors.
@@ -3648,8 +3648,8 @@ namespace PrtgAPI
         /// <param name="sensorIds">The IDs of the sensors whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
-            await SetObjectPropertyAsync(sensorIds, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, params ChannelParameter[] parameters) =>
+            await SetChannelPropertyAsync(sensorIds, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple channel properties for one or more PRTG Sensors with a specified cancellation token.
@@ -3658,7 +3658,7 @@ namespace PrtgAPI
         /// <param name="channelId">The ID of the channel of each sensor to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
+        public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
             await GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList()).SetChannelPropertyAsync(sensorIds, channelId, null, parameters, token).ConfigureAwait(false);
 
             #endregion

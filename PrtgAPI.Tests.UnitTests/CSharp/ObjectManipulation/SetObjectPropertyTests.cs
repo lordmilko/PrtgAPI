@@ -794,7 +794,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var client = Initialize_Client(new SetObjectPropertyResponse<ChannelProperty>(ChannelProperty.LimitsEnabled, "1"));
 
-            await client.SetObjectPropertyAsync(1001, 1, ChannelProperty.LimitsEnabled, true);
+            await client.SetChannelPropertyAsync(1001, 1, ChannelProperty.LimitsEnabled, true);
         }
 
         [TestMethod]
@@ -846,7 +846,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 expectedSerializedValue = value.ToString();
 
             var client = Initialize_Client(new SetObjectPropertyResponse<ChannelProperty>(property, expectedSerializedValue));
-            client.SetObjectProperty(1, 1, property, value);
+            client.SetChannelProperty(1, 1, property, value);
         }
 
         [TestMethod]
@@ -925,7 +925,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 TestHelpers.SetChannelProperty("id=1001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=1&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             };
 
-            Execute(c => c.SetObjectProperty(
+            Execute(c => c.SetChannelProperty(
                 1001,
                 1,
                 new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
@@ -945,7 +945,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             };
 
             await ExecuteAsync(
-                async c => await c.SetObjectPropertyAsync(
+                async c => await c.SetChannelPropertyAsync(
                     1001,
                     1,
                     new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),

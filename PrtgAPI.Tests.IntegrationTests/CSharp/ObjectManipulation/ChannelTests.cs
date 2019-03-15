@@ -35,11 +35,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             var initialChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
             AssertEx.AreNotEqual(getProperty(initialChannel), newValue, "Initial channel value was not expected value");
 
-            client.SetObjectProperty(Settings.ChannelSensor, Settings.Channel, property, newValue);
+            client.SetChannelProperty(Settings.ChannelSensor, Settings.Channel, property, newValue);
             var newChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
             AssertEx.AreEqual(newValue, getProperty(newChannel), "New channel value did not apply properly");
 
-            client.SetObjectProperty(Settings.ChannelSensor, Settings.Channel, property, getProperty(initialChannel));
+            client.SetChannelProperty(Settings.ChannelSensor, Settings.Channel, property, getProperty(initialChannel));
             var finalChannel = client.GetChannels(Settings.ChannelSensor).First(c => c.Id == Settings.Channel);
             AssertEx.AreEqual(getProperty(initialChannel), getProperty(finalChannel), "Channel value did not revert properly");
         }
@@ -49,11 +49,11 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             var initialChannel = (await client.GetChannelsAsync(Settings.ChannelSensor)).First(c => c.Id == Settings.Channel);
             AssertEx.AreNotEqual(getProperty(initialChannel), newValue, "Initial channel value was not expected value");
 
-            await client.SetObjectPropertyAsync(Settings.ChannelSensor, Settings.Channel, property, newValue);
+            await client.SetChannelPropertyAsync(Settings.ChannelSensor, Settings.Channel, property, newValue);
             var newChannel = (await client.GetChannelsAsync(Settings.ChannelSensor)).First(c => c.Id == Settings.Channel);
             AssertEx.AreEqual(newValue, getProperty(newChannel), "New channel value did not apply properly");
 
-            await client.SetObjectPropertyAsync(Settings.ChannelSensor, Settings.Channel, property, getProperty(initialChannel));
+            await client.SetChannelPropertyAsync(Settings.ChannelSensor, Settings.Channel, property, getProperty(initialChannel));
             var finalChannel = (await client.GetChannelsAsync(Settings.ChannelSensor)).First(c => c.Id == Settings.Channel);
             AssertEx.AreEqual(getProperty(initialChannel), getProperty(finalChannel), "Channel value did not revert properly");
         }
