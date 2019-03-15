@@ -167,6 +167,9 @@ namespace PrtgAPI.Request
             where TObject : IObject
             where TParam : ContentParameters<TObject>, IShallowCloneable<TParam>
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             return StreamObjects<TObject, TParam>(
                 parameters,                       //Parameters to use for the request
                 serial,                           //Whether to stream serial or parallel
@@ -176,7 +179,7 @@ namespace PrtgAPI.Request
                 ),
                 null,                             //The function used to retrieve objects synchronously
                 null,                             //The function used to retrieve objects asynchronously
-                validateValueTypes                    //Whether to deserialize all properties onto the output object
+                validateValueTypes                //Whether to deserialize all properties onto the output object
             );
         }
 
@@ -186,6 +189,9 @@ namespace PrtgAPI.Request
             bool validateValueTypes = true)
             where TParam : PageableParameters, IShallowCloneable<TParam>, IXmlParameters
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             prtgClient.Log("Preparing to stream objects", LogLevel.Trace);
             prtgClient.Log("Requesting total number of objects", LogLevel.Trace);
 

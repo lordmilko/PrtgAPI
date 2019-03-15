@@ -41,6 +41,9 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(ICsvParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
@@ -53,6 +56,9 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(IJsonParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
@@ -62,6 +68,9 @@ namespace PrtgAPI.Request
 
         internal async Task<PrtgResponse> ExecuteRequestAsync(IJsonParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
@@ -75,6 +84,9 @@ namespace PrtgAPI.Request
         [Obsolete("XmlReader ExecuteRequest() should not be used directly. Use ObjectEngine.GetObjectsXml() instead")]
         internal XmlReader ExecuteRequest(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
@@ -87,6 +99,9 @@ namespace PrtgAPI.Request
         [Obsolete("Task<XmlReader> ExecuteRequest() should not be used directly. Use ObjectEngine.GetObjectsXml() instead")]
         internal async Task<XmlReader> ExecuteRequestAsync(IXmlParameters parameters, Action<PrtgResponse> responseValidator = null, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
@@ -101,6 +116,9 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(ICommandParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (parameters is IMultiTargetParameters)
                 return ExecuteMultiRequest(p => GetRequestMessage((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser);
 
@@ -113,6 +131,9 @@ namespace PrtgAPI.Request
 
         internal async Task<PrtgResponse> ExecuteRequestAsync(ICommandParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (parameters is IMultiTargetParameters)
                 return await ExecuteMultiRequestAsync(p => GetRequestMessage((ICommandParameters)p), (IMultiTargetParameters)parameters, token, responseParser).ConfigureAwait(false);
 
@@ -128,6 +149,9 @@ namespace PrtgAPI.Request
 
         internal PrtgResponse ExecuteRequest(IHtmlParameters parameters, Func<HttpResponseMessage, PrtgResponse> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = ExecuteRequest(url, token, responseParser);
@@ -137,6 +161,9 @@ namespace PrtgAPI.Request
 
         internal async Task<PrtgResponse> ExecuteRequestAsync(IHtmlParameters parameters, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var url = GetRequestMessage(parameters);
 
             var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
@@ -146,6 +173,9 @@ namespace PrtgAPI.Request
 
         internal XElement ExecuteRequest(IHtmlParameters parameters, Func<PrtgResponse, XElement> xmlParser, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var response = ExecuteRequest(parameters, token: token);
 
             return xmlParser(response);
@@ -153,6 +183,9 @@ namespace PrtgAPI.Request
 
         internal async Task<XElement> ExecuteRequestAsync(IHtmlParameters parameters, Func<PrtgResponse, XElement> xmlParser, CancellationToken token = default(CancellationToken))
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             var response = await ExecuteRequestAsync(parameters, token: token).ConfigureAwait(false);
 
             return xmlParser(response);

@@ -1544,8 +1544,14 @@ namespace PrtgAPI
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception>
         /// <returns>The channel with the specified name.</returns>
-        public Channel GetChannel(int sensorId, string name) =>
-            GetChannelsInternal(sensorId, n => n == name).SingleObject(name, "name");
+        public Channel GetChannel(int sensorId, string name)
+        {
+            AssertHasValue(name, nameof(name));
+
+            var channels = GetChannelsInternal(sensorId, n => n == name);
+
+            return channels.SingleObject(name, "name");
+        }
 
         /// <summary>
         /// Asynchronously retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
@@ -1565,8 +1571,14 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception>
         /// <returns>The channel with the specified name.</returns>
-        public async Task<Channel> GetChannelAsync(int sensorId, string name, CancellationToken token) =>
-            (await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false)).SingleObject(name, "name");
+        public async Task<Channel> GetChannelAsync(int sensorId, string name, CancellationToken token)
+        {
+            AssertHasValue(name, nameof(name));
+
+            var channels = await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false);
+
+            return channels.SingleObject(name, "name");
+        }
 
             #endregion
 
@@ -1601,8 +1613,12 @@ namespace PrtgAPI
         /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public List<Channel> GetChannels(int sensorId, string name) =>
-            GetChannelsInternal(sensorId, n => n == name);
+        public List<Channel> GetChannels(int sensorId, string name)
+        {
+            AssertHasValue(name, nameof(name));
+
+            return GetChannelsInternal(sensorId, n => n == name);
+        }
 
         /// <summary>
         /// Asynchronously retrieves all channels of a sensor that match the specified name.
@@ -1620,8 +1636,12 @@ namespace PrtgAPI
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string name, CancellationToken token) =>
-            await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string name, CancellationToken token)
+        {
+            AssertHasValue(name, nameof(name));
+
+            return await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false);
+        }
 
         #endregion
         #region Logs
@@ -1999,7 +2019,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified name.</exception>
         /// <returns>The notification action with the specified name.</returns>
         public NotificationAction GetNotificationAction(string name) =>
-            GetNotificationActions(Property.Name, name).SingleObject(name, "name");
+            GetNotificationActions(Property.Name, AssertHasValue(name, nameof(name))).SingleObject(name, "name");
 
         /// <summary>
         /// Asynchronously retrieves a notification action with a specified name from a PRTG Server. If the notification action does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
@@ -2018,7 +2038,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified notification action does not exist or multiple notification actions were resolved with the specified name.</exception>
         /// <returns>The notification action with the specified name.</returns>
         public async Task<NotificationAction> GetNotificationActionAsync(string name, CancellationToken token) =>
-            (await GetNotificationActionsAsync(Property.Name, name, token).ConfigureAwait(false)).SingleObject(name, "name");
+            (await GetNotificationActionsAsync(Property.Name, AssertHasValue(name, nameof(name)), token).ConfigureAwait(false)).SingleObject(name, "name");
 
         /// <summary>
         /// Retrieves all notification actions from a PRTG Server.
@@ -2190,7 +2210,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified name.</exception>
         /// <returns>The schedule with the specified name.</returns>
         public Schedule GetSchedule(string name) =>
-            GetSchedules(Property.Name, name).SingleObject(name, "name");
+            GetSchedules(Property.Name, AssertHasValue(name, nameof(name))).SingleObject(name, "name");
 
         /// <summary>
         /// Asynchronously retrieves a monitoring schedule with a specified name from a PRTG Server.<para/>
@@ -2211,7 +2231,7 @@ namespace PrtgAPI
         /// <exception cref="InvalidOperationException">The specified schedule does not exist or multiple schedules were resolved with the specified name.</exception>
         /// <returns>The schedule with the specified name.</returns>
         public async Task<Schedule> GetScheduleAsync(string name, CancellationToken token) =>
-            (await GetSchedulesAsync(Property.Name, name, token).ConfigureAwait(false)).SingleObject(name, "name");
+            (await GetSchedulesAsync(Property.Name, AssertHasValue(name, nameof(name)), token).ConfigureAwait(false)).SingleObject(name, "name");
 
         /// <summary>
         /// Retrieves all monitoring schedules from a PRTG Server.
@@ -3058,7 +3078,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
+        /// <returns>All settings of the specified sensor.</returns>
         public SensorSettings GetSensorProperties(int sensorId) =>
             GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name);
 
@@ -3068,7 +3088,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
+        /// <returns>All settings of the specified sensor.</returns>
         public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId) =>
             await GetSensorPropertiesAsync(sensorId, CancellationToken.None).ConfigureAwait(false);
 
@@ -3079,7 +3099,7 @@ namespace PrtgAPI
         /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified sensor. Otherwise. null.</returns>
+        /// <returns>All settings of the specified sensor.</returns>
         public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId, CancellationToken token) =>
             await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name, token).ConfigureAwait(false);
 
@@ -3092,7 +3112,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
+        /// <returns>All settings of the specified device.</returns>
         public DeviceSettings GetDeviceProperties(int deviceId) =>
             GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name);
 
@@ -3102,7 +3122,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
+        /// <returns>All settings of the specified device.</returns>
         public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId) =>
             await GetDevicePropertiesAsync(deviceId, CancellationToken.None).ConfigureAwait(false);
 
@@ -3113,7 +3133,7 @@ namespace PrtgAPI
         /// <param name="deviceId">ID of the device to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified device. Otherwise. null.</returns>
+        /// <returns>All settings of the specified device.</returns>
         public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId, CancellationToken token) =>
             await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name, token).ConfigureAwait(false);
 
@@ -3126,7 +3146,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
+        /// <returns>All settings of the specified group.</returns>
         public GroupSettings GetGroupProperties(int groupId) =>
             GetObjectProperties<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name);
 
@@ -3136,7 +3156,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
+        /// <returns>All settings of the specified group.</returns>
         public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId) =>
             await GetGroupPropertiesAsync(groupId, CancellationToken.None).ConfigureAwait(false);
 
@@ -3147,7 +3167,7 @@ namespace PrtgAPI
         /// <param name="groupId">ID of the group to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified group. Otherwise. null.</returns>
+        /// <returns>All settings of the specified group.</returns>
         public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId, CancellationToken token) =>
             await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name, token).ConfigureAwait(false);
 
@@ -3160,7 +3180,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
+        /// <returns>All settings of the specified probe.</returns>
         public ProbeSettings GetProbeProperties(int probeId) =>
             GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name);
 
@@ -3170,7 +3190,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
+        /// <returns>All settings of the specified probe.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
             await GetProbePropertiesAsync(probeId, CancellationToken.None).ConfigureAwait(false);
 
@@ -3181,7 +3201,7 @@ namespace PrtgAPI
         /// <param name="probeId">ID of the probe to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
-        /// <returns>If the current user has write access, all settings of the specified probe. Otherwise. null.</returns>
+        /// <returns>All settings of the specified probe.</returns>
         public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId, CancellationToken token) =>
             await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name, token).ConfigureAwait(false);
 
@@ -3473,7 +3493,7 @@ namespace PrtgAPI
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         public void SetObjectProperty(int[] objectIds, params PropertyParameter[] parameters) =>
-            SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
+            SetObjectProperty(CreateSetObjectPropertyParameters(objectIds, parameters, CancellationToken.None), objectIds.Length, CancellationToken.None);
 
         /// <summary>
         /// Asynchronously modifies multiple properties of a PRTG Object.<para/>
@@ -3723,7 +3743,7 @@ namespace PrtgAPI
         /// <param name="objectIds">The IDs of the objects whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         public void SetObjectPropertyRaw(int[] objectIds, params CustomParameter[] parameters) =>
-            SetObjectProperty(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length);
+            SetObjectProperty(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length, CancellationToken.None);
 
         /// <summary>
         /// Asynchronously modifies multiple unsupported properties of a PRTG Object.

@@ -119,7 +119,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "throws when a raw name is null" {
-            { New-SensorParameters @{"name_" = $null; "sensortype" = "custom type"} } | Should Throw "objectName cannot be null or empty"
+            { New-SensorParameters @{"name_" = $null; "sensortype" = "custom type"} } | Should Throw "An object name cannot be null."
         }
 
         It "throws when a raw sensortype isn't specified" {
@@ -127,7 +127,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "throws when a raw sensortype is null" {
-            { New-SensorParameters @{"name_" = "custom name"; "sensortype" = $null} } | Should Throw "sensorType cannot be null or empty"
+            { New-SensorParameters @{"name_" = "custom name"; "sensortype" = $null} } | Should Throw "SensorType cannot be null or empty."
         }
 
         It "throws when multiple CustomParameter objects exist for a non sensor target property" {

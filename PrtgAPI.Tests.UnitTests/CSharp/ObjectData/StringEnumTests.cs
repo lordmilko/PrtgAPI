@@ -249,7 +249,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void StringEnum_Validates_ConstructorArguments()
         {
             AssertEx.Throws<ArgumentNullException>(() => new StringEnum<SimpleEnum>(null), "Value cannot be null.");
-            AssertEx.Throws<ArgumentException>(() => new StringEnum<SimpleEnum>(string.Empty), "stringValue cannot be empty.");
+            AssertEx.Throws<ArgumentException>(() => new StringEnum<SimpleEnum>(string.Empty), "stringValue cannot be empty or whitespace.");
         }
     }
 }

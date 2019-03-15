@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -216,6 +217,12 @@ namespace PrtgAPI
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Count == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
             return GetVersionClient(parameters.Select(p => p.Property).Cast<object>().ToArray());
         }
 
@@ -229,6 +236,36 @@ namespace PrtgAPI
                 throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
 
             return response;
+        }
+
+        private T AssertHasValue<T>(T value, string paramName)
+        {
+            if (value == null)
+                throw new ArgumentNullException(paramName, $"{paramName.ToSentenceCase()} cannot be null.");
+
+            if (typeof(T) == typeof(string))
+            {
+                if (string.IsNullOrWhiteSpace((string)(object)value))
+                    throw new ArgumentException($"{paramName.ToSentenceCase()} cannot be empty or whitespace.", paramName);
+            }
+            else
+            {
+                var collection = value as ICollection;
+
+                if (collection != null)
+                {
+                    if (collection.Count == 0)
+                        throw new ArgumentException($"At least one {paramName.FromPlural()} must be specified.", paramName);
+
+                    foreach (var v in collection)
+                    {
+                        if (v == null)
+                            throw new ArgumentException($"Cannot process a null {paramName.FromPlural()}.", nameof(paramName));
+                    }
+                }
+            }
+
+            return value;
         }
 
         internal List<Sensor> GetSensors(Property property, object value, CancellationToken token) =>
@@ -691,75 +728,15 @@ namespace PrtgAPI
         #endregion
         #region Set Object Properties
 
-        internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds) =>
-            RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m));
+        internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
+            RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m), token);
 
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
             await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult<PrtgResponse>(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m)), token).ConfigureAwait(false);
 
-        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, params PropertyParameter[] @params)
-        {
-            var paramLists = RequestParser.GetSetObjectPropertyParamLists(@params); //Item1: Normal items. Item2: Mergeable items
-
-            for (var i = 0; i < paramLists.Item1.Length; i++)
-            {
-                var prop = paramLists.Item1[i];
-
-                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
-
-                if (attrib != null)
-                {
-                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
-                    {
-                        var str = Location.GetAddress(prop.Value);
-
-                        var newValue = ResolveAddress(str, CancellationToken.None);
-
-                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
-                    }
-                }
-            }
-
-            @params = RequestParser.MergeParameters(paramLists);
-
-            var parameters = new SetObjectPropertyParameters(objectIds, @params);
-
-            return parameters;
-        }
-
-        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, PropertyParameter[] @params, CancellationToken token)
-        {
-            var paramLists = RequestParser.GetSetObjectPropertyParamLists(@params); //Item1: Normal items. Item2: Mergeable items
-
-            for (var i = 0; i < paramLists.Item1.Length; i++)
-            {
-                var prop = paramLists.Item1[i];
-
-                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
-
-                if (attrib != null)
-                {
-                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
-                    {
-                        var str = Location.GetAddress(prop.Value);
-
-                        var newValue = await ResolveAddressAsync(str, token).ConfigureAwait(false);
-
-                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
-                    }
-                }
-            }
-
-            @params = RequestParser.MergeParameters(paramLists);
-
-            var parameters = new SetObjectPropertyParameters(objectIds, @params);
-
-            return parameters;
-        }
-
         #endregion
         #region System Administration
-        
+
         private void RestartProbeInternal(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[], bool> progressCallback, CancellationToken token)
         {
             var restartTime = waitForRestart ? (DateTime?) GetStatus().DateTime : null;

@@ -150,6 +150,9 @@ for(int i = 0; i < 2; i++)
 #>
         private <#= GetSignature("ValidateTriggerParameters", "void", i) #>(TriggerParameters parameters, CancellationToken token)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (parameters.Action == ModifyAction.Add)
             {
                 var data = <#= CallFunction("GetNotificationTriggerData", "parameters.ObjectId, token", i) #>;
@@ -455,6 +458,12 @@ for(int i = 0; i < 2; i++)
 #>
         private <#= GetSignature("GetSensorTargetsResponse", "string", i) #>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
+            if (sensorType == null)
+                throw new ArgumentNullException(nameof(sensorType), "Sensor type cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(sensorType))
+                throw new ArgumentException("Sensor type cannot be null or whitespace.", nameof(sensorType));
+
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
             return <#= CallFunction("GetSensorTargetsResponse", "deviceId, parameters, progressCallback, timeout, token", i) #>;
@@ -545,6 +554,9 @@ for(int i = 0; i < 2; i++)
             Func<SearchFilter[], CancellationToken, <#= GetFuncRet("List<T>", i) #>> getObjects, bool resolve, CancellationToken token, Action<Type, int> errorCallback = null,
             Func<bool> shouldStop = null, bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
@@ -688,6 +700,9 @@ for(int i = 0; i < 2; i++)
         internal <#= GetSignature("AddNotificationTriggerInternal", "List<NotificationTrigger>", i)#>(TriggerParameters parameters, bool resolve,
             CancellationToken token, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 <#= DeclareTokenAction0("addTrigger", "SetNotificationTriggerInternal", "parameters", i) #>;
@@ -884,6 +899,53 @@ for(int i = 0; i < 2; i++)
             {
                 throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
             }
+        }
+
+<#
+}
+#>
+        //#######################################
+        // CreateSetObjectPropertyParametersAsync
+        //#######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        private <#= GetSignature("CreateSetObjectPropertyParameters", "SetObjectPropertyParameters", i) #>(int[] objectIds, PropertyParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            var paramLists = RequestParser.GetSetObjectPropertyParamLists(parameters); //Item1: Normal items. Item2: Mergeable items
+
+            for (var i = 0; i < paramLists.Item1.Length; i++)
+            {
+                var prop = paramLists.Item1[i];
+
+                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
+
+                if (attrib != null)
+                {
+                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
+                    {
+                        var str = Location.GetAddress(prop.Value);
+
+                        var newValue = <#= CallMandatoryAsyncTokenFunction("ResolveAddress", "str", "token", i) #>;
+
+                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
+                    }
+                }
+            }
+
+            parameters = RequestParser.MergeParameters(paramLists);
+
+            var @params = new SetObjectPropertyParameters(objectIds, parameters);
+
+            return @params;
         }
 <#
 if(i == 0)

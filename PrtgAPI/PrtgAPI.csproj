@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Attributes\AlternateDescription.cs" />
     <Compile Include="Attributes\CategoryAttribute.cs" />
+    <Compile Include="Attributes\FactorAttribute.cs" />
     <Compile Include="Attributes\FilterHandlerAttribute.cs" />
     <Compile Include="Attributes\LengthLimitAttribute.cs" />
     <Compile Include="Attributes\LiteralValueAttribute.cs" />

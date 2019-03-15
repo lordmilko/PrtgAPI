@@ -15,11 +15,11 @@ namespace PrtgAPI.Parameters
 
         private static int ValidateTrigger(NotificationTrigger trigger)
         {
+            if (trigger == null)
+                throw new ArgumentNullException(nameof(trigger), "Trigger cannot be null.");
+
             if (trigger.Inherited)
                 throw new InvalidOperationException($"Cannot remove trigger {trigger.SubId} from Object ID: {trigger.ObjectId} as it is inherited from Object ID: {trigger.ParentId}");
-
-            if (trigger == null)
-                throw new ArgumentNullException(nameof(trigger));
 
             return trigger.ObjectId;
         }

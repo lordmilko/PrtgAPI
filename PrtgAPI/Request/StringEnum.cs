@@ -59,8 +59,8 @@ namespace PrtgAPI
             if (stringValue == null)
                 throw new ArgumentNullException(nameof(stringValue));
 
-            if (stringValue == string.Empty)
-                throw new ArgumentException($"{nameof(stringValue)} cannot be empty.");
+            if (string.IsNullOrWhiteSpace(stringValue))
+                throw new ArgumentException($"{nameof(stringValue)} cannot be empty or whitespace.", nameof(stringValue));
 
             StringValue = stringValue;
 

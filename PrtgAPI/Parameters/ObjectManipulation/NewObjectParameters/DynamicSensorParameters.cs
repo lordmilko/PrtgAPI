@@ -70,7 +70,7 @@ namespace PrtgAPI.Parameters
             {
                 ParseResponse(response);
 
-                Debug.Assert(Name != TempName);
+                Debug.Assert(Name != TempName, "Response did not contain the object's name. Parameters are in an invalid state.");
             } 
         }
 

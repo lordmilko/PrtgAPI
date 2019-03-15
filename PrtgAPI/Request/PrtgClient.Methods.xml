@@ -410,8 +410,12 @@
                     <Parameter name="sensorId" type="int" description="The ID of the sensor containing the channel."/>
                     <Parameter name="name" type="string" description="The name of the channel to retrieve."/>
 
-                    <Body expression="true">
-                        <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>.SingleObject(name, "name")
+                    <Body expression="false">
+                        AssertHasValue(name, nameof(name));
+
+                        var channels = <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>;
+
+                        return channels.SingleObject(name, "name");
                     </Body>
                 </MethodDef>
             </Region>
@@ -433,8 +437,10 @@
                 <Parameter name="sensorId" type="int" description="The ID of the sensor to retrieve channels for."/>
                 <Parameter name="name" type="string" description="The name of the channel to retrieve."/>
 
-                <Body expression="true">
-                    <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>
+                <Body expression="false">
+                    AssertHasValue(name, nameof(name));
+
+                    return <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>;
                 </Body>
             </MethodDef>
         </Template>
@@ -447,7 +453,7 @@
 
                 <Parameter name="name" type="string" description="The name of the {description} to retrieve." />
                 <Body expression="true">
-                    <Call name="{Request}{Name}s" args="Property.Name, name"/>.SingleObject(name, "name")
+                    <Call name="{Request}{Name}s" args="Property.Name, AssertHasValue(name, nameof(name))"/>.SingleObject(name, "name")
                 </Body>
             </MethodDef>
             <MethodDef name="{Request}{Name}s" template="Object" parameters="none" overload="all" tokenMode="MandatoryCall">
@@ -628,7 +634,7 @@
                     Retrieves properties and settings of a PRTG {type}.&lt;para/&gt;
                     If the current user does not have write access to the specified object, an &lt;see cref="InvalidOperationException"/&gt; will be thrown.</Summary>
                 <Exception type="InvalidOperationException" description="The specified {name} is read only. To retrieve properties from read only {name}s, use &lt;see cref=&quot;GetObjectProperty(int, ObjectProperty)&quot;/&gt;."/>
-                <ReturnDescription>If the current user has write access, all settings of the specified {name}. Otherwise. null.</ReturnDescription>
+                <ReturnDescription>All settings of the specified {name}.</ReturnDescription>
 
                 <Parameter name="{name}Id" type="int" description="ID of the {name} to retrieve settings for."/>
                 <Body expression="true">
@@ -1143,7 +1149,7 @@
                             <Call name="SetObjectProperty" args="new[] {objectId}, parameters"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
+                    <InlineMethodDef name="SetObjectProperty" returns="void" tokenMode="MandatoryCall">
                         <Summary>
                             Modifies multiple properties of one or more PRTG Objects.&lt;para/&gt;
                             Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
@@ -1251,7 +1257,7 @@
                             <Call name="SetObjectPropertyRaw" args="new[] { objectId }, parameters"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
+                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void" tokenMode="MandatoryCall">
                         <Summary>Modifies multiple unsupported properties of one or more PRTG Objects.</Summary>
 
                         <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>

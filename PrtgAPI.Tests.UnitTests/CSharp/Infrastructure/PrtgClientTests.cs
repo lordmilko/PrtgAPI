@@ -13,6 +13,9 @@ using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Targets;
+using PrtgAPI.Tests.UnitTests.ObjectData;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.Serialization;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
@@ -246,7 +249,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = client.ObjectEngine.GetObjects<DummyElement<DummyElementRoot>>(new SensorParameters());
 
@@ -259,7 +262,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<sensors totalcount=\"1\"><item><property><value>1\0</value></property></item></sensors>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = await client.ObjectEngine.GetObjectsAsync<DummyElement<DummyElementRoot>>(new SensorParameters());
 
@@ -272,7 +275,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = client.ObjectEngine.GetObject<DummyElementRoot>(new SensorParameters());
 
@@ -285,7 +288,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = await client.ObjectEngine.GetObjectAsync<DummyElementRoot>(new SensorParameters());
 
@@ -298,7 +301,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = client.ObjectEngine.GetObjectsXml(new SensorParameters());
 
@@ -311,7 +314,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = await client.ObjectEngine.GetObjectsXmlAsync(new SensorParameters());
 
@@ -324,7 +327,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var validator = new EventValidator<string>(new[]
             {
@@ -364,7 +367,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var validator = new EventValidator<string>(new[]
             {
@@ -404,7 +407,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property><value>\01</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = client.ObjectEngine.GetObject<DummyElementRoot>(new SensorParameters());
 
@@ -417,7 +420,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var xml = "<property\0><value>1</value></property>";
 
-            var client = BaseTest.Initialize_Client(new BasicResponse(xml.ToString()));
+            var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
             var result = client.ObjectEngine.GetObjectsXml(new SensorParameters());
 
@@ -535,7 +538,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 var c = GetCustomClient(method, client);
                 client.LogLevel = LogLevel.All;
                 var m = GetCustomMethod(method);
-                var p = GetParameters(method);
+                var p = GetParameters(m);
 
                 m.Invoke(c, p);
             }
@@ -641,7 +644,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private PrtgClient GetDefaultClient()
         {
-            var client = BaseTest.Initialize_Client(new MultiTypeResponse
+            var client = Initialize_Client(new MultiTypeResponse
             {
                 CountOverride = new Dictionary<Content, int>
                 {
@@ -667,15 +670,15 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return defaultClient;
         }
 
-        private object[] GetParameters(MethodInfo method)
+        internal static object[] GetParameters(MethodBase method)
         {
             var parameters = method.GetParameters();
             return parameters.Select(p => GetParameterObject(method, p)).ToArray();
         }
 
-        private object GetParameterObject(MethodInfo method, ParameterInfo parameter)
+        private static object GetParameterObject(MethodBase method, ParameterInfo parameter)
         {
-            var realClient = BaseTest.Initialize_Client(new MultiTypeResponse());
+            var realClient = Initialize_Client(new MultiTypeResponse());
 
             var t = parameter.ParameterType;
 
@@ -826,7 +829,680 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (t == typeof(Status[]))
                 return new[] { Status.Up };
 
-            throw new NotImplementedException($"Don't know how to process parameter {parameter}");
+            //Parameter specific
+            if (t == typeof(ExeFileTarget))
+                return (ExeFileTarget) "test.ps1";
+            if (t == typeof(IEnumerable<string>))
+                return Enumerable.Empty<string>();
+            if (t.IsEnum)
+                return Enum.GetValues(t).Cast<object>().First();
+            if (t == typeof(object) && parameter.Name == "objectType")
+                return ObjectType.Device;
+            if (t == typeof(WmiServiceTarget))
+                return Initialize_Client(new MultiTypeResponse()).Targets.GetWmiServices(1001).First();
+            if (parameter.Name == "versionSpecific")
+                return null;
+
+            throw new NotImplementedException($"Don't know how to create instance for parameter {parameter}");
+        }
+
+        private object GetTypeObject(Type t)
+        {
+            if (t == typeof(DeviceTemplate))
+                return new DeviceTemplate("a|b");
+            if (t == typeof(string))
+                return "test";
+            if (t == typeof(WmiServiceTarget))
+                return Initialize_Client(new MultiTypeResponse()).Targets.GetWmiServices(1001).First();
+            if (t == typeof(GenericSensorTarget[]))
+                return new GenericSensorTarget[] { };
+            if (t == typeof(CustomParameter))
+                return new CustomParameter("test", "value");
+            if (t == typeof(SearchFilter))
+                return new SearchFilter(Property.Name, "test");
+            if (t == typeof(Property))
+                return Property.Name;
+
+            throw new NotImplementedException($"Don't know how to create instance for type {t}");
+        }
+
+        #endregion
+        #region Execute With Null Arguments
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_AllMethodsExecute_WithNullArgumentValidations()
+        {
+            WithMethodParameters(false, null, (c, method, @params, p, i) =>
+            {
+                var nullArgument = TestReflectionUtilities.GetDefault(p.ParameterType);
+
+                if (nullArgument == null)
+                {
+                    var args = GetParametersWithNull(nullArgument, @params, method, i);
+
+                    try
+                    {
+                        method.Invoke(c, args);
+
+                        if (CanIgnoreNullParameter(method, p))
+                            return;
+
+                        Assert.Fail($"Expected an ArgumentNullException to be thrown for parameter '{p.Name}' on method {method}, however no exception was thrown.");
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        Assert.IsInstanceOfType(ex.InnerException, typeof(ArgumentNullException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.InnerException.StackTrace}");
+                    }
+                }
+            });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_AllMethodsExecute_WithNullArgumentValidationsAsync()
+        {
+            await WithMethodParametersAsync(true, null, async (c, method, @params, p, i) =>
+            {
+                var nullArgument = TestReflectionUtilities.GetDefault(p.ParameterType);
+
+                if (nullArgument == null)
+                {
+                    var args = GetParametersWithNull(nullArgument, @params, method, i);
+
+                    try
+                    {
+                        await (Task)method.Invoke(c, args);
+
+                        if (CanIgnoreNullParameter(method, p))
+                            return;
+
+                        Assert.Fail($"Expected an ArgumentNullException to be thrown for parameter '{p.Name}' on method {method}, however no exception was thrown.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Assert.IsInstanceOfType(ex, typeof(ArgumentNullException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.StackTrace}");
+                    }
+                }
+            });
+        }
+
+        private object[] GetParametersWithNull(object nullArgument, ParameterInfo[] parameters, MethodInfo method, int nullIndex)
+        {
+            var args = parameters.Select((v, j) =>
+            {
+                if (nullIndex == j)
+                    return nullArgument;
+
+                return GetParameterObject(method, v);
+            }).ToArray();
+
+            return args;
+        }
+
+        private bool CanIgnoreNullParameter(MethodInfo method, ParameterInfo parameter)
+        {
+            if (method.Name.StartsWith("Query") && parameter.Name == "predicate")
+                return true;
+
+            if ((IsMethod(method, "GetLogs") || method.Name == "StreamLogs") && (parameter.Name == "startDate" || parameter.Name == "count"))
+                return true;
+
+            if (parameter.HasDefaultValue && parameter.DefaultValue == null)
+                return true;
+
+            //Params shouldn't throw
+            if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null)
+                return true;
+
+            if (IsMethod(method, "SetObjectProperty") || IsMethod(method, "SetChannelProperty") || IsMethod(method, "SetObjectPropertyRaw") && parameter.Name == "value")
+                return true;
+
+            var allowed = new Dictionary<string, object>
+            {
+                ["AutoDiscoverAsync"] = "templates",
+                ["GetLogsAsync"] = new[] { "status", "endDate" },
+                ["GetSensorsAsync"] = "statuses",
+                ["GetTotalObjectsAsync"] = "filters",
+                ["RefreshSystemInfoAsync"] = "types",
+            };
+
+            object v;
+
+            if (allowed.TryGetValue(method.Name, out v) && v.ToString() == parameter.Name || ((string[])v).Contains(parameter.Name))
+                return true;
+
+            return false;
+        }
+
+        #endregion
+        #region Execute With Null List Elements
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_AllMethodsExecute_WithNullListElements()
+        {
+            WithMethodParameters(
+                false,
+                GetEnumerableParameterFilter,
+                (c, method, @params, p, i) =>
+                {
+                    if (IsValueTypeArray(p))
+                        return;
+
+                    var args = GetParametersWithNullElement(@params, p, method);
+
+                    try
+                    {
+                        method.Invoke(c, args);
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        Assert.IsInstanceOfType(ex.InnerException, typeof(ArgumentException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.InnerException.StackTrace}");
+                    }
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_AllMethodsExecute_WithNullListElementsAsync()
+        {
+            await WithMethodParametersAsync(
+                true,
+                GetEnumerableParameterFilter,
+                async (c, method, @params, p, i) =>
+                {
+                    if (IsValueTypeArray(p))
+                        return;
+
+                    var args = GetParametersWithNullElement(@params, p, method);
+
+                    try
+                    {
+                        await (Task)method.Invoke(c, args);
+                    }
+                    catch (ArgumentException)
+                    {
+                    }
+                }
+            );
+        }
+
+        private object[] GetParametersWithNullElement(ParameterInfo[] parameters, ParameterInfo currentParameter, MethodInfo method)
+        {
+            var args = parameters.Select((p) =>
+            {
+                if (p == currentParameter)
+                {
+                    var arr = Activator.CreateInstance(p.ParameterType, 1);
+
+                    return arr;
+                }
+
+                return GetParameterObject(method, p);
+            }).ToArray();
+
+            return args;
+        }
+
+        private bool IsValueTypeArray(ParameterInfo parameter) => parameter.ParameterType.IsArray && parameter.ParameterType.GetElementType().IsValueType;
+
+        #endregion
+        #region Execute With Empty Lists
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_AllMethodsExecute_WithEmptyListValidations()
+        {
+            WithMethodParameters(
+                false,
+                GetEnumerableParameterFilter,
+                (c, method, @params, p, i) =>
+                {
+                    var args = GetParametersWithEmptyListElement(@params, p, method);
+
+                    try
+                    {
+                        method.Invoke(c, args);
+
+                        if (p.GetCustomAttribute<ParamArrayAttribute>() != null || p.HasDefaultValue)
+                            return;
+
+                        Assert.Fail($"Expected an ArgumentException to be thrown for parameter '{p.Name}' on method {method}, however no exception was thrown.");
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        Assert.IsInstanceOfType(ex.InnerException, typeof(ArgumentException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.InnerException.StackTrace}");
+                    }
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_AllMethodsExecute_WithEmptyListValidationsAsync()
+        {
+            await WithMethodParametersAsync(
+                true,
+                GetEnumerableParameterFilter,
+                async (c, method, @params, p, i) =>
+                {
+                    var args = GetParametersWithEmptyListElement(@params, p, method);
+
+                    try
+                    {
+                        await (Task)method.Invoke(c, args);
+
+                        if (p.GetCustomAttribute<ParamArrayAttribute>() != null || p.HasDefaultValue)
+                            return;
+
+                        var allowed = new Dictionary<string, object>
+                        {
+                            ["AutoDiscoverAsync"] = "templates",
+                            ["GetSensorsAsync"] = new[] { "filters", "statuses" },
+                            ["GetDevicesAsync"] = "filters",
+                            ["GetGroupsAsync"] = "filters",
+                            ["GetProbesAsync"] = "filters",
+                            ["GetNotificationActionsAsync"] = "filters",
+                            ["GetSchedulesAsync"] = "filters",
+                            ["GetObjectsAsync"] = "filters",
+                            ["GetLogsAsync"] = "status"
+                        };
+
+                        object v;
+
+                        if (allowed.TryGetValue(method.Name, out v) && v.ToString() == p.Name || ((string[])v).Contains(p.Name))
+                            return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Assert.IsInstanceOfType(ex, typeof(ArgumentException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.StackTrace}");
+                    }
+                }
+            );
+        }
+
+        private object[] GetParametersWithEmptyListElement(ParameterInfo[] parameters, ParameterInfo currentParameter, MethodInfo method)
+        {
+            var args = parameters.Select((p) =>
+            {
+                if (p == currentParameter)
+                {
+                    var arr = Activator.CreateInstance(p.ParameterType, 0);
+
+                    return arr;
+                }
+
+                return GetParameterObject(method, p);
+            }).ToArray();
+
+            return args;
+        }
+
+        #endregion
+        #region Execute With Injected Null List Elements
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_AllMethodsExecute_WithInjectedNullArrayElements()
+        {
+            WithMethodParameters(
+                false,
+                p => typeof(IParameters).IsAssignableFrom(p.ParameterType),
+                (c, method, @params, p, i) =>
+                {
+                    Action<Type> action = instanceType =>
+                    {
+                        foreach (var property in GetEnumerableParameterProperties(instanceType))
+                        {
+                            object[] args;
+
+                            if (!GetInjectedNullArrayArgs(property, method, @params, p, instanceType, out args))
+                                continue;
+
+                            try
+                            {
+                                method.Invoke(c, args);
+                            }
+                            catch (TargetInvocationException ex)
+                            {
+                                Assert.IsInstanceOfType(ex.InnerException, typeof(InvalidOperationException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.InnerException.StackTrace}");
+                            }
+                        }
+                    };
+
+                    if (IsBaseTypeParameter(p))
+                    {
+                        foreach (var type in DerivedParameterTypes(p))
+                        {
+                            action(type);
+                        }
+                    }
+                    else
+                    {
+                        action(p.ParameterType);
+                    }
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_AllMethodsExecute_WithInjectedNullArrayElementsAsync()
+        {
+            await WithMethodParametersAsync(
+                true,
+                p => typeof(IParameters).IsAssignableFrom(p.ParameterType),
+                async (c, method, @params, p, i) =>
+                {
+                    Func<Type, Task> action = async instanceType =>
+                    {
+                        foreach (var property in GetEnumerableParameterProperties(instanceType))
+                        {
+                            object[] args;
+
+                            if (!GetInjectedNullArrayArgs(property, method, @params, p, instanceType, out args))
+                                continue;
+
+                            try
+                            {
+                                await (Task)method.Invoke(c, args);
+                            }
+                            catch (InvalidOperationException)
+                            {
+                            }
+                        }
+                    };
+
+                    if (IsBaseTypeParameter(p))
+                    {
+                        foreach (var type in DerivedParameterTypes(p))
+                        {
+                            await action(type);
+                        }
+                    }
+                    else
+                    {
+                        await action(p.ParameterType);
+                    }
+                }
+            );
+        }
+
+        private bool GetInjectedNullArrayArgs(PropertyCache paramsInstanceProperty, MethodInfo method, ParameterInfo[] @params, ParameterInfo p, Type instanceType, out object[] args)
+        {
+            Type underlying;
+
+            if (!TryGetUnderlyingEnumerableType(paramsInstanceProperty.Property.PropertyType, out underlying))
+            {
+                args = null;
+                return false;
+            }
+
+            //Create an instance of our IParameters type
+            var instance = ParameterTests.GetParametersInstance(instanceType);
+
+            //Create a set of arguments for the method, including our IParameters instance at its appropriate position
+            args = GetParametersWithInjectedNullArrayElement(@params, p, method, instance);
+
+            //Create an array for the current enumerable IParameters property we're processing containing
+            //a single valid element. Assign the value to the property, then do a bait and switch, replacing
+            //the value with null after it's already been inserted.
+            InjectNullArrayArg(paramsInstanceProperty, underlying, instance);
+
+            return true;
+        }
+
+        private void InjectNullArrayArg(PropertyCache paramsInstanceProperty, Type underlying, object instance)
+        {
+            var t = paramsInstanceProperty.Property.PropertyType;
+
+            //Create a new collection capable of holding a single element
+            var collection = Activator.CreateInstance(t, 1);
+
+            //Figure out what sort of collection it is, and how to interface with its members
+
+            var list = collection as IList;
+
+            if (list != null)
+            {
+                if (t.IsArray)
+                {
+                    list[0] = GetTypeObject(underlying);
+                    paramsInstanceProperty.SetValue(instance, list);
+                    list[0] = null;
+                }
+                else
+                {
+                    list.Add(GetTypeObject(underlying));
+                    paramsInstanceProperty.SetValue(instance, list);
+                    list[0] = null;
+                }
+            }
+            else
+            {
+                if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    var genericArgs = t.GetGenericArguments();
+
+                    var key = GetTypeObject(genericArgs[0]);
+                    var value = GetTypeObject(genericArgs[1]);
+
+                    ((IDictionary) collection).Add(key, value);
+
+                    paramsInstanceProperty.SetValue(instance, collection);
+
+                    ((IDictionary)collection)[key] = null;
+                }
+                else
+                    throw new NotImplementedException($"Don't know what sort of collection '{t}' is");
+            }
+        }
+
+        private bool TryGetUnderlyingEnumerableType(Type t, out Type underlying)
+        {
+            //Is the property we're looking at on this IParmeters instance some type of array? If so, record its underlying type
+            //so we can create a dummy instance of it
+            if (t.IsArray)
+            {
+                if (t.GetElementType().IsValueType)
+                {
+                    underlying = null;
+                    return false;
+                }
+
+                underlying = t.GetElementType();
+            }
+            else
+            {
+                if (t.IsGenericType)
+                {
+                    underlying = t.GetGenericArguments()[0];
+
+                    if (underlying.IsValueType)
+                    {
+                        underlying = null;
+                        return false;
+                    }
+                }
+                else
+                    throw new NotImplementedException($"Don't know what sort of collection property of type '{t}' is");
+            }
+
+            return true;
+        }
+
+        private IEnumerable<PropertyCache> GetEnumerableParameterProperties(Type t) => ReflectionExtensions.GetNormalProperties(t)
+            .Where(p2 => typeof(IEnumerable).IsAssignableFrom(p2.Property.PropertyType) && p2.Property.PropertyType != typeof(string));
+
+        private object[] GetParametersWithInjectedNullArrayElement(ParameterInfo[] parameters, ParameterInfo currentParameter, MethodInfo method, object instance)
+        {
+            var args = parameters.Select((p) =>
+            {
+                if (p == currentParameter)
+                {
+                    return instance;
+                }
+
+                return GetParameterObject(method, p);
+            }).ToArray();
+
+            return args;
+        }
+
+        #endregion
+        #region Execute With Null IParameter Properties
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_AllMethodsExecute_ParametersWithNullProperties()
+        {
+            WithMethodParameters(
+                false,
+                p => typeof(IParameters).IsAssignableFrom(p.ParameterType),
+                (c, method, @params, p, i) =>
+                {
+                    if (IsBaseTypeParameter(p))
+                    {
+                        foreach (var type in DerivedParameterTypes(p))
+                        {
+                            var args = GetParametersWithNullParameterProperties(@params, p, method, type);
+
+                            method.Invoke(c, args);
+                        }
+                    }
+                    else
+                    {
+                        var args = GetParametersWithNullParameterProperties(@params, p, method);
+
+                        method.Invoke(c, args);
+                    }
+                });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_AllMethodsExecute_ParametersWithNullPropertiesAsync()
+        {
+            await WithMethodParametersAsync(
+                true,
+                p => typeof(IParameters).IsAssignableFrom(p.ParameterType),
+                async (c, method, @params, p, i) =>
+                {
+                    if (p.ParameterType == typeof(TriggerParameters) || p.ParameterType == typeof(NewSensorParameters))
+                    {
+                        foreach (var type in p.ParameterType.Assembly.GetTypes()
+                            .Where(t => p.ParameterType.IsAssignableFrom(t) && t != p.ParameterType && !t.IsAbstract))
+                        {
+                            var args = GetParametersWithNullParameterProperties(@params, p, method, type);
+
+                            await (Task)method.Invoke(c, args);
+                        }
+                    }
+                    else
+                    {
+                        var args = GetParametersWithNullParameterProperties(@params, p, method);
+
+                        await (Task)method.Invoke(c, args);
+                    }
+                });
+        }
+
+        private object[] GetParametersWithNullParameterProperties(ParameterInfo[] parameters, ParameterInfo currentParameter, MethodInfo method, Type alternateType = null)
+        {
+            var args = parameters.Select((p) =>
+            {
+                if (p == currentParameter)
+                {
+                    var t = alternateType ?? p.ParameterType;
+
+                    var instance = ParameterTests.GetParametersInstance(t);
+
+                    foreach (var prop in ReflectionExtensions.GetNormalProperties(t))
+                    {
+                        if (prop.Property.PropertyType.IsValueType)
+                            continue;
+
+                        try
+                        {
+                            prop.SetValue(instance, null);
+                        }
+                        catch (InvalidOperationException)
+                        {
+                        }
+                    }
+                }
+
+                return GetParameterObject(method, p);
+            }).ToArray();
+
+            return args;
+        }
+
+        #endregion
+        #region Execute With* Helpers
+
+        private bool IsBaseTypeParameter(ParameterInfo p) => p.ParameterType == typeof(TriggerParameters) || p.ParameterType == typeof(NewSensorParameters);
+
+        private IEnumerable<Type> DerivedParameterTypes(ParameterInfo p) => p.ParameterType.Assembly.GetTypes()
+            .Where(t => p.ParameterType.IsAssignableFrom(t) && t != p.ParameterType && !t.IsAbstract);
+
+        private void WithMethodParameters(bool allowAsync, Func<ParameterInfo, bool> filter,
+            Action<PrtgClient, MethodInfo, ParameterInfo[], ParameterInfo, int> action)
+        {
+            var methods = GetMethods(allowAsync).OrderBy(m => m.Name).ToList();
+
+            var client = GetDefaultClient();
+
+            foreach (var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                var m = GetCustomMethod(method);
+                var parameters = m.GetParameters();
+
+                var filteredParams = parameters;
+
+                if (filter != null)
+                    filteredParams = parameters.Where(filter).ToArray();
+
+                for (var i = 0; i < filteredParams.Length; i++)
+                {
+                    action(c, m, parameters, filteredParams[i], i);
+                }
+            }
+        }
+
+        private async Task WithMethodParametersAsync(bool allowAsync, Func<ParameterInfo, bool> filter,
+            Func<PrtgClient, MethodInfo, ParameterInfo[], ParameterInfo, int, Task> action)
+        {
+            var methods = GetMethods(allowAsync).OrderBy(m => m.Name).ToList();
+
+            var client = GetDefaultClient();
+
+            foreach (var method in methods)
+            {
+                var c = GetCustomClient(method, client);
+                var m = GetCustomMethod(method);
+                var parameters = m.GetParameters();
+
+                var filteredParams = parameters;
+
+                if (filter != null)
+                    filteredParams = parameters.Where(filter).ToArray();
+
+                for (var i = 0; i < filteredParams.Length; i++)
+                {
+                    await action(c, m, parameters, filteredParams[i], i);
+                }
+            }
+        }
+
+        private bool GetEnumerableParameterFilter(ParameterInfo info) => typeof(IEnumerable).IsAssignableFrom(info.ParameterType) && info.ParameterType != typeof(string);
+
+        private bool IsMethod(MethodInfo method, string name)
+        {
+            return method.Name == name || method.Name == $"{name}Async";
         }
 
         #endregion

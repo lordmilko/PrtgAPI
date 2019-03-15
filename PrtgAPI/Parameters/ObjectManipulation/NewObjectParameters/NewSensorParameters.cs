@@ -75,12 +75,12 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="NewSensorParameters"/> class.
         /// </summary>
-        /// <param name="sensorName">The name to use for this sensor.</param>
+        /// <param name="name">The name to use for this sensor.</param>
         /// <param name="sensorType">The type of sensor these parameters will create.</param>
-        protected NewSensorParameters(string sensorName, object sensorType) : base(sensorName)
+        protected NewSensorParameters(string name, object sensorType) : base(name)
         {
             if (string.IsNullOrEmpty(sensorType?.ToString()))
-                throw new ArgumentException($"{nameof(sensorType)} cannot be null or empty", nameof(sensorType));
+                throw new ArgumentException("SensorType cannot be null or empty.", nameof(sensorType));
 
             this[Parameter.SensorType] = sensorType;
 

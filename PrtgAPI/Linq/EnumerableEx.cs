@@ -67,5 +67,21 @@ namespace PrtgAPI.Linq
 
             throw new InvalidOperationException($"Failed to retrieve {desc.ToLower()} with {property} '{value}': Multiple {desc.ToLower()}s were returned: " + string.Join(", ", str));
         }
+
+        public static T[] WithoutNull<T>(this T[] source)
+        {
+            if (source.Any(v => v == null))
+                return source.Where(v => v != null).ToArray();
+
+            return source;
+        }
+
+        public static List<T> WithoutNull<T>(this List<T> source)
+        {
+            if (source.Any(v => v == null))
+                return source.Where(v => v != null).ToList();
+
+            return source;
+        }
     }
 }

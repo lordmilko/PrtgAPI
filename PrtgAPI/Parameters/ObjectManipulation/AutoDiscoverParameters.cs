@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using PrtgAPI.Linq;
 
 namespace PrtgAPI.Parameters
 {
@@ -9,7 +10,7 @@ namespace PrtgAPI.Parameters
         public AutoDiscoverParameters(int objectId, DeviceTemplate[] templates) : base(objectId)
         {
             if (templates != null && templates.Length > 0)
-                DeviceTemplates = templates;
+                DeviceTemplates = templates.WithoutNull();
         }
 
         public DeviceTemplate[] DeviceTemplates
@@ -17,7 +18,7 @@ namespace PrtgAPI.Parameters
             get { return (DeviceTemplate[]) this[Parameter.Template]; }
             set
             {
-                this[Parameter.Template] = value.Select(
+                this[Parameter.Template] = value?.Select(
                     s => new DeviceTemplate(s.raw, t => $"\"{t.Value}\"")
                 ).ToArray();
             }

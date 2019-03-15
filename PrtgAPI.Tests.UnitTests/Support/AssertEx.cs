@@ -71,6 +71,11 @@ namespace PrtgAPI.Tests.UnitTests
 
         public static void AllPropertiesAndFieldsAreEqual<T>(T original, T clone)
         {
+            AllPropertiesAndFieldsAreEqualInternal(original, clone, new Stack<object>());
+        }
+
+        public static void AllPropertiesAndFieldsAreEqualInternal<T>(T original, T clone, Stack<object> seen)
+        {
             var firstProperties = original.GetType().GetProperties(flags).Where(p => !p.GetIndexParameters().Any()).ToList();
             var secondProperties = original.GetType().GetProperties(flags).Where(p => !p.GetIndexParameters().Any());
 
@@ -86,6 +91,9 @@ namespace PrtgAPI.Tests.UnitTests
 
                 var newValue = newProperty.GetValue(clone);
                 var originalValue = originalProperty.GetValue(original);
+
+                seen.Push(newValue);
+                seen.Push(originalValue);
 
                 if (originalValue.IsIEnumerable() && newValue.IsIEnumerable())
                 {
@@ -111,7 +119,7 @@ namespace PrtgAPI.Tests.UnitTests
                 }
                 else
                 {
-                    if(TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue))
+                    if(TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue) && seen.Where(v => v == originalValue).Count() < 3 && seen.Where(v => v == newValue).Count() < 3)
                     {
                         AllPropertiesAndFieldsAreEqual(originalValue, newValue);
                     }
@@ -126,6 +134,9 @@ namespace PrtgAPI.Tests.UnitTests
                         Assert.AreEqual(newValue, originalValue, $"Expected property '{newProperty.Name}' new value to be '{originalValue}' ({(originalValue?.GetType().Name ?? "null")}) however value was actually {newValue} ({(newValue?.GetType().Name ?? "null")})");
                     }
                 }
+
+                seen.Pop();
+                seen.Pop();
             }
 
             foreach (var newField in secondFields)
@@ -141,15 +152,18 @@ namespace PrtgAPI.Tests.UnitTests
                 var newValue = newField.GetValue(clone);
                 var originalValue = originalField.GetValue(original);
 
-                if (TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue))
+                seen.Push(newValue);
+                seen.Push(originalValue);
+
+                if (TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue) && seen.Where(v => v == originalValue).Count() < 3 && seen.Where(v => v == newValue).Count() < 3)
                 {
-                    AllPropertiesAndFieldsAreEqual(originalValue, newValue);
+                    AllPropertiesAndFieldsAreEqualInternal(originalValue, newValue, seen);
                 }
                 else
                 {
                     if (ReflectionExtensions.IsSubclassOfRawGeneric(newField.FieldType, typeof(IReadOnlyDictionary<,>)) && ReflectionExtensions.IsSubclassOfRawGeneric(originalField.FieldType, typeof(IReadOnlyDictionary<,>)))
                     {
-                        AllPropertiesAndFieldsAreEqual(originalValue, originalValue);
+                        AllPropertiesAndFieldsAreEqualInternal(originalValue, originalValue, seen);
                     }
                     else
                     {
@@ -158,9 +172,10 @@ namespace PrtgAPI.Tests.UnitTests
                         else
                             Assert.IsTrue((newValue == null && originalValue == null) || newValue?.Equals(originalValue) == true, $"Expected field '{newField.Name}' new value to be '{originalValue}' however value was actually '{newValue}'");
                     }
-                        
                 }
-                    
+
+                seen.Pop();
+                seen.Pop();
             }
         }
 

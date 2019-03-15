@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using PrtgAPI.Attributes;
+using PrtgAPI.Linq;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -110,6 +111,8 @@ namespace PrtgAPI.Parameters
             get { return (List<DeviceTemplate>) this[Parameter.DeviceTemplate]; }
             set
             {
+                value = value?.WithoutNull();
+
                 this[Parameter.DeviceTemplate] = value;
 
                 if (value != null && value.Count > 0)
@@ -125,11 +128,11 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="NewDeviceParameters"/> class.
         /// </summary>
-        /// <param name="deviceName">The name to use for this device.</param>
-        /// <param name="host">The IP Address or HostName to use to connect to this device. If the host is not specified, the <paramref name="deviceName"/> is used as the host.</param>
-        public NewDeviceParameters(string deviceName, string host = null) : base(deviceName)
+        /// <param name="name">The name to use for this device.</param>
+        /// <param name="host">The IP Address or HostName to use to connect to this device. If the host is not specified, the <paramref name="name"/> is used as the host.</param>
+        public NewDeviceParameters(string name, string host = null) : base(name)
         {
-            Host = host ?? deviceName;
+            Host = host ?? name;
             IPVersion = IPVersion.IPv4;
             AutoDiscoveryMode = AutoDiscoveryMode.Manual;
             AutoDiscoverySchedule = AutoDiscoverySchedule.Once;

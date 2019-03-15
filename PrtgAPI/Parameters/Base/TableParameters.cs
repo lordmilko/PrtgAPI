@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using PrtgAPI.Linq;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
@@ -11,7 +12,7 @@ namespace PrtgAPI.Parameters
     /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving data stored in tables.
     /// </summary>
     /// <typeparam name="T">The type of PRTG Object to retrieve.</typeparam>
-    public class TableParameters<T> : ContentParameters<T> where T : ITableObject, IObject
+    public abstract class TableParameters<T> : ContentParameters<T> where T : ITableObject, IObject
     {
         /// <summary>
         /// Gets or sets a collection of search filters used to limit search results to those that match certain criteria. This property is self initializing.
@@ -32,7 +33,7 @@ namespace PrtgAPI.Parameters
 
                 return newList;
             }
-            set { SetSearchFilter(value); }
+            set { SetSearchFilter(value?.WithoutNull()); }
         }
 
         internal virtual void SetSearchFilter(List<SearchFilter> value)

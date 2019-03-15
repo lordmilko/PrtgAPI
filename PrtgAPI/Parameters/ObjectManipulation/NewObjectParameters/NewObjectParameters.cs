@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
@@ -56,14 +57,17 @@ namespace PrtgAPI.Parameters
             set { SetCustomParameterArray(ObjectProperty.Tags, value, ' '); }
         }
 
-        internal NewObjectParameters(string objectName)
+        internal NewObjectParameters(string name)
         {
-            if (string.IsNullOrEmpty(objectName))
-                throw new ArgumentException($"{nameof(objectName)} cannot be null or empty", nameof(objectName));
+            if (name == null)
+                throw new ArgumentNullException(nameof(name), "An object name cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name cannot be empty or whitespace.", nameof(name));
 
             parser = new ObjectPropertyParser(this, this, ObjectPropertyParser.GetObjectPropertyNameViaCache);
 
-            Name = objectName;
+            Name = name;
         }
 
         #region GetCustomParameter
@@ -402,7 +406,15 @@ namespace PrtgAPI.Parameters
                 if (this[Parameter.Custom] == null)
                     this[Parameter.Custom] = new List<CustomParameter>();
 
-                return (List<CustomParameter>)this[Parameter.Custom];
+                var list = (List<CustomParameter>) this[Parameter.Custom];
+
+                if (list.Any(v => v == null))
+                {
+                    list = list.Where(v => v != null).ToList();
+                    this[Parameter.Custom] = list;
+                }
+
+                return list;
             }
         }
     }

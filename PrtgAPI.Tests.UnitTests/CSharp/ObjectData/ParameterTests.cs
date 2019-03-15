@@ -781,5 +781,77 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(parameters[Parameter.PassHash], "passhash");
             Assert.AreEqual(null, parameters[Parameter.Password]);
         }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AllParameterProperties_CanSetAndRetrieveNull()
+        {
+            var groups = typeof(BaseParameters).Assembly.GetTypes()
+                .Where(t => typeof(BaseParameters).IsAssignableFrom(t) && !t.IsAbstract)
+                .SelectMany(t => t.GetNormalProperties())
+                .OrderBy(p => p.Name)
+                .GroupBy(p => p.ReflectedType)
+                .OrderBy(p => p.Key.Name)
+                .ToList();
+
+            foreach (var group in groups)
+            {
+                var instance = GetParametersInstance(group.Key);
+
+                foreach (var property in group)
+                {
+                    var p = property;
+
+                    if (group.Key.IsGenericType)
+                    {
+                        p = instance.GetType().GetProperty(property.Name);
+                    }
+
+                    if (p.PropertyType.IsValueType)
+                        continue;
+
+                    try
+                    {
+                        p.SetValue(instance, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (group.Key.Name == "SpeedTriggerParameters" && p.Name == "Channel" && ex.Message ==
+                            "Trigger property 'Channel' cannot be null for trigger type 'Speed'.")
+                        {
+                            continue;
+                        }
+                    }
+
+                    var val = p.GetValue(instance);
+                }
+            }
+        }
+
+        internal static IParameters GetParametersInstance(Type type)
+        {
+            if (type.Name == "SystemInfoParameters`1")
+                type = typeof(SystemInfoParameters<DeviceSystemInfo>);
+
+            var ctor = type.GetConstructors().FirstOrDefault();
+
+            if (ctor != null)
+            {
+                var args = PrtgClientTests.GetParameters(ctor);
+
+                return (IParameters)Activator.CreateInstance(type, args);
+            }
+            else
+            {
+                switch (type.Name)
+                {
+                    case nameof(DynamicSensorParameters):
+                        return new DynamicSensorParameters("<input name=\"name_\" value=\"test\">", "exexml");
+
+                    default:
+                        throw new NotImplementedException($"Don't know how to create instance of parameters type '{type.Name}'");
+                }
+            }
+        }
     }
 }

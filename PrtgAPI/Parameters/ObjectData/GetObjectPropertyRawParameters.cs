@@ -20,24 +20,30 @@ namespace PrtgAPI.Parameters
             }
         }
 
-        public GetObjectPropertyRawParameters(int objectId, string name, bool text) : base(objectId)
+        public GetObjectPropertyRawParameters(int objectId, string property, bool text) : base(objectId)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException($"{nameof(name)} cannot be null or empty", nameof(name));
+            if (property == null)
+                throw new ArgumentNullException(nameof(property), "Property cannot be null.");
 
-            if (name.EndsWith("_"))
-                name = name.Substring(0, name.Length - 1);
+            if (string.IsNullOrWhiteSpace(property))
+                throw new ArgumentException("Property cannot be empty or whitespace.", nameof(property));
 
-            Name = name;
+            if (property.EndsWith("_"))
+                property = property.Substring(0, property.Length - 1);
+
+            Name = property;
 
             if (text)
                 this[Parameter.Show] = CustomValueFormat.Text;
         }
 
-        public GetObjectPropertyRawParameters(int objectId, int subId, string subType, string name, bool text) : this(objectId, name, false)
+        public GetObjectPropertyRawParameters(int objectId, int subId, string subType, string property, bool text) : this(objectId, property, false)
         {
-            if (string.IsNullOrEmpty(subType))
-                throw new ArgumentException($"{nameof(subType)} cannot be null or empty", nameof(subType));
+            if (subType == null)
+                throw new ArgumentNullException(nameof(subType), "SubType cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(subType))
+                throw new ArgumentException("SubType cannot be empty or whitespace.", nameof(subType));
 
             this[Parameter.SubId] = subId;
             this[Parameter.SubType] = subType;

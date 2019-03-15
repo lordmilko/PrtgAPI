@@ -117,9 +117,9 @@ namespace PrtgAPI.Request
 
             var dependentStr = attrib != null ? $" when property '{attrib.Property}' is value '{attrib.RequiredValue}'" : "";
 
-            if (string.IsNullOrEmpty(val?.ToString()))
+            if (string.IsNullOrWhiteSpace(val?.ToString()))
             {
-                throw new InvalidOperationException($"Property '{property.Name}' requires a value{dependentStr}, however the value was null or empty.");
+                throw new InvalidOperationException($"Property '{property.Name}' requires a value{dependentStr}, however the value was null, empty or whitespace.");
             }
 
             var list = val as IEnumerable;
@@ -129,7 +129,7 @@ namespace PrtgAPI.Request
                 var casted = list.Cast<object>();
 
                 if (!casted.Any())
-                    throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty list was specified.");
+                    throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty collection was specified.");
             }
         }
 

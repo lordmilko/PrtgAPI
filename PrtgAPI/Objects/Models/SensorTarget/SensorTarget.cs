@@ -50,8 +50,8 @@ namespace PrtgAPI.Targets
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (name == string.Empty)
-                throw new ArgumentException("Value must not be an empty string", nameof(name));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Value must not be an empty string or whitespace.", nameof(name));
 
             return $"{name}|{name}||";
         }

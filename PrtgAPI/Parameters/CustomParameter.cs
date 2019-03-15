@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -26,13 +27,10 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomParameter"/> class.
         /// </summary>
-        /// <param name="name">The name of the parameter</param>
+        /// <param name="name">The name of the parameter.</param>
         /// <param name="value">The value of the parameter. The caller is responsible for ensuring the value and type contains the correct capitalization and is formatted corectly when converted <see cref="ToString"/>.</param>
-        public CustomParameter(string name, object value)
+        public CustomParameter(string name, object value) : this(name, value, ParameterType.SingleValue)
         {
-            Name = name;
-            Value = value;
-            ParameterType = ParameterType.SingleValue;
         }
 
         /// <summary>
@@ -43,6 +41,12 @@ namespace PrtgAPI.Parameters
         /// <param name="parameterType">How the <paramref name="value"/> should be formatted if it contains a string.</param>
         public CustomParameter(string name, object value, ParameterType parameterType)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name), "Name cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
+
             Name = name;
             Value = value;
             ParameterType = parameterType;

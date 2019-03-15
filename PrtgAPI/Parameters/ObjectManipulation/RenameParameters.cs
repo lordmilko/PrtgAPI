@@ -10,8 +10,11 @@ namespace PrtgAPI.Parameters
 
         public RenameParameters(int[] objectIds, string name) : base(objectIds)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("name cannot be null or empty", nameof(name));
+            if (name == null)
+                throw new ArgumentNullException(nameof(name), $"Name cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name cannot be empty or whitespace.", nameof(name));
 
             Name = name;
         }

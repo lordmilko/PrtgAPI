@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
 
@@ -43,6 +44,9 @@ namespace PrtgAPI.Parameters
 
             if (parameters.Length == 0)
                 throw new ArgumentException("At least one parameter must be specified", nameof(parameters));
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
 
             ObjectIds = objectIds;
             this[Parameter.Custom] = parameters;

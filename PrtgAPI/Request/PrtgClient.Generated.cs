@@ -196,6 +196,9 @@ namespace PrtgAPI
 
         private void ValidateTriggerParameters(TriggerParameters parameters, CancellationToken token)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (parameters.Action == ModifyAction.Add)
             {
                 var data = GetNotificationTriggerData(parameters.ObjectId, token);
@@ -239,6 +242,9 @@ namespace PrtgAPI
 
         private async Task ValidateTriggerParametersAsync(TriggerParameters parameters, CancellationToken token)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (parameters.Action == ModifyAction.Add)
             {
                 var data = await GetNotificationTriggerDataAsync(parameters.ObjectId, token).ConfigureAwait(false);
@@ -662,6 +668,12 @@ namespace PrtgAPI
 
         private string GetSensorTargetsResponse(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
+            if (sensorType == null)
+                throw new ArgumentNullException(nameof(sensorType), "Sensor type cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(sensorType))
+                throw new ArgumentException("Sensor type cannot be null or whitespace.", nameof(sensorType));
+
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
             return GetSensorTargetsResponse(deviceId, parameters, progressCallback, timeout, token);
@@ -685,6 +697,12 @@ namespace PrtgAPI
 
         private async Task<string> GetSensorTargetsResponseAsync(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
+            if (sensorType == null)
+                throw new ArgumentNullException(nameof(sensorType), "Sensor type cannot be null.");
+
+            if (string.IsNullOrWhiteSpace(sensorType))
+                throw new ArgumentException("Sensor type cannot be null or whitespace.", nameof(sensorType));
+
             var parameters = new SensorTargetParameters(deviceId, sensorType);
 
             return await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
@@ -804,6 +822,9 @@ namespace PrtgAPI
             Func<SearchFilter[], CancellationToken, List<T>> getObjects, bool resolve, CancellationToken token, Action<Type, int> errorCallback = null,
             Func<bool> shouldStop = null, bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
@@ -937,6 +958,9 @@ namespace PrtgAPI
             Func<SearchFilter[], CancellationToken, Task<List<T>>> getObjects, bool resolve, CancellationToken token, Action<Type, int> errorCallback = null,
             Func<bool> shouldStop = null, bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 var filters = RequestParser.GetFilters(parentId, parameters);
@@ -1073,6 +1097,9 @@ namespace PrtgAPI
         internal List<NotificationTrigger> AddNotificationTriggerInternal(TriggerParameters parameters, bool resolve,
             CancellationToken token, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 Action<CancellationToken> addTrigger = t => SetNotificationTriggerInternal(parameters, t);
@@ -1093,6 +1120,9 @@ namespace PrtgAPI
         internal async Task<List<NotificationTrigger>> AddNotificationTriggerInternalAsync(TriggerParameters parameters, bool resolve,
             CancellationToken token, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
         {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
             if (resolve)
             {
                 Func<CancellationToken, Task> addTrigger = async t => await SetNotificationTriggerInternalAsync(parameters, t).ConfigureAwait(false);
@@ -1362,6 +1392,82 @@ namespace PrtgAPI
             {
                 throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
             }
+        }
+
+        //#######################################
+        // CreateSetObjectPropertyParametersAsync
+        //#######################################
+
+        private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, PropertyParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            var paramLists = RequestParser.GetSetObjectPropertyParamLists(parameters); //Item1: Normal items. Item2: Mergeable items
+
+            for (var i = 0; i < paramLists.Item1.Length; i++)
+            {
+                var prop = paramLists.Item1[i];
+
+                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
+
+                if (attrib != null)
+                {
+                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
+                    {
+                        var str = Location.GetAddress(prop.Value);
+
+                        var newValue = ResolveAddress(str, CancellationToken.None);
+
+                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
+                    }
+                }
+            }
+
+            parameters = RequestParser.MergeParameters(paramLists);
+
+            var @params = new SetObjectPropertyParameters(objectIds, parameters);
+
+            return @params;
+        }
+
+        private async Task<SetObjectPropertyParameters> CreateSetObjectPropertyParametersAsync(int[] objectIds, PropertyParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            var paramLists = RequestParser.GetSetObjectPropertyParamLists(parameters); //Item1: Normal items. Item2: Mergeable items
+
+            for (var i = 0; i < paramLists.Item1.Length; i++)
+            {
+                var prop = paramLists.Item1[i];
+
+                var attrib = prop.Property.GetEnumAttribute<TypeAttribute>();
+
+                if (attrib != null)
+                {
+                    if (attrib.Class == typeof(Location) && !(prop.Value is Location))
+                    {
+                        var str = Location.GetAddress(prop.Value);
+
+                        var newValue = await ResolveAddressAsync(str, token).ConfigureAwait(false);
+
+                        paramLists.Item1[i] = new PropertyParameter(prop.Property, newValue);
+                    }
+                }
+            }
+
+            parameters = RequestParser.MergeParameters(paramLists);
+
+            var @params = new SetObjectPropertyParameters(objectIds, parameters);
+
+            return @params;
         }
     }
 }
